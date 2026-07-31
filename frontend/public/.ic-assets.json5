@@ -1,0 +1,14 @@
+[
+  {
+    // Internet Identity fetches this over the non-raw canister domain and
+    // requires a certified 200 with JSON content-type. It has no file
+    // extension, so the asset canister would not infer the type, and dotfile
+    // directories are skipped unless ignore is explicitly false.
+    "match": ".well-known/ii-alternative-origins",
+    "headers": {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "ignore": false
+  }
+]

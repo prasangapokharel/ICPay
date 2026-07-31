@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next"
 
+// output: "export" cannot defer this to a server, so it is emitted at build time.
+export const dynamic = "force-static"
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "ICPay — Send ICP by Username",

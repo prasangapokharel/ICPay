@@ -1,5 +1,5 @@
 import { AuthClient } from "@dfinity/auth-client"
-import { getIdentityProvider } from "@/services/icp"
+import { getIdentityProvider, getDerivationOrigin } from "@/services/icp"
 import type { Identity } from "@dfinity/agent"
 
 let clientPromise: Promise<AuthClient> | null = null
@@ -52,6 +52,7 @@ export function login(): Promise<Identity | null> {
     authClient
       .login({
         identityProvider: getIdentityProvider(),
+        derivationOrigin: getDerivationOrigin(),
         onSuccess: () => finish(authClient.getIdentity()),
         onError: (error) => {
           console.error("II login error:", error)

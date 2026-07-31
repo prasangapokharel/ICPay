@@ -48,3 +48,17 @@ export function getIdentityProvider(): string {
   if (getIsLocal()) return `http://${LOCAL_II_CANISTER_ID}.localhost:4943`
   return process.env.NEXT_PUBLIC_II_URL ?? "https://id.ai"
 }
+
+// Internet Identity derives a principal from the origin that asked for it, so
+// the same II account yields a different principal -- and therefore a different
+// wallet and balance -- on each origin the app is served from. Naming one
+// canister origin here makes every deployment resolve to that single principal.
+// The canister must serve /.well-known/ii-alternative-origins listing the other
+// origins; II rejects a derivationOrigin that is not canister-hosted.
+//
+// This value is permanent: changing it changes every user's principal and
+// strands the funds held under the old one.
+export function getDerivationOrigin(): string | undefined {
+  if (getIsLocal()) return undefined
+  return process.env.NEXT_PUBLIC_DERIVATION_ORIGIN || undefined
+}

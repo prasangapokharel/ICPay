@@ -5,6 +5,11 @@
       "main": "src/main.mo",
       "dependencies": ["icp_ledger"]
     },
+    "icp_wallet_frontend": {
+      "type": "assets",
+      "source": ["../frontend/out"],
+      "dependencies": ["icp_wallet_backend"]
+    },
     "icp_ledger": {
       "type": "pull",
       "id": "ryjl3-tyaaa-aaaaa-aaaba-cai"
