@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Spinner } from "@/components/ui/spinner"
-import { RefreshCw, AlertTriangle } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { RefreshIcon, Alert02Icon } from "@hugeicons/core-free-icons"
 import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDepositAddress, useRefreshWallet } from "@/hooks/use-wallet-data"
@@ -88,7 +89,7 @@ export default function DepositPage() {
           />
 
           <p className="flex items-start gap-2 text-xs text-muted-foreground">
-            <AlertTriangle className="mt-px size-3.5 shrink-0" />
+            <HugeiconsIcon icon={Alert02Icon} className="mt-px size-3.5 shrink-0" />
             Only send ICP to this address. Other tokens will be lost.
           </p>
 
@@ -98,7 +99,7 @@ export default function DepositPage() {
             onClick={handleCheck}
             disabled={checking}
           >
-            {checking ? <Spinner className="size-4" /> : <RefreshCw className="size-4" />}
+            {checking ? <Spinner className="size-4" /> : <HugeiconsIcon icon={RefreshIcon} className="size-4" />}
             {checking ? "Checking…" : "Check for deposits"}
           </Button>
         </>

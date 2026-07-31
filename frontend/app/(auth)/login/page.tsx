@@ -6,13 +6,14 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Wallet, ShieldCheck, Zap, KeyRound } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Wallet01Icon, ShieldKeyIcon, FlashIcon, Key01Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 
 const features = [
-  { icon: ShieldCheck, title: "Self-custodial", body: "Only you can authorize transfers." },
-  { icon: KeyRound, title: "No passwords", body: "Internet Identity signs you in." },
-  { icon: Zap, title: "Instant settlement", body: "ICP transfers confirm in seconds." },
+  { icon: ShieldKeyIcon, title: "Self-custodial", body: "Only you can authorize transfers." },
+  { icon: Key01Icon, title: "No passwords", body: "Internet Identity signs you in." },
+  { icon: FlashIcon, title: "Instant settlement", body: "ICP transfers confirm in seconds." },
 ]
 
 export default function LoginPage() {
@@ -63,10 +64,10 @@ export default function LoginPage() {
           </p>
 
           <ul className="mt-10 w-full space-y-4 text-left">
-            {features.map(({ icon: Icon, title, body }) => (
+            {features.map(({ icon, title, body }) => (
               <li key={title} className="flex items-start gap-3">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                  <Icon className="size-4 text-primary" />
+                  <HugeiconsIcon icon={icon} className="size-4 text-primary" />
                 </span>
                 <div>
                   <p className="text-sm font-medium">{title}</p>
@@ -84,7 +85,7 @@ export default function LoginPage() {
             </Alert>
           )}
           <Button className="h-12 w-full text-base" onClick={handleLogin} disabled={connecting}>
-            {connecting ? <Spinner className="size-4" /> : <Wallet className="size-5" />}
+            {connecting ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Wallet01Icon} className="size-5" />}
             {connecting ? "Connecting…" : "Connect Wallet"}
           </Button>
           <p className="text-center text-xs text-muted-foreground">

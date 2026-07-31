@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { Copy, Check } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -68,9 +69,9 @@ function AddressBlock({
       >
         <span className="min-w-0 flex-1 break-all font-mono text-xs leading-relaxed">{value}</span>
         {copied ? (
-          <Check className="size-4 shrink-0 text-muted-foreground" />
+          <HugeiconsIcon icon={Tick02Icon} className="size-4 shrink-0 text-muted-foreground" />
         ) : (
-          <Copy className="size-4 shrink-0 text-muted-foreground" />
+          <HugeiconsIcon icon={Copy01Icon} className="size-4 shrink-0 text-muted-foreground" />
         )}
       </button>
 

@@ -16,7 +16,8 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { ArrowUpRight } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { formatAmount } from "@/lib/wallet-utils"
 import { Principal } from "@dfinity/principal"
 
@@ -158,7 +159,7 @@ export function TransferForm({
         disabled={!canReview}
         onClick={() => setConfirmOpen(true)}
       >
-        <ArrowUpRight className="size-4" />
+        <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
         Review transfer
       </Button>
 
@@ -191,7 +192,7 @@ export function TransferForm({
 
           <DrawerFooter>
             <Button className="h-12 text-base" onClick={handleConfirm} disabled={loading}>
-              {loading ? <Spinner className="size-4" /> : <ArrowUpRight className="size-4" />}
+              {loading ? <Spinner className="size-4" /> : <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />}
               {loading ? "Sending…" : "Confirm & send"}
             </Button>
             <DrawerClose

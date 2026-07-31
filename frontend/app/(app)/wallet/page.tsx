@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Wallet, Banknote } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Money01Icon } from "@hugeicons/core-free-icons"
 import { getWalletActor } from "@/services/wallet"
 import { formatAmount, formatE8s } from "@/lib/wallet-utils"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -41,7 +42,7 @@ export default function WalletPage() {
       <Card className="bg-primary text-primary-foreground">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Banknote className="h-5 w-5" />
+            <HugeiconsIcon icon={Money01Icon} className="h-5 w-5" />
             ICP Balance
           </CardTitle>
         </CardHeader>

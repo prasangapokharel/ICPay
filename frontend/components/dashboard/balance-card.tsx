@@ -1,7 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import { Eye, EyeOff, RefreshCw } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { EyeIcon, EyeOffIcon, RefreshIcon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 import { formatUsd, type IcpPrice } from "@/lib/use-icp-price"
 
@@ -45,10 +46,10 @@ export function BalanceCard({
 
       <div className="relative flex items-start justify-end gap-1 pt-3">
         <IconButton label="Refresh balance" onClick={onRefresh} disabled={refreshing}>
-          <RefreshCw className={cn("size-4", refreshing && "animate-spin")} />
+          <HugeiconsIcon icon={RefreshIcon} className={cn("size-4", refreshing && "animate-spin")} />
         </IconButton>
         <IconButton label={hidden ? "Show balance" : "Hide balance"} onClick={onToggleHidden}>
-          {hidden ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          <HugeiconsIcon icon={hidden ? EyeOffIcon : EyeIcon} className="size-4" />
         </IconButton>
       </div>
 

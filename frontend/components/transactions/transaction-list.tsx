@@ -12,7 +12,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { ChevronLeft, ChevronRight, ExternalLink, Inbox, MessageSquare } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowLeft01Icon, ArrowRight01Icon, LinkSquare02Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
 import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel } from "@/lib/wallet-utils"
 import { cn } from "@/lib/utils"
@@ -33,7 +34,7 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
   if (transactions.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed py-12 text-center">
-        <Inbox className="mx-auto size-6 text-muted-foreground/50" />
+        <HugeiconsIcon icon={InboxIcon} className="mx-auto size-6 text-muted-foreground/50" />
         <p className="mt-3 text-sm font-medium">No transactions yet</p>
         <p className="mt-1 text-xs text-muted-foreground">Deposit ICP to get started</p>
       </div>
@@ -61,7 +62,7 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
               disabled={!hasPrev}
               onClick={() => onPageChange(page - 1)}
             >
-              <ChevronLeft className="size-3" />
+              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-3" />
               Previous
             </Button>
             <Button
@@ -72,7 +73,7 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
               onClick={() => onPageChange(page + 1)}
             >
               Next
-              <ChevronRight className="size-3" />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" />
             </Button>
           </div>
         </div>
@@ -112,7 +113,7 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
           </p>
           {memo && (
             <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-              <MessageSquare className="size-3 shrink-0" />
+              <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0" />
               <span className="truncate">{memo}</span>
             </p>
           )}
@@ -164,7 +165,7 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
                 className="inline-flex items-center gap-1 font-mono underline underline-offset-2"
               >
                 {tx.blockIndex[0].toString()}
-                <ExternalLink className="size-3" />
+                <HugeiconsIcon icon={LinkSquare02Icon} className="size-3" />
               </a>
             </Row>
           )}

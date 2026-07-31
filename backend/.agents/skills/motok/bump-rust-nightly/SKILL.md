@@ -1,3 +1,11 @@
+---
+name: bump-rust-nightly
+description: >-
+  Bump the rustc-nightly toolchain used to build the Motoko RTS. Use only when
+  working inside the dfinity/motoko compiler repo — not for application
+  canisters.
+---
+
 # Bumping the Rust Nightly Toolchain
 
 This skill guides you through bumping the `rustc-nightly` version used to build

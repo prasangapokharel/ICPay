@@ -28,6 +28,7 @@ module {
           .values()
           .map<Types.Transaction, Types.TransactionPublic>(Types.txToPublic)
           .toArray();
+        let totals = TxRepo.getUserTotals(service.txs, user.id);
         #ok({
           user = Types.userToPublic(user);
           principal = caller;
@@ -35,9 +36,9 @@ module {
           depositAddress = depositAccount;
           depositAccountIdentifier = AccountHelper.toAccountIdentifier(depositAccount);
           recentTransactions = recentPublic;
-          totalDeposits = TxRepo.getTotalDepositAmount(service.txs, user.id);
-          totalWithdrawals = TxRepo.getTotalWithdrawalAmount(service.txs, user.id);
-          totalTransfers = TxRepo.getTotalTransferCount(service.txs, user.id);
+          totalDeposits = totals.deposits;
+          totalWithdrawals = totals.withdrawals;
+          totalTransfers = totals.transfers;
         });
       };
       case (null) { #err("User not found") };

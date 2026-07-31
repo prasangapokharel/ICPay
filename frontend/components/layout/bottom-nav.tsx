@@ -3,14 +3,15 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { Home, ArrowDownToLine, ArrowUpFromLine, History } from "lucide-react"
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
+import { Home01Icon, Download01Icon, Upload01Icon, Clock01Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 
 const navItems = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/deposit", label: "Deposit", icon: ArrowDownToLine },
-  { href: "/withdraw", label: "Withdraw", icon: ArrowUpFromLine },
-  { href: "/transactions", label: "Activity", icon: History },
+  { href: "/", label: "Home", icon: Home01Icon },
+  { href: "/deposit", label: "Deposit", icon: Download01Icon },
+  { href: "/withdraw", label: "Withdraw", icon: Upload01Icon },
+  { href: "/transactions", label: "Activity", icon: Clock01Icon },
 ]
 
 export function BottomNav() {
@@ -59,12 +60,12 @@ export function BottomNav() {
 function NavTab({
   href,
   label,
-  icon: Icon,
+  icon,
   active,
 }: {
   href: string
   label: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: IconSvgElement
   active: boolean
 }) {
   return (
@@ -76,7 +77,7 @@ function NavTab({
         active ? "text-primary" : "text-muted-foreground hover:text-foreground",
       )}
     >
-      <Icon className="size-5" />
+      <HugeiconsIcon icon={icon} className="size-5" />
       <span>{label}</span>
     </Link>
   )

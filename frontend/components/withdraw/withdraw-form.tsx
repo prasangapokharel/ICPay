@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
-import { ArrowUpFromLine } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Upload01Icon } from "@hugeicons/core-free-icons"
 import { formatE8s, formatAmount } from "@/lib/wallet-utils"
 import { Principal } from "@dfinity/principal"
 
@@ -153,7 +154,7 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
       )}
 
       <Button type="submit" className="h-12 w-full text-base" disabled={!canSubmit}>
-        {loading ? <Spinner className="size-4" /> : <ArrowUpFromLine className="size-4" />}
+        {loading ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Upload01Icon} className="size-4" />}
         {loading ? "Sending…" : "Withdraw ICP"}
       </Button>
     </form>

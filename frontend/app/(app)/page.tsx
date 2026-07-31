@@ -6,7 +6,8 @@ import { BalanceCard } from "@/components/dashboard/balance-card"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { ArrowDownToLine, ArrowUpRight } from "lucide-react"
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
+import { ArrowUpRight01Icon, Download01Icon } from "@hugeicons/core-free-icons"
 import { formatE8s } from "@/lib/wallet-utils"
 import { useIcpPrice } from "@/lib/use-icp-price"
 import { useDashboard } from "@/hooks/use-wallet-data"
@@ -52,8 +53,8 @@ export default function DashboardPage() {
       />
 
       <div className="grid grid-cols-2 gap-3">
-        <ActionButton href="/transfer" label="Send" icon={ArrowUpRight} primary />
-        <ActionButton href="/deposit" label="Receive" icon={ArrowDownToLine} />
+        <ActionButton href="/transfer" label="Send" icon={ArrowUpRight01Icon} primary />
+        <ActionButton href="/deposit" label="Receive" icon={Download01Icon} />
       </div>
 
       <RecentTransactions transactions={data.recentTransactions} />
@@ -64,12 +65,12 @@ export default function DashboardPage() {
 function ActionButton({
   href,
   label,
-  icon: Icon,
+  icon,
   primary,
 }: {
   href: string
   label: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: IconSvgElement
   primary?: boolean
 }) {
   return (
@@ -81,7 +82,7 @@ function ActionButton({
           : "flex h-12 items-center justify-center gap-2 rounded-full border bg-background text-sm font-medium transition-colors hover:bg-accent active:scale-95"
       }
     >
-      <Icon className="size-4" />
+      <HugeiconsIcon icon={icon} className="size-4" />
       {label}
     </Link>
   )

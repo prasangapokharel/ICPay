@@ -1,3 +1,11 @@
+---
+name: bump-pocket-ic
+description: >-
+  Bump the pocket-ic-server binary used by the Motoko compiler test suite.
+  Use only when working inside the dfinity/motoko compiler repo — not for
+  application canisters.
+---
+
 # Bumping pocket-ic-server
 
 This skill guides you through bumping the `pocket-ic-server` binary used in

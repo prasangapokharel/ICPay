@@ -7,7 +7,8 @@ import { adventurer } from "@dicebear/collection"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ChevronRight, Inbox, MessageSquare } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowRight01Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
 import {
   formatAmount,
@@ -35,14 +36,14 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
             render={<Link href="/transactions" />}
           >
             See more
-            <ChevronRight className="size-3" />
+            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" />
           </Button>
         )}
       </div>
 
       {transactions.length === 0 ? (
         <div className="rounded-2xl border border-dashed py-10 text-center">
-          <Inbox className="mx-auto size-6 text-muted-foreground/50" />
+          <HugeiconsIcon icon={InboxIcon} className="mx-auto size-6 text-muted-foreground/50" />
           <p className="mt-3 text-sm font-medium">No transactions yet</p>
           <p className="mt-1 text-xs text-muted-foreground">Deposit ICP to get started</p>
         </div>
@@ -85,7 +86,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
         </p>
         {memo && (
           <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-            <MessageSquare className="size-3 shrink-0" />
+            <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0" />
             <span className="truncate">{memo}</span>
           </p>
         )}

@@ -105,6 +105,25 @@ module {
     List.toArray(result);
   };
 
+  // The three getTotal* helpers below each walk the whole list. Callers needing
+  // more than one (the dashboard needs all three) should use this single pass.
+  public func getUserTotals(txs: TxStorage.TxList, userId: Types.UserId): { deposits: Nat; withdrawals: Nat; transfers: Nat } {
+    var deposits = 0;
+    var withdrawals = 0;
+    var transfers = 0;
+    for (tx in txs.values()) {
+      if (tx.userId == userId and tx.status == #completed) {
+        switch (tx.txType) {
+          case (#deposit) { deposits += tx.amount };
+          case (#withdraw) { withdrawals += tx.amount };
+          case (#transfer) { transfers += 1 };
+          case (#fee) {};
+        };
+      };
+    };
+    { deposits; withdrawals; transfers };
+  };
+
   public func getTotalDepositAmount(txs: TxStorage.TxList, userId: Types.UserId): Nat {
     var total = 0;
     for (tx in txs.values()) {

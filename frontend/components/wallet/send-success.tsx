@@ -4,7 +4,8 @@ import Image from "next/image"
 import { useMemo } from "react"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
-import { ExternalLink } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { LinkSquare02Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { formatE8s } from "@/lib/wallet-utils"
@@ -62,7 +63,7 @@ export function SendSuccess({ amount, recipient, blockIndex, onDone }: SendSucce
               className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground underline underline-offset-2"
             >
               View on ICP Dashboard
-              <ExternalLink className="size-3" />
+              <HugeiconsIcon icon={LinkSquare02Icon} className="size-3" />
             </a>
           </div>
         </div>

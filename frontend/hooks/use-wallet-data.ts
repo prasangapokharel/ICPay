@@ -23,7 +23,9 @@ export function useDashboard() {
       if ("err" in result) throw new Error(result.err)
       return result.ok
     },
-    { revalidateOnFocus: true, keepPreviousData: true }
+    // getDashboard is an update call and costs real cycles, so refocus
+    // revalidation is deduped: tab-switching must not refetch every time.
+    { revalidateOnFocus: true, keepPreviousData: true, dedupingInterval: 30_000 }
   )
 
   return {

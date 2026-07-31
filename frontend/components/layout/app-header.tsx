@@ -5,7 +5,8 @@ import { useEffect, useMemo, useState } from "react"
 import { useTheme } from "next-themes"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
-import { User, Settings, LogOut, Sun, Moon } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { UserIcon, Settings01Icon, Logout01Icon, Sun01Icon, Moon02Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -61,16 +62,16 @@ export function AppHeader() {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem render={<Link href="/profile" />}>
-            <User className="size-4" />
+            <HugeiconsIcon icon={UserIcon} className="size-4" />
             Profile
           </DropdownMenuItem>
           <DropdownMenuItem render={<Link href="/settings" />}>
-            <Settings className="size-4" />
+            <HugeiconsIcon icon={Settings01Icon} className="size-4" />
             Settings
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" onSelect={() => logout()}>
-            <LogOut className="size-4" />
+            <HugeiconsIcon icon={Logout01Icon} className="size-4" />
             Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -83,7 +84,7 @@ export function AppHeader() {
         className="flex size-9 items-center justify-center rounded-full border bg-background text-foreground transition-colors hover:bg-accent active:scale-95"
       >
         {mounted ? (
-          isDark ? <Sun className="size-4.5" /> : <Moon className="size-4.5" />
+          isDark ? <HugeiconsIcon icon={Sun01Icon} className="size-4.5" /> : <HugeiconsIcon icon={Moon02Icon} className="size-4.5" />
         ) : (
           <span className="size-4.5" />
         )}

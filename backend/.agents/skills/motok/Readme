@@ -3,6 +3,20 @@ alwaysApply: true
 ---
 # Motoko Backend Engineering Standards
 
+## Skills in this set
+
+| Skill | Load when |
+|---|---|
+| `writing-motoko` | Writing or reviewing any `.mo` file |
+| `testing-motok` | Writing or running tests, verifying upgrade persistence |
+| `cycles-and-cost` | Optimizing, choosing query vs update, sizing runway |
+| `ledger-integration` | Code that holds or moves ICP |
+| `internet-identity-auth` | Login, delegations, session restore |
+| `migrating-motoko` | Inline migration, no `--enhanced-migration` |
+| `migrating-motoko-enhanced` | `migrations/` directory projects |
+| `deploy-guide/` | Building, deploying, upgrading (read `README.md` first) |
+| `build-and-test`, `bump-*` | Only inside the dfinity/motoko compiler repo |
+
 ## Objective
 Build production-grade ICP canisters with clean architecture, strong separation of concerns, deterministic behavior, scalability, maintainability, and security.
 

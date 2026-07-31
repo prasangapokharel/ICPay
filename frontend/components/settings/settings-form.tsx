@@ -8,7 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Settings } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Settings01Icon } from "@hugeicons/core-free-icons"
 import type { SettingsPublic } from "@/services/types"
 
 type SettingsFormProps = {
@@ -65,7 +66,7 @@ export function SettingsForm({ settings, onSave }: SettingsFormProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Settings className="h-5 w-5" />
+          <HugeiconsIcon icon={Settings01Icon} className="h-5 w-5" />
           Settings
         </CardTitle>
         <CardDescription>Customize your wallet experience</CardDescription>

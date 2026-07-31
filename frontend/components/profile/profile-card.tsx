@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
-import { User, Check, X } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { UserIcon, Tick02Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
 import type { UserPublic } from "@/services/types"
 import { formatPrincipal } from "@/lib/wallet-utils"
 
@@ -48,7 +49,7 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <User className="h-5 w-5" />
+          <HugeiconsIcon icon={UserIcon} className="h-5 w-5" />
           Profile
         </CardTitle>
         <CardDescription>Manage your wallet profile and username</CardDescription>
@@ -74,8 +75,8 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
                 onChange={(e) => { setUsername(e.target.value); setCheckResult(null) }}
                 onBlur={handleCheck}
               />
-              {checkResult === true && <Check className="h-5 w-5 text-green-500" />}
-              {checkResult === false && <X className="h-5 w-5 text-red-500" />}
+              {checkResult === true && <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-green-500" />}
+              {checkResult === false && <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-red-500" />}
             </div>
             {checkResult === true && <p className="text-xs text-green-500">Username is available</p>}
             {checkResult === false && <p className="text-xs text-red-500">Username is taken</p>}
