@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { BalanceCard } from "@/components/dashboard/balance-card"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
+import { UsernamePrompt } from "@/components/dashboard/username-prompt"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
@@ -42,6 +43,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 pt-2">
+      <UsernamePrompt username={data.user.username?.[0]} />
       <BalanceCard
         balance={formatE8s(data.icpBalance)}
         balanceE8s={data.icpBalance}

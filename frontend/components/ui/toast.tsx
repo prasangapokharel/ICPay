@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { Toast as ToastPrimitive } from "@base-ui/react/toast"
 
 import { cn } from "@/lib/utils"
@@ -166,7 +167,22 @@ function ToastIcon({ type }: { type: string | undefined }) {
   }
 
   if (!icon) {
-    return null
+    // Plain toasts carry no status icon and read as bare text. The ICP mark
+    // keeps them branded and visually aligned with the typed variants.
+    return (
+      <span
+        data-slot="toast-icon"
+        className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted ring-1 ring-border"
+      >
+        <Image
+          src="/images/logo/logo.png"
+          alt=""
+          width={48}
+          height={48}
+          className="size-4 object-contain"
+        />
+      </span>
+    )
   }
 
   return (

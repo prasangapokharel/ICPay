@@ -56,10 +56,20 @@ function isValidFor(mode: TransferMode, v: string): boolean {
   return t.length >= 3
 }
 
+function toPlainIcp(e8s: bigint): string {
+  // Not formatE8s: it groups thousands with commas, which parseIcp rejects.
+  // Full precision is kept so Max cannot round part of the balance away.
+  const whole = e8s / 100_000_000n
+  const fraction = (e8s % 100_000_000n).toString().padStart(8, "0").replace(/0+$/, "")
+  return fraction ? `${whole}.${fraction}` : `${whole}`
+}
+
 export function TransferForm({
   onTransfer,
+  balance,
 }: {
   onTransfer: (mode: TransferMode, to: string, amount: bigint, memo?: string) => Promise<string | null>
+  balance?: bigint
 }) {
   const [mode, setMode] = useState<TransferMode>("username")
   const [to, setTo] = useState("")
@@ -71,7 +81,12 @@ export function TransferForm({
 
   const parsed = parseIcp(amount)
   const total = parsed === null ? null : parsed + ICP_FEE
-  const canReview = parsed !== null && isValidFor(mode, to)
+  // The fee is taken on top of the amount, so the largest sendable amount is
+  // balance - fee. Anything above that is rejected by the ledger, not here.
+  const sendable = balance === undefined ? undefined : balance > ICP_FEE ? balance - ICP_FEE : 0n
+  const insufficient =
+    total !== null && balance !== undefined && total > balance
+  const canReview = parsed !== null && isValidFor(mode, to) && !insufficient
 
   const handleConfirm = async () => {
     if (parsed === null) return
@@ -108,18 +123,47 @@ export function TransferForm({
       </Tabs>
 
       <div className="space-y-2">
-        <Label htmlFor="amount">Amount</Label>
-        <Input
-          id="amount"
-          inputMode="decimal"
-          placeholder="0.00"
-          value={amount}
-          onChange={(e) => {
-            setAmount(e.target.value)
-            setError(null)
-          }}
-          className="h-14 text-2xl font-semibold tabular-nums"
-        />
+        <div className="flex items-baseline justify-between">
+          <Label htmlFor="amount">Amount</Label>
+          {balance !== undefined && (
+            <span className="text-xs text-muted-foreground">
+              Balance{" "}
+              <span className="font-medium tabular-nums text-foreground">
+                {formatAmount(balance)} ICP
+              </span>
+            </span>
+          )}
+        </div>
+        <div className="relative">
+          <Input
+            id="amount"
+            inputMode="decimal"
+            placeholder="0.00"
+            value={amount}
+            onChange={(e) => {
+              setAmount(e.target.value)
+              setError(null)
+            }}
+            className="h-14 pr-16 text-2xl font-semibold tabular-nums"
+          />
+          {sendable !== undefined && sendable > 0n && (
+            <button
+              type="button"
+              onClick={() => {
+                setAmount(toPlainIcp(sendable))
+                setError(null)
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-muted/70"
+            >
+              Max
+            </button>
+          )}
+        </div>
+        {sendable !== undefined && (
+          <p className="text-xs text-muted-foreground">
+            Max sendable {formatAmount(sendable)} ICP after the {formatAmount(ICP_FEE)} ICP fee
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -147,6 +191,15 @@ export function TransferForm({
           onChange={(e) => setMemo(e.target.value)}
         />
       </div>
+
+      {insufficient && !error && (
+        <Alert variant="destructive">
+          <AlertDescription>
+            Not enough balance. Sending {formatAmount(parsed!)} ICP costs{" "}
+            {formatAmount(total!)} ICP with the fee.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {error && (
         <Alert variant="destructive">

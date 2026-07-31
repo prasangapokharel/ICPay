@@ -30,10 +30,10 @@ export function BalanceCard({
   const usdValue = price ? (Number(balanceE8s) / E8S) * price.usd : null
 
   return (
-    <div className="relative mt-7 rounded-3xl bg-primary px-5 pb-6 pt-0 text-primary-foreground shadow-lg">
+    <div className="relative mt-7 rounded-3xl bg-primary px-5 pb-6 pt-0 text-primary-foreground shadow-lg ">
       {/* The coin straddles the card's top edge, so the card itself cannot clip
           it -- the decorative blur is masked in its own layer instead. */}
-      <span className="absolute -top-7 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full bg-primary shadow-md ring-4 ring-background">
+      <span className="absolute -top-7 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full bg-accent shadow-md ring-4 ring-background">
         <Image src="/images/logo/logo.png" alt="ICP" width={36} height={36} className="size-9" />
       </span>
 

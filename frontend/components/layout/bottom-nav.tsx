@@ -39,7 +39,7 @@ export function BottomNav() {
             width={112}
             height={112}
             priority
-            className="size-14 object-contain drop-shadow-lg"
+            className="size-14 object-contain drop-shadow-lg animate-pulse"
           />
         </Link>
 

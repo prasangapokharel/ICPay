@@ -5,7 +5,7 @@ import { TransferForm } from "@/components/transfer/transfer-form"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useRefreshWallet, useDashboard } from "@/hooks/use-wallet-data"
 import type { TransferMode } from "@/components/transfer/transfer-form"
 import type { ApiResult, AccountType } from "@/services/types"
 import { Principal } from "@dfinity/principal"
@@ -15,6 +15,7 @@ type Sent = { amount: bigint; recipient: string; blockIndex: bigint }
 export default function TransferPage() {
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
+  const { data: dashboard } = useDashboard()
   const [sent, setSent] = useState<Sent | null>(null)
 
   const isHexAccountId = (s: string) => /^[0-9a-fA-F]{64}$/.test(s)
@@ -74,7 +75,7 @@ export default function TransferPage() {
         <h1 className="text-xl font-bold tracking-tight">Send</h1>
         <p className="text-sm text-muted-foreground">Transfer ICP to another wallet</p>
       </div>
-      <TransferForm onTransfer={handleTransfer} />
+      <TransferForm onTransfer={handleTransfer} balance={dashboard?.icpBalance} />
     </div>
   )
 }
