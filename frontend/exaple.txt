@@ -1,0 +1,3 @@
+NEXT_PUBLIC_IC_NETWORK=ic
+NEXT_PUBLIC_WALLET_CANISTER_ID=6vbhm-nqaaa-aaaan-q6muq-cai
+NEXT_PUBLIC_SITE_URL=https://ic-pay.vercel.app

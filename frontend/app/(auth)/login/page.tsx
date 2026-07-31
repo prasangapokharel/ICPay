@@ -39,8 +39,8 @@ export default function LoginPage() {
     setConnecting(true)
     try {
       await login()
-    } catch {
-      setError("Could not connect. Please try again.")
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not connect. Please try again.")
     } finally {
       setConnecting(false)
     }
