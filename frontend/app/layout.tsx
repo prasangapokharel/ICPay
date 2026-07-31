@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono, Inter } from "next/font/google"
+import type { Metadata, Viewport } from "next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth/auth-provider"
@@ -12,6 +13,67 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
+const title = "ICPay — Send ICP by Username"
+const description =
+  "ICPay is an ICP wallet that lets you send and receive Internet Computer tokens using a username instead of a long principal address. Sign in with Internet Identity, no seed phrase required."
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: { default: title, template: "%s — ICPay" },
+  description,
+  applicationName: "ICPay",
+  keywords: [
+    "ICP wallet",
+    "send ICP by username",
+    "Internet Computer wallet",
+    "ICP transfer",
+    "Internet Identity wallet",
+    "ICRC-1 wallet",
+    "crypto wallet no seed phrase",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    siteName: "ICPay",
+    title,
+    description,
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "ICPay — send ICP by username" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/og.png"],
+  },
+  robots: { index: true, follow: true },
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#252525" },
+  ],
+}
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "ICPay",
+  url: siteUrl,
+  description,
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "Web",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  featureList: [
+    "Send ICP by username",
+    "Receive ICP to a personal deposit address",
+    "Internet Identity sign-in without a seed phrase",
+    "Transaction history with on-chain block links",
+  ],
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,6 +86,10 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
     >
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <ThemeProvider>
           <AuthProvider>
             {children}
