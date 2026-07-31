@@ -1,36 +1,30 @@
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
+# Local tooling and operating-system files
+.claude/
 .DS_Store
-*.pem
 
-# debug
+# Environment files and credentials
+**/.env*
+!**/.env.example
+backend/freemodel/cookies.json
+*.pem
+*.key
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/coverage/
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# Backend dependencies and local canister output
+backend/.dfx/
+backend/.mops/
+
+# Package-manager and debug logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts

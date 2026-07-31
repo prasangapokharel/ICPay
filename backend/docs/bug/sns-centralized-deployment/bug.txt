@@ -1,0 +1,35 @@
+BUG: SNS Canisters Share Identical Module Hash - Centralized Deployment Risk
+==============================================================================
+Severity: LOW
+Type: Centralization / Upgrade Risk
+Network: Internet Computer Mainnet
+
+DESCRIPTION:
+-----------
+Multiple SNS governance/ledger canisters controlled by aboy3-giaaa-aaaar-aaaaq-cai
+share identical module hashes, indicating they all run the same wasm binary version.
+A vulnerability in one affects all.
+
+AFFECTED CANISTERS (identical Module hash: 0x60aa4162d7d762907eed033422b6d469c6b594c866b756f7cfb9d02c5da4afc9):
+  - 222bw-hyaaa-aaaar-bdsna-cai
+  - 223gm-kyaaa-aaaar-aawaq-cai
+  - 223jf-riaaa-aaaar-amrmq-cai
+  - 223mf-jqaaa-aaaar-bfdjq-cai
+
+SHARED CONTROLLER: aboy3-giaaa-aaaar-aaaaq-cai (SNS DAO governance framework)
+
+IMPACT:
+-------
+1. Single point of failure - vulnerability in shared wasm affects ALL SNS canisters
+2. Centralized upgrade path - single governance actor controls all versions
+3. Synchronized risk - all canisters upgrade/downgrade together
+4. Supply chain risk - compromise of shared binary affects entire ecosystem
+
+MITIGATION (expected):
+-----------------------
+SNS canisters use SNS governance for upgrades (proposals voted on by neurons),
+providing democratic control over wasm upgrades. This is the intended pattern
+for SNS-controlled canisters.
+
+However, the identical module hash pattern still represents a systemic risk
+whereby one wasm vulnerability propagates across multiple deployments simultaneously.

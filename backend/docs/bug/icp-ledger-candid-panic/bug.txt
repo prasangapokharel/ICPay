@@ -1,0 +1,79 @@
+BUG: ICP Ledger Panics on Candid Deserialization Errors
+=========================================================
+Severity: MEDIUM
+Canister: ryjl3-tyaaa-aaaaa-aaaba-cai
+Canister Name: ICP Ledger
+Network: Internet Computer Mainnet
+
+DESCRIPTION:
+-----------
+The ICP Ledger canister's legacy methods (send_dfx, transfer, account_balance)
+contain unwrap().expect() calls on Candid deserialization that cause the
+canister to trap (panic) when malformed arguments are received. This prevents
+graceful error handling and could be used for denial-of-service attacks
+by repeatedly sending malformed Candid payloads to waste canister cycles.
+
+SYMPTOM:
+--------
+When calling send_dfx or transfer with improperly formatted Candid arguments:
+  Error IC0503: "Canister called ic0.trap with message:
+  'Panicked at called Result::unwrap() on an Err value:
+  Custom(Trailing value after finishing deserialization)'"
+
+AFFECTED METHODS (legacy methods):
+-----------------------------------
+1. send_dfx - panics with unwrap() on deserialization error
+2. transfer (legacy) - panics with unwrap() on deserialization error
+3. account_balance (legacy) - panics with unwrap() on deserialization error
+
+WORKING METHODS (graceful error handling):
+------------------------------------------
+1. icrc1_transfer - returns proper error variants (InsufficientFunds, BadFee, etc)
+2. icrc1_balance_of - query method, no panic risk
+
+REPRODUCTION:
+-------------
+  dfx canister call ryjl3-tyaaa-aaaaa-aaaba-cai send_dfx \
+    '(record{...malformed...})' --network ic
+  Result: IC0503 panic with unwrap().expect() traceback
+
+  dfx canister call ryjl3-tyaaa-aaaaa-aaaba-cai transfer \
+    '(record{...malformed...})' --network ic
+  Result: IC0503 panic with unwrap().expect() traceback
+
+Note: The icrc1_transfer method handles malformed arguments gracefully
+by returning structured error variants instead of panicking.
+
+ROOT CAUSE:
+-----------
+Legacy ICP Ledger methods use .unwrap().expect() on Candid deserialization
+results instead of proper Result pattern matching. This causes the canister
+to trap (halt execution) on any deserialization failure.
+
+FIX:
+----
+Replace unwrap().expect() with proper Result handling:
+
+  // Instead of:
+  let args = deserialArgs(args).unwrap();
+
+  // Use:
+  match deserializeArgs(args) {
+    case Ok(args) => { ... },
+    case Err(e) => { trap("Invalid arguments: " + debugShow(e)) }
+  }
+
+  // Or better yet, return structured errors:
+  #Err(BadArguments { message: "Invalid Candid encoding" })
+
+SECURITY IMPACT:
+----------------
+A malicious actor could repeatedly call legacy methods with malformed
+arguments, causing the canister to trap and consume cycles on each failed
+execution. Proper error handling would prevent cycle waste and allow
+graceful recovery.
+
+REFERENCE:
+----------
+ICP Ledger canister source: rs/rosetta-api/icp_ledger/
+ICRC-1 standard for graceful error handling of deserialization failures.

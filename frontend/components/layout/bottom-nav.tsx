@@ -1,0 +1,83 @@
+"use client"
+
+import Link from "next/link"
+import Image from "next/image"
+import { usePathname } from "next/navigation"
+import { Home, ArrowDownToLine, ArrowUpFromLine, History } from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const navItems = [
+  { href: "/", label: "Home", icon: Home },
+  { href: "/deposit", label: "Deposit", icon: ArrowDownToLine },
+  { href: "/withdraw", label: "Withdraw", icon: ArrowUpFromLine },
+  { href: "/transactions", label: "Activity", icon: History },
+]
+
+export function BottomNav() {
+  const pathname = usePathname()
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href)
+
+  // Split around the centered Send action so the raised button sits mid-row.
+  const left = navItems.slice(0, 2)
+  const right = navItems.slice(2)
+
+  return (
+    <nav className="sticky bottom-0 z-50 mt-auto px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-8">
+      <div className="relative">
+        {/* The raised button sits outside the bar: the glass surface clips its own
+            children (overflow-hidden powers the inset border), so it is a sibling. */}
+        <Link
+          href="/transfer"
+          aria-label="Send ICP"
+          className="absolute -top-6 left-1/2 z-10 flex size-14 -translate-x-1/2 items-center justify-center transition-transform active:scale-95"
+        >
+          <Image
+            src="/images/navballcenter/1.png"
+            alt=""
+            width={112}
+            height={112}
+            priority
+            className="size-14 object-contain drop-shadow-lg"
+          />
+        </Link>
+
+        <div className="liquid-glass-strong grid h-16 grid-cols-5 items-center rounded-3xl px-2 shadow-lg">
+          {left.map((item) => (
+            <NavTab key={item.href} {...item} active={isActive(item.href)} />
+          ))}
+          <span aria-hidden />
+          {right.map((item) => (
+            <NavTab key={item.href} {...item} active={isActive(item.href)} />
+          ))}
+        </div>
+      </div>
+    </nav>
+  )
+}
+
+function NavTab({
+  href,
+  label,
+  icon: Icon,
+  active,
+}: {
+  href: string
+  label: string
+  icon: React.ComponentType<{ className?: string }>
+  active: boolean
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "flex flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors",
+        active ? "text-primary" : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      <Icon className="size-5" />
+      <span>{label}</span>
+    </Link>
+  )
+}

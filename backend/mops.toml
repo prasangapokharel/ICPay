@@ -1,0 +1,11 @@
+[dependencies]
+core = "2.5.0"
+
+[toolchain]
+moc = "1.8.0"
+
+[moc]
+args = ["--default-persistent-actors"]
+
+[canisters.backend]
+main = "src/main.mo"

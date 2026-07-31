@@ -1,0 +1,8 @@
+Canister: 22255-zqaaa-aaaas-qf6uq-cai
+Date: Thu Jul 30 05:50:42 PM +0545 2026
+---
+>> Getting canister info...
+Controllers: t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe
+Module hash: None
+
+>> Getting Candid interface...

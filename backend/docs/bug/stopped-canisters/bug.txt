@@ -1,0 +1,69 @@
+BUG: Multiple Stopped/Empty Canisters on ICP Mainnet
+=======================================================
+Severity: LOW
+Type: Operational / Deployment Hygiene
+Network: Internet Computer Mainnet
+
+DESCRIPTION:
+-----------
+A significant number of canisters in the audited bounty list are either
+stopped (IC0508) or have no WASM module installed (IC0537). These include:
+
+STOPPED CANISTERS (no CallContextManager, IC0508):
+  - 22255-zqaaa-aaaas-qf6uq-cai (controller: t64is-qmxox-...)
+  - 2226h-fiaaa-aaaaa-qck3a-cai
+  - 222x4-hiaaa-aaaak-alfea-cai
+  - 223mn-uaaaa-aaaaj-qonqa-cai
+
+EMPTY CANISTERS (no WASM module, IC0537):
+  - 2225w-rqaaa-aaaai-qtqca-cai (DOLR AI Dapp, controller: 74zq4-...)
+  - 2227b-baaaa-aaaao-abd6a-cai
+  - 222ay-6aaaa-aaaah-alvrq-cai
+  - 222h4-tyaaa-aaaak-qp7ha-cai
+  - 222iv-iiaaa-aaaak-qdyla-cai
+  - 222un-tqaaa-aaaac-a275a-cai
+  - 222w2-daaaa-aaaae-qimba-cai
+  - 2225w-rqaaa-aaaai-qtqca-cai (duplicate, DOLR AI)
+  - 223fg-gaaaa-aaaak-qfjpq-cai
+  - 223kp-5qaaa-aaaak-qjodq-cai
+  - 222n5-naaaa-aaaas-abexq-cai
+  - 2227r-raaaa-aaaah-qdi6q-cai
+
+CONTROLLERS AFFECTED:
+----------------------
+  74zq4-iqaaa-aaaam-ab53a-cai - DOLR AI Platform (most empty canisters)
+  t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe - Platform/Team
+  gnbwv-aqaaa-aaaan-qhssq-cai - SNS-related
+
+IMPACT:
+-------
+1. Cycle waste - controllers still pay for canister storage (0 cycles/sec but
+   still allocated)
+2. Attack surface - controllers could reinstall malicious code into empty canisters
+3. Confusion - users may encounter non-functional endpoints
+4. Resource misallocation - cycles stored in empty canisters could be reclaimed
+5. Potential for canister ID squatting or future abuse
+
+SECURITY CONCERN:
+-----------------
+Empty stopped canisters represent dormant attack vectors. If a controller
+reinstalls code into these canisters, they could be used for phishing, malicious
+redirects, or as staging points for future attacks. Users checking these canister
+IDs would see them as non-functional, potentially missing red flags.
+
+FIX:
+----
+1. Controllers should either install proper WASM or destroy the canister
+2. Use `dfx canister delete <canister_id> --network ic` to reclaim cycles
+3. Publish canister status (active/stopped) on project documentation
+4. Set up monitoring alerts for canister stop events
+
+CANISTERS WITH ACTIVE WASM (for reference):
+--------------------------------------------
+  6rdgd-kyaaa-aaaaq-aaavq-cai - DOLR AI Token (has WASM, ICRC-1 compliant except missing balance_of)
+  222bw-hyaaa-aaaar-bdsna-cai - SNS canister (has WASM, controller-rejecting)
+  223lz-jyaaa-aaaan-qimga-cai - SNS canister (has WASM, unique module hash)
+  223dm-saaaa-aaaar-bjefq-cai - SNS canister (has WASM)
+  223ea-ciaaa-aaaae-agakq-cai - SNS canister (has WASM)
+  74zq4-iqaaa-aaaam-ab53a-cai - DOLR AI Platform (has WASM, hidden methods)
+  6wcax-haaaa-aaaaq-aaava-cai - DOLR AI Governance (has WASM)

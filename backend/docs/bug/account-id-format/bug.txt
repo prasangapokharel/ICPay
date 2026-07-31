@@ -1,0 +1,51 @@
+BUG: ICP Account Identifier - One-Way Hash Without Validation
+================================================================
+Severity: MEDIUM
+Type: Usability / Error Recovery
+Network: Internet Computer Mainnet
+
+DESCRIPTION:
+-----------
+ICP ledger account identifiers are computed as:
+  account_id = CRC32(sha256("\x0a" || principal_bytes || subaccount_bytes)) || sha256(...)
+
+This is a ONE-WAY hash - there is no way to reverse an account identifier back
+to its principal and subaccount. This design has significant usability issues:
+
+1. NO ERROR RECOVERY: If a user forgets their subaccount hex, tokens sent to
+   that subaccount are LOST FOREVER. The ledger sees only a hashed value and
+   cannot validate or recover the original account.
+
+2. NO VALIDATION: The ledger cannot distinguish between a valid account identifier
+   and a random 64-char hex string. Any 64-char hex is accepted as an account
+   identifier, even if it doesn't correspond to any valid principal+subaccount.
+
+3. FRAGILE: Users must copy subaccount hex values precisely. A single typo
+   sends tokens to a non-existent account that may never be recoverable.
+
+4. NO VISUAL INDICATOR: The ledger does not distinguish between accounts that
+   exist and have balances vs. accounts that exist but have zero balance vs.
+   account identifiers that don't correspond to any real account.
+
+EXAMPLE:
+--------
+The target address from this audit: 19dc10147b76ec71948ed0698ca23fd11020b358e890622429208722104f2d92
+This is a valid 64-char hex ICP account identifier with 4.99 ICP balance.
+We CANNOT determine who owns it or what principal/subaccount it corresponds to.
+
+This is by design (privacy), but it creates real user experience problems.
+
+REFERENCE:
+----------
+From ICP Ledger source code (rs/rosetta-api/icp_ledger/):
+  account_identifier = CRC32(SHA256(domain_separator || principal_bytes || subaccount))
+  where domain_separator = 0x0A || "account-id" (length-prefixed)
+
+Note: Newer ICRC-1 accounts use Account = { owner: Principal; subaccount: ?Blob }
+which is reversible (unlike the legacy account identifier).
+
+RECOMMENDATION:
+---------------
+The frontend should always display both the ICRC-1 account format (principal.subaccount)
+AND the legacy account identifier separately. When a user enters a legacy account ID,
+the frontend should warn them if the subaccount portion is unknown.

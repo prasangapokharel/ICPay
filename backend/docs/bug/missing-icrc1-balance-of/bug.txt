@@ -1,0 +1,80 @@
+BUG: DOLR AI Token Missing ICRC-1 icrc1_balance_of Query Method
+=================================================================
+Severity: HIGH
+Canister: 6rdgd-kyaaa-aaaaq-aaavq-cai
+Canister Name: DOLR AI Token (DOLR)
+Controller: 6wcax-haaaa-aaaaq-aaava-cai (DOLR AI Governance)
+Network: Internet Computer Mainnet
+
+DESCRIPTION:
+-----------
+The DOLR AI token canister (6rdgd-kyaaa-aaaaq-aaavq-cai) on ICP mainnet is
+missing the required ICRC-1 query method icrc1_balance_of. This method is
+mandatory per the ICRC-1 standard specification and allows any caller to
+query the token balance of any account.
+
+SYMPTOMS:
+---------
+When attempting to call icrc1_balance_of on the canister, it returns:
+  Error IC0536: "Canister has no query method 'icrc1_balance_of'..
+
+IMPACT:
+-------
+1. Wallets cannot display DOLR AI token balances to users
+2. Token aggregators (CoinMarketCap, etc.) cannot index DOLR AI balances
+3. DEXes (ICPSwap) cannot show user DOLR AI balances for trading pairs
+4. Index canisters (ICRC-3) cannot auto-index balance queries
+5. Composability with standard tooling is broken entirely
+6. Users may send tokens without being able to verify balances beforehand
+
+WORKING METHODS (verified):
+---------------------------
+  icrc1_name: PRESENT -> "DOLR AI"
+  icrc1_symbol: PRESENT -> "DOLR"
+  icrc1_decimals: PRESENT -> 8
+  icrc1_fee: PRESENT -> 100,000 e8s (0.001 DOLR)
+  icrc1_total_supply: PRESENT -> 108,321,227,737,328,246
+  icrc1_minting_account: PRESENT -> 6wcax-haaaa-aaaaq-aaava-cai
+  icrc1_transfer: PRESENT (update method)
+  icrc1_supported_standards: PRESENT -> ICRC-1, ICRC-2, ICRC-3, ICRC-10, ICRC-21, ICRC-103, ICRC-106
+  icrc1_metadata: PRESENT (full metadata including index_principal)
+  icrc2_approve: PRESENT (update method)
+  icrc2_allowance: PRESENT (query method)
+  icrc3_get_blocks: PRESENT (query method)
+  icrc3_get_archives: PRESENT (query method)
+  icrc10_supported_standards: PRESENT
+  is_ledger_ready: PRESENT -> true
+
+MISSING METHODS:
+----------------
+  icrc1_balance_of: MISSING (CRITICAL - required by ICRC-1 standard)
+  icrc_3_get_account_transactions: MISSING (ICRC-3 standard method)
+
+REPRODUCTION:
+-------------
+  dfx canister call 6rdgd-kyaaa-aaaaq-aaavq-cai icrc1_balance_of \
+    --query '(record{owner=principal"2vxsx-fae";subaccount=null})' \
+    --network ic
+
+  Expected: (100_000_000000 : nat) or similar balance value
+  Actual:   IC0536 error: "Canister has no query method icrc1_balance_of"
+
+ROOT CAUSE:
+-----------
+The DOLR AI token canister implements ICRC-1 transfer functionality but
+omits the icrc1_balance_of query method from its Candid interface.
+
+FIX:
+----
+Implement icrc1_balance_of in the TokenCanister Motoko/Rust code:
+
+  public query func icrc1_balance_of(account: Account) : async Tokens {
+    let balance = getBalance(account.owner, account.subaccount);
+    { e8s = balance }
+  }
+
+REFERENCE:
+----------
+ICRC-1 Standard: https://github.com/dfinity/ICRC-1/tree/main/standards/ICRC-1
+Required methods include icrc1_name, icrc1_symbol, icrc1_decimals, icrc1_fee,
+icrc1_total_supply, icrc1_minting_account, icrc1_balance_of, icrc1_transfer.

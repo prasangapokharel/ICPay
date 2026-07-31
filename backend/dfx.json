@@ -1,0 +1,39 @@
+{
+  "canisters": {
+    "icp_wallet_backend": {
+      "type": "motoko",
+      "main": "src/main.mo",
+      "dependencies": ["icp_ledger"]
+    },
+    "icp_ledger": {
+      "type": "pull",
+      "id": "ryjl3-tyaaa-aaaaa-aaaba-cai"
+    },
+    "internet_identity": {
+      "type": "custom",
+      "candid": "deps/local/internet_identity.did",
+      "wasm": "deps/local/internet_identity.wasm.gz",
+      "build": [],
+      "specified_id": "rdmx6-jaaaa-aaaaa-aaadq-cai",
+      "remote": { "id": { "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai" } }
+    },
+    "test_icp_ledger": {
+      "type": "custom",
+      "candid": "/tmp/icp_ledger.did",
+      "wasm": "/tmp/icp_ledger_canister.wasm.gz",
+      "build": []
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": "mops sources"
+    }
+  },
+  "networks": {
+    "ic": {
+      "providers": ["https://icp0.io"],
+      "type": "persistent"
+    }
+  },
+  "version": 1
+}

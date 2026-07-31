@@ -1,0 +1,55 @@
+CANISTER AUDIT LIST - ICP Mainnet
+====================================
+Date: 2026-07-30
+
+Canister ID                          | Controllers                                                      | Subnet ID
+--------------------------------------|------------------------------------------------------------------|----------------------------------------
+22255-zqaaa-aaaas-qf6uq-cai          | t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe | 4utr6-xo2fz-v7fsb-t3wsg-k7sfl-cj2ba-ghdnd-kcrfo-xavdb-ebean-mqe
+2225w-rqaaa-aaaai-qtqca-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | mpubz-g52jc-grhjo-5oze5-qcj74-sex34-omprz-ivnsm-qvvhr-rfzpv-vae
+2226h-fiaaa-aaaaa-qck3a-cai          | t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe | snjp4-xlbw4-mnbog-ddwy6-6ckfd-2w5a2-eipqo-7l436-pxqkh-l6fuv-vae
+2226x-viaaa-aaaaj-aab3q-cai          | ujkeo-2rcd5-pew4p-pkvrt-gpxo3-gmr7j-rssd3-jgk44-aq6dg-snvsw-mqe | qdvhd-os4o2-zzrdw-xrcv4-gljou-eztdp-bj326-e6jgr-tkhuc-ql6v2-yqe
+2227b-baaaa-aaaao-abd6a-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | o3ow2-2ipam-6fcjo-3j5vt-fzbge-2g7my-5fz2m-p4o2t-dwlc4-gt2q7-5ae
+2227r-raaaa-aaaah-qdi6q-cai          | t7hzl-fqaaa-aaaah-qdc7a-cai, rzklm-7vepx-occee-52fk2-jccit-... | pjljw-kztyl-46ud4-ofrj6-nzkhm-3n4nt-wi3jt-ypmav-ijqkt-gjf66-uae
+222ai-oaaaa-aaaao-qj6ra-cai          | x6xf5-26b5u-kkjpc-gs4p4-nr4sd-4qgot-r5lri-4yshv-pcx42-ual6w-uae | fuqsr-in2lc-zbcjj-ydmcw-pzq7h-4xm2z-pto4i-dcyee-5z4rz-x63ji-nae
+222ay-6aaaa-aaaah-alvrq-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | gmq5v-hbozq-uui6y-o55wc-ihop3-562wb-3qspg-nnijg-npqp5-he3cj-3ae
+222b6-2iaaa-aaaaj-qi4uq-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | jtdsg-3h6gi-hs7o5-z2soi-43w3z-soyl3-ajnp3-ekni5-sw553-5kw67-nqe
+222bw-hyaaa-aaaar-bdsna-cai          | aboy3-giaaa-aaaar-aaaaq-cai                                    | 2fq7c-slacv-26cgz-vzbx2-2jrcs-5edph-i5s2j-tck77-c3rlz-iobzx-mqe
+222ew-7aaaa-aaaar-akaia-cai          | aboy3-giaaa-aaaar-aaaaq-cai                                    | 2fq7c-slacv-26cgz-vzbx2-2jrcs-5edph-i5s2j-tck77-c3rlz-iobzx-mqe
+222h4-tyaaa-aaaak-qp7ha-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | opn46-zyspe-hhmyp-4zu6u-7sbrh-dok77-m7dch-im62f-vyimr-a3n2c-4ae
+222if-yiaaa-aaaad-abtlq-cai          | reniz-wsts7-xido2-ncggi-g6xww-vvr4d-accy3-yv2ww-fxqxh-2l44a-gqe| io67a-2jmkw-zup3h-snbwi-g6a5n-rm5dn-b6png-lvdpl-nqnto-yih6l-gqe
+222iv-iiaaa-aaaak-qdyla-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | opn46-zyspe-hhmyp-4zu6u-7sbrh-dok77-m7dch-im62f-vyimr-a3n2c-4ae
+222jd-4aaaa-aaaan-qc2oq-cai          | ciual-vyaaa-aaaan-qcywa-cai, eholc-klqlf-ru6kf-k5jv6-3gzhb-... | cv73p-6v7zi-u67oy-7jc3h-qspsz-g5lrj-4fn7k-xrax3-thek2-sl46v-jae
+222jt-maaaa-aaaae-aaroa-cai          | reniz-wsts7-xido2-ncggi-g6xww-vvr4d-accy3-yv2ww-fxqxh-2l44a-gqe| shefu-t3kr5-t5q3w-mqmdq-jabyv-vyvtf-cyyey-3kmo4-toyln-emubw-4qe
+222l7-eqaaa-aaaar-aghea-cai          | aboy3-giaaa-aaaar-aaaaq-cai                                    | 2fq7c-slacv-26cgz-vzbx2-2jrcs-5edph-i5s2j-tck77-c3rlz-iobzx-mqe
+222lu-mqaaa-aaaal-aqjsq-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | 6pbhf-qzpdk-kuqbr-pklfa-5ehhf-jfjps-zsj6q-57nrl-kzhpd-mu7hc-vae
+222n5-naaaa-aaaas-abexq-cai          | 6lnhz-oaaaa-aaaas-aabkq-cai                                    | bkfrj-6k62g-dycql-7h53p-atvkj-zg4to-gaogh-netha-ptybj-ntsgw-rqe
+222nw-faaaa-aaaai-axkba-cai          | t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe | brlsh-zidhj-3yy3e-6vqbz-7xnih-xeq2l-as5oc-g32c4-i5pdn-2wwof-oae
+222ox-byaaa-aaaaj-qe3yq-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | jtdsg-3h6gi-hs7o5-z2soi-43w3z-soyl3-ajnp3-ekni5-sw553-5kw67-nqe
+222pb-vqaaa-aaaao-qfz5a-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | fuqsr-in2lc-zbcjj-ydmcw-pzq7h-4xm2z-pto4i-dcyee-5z4rz-x63ji-nae
+222pr-fqaaa-aaaah-ahs5q-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | gmq5v-hbozq-uui6y-o55wc-ihop3-562wb-3qspg-nnijg-npqp5-he3cj-3ae
+222qi-2qaaa-aaaao-anesa-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | o3ow2-2ipam-6fcjo-3j5vt-fzbge-2g7my-5fz2m-p4o2t-dwlc4-gt2q7-5ae
+222qy-kqaaa-aaaah-qppsq-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | pjljw-kztyl-46ud4-ofrj6-nzkhm-3n4nt-wi3jt-ypmav-ijqkt-gjf66-uae
+222r6-oyaaa-aaaaj-amgxq-cai          | k6dka-zyaaa-aaaaj-aafla-cai, fhzp2-mb4kr-hm4io-32js7-oketg-... | qdvhd-os4o2-zzrdw-xrcv4-gljou-eztdp-bj326-e6jgr-tkhuc-ql6v2-yqe
+222s7-kaaaa-aaaai-q7xoa-cai          | t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe | mpubz-g52jc-grhjo-5oze5-qcj74-sex34-omprz-ivnsm-qvvhr-rfzpv-vae
+222un-tqaaa-aaaac-a275a-cai          | lyt4m-myaaa-aaaac-aadkq-cai                                    | 4zbus-z2bmt-ilreg-xakz4-6tyre-hsqj4-slb4g-zjwqo-snjcc-iqphi-3qe
+222w2-daaaa-aaaae-qimba-cai          | t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe | ejbmu-grnam-gk6ol-6irwa-htwoj-7ihfl-goimw-hlnvh-abms4-47v2e-zqe
+222x4-hiaaa-aaaak-alfea-cai          | ttwkb-siaaa-aaaak-afrla-cai                                    | k44fs-gm4pv-afozh-rs7zw-cg32n-u7xov-xqyx3-2pw5q-eucnu-cosd4-uqe
+222xm-xiaaa-aaaad-qjoeq-cai          | t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe | 5kdm2-62fc6-fwnja-hutkz-ycsnm-4z33i-woh43-4cenu-ev7mi-gii6t-4ae
+222yf-myaaa-aaaad-qfjiq-cai          | owdog-wiaaa-aaaad-qaaaq-cai, 5oynr-yl472-mav57-c2oxo-g7woc-... | 5kdm2-62fc6-fwnja-hutkz-ycsnm-4z33i-woh43-4cenu-ev7mi-gii6t-4ae
+222yv-4yaaa-aaaak-ahcia-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | k44fs-gm4pv-afozh-rs7zw-cg32n-u7xov-xqyx3-2pw5q-eucnu-cosd4-uqe
+222zt-yqaaa-aaaae-qelna-cai          | gbb2y-raaaa-aaaae-qakza-cai, s4ote-sqryj-ib3om-koiwq-k66jh-... | ejbmu-grnam-gk6ol-6irwa-htwoj-7ihfl-goimw-hlnvh-abms4-47v2e-zqe
+2232p-jaaaa-aaaak-anuaq-cai          | ttwkb-siaaa-aaaak-afrla-cai                                    | k44fs-gm4pv-afozh-rs7zw-cg32n-u7xov-xqyx3-2pw5q-eucnu-cosd4-uqe
+2234n-aqaaa-aaaaj-akxta-cai          | k6dka-zyaaa-aaaaj-aafla-cai, fhzp2-mb4kr-hm4io-32js7-oketg-... | qdvhd-os4o2-zzrdw-xrcv4-gljou-eztdp-bj326-e6jgr-tkhuc-ql6v2-yqe
+22353-uyaaa-aaaao-alvwq-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | o3ow2-2ipam-6fcjo-3j5vt-fzbge-2g7my-5fz2m-p4o2t-dwlc4-gt2q7-5ae
+2235l-eyaaa-aaaah-qj6wa-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | pjljw-kztyl-46ud4-ofrj6-nzkhm-3n4nt-wi3jt-ypmav-ijqkt-gjf66-uae
+223cs-3yaaa-aaaao-qdizq-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | fuqsr-in2lc-zbcjj-ydmcw-pzq7h-4xm2z-pto4i-dcyee-5z4rz-x63ji-nae
+223de-pqaaa-aaaaj-qck4a-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | jtdsg-3h6gi-hs7o5-z2soi-43w3z-soyl3-ajnp3-ekni5-sw553-5kw67-nqe
+223dm-saaaa-aaaar-bjefq-cai          | aboy3-giaaa-aaaar-aaaaq-cai, ainth-qaaaa-aaaar-aaaba-cai       | 2fq7c-slacv-26cgz-vzbx2-2jrcs-5edph-i5s2j-tck77-c3rlz-iobzx-mqe
+223ea-ciaaa-aaaae-agakq-cai          | t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe | shefu-t3kr5-t5q3w-mqmdq-jabyv-vyvtf-cyyey-3kmo4-toyln-emubw-4qe
+223fg-gaaaa-aaaak-qfjpq-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | opn46-zyspe-hhmyp-4zu6u-7sbrh-dok77-m7dch-im62f-vyimr-a3n2c-4ae
+223gm-kyaaa-aaaar-aawaq-cai          | aboy3-giaaa-aaaar-aaaaq-cai                                    | 2fq7c-slacv-26cgz-vzbx2-2jrcs-5edph-i5s2j-tck77-c3rlz-iobzx-mqe
+223jf-riaaa-aaaar-amrmq-cai          | aboy3-giaaa-aaaar-aaaaq-cai                                    | 2fq7c-slacv-26cgz-vzbx2-2jrcs-5edph-i5s2j-tck77-c3rlz-iobzx-mqe
+223kp-5qaaa-aaaak-qjodq-cai          | 74zq4-iqaaa-aaaam-ab53a-cai (DOLR AI Dapp)                     | opn46-zyspe-hhmyp-4zu6u-7sbrh-dok77-m7dch-im62f-vyimr-a3n2c-4ae
+223lz-jyaaa-aaaan-qimga-cai          | gnbwv-aqaaa-aaaan-qhssq-cai                                    | cv73p-6v7zi-u67oy-7jc3h-qspsz-g5lrj-4fn7k-xrax3-thek2-sl46v-jae
+223mf-jqaaa-aaaar-bfdjq-cai          | aboy3-giaaa-aaaar-aaaaq-cai                                    | 2fq7c-slacv-26cgz-vzbx2-2jrcs-5edph-i5s2j-tck77-c3rlz-iobzx-mqe
+223mn-uaaaa-aaaaj-qonqa-cai          | t64is-qmxox-4kgtp-xwtsg-ssvbl-coqwp-7jvbh-yqhqi-2gjvt-4k7l4-nqe | jtdsg-3h6gi-hs7o5-z2soi-43w3z-soyl3-ajnp3-ekni5-sw553-5kw67-nqe
