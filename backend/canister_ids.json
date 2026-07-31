@@ -1,5 +1,8 @@
 {
   "icp_wallet_backend": {
     "ic": "6vbhm-nqaaa-aaaan-q6muq-cai"
+  },
+  "icp_wallet_frontend": {
+    "ic": "63dke-waaaa-aaaan-q6mvq-cai"
   }
 }

@@ -7,7 +7,8 @@
     },
     "icp_wallet_frontend": {
       "type": "assets",
-      "source": ["../frontend/out"],
+      "source": ["dist"],
+      "build": ["bash scripts/build-frontend.sh"],
       "dependencies": ["icp_wallet_backend"]
     },
     "icp_ledger": {
