@@ -3,13 +3,17 @@ import { getIdentityProvider } from "@/services/icp"
 import type { Identity } from "@dfinity/agent"
 
 let clientPromise: Promise<AuthClient> | null = null
+let readyClient: AuthClient | null = null
 
 export async function createAuthClient(): Promise<AuthClient> {
-  // Cached because AuthClient.create() reads IndexedDB. login() must not await
-  // that work before window.open(): the async gap loses the user gesture and
-  // the browser blocks the popup. Warmed at mount so login() opens instantly.
+  // Cached because AuthClient.create() reads IndexedDB. login() must reach
+  // window.open() with no await in front of it, so the resolved instance is
+  // also kept synchronously accessible via readyClient.
   clientPromise ??= AuthClient.create({
     idleOptions: { disableIdle: true, disableDefaultIdleCallback: true },
+  }).then((c) => {
+    readyClient = c
+    return c
   })
   return clientPromise
 }
@@ -21,8 +25,19 @@ export class PopupBlockedError extends Error {
   }
 }
 
-export async function login(): Promise<Identity | null> {
-  const authClient = await createAuthClient()
+export function login(): Promise<Identity | null> {
+  // Deliberately NOT async. auth-client calls window.open() synchronously, and
+  // a popup only opens if the browser still sees the click as the active user
+  // gesture. Any await here -- even on an already-resolved promise -- defers to
+  // a microtask and can spend that activation, which is what made the hosted
+  // build report "popup blocked" while localhost (already warm) worked.
+  const authClient = readyClient
+  if (!authClient) {
+    void createAuthClient()
+    return Promise.reject(
+      new Error("Still preparing sign-in. Please try again in a moment.")
+    )
+  }
 
   return new Promise((resolve, reject) => {
     let settled = false
