@@ -25,26 +25,21 @@ module {
     txs.find(func(tx) { tx.id == id });
   };
 
+  // Walks newest-first and stops as soon as the page is filled, so the cost is
+  // bounded by (offset + limit) matches rather than by the whole list.
   public func getByUser(txs: TxStorage.TxList, userId: Types.UserId, limit: Nat, offset: Nat): [Types.Transaction] {
-    let all = List.empty<Types.Transaction>();
-    for (tx in txs.values()) {
+    let page = List.empty<Types.Transaction>();
+    var seen = 0;
+    label scan for (tx in txs.reverseValues()) {
       if (tx.userId == userId) {
-        all.add(tx);
+        if (seen >= offset) {
+          page.add(tx);
+          if (page.size() >= limit) { break scan };
+        };
+        seen += 1;
       };
     };
-    let result = List.toArray(all);
-    let size = result.size();
-    if (offset >= size) { [] }
-    else {
-      let end = if (offset + limit > size) { size } else { offset + limit };
-      let sliced = List.empty<Types.Transaction>();
-      var i = offset;
-      while (i < end) {
-        sliced.add(result[i]);
-        i += 1;
-      };
-      List.toArray(sliced);
-    };
+    List.toArray(page);
   };
 
   public func getUserTxCount(txs: TxStorage.TxList, userId: Types.UserId): Nat {
@@ -55,25 +50,15 @@ module {
     count;
   };
 
-  public func getRecentByUser(txs: TxStorage.TxList, userId: Types.UserId, count: Nat): [Types.Transaction] {
-    let all = List.empty<Types.Transaction>();
-    for (tx in txs.values()) {
+    public func getRecentByUser(txs: TxStorage.TxList, userId: Types.UserId, count: Nat): [Types.Transaction] {
+    let recent = List.empty<Types.Transaction>();
+    label scan for (tx in txs.reverseValues()) {
       if (tx.userId == userId) {
-        all.add(tx);
+        recent.add(tx);
+        if (recent.size() >= count) { break scan };
       };
     };
-    let arr = List.toArray(all);
-    let size = arr.size();
-    if (size <= count) { arr }
-    else {
-      let sliced = List.empty<Types.Transaction>();
-      var i = size - count;
-      while (i < size) {
-        sliced.add(arr[i]);
-        i += 1;
-      };
-      List.toArray(sliced);
-    };
+    List.toArray(recent);
   };
 
   public func completeTx(txs: TxStorage.TxList, id: Types.TxId, blockIndex: Nat64, now: Int): Bool {
