@@ -28,12 +28,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (!isAuthenticated) return null
 
   return (
-    <div className="min-h-svh bg-muted/40">
+    <div className="h-svh bg-muted/40">
       {/* Phone-width column: mobile-first, so it stays narrow and centered
           rather than stretching across desktop viewports. */}
-      <div className="relative mx-auto flex min-h-svh w-full max-w-md flex-col bg-background shadow-sm">
+      <div className="relative mx-auto flex h-svh w-full max-w-md flex-col overflow-hidden bg-background shadow-sm">
         <AppHeader />
-        <main className="flex-1 px-4 pb-28 pt-2">{children}</main>
+        <main className="flex-1 overflow-y-auto px-4 pb-28 pt-2">{children}</main>
         <BottomNav />
       </div>
     </div>

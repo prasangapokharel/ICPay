@@ -51,7 +51,7 @@ export default function LoginPage() {
   return (
     <>
       <MarketStats />
-      <div className="flex min-h-svh justify-center">
+      <div className="flex h-svh overflow-hidden justify-center">
       <div className="relative flex w-full max-w-md flex-col overflow-hidden px-6 pb-10 pt-16 shadow-xl sm:my-8 sm:max-h-[calc(100svh-4rem)] sm:rounded-3xl sm:border sm:border-border/50">
         <Image
           src="/images/connectbg/1.png"
@@ -62,7 +62,7 @@ export default function LoginPage() {
           className="-z-10 object-cover object-center"
         />
         <div className="pointer-events-none absolute inset-0 -z-10 bg-background/50" />
-        <div className="flex flex-1 flex-col items-center justify-center text-center">
+        <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto text-center">
             <Image
               src="/images/logo/logo.png"
               alt="ICP Wallet"
