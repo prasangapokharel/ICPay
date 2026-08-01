@@ -125,7 +125,7 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
           <p
             className={cn(
               "text-sm font-semibold font-mono tabular-nums",
-              incoming ? "text-emerald-600 dark:text-emerald-400" : "text-foreground",
+              incoming ? "text-success" : "text-foreground",
             )}
           >
             {incoming ? "+" : "−"}

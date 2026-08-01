@@ -11,8 +11,7 @@ export type IcpPrice = {
 }
 
 // A constant key, so every component that asks for the price shares one cache
-// entry and one request -- the dashboard and each amount field would otherwise
-// each hit CoinGecko on mount, and again on every navigation back.
+// entry and one request.
 const PRICE_KEY = "icp-price"
 
 export function useIcpPrice(): { price: IcpPrice | null; loading: boolean } {

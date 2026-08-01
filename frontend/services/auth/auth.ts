@@ -26,11 +26,10 @@ export class PopupBlockedError extends Error {
 }
 
 export function login(): Promise<Identity | null> {
-  // Deliberately NOT async. auth-client calls window.open() synchronously, and
-  // a popup only opens if the browser still sees the click as the active user
+  // Deliberately NOT async. auth-client calls window.open() synchronously, and a
+  // popup only opens if the browser still sees the click as the active user
   // gesture. Any await here -- even on an already-resolved promise -- defers to
-  // a microtask and can spend that activation, which is what made the hosted
-  // build report "popup blocked" while localhost (already warm) worked.
+  // a microtask and can spend that activation.
   const authClient = readyClient
   if (!authClient) {
     void createAuthClient()
@@ -49,8 +48,7 @@ export function login(): Promise<Identity | null> {
 
     // auth-client polls for a user-dismissed popup and reports it through
     // onError, so no extra watchdog is needed for that case.
-    authClient
-      .login({
+    authClient      .login({
         identityProvider: getIdentityProvider(),
         derivationOrigin: getDerivationOrigin(),
         onSuccess: () => finish(authClient.getIdentity()),
@@ -62,8 +60,7 @@ export function login(): Promise<Identity | null> {
       .then(() => {
         // window.open() returns null when blocked, leaving _idpWindow undefined.
         // auth-client's own interrupt check is guarded on that handle existing,
-        // so it stops immediately and neither callback ever fires -- the promise
-        // would hang forever and the button would spin with no way to recover.
+        // so neither callback ever fires and the promise would hang forever.
         const popup = (authClient as unknown as { _idpWindow?: Window })._idpWindow
         if (!popup && !settled) {
           settled = true
@@ -81,18 +78,4 @@ export function login(): Promise<Identity | null> {
 export async function logout(): Promise<void> {
   const authClient = await createAuthClient()
   await authClient.logout()
-}
-
-export async function getIdentity(): Promise<Identity | undefined> {
-  const authClient = await createAuthClient()
-  const identity = authClient.getIdentity()
-  if (identity.getPrincipal().isAnonymous()) {
-    return undefined
-  }
-  return identity
-}
-
-export async function isAuthenticated(): Promise<boolean> {
-  const authClient = await createAuthClient()
-  return await authClient.isAuthenticated()
 }

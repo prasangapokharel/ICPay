@@ -14,8 +14,7 @@ import {
 
 // A username is required rather than suggested: without one, nobody can send
 // this account ICP by name. So there is no dismiss path -- no close button, no
-// outside click, no escape key. It clears only once a username actually exists,
-// which /profile is the one place that can do.
+// outside click, no escape key.
 export function UsernamePrompt({ username }: { username?: string }) {
   if (username) return null
 

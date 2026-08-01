@@ -31,11 +31,9 @@ export function ProfileView() {
 
   // Read from the path, not useParams: under output "export" this component is
   // served as the /icpverse/profile shell via a rewrite, so useParams would
-  // report "profile" for everyone.
-  //
-  // Segment count is checked because this view stays mounted for a frame while
-  // Next transitions back to /icpverse -- popping the last segment there yields
-  // "icpverse" and would flash "No ICPay account found for @icpverse".
+  // report "profile" for everyone. The segment count is checked because this
+  // view stays mounted for a frame while Next transitions back to /icpverse,
+  // where popping the last segment would yield "icpverse".
   const segments = pathname.split("/").filter(Boolean)
   const username = segments.length > 1 ? decodeURIComponent(segments[segments.length - 1]) : ""
   const { principal, isLoading } = useResolvedUsername(username)
@@ -61,8 +59,6 @@ export function ProfileView() {
     try {
       const actor = await getWalletActor(identity)
       const memoArg = (message ? [message] : []) as [] | [string]
-      // Sent by username rather than principal so the backend records the same
-      // recipient the user actually chose.
       const result = await actor.transferByUsername(username, amount, memoArg)
       if ("ok" in result) {
         refreshWallet()
@@ -76,9 +72,8 @@ export function ProfileView() {
     }
   }
 
-  // An empty username means this is the mid-transition frame described above,
-  // where the route no longer has a profile segment. Holding the skeleton keeps
-  // the outgoing page quiet instead of asserting the account does not exist.
+  // An empty username means the mid-transition frame described above. Holding
+  // the skeleton avoids asserting the account does not exist.
   if (isLoading || !username) return <ProfileSkeleton />
 
   if (!principal) {

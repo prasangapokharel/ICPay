@@ -28,7 +28,7 @@ export function BalanceCard({
     <div className="relative mt-7 rounded-3xl bg-primary px-5 pb-6 pt-0 text-primary-foreground shadow-lg">
       {/* The coin straddles the card's top edge, so the card itself cannot clip
           it -- the decorative blur is masked in its own layer instead. */}
-      <span className="absolute -top-5 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full bg-accent/90 shadow-lg shadow-black/15 ring-1 ring-black/5 backdrop-blur">
+      <span className="absolute -top-5 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full bg-accent/90 shadow-lg shadow-foreground/15 ring-1 ring-foreground/5 backdrop-blur">
         <Image src="/images/logo/logo.png" alt="ICP" width={36} height={36} className="size-9" />
       </span>
 
@@ -36,7 +36,7 @@ export function BalanceCard({
         aria-hidden
         className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl"
       >
-        <span className="absolute -right-10 -top-16 size-48 rounded-full bg-white/10 blur-2xl" />
+        <span className="absolute -right-10 -top-16 size-48 rounded-full bg-primary-foreground/10 blur-2xl" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center pt-12">

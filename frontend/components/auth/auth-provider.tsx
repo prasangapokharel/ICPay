@@ -46,19 +46,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (id.getPrincipal().isAnonymous()) return
 
         // A stored delegation can be unusable against the current replica --
-        // expired, or issued by a different Internet Identity than the one this
-        // build talks to. Both surface as an opaque "Invalid delegation" on the
-        // first real call, so probe with a cheap query and drop it if it fails.
+        // expired, or issued by a different Internet Identity than this build
+        // talks to. Both surface as an opaque "Invalid delegation" on the first
+        // real call, so probe with a cheap query and drop it if it fails.
         try {
           const actor = await getWalletActor(id)
           // login() is idempotent and returns the existing record when there is
-          // one. Calling it on restore (not just on connect) re-creates the user
-          // if the canister lost it -- otherwise a still-valid delegation leaves
-          // the UI signed in against a canister with no record, where reads off
-          // the ledger succeed but every user-scoped write fails "User not found".
-          //
-          // Bounded: a hung boundary node would otherwise leave isLoading true
-          // forever and the whole app stuck behind a spinner with no error.
+          // one. Calling it on restore re-creates the user if the canister lost
+          // it -- otherwise a still-valid delegation leaves the UI signed in
+          // against a canister with no record, where reads succeed but every
+          // user-scoped write fails "User not found". Bounded because a hung
+          // boundary node would otherwise leave the app stuck behind a spinner.
           await withTimeout(actor.login(), 20_000)
           setIdentity(id)
         } catch (e) {
@@ -93,8 +91,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearActorCache()
     // The SWR cache is module-global and outlives the identity, so balances and
     // transactions from this session would still be readable after signing out.
-    // Drop every entry and disable revalidation so nothing refetches on the way
-    // to /login while the delegation is already gone.
     await mutate(() => true, undefined, { revalidate: false })
     setIdentity(undefined)
     router.replace("/login")

@@ -1,4 +1,5 @@
 import { Actor, type Identity } from "@dfinity/agent"
+import type { IDL } from "@dfinity/candid"
 import type { Principal } from "@dfinity/principal"
 import { createAgent, WALLET_CANISTER_ID } from "@/services/icp"
 import type {
@@ -10,8 +11,6 @@ import type {
   ApiResult_7,
   ApiResult_8,
   UserPublic,
-  DashboardData,
-  SettingsPublic,
   ICRC1Account,
   TxId,
   AccountType,
@@ -67,7 +66,7 @@ export function clearActorCache(): void {
   cachedIdentity = null
 }
 
-const walletIdl = ({ IDL }: { IDL: any }) => {
+const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const TxId = IDL.Text
 
   const TxType = IDL.Variant({

@@ -22,16 +22,13 @@ type ProfileCardProps = {
 export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername }: ProfileCardProps) {
   const [username, setUsername] = useState(user.username?.[0] ?? "")
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
-  const [checking, setChecking] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const handleCheck = async () => {
     if (!username.trim() || username === user.username?.[0]) { setCheckResult(null); return }
-    setChecking(true)
     const available = await onCheckUsername(username.trim())
     setCheckResult(available)
-    setChecking(false)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,11 +72,11 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
                 onChange={(e) => { setUsername(e.target.value); setCheckResult(null) }}
                 onBlur={handleCheck}
               />
-              {checkResult === true && <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-green-500" />}
-              {checkResult === false && <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-red-500" />}
+              {checkResult === true && <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-success" />}
+              {checkResult === false && <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-destructive" />}
             </div>
-            {checkResult === true && <p className="text-xs text-green-500">Username is available</p>}
-            {checkResult === false && <p className="text-xs text-red-500">Username is taken</p>}
+            {checkResult === true && <p className="text-xs text-success">Username is available</p>}
+            {checkResult === false && <p className="text-xs text-destructive">Username is taken</p>}
           </div>
           {error && (
             <Alert variant="destructive">

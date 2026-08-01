@@ -69,14 +69,13 @@ function ThemeHotkey() {
   return null
 }
 
-// Hex, not var(--background): those tokens are oklch(), and theme-color is
-// parsed by the browser chrome rather than the CSS engine. Kept in sync with
-// --background in globals.css.
-const THEME_COLOR = { light: "#ffffff", dark: "#252525" } as const
+// Hex rather than var(--background): theme-color is read by the browser chrome,
+// not the CSS engine, so it cannot resolve an oklch() custom property. These are
+// the sRGB equivalents of --background in globals.css (oklch(1 0 0) and
+// oklch(0.145 0 0)) and must be updated alongside it.
+const THEME_COLOR = { light: "#ffffff", dark: "#0a0a0a" } as const
 
-// Runs before paint so the status bar never flashes the wrong shade. Reads the
-// same localStorage key next-themes writes, falling back to the OS preference
-// only when the user has not chosen explicitly.
+// Runs before paint so the status bar never flashes the wrong shade.
 const themeColorScript = `(function(){try{
 var t=localStorage.getItem('theme');
 var d=t==='dark'||((!t||t==='system')&&matchMedia('(prefers-color-scheme: dark)').matches);
@@ -94,9 +93,9 @@ function ThemeColorSync() {
 
   React.useEffect(() => {
     if (!resolvedTheme) return
-    // Safari paints the area above the viewport (notch, status bar, rubber-band
-    // overscroll) with theme-color, not with the page background, so it stays
-    // the wrong shade unless this follows the class toggle.
+    // Safari paints the area above the viewport (notch, status bar, overscroll)
+    // with theme-color rather than the page background, so it stays the wrong
+    // shade unless this follows the class toggle.
     const color = resolvedTheme === "dark" ? THEME_COLOR.dark : THEME_COLOR.light
     const existing = document.querySelectorAll<HTMLMetaElement>(
       'meta[name="theme-color"]',

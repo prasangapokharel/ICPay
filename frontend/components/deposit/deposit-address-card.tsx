@@ -117,6 +117,8 @@ function QrCode({ value }: { value: string }) {
   if (!src) return <Skeleton className="size-52 rounded-2xl" />
 
   return (
+    // Literal white, not a theme token: the QR is generated as dark modules on a
+    // light field, so scanners need that contrast to hold in dark mode too.
     <div className="relative rounded-2xl border bg-white p-3">
       <Image src={src} alt="Deposit address QR code" width={512} height={512} unoptimized className="size-44" />
       <span className="absolute left-1/2 top-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/10">

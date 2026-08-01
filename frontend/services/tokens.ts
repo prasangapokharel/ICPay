@@ -1,16 +1,15 @@
 import { Actor, type Identity } from "@dfinity/agent"
+import type { IDL } from "@dfinity/candid"
 import { Principal } from "@dfinity/principal"
 import { createAgent } from "@/services/icp"
 
-// Mirrors backend Config.ICP_LEDGER_CANISTER_ID. ICP is listed first so it
-// always heads the holdings list regardless of what discovery returns.
+// Mirrors backend Config.ICP_LEDGER_CANISTER_ID.
 export const ICP_LEDGER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"
 
 // The NNS SNS-W canister, which knows every SNS ever deployed.
 const SNS_WASM_ID = "qaa6y-5yaaa-aaaaa-aaafa-cai"
 
-// The chain-key tokens are not SNS-launched, so SNS-W does not list them and
-// they have to be named explicitly.
+// The chain-key tokens are not SNS-launched, so SNS-W does not list them.
 const CK_LEDGER_IDS = [
   ICP_LEDGER_ID,
   "mxzaz-hqaaa-aaaar-qaada-cai", // ckBTC
@@ -19,10 +18,9 @@ const CK_LEDGER_IDS = [
   "cngnf-vqaaa-aaaar-qag4q-cai", // ckUSDT
 ]
 
-// Only the two ICRC-1 methods this app calls. A trimmed interface keeps the
-// candid decode cheap: the full ledger interface would pull in transfer and
-// archive types that are never used here.
-const balanceIdl = ({ IDL }: { IDL: any }) =>
+// Trimmed to the methods this app calls: the full ledger interface would pull in
+// transfer and archive types that are never used here.
+const balanceIdl: IDL.InterfaceFactory = ({ IDL }) =>
   IDL.Service({
     icrc1_balance_of: IDL.Func(
       [IDL.Record({ owner: IDL.Principal, subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)) })],
@@ -31,7 +29,7 @@ const balanceIdl = ({ IDL }: { IDL: any }) =>
     ),
   })
 
-const metadataIdl = ({ IDL }: { IDL: any }) => {
+const metadataIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const Value = IDL.Rec()
   Value.fill(
     IDL.Variant({
@@ -48,7 +46,7 @@ const metadataIdl = ({ IDL }: { IDL: any }) => {
   })
 }
 
-const snsWasmIdl = ({ IDL }: { IDL: any }) => {
+const snsWasmIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const P = IDL.Principal
   const Sns = IDL.Record({
     root_canister_id: IDL.Opt(P),
@@ -76,11 +74,9 @@ export type TokenHolding = {
   logo?: string
 }
 
-/**
- * Length-prefixed, right-aligned principal in 32 bytes. Must stay byte-identical
- * to backend Subaccount.fromPrincipal -- this is what makes the custodial
- * address the frontend queries the same one the canister deposits into.
- */
+// Length-prefixed, right-aligned principal in 32 bytes. Must stay byte-identical
+// to backend Subaccount.fromPrincipal -- this is what makes the address the
+// frontend queries the same one the canister deposits into.
 export function custodialSubaccount(user: Principal): Uint8Array {
   const bytes = user.toUint8Array()
   const out = new Uint8Array(32)
@@ -90,11 +86,9 @@ export function custodialSubaccount(user: Principal): Uint8Array {
   return out
 }
 
-/**
- * Every ICRC-1 ledger worth scanning. Discovery is one query call to SNS-W
- * rather than the SNS aggregator's REST API, which inlines base64 logos and
- * costs 5.4MB across six requests to return the same canister ids.
- */
+// Discovery is one query call to SNS-W rather than the SNS aggregator's REST
+// API, which inlines base64 logos and costs 5.4MB across six requests to return
+// the same canister ids.
 export async function listLedgerIds(identity?: Identity): Promise<string[]> {
   const agent = await createAgent(identity)
   const snsw = Actor.createActor<{
@@ -111,19 +105,13 @@ export async function listLedgerIds(identity?: Identity): Promise<string[]> {
     // Discovery is an enhancement, not a requirement: if SNS-W is unreachable
     // the ck tokens below still resolve and the wallet stays usable.
   }
-
   const seen = new Set(CK_LEDGER_IDS)
   return [...CK_LEDGER_IDS, ...sns.filter((id) => !seen.has(id) && seen.add(id))]
 }
 
-/**
- * Balance for one account across many ledgers, in parallel.
- *
- * Only the balance is read here, never metadata: a symbol and logo cost a
- * second call per ledger and are worthless for the ~50 tokens the user holds
- * none of. Dead SNS ledgers reject the call, so a failure maps to zero and
- * drops out rather than failing the whole sweep.
- */
+// Balance only, never metadata: a symbol and logo cost a second call per ledger
+// and are worthless for the ~50 tokens the user holds none of. Dead SNS ledgers
+// reject the call, so a failure maps to zero rather than failing the sweep.
 export async function fetchBalances(
   ledgerIds: string[],
   owner: Principal,
@@ -149,14 +137,9 @@ export async function fetchBalances(
   return new Map(entries.filter(([, balance]) => balance > 0n))
 }
 
-/**
- * Symbol, decimals, fee and logo for a single ledger. Called only for tokens
- * the user actually holds, so the cost scales with the holdings list rather
- * than with the number of tokens that exist.
- *
- * The logo comes from the ledger's own icrc1:logo entry, a small inline SVG
- * data URI -- no image host to depend on and nothing extra to fetch.
- */
+// Called only for tokens the user actually holds, so the cost scales with the
+// holdings list rather than with the number of tokens that exist. The logo comes
+// from the ledger's own icrc1:logo entry, a small inline data URI.
 export async function fetchTokenMetadata(
   ledgerId: string,
   identity?: Identity
