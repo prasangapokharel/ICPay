@@ -26,19 +26,6 @@ export default function LoginPage() {
     if (!isLoading && isAuthenticated) router.replace("/")
   }, [isLoading, isAuthenticated, router])
 
-  // Retry muted autoplay on user interaction: some browsers defer video start
-  // until the first tap, which would leave a static poster with a play button.
-  useEffect(() => {
-    function resume() {
-      const v = document.querySelector<HTMLVideoElement>(
-        'video[aria-hidden="true"]',
-      )
-      v?.play().catch(() => {})
-    }
-    window.addEventListener("pointerdown", resume, { once: true })
-    return () => window.removeEventListener("pointerdown", resume)
-  }, [])
-
   if (isLoading || isAuthenticated) {
     return (
       <div className="flex min-h-svh items-center justify-center bg-muted/40">
@@ -62,16 +49,13 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-svh justify-center">
       <div className="relative flex w-full max-w-md flex-col overflow-hidden px-6 pb-10 pt-16 shadow-xl sm:my-8 sm:max-h-[calc(100svh-4rem)] sm:rounded-3xl sm:border sm:border-border/50">
-        <video
-          src="/video/connectbg/1.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          disablePictureInPicture
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 size-full object-cover object-center"
+        <Image
+          src="/images/connectbg/1.png"
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 640px) 100vw, 28rem"
+          className="-z-10 object-cover object-center"
         />
         <div className="pointer-events-none absolute inset-0 -z-10 bg-background/50" />
         <div className="flex flex-1 flex-col items-center justify-center text-center">
