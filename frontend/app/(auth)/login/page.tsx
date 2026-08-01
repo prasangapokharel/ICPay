@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Wallet01Icon, ShieldKeyIcon, FlashIcon, Key01Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
+import { Typewriter } from "@/components/shared/typewriter"
 
 const features = [
   { icon: ShieldKeyIcon, title: "Self-custodial", body: "Only you can authorize transfers." },
@@ -68,8 +69,8 @@ export default function LoginPage() {
               className="size-24 object-contain"
             />
             <h1 className="mt-6 text-2xl font-bold tracking-tight">ICP Wallet</h1>
-            <p className="mt-2 text-balance text-sm text-muted-foreground">
-              Send, receive and hold ICP with a wallet secured by your Internet Identity.
+            <p className="mt-2 h-10 text-balance text-sm text-muted-foreground">
+              <Typewriter text="Send, receive and hold ICP with a wallet secured by your Internet Identity." />
             </p>
 
             <ul className="mt-10 w-full space-y-4 text-left">
