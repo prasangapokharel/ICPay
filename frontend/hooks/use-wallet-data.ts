@@ -112,7 +112,16 @@ export function useTransactions(page = 0, pageSize = 20) {
       if ("err" in result) throw new Error(result.err)
       return result.ok
     },
-    { keepPreviousData: true }
+    // History only changes when this user moves funds, and every such action
+    // already calls useRefreshWallet. Left on SWR's defaults this refetched on
+    // each visit to Activity and on every window focus.
+    {
+      keepPreviousData: true,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      revalidateIfStale: false,
+      dedupingInterval: 300_000,
+    }
   )
 
   return {
@@ -124,6 +133,11 @@ export function useTransactions(page = 0, pageSize = 20) {
   }
 }
 
+// Only these actually change when funds move. Matching every key for the
+// principal instead would also re-fetch the deposit address (derived, constant)
+// and cached username lookups, turning one transfer into a burst of calls.
+const FUNDS_KEYS = ["dashboard", "live-balance", "transactions", "token-balances"]
+
 // Anything that moves funds invalidates balance and history together, so both
 // are refetched from one call rather than each page tracking its own staleness.
 export function useRefreshWallet() {
@@ -133,7 +147,12 @@ export function useRefreshWallet() {
   return () => {
     if (!identity) return
     const principal = identity.getPrincipal().toText()
-    mutate((key) => Array.isArray(key) && key[key.length - 1] === principal)
+    mutate(
+      (key) =>
+        Array.isArray(key) &&
+        key[key.length - 1] === principal &&
+        FUNDS_KEYS.includes(key[0] as string)
+    )
   }
 }
 
