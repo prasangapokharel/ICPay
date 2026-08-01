@@ -4,7 +4,7 @@ import useSWR, { useSWRConfig } from "swr"
 import type { Identity } from "@dfinity/agent"
 import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
-import type { DashboardData, TransactionPublic } from "@/services/types"
+import type { DashboardData, TransactionPublic, UserPublic } from "@/services/types"
 import {
   listLedgerIds,
   fetchBalances,
@@ -152,6 +152,29 @@ export function useRefreshWallet() {
         Array.isArray(key) &&
         key[key.length - 1] === principal &&
         FUNDS_KEYS.includes(key[0] as string)
+    )
+  }
+}
+
+// The dashboard carries its own copy of the user record, and the mandatory
+// username prompt reads it. /profile has no dashboard subscriber mounted, so a
+// plain invalidation there has no fetcher to revalidate with -- and because the
+// dashboard is configured revalidateIfStale: false, remounting it just re-served
+// the cached record with the empty username until a hard refresh. Writing the
+// updated user straight into the cache avoids both the staleness and a second
+// ~6.6s getDashboard call.
+export function usePatchDashboardUser() {
+  const { identity } = useAuth()
+  const { mutate } = useSWRConfig()
+
+  return (user: UserPublic) => {
+    const key = keyFor(identity, "dashboard")
+    if (!key) return
+    mutate(
+      key,
+      (current: DashboardData | undefined) =>
+        current ? { ...current, user } : current,
+      { revalidate: false }
     )
   }
 }

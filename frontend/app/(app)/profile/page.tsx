@@ -4,15 +4,16 @@ import useSWR from "swr"
 import { ProfileCard } from "@/components/profile/profile-card"
 import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useRefreshWallet } from "@/hooks/use-wallet-data"
+import { usePatchDashboardUser } from "@/hooks/use-wallet-data"
 import type { UserPublic } from "@/services/types"
 
 export default function ProfilePage() {
   const { identity } = useAuth()
-  const refreshWallet = useRefreshWallet()
+  const patchDashboardUser = usePatchDashboardUser()
   const principal = identity?.getPrincipal().toText() ?? ""
 
-  // Principal last in the key so useRefreshWallet's invalidation matches it.
+  // Principal in the key so switching identity cannot serve the previous
+  // user's profile.
   const { data: user, isLoading, mutate } = useSWR(
     identity ? (["profile", principal] as const) : null,
     async () => {
@@ -30,10 +31,10 @@ export default function ProfilePage() {
       const result = await actor.updateUsername(username)
       if ("ok" in result) {
         mutate(result.ok, { revalidate: false })
-        // The dashboard caches the username too, and its mandatory prompt keys
-        // off it -- without this the popup would still demand a username the
-        // user just claimed.
-        refreshWallet()
+        // The dashboard holds its own copy of the user, and the mandatory
+        // username prompt keys off it. The canister already returned the saved
+        // record, so patch it in rather than paying another getDashboard.
+        patchDashboardUser(result.ok)
         return null
       }
       return result.err
