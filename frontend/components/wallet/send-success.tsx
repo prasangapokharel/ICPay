@@ -1,28 +1,48 @@
 "use client"
 
 import Image from "next/image"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon } from "@hugeicons/core-free-icons"
+import { LinkSquare02Icon, Share08Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { formatE8s, explorerTxUrl } from "@/lib/wallet-utils"
+import { shareReceipt } from "@/lib/receipt"
+import { toast } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
 
 type SendSuccessProps = {
   amount: bigint
   recipient: string
   blockIndex: bigint
+  memo?: string
   onDone: () => void
 }
 
-export function SendSuccess({ amount, recipient, blockIndex, onDone }: SendSuccessProps) {
+export function SendSuccess({ amount, recipient, blockIndex, memo, onDone }: SendSuccessProps) {
+  const [sharing, setSharing] = useState(false)
+
   const avatarUri = useMemo(
     () => createAvatar(adventurer, { seed: recipient }).toDataUri(),
     [recipient]
   )
+
+  const handleShare = async () => {
+    setSharing(true)
+    try {
+      const outcome = await shareReceipt({ amount, recipient, blockIndex, memo })
+      if (outcome === "downloaded") {
+        toast.add({ title: "Receipt saved", description: "Check your downloads." })
+      }
+    } catch {
+      toast.add({ title: "Could not create receipt", description: "Please try again." })
+    } finally {
+      setSharing(false)
+    }
+  }
 
   const label = recipient.startsWith("@")
     ? recipient
@@ -72,9 +92,24 @@ export function SendSuccess({ amount, recipient, blockIndex, onDone }: SendSucce
         </div>
       </div>
 
-      <Button className="mt-8 h-12 w-full text-base" onClick={onDone}>
-        Done
-      </Button>
+      <div className="mt-8 grid w-full gap-2.5">
+        <Button
+          variant="outline"
+          className="h-12 w-full text-base"
+          onClick={handleShare}
+          disabled={sharing}
+        >
+          {sharing ? (
+            <Spinner className="size-4" />
+          ) : (
+            <HugeiconsIcon icon={Share08Icon} className="size-4" />
+          )}
+          {sharing ? "Preparing…" : "Share receipt"}
+        </Button>
+        <Button className="h-12 w-full text-base" onClick={onDone}>
+          Done
+        </Button>
+      </div>
     </div>
   )
 }

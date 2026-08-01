@@ -10,7 +10,7 @@ import type { TransferMode } from "@/components/transfer/transfer-form"
 import type { ApiResult } from "@/services/types"
 import { Principal } from "@dfinity/principal"
 
-type Sent = { amount: bigint; recipient: string; blockIndex: bigint }
+type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
 export default function TransferPage() {
   const { identity } = useAuth()
@@ -47,6 +47,7 @@ export default function TransferPage() {
           amount,
           recipient: mode === "username" && !to.startsWith("@") ? `@${to}` : to,
           blockIndex: result.ok.blockIndex,
+          memo,
         })
         return null
       }
@@ -63,6 +64,7 @@ export default function TransferPage() {
         amount={sent.amount}
         recipient={sent.recipient}
         blockIndex={sent.blockIndex}
+        memo={sent.memo}
         onDone={() => setSent(null)}
       />
     )
