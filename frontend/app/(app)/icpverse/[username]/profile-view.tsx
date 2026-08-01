@@ -15,6 +15,7 @@ import {
   GiftIcon,
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor, shortPrincipal } from "@/lib/avatar"
+import { shareReceipt } from "@/lib/receipt"
 import { useResolvedUsername, useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -62,7 +63,26 @@ export function ProfileView() {
       const result = await actor.transferByUsername(username, amount, memoArg)
       if ("ok" in result) {
         refreshWallet()
-        toast.add({ title: "Tip sent", description: `You tipped @${username}.` })
+        const receipt = {
+          amount,
+          recipient: `@${username}`,
+          blockIndex: result.ok.blockIndex,
+          memo: message,
+        }
+        toast.add({
+          title: "Tip sent",
+          description: `You tipped @${username}.`,
+          actionProps: {
+            children: "Share",
+            onClick: () => {
+              // Fire-and-forget: the toast dismisses on click, so there is no
+              // element left to show a pending state on.
+              void shareReceipt(receipt).catch(() => {
+                toast.add({ title: "Could not create receipt" })
+              })
+            },
+          },
+        })
         return null
       }
       return result.err
