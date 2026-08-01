@@ -78,4 +78,13 @@ export function login(): Promise<Identity | null> {
 export async function logout(): Promise<void> {
   const authClient = await createAuthClient()
   await authClient.logout()
+
+  // logout() deletes the stored base key but leaves it on the instance, and a
+  // later login only re-persists the delegation. Reusing this client would
+  // leave IndexedDB holding a chain with no key to match it, and the next
+  // reload silently falls back to anonymous. Drop it and prime a fresh one so
+  // login() -- which needs readyClient synchronously -- is ready on arrival.
+  clientPromise = null
+  readyClient = null
+  void createAuthClient()
 }

@@ -1,8 +1,6 @@
 "use client"
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react"
-import { useRouter } from "next/navigation"
-import { useSWRConfig } from "swr"
 import type { Identity } from "@dfinity/agent"
 import { login as iiLogin, logout as iiLogout, createAuthClient } from "@/services/auth/auth"
 import { getWalletActor, clearActorCache } from "@/services/wallet"
@@ -35,8 +33,6 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [identity, setIdentity] = useState<Identity | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
-  const { mutate } = useSWRConfig()
 
   useEffect(() => {
     async function init() {
@@ -80,13 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await iiLogout()
-    clearActorCache()
-    // The SWR cache is module-global and outlives the identity, so balances and
-    // transactions from this session would still be readable after signing out.
-    await mutate(() => true, undefined, { revalidate: false })
-    setIdentity(undefined)
-    router.replace("/login")
-  }, [mutate, router])
+    // A full document load rather than router.replace: the SWR cache, the
+    // wallet actor and the auth client are all module-level singletons that
+    // would otherwise outlive the identity and stay readable after sign-out.
+    window.location.replace("/login")
+  }, [])
 
   return (
     <AuthContext.Provider
