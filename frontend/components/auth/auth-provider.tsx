@@ -45,18 +45,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const id = authClient.getIdentity()
         if (id.getPrincipal().isAnonymous()) return
 
-        // A stored delegation can be unusable against the current replica --
-        // expired, or issued by a different Internet Identity than this build
-        // talks to. Both surface as an opaque "Invalid delegation" on the first
-        // real call, so probe with a cheap query and drop it if it fails.
+        
         try {
           const actor = await getWalletActor(id)
-          // login() is idempotent and returns the existing record when there is
-          // one. Calling it on restore re-creates the user if the canister lost
-          // it -- otherwise a still-valid delegation leaves the UI signed in
-          // against a canister with no record, where reads succeed but every
-          // user-scoped write fails "User not found". Bounded because a hung
-          // boundary node would otherwise leave the app stuck behind a spinner.
+          
           await withTimeout(actor.login(), 20_000)
           setIdentity(id)
         } catch (e) {

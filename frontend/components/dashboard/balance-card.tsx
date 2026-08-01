@@ -25,10 +25,23 @@ export function BalanceCard({
   const usdValue = price ? (Number(balanceE8s) / E8S) * price.usd : null
 
   return (
-    <div className="relative mt-7 rounded-3xl bg-primary px-5 pb-6 pt-0 text-primary-foreground shadow-lg">
+    <div className="relative mt-7 rounded-3xl bg-gradient-to-br from-[#ED1E79] to-[#3B82F6] px-5 pb-6 pt-0 text-white shadow-lg">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-3xl p-px"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.12) 25%, rgba(255,255,255,0) 45%, rgba(255,255,255,0) 55%, rgba(255,255,255,0.12) 75%, rgba(255,255,255,0.35) 100%)",
+          mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          maskComposite: "exclude",
+          WebkitMask:
+            "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+        }}
+      />
       {/* The coin straddles the card's top edge, so the card itself cannot clip
           it -- the decorative blur is masked in its own layer instead. */}
-      <span className="absolute -top-5 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full bg-accent/90 shadow-lg shadow-foreground/15 ring-1 ring-foreground/5 backdrop-blur">
+      <span className="absolute -top-5 left-1/2 flex size-14 -translate-x-1/2 items-center justify-center rounded-full border border-white/20 bg-white/10 shadow-lg backdrop-blur-md">
         <Image src="/images/logo/logo.png" alt="ICP" width={36} height={36} className="size-9" />
       </span>
 
@@ -36,7 +49,7 @@ export function BalanceCard({
         aria-hidden
         className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl"
       >
-        <span className="absolute -right-10 -top-16 size-48 rounded-full bg-primary-foreground/10 blur-2xl" />
+        <span className="absolute -right-10 -top-16 size-48 rounded-full bg-white/10 blur-2xl" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center pt-12">
@@ -44,20 +57,20 @@ export function BalanceCard({
           <span className="text-4xl font-bold tracking-tight tabular-nums">
             {hidden ? "••••••" : balance}
           </span>
-          <span className="flex items-center gap-1.5 text-sm font-medium text-primary-foreground/70">
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-white/70">
             ICP
             <button
               type="button"
               aria-label={hidden ? "Show balance" : "Hide balance"}
               onClick={onToggleHidden}
-              className="transition-colors hover:text-primary-foreground active:scale-95"
+              className="flex items-center transition-colors hover:text-white active:scale-95"
             >
               <HugeiconsIcon icon={hidden ? EyeOffIcon : EyeIcon} className="size-4" />
             </button>
           </span>
         </div>
 
-        <span className="mt-2 text-xs text-primary-foreground/80 tabular-nums">
+        <span className="mt-3 inline-flex items-center rounded-full bg-white/15 px-3 py-0.5 text-xs font-medium tabular-nums text-white/90">
           {hidden || usdValue === null ? "••••" : formatUsdPrecise(usdValue)}
         </span>
       </div>

@@ -107,16 +107,16 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
         </Avatar>
 
         <div className="min-w-0 flex-1 text-left">
-          <p className={cn("truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-xs")}>
+          <p className={cn("truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
             {shorten(counterparty)}
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground">
+          <p className="mt-0.5 text-xs text-muted-foreground/80">
             <span className="capitalize">{type}</span> · {formatTime(tx.createdAt)}
           </p>
           {memo && (
             <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
               <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0" />
-              <span className="truncate rounded-full bg-muted px-2 py-0.5">{memo}</span>
+              <span className="truncate rounded-full bg-muted px-2.5 py-0.5 text-xs">{memo}</span>
             </p>
           )}
         </div>
