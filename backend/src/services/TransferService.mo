@@ -106,6 +106,10 @@ module {
     if (accountIdHex.size() != 64) {
       return #err("Account identifier must be 64 hex characters");
     };
+    switch (TransferValidator.validateMemo(memo)) {
+      case (?err) { return #err(err) };
+      case (null) {};
+    };
     let toBlob = Helpers.hexToBlob(accountIdHex);
     switch (await* checkFunds(service, caller)) {
       case (#err(e)) { #err(e) };
@@ -161,6 +165,10 @@ module {
   };
 
   func doTransfer(service: TransferService, caller: Principal, destination: LedgerTypes.Account, amount: Nat, toLabel: Text, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    switch (TransferValidator.validateMemo(memo)) {
+      case (?err) { return #err(err) };
+      case (null) {};
+    };
     switch (await* checkFunds(service, caller)) {
       case (#err(e)) { #err(e) };
       case (#ok({ userId; source; balance })) {

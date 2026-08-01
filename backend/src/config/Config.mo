@@ -9,4 +9,7 @@ module {
   // size lets one caller's request grow with total canister activity. 50 rows
   // is more history than the UI shows and keeps the per-call cost predictable.
   public let MAX_PAGE_SIZE: Nat = 50;
+  // The ICP ledger rejects a memo blob over 32 bytes. Counted in UTF-8 bytes,
+  // not characters, because one emoji costs four.
+  public let MEMO_MAX_BYTES: Nat = 32;
 };
