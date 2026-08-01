@@ -1,36 +1,20 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Money01Icon } from "@hugeicons/core-free-icons"
-import { getWalletActor } from "@/services/wallet"
 import { formatAmount, formatE8s } from "@/lib/wallet-utils"
-import { useAuth } from "@/components/auth/auth-provider"
-import type { DashboardData } from "@/services/types"
+import { useDashboard, useTokenHoldings, useLiveBalance } from "@/hooks/use-wallet-data"
+import { TokenList } from "@/components/wallet/token-list"
 
 export default function WalletPage() {
-  const { identity } = useAuth()
-  const [data, setData] = useState<DashboardData | null>(null)
-  const [loading, setLoading] = useState(true)
+  // Shares the dashboard cache instead of calling getDashboard again: that is a
+  // ~6.6s update call, and it already ran on the page the user came from.
+  const { data, isLoading } = useDashboard()
+  const { holdings, isLoading: holdingsLoading } = useTokenHoldings()
+  const liveBalance = useLiveBalance()
 
-  useEffect(() => {
-    async function load() {
-      if (!identity) return
-      try {
-        const actor = await getWalletActor(identity)
-        const result = await actor.getDashboard()
-        if ("ok" in result) setData(result.ok)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [identity])
-
-  if (loading) return <div className="flex justify-center py-12"><p className="text-muted-foreground">Loading...</p></div>
+  if (isLoading && !data) return <div className="flex justify-center py-12"><p className="text-muted-foreground">Loading...</p></div>
   if (!data) return null
 
   return (
@@ -47,8 +31,16 @@ export default function WalletPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-4xl font-bold tracking-tight">{formatE8s(data.icpBalance)}</div>
+          <div className="text-4xl font-bold tracking-tight">{formatE8s(liveBalance ?? data.icpBalance)}</div>
           <p className="mt-1 text-sm text-primary-foreground/70">ICP</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-medium">Tokens</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TokenList holdings={holdings} isLoading={holdingsLoading} />
         </CardContent>
       </Card>
       <Card>

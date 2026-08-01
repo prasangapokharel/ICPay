@@ -4,12 +4,12 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import { Home01Icon, Download01Icon, Upload01Icon, Clock01Icon } from "@hugeicons/core-free-icons"
+import { Home01Icon, UserMultipleIcon, Upload01Icon, Clock01Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/", label: "Home", icon: Home01Icon },
-  { href: "/deposit", label: "Deposit", icon: Download01Icon },
+  { href: "/icpverse", label: "ICPverse", icon: UserMultipleIcon },
   { href: "/withdraw", label: "Withdraw", icon: Upload01Icon },
   { href: "/transactions", label: "Activity", icon: Clock01Icon },
 ]
@@ -73,12 +73,18 @@ function NavTab({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors",
+        "relative flex h-full flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors",
         active ? "text-primary" : "text-muted-foreground hover:text-foreground",
       )}
     >
-      <HugeiconsIcon icon={icon} className="size-5" />
+      <HugeiconsIcon icon={icon} className="size-5" strokeWidth={1.75} />
       <span>{label}</span>
+      <span
+        className={cn(
+          "absolute bottom-1 left-1/2 size-1 -translate-x-1/2 rounded-full bg-primary transition-opacity",
+          active ? "opacity-100" : "opacity-0",
+        )}
+      />
     </Link>
   )
 }

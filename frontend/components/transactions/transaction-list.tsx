@@ -107,14 +107,16 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
         </Avatar>
 
         <div className="min-w-0 flex-1 text-left">
-          <p className="truncate text-sm font-medium">{shorten(counterparty)}</p>
+          <p className={cn("truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-xs")}>
+            {shorten(counterparty)}
+          </p>
           <p className="mt-0.5 text-xs text-muted-foreground">
             <span className="capitalize">{type}</span> · {formatTime(tx.createdAt)}
           </p>
           {memo && (
             <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
               <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0" />
-              <span className="truncate">{memo}</span>
+              <span className="truncate rounded-full bg-muted px-2 py-0.5">{memo}</span>
             </p>
           )}
         </div>
@@ -122,12 +124,12 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
         <div className="shrink-0 text-right">
           <p
             className={cn(
-              "text-sm font-semibold tabular-nums",
+              "text-sm font-semibold font-mono tabular-nums",
               incoming ? "text-emerald-600 dark:text-emerald-400" : "text-foreground",
             )}
           >
             {incoming ? "+" : "−"}
-            {formatAmount(tx.amount)}
+            {formatAmount(tx.amount)} ICP
           </p>
           {status !== "completed" && (
             <Badge variant={getTxStatusVariant(tx.status)} className="mt-0.5 text-[10px]">

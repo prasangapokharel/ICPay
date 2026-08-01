@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/icpverse/:username",
+      "destination": "/icpverse/profile.html"
+    }
+  ]
+}

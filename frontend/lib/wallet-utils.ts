@@ -2,6 +2,15 @@ import type { TxTypeVariant, TxStatusVariant } from "@/services/types"
 
 const ICP_DECIMALS = 8n
 
+// A memo is sent to the ledger as the ICRC-1 memo blob, which the ICP ledger
+// caps at 32 bytes. Measured in UTF-8 bytes rather than characters, since an
+// emoji costs four; exceeding it fails the transfer at the ledger.
+export const MEMO_MAX_BYTES = 32
+
+export function memoByteLength(s: string): number {
+  return new TextEncoder().encode(s).length
+}
+
 export function formatE8s(amount: bigint): string {
   const whole = amount / 10n ** ICP_DECIMALS
   const fraction = amount % 10n ** ICP_DECIMALS
@@ -15,6 +24,19 @@ export function formatAmount(amount: bigint): string {
   const fractionStr = fraction.toString().padStart(Number(ICP_DECIMALS), "0")
   const trimmed = fractionStr.replace(/0+$/, "") || "0"
   return `${whole.toLocaleString()}.${trimmed.slice(0, 4)}`
+}
+
+// formatAmount assumes ICP's 8 decimals. Other ICRC-1 ledgers differ -- ckETH
+// uses 18, ckUSDC 6 -- so a token amount must be scaled by its own value.
+export function formatTokenAmount(amount: bigint, decimals: number, maxFraction = 6): string {
+  const scale = 10n ** BigInt(decimals)
+  const whole = amount / scale
+  const fraction = (amount % scale).toString().padStart(decimals, "0")
+  const trimmed = fraction.slice(0, maxFraction).replace(/0+$/, "")
+  // A nonzero balance too small to show at this precision reads as plain "0",
+  // which looks like an empty wallet, so it gets a leading-approximation mark.
+  if (!trimmed) return whole === 0n && amount > 0n ? "<0.000001" : whole.toLocaleString()
+  return `${whole.toLocaleString()}.${trimmed}`
 }
 
 export function formatPrincipal(p: string): string {

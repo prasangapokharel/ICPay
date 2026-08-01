@@ -8,7 +8,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Upload01Icon } from "@hugeicons/core-free-icons"
-import { formatE8s, formatAmount } from "@/lib/wallet-utils"
+import { formatAmount } from "@/lib/wallet-utils"
+import { AmountInput } from "@/components/shared/amount-input"
 import { Principal } from "@dfinity/principal"
 
 // Matches Config.ICP_FEE on the canister. The ledger charges it on top of the
@@ -53,11 +54,6 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
   const canSubmit =
     !loading && parsed !== null && !overBalance && isValidDestination(destination.trim())
 
-  const handleMax = () => {
-    setAmount((Number(maxSendable) / E8S).toString())
-    setError(null)
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -88,39 +84,17 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="rounded-2xl border p-4">
-        <div className="flex items-baseline justify-between">
-          <span className="text-xs text-muted-foreground">Available</span>
-          <span className="text-sm font-semibold tabular-nums">{formatE8s(balance)} ICP</span>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="amount">Amount</Label>
-        <div className="relative">
-          <Input
-            id="amount"
-            inputMode="decimal"
-            placeholder="0.00"
-            value={amount}
-            onChange={(e) => {
-              setAmount(e.target.value)
-              setError(null)
-            }}
-            className="h-14 pr-20 text-2xl font-semibold tabular-nums"
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={handleMax}
-            disabled={maxSendable === 0n}
-            className="absolute right-2 top-1/2 h-8 -translate-y-1/2 text-xs font-semibold"
-          >
-            MAX
-          </Button>
-        </div>
-      </div>
+      <AmountInput
+        id="amount"
+        label="Amount"
+        value={amount}
+        onChange={(v) => {
+          setAmount(v)
+          setError(null)
+        }}
+        balance={balance}
+        maxE8s={maxSendable}
+      />
 
       <div className="space-y-2">
         <Label htmlFor="destination">Destination</Label>

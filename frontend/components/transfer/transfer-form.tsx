@@ -18,7 +18,11 @@ import {
 } from "@/components/ui/drawer"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
-import { formatAmount } from "@/lib/wallet-utils"
+import { formatAmount, memoByteLength, MEMO_MAX_BYTES } from "@/lib/wallet-utils"
+import { AmountInput } from "@/components/shared/amount-input"
+import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-card"
+import { useResolvedUsername } from "@/hooks/use-wallet-data"
+import { useDebounced } from "@/hooks/use-debounced"
 import { Principal } from "@dfinity/principal"
 
 export type TransferMode = "username" | "principal" | "account"
@@ -56,14 +60,6 @@ function isValidFor(mode: TransferMode, v: string): boolean {
   return t.length >= 3
 }
 
-function toPlainIcp(e8s: bigint): string {
-  // Not formatE8s: it groups thousands with commas, which parseIcp rejects.
-  // Full precision is kept so Max cannot round part of the balance away.
-  const whole = e8s / 100_000_000n
-  const fraction = (e8s % 100_000_000n).toString().padStart(8, "0").replace(/0+$/, "")
-  return fraction ? `${whole}.${fraction}` : `${whole}`
-}
-
 export function TransferForm({
   onTransfer,
   balance,
@@ -81,12 +77,30 @@ export function TransferForm({
 
   const parsed = parseIcp(amount)
   const total = parsed === null ? null : parsed + ICP_FEE
+  // Only username mode is resolvable; a principal or account id has no profile
+  // to look up. Debounced so a lookup runs per typing pause, not per keystroke.
+  const debouncedTo = useDebounced(mode === "username" ? to : "")
+  const { principal: resolved, isLoading: resolving } = useResolvedUsername(debouncedTo)
+  // True only once the lookup has settled on a miss, so the Review button is not
+  // disabled while a valid name is still in flight.
+  const unknownRecipient =
+    mode === "username" &&
+    to.trim().length >= 3 &&
+    debouncedTo.trim() === to.trim() &&
+    !resolving &&
+    resolved === null
   // The fee is taken on top of the amount, so the largest sendable amount is
   // balance - fee. Anything above that is rejected by the ledger, not here.
   const sendable = balance === undefined ? undefined : balance > ICP_FEE ? balance - ICP_FEE : 0n
   const insufficient =
     total !== null && balance !== undefined && total > balance
-  const canReview = parsed !== null && isValidFor(mode, to) && !insufficient
+  const memoTooLong = memoByteLength(memo.trim()) > MEMO_MAX_BYTES
+  const canReview =
+    parsed !== null &&
+    isValidFor(mode, to) &&
+    !insufficient &&
+    !unknownRecipient &&
+    !memoTooLong
 
   const handleConfirm = async () => {
     if (parsed === null) return
@@ -122,49 +136,22 @@ export function TransferForm({
         </TabsList>
       </Tabs>
 
-      <div className="space-y-2">
-        <div className="flex items-baseline justify-between">
-          <Label htmlFor="amount">Amount</Label>
-          {balance !== undefined && (
-            <span className="text-xs text-muted-foreground">
-              Balance{" "}
-              <span className="font-medium tabular-nums text-foreground">
-                {formatAmount(balance)} ICP
-              </span>
-            </span>
-          )}
-        </div>
-        <div className="relative">
-          <Input
-            id="amount"
-            inputMode="decimal"
-            placeholder="0.00"
-            value={amount}
-            onChange={(e) => {
-              setAmount(e.target.value)
-              setError(null)
-            }}
-            className="h-14 pr-16 text-2xl font-semibold tabular-nums"
-          />
-          {sendable !== undefined && sendable > 0n && (
-            <button
-              type="button"
-              onClick={() => {
-                setAmount(toPlainIcp(sendable))
-                setError(null)
-              }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-muted/70"
-            >
-              Max
-            </button>
-          )}
-        </div>
-        {sendable !== undefined && (
-          <p className="text-xs text-muted-foreground">
-            Max sendable {formatAmount(sendable)} ICP after the {formatAmount(ICP_FEE)} ICP fee
-          </p>
-        )}
-      </div>
+      <AmountInput
+        id="amount"
+        label="Amount"
+        value={amount}
+        onChange={(v) => {
+          setAmount(v)
+          setError(null)
+        }}
+        balance={balance}
+        maxE8s={sendable}
+      />
+      {sendable !== undefined && (
+        <p className="text-xs text-muted-foreground">
+          Max sendable {formatAmount(sendable)} ICP after the {formatAmount(ICP_FEE)} ICP fee
+        </p>
+      )}
 
       <div className="space-y-2">
         <Label htmlFor="to">{labels[mode].label}</Label>
@@ -180,16 +167,39 @@ export function TransferForm({
           }}
           className={mode === "username" ? undefined : "font-mono text-xs"}
         />
+        {mode === "username" && (
+          <RecipientLookup
+            username={to}
+            principal={resolved}
+            isLoading={resolving || debouncedTo.trim() !== to.trim()}
+          />
+        )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="memo">Memo (optional)</Label>
+        <div className="flex items-baseline justify-between">
+          <Label htmlFor="memo">Memo (optional)</Label>
+          <span
+            className={
+              memoTooLong
+                ? "text-xs font-medium tabular-nums text-destructive"
+                : "text-xs tabular-nums text-muted-foreground"
+            }
+          >
+            {memoByteLength(memo.trim())}/{MEMO_MAX_BYTES}
+          </span>
+        </div>
         <Input
           id="memo"
           placeholder="Payment reference"
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
         />
+        {memoTooLong && (
+          <p className="text-xs text-destructive">
+            The ledger only stores {MEMO_MAX_BYTES} bytes. Shorten the memo.
+          </p>
+        )}
       </div>
 
       {insufficient && !error && (
@@ -231,8 +241,14 @@ export function TransferForm({
               <p className="mt-1 text-xs text-muted-foreground">ICP</p>
             </div>
 
+            {mode === "username" && resolved && (
+              <RecipientCard username={to.trim()} principal={resolved} />
+            )}
+
             <div className="space-y-2 rounded-2xl border p-4">
-              <Row label="To" value={to.trim()} mono />
+              {!(mode === "username" && resolved) && (
+                <Row label="To" value={to.trim()} mono />
+              )}
               <Row label="Network fee" value={`${formatAmount(ICP_FEE)} ICP`} />
               <Row
                 label="Total deducted"

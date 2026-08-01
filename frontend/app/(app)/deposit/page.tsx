@@ -35,7 +35,7 @@ export default function DepositPage() {
       document.execCommand("copy")
       document.body.removeChild(ta)
     }
-    toast.add({ title: "Address copied" })
+    toast.add({ title: "Address copied to clipboard" })
   }
 
   const handleCheck = async () => {

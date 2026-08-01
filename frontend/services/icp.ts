@@ -49,6 +49,11 @@ export function getIdentityProvider(): string {
   return process.env.NEXT_PUBLIC_II_URL ?? "https://id.ai"
 }
 
+// Must stay identical to public/.well-known/ii-alternative-origins, which the
+// canister serves and II actually checks against. An origin missing here just
+// falls back to its own principal instead of the shared one.
+const ALTERNATIVE_ORIGINS = ["https://ic-pay.vercel.app"]
+
 // Internet Identity derives a principal from the origin that asked for it, so
 // the same II account yields a different principal -- and therefore a different
 // wallet and balance -- on each origin the app is served from. Naming one
@@ -59,6 +64,14 @@ export function getIdentityProvider(): string {
 // This value is permanent: changing it changes every user's principal and
 // strands the funds held under the old one.
 export function getDerivationOrigin(): string | undefined {
-  if (getIsLocal()) return undefined
-  return process.env.NEXT_PUBLIC_DERIVATION_ORIGIN || undefined
+  const origin = process.env.NEXT_PUBLIC_DERIVATION_ORIGIN || undefined
+  if (!origin) return undefined
+  if (typeof window === "undefined") return origin
+  // II only accepts a derivationOrigin when the page origin is the origin
+  // itself or is listed in its ii-alternative-origins file. A dev server is
+  // neither, so sending it there fails with "Unverified origin" -- and the
+  // list cannot fix that, since II requires https and rejects localhost.
+  const here = window.location.origin
+  if (here === origin) return origin
+  return ALTERNATIVE_ORIGINS.includes(here) ? origin : undefined
 }

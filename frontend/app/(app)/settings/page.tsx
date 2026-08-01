@@ -1,31 +1,26 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import useSWR from "swr"
 import { SettingsForm } from "@/components/settings/settings-form"
 import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
-import type { SettingsPublic } from "@/services/types"
 
 export default function SettingsPage() {
   const { identity } = useAuth()
-  const [settings, setSettings] = useState<SettingsPublic | null>(null)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    async function load() {
-      if (!identity) return
-      try {
-        const actor = await getWalletActor(identity)
-        const result = await actor.getSettings()
-        if ("ok" in result) setSettings(result.ok)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [identity])
+  // Cached like every other read: settings change only when this page writes
+  // them, and the write below seeds the cache directly, so revisiting the page
+  // never needs to call the canister again.
+  const { data: settings, isLoading, mutate } = useSWR(
+    identity ? (["settings", identity.getPrincipal().toText()] as const) : null,
+    async () => {
+      const actor = await getWalletActor(identity!)
+      const result = await actor.getSettings()
+      if ("err" in result) throw new Error(result.err)
+      return result.ok
+    },
+    { revalidateOnFocus: false, revalidateIfStale: false, keepPreviousData: true }
+  )
 
   const handleSave = async (theme: string, language: string, notifications: boolean): Promise<string | null> => {
     if (!identity) return "Not authenticated"
@@ -33,7 +28,9 @@ export default function SettingsPage() {
       const actor = await getWalletActor(identity)
       const result = await actor.updateSettings(theme, language, notifications)
       if ("ok" in result) {
-        setSettings(result.ok)
+        // The canister returns the saved record, so the cache can be updated
+        // from it without a follow-up read.
+        mutate(result.ok, { revalidate: false })
         return null
       }
       return result.err
@@ -43,7 +40,7 @@ export default function SettingsPage() {
     }
   }
 
-  if (loading) return <div className="flex justify-center py-12"><p className="text-muted-foreground">Loading...</p></div>
+  if (isLoading && !settings) return <div className="flex justify-center py-12"><p className="text-muted-foreground">Loading...</p></div>
   if (!settings) return null
 
   return (

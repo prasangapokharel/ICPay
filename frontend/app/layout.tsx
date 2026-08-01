@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono, Inter } from "next/font/google"
 import type { Metadata, Viewport } from "next"
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider, ThemeColorScript } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { Toaster } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
@@ -51,10 +51,10 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#252525" },
-  ],
+  // No themeColor here on purpose. React hoists metadata tags and owns them, so
+  // a runtime edit gets reverted, and a prefers-color-scheme tag would keep
+  // matching the OS instead of the class toggle the app actually uses.
+  // themeColorScript + ThemeColorSync own the single tag instead.
 }
 
 const jsonLd = {
@@ -85,6 +85,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
     >
+      <head>
+        <ThemeColorScript />
+      </head>
       <body>
         <script
           type="application/ld+json"

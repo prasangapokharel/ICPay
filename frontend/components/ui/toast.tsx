@@ -6,7 +6,15 @@ import { Toast as ToastPrimitive } from "@base-ui/react/toast"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { XIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Cancel01Icon,
+  CancelCircleIcon,
+  CheckmarkCircle01Icon,
+  InformationCircleIcon,
+  Loading01Icon,
+  Triangle01Icon,
+} from "@hugeicons/core-free-icons"
 
 const toast = ToastPrimitive.createToastManager()
 
@@ -127,7 +135,7 @@ function ToastClose({
       {...props}
     >
       {children ?? (
-        <XIcon aria-hidden="true" />
+        <HugeiconsIcon icon={Cancel01Icon} aria-hidden="true" />
       )}
     </ToastPrimitive.Close>
   )
@@ -138,31 +146,31 @@ function ToastIcon({ type }: { type: string | undefined }) {
 
   if (type === "success") {
     icon = (
-      <CircleCheckIcon aria-hidden="true" />
+      <HugeiconsIcon icon={CheckmarkCircle01Icon} aria-hidden="true" />
     )
   }
 
   if (type === "info") {
     icon = (
-      <InfoIcon aria-hidden="true" />
+      <HugeiconsIcon icon={InformationCircleIcon} aria-hidden="true" />
     )
   }
 
   if (type === "warning") {
     icon = (
-      <TriangleAlertIcon aria-hidden="true" />
+      <HugeiconsIcon icon={Triangle01Icon} aria-hidden="true" />
     )
   }
 
   if (type === "error") {
     icon = (
-      <OctagonXIcon className="text-destructive" aria-hidden="true" />
+      <HugeiconsIcon icon={CancelCircleIcon} className="text-destructive" aria-hidden="true" />
     )
   }
 
   if (type === "loading") {
     icon = (
-      <Loader2Icon className="animate-spin" aria-hidden="true" />
+      <HugeiconsIcon icon={Loading01Icon} className="animate-spin" aria-hidden="true" />
     )
   }
 

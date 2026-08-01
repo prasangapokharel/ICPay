@@ -1,33 +1,27 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import useSWR from "swr"
 import { ProfileCard } from "@/components/profile/profile-card"
 import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
+import { useRefreshWallet } from "@/hooks/use-wallet-data"
 import type { UserPublic } from "@/services/types"
 
 export default function ProfilePage() {
   const { identity } = useAuth()
-  const [user, setUser] = useState<UserPublic | null>(null)
-  const [principal, setPrincipal] = useState("")
-  const [loading, setLoading] = useState(true)
+  const refreshWallet = useRefreshWallet()
+  const principal = identity?.getPrincipal().toText() ?? ""
 
-  useEffect(() => {
-    async function load() {
-      if (!identity) return
-      try {
-        const actor = await getWalletActor(identity)
-        setPrincipal(identity.getPrincipal().toText())
-        const profile = await actor.getUser()
-        if (profile.length > 0) setUser(profile[0] as UserPublic)
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [identity])
+  // Principal last in the key so useRefreshWallet's invalidation matches it.
+  const { data: user, isLoading, mutate } = useSWR(
+    identity ? (["profile", principal] as const) : null,
+    async () => {
+      const actor = await getWalletActor(identity!)
+      const profile = await actor.getUser()
+      return profile.length > 0 ? (profile[0] as UserPublic) : null
+    },
+    { revalidateOnFocus: false, revalidateIfStale: false, keepPreviousData: true }
+  )
 
   const handleUpdateUsername = async (username: string): Promise<string | null> => {
     if (!identity) return "Not authenticated"
@@ -35,7 +29,11 @@ export default function ProfilePage() {
       const actor = await getWalletActor(identity)
       const result = await actor.updateUsername(username)
       if ("ok" in result) {
-        setUser(result.ok)
+        mutate(result.ok, { revalidate: false })
+        // The dashboard caches the username too, and its mandatory prompt keys
+        // off it -- without this the popup would still demand a username the
+        // user just claimed.
+        refreshWallet()
         return null
       }
       return result.err
@@ -55,7 +53,7 @@ export default function ProfilePage() {
     }
   }
 
-  if (loading) return <div className="flex justify-center py-12"><p className="text-muted-foreground">Loading...</p></div>
+  if (isLoading && !user) return <div className="flex justify-center py-12"><p className="text-muted-foreground">Loading...</p></div>
   if (!user) return null
 
   return (

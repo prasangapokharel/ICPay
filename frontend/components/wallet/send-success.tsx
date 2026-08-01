@@ -9,6 +9,7 @@ import { LinkSquare02Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { formatE8s } from "@/lib/wallet-utils"
+import { cn } from "@/lib/utils"
 
 type SendSuccessProps = {
   amount: bigint
@@ -55,7 +56,9 @@ export function SendSuccess({ amount, recipient, blockIndex, onDone }: SendSucce
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{label}</p>
+            <p className={cn("truncate text-sm font-medium", !recipient.startsWith("@") && "font-mono text-xs")}>
+              {label}
+            </p>
             <a
               href={`https://dashboard.internetcomputer.org/transaction/${blockIndex}`}
               target="_blank"

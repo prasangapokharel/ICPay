@@ -11,19 +11,13 @@ import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import { ArrowUpRight01Icon, Download01Icon } from "@hugeicons/core-free-icons"
 import { formatE8s } from "@/lib/wallet-utils"
 import { useIcpPrice } from "@/lib/use-icp-price"
-import { useDashboard } from "@/hooks/use-wallet-data"
+import { useDashboard, useLiveBalance } from "@/hooks/use-wallet-data"
 
 export default function DashboardPage() {
   const { price } = useIcpPrice()
-  const { data, error, isLoading, refresh } = useDashboard()
-  const [refreshing, setRefreshing] = useState(false)
+  const { data, error, isLoading } = useDashboard()
+  const liveBalance = useLiveBalance()
   const [hidden, setHidden] = useState(false)
-
-  const handleRefresh = async () => {
-    setRefreshing(true)
-    await refresh()
-    setRefreshing(false)
-  }
 
   if (isLoading && !data) return <DashboardSkeleton />
 
@@ -45,13 +39,11 @@ export default function DashboardPage() {
     <div className="space-y-6 pt-2">
       <UsernamePrompt username={data.user.username?.[0]} />
       <BalanceCard
-        balance={formatE8s(data.icpBalance)}
-        balanceE8s={data.icpBalance}
+        balance={formatE8s(liveBalance ?? data.icpBalance)}
+        balanceE8s={liveBalance ?? data.icpBalance}
         price={price}
         hidden={hidden}
         onToggleHidden={() => setHidden((v) => !v)}
-        onRefresh={handleRefresh}
-        refreshing={refreshing}
       />
 
       <div className="grid grid-cols-2 gap-3">
@@ -80,8 +72,8 @@ function ActionButton({
       href={href}
       className={
         primary
-          ? "flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-sm font-medium text-primary-foreground transition-transform active:scale-95"
-          : "flex h-12 items-center justify-center gap-2 rounded-full border bg-background text-sm font-medium transition-colors hover:bg-accent active:scale-95"
+          ? "flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/25 transition-all hover:bg-primary/90 active:scale-95"
+          : "flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-background text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-accent active:scale-95 dark:border-white/10"
       }
     >
       <HugeiconsIcon icon={icon} className="size-4" />
