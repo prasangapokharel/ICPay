@@ -1,8 +1,6 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { TrendingUpDownIcon } from "@hugeicons/core-free-icons"
 import { useIcpPrice } from "@/lib/use-icp-price"
 
 // Eases toward the target on every change, so the digits visibly tick up or
@@ -32,36 +30,47 @@ function useEasedPrice(target: number, duration = 500) {
   return value
 }
 
+// Two trailing digits that roll to random values between refreshes, but snap
+// to the real 3rd-4th decimals the moment a fresh price arrives.
+function useRandomTicker(seed: number) {
+  const [ticks, setTicks] = useState("00")
+  const seeded = useRef(false)
+
+  useEffect(() => {
+    const real = Math.floor(Math.abs(seed * 100) % 1 * 100)
+    setTicks(real.toString().padStart(2, "0"))
+    seeded.current = true
+  }, [seed])
+
+  useEffect(() => {
+    if (!seeded.current) return
+    const id = setInterval(
+      () => setTicks(Math.floor(Math.random() * 100).toString().padStart(2, "0")),
+      120,
+    )
+    return () => clearInterval(id)
+  }, [seed])
+
+  return ticks
+}
+
 export function MarketStats() {
   const { price } = useIcpPrice({ refreshInterval: 5_000 })
   const count = useEasedPrice(price?.usd ?? 0)
-  const up = (price?.change24h ?? 0) >= 0
+  const ticker = useRandomTicker(price?.usd ?? 0)
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-0 z-10 flex justify-center px-4 pt-6">
-      <div className="flex items-center gap-2 rounded-full border border-white/50 bg-white/40 px-3 py-1 shadow-sm backdrop-blur-md">
-        <span className="text-xs font-mono font-medium tabular-nums text-foreground">
-          ICP ${count.toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
+    <div className="flex justify-center">
+      <span className="font-mono text-5xl font-light tracking-[0.15em] tabular-nums text-primary/40 drop-shadow-sm">
+        <span className="mr-1 text-3xl align-middle text-primary/50">$</span>
+        {count.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+        <span className="text-primary/60">
+          {ticker}
         </span>
-        {price && (
-          <span
-            className={
-              "inline-flex items-center gap-0.5 text-xs font-mono tabular-nums " +
-              (up ? "text-success" : "text-destructive")
-            }
-          >
-            <HugeiconsIcon
-              icon={TrendingUpDownIcon}
-              className={up ? "size-3 -scale-x-100" : "size-3"}
-            />
-            {up ? "+" : ""}
-            {price.change24h.toFixed(2)}%
-          </span>
-        )}
-      </div>
+      </span>
     </div>
   )
 }
