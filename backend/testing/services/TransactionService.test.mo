@@ -83,8 +83,4 @@ switch (TransactionService.getDetail(svc, Principal.fromText("rrkah-fqaaa-aaaaa-
   case (#err(msg)) { Debug.print("PASS: getDetail for other user's tx rejected: " # msg) };
 };
 
-let url = TransactionService.getExplorerUrl("tx-1");
-assert(url == "https://dashboard.internetcomputer.org/transaction/tx-1");
-Debug.print("PASS: getExplorerUrl returns correct URL");
-
 Debug.print("ALL TRANSACTION SERVICE TESTS PASSED");

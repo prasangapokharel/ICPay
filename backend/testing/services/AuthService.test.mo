@@ -2,11 +2,13 @@ import Debug "mo:core/Debug";
 import Principal "mo:core/Principal";
 import UserStorage "../../src/storage/UserStorage";
 import AuthService "../../src/services/AuthService";
+import ReservedStorage "../../src/storage/ReservedUsernameStorage";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
-let auth = AuthService.create(users, usernames, usersById);
+let reserved = ReservedStorage.createReservedUsernameSet();
+let auth = AuthService.create(users, usernames, usersById, reserved);
 
 let anon = Principal.fromText("2vxsx-fae");
 switch (AuthService.login(auth, anon)) {
@@ -65,19 +67,6 @@ switch (AuthService.register(auth, userPrincipal, "testuser")) {
 switch (AuthService.register(auth, Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"), "ab")) {
   case (#ok(_)) { assert(false); Debug.print("FAIL: register should reject short username") };
   case (#err(msg)) { Debug.print("PASS: short username rejected on register: " # msg) };
-};
-
-switch (AuthService.getProfile(auth, userPrincipal)) {
-  case (?profile) {
-    let _ = profile;
-    Debug.print("PASS: getProfile returns profile for known user");
-  };
-  case (null) { assert(false); Debug.print("FAIL: getProfile returned null for known user") };
-};
-
-switch (AuthService.getProfile(auth, Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"))) {
-  case (?_) { assert(false); Debug.print("FAIL: getProfile should return null for unknown") };
-  case (null) { Debug.print("PASS: getProfile returns null for unknown user") };
 };
 
 Debug.print("ALL AUTH SERVICE TESTS PASSED");

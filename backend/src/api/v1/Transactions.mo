@@ -10,8 +10,4 @@ mixin (txs: TransactionService.TransactionService, mwConfig: MiddlewareAuth.Conf
   public shared query ({ caller }) func getTransactionDetail(txId: Types.TxId) : async Types.ApiResult<Types.TransactionPublic> {
     TransactionService.getDetail(txs, MiddlewareAuth.effectiveCaller(mwConfig, caller), txId);
   };
-
-  public shared query func getExplorerUrl(txId: Types.TxId) : async Text {
-    TransactionService.getExplorerUrl(txId);
-  };
 };

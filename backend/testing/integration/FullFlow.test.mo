@@ -13,18 +13,20 @@ import DepositService "../../src/services/DepositService";
 import WithdrawService "../../src/services/WithdrawService";
 import TransferService "../../src/services/TransferService";
 import LedgerService "../../src/services/LedgerService";
+import ReservedStorage "../../src/storage/ReservedUsernameStorage";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
+let reserved = ReservedStorage.createReservedUsernameSet();
 let txs = TxStorage.createTxList();
 let settingsMap = SettingsStorage.createSettingsMap();
 
 let p1 = Principal.fromText("aaaaa-aa");
 let p2 = Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai");
 
-let auth = AuthService.create(users, usernames, usersById);
-let userSvc = UserService.create(users, usernames, usersById);
+let auth = AuthService.create(users, usernames, usersById, reserved);
+let userSvc = UserService.create(users, usernames, usersById, reserved);
 let txSvc = TransactionService.create(users, txs);
 let settingsSvc = SettingsService.create(users, settingsMap);
 
@@ -130,26 +132,26 @@ switch (UserService.getProfile(userSvc, p2)) {
 };
 
 switch (UserService.updateUsername(userSvc, p1, "alice_updated")) {
-  case (#ok(result)) {
-    assert(result.username == ?"alice_updated");
-    Debug.print("PASS [FLOW]: user1 updates to alice_updated");
-  };
-  case (#err(msg)) { assert(false); Debug.print("FAIL [FLOW]: username update: " # msg) };
+  case (#ok(_)) { assert(false); Debug.print("FAIL [FLOW]: username must be permanent") };
+  case (#err(_)) { Debug.print("PASS [FLOW]: user1 cannot rename after claiming") };
 };
 
 switch (UserService.resolveUsername(userSvc, "alice")) {
-  case (?_) { assert(false); Debug.print("FAIL [FLOW]: old username still resolves") };
-  case (null) { Debug.print("PASS [FLOW]: old username no longer resolves") };
+  case (?p) {
+    assert(p == p1);
+    Debug.print("PASS [FLOW]: original username still resolves to user1");
+  };
+  case (null) { assert(false); Debug.print("FAIL [FLOW]: claimed username stopped resolving") };
 };
 
 switch (UserService.checkAvailability(userSvc, "alice_updated")) {
-  case (false) { Debug.print("PASS [FLOW]: updated username is taken") };
-  case (true) { assert(false); Debug.print("FAIL [FLOW]: updated username should be taken") };
+  case (true) { Debug.print("PASS [FLOW]: rejected name was never claimed") };
+  case (false) { assert(false); Debug.print("FAIL [FLOW]: rejected name must stay free") };
 };
 
 switch (UserService.checkAvailability(userSvc, "alice")) {
-  case (true) { Debug.print("PASS [FLOW]: old username is now available") };
-  case (false) { assert(false); Debug.print("FAIL [FLOW]: old username should be available") };
+  case (false) { Debug.print("PASS [FLOW]: claimed username stays permanently taken") };
+  case (true) { assert(false); Debug.print("FAIL [FLOW]: claimed username must never free up") };
 };
 
 Debug.print("ALL INTEGRATION FLOW TESTS PASSED");

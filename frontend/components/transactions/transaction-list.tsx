@@ -15,7 +15,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, ArrowRight01Icon, LinkSquare02Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
-import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel } from "@/lib/wallet-utils"
+import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, explorerTxUrl } from "@/lib/wallet-utils"
 import { cn } from "@/lib/utils"
 
 type TransactionListProps = {
@@ -161,7 +161,7 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
           {tx.blockIndex?.[0] !== undefined && (
             <Row label="Block">
               <a
-                href={`https://dashboard.internetcomputer.org/transaction/${tx.blockIndex[0]}`}
+                href={explorerTxUrl(tx.blockIndex[0])}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 font-mono underline underline-offset-2"

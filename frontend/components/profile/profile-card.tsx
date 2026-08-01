@@ -20,13 +20,14 @@ type ProfileCardProps = {
 }
 
 export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername }: ProfileCardProps) {
-  const [username, setUsername] = useState(user.username?.[0] ?? "")
+  const claimed = user.username?.[0]
+  const [username, setUsername] = useState("")
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const handleCheck = async () => {
-    if (!username.trim() || username === user.username?.[0]) { setCheckResult(null); return }
+    if (!username.trim()) { setCheckResult(null); return }
     const available = await onCheckUsername(username.trim())
     setCheckResult(available)
   }
@@ -61,32 +62,46 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
           <p className="font-mono text-xs text-muted-foreground">{user.id}</p>
         </div>
         <Separator />
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
-            <div className="flex gap-2">
-              <Input
-                id="username"
-                placeholder="@username"
-                value={username}
-                onChange={(e) => { setUsername(e.target.value); setCheckResult(null) }}
-                onBlur={handleCheck}
-              />
-              {checkResult === true && <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-success" />}
-              {checkResult === false && <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-destructive" />}
-            </div>
-            {checkResult === true && <p className="text-xs text-success">Username is available</p>}
-            {checkResult === false && <p className="text-xs text-destructive">Username is taken</p>}
+        {claimed ? (
+          <div className="space-y-1">
+            <Label className="text-xs text-muted-foreground">Username</Label>
+            <p className="text-sm font-medium">@{claimed}</p>
+            <p className="text-xs text-muted-foreground">
+              Usernames are permanent. People send you funds at this name, so it
+              cannot be changed or transferred.
+            </p>
           </div>
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Saving..." : "Save Username"}
-          </Button>
-        </form>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Choose a username</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="username"
+                  placeholder="@username"
+                  value={username}
+                  onChange={(e) => { setUsername(e.target.value); setCheckResult(null) }}
+                  onBlur={handleCheck}
+                />
+                {checkResult === true && <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-success" />}
+                {checkResult === false && <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-destructive" />}
+              </div>
+              {checkResult === true && <p className="text-xs text-success">Username is available</p>}
+              {checkResult === false && <p className="text-xs text-destructive">Username is taken</p>}
+              <p className="text-xs text-muted-foreground">
+                You can only set this once — choose carefully.
+              </p>
+            </div>
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Saving..." : "Claim Username"}
+            </Button>
+          </form>
+        )}
       </CardContent>
     </Card>
   )

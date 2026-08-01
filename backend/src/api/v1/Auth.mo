@@ -10,8 +10,4 @@ mixin (auth: AuthService.AuthService, mwConfig: MiddlewareAuth.Config) {
   public shared ({ caller }) func register(username: Text) : async Types.AuthResult {
     AuthService.register(auth, MiddlewareAuth.effectiveCaller(mwConfig, caller), username);
   };
-
-  public shared query ({ caller }) func getProfile() : async ?Types.UserPublic {
-    AuthService.getProfile(auth, MiddlewareAuth.effectiveCaller(mwConfig, caller));
-  };
 };

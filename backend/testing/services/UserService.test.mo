@@ -4,11 +4,14 @@ import Time "mo:core/Time";
 import UserStorage "../../src/storage/UserStorage";
 import UserService "../../src/services/UserService";
 import UserRepo "../../src/repositories/UserRepository";
+import ReservedStorage "../../src/storage/ReservedUsernameStorage";
+import ReservedRepo "../../src/repositories/ReservedUsernameRepository";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
-let svc = UserService.create(users, usernames, usersById);
+let reserved = ReservedStorage.createReservedUsernameSet();
+let svc = UserService.create(users, usernames, usersById, reserved);
 
 let p1 = Principal.fromText("aaaaa-aa");
 let p2 = Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai");
@@ -38,12 +41,27 @@ switch (UserService.updateUsername(svc, p1, "alice")) {
   case (#err(msg)) { assert(false); Debug.print("FAIL: updateUsername failed: " # msg) };
 };
 
-switch (UserService.updateUsername(svc, p1, "bob")) {
+switch (UserService.updateUsername(svc, p1, "alice2")) {
+  case (#ok(_)) { assert(false); Debug.print("FAIL: username must be permanent once claimed") };
+  case (#err(msg)) { Debug.print("PASS: second claim rejected: " # msg) };
+};
+
+// Every remaining claim check needs a principal that has not claimed yet,
+// otherwise the permanence rule short-circuits before the check under test.
+let p3 = Principal.fromText("r7inp-6aaaa-aaaaa-aaabq-cai");
+let _u3 = UserRepo.create(users, usernames, usersById, "uid-3", p3, null, "Carol", now);
+
+switch (UserService.updateUsername(svc, p3, "bob")) {
   case (#ok(_)) { assert(false); Debug.print("FAIL: updateUsername should reject taken name") };
   case (#err(msg)) { Debug.print("PASS: taken username rejected on update: " # msg) };
 };
 
-switch (UserService.updateUsername(svc, p1, "ab")) {
+switch (UserService.updateUsername(svc, p3, "BOB")) {
+  case (#ok(_)) { assert(false); Debug.print("FAIL: uniqueness must be case-insensitive") };
+  case (#err(msg)) { Debug.print("PASS: case variant of taken name rejected: " # msg) };
+};
+
+switch (UserService.updateUsername(svc, p3, "ab")) {
   case (#ok(_)) { assert(false); Debug.print("FAIL: updateUsername should reject short name") };
   case (#err(msg)) { Debug.print("PASS: short username rejected: " # msg) };
 };
@@ -64,6 +82,29 @@ Debug.print("PASS: checkAvailability returns false for taken name");
 let invalidCheck = UserService.checkAvailability(svc, "ab");
 assert(invalidCheck == false);
 Debug.print("PASS: checkAvailability returns false for invalid name");
+
+let caseVariantTaken = UserService.checkAvailability(svc, "BoB");
+assert(caseVariantTaken == false);
+Debug.print("PASS: checkAvailability is case-insensitive");
+
+ReservedRepo.reserve(reserved, "dfinity");
+assert(UserService.checkAvailability(svc, "dfinity") == false);
+assert(UserService.checkAvailability(svc, "DFINITY") == false);
+Debug.print("PASS: reserved names report unavailable in any case");
+
+switch (UserService.updateUsername(svc, p3, "dfinity")) {
+  case (#ok(_)) { assert(false); Debug.print("FAIL: reserved name must be rejected") };
+  case (#err(msg)) { Debug.print("PASS: reserved username rejected: " # msg) };
+};
+
+ReservedRepo.release(reserved, "dfinity");
+switch (UserService.updateUsername(svc, p3, "dfinity")) {
+  case (#ok(profile)) {
+    assert(profile.username == ?"dfinity");
+    Debug.print("PASS: released name becomes claimable");
+  };
+  case (#err(msg)) { assert(false); Debug.print("FAIL: released name still blocked: " # msg) };
+};
 
 let results = UserService.search(svc, "ali");
 assert(results.size() == 1);

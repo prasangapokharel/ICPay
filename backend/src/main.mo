@@ -1,9 +1,11 @@
 import UserStorage "storage/UserStorage";
+import ReservedUsernameStorage "storage/ReservedUsernameStorage";
 import TxStorage "storage/TransactionStorage";
 import SettingsStorage "storage/SettingsStorage";
 import LedgerService "services/LedgerService";
 import AuthService "services/AuthService";
 import UserService "services/UserService";
+import AdminService "services/AdminService";
 import DashboardService "services/DashboardService";
 import DepositService "services/DepositService";
 import WithdrawService "services/WithdrawService";
@@ -13,6 +15,7 @@ import SettingsService "services/SettingsService";
 import HealthApi "api/v1/Health";
 import AuthApi "api/v1/Auth";
 import UsersApi "api/v1/Users";
+import AdminApi "api/v1/Admin";
 import DashboardApi "api/v1/Dashboard";
 import DepositApi "api/v1/Deposit";
 import WithdrawApi "api/v1/Withdraw";
@@ -32,12 +35,14 @@ persistent actor self {
   let users = UserStorage.createUserMap();
   let usernames = UserStorage.createUsernameMap();
   let usersById = UserStorage.createUserIdMap();
+  let reservedUsernames = ReservedUsernameStorage.createReservedUsernameSet();
   let transactions = TxStorage.createTxList();
   let settings = SettingsStorage.createSettingsMap();
   transient let ledger = LedgerService.create(Principal.fromActor(self));
 
-  transient let authService = AuthService.create(users, usernames, usersById);
-  transient let userService = UserService.create(users, usernames, usersById);
+  transient let authService = AuthService.create(users, usernames, usersById, reservedUsernames);
+  transient let userService = UserService.create(users, usernames, usersById, reservedUsernames);
+  transient let adminService = AdminService.create(reservedUsernames, users, usernames);
   transient let dashboardService = DashboardService.create(users, transactions, ledger);
   transient let depositService = DepositService.create(users, transactions, ledger);
   transient let withdrawService = WithdrawService.create(users, transactions, ledger);
@@ -48,6 +53,7 @@ persistent actor self {
   include HealthApi();
   include AuthApi(authService, mwConfig);
   include UsersApi(userService, mwConfig);
+  include AdminApi(adminService, mwConfig);
   include DashboardApi(dashboardService, mwConfig);
   include DepositApi(depositService, mwConfig);
   include WithdrawApi(withdrawService, mwConfig);

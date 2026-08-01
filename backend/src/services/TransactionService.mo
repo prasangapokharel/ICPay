@@ -51,8 +51,4 @@ module {
       case (null) { #err("User not found") };
     };
   };
-
-  public func getExplorerUrl(txId: Types.TxId): Text {
-    "https://dashboard.internetcomputer.org/transaction/" # txId;
-  };
 };

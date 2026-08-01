@@ -15,6 +15,7 @@ import PrincipalValidator "../../src/validators/PrincipalValidator";
 import UsernameValidator "../../src/validators/UsernameValidator";
 import TransferValidator "../../src/validators/TransferValidator";
 import AccountValidator "../../src/validators/AccountValidator";
+import ReservedStorage "../../src/storage/ReservedUsernameStorage";
 
 let anon = Principal.fromText("2vxsx-fae");
 
@@ -30,13 +31,14 @@ let now = Time.now();
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
+let reserved = ReservedStorage.createReservedUsernameSet();
 let txs = TxStorage.createTxList();
 let settingsMap = SettingsStorage.createSettingsMap();
 
 let u1 = UserRepo.create(users, usernames, usersById, "uid-1", user1Principal, ?"alice", "Alice", now);
 let u2 = UserRepo.create(users, usernames, usersById, "uid-2", user2Principal, ?"bob", "Bob", now);
 
-let userSvc = UserService.create(users, usernames, usersById);
+let userSvc = UserService.create(users, usernames, usersById, reserved);
 switch (UserService.getProfile(userSvc, anon)) {
   case (?_) { assert(false); Debug.print("FAIL [SEC]: anonymous should not get profile") };
   case (null) { Debug.print("PASS [SEC]: anonymous profile lookup returns null") };
@@ -109,7 +111,7 @@ assert(searchResult.size() == 1);
 assert(searchResult[0].username == ?"alice");
 Debug.print("PASS [SEC]: search returns only matching users");
 
-let authService = AuthService.create(users, usernames, usersById);
+let authService = AuthService.create(users, usernames, usersById, reserved);
 switch (AuthService.login(authService, anon)) {
   case (#ok(_)) { assert(false); Debug.print("FAIL [SEC]: anonymous login accepted") };
   case (#err(msg)) { Debug.print("PASS [SEC]: anonymous login rejected: " # msg) };

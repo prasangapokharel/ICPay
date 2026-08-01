@@ -1,6 +1,14 @@
+import Text "mo:core/Text";
 import Config "../config/Config";
 
 module {
+  // Usernames are how one user names another when sending funds, so "Alice" and
+  // "alice" must not be separate accounts. Every lookup and uniqueness check
+  // goes through this; the display form the user typed is kept on the record.
+  public func normalize(name: Text): Text {
+    Text.toLower(name);
+  };
+
   public func validate(name: Text): ?Text {
     let len = name.size();
     if (len < Config.MIN_USERNAME_LENGTH) {

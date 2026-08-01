@@ -8,7 +8,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { formatE8s } from "@/lib/wallet-utils"
+import { formatE8s, explorerTxUrl } from "@/lib/wallet-utils"
 import { cn } from "@/lib/utils"
 
 type SendSuccessProps = {
@@ -60,7 +60,7 @@ export function SendSuccess({ amount, recipient, blockIndex, onDone }: SendSucce
               {label}
             </p>
             <a
-              href={`https://dashboard.internetcomputer.org/transaction/${blockIndex}`}
+              href={explorerTxUrl(blockIndex)}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground underline underline-offset-2"

@@ -20,7 +20,6 @@ export interface WalletActor {
   health: () => Promise<string>
   login: () => Promise<AuthResult>
   register: (username: string) => Promise<AuthResult>
-  getProfile: () => Promise<[] | [UserPublic]>
   getUser: () => Promise<[] | [UserPublic]>
   updateUsername: (newUsername: string) => Promise<ApiResult_2>
   checkUsername: (name: string) => Promise<boolean>
@@ -37,7 +36,6 @@ export interface WalletActor {
   transferByAccountId: (accountId: string, amount: bigint, memo: [] | [string]) => Promise<ApiResult>
   getTransactions: (page: bigint, pageSize: bigint) => Promise<ApiResult_7>
   getTransactionDetail: (txId: TxId) => Promise<ApiResult_1>
-  getExplorerUrl: (txId: TxId) => Promise<string>
   getSettings: () => Promise<ApiResult_3>
   updateSettings: (theme: string, language: string, notifications: boolean) => Promise<ApiResult_3>
 }
@@ -175,7 +173,6 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     health: IDL.Func([], [IDL.Text], ["query"]),
     login: IDL.Func([], [AuthResult], []),
     register: IDL.Func([IDL.Text], [AuthResult], []),
-    getProfile: IDL.Func([], [IDL.Opt(UserPublic)], ["query"]),
     getUser: IDL.Func([], [IDL.Opt(UserPublic)], ["query"]),
     updateUsername: IDL.Func([IDL.Text], [ApiResult_2], []),
     checkUsername: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
@@ -190,9 +187,8 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     transferByPrincipal: IDL.Func([IDL.Principal, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
     transferByAccount: IDL.Func([Account, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
     transferByAccountId: IDL.Func([IDL.Text, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
-    getTransactions: IDL.Func([IDL.Nat, IDL.Nat], [ApiResult_7], []),
-    getTransactionDetail: IDL.Func([TxId], [ApiResult_1], []),
-    getExplorerUrl: IDL.Func([TxId], [IDL.Text], ["query"]),
+    getTransactions: IDL.Func([IDL.Nat, IDL.Nat], [ApiResult_7], ["query"]),
+    getTransactionDetail: IDL.Func([TxId], [ApiResult_1], ["query"]),
     getSettings: IDL.Func([], [ApiResult_3], []),
     updateSettings: IDL.Func([IDL.Text, IDL.Text, IDL.Bool], [ApiResult_3], []),
   })

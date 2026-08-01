@@ -44,6 +44,12 @@ export function formatPrincipal(p: string): string {
   return `${p.slice(0, 5)}...${p.slice(-5)}`
 }
 
+// The dashboard indexes by ledger block index, not our internal tx id, so this
+// is only linkable once a transfer has settled and reported a block.
+export function explorerTxUrl(blockIndex: bigint): string {
+  return `https://dashboard.internetcomputer.org/transaction/${blockIndex}`
+}
+
 export function formatTime(t: bigint): string {
   const ms = Number(t / 1_000_000n)
   const date = new Date(ms)

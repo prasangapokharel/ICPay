@@ -69,6 +69,7 @@ run_test "$ROOT/testing/ledger/Account.test.mo" "Account"
 echo "--- Service Tests ---"
 run_test "$ROOT/testing/services/AuthService.test.mo" "AuthService"
 run_test "$ROOT/testing/services/UserService.test.mo" "UserService"
+run_test "$ROOT/testing/services/AdminService.test.mo" "AdminService"
 run_test "$ROOT/testing/services/TransactionService.test.mo" "TransactionService"
 run_test "$ROOT/testing/services/SettingsService.test.mo" "SettingsService"
 
