@@ -183,3 +183,14 @@
     );
   }
 }
+
+/* Background videos are decorative: hide every native control surface so
+   browsers that briefly block muted autoplay never flash a play button. */
+video[aria-hidden='true']::-webkit-media-controls,
+video[aria-hidden='true']::-webkit-media-controls-start-playback-button,
+video[aria-hidden='true']::-moz-media-controls {
+  display: none !important;
+  appearance: none;
+  opacity: 0;
+  pointer-events: none;
+}

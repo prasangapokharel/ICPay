@@ -26,6 +26,19 @@ export default function LoginPage() {
     if (!isLoading && isAuthenticated) router.replace("/")
   }, [isLoading, isAuthenticated, router])
 
+  // Retry muted autoplay on user interaction: some browsers defer video start
+  // until the first tap, which would leave a static poster with a play button.
+  useEffect(() => {
+    function resume() {
+      const v = document.querySelector<HTMLVideoElement>(
+        'video[aria-hidden="true"]',
+      )
+      v?.play().catch(() => {})
+    }
+    window.addEventListener("pointerdown", resume, { once: true })
+    return () => window.removeEventListener("pointerdown", resume)
+  }, [])
+
   if (isLoading || isAuthenticated) {
     return (
       <div className="flex min-h-svh items-center justify-center bg-muted/40">
@@ -55,6 +68,8 @@ export default function LoginPage() {
           muted
           loop
           playsInline
+          preload="auto"
+          disablePictureInPicture
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10 size-full object-cover object-center"
         />
