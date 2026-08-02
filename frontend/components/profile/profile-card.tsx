@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { UserIcon, Tick02Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { UserIcon, Tick02Icon, Cancel01Icon, ShoppingBag01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import type { UserPublic } from "@/services/types"
 import { formatPrincipal } from "@/lib/wallet-utils"
 import Link from "next/link"
@@ -132,6 +132,16 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
             </Button>
           </form>
         )}
+        <Link
+          href="/username"
+          className="flex items-center justify-between gap-3 rounded-xl border border-dashed px-3 py-2.5 transition-colors hover:bg-accent"
+        >
+          <span className="flex items-center gap-2 text-xs text-muted-foreground">
+            <HugeiconsIcon icon={ShoppingBag01Icon} className="size-4 shrink-0" />
+            Want something shorter? Buy a premium username
+          </span>
+          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 shrink-0 text-muted-foreground" />
+        </Link>
       </CardContent>
     </Card>
   )
