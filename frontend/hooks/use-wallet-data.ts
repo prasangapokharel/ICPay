@@ -56,22 +56,20 @@ export function useDashboard() {
   }
 }
 
-// The custodian principal that holds everyone's funds. Both calls derive it from
-// the same LedgerService.depositAccount, but getDepositAddress is a query that
-// answers in about a second while getDashboard is a ~6.6s update call. Taking
-// whichever has landed keeps the ledger reads off the slow call's critical path.
+// The custodian principal that holds everyone's funds. Read only from
+// getDepositAddress, which is a query: taking it from the dashboard as well
+// would make every balance read pull in that update call, which is the cost
+// this hook exists to avoid.
 function useCustodian(): Principal | undefined {
-  const { data: dashboard } = useDashboard()
   const { data: deposit } = useDepositAddress()
-  return deposit?.address.owner ?? dashboard?.depositAddress.owner
+  return deposit?.address.owner
 }
 
-// The dashboard's balance arrives inside a ~6.6s update call. The same number is
-// readable straight from the ledger as a query in about a second, so the balance
-// card can settle long before the rest of the dashboard does.
+// The balance is read straight from the ledger as a query rather than through
+// the dashboard, so a page that only needs a number never pays for an update
+// call.
 export function useLiveBalance() {
   const { identity } = useAuth()
-  const { data: dashboard } = useDashboard()
   const custodian = useCustodian()
 
   const { data } = useSWR(
@@ -88,9 +86,9 @@ export function useLiveBalance() {
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 30_000 }
   )
 
-  // Falls back to the dashboard's copy until the ledger query lands, so the card
-  // never renders an empty balance it already knows.
-  return data ?? dashboard?.icpBalance
+  // undefined until the ledger answers, which callers render as a skeleton.
+  // Returning 0n instead would show a real holder an empty wallet.
+  return data
 }
 
 export function useDepositAddress() {

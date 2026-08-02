@@ -13,10 +13,10 @@ import { Tick02Icon, Cancel01Icon, ShoppingBag01Icon } from "@hugeicons/core-fre
 import { purchaseUsername } from "@/services/buy/buy"
 import type { Purchase } from "@/services/types"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useRefreshWallet } from "@/hooks/use-wallet-data"
 import { formatAmount, ICP_FEE } from "@/lib/wallet-utils"
 import { priceFor, tierFor, validateUsername, TIERS, USERNAME_MAX_LENGTH } from "@/lib/username"
-import { useUsernameAvailability } from "@/hooks/use-wallet-data"
+import { useUsernameAvailability, useLiveBalance } from "@/hooks/use-wallet-data"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { primeSuccessChime } from "@/lib/success-chime"
 import { cn } from "@/lib/utils"
@@ -24,7 +24,6 @@ import { cn } from "@/lib/utils"
 export default function UsernamePage() {
   const router = useRouter()
   const { identity } = useAuth()
-  const { data: dashboard } = useDashboard()
   const refreshWallet = useRefreshWallet()
   const [name, setName] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -40,7 +39,7 @@ export default function UsernamePage() {
   const price = trimmed ? priceFor(trimmed) : 0n
   const tier = trimmed ? tierFor(trimmed) : null
   const total = price + ICP_FEE
-  const balance = dashboard?.icpBalance
+  const balance = useLiveBalance()
   const insufficient = balance !== undefined && trimmed !== "" && total > balance
   const canBuy =
     trimmed !== "" && !shapeError && available === true && !insufficient && !buying

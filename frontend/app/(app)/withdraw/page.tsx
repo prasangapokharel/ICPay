@@ -4,7 +4,7 @@ import { useState } from "react"
 import { WithdrawForm } from "@/components/withdraw/withdraw-form"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { Skeleton } from "@/components/ui/skeleton"
 import { withdraw } from "@/services/withdraw/withdraw"
 
@@ -12,10 +12,9 @@ type Sent = { amount: bigint; recipient: string; blockIndex: bigint }
 
 export default function WithdrawPage() {
   const { identity } = useAuth()
-  const { data, isLoading } = useDashboard()
+  const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
   const [sent, setSent] = useState<Sent | null>(null)
-  const balance = data?.icpBalance ?? 0n
 
   const handleWithdraw = async (amount: bigint, destination: string): Promise<string | null> => {
     const result = await withdraw(identity, amount, destination)
@@ -46,7 +45,7 @@ export default function WithdrawPage() {
         <p className="text-sm text-muted-foreground">Send ICP to an external wallet</p>
       </div>
 
-      {isLoading && !data ? (
+      {balance === undefined ? (
         <div className="space-y-4">
           <Skeleton className="h-16 w-full rounded-2xl" />
           <Skeleton className="h-14 w-full rounded-xl" />

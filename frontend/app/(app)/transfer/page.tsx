@@ -4,7 +4,7 @@ import { useState } from "react"
 import { TransferForm } from "@/components/transfer/transfer-form"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useRefreshWallet, useDashboard } from "@/hooks/use-wallet-data"
+import { useRefreshWallet, useLiveBalance } from "@/hooks/use-wallet-data"
 import { transfer, type TransferMode } from "@/services/transfer/transfer"
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
@@ -12,7 +12,7 @@ type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: stri
 export default function TransferPage() {
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
-  const { data: dashboard } = useDashboard()
+  const balance = useLiveBalance()
   const [sent, setSent] = useState<Sent | null>(null)
 
   const handleTransfer = async (
@@ -53,7 +53,7 @@ export default function TransferPage() {
         <h1 className="text-xl font-bold tracking-tight">Send</h1>
         <p className="text-sm text-muted-foreground">Transfer ICP to another wallet</p>
       </div>
-      <TransferForm onTransfer={handleTransfer} balance={dashboard?.icpBalance} />
+      <TransferForm onTransfer={handleTransfer} balance={balance} />
     </div>
   )
 }

@@ -18,7 +18,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
-import { useResolvedUsername, useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useResolvedUsername, useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { tip } from "@/services/transfer/transfer"
 import { useAuth } from "@/components/auth/auth-provider"
 
@@ -28,7 +28,7 @@ export function ProfileView() {
   const pathname = usePathname()
   const router = useRouter()
   const { identity } = useAuth()
-  const { data: dashboard } = useDashboard()
+  const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
   const [tipOpen, setTipOpen] = useState(false)
   const [tipped, setTipped] = useState<Tipped | null>(null)
@@ -137,7 +137,7 @@ export function ProfileView() {
         open={tipOpen}
         onOpenChange={setTipOpen}
         username={username}
-        balance={dashboard?.icpBalance}
+        balance={balance}
         onTip={handleTip}
       />
     </div>
