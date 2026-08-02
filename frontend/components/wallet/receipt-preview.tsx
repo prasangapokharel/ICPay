@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Download04Icon, Share08Icon } from "@hugeicons/core-free-icons"
+import { Share08Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { downloadReceipt, receiptPng, shareReceipt, type Receipt } from "@/lib/receipt"
+import { receiptPng, shareReceipt, type Receipt } from "@/lib/receipt"
 
 // The card is 1080x1480, so it is shown at its own ratio rather than a fixed
 // height -- the whole point is that what you see is what gets shared.
@@ -72,16 +72,10 @@ export function ReceiptPreview({
       if (outcome === "shared") onOpenChange(false)
       else if (outcome === "downloaded") setNote("Receipt saved to your downloads.")
     } catch {
-      setNote("Could not share the receipt. Try saving it instead.")
+      setNote("Could not share the receipt. Please try again.")
     } finally {
       setBusy(false)
     }
-  }
-
-  const handleDownload = () => {
-    if (!blob) return
-    downloadReceipt(blob, receipt.blockIndex)
-    setNote("Receipt saved to your downloads.")
   }
 
   return (
@@ -112,19 +106,10 @@ export function ReceiptPreview({
 
         {note && <p className="text-center text-xs text-muted-foreground">{note}</p>}
 
-        <DialogFooter className="gap-2">
+        <DialogFooter>
           <Button className="h-12 text-base" onClick={handleShare} disabled={!blob || busy}>
             <HugeiconsIcon icon={Share08Icon} className="size-4" />
             Share
-          </Button>
-          <Button
-            variant="outline"
-            className="h-12 text-base"
-            onClick={handleDownload}
-            disabled={!blob || busy}
-          >
-            <HugeiconsIcon icon={Download04Icon} className="size-4" />
-            Save image
           </Button>
         </DialogFooter>
       </DialogContent>

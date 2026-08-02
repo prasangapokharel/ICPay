@@ -213,10 +213,6 @@ export function receiptFilename(blockIndex: bigint): string {
   return `icpay-receipt-${blockIndex}.png`
 }
 
-export function downloadReceipt(blob: Blob, blockIndex: bigint): void {
-  triggerDownload(blob, receiptFilename(blockIndex))
-}
-
 function triggerDownload(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob)
   const a = document.createElement("a")
