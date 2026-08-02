@@ -15,8 +15,14 @@ export default function TransferPage() {
   const { data: dashboard } = useDashboard()
   const [sent, setSent] = useState<Sent | null>(null)
 
-  const handleTransfer = async (mode: TransferMode, to: string, amount: bigint, memo?: string): Promise<string | null> => {
-    const result = await transfer(identity, mode, to, amount, memo)
+  const handleTransfer = async (
+    mode: TransferMode,
+    to: string,
+    amount: bigint,
+    memo?: string,
+    subaccount?: Uint8Array
+  ): Promise<string | null> => {
+    const result = await transfer(identity, mode, to, amount, memo, subaccount)
     if ("err" in result) return result.err
 
     refreshWallet()

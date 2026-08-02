@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { TipDrawer } from "@/components/icpverse/tip-drawer"
+import { AccountStatsCard } from "@/components/icpverse/account-stats-card"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -126,6 +127,10 @@ export function ProfileView() {
             Tip
           </Button>
         )}
+
+        <div className="w-full pt-8">
+          <AccountStatsCard principal={principal} />
+        </div>
       </div>
 
       <TipDrawer

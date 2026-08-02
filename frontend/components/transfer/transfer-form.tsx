@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,7 +17,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { ArrowUpRight01Icon, QrCodeScanIcon } from "@hugeicons/core-free-icons"
 import {
   formatAmount,
   memoByteLength,
@@ -31,12 +31,29 @@ import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-
 import { useResolvedUsername } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
 import { Principal } from "@dfinity/principal"
+import { QrScanner, takeScannedAddress } from "@/components/scan/scan"
+import { addressText, type ScannedAddress } from "@/lib/icp-address"
 import type { TransferMode } from "@/services/transfer/transfer"
 
 const labels: Record<TransferMode, { label: string; placeholder: string }> = {
   username: { label: "Recipient username", placeholder: "username" },
   principal: { label: "Recipient principal", placeholder: "aaaaa-aa..." },
   account: { label: "Account identifier", placeholder: "64-character hex" },
+}
+
+// An ICRC-1 address names an account under a principal, so it fills the
+// principal tab and carries its subaccount alongside.
+const modeFor: Record<ScannedAddress["kind"], TransferMode> = {
+  account: "account",
+  icrc1: "principal",
+  principal: "principal",
+  username: "username",
+}
+
+function toHex(bytes: Uint8Array): string {
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
 }
 
 function isValidFor(mode: TransferMode, v: string): boolean {
@@ -58,7 +75,13 @@ export function TransferForm({
   onTransfer,
   balance,
 }: {
-  onTransfer: (mode: TransferMode, to: string, amount: bigint, memo?: string) => Promise<string | null>
+  onTransfer: (
+    mode: TransferMode,
+    to: string,
+    amount: bigint,
+    memo?: string,
+    subaccount?: Uint8Array
+  ) => Promise<string | null>
   balance?: bigint
 }) {
   const [mode, setMode] = useState<TransferMode>("username")
@@ -68,6 +91,27 @@ export function TransferForm({
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const [scanOpen, setScanOpen] = useState(false)
+  // Only ever set by a scan. Held apart from `to` because the recipient field
+  // shows the owner, while the money is owed to one account underneath it.
+  const [subaccount, setSubaccount] = useState<Uint8Array | null>(null)
+
+  const applyScan = (hit: ScannedAddress) => {
+    setMode(modeFor[hit.kind])
+    setTo(addressText(hit))
+    setSubaccount(hit.kind === "icrc1" ? hit.subaccount : null)
+    setError(null)
+  }
+
+  // A scan started elsewhere in the app lands here through session storage.
+  // Reading it during render is not an option: the page is prerendered at build
+  // time, where sessionStorage does not exist, so a filled field would mismatch
+  // the baked HTML on hydration.
+  useEffect(() => {
+    const hit = takeScannedAddress()
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (hit) applyScan(hit)
+  }, [])
 
   const parsed = parseIcp(amount)
   const total = parsed === null ? null : parsed + ICP_FEE
@@ -100,7 +144,7 @@ export function TransferForm({
     if (parsed === null) return
     setLoading(true)
     setError(null)
-    const err = await onTransfer(mode, to.trim(), parsed, memo.trim() || undefined)
+    const err = await onTransfer(mode, to.trim(), parsed, memo.trim() || undefined, subaccount ?? undefined)
     setLoading(false)
     if (err) {
       setError(err)
@@ -109,6 +153,7 @@ export function TransferForm({
     }
     setConfirmOpen(false)
     setTo("")
+    setSubaccount(null)
     setAmount("")
     setMemo("")
   }
@@ -120,6 +165,7 @@ export function TransferForm({
         onValueChange={(v) => {
           setMode(v as TransferMode)
           setTo("")
+          setSubaccount(null)
           setError(null)
         }}
       >
@@ -149,18 +195,31 @@ export function TransferForm({
 
       <div className="space-y-2">
         <Label htmlFor="to">{labels[mode].label}</Label>
-        <Input
-          id="to"
-          placeholder={labels[mode].placeholder}
-          autoComplete="off"
-          spellCheck={false}
-          value={to}
-          onChange={(e) => {
-            setTo(e.target.value)
-            setError(null)
-          }}
-          className={mode === "username" ? undefined : "font-mono text-xs"}
-        />
+        <div className="relative">
+          <Input
+            id="to"
+            placeholder={labels[mode].placeholder}
+            autoComplete="off"
+            spellCheck={false}
+            value={to}
+            onChange={(e) => {
+              setTo(e.target.value)
+              // A subaccount left over from a scan would silently redirect a
+              // hand-typed principal's payment to a different account.
+              setSubaccount(null)
+              setError(null)
+            }}
+            className={mode === "username" ? "pr-11" : "pr-11 font-mono text-xs"}
+          />
+          <button
+            type="button"
+            aria-label="Scan a QR code"
+            onClick={() => setScanOpen(true)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <HugeiconsIcon icon={QrCodeScanIcon} className="size-5" />
+          </button>
+        </div>
         {mode === "username" && (
           <RecipientLookup
             username={to}
@@ -169,6 +228,8 @@ export function TransferForm({
           />
         )}
       </div>
+
+      <QrScanner open={scanOpen} onOpenChange={setScanOpen} onScan={applyScan} />
 
       <div className="space-y-2">
         <div className="flex items-baseline justify-between">
@@ -243,6 +304,7 @@ export function TransferForm({
               {!(mode === "username" && resolved) && (
                 <Row label="To" value={to.trim()} mono />
               )}
+              {subaccount && <Row label="Subaccount" value={toHex(subaccount)} mono />}
               <Row label="Network fee" value={`${formatAmount(ICP_FEE)} ICP`} />
               <Row
                 label="Total deducted"

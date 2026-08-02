@@ -32,16 +32,6 @@ import { cn } from "@/lib/utils"
 
 const PRESETS = [1n, 5n, 10n] as const
 
-// Canned memos for the common cases, so the usual tip is two taps and no typing.
-// Emoji cost 3-4 UTF-8 bytes each, so these are kept well inside MEMO_MAX_BYTES
-// (the longest is 16 bytes) -- the counter and the backend both still enforce it.
-const REACTIONS = [
-  { emoji: "🔥", label: "Banger", memo: "🔥 Banger" },
-  { emoji: "☕", label: "Coffee", memo: "☕ Coffee on me" },
-  { emoji: "🚀", label: "Moon", memo: "🚀 To the moon" },
-  { emoji: "🙏", label: "Thanks", memo: "🙏 Thank you" },
-] as const
-
 export function TipDrawer({
   open,
   onOpenChange,
@@ -186,29 +176,6 @@ export function TipDrawer({
               >
                 {memoByteLength(message.trim())}/{MEMO_MAX_BYTES}
               </span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {REACTIONS.map((r) => {
-                const active = message === r.memo
-                return (
-                  <button
-                    key={r.emoji}
-                    type="button"
-                    // Tapping the active reaction clears it, so a preset can be
-                    // undone without selecting the text and deleting it.
-                    onClick={() => setMessage(active ? "" : r.memo)}
-                    className={cn(
-                      "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium ring-1 transition-colors",
-                      active
-                        ? "bg-primary/10 text-primary ring-primary"
-                        : "bg-muted/40 ring-border hover:bg-accent"
-                    )}
-                  >
-                    <span aria-hidden="true">{r.emoji}</span>
-                    {r.label}
-                  </button>
-                )
-              })}
             </div>
             <Input
               id="tip-message"

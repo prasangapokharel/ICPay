@@ -15,11 +15,22 @@ export function transfer(
   mode: TransferMode,
   to: string,
   amount: bigint,
-  memo?: string
+  memo?: string,
+  subaccount?: Uint8Array
 ): Promise<Outcome<TransferResult>> {
   return call(identity, "Transfer failed", (actor) => {
     const arg = optional(memo)
     if (isHexAccountId(to)) return actor.transferByAccountId(to, amount, arg)
+    // A subaccount outranks the tab: transferByPrincipal has nowhere to put one,
+    // so honouring the mode here would pay the owner's default account instead
+    // of the account the address named, and report success.
+    if (subaccount) {
+      return actor.transferByAccount(
+        { owner: Principal.fromText(to), subaccount: [subaccount] },
+        amount,
+        arg
+      )
+    }
     switch (mode) {
       case "username":
         return actor.transferByUsername(to, amount, arg)

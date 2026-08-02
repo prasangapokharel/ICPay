@@ -10,7 +10,7 @@ const CRC32_TABLE = (() => {
   return table
 })()
 
-function crc32(bytes: Uint8Array): number {
+export function crc32(bytes: Uint8Array): number {
   let crc = 0xffffffff
   for (const b of bytes) crc = CRC32_TABLE[(crc ^ b) & 0xff] ^ (crc >>> 8)
   return (crc ^ 0xffffffff) >>> 0
@@ -22,7 +22,7 @@ function toHex(bytes: Uint8Array): string {
     .join("")
 }
 
-function base32NoPad(bytes: Uint8Array): string {
+export function base32NoPad(bytes: Uint8Array): string {
   const alphabet = "abcdefghijklmnopqrstuvwxyz234567"
   let bits = 0
   let value = 0

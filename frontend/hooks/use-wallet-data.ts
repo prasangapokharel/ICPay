@@ -2,6 +2,7 @@
 
 import useSWR, { useSWRConfig } from "swr"
 import type { Identity } from "@dfinity/agent"
+import { Principal } from "@dfinity/principal"
 import { useAuth } from "@/components/auth/auth-provider"
 import type { DashboardData, UserPublic } from "@/services/types"
 import { getDashboard } from "@/services/dashboard/dashboard"
@@ -9,6 +10,7 @@ import { getDepositAddress } from "@/services/deposit/deposit"
 import { getTransactions } from "@/services/transactions/transactions"
 import { resolveUsername, searchUsers } from "@/services/profile/profile"
 import { checkUsername } from "@/services/buy/buy"
+import { fetchAccountStats, type AccountStats } from "@/services/account/account"
 import {
   listLedgerIds,
   fetchBalances,
@@ -273,5 +275,77 @@ export function useTokenHoldings() {
       return a.symbol.localeCompare(b.symbol)
     }),
     isLoading: loadingBalances || (heldIds.length > 0 && loadingMetadata && !metadata),
+  }
+}
+
+// Public account stats for any principal, read straight from the NNS index
+// canister by query -- the ICPay canister is never involved, so viewing a
+// profile costs it nothing.
+export function useAccountStats(owner: string | null) {
+  const { identity } = useAuth()
+  const { data: dashboard } = useDashboard()
+  const custodian = dashboard?.depositAddress.owner?.toText()
+
+  const { data, isLoading } = useSWR(
+    owner ? (["account-stats", owner] as const) : null,
+    async () => {
+      // An ICPay user's funds sit in a subaccount under the custodian, not at
+      // their own principal, so the balance is looked up where it actually is.
+      const isIcpayUser = custodian !== undefined
+      const stats = await fetchAccountStats(
+        isIcpayUser ? custodian : owner!,
+        isIcpayUser ? custodialSubaccount(Principal.fromText(owner!)) : undefined,
+        identity
+      )
+      writeCachedStats(owner!, stats)
+      return stats
+    },
+    {
+      // The seed is the last value seen for this account, so a revisit paints
+      // real numbers before the query lands rather than a skeleton.
+      fallbackData: owner ? readCachedStats(owner) : undefined,
+      revalidateOnFocus: false,
+      keepPreviousData: false,
+      dedupingInterval: 60_000,
+    }
+  )
+
+  return { stats: data, isLoading: isLoading && !data }
+}
+
+const STATS_KEY = "icpay:stats:"
+
+function readCachedStats(owner: string): AccountStats | undefined {
+  if (typeof window === "undefined") return undefined
+  try {
+    const raw = localStorage.getItem(STATS_KEY + owner)
+    if (!raw) return undefined
+    const j = JSON.parse(raw)
+    return {
+      balance: BigInt(j.balance),
+      txCount: j.txCount,
+      firstBlock: j.firstBlock === null ? undefined : BigInt(j.firstBlock),
+      lastBlock: j.lastBlock === null ? undefined : BigInt(j.lastBlock),
+    }
+  } catch {
+    // A stale entry from an older shape is not worth reasoning about; the query
+    // is already in flight and will overwrite it.
+    return undefined
+  }
+}
+
+function writeCachedStats(owner: string, s: AccountStats) {
+  try {
+    localStorage.setItem(
+      STATS_KEY + owner,
+      JSON.stringify({
+        balance: s.balance.toString(),
+        txCount: s.txCount,
+        firstBlock: s.firstBlock?.toString() ?? null,
+        lastBlock: s.lastBlock?.toString() ?? null,
+      })
+    )
+  } catch {
+    // Private-browsing quota rejections must not break the profile.
   }
 }
