@@ -18,14 +18,18 @@ import {
 } from "@/components/ui/drawer"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { GiftIcon } from "@hugeicons/core-free-icons"
-import { formatAmount, memoByteLength, MEMO_MAX_BYTES } from "@/lib/wallet-utils"
+import {
+  formatAmount,
+  memoByteLength,
+  MEMO_MAX_BYTES,
+  parseIcp,
+  E8S,
+  ICP_FEE,
+} from "@/lib/wallet-utils"
 import { AmountInput } from "@/components/shared/amount-input"
 import { avatarUriFor } from "@/lib/avatar"
 import { cn } from "@/lib/utils"
 
-const E8S = 100_000_000n
-// Matches Config.ICP_FEE; the ledger charges it on top of the amount sent.
-const ICP_FEE = 10_000n
 const PRESETS = [1n, 5n, 10n] as const
 
 // Canned memos for the common cases, so the usual tip is two taps and no typing.
@@ -249,12 +253,4 @@ export function TipDrawer({
       </DrawerContent>
     </Drawer>
   )
-}
-
-function parseIcp(v: string): bigint | null {
-  const t = v.trim()
-  if (t === "" || t === "." || !/^\d*\.?\d*$/.test(t)) return null
-  const n = Number(t)
-  if (!Number.isFinite(n) || n <= 0) return null
-  return BigInt(Math.round(n * Number(E8S)))
 }

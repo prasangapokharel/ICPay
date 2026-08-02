@@ -48,7 +48,8 @@ export function login(): Promise<Identity | null> {
 
     // auth-client polls for a user-dismissed popup and reports it through
     // onError, so no extra watchdog is needed for that case.
-    authClient      .login({
+    authClient
+      .login({
         identityProvider: getIdentityProvider(),
         derivationOrigin: getDerivationOrigin(),
         onSuccess: () => finish(authClient.getIdentity()),

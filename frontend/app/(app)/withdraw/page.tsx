@@ -9,8 +9,7 @@ import { useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { ApiResult } from "@/services/types"
 import { Principal } from "@dfinity/principal"
-
-const isHexAccountId = (s: string) => /^[0-9a-fA-F]{64}$/.test(s)
+import { isHexAccountId } from "@/lib/wallet-utils"
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint }
 

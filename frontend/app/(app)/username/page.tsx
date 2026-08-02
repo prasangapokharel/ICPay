@@ -13,14 +13,11 @@ import { Tick02Icon, Cancel01Icon, ShoppingBag01Icon } from "@hugeicons/core-fre
 import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
-import { formatAmount } from "@/lib/wallet-utils"
+import { formatAmount, ICP_FEE } from "@/lib/wallet-utils"
 import { priceFor, tierFor, validateUsername, TIERS, USERNAME_MAX_LENGTH } from "@/lib/username"
 import { useUsernameAvailability } from "@/hooks/use-wallet-data"
 import { toast } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
-
-// Matches Config.ICP_FEE; the ledger charges it on top of the price.
-const ICP_FEE = 10_000n
 
 export default function UsernamePage() {
   const router = useRouter()

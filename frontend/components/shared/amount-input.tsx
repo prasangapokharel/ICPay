@@ -3,20 +3,13 @@
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { formatAmount } from "@/lib/wallet-utils"
+import { formatAmount, parseIcp, E8S } from "@/lib/wallet-utils"
 import { formatUsdPrecise, useIcpPrice } from "@/lib/use-icp-price"
 
-const E8S = 100_000_000
 const PERCENTAGES = [25, 50, 75, 100]
 
-function parseIcp(v: string): bigint | null {
-  const t = v.trim()
-  if (t === "" || t === "." || !/^\d*\.?\d*$/.test(t)) return null
-  const n = Number(t)
-  if (!Number.isFinite(n) || n <= 0) return null
-  return BigInt(Math.round(n * E8S))
-}
-
+// Not formatAmount: that adds thousands separators and caps at 4 decimals, both
+// of which parseIcp rejects when the value is read back out of the field.
 function toPlainIcp(e8s: bigint): string {
   const whole = e8s / 100_000_000n
   const fraction = (e8s % 100_000_000n).toString().padStart(8, "0").replace(/0+$/, "")
@@ -40,7 +33,7 @@ export function AmountInput({
 }) {
   const { price } = useIcpPrice()
   const parsed = parseIcp(value)
-  const usd = parsed !== null && price ? (Number(parsed) / E8S) * price.usd : null
+  const usd = parsed !== null && price ? (Number(parsed) / Number(E8S)) * price.usd : null
   const max = maxE8s ?? 0n
 
   const setAmount = (e8s: bigint) => onChange(toPlainIcp(e8s))

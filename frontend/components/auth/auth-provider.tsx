@@ -41,10 +41,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const id = authClient.getIdentity()
         if (id.getPrincipal().isAnonymous()) return
 
-        
         try {
           const actor = await getWalletActor(id)
-          
           await withTimeout(actor.login(), 20_000)
           setIdentity(id)
         } catch (e) {

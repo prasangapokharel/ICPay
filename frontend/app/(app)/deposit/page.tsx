@@ -12,7 +12,7 @@ import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDepositAddress, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { icrc1Account } from "@/lib/account-id"
-import { formatAmount } from "@/lib/wallet-utils"
+import { formatAmount, copyText } from "@/lib/wallet-utils"
 import { toast } from "@/components/ui/toast"
 
 export default function DepositPage() {
@@ -25,16 +25,7 @@ export default function DepositPage() {
   const accountId = data?.accountId ?? ""
 
   const handleCopy = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text)
-    } catch {
-      const ta = document.createElement("textarea")
-      ta.value = text
-      document.body.appendChild(ta)
-      ta.select()
-      document.execCommand("copy")
-      document.body.removeChild(ta)
-    }
+    await copyText(text)
     toast.add({ title: "Address copied to clipboard" })
   }
 

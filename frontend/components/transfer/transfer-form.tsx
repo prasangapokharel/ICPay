@@ -18,7 +18,14 @@ import {
 } from "@/components/ui/drawer"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
-import { formatAmount, memoByteLength, MEMO_MAX_BYTES } from "@/lib/wallet-utils"
+import {
+  formatAmount,
+  memoByteLength,
+  MEMO_MAX_BYTES,
+  parseIcp,
+  isHexAccountId,
+  ICP_FEE,
+} from "@/lib/wallet-utils"
 import { AmountInput } from "@/components/shared/amount-input"
 import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-card"
 import { useResolvedUsername } from "@/hooks/use-wallet-data"
@@ -27,28 +34,16 @@ import { Principal } from "@dfinity/principal"
 
 export type TransferMode = "username" | "principal" | "account"
 
-// Matches Config.ICP_FEE; the ledger charges it on top of the amount sent.
-const ICP_FEE = 10_000n
-const E8S = 100_000_000
-
 const labels: Record<TransferMode, { label: string; placeholder: string }> = {
   username: { label: "Recipient username", placeholder: "username" },
   principal: { label: "Recipient principal", placeholder: "aaaaa-aa..." },
   account: { label: "Account identifier", placeholder: "64-character hex" },
 }
 
-function parseIcp(v: string): bigint | null {
-  const t = v.trim()
-  if (t === "" || t === "." || !/^\d*\.?\d*$/.test(t)) return null
-  const n = Number(t)
-  if (!Number.isFinite(n) || n <= 0) return null
-  return BigInt(Math.round(n * E8S))
-}
-
 function isValidFor(mode: TransferMode, v: string): boolean {
   const t = v.trim()
   if (!t) return false
-  if (mode === "account") return /^[0-9a-fA-F]{64}$/.test(t)
+  if (mode === "account") return isHexAccountId(t)
   if (mode === "principal") {
     try {
       Principal.fromText(t)

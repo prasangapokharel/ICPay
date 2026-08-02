@@ -8,14 +8,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Upload01Icon } from "@hugeicons/core-free-icons"
-import { formatAmount } from "@/lib/wallet-utils"
+import { formatAmount, parseIcp, isHexAccountId, ICP_FEE } from "@/lib/wallet-utils"
 import { AmountInput } from "@/components/shared/amount-input"
 import { Principal } from "@dfinity/principal"
-
-// Matches Config.ICP_FEE on the canister. The ledger charges it on top of the
-// amount sent, so the most a user can withdraw is balance - fee.
-const ICP_FEE = 10_000n
-const E8S = 100_000_000
 
 type WithdrawFormProps = {
   balance: bigint
@@ -23,21 +18,13 @@ type WithdrawFormProps = {
 }
 
 function isValidDestination(v: string): boolean {
-  if (/^[0-9a-fA-F]{64}$/.test(v)) return true
+  if (isHexAccountId(v)) return true
   try {
     Principal.fromText(v)
     return true
   } catch {
     return false
   }
-}
-
-function parseIcp(v: string): bigint | null {
-  const t = v.trim()
-  if (t === "" || t === "." || !/^\d*\.?\d*$/.test(t)) return null
-  const n = Number(t)
-  if (!Number.isFinite(n) || n <= 0) return null
-  return BigInt(Math.round(n * E8S))
 }
 
 export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {

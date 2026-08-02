@@ -3,7 +3,8 @@
 import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
-import { avatarUriFor, shortPrincipal } from "@/lib/avatar"
+import { avatarUriFor } from "@/lib/avatar"
+import { shortPrincipal } from "@/lib/wallet-utils"
 import { cn } from "@/lib/utils"
 
 // The confirmation a payment app owes the user before they send money: proof the

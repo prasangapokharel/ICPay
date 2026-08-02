@@ -4,14 +4,14 @@ import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import { Home01Icon, UserMultipleIcon, Upload01Icon, Clock01Icon } from "@hugeicons/core-free-icons"
+import { Home01Icon, UserMultipleIcon, Upload01Icon, Menu01Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/", label: "Home", icon: Home01Icon },
   { href: "/icpverse", label: "ICPverse", icon: UserMultipleIcon },
-  { href: "/withdraw", label: "Withdraw", icon: Upload01Icon },
-  { href: "/transactions", label: "Activity", icon: Clock01Icon },
+  { href: "/transfer", label: "Withdraw", icon: Upload01Icon },
+  { href: "/settings", label: "Menu", icon: Menu01Icon },
 ]
 
 export function BottomNav() {
@@ -19,7 +19,7 @@ export function BottomNav() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href)
 
-  // Split around the centered Send action so the raised button sits mid-row.
+  // Split around the centered Buy action so the raised button sits mid-row.
   const left = navItems.slice(0, 2)
   const right = navItems.slice(2)
 
@@ -29,8 +29,8 @@ export function BottomNav() {
         {/* The raised button sits outside the bar: the glass surface clips its own
             children (overflow-hidden powers the inset border), so it is a sibling. */}
         <Link
-          href="/transfer"
-          aria-label="Send ICP"
+          href="/username"
+          aria-label="Buy a username"
           className="absolute -top-6 left-1/2 z-10 flex size-14 -translate-x-1/2 items-center justify-center transition-transform active:scale-95"
         >
           <Image

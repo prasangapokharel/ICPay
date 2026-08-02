@@ -8,6 +8,3 @@ export function avatarUriFor(seed: string): string {
   return createAvatar(adventurer, { seed }).toDataUri()
 }
 
-export function shortPrincipal(text: string): string {
-  return text.length > 12 ? `${text.slice(0, 6)}…${text.slice(-4)}` : text
-}

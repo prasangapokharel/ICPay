@@ -9,6 +9,7 @@ import { useRefreshWallet, useDashboard } from "@/hooks/use-wallet-data"
 import type { TransferMode } from "@/components/transfer/transfer-form"
 import type { ApiResult } from "@/services/types"
 import { Principal } from "@dfinity/principal"
+import { isHexAccountId } from "@/lib/wallet-utils"
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
@@ -17,8 +18,6 @@ export default function TransferPage() {
   const refreshWallet = useRefreshWallet()
   const { data: dashboard } = useDashboard()
   const [sent, setSent] = useState<Sent | null>(null)
-
-  const isHexAccountId = (s: string) => /^[0-9a-fA-F]{64}$/.test(s)
 
   const handleTransfer = async (mode: TransferMode, to: string, amount: bigint, memo?: string): Promise<string | null> => {
     if (!identity) return "Not authenticated"

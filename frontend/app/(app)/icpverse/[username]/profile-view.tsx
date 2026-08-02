@@ -14,7 +14,8 @@ import {
   CheckmarkCircle01Icon,
   GiftIcon,
 } from "@hugeicons/core-free-icons"
-import { avatarUriFor, shortPrincipal } from "@/lib/avatar"
+import { avatarUriFor } from "@/lib/avatar"
+import { copyText, shortPrincipal } from "@/lib/wallet-utils"
 import { shareReceipt } from "@/lib/receipt"
 import { useIcpPrice } from "@/lib/use-icp-price"
 import { useResolvedUsername, useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
@@ -43,16 +44,7 @@ export function ProfileView() {
 
   const handleCopy = async () => {
     if (!principal) return
-    try {
-      await navigator.clipboard.writeText(principal)
-    } catch {
-      const ta = document.createElement("textarea")
-      ta.value = principal
-      document.body.appendChild(ta)
-      ta.select()
-      document.execCommand("copy")
-      document.body.removeChild(ta)
-    }
+    await copyText(principal)
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
   }

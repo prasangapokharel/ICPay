@@ -15,7 +15,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, ArrowRight01Icon, LinkSquare02Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
-import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, explorerTxUrl } from "@/lib/wallet-utils"
+import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, explorerTxUrl, shortenCounterparty } from "@/lib/wallet-utils"
 import { cn } from "@/lib/utils"
 
 type TransactionListProps = {
@@ -108,7 +108,7 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
 
         <div className="min-w-0 flex-1 text-left">
           <p className={cn("truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
-            {shorten(counterparty)}
+            {shortenCounterparty(counterparty)}
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground/80">
             <span className="capitalize">{type}</span> · {formatTime(tx.createdAt)}
@@ -186,10 +186,3 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   )
 }
 
-// Username transfers are stored as "@name" and shown verbatim; addresses and
-// principals are far too long for a mobile row, so they get middle-truncated.
-function shorten(value: string): string {
-  if (value.startsWith("@")) return value
-  if (value.length <= 16) return value
-  return `${value.slice(0, 6)}…${value.slice(-4)}`
-}

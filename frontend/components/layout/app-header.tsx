@@ -8,6 +8,7 @@ import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { UserIcon, Settings01Icon, Logout01Icon, Sun01Icon, Moon02Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
+import { shortPrincipal } from "@/lib/wallet-utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -29,8 +30,7 @@ export function AppHeader() {
   useEffect(() => setMounted(true), [])
 
   const principal = identity?.getPrincipal().toText() ?? ""
-  const short =
-    principal.length > 12 ? `${principal.slice(0, 6)}…${principal.slice(-4)}` : principal
+  const short = shortPrincipal(principal)
 
   const avatarUri = useMemo(
     () => (principal ? createAvatar(adventurer, { seed: principal }).toDataUri() : ""),

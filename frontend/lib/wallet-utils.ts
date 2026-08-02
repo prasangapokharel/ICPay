@@ -2,6 +2,54 @@ import type { TxTypeVariant, TxStatusVariant } from "@/services/types"
 
 const ICP_DECIMALS = 8n
 
+export const E8S = 100_000_000n
+
+// Matches Config.ICP_FEE. The ledger charges this on top of every transfer.
+export const ICP_FEE = 10_000n
+
+// Account identifiers are 32-byte hashes rendered as hex, so anything else is a
+// principal or a username.
+const HEX_ACCOUNT_ID = /^[0-9a-fA-F]{64}$/
+
+export function isHexAccountId(s: string): boolean {
+  return HEX_ACCOUNT_ID.test(s)
+}
+
+// Parses a user-typed ICP amount into e8s. The digits-and-one-dot test rejects
+// forms Number() would otherwise accept -- "1e5", "0x10", "-1" -- which a person
+// typing an amount never means. Returns null for anything unparseable or <= 0.
+export function parseIcp(value: string): bigint | null {
+  const t = value.trim()
+  if (t === "" || t === "." || !/^\d*\.?\d*$/.test(t)) return null
+  const n = Number(t)
+  if (!Number.isFinite(n) || n <= 0) return null
+  return BigInt(Math.round(n * Number(E8S)))
+}
+
+// Username transfers are stored as "@name" and shown verbatim; addresses and
+// principals are far too long for a mobile row, so they get middle-truncated.
+export function shortenCounterparty(value: string): string {
+  if (value.startsWith("@")) return value
+  if (value.length <= 16) return value
+  return `${value.slice(0, 6)}…${value.slice(-4)}`
+}
+
+// navigator.clipboard is unavailable in insecure contexts and older WebViews, so
+// the deprecated execCommand path is kept as the fallback -- a wallet address
+// that cannot be copied is close to useless.
+export async function copyText(text: string): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(text)
+  } catch {
+    const ta = document.createElement("textarea")
+    ta.value = text
+    document.body.appendChild(ta)
+    ta.select()
+    document.execCommand("copy")
+    document.body.removeChild(ta)
+  }
+}
+
 // A memo is sent to the ledger as the ICRC-1 memo blob, which the ICP ledger
 // caps at 32 bytes. Measured in UTF-8 bytes rather than characters, since an
 // emoji costs four; exceeding it fails the transfer at the ledger.
@@ -37,6 +85,12 @@ export function formatTokenAmount(amount: bigint, decimals: number, maxFraction 
   // which looks like an empty wallet, so it gets a leading-approximation mark.
   if (!trimmed) return whole === 0n && amount > 0n ? "<0.000001" : whole.toLocaleString()
   return `${whole.toLocaleString()}.${trimmed}`
+}
+
+// 6/4 split, used wherever a principal is shown inline next to other text.
+// formatPrincipal's 5/5 split is the standalone-field form.
+export function shortPrincipal(text: string): string {
+  return text.length > 12 ? `${text.slice(0, 6)}…${text.slice(-4)}` : text
 }
 
 export function formatPrincipal(p: string): string {

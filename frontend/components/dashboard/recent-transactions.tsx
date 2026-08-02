@@ -10,13 +10,7 @@ import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
-import {
-  formatAmount,
-  formatTime,
-  getTxStatusVariant,
-  txTypeLabel,
-  txStatusLabel,
-} from "@/lib/wallet-utils"
+import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, shortenCounterparty } from "@/lib/wallet-utils"
 import { cn } from "@/lib/utils"
 
 type RecentTransactionsProps = {
@@ -82,7 +76,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
 
       <div className="min-w-0 flex-1">
         <p className={cn("truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
-          {formatCounterparty(counterparty)}
+          {shortenCounterparty(counterparty)}
         </p>
         <p className="mt-0.5 text-xs text-muted-foreground/80">
           <span className="capitalize">{type}</span> · {formatTime(tx.createdAt)}
@@ -115,10 +109,3 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   )
 }
 
-// Username transfers are stored as "@name" and shown verbatim; raw addresses and
-// principals are far too long for a mobile row, so they get middle-truncated.
-function formatCounterparty(value: string): string {
-  if (value.startsWith("@")) return value
-  if (value.length <= 16) return value
-  return `${value.slice(0, 6)}…${value.slice(-4)}`
-}
