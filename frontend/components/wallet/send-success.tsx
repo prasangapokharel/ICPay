@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -12,20 +12,40 @@ import { Spinner } from "@/components/ui/spinner"
 import { formatE8s, explorerTxUrl } from "@/lib/wallet-utils"
 import { shareReceipt } from "@/lib/receipt"
 import { useIcpPrice } from "@/lib/use-icp-price"
-import { toast } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
+
+const HEADING = {
+  send: "Send Success",
+  tip: "Tip Sent",
+  purchase: "Purchase Complete",
+} as const
 
 type SendSuccessProps = {
   amount: bigint
   recipient: string
   blockIndex: bigint
   memo?: string
+  kind?: "send" | "tip" | "purchase"
   onDone: () => void
 }
 
-export function SendSuccess({ amount, recipient, blockIndex, memo, onDone }: SendSuccessProps) {
+export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send", onDone }: SendSuccessProps) {
   const [sharing, setSharing] = useState(false)
+  const [shareNote, setShareNote] = useState<string | null>(null)
   const { price } = useIcpPrice()
+
+  // Ref-guarded so the chime belongs to the payment, not to the render: a dev
+  // remount or parent state change would otherwise replay it on-screen.
+  const chimed = useRef(false)
+  useEffect(() => {
+    if (chimed.current) return
+    chimed.current = true
+    const audio = new Audio("/audio/sucess/sucess.mp3")
+    audio.volume = 0.5
+    // Reaching this screen always follows a tap, but a blocked-autoplay
+    // rejection must still be swallowed or it surfaces as an unhandled one.
+    void audio.play().catch(() => {})
+  }, [])
 
   const avatarUri = useMemo(
     () => createAvatar(adventurer, { seed: recipient }).toDataUri(),
@@ -34,6 +54,7 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, onDone }: Sen
 
   const handleShare = async () => {
     setSharing(true)
+    setShareNote(null)
     try {
       const outcome = await shareReceipt({
         amount,
@@ -42,11 +63,9 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, onDone }: Sen
         memo,
         usdPrice: price?.usd,
       })
-      if (outcome === "downloaded") {
-        toast.add({ title: "Receipt saved", description: "Check your downloads." })
-      }
+      if (outcome === "downloaded") setShareNote("Receipt saved to your downloads.")
     } catch {
-      toast.add({ title: "Could not create receipt", description: "Please try again." })
+      setShareNote("Could not create the receipt. Please try again.")
     } finally {
       setSharing(false)
     }
@@ -64,9 +83,13 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, onDone }: Sen
         <Image src="/images/logo/logo.png" alt="" width={56} height={56} className="size-14" />
       </span>
 
-      <h1 className="mt-6 text-2xl font-bold tracking-tight">Send Success</h1>
+      <h1 className="mt-6 text-2xl font-bold tracking-tight">{HEADING[kind]}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        You&apos;ve sent {label} some ICP!
+        {kind === "tip"
+          ? `You tipped ${label} some ICP!`
+          : kind === "purchase"
+            ? `${label} is yours.`
+            : `You've sent ${label} some ICP!`}
       </p>
 
       <p className="mt-8 text-xs text-muted-foreground">Total</p>
@@ -75,7 +98,9 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, onDone }: Sen
       </p>
 
       <div className="mt-8 w-full border-t border-dashed pt-6 text-left">
-        <p className="text-xs text-muted-foreground">Recipient</p>
+        <p className="text-xs text-muted-foreground">
+          {kind === "purchase" ? "Username" : "Recipient"}
+        </p>
         <div className="mt-3 flex items-center gap-3 rounded-2xl bg-muted/50 p-3">
           <Avatar className="size-11 shrink-0">
             <AvatarImage src={avatarUri} alt="" />
@@ -101,19 +126,26 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, onDone }: Sen
       </div>
 
       <div className="mt-8 grid w-full gap-2.5">
-        <Button
-          variant="outline"
-          className="h-12 w-full text-base"
-          onClick={handleShare}
-          disabled={sharing}
-        >
-          {sharing ? (
-            <Spinner className="size-4" />
-          ) : (
-            <HugeiconsIcon icon={Share08Icon} className="size-4" />
-          )}
-          {sharing ? "Preparing…" : "Share receipt"}
-        </Button>
+        {/* A purchase pays the treasury, so the receipt card -- which is framed
+            around who received the money -- would read as a transfer to us. */}
+        {kind !== "purchase" && (
+          <>
+            <Button
+              variant="outline"
+              className="h-12 w-full text-base"
+              onClick={handleShare}
+              disabled={sharing}
+            >
+              {sharing ? (
+                <Spinner className="size-4" />
+              ) : (
+                <HugeiconsIcon icon={Share08Icon} className="size-4" />
+              )}
+              {sharing ? "Preparing…" : "Share receipt"}
+            </Button>
+            {shareNote && <p className="text-xs text-muted-foreground">{shareNote}</p>}
+          </>
+        )}
         <Button className="h-12 w-full text-base" onClick={onDone}>
           Done
         </Button>

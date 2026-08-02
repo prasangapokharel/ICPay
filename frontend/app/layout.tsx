@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next"
 import "./globals.css"
 import { ThemeProvider, ThemeColorScript } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth/auth-provider"
-import { Toaster } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
@@ -94,10 +93,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <ThemeProvider>
-          <AuthProvider>
-            {children}
-            <Toaster />
-          </AuthProvider>
+          <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>
     </html>
