@@ -38,12 +38,6 @@ export function getIdentityProvider(): string {
   return process.env.NEXT_PUBLIC_II_URL ?? "https://id.ai"
 }
 
-// The classic Internet Identity origin, kept alongside id.ai because a passkey
-// is bound to the origin it was registered on, so an anchor created before the
-// id.ai move can only be reached here. Both serve the same II canister and
-// derive from the same anchor, so either resolves to the same principal.
-export const LEGACY_II_PROVIDER = "https://identity.ic0.app"
-
 // NFID authorizes through the same delegation flow auth-client speaks, so it is
 // a drop-in identityProvider. Signers like Oisy and Plug are not: they approve
 // one call at a time and never issue a delegation, so they cannot sign anyone in.

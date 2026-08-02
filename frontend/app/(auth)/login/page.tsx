@@ -13,7 +13,7 @@ import { Wallet01Icon, ShieldKeyIcon, FlashIcon, Key01Icon } from "@hugeicons/co
 import { useAuth } from "@/components/auth/auth-provider"
 import { Typewriter } from "@/components/shared/typewriter"
 import { MarketStats } from "@/components/auth/market-stats"
-import { LEGACY_II_PROVIDER, NFID_PROVIDER } from "@/services/icp"
+import { NFID_PROVIDER } from "@/services/icp"
 
 const features = [
   { icon: ShieldKeyIcon, title: "Self-custodial", body: "Only you can authorize transfers." },
@@ -114,14 +114,6 @@ export default function LoginPage() {
           <div className="flex flex-col items-center gap-2 pt-1">
             <p className="text-xs text-muted-foreground">Or continue with</p>
             <ButtonGroup>
-              <Button
-                variant="outline"
-                className="h-9 px-5 text-xs"
-                onClick={() => handleLogin(LEGACY_II_PROVIDER)}
-                disabled={connecting}
-              >
-                identity.ic0.app
-              </Button>
               <Button
                 variant="outline"
                 className="h-9 px-5 text-xs"
