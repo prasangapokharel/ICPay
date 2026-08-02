@@ -25,7 +25,7 @@ export class PopupBlockedError extends Error {
   }
 }
 
-export function login(): Promise<Identity | null> {
+export function login(provider?: string): Promise<Identity | null> {
   // Deliberately NOT async: auth-client calls window.open() synchronously, and
   // any await defers to a microtask that can spend the click's popup activation.
   const authClient = readyClient
@@ -48,7 +48,7 @@ export function login(): Promise<Identity | null> {
     // onError, so no extra watchdog is needed for that case.
     authClient
       .login({
-        identityProvider: getIdentityProvider(),
+        identityProvider: provider ?? getIdentityProvider(),
         derivationOrigin: getDerivationOrigin(),
         onSuccess: () => finish(authClient.getIdentity()),
         onError: (error) => {

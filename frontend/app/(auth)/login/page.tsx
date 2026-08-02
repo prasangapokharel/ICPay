@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -12,6 +13,7 @@ import { Wallet01Icon, ShieldKeyIcon, FlashIcon, Key01Icon } from "@hugeicons/co
 import { useAuth } from "@/components/auth/auth-provider"
 import { Typewriter } from "@/components/shared/typewriter"
 import { MarketStats } from "@/components/auth/market-stats"
+import { LEGACY_II_PROVIDER, NFID_PROVIDER } from "@/services/icp"
 
 const features = [
   { icon: ShieldKeyIcon, title: "Self-custodial", body: "Only you can authorize transfers." },
@@ -37,11 +39,11 @@ export default function LoginPage() {
     )
   }
 
-  const handleLogin = async () => {
+  const handleLogin = async (provider?: string) => {
     setError(null)
     setConnecting(true)
     try {
-      await login()
+      await login(provider)
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not connect. Please try again.")
     } finally {
@@ -97,13 +99,46 @@ export default function LoginPage() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          <Button className="h-12 w-full text-base" onClick={handleLogin} disabled={connecting}>
+          <Button className="h-12 w-full text-base" onClick={() => handleLogin()} disabled={connecting}>
             {connecting ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Wallet01Icon} className="size-5" />}
             {connecting ? "Connecting…" : "Connect Wallet"}
           </Button>
           <p className="text-center text-xs text-muted-foreground">
             You&apos;ll be redirected to Internet Identity to approve access.
           </p>
+
+          {/* NFID authorizes through the same delegation flow auth-client
+              speaks, so it is a drop-in provider. Signers like Oisy and Plug
+              approve one call at a time and never issue a delegation, so they
+              can fund the wallet but cannot open a session. */}
+          <div className="flex flex-col items-center gap-2 pt-1">
+            <p className="text-xs text-muted-foreground">Or continue with</p>
+            <ButtonGroup>
+              <Button
+                variant="outline"
+                className="h-9 px-5 text-xs"
+                onClick={() => handleLogin(LEGACY_II_PROVIDER)}
+                disabled={connecting}
+              >
+                identity.ic0.app
+              </Button>
+              <Button
+                variant="outline"
+                className="h-9 px-5 text-xs"
+                onClick={() => handleLogin(NFID_PROVIDER)}
+                disabled={connecting}
+              >
+                NFID
+              </Button>
+            </ButtonGroup>
+            {/* NFID is a separate identity system, so it derives a different
+                principal -- a different wallet. Without this line an existing
+                user signing in through it sees an empty balance. */}
+            <p className="text-center text-xs text-muted-foreground">
+              NFID creates a separate wallet from Internet Identity.
+            </p>
+          </div>
+
           <p className="text-center text-xs text-muted-foreground">
             By continuing you agree to the{" "}
             <Link href="/terms" className="underline underline-offset-2">

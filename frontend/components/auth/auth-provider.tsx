@@ -14,7 +14,7 @@ type AuthContextType = {
   identity: Identity | undefined
   isAuthenticated: boolean
   isLoading: boolean
-  login: () => Promise<void>
+  login: (provider?: string) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -53,8 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     init()
   }, [])
 
-  const login = useCallback(async () => {
-    const id = await iiLogin()
+  const login = useCallback(async (provider?: string) => {
+    const id = await iiLogin(provider)
     if (id) {
       setIdentity(id)
       try {
