@@ -1,6 +1,7 @@
 "use client"
 
 import useSWR, { useSWRConfig } from "swr"
+import useSWRImmutable from "swr/immutable"
 import type { Identity } from "@dfinity/agent"
 import { Principal } from "@dfinity/principal"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -26,13 +27,16 @@ const keyFor = (identity: Identity | undefined, ...parts: string[]) =>
   identity ? ([...parts, identity.getPrincipal().toText()] as const) : null
 
 // getDashboard is an update call measured at ~6.6s, so it is fetched once and
-// refreshed on explicit action rather than on focus or remount.
+// refreshed on explicit action rather than on focus or remount. The retry cap
+// matters here: SWR retries errors forever by default, and an update call that
+// keeps failing would go on burning cycles behind an already-broken screen.
 const FETCH_ONCE = {
   revalidateOnFocus: false,
   revalidateOnReconnect: false,
   revalidateIfStale: false,
   keepPreviousData: true,
   dedupingInterval: 300_000,
+  errorRetryCount: 3,
 } as const
 
 export function useDashboard() {
@@ -52,13 +56,23 @@ export function useDashboard() {
   }
 }
 
+// The custodian principal that holds everyone's funds. Both calls derive it from
+// the same LedgerService.depositAccount, but getDepositAddress is a query that
+// answers in about a second while getDashboard is a ~6.6s update call. Taking
+// whichever has landed keeps the ledger reads off the slow call's critical path.
+function useCustodian(): Principal | undefined {
+  const { data: dashboard } = useDashboard()
+  const { data: deposit } = useDepositAddress()
+  return deposit?.address.owner ?? dashboard?.depositAddress.owner
+}
+
 // The dashboard's balance arrives inside a ~6.6s update call. The same number is
 // readable straight from the ledger as a query in about a second, so the balance
 // card can settle long before the rest of the dashboard does.
 export function useLiveBalance() {
   const { identity } = useAuth()
   const { data: dashboard } = useDashboard()
-  const custodian = dashboard?.depositAddress.owner
+  const custodian = useCustodian()
 
   const { data } = useSWR(
     custodian && identity ? keyFor(identity, "live-balance") : null,
@@ -82,11 +96,11 @@ export function useLiveBalance() {
 export function useDepositAddress() {
   const { identity } = useAuth()
 
-  const { data, error, isLoading } = useSWR(
+  // A principal's deposit address is derived and never changes, so it is read
+  // once per session and never revalidated.
+  const { data, error, isLoading } = useSWRImmutable(
     keyFor(identity, "deposit-address"),
-    () => getDepositAddress(identity),
-    // A principal's deposit address is derived and never changes.
-    { revalidateOnFocus: false, revalidateIfStale: false }
+    () => getDepositAddress(identity)
   )
 
   return { data, error, isLoading }
@@ -242,8 +256,7 @@ function dedupeById(users: UserPublic[]): UserPublic[] {
 // load.
 export function useTokenHoldings() {
   const { identity } = useAuth()
-  const { data: dashboard } = useDashboard()
-  const custodian = dashboard?.depositAddress.owner
+  const custodian = useCustodian()
 
   // Phase 1 -- balances only, across every known ledger. Discovery is folded in
   // so the whole sweep is one cache entry.
@@ -260,15 +273,15 @@ export function useTokenHoldings() {
 
   // Phase 2 -- metadata for held tokens only, keyed by the held ledger ids so it
   // refetches when a new token appears rather than on every balance change.
+  // A ledger's symbol and decimals are immutable in practice, so once fetched it
+  // is never revalidated.
   const heldIds = balances ? [...balances.keys()].sort() : []
-  const { data: metadata, isLoading: loadingMetadata } = useSWR(
+  const { data: metadata, isLoading: loadingMetadata } = useSWRImmutable(
     heldIds.length ? (["token-metadata", heldIds.join(",")] as const) : null,
     async () => {
       const entries = await Promise.all(heldIds.map((id) => fetchTokenMetadata(id, identity)))
       return new Map(entries.flatMap((m) => (m ? [[m.ledgerId, m] as const] : [])))
-    },
-    // Token metadata is immutable in practice.
-    { revalidateOnFocus: false, revalidateIfStale: false, dedupingInterval: 3_600_000 }
+    }
   )
 
   const holdings: TokenHolding[] = heldIds.flatMap((ledgerId) => {
@@ -295,18 +308,19 @@ export function useTokenHoldings() {
 // profile costs it nothing.
 export function useAccountStats(owner: string | null) {
   const { identity } = useAuth()
-  const { data: dashboard } = useDashboard()
-  const custodian = dashboard?.depositAddress.owner?.toText()
+  const custodian = useCustodian()?.toText()
 
   const { data, isLoading } = useSWR(
-    owner ? (["account-stats", owner] as const) : null,
+    // The custodian is in the key because the fetcher reads it: without it the
+    // first render caches a stats-at-own-principal result under the same key the
+    // custodial lookup wants, and SWR never refetches once the dashboard lands.
+    owner && custodian ? (["account-stats", owner, custodian] as const) : null,
     async () => {
       // An ICPay user's funds sit in a subaccount under the custodian, not at
       // their own principal, so the balance is looked up where it actually is.
-      const isIcpayUser = custodian !== undefined
       const stats = await fetchAccountStats(
-        isIcpayUser ? custodian : owner!,
-        isIcpayUser ? custodialSubaccount(Principal.fromText(owner!)) : undefined,
+        custodian!,
+        custodialSubaccount(Principal.fromText(owner!)),
         identity
       )
       writeCachedStats(owner!, stats)
