@@ -10,21 +10,24 @@ Measured 2026-08-02 against `6vbhm-nqaaa-aaaan-q6muq-cai` (backend) and
 
 ## Answer first
 
-| Scale | Cycles / year | USD / year | ICP / year @ $5 |
-|---|---|---|---|
-| Idle (zero users) | 0.90 T | **$1.22** | 0.24 |
-| 100 active users | 8.89 T | **$12.00** | 2.40 |
-| 1,000 active users | 80.81 T | **$109.10** | 21.82 |
-| **10,000 active users** | **800.03 T** | **$1,080.04** | **216.01** |
-| 10,000 heavy users | 2,744.56 T | **$3,705.15** | 741.03 |
+Measured before and after converting `getDashboard` from an update call to a
+query (commit `bba0295`):
 
-**10k daily users costs roughly $1,080/year — about $90/month.**
+| Scale | Before | After | Cut |
+|---|---|---|---|
+| Idle (zero users) | $1.22 | $1.22 | — |
+| 100 active users | $12.00 | **$2.02** | 83.2% |
+| 1,000 active users | $109.10 | **$9.25** | 91.5% |
+| **10,000 active users** | **$1,080.04** | **$81.56** | **92.4%** |
+| 10,000 heavy users | $3,705.15 | **$376.87** | 89.8% |
+
+**10k daily users now costs about $82/year — under $7/month.**
 
 "Active" = 3 dashboard loads and 10 queries per day, plus a transfer every 5
 days. "Heavy" = 10 dashboard loads, 30 queries, and a transfer every day.
 
-At $1,080/year for 10k users, ICPay costs **$0.108 per user per year**. A single
-premium username sale (10 ICP ≈ $50) covers roughly 460 user-years.
+At $82/year for 10k users, ICPay costs **$0.008 per user per year**. One premium
+username sale (10 ICP ≈ $50) covers roughly 6,000 user-years.
 
 ---
 
@@ -33,25 +36,29 @@ premium username sale (10 ICP ≈ $50) covers roughly 460 user-years.
 Measured cost of one call, averaged over 10 real mainnet calls with idle burn
 subtracted:
 
-| Call | Type | Cycles | USD | Share of a session |
-|---|---|---|---|---|
-| `getDashboard` | update + ledger cross-call | **67,761,726** | $0.0000915 | dominant |
-| `getTransactions` | query | **210,243** | $0.00000028 | negligible |
+| Call | Type | Cycles | USD |
+|---|---|---|---|
+| `getDashboard` **before** | update + ledger cross-call | 67,761,726 | $0.0000915 |
+| `getDashboard` **after** | query | **216,657** | $0.00000029 |
+| `getTransactions` | query | 210,243 | $0.00000028 |
 
-**One dashboard call costs 322× a query call.**
+The endpoint was 322× the cost of a query for data it holds locally. The cause
+was a single line — `await LedgerService.getBalance(...)` in
+`DashboardService.mo` — which put the whole call on the update path. An update
+call pays consensus across the subnet; a query is answered by one node.
 
-The reason is not compute — it is the `await LedgerService.getBalance(...)`
-cross-canister call in `DashboardService.mo:26`. An update call carries
-consensus overhead across the subnet; a query is answered by a single node with
-no consensus at all.
+Removing the await dropped it to **216,657 cycles, a 99.7% reduction**, and the
+balance now comes from the client's own ledger query.
 
-So the cost model is effectively:
+Page size, by contrast, is not a cost lever at all. Measured:
 
-```
-yearly cost ≈ (dashboard loads + transfers) × 67.8M cycles + idle
-```
+| `getTransactions` page size | Cycles |
+|---|---|
+| 10 | 210,243 |
+| 50 | 199,282 |
 
-Queries and storage round to zero against that.
+Identical within noise. **Update-vs-query is what costs money; row count is
+not.**
 
 ### Storage is not the problem
 
@@ -79,46 +86,79 @@ This is what ICPay costs with zero users. It does not scale with traffic.
 
 ## Cost breakdown at 10k users
 
+Before the fix — one endpoint was 93% of the bill:
+
 | Component | Cycles/year | USD | % |
 |---|---|---|---|
 | Dashboard loads (3/user/day) | 741.99 T | $1,001.69 | 92.7% |
 | Transfers (1 per 5 days) | 49.47 T | $66.78 | 6.2% |
-| Idle burn | 0.90 T | $1.22 | 0.1% |
 | Queries (10/user/day) | 7.67 T | $10.35 | 1.0% |
+| Idle burn | 0.90 T | $1.22 | 0.1% |
 | Storage | 0.11 T | $0.15 | 0.0% |
 | **Total** | **800.03 T** | **$1,080.04** | |
 
-**93% of the bill is one endpoint.** Everything else is rounding error.
+After — transfers dominate, which is correct, because a transfer genuinely has
+to be an update call:
+
+| Component | Cycles/year | USD | % |
+|---|---|---|---|
+| Transfers (1 per 5 days) | 49.47 T | $66.78 | 81.9% |
+| Queries (10/user/day) | 7.67 T | $10.35 | 12.7% |
+| Dashboard loads (3/user/day) | 2.37 T | $3.20 | 3.9% |
+| Idle burn | 0.90 T | $1.22 | 1.5% |
+| Storage | 0.11 T | $0.15 | 0.0% |
+| **Total** | **60.41 T** | **$81.56** | |
+
+The remaining bill is real work: moving money. There is no further large win
+available without changing what ICPay does.
 
 ---
 
-## The optimisation that matters
+## What the fix was
 
-`getDashboard` is an update call **only because it awaits the ledger balance**.
-It mutates nothing — verified by reading `DashboardService.mo:22-45`, which
-performs reads and returns a record.
+`getDashboard` was an update call **only because it awaited the ledger balance**.
+It mutates nothing — it reads local state and returns a record.
 
-Two options, in order of value:
+The frontend was already reading the same balance directly from the ledger as a
+query (`useLiveBalance`), so the dashboard's copy was redundant on the two
+screens that had it, and four other pages were paying for a 67.8M-cycle call to
+read one number.
 
-1. **Split the balance out.** Serve user record, recent transactions and totals
-   from a `query` (~210k cycles), and fetch the balance separately. A page load
-   that shows cached balance instantly and refreshes it on demand drops the
-   common case from 67.8M to 0.2M cycles.
-2. **Cache the balance with a short TTL.** The frontend already dedupes at
-   30–60s (`hooks/use-wallet-data.ts`); pushing balance reads to on-demand only
-   would cut dashboard calls substantially.
+Done in two commits:
 
-Rough effect of option 1, if two-thirds of dashboard loads become queries:
+1. `2085700` — four pages moved to `useLiveBalance`. `useCustodian` also had to
+   stop reading the dashboard, or the balance hook would have pulled in the very
+   update call it exists to avoid.
+2. `bba0295` — `icpBalance` dropped from `DashboardData`, the `await` removed,
+   and the endpoint declared `query`.
 
-| | Current | After |
-|---|---|---|
-| 10k users/year | 800 T / $1,080 | **~$362** |
+Verified in the generated Candid:
 
-That is a **66% reduction**, and it is worth doing before scale, not after.
+```
+getDashboard: () -> (ApiResult_12) query;
+```
 
-The frontend already avoids the other trap: there is **no polling**. Every SWR
+The frontend already avoids the other common trap: **no polling**. Every SWR
 hook sets `revalidateOnFocus: false` with 30s–300s deduping, so an idle open tab
 costs nothing.
+
+---
+
+## Still worth fixing
+
+`TxRepo.getUserTxCount` and `getUserTotals` walk the **entire global
+transaction list** with no early exit, and `TxList` is one list shared by all
+users. Every page load therefore scans every other user's transactions.
+
+At 10k users × 50 transactions, that is 500,000 records scanned to render one
+page of 20. It is cheap today because both now sit behind queries, but it is
+O(all users) and will show up as latency long before it shows up as cost. The
+fix is a per-user counter maintained on insert, or sharding `TxList` by user.
+
+Pagination itself is already correct and already safe: `getByUser` walks
+newest-first and stops when the page fills, and `TransactionService` clamps
+`pageSize` to `MAX_PAGE_SIZE = 50`, so a caller asking for a million rows gets
+50.
 
 ---
 
@@ -128,7 +168,7 @@ Current balances:
 
 | Canister | Balance | Runway at 10k users |
 |---|---|---|
-| Backend | 818 T | ~1 year |
+| Backend | 818 T | **~13 years** (was ~1 year) |
 | Frontend | 316 T | ~285 years (idle only) |
 
 The frontend canister only burns idle cycles — asset serving is a query. It
@@ -165,10 +205,13 @@ bill at 1,000 users**.
 
 | | USD/year |
 |---|---|
-| IC cycles | $1,080 |
+| IC cycles | $82 |
 | Domain | $15 |
 | Vercel Pro (if commercial) | $240 |
-| **Total** | **~$1,335** |
+| **Total** | **~$337** |
+
+Vercel is now the largest line by far — **three times the entire IC bill**. If
+ICPay stays non-commercial and on Hobby, the real total is about **$97/year**.
 
 ---
 
@@ -194,11 +237,18 @@ Raw measurements:
 
 | | Value |
 |---|---|
-| 10× `getDashboard` | 678,903,065 cycles over 82 s |
+| 10× `getDashboard` **before** | 678,903,065 cycles over 82 s |
 | Idle during window | 1,285,797 cycles |
 | **Per call** | **67,761,726 cycles** |
+| 10× `getDashboard` **after** | 2,464,502 cycles over 19 s |
+| **Per call** | **216,657 cycles** |
 | 10× `getTransactions` | 2,384,680 cycles over 18 s |
 | **Per call** | **210,243 cycles** |
+
+The before and after were measured the same way on the same canister, either
+side of the upgrade in `bba0295`. Wall-clock fell from 82 s to 19 s for the same
+10 calls, which is the same change seen from the user's side: the dashboard no
+longer waits on consensus.
 
 Loops were capped at 10 calls — these burn real cycles.
 
@@ -209,10 +259,10 @@ need better than ±5%. ICP figures assume $5/ICP and move with the market.
 
 ## Assumptions worth challenging
 
-- **3 dashboard loads/user/day.** If real usage is 10, multiply the dominant
-  line by 3.3. Measure this after launch rather than trusting it.
+- **3 dashboard loads/user/day.** This barely matters now — dashboard loads are
+  3.9% of the bill. Transfer frequency is the assumption to check instead.
 - **10k *active* users, not registered.** 10k signups with 500 daily actives
-  costs about $54/year, not $1,080.
+  costs about $5/year, not $82.
 - Measured on the current subnet. A different subnet with more nodes costs more
   per update call.
 - Excludes the ledger's own 0.0001 ICP transfer fee, which the **user** pays to
