@@ -11,6 +11,7 @@ CLAUDE.md
 # contents rather than the directory itself for the launch runbook to survive.
 docs/*
 !docs/launch/
+!docs/costing/
 
 # Environment files and credentials
 **/.env*
