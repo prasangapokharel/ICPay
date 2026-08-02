@@ -78,4 +78,29 @@ let noResults = UserRepo.searchByUsername(usernames, users, "xyz123");
 assert(noResults.size() == 0);
 Debug.print("PASS: searchByUsername returns empty for no match");
 
+// A bought handle is added as an alias, leaving the buyer under two keys. The
+// listing must still show them once, or one person appears as several identical
+// rows and their old handle looks like a separate account.
+UserRepo.addAlias(usernames, user1, "alice_bought", now);
+assert(UserRepo.usernameExists(usernames, "alice_new") == true);
+assert(UserRepo.usernameExists(usernames, "alice_bought") == true);
+Debug.print("PASS: addAlias keeps the old handle claimed");
+
+let aliased = UserRepo.searchByUsername(usernames, users, "alice");
+assert(aliased.size() == 1);
+assert(aliased[0].username == ?"alice_bought");
+Debug.print("PASS: searchByUsername lists an aliased user once");
+
+// Both handles must keep resolving to the buyer: people memorise a handle as a
+// payment address, so an alias that stopped resolving would misdirect funds.
+switch (UserRepo.getByUsername(usernames, users, "alice_new")) {
+  case (?u) { assert(u.principal == p1) };
+  case (null) { assert(false) };
+};
+switch (UserRepo.getByUsername(usernames, users, "alice_bought")) {
+  case (?u) { assert(u.principal == p1) };
+  case (null) { assert(false) };
+};
+Debug.print("PASS: every alias still resolves to its owner");
+
 Debug.print("ALL USER REPOSITORY TESTS PASSED");

@@ -1,5 +1,6 @@
 import Principal "mo:core/Principal";
 import Map "mo:core/Map";
+import Set "mo:core/Set";
 import List "mo:core/List";
 import Text "mo:core/Text";
 import Types "../types";
@@ -83,13 +84,22 @@ module {
     user.setUsername(newUsername, now);
   };
 
+  // Keyed by principal, not by name: a user who bought a handle keeps their old
+  // ones as aliases, and every alias is a separate key here. Emitting one row
+  // per key listed the same account once per handle it has ever held, each row
+  // rendering that account's current username -- so one person showed up as
+  // several identical entries.
   public func searchByUsername(usernames: UserStorage.UsernameMap, users: UserStorage.UserMap, search: Text): [Types.UserPublic] {
     let needle = UsernameValidator.normalize(search);
     let results = List.empty<Types.UserPublic>();
+    let seen = Set.empty<Principal>();
     for ((name, p) in usernames.entries()) {
-      if (name.contains(#text(needle))) {
+      if (name.contains(#text(needle)) and not seen.contains(p)) {
         switch (users.get(p)) {
-          case (?u) { results.add(Types.userToPublic(u)) };
+          case (?u) {
+            seen.add(p);
+            results.add(Types.userToPublic(u));
+          };
           case (null) {};
         };
       };
