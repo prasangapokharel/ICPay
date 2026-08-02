@@ -138,12 +138,17 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="No tracking">
+      <Section title="Analytics">
         <p>
-          ICPay runs no analytics, no advertising pixels, no session recording
-          and no third-party trackers. It sets no cookies for its own purposes.
-          Nobody is building a profile of your behaviour, because nothing is
-          measuring it.
+          ICPay counts page views through Vercel Analytics. It records the page,
+          the referrer, the country and the device type, and it sets no cookies
+          and no persistent identifier — a visit cannot be linked to your last
+          one, so no profile of your behaviour is built. It never sees your
+          principal, your username or any amount.
+        </p>
+        <p>
+          There are no advertising pixels, no session recording and no other
+          third-party trackers.
         </p>
       </Section>
 
@@ -165,6 +170,10 @@ export default function PrivacyPage() {
               queried for the ICP price shown in the app. The request contains no
               identifier, no principal and no balance; it asks only what ICP is
               worth. Your IP address is visible to them, as with any request.
+            </>,
+            <>
+              <span className="font-medium text-foreground">Vercel Analytics</span>{" "}
+              — receives one anonymous event per page view, as described above.
             </>,
           ]}
         />
