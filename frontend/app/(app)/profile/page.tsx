@@ -2,6 +2,7 @@
 
 import useSWR from "swr"
 import { ProfileCard } from "@/components/profile/profile-card"
+import { ShareProfileCard } from "@/components/profile/share-profile-card"
 import { useAuth } from "@/components/auth/auth-provider"
 import { usePatchDashboardUser } from "@/hooks/use-wallet-data"
 import { getProfile, updateUsername } from "@/services/profile/profile"
@@ -43,12 +44,15 @@ export default function ProfilePage() {
   if (isLoading && !user) return <div className="flex justify-center py-12"><p className="text-muted-foreground">Loading...</p></div>
   if (!user) return null
 
+  const claimed = user.username?.[0]
+
   return (
     <div className="mx-auto max-w-lg space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
         <p className="text-sm text-muted-foreground">Manage your wallet profile</p>
       </div>
+      {claimed && <ShareProfileCard username={claimed} />}
       <ProfileCard
         user={user}
         principal={principal}

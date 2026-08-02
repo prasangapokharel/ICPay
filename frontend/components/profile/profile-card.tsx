@@ -8,9 +8,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { UserIcon, Tick02Icon, Cancel01Icon, ShoppingBag01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { UserIcon, Tick02Icon, Cancel01Icon, ShoppingBag01Icon, ArrowRight01Icon, Copy01Icon } from "@hugeicons/core-free-icons"
 import type { UserPublic } from "@/services/types"
-import { formatPrincipal } from "@/lib/wallet-utils"
+import { copyText, formatPrincipal } from "@/lib/wallet-utils"
 import Link from "next/link"
 import {
   validateFreeUsername,
@@ -31,6 +31,15 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [copiedPrincipal, setCopiedPrincipal] = useState(false)
+
+  // Copies the full principal, not the truncated form on screen -- a shortened
+  // one pasted into a send field would address nothing.
+  const handleCopyPrincipal = async () => {
+    await copyText(principal)
+    setCopiedPrincipal(true)
+    setTimeout(() => setCopiedPrincipal(false), 1500)
+  }
 
   const handleCheck = async () => {
     if (!username.trim()) { setCheckResult(null); return }
@@ -70,7 +79,24 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
       <CardContent className="space-y-4">
         <div className="space-y-1">
           <Label className="text-xs text-muted-foreground">Principal</Label>
-          <p className="font-mono text-sm">{formatPrincipal(principal)}</p>
+          <button
+            type="button"
+            onClick={handleCopyPrincipal}
+            aria-label="Copy principal"
+            className="flex w-full items-center gap-2 rounded-lg text-left transition-colors hover:bg-accent active:scale-[0.99]"
+          >
+            <span className="min-w-0 flex-1 truncate font-mono text-sm">
+              {formatPrincipal(principal)}
+            </span>
+            <HugeiconsIcon
+              icon={copiedPrincipal ? Tick02Icon : Copy01Icon}
+              className={
+                copiedPrincipal
+                  ? "size-4 shrink-0 text-primary"
+                  : "size-4 shrink-0 text-muted-foreground"
+              }
+            />
+          </button>
         </div>
         <div className="space-y-1">
           <Label className="text-xs text-muted-foreground">User ID</Label>

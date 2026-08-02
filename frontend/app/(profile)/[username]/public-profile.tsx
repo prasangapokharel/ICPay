@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, FlashIcon, Tick02Icon, UserQuestion01Icon } from "@hugeicons/core-free-icons"
+import { Copy01Icon, Tick02Icon, UserQuestion01Icon } from "@hugeicons/core-free-icons"
 import { PayQr } from "@/components/profile/pay-qr"
 import { QuickPayDrawer } from "@/components/profile/quick-pay-drawer"
 import { avatarUriFor } from "@/lib/avatar"
@@ -124,8 +124,7 @@ export function PublicProfile() {
         </p>
       ) : (
         <Button className="mt-4 h-13 w-full text-base" onClick={handlePayClick}>
-          <HugeiconsIcon icon={FlashIcon} className="size-4" />
-          Pay or Tip @{username}
+          Pay
         </Button>
       )}
 
