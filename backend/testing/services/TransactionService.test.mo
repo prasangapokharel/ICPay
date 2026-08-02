@@ -11,7 +11,8 @@ let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
 let txs = TxStorage.createTxList();
-let svc = TransactionService.create(users, txs);
+let txsByUser = TxStorage.createTxByUser();
+let svc = TransactionService.create(users, txs, txsByUser);
 
 let unknownUser = Principal.fromText("2vxsx-fae");
 switch (TransactionService.list(svc, unknownUser, 0, 20)) {
@@ -23,9 +24,9 @@ let p = Principal.fromText("aaaaa-aa");
 let now = Time.now();
 let _ = UserRepo.create(users, usernames, usersById, "uid-1", p, null, "Alice", now);
 
-let _tx1 = TxRepo.create(txs, "tx-1", "uid-1", #deposit, 100_000_000, 0, "from", "to", null, now);
-let _tx2 = TxRepo.create(txs, "tx-2", "uid-1", #withdraw, 50_000_000, 10_000, "from", "to", null, now);
-let _tx3 = TxRepo.create(txs, "tx-3", "uid-1", #transfer, 25_000_000, 10_000, "from", "to", ?"memo", now);
+let _tx1 = TxRepo.create(txs, txsByUser, "tx-1", "uid-1", #deposit, 100_000_000, 0, "from", "to", null, now);
+let _tx2 = TxRepo.create(txs, txsByUser, "tx-2", "uid-1", #withdraw, 50_000_000, 10_000, "from", "to", null, now);
+let _tx3 = TxRepo.create(txs, txsByUser, "tx-3", "uid-1", #transfer, 25_000_000, 10_000, "from", "to", ?"memo", now);
 
 switch (TransactionService.list(svc, p, 0, 20)) {
   case (#ok(result)) {

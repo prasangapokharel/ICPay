@@ -9,13 +9,14 @@ import UserStorage "../storage/UserStorage";
 import TxStorage "../storage/TransactionStorage";
 
 module {
-  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, ledger: LedgerService.LedgerService): DashboardService {
-    { users; txs; ledger };
+  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService): DashboardService {
+    { users; txs; byUser; ledger };
   };
 
   public type DashboardService = {
     users: UserStorage.UserMap;
     txs: TxStorage.TxList;
+    byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
   };
 
@@ -27,11 +28,11 @@ module {
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?user) {
         let depositAccount = LedgerService.depositAccount(service.ledger, caller);
-        let recentPublic = TxRepo.getRecentByUser(service.txs, user.id, 10)
+        let recentPublic = TxRepo.getRecentByUser(service.byUser, user.id, 10)
           .values()
           .map<Types.Transaction, Types.TransactionPublic>(Types.txToPublic)
           .toArray();
-        let totals = TxRepo.getUserTotals(service.txs, user.id);
+        let totals = TxRepo.getUserTotals(service.byUser, user.id);
         #ok({
           user = Types.userToPublic(user);
           principal = caller;

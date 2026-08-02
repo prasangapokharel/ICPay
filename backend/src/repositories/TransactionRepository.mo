@@ -1,11 +1,16 @@
 import List "mo:core/List";
+import Map "mo:core/Map";
+import Text "mo:core/Text";
 import Types "../types";
 import TxModel "../models/Transaction";
 import TxStorage "../storage/TransactionStorage";
 
 module {
+  // Appends to the global log and to the user's own list. Both hold the same
+  // object, so later in-place mutations (complete/fail) are seen through either.
   public func create(
     txs: TxStorage.TxList,
+    byUser: TxStorage.TxByUser,
     id: Types.TxId,
     userId: Types.UserId,
     txType: Types.TxType,
@@ -18,45 +23,67 @@ module {
   ): Types.Transaction {
     let tx = TxModel.new(id, userId, txType, amount, fee, from, to, memo, now);
     txs.add(tx);
+    userTxs(byUser, userId).add(tx);
     tx;
+  };
+
+  // The index is empty on the upgrade that introduces it, and stays empty for
+  // any user whose transactions predate it, so it is rebuilt once from the
+  // global log rather than assumed to be populated.
+  public func reindex(txs: TxStorage.TxList, byUser: TxStorage.TxByUser) {
+    byUser.clear();
+    for (tx in txs.values()) {
+      userTxs(byUser, tx.userId).add(tx);
+    };
+  };
+
+  func userTxs(byUser: TxStorage.TxByUser, userId: Types.UserId): TxStorage.TxList {
+    switch (byUser.get(userId)) {
+      case (?list) { list };
+      case (null) {
+        let list = List.empty<Types.Transaction>();
+        byUser.add(userId, list);
+        list;
+      };
+    };
+  };
+
+  func userView(byUser: TxStorage.TxByUser, userId: Types.UserId): TxStorage.TxList {
+    switch (byUser.get(userId)) {
+      case (?list) { list };
+      case (null) { List.empty<Types.Transaction>() };
+    };
   };
 
   public func getById(txs: TxStorage.TxList, id: Types.TxId): ?Types.Transaction {
     txs.find(func(tx) { tx.id == id });
   };
 
-  // Walks newest-first and stops as soon as the page is filled, so the cost is
-  // bounded by (offset + limit) matches rather than by the whole list.
-  public func getByUser(txs: TxStorage.TxList, userId: Types.UserId, limit: Nat, offset: Nat): [Types.Transaction] {
+  // Walks the user's own list newest-first and stops once the page is filled,
+  // so the cost is bounded by (offset + limit) rather than by anyone else's
+  // transaction volume.
+  public func getByUser(byUser: TxStorage.TxByUser, userId: Types.UserId, limit: Nat, offset: Nat): [Types.Transaction] {
     let page = List.empty<Types.Transaction>();
     var seen = 0;
-    label scan for (tx in txs.reverseValues()) {
-      if (tx.userId == userId) {
-        if (seen >= offset) {
-          page.add(tx);
-          if (page.size() >= limit) { break scan };
-        };
-        seen += 1;
+    label scan for (tx in userView(byUser, userId).reverseValues()) {
+      if (seen >= offset) {
+        page.add(tx);
+        if (page.size() >= limit) { break scan };
       };
+      seen += 1;
     };
     List.toArray(page);
   };
 
-  public func getUserTxCount(txs: TxStorage.TxList, userId: Types.UserId): Nat {
-    var count = 0;
-    for (tx in txs.values()) {
-      if (tx.userId == userId) { count += 1 };
-    };
-    count;
+  public func getUserTxCount(byUser: TxStorage.TxByUser, userId: Types.UserId): Nat {
+    userView(byUser, userId).size();
   };
 
-    public func getRecentByUser(txs: TxStorage.TxList, userId: Types.UserId, count: Nat): [Types.Transaction] {
+  public func getRecentByUser(byUser: TxStorage.TxByUser, userId: Types.UserId, count: Nat): [Types.Transaction] {
     let recent = List.empty<Types.Transaction>();
-    label scan for (tx in txs.reverseValues()) {
-      if (tx.userId == userId) {
-        recent.add(tx);
-        if (recent.size() >= count) { break scan };
-      };
+    label scan for (tx in userView(byUser, userId).reverseValues()) {
+      recent.add(tx);
+      if (recent.size() >= count) { break scan };
     };
     List.toArray(recent);
   };
@@ -75,44 +102,35 @@ module {
     };
   };
 
-  public func getUserDeposits(txs: TxStorage.TxList, userId: Types.UserId): [Types.Transaction] {
+  func byType(byUser: TxStorage.TxByUser, userId: Types.UserId, txType: Types.TxType): [Types.Transaction] {
     let result = List.empty<Types.Transaction>();
-    for (tx in txs.values()) {
-      if (tx.userId == userId and tx.txType == #deposit) {
-        result.add(tx);
-      };
+    for (tx in userView(byUser, userId).values()) {
+      if (tx.txType == txType) { result.add(tx) };
     };
     List.toArray(result);
   };
 
-  public func getUserWithdrawals(txs: TxStorage.TxList, userId: Types.UserId): [Types.Transaction] {
-    let result = List.empty<Types.Transaction>();
-    for (tx in txs.values()) {
-      if (tx.userId == userId and tx.txType == #withdraw) {
-        result.add(tx);
-      };
-    };
-    List.toArray(result);
+  public func getUserDeposits(byUser: TxStorage.TxByUser, userId: Types.UserId): [Types.Transaction] {
+    byType(byUser, userId, #deposit);
   };
 
-  public func getUserTransfers(txs: TxStorage.TxList, userId: Types.UserId): [Types.Transaction] {
-    let result = List.empty<Types.Transaction>();
-    for (tx in txs.values()) {
-      if (tx.userId == userId and tx.txType == #transfer) {
-        result.add(tx);
-      };
-    };
-    List.toArray(result);
+  public func getUserWithdrawals(byUser: TxStorage.TxByUser, userId: Types.UserId): [Types.Transaction] {
+    byType(byUser, userId, #withdraw);
   };
 
-  // The three getTotal* helpers below each walk the whole list. Callers needing
-  // more than one (the dashboard needs all three) should use this single pass.
-  public func getUserTotals(txs: TxStorage.TxList, userId: Types.UserId): { deposits: Nat; withdrawals: Nat; transfers: Nat } {
+  public func getUserTransfers(byUser: TxStorage.TxByUser, userId: Types.UserId): [Types.Transaction] {
+    byType(byUser, userId, #transfer);
+  };
+
+  // Totals are summed rather than kept as running counters because status is
+  // mutated in place after creation, so a counter would need updating at every
+  // complete/fail site and would drift the moment one was missed.
+  public func getUserTotals(byUser: TxStorage.TxByUser, userId: Types.UserId): { deposits: Nat; withdrawals: Nat; transfers: Nat } {
     var deposits = 0;
     var withdrawals = 0;
     var transfers = 0;
-    for (tx in txs.values()) {
-      if (tx.userId == userId and tx.status == #completed) {
+    for (tx in userView(byUser, userId).values()) {
+      if (tx.status == #completed) {
         switch (tx.txType) {
           case (#deposit) { deposits += tx.amount };
           case (#withdraw) { withdrawals += tx.amount };
@@ -124,32 +142,26 @@ module {
     { deposits; withdrawals; transfers };
   };
 
-  public func getTotalDepositAmount(txs: TxStorage.TxList, userId: Types.UserId): Nat {
+  func sumAmount(byUser: TxStorage.TxByUser, userId: Types.UserId, txType: Types.TxType): Nat {
     var total = 0;
-    for (tx in txs.values()) {
-      if (tx.userId == userId and tx.txType == #deposit and tx.status == #completed) {
-        total += tx.amount;
-      };
+    for (tx in userView(byUser, userId).values()) {
+      if (tx.txType == txType and tx.status == #completed) { total += tx.amount };
     };
     total;
   };
 
-  public func getTotalWithdrawalAmount(txs: TxStorage.TxList, userId: Types.UserId): Nat {
-    var total = 0;
-    for (tx in txs.values()) {
-      if (tx.userId == userId and tx.txType == #withdraw and tx.status == #completed) {
-        total += tx.amount;
-      };
-    };
-    total;
+  public func getTotalDepositAmount(byUser: TxStorage.TxByUser, userId: Types.UserId): Nat {
+    sumAmount(byUser, userId, #deposit);
   };
 
-  public func getTotalTransferCount(txs: TxStorage.TxList, userId: Types.UserId): Nat {
+  public func getTotalWithdrawalAmount(byUser: TxStorage.TxByUser, userId: Types.UserId): Nat {
+    sumAmount(byUser, userId, #withdraw);
+  };
+
+  public func getTotalTransferCount(byUser: TxStorage.TxByUser, userId: Types.UserId): Nat {
     var count = 0;
-    for (tx in txs.values()) {
-      if (tx.userId == userId and tx.txType == #transfer and tx.status == #completed) {
-        count += 1;
-      };
+    for (tx in userView(byUser, userId).values()) {
+      if (tx.txType == #transfer and tx.status == #completed) { count += 1 };
     };
     count;
   };

@@ -11,13 +11,14 @@ import UserStorage "../storage/UserStorage";
 import TxStorage "../storage/TransactionStorage";
 
 module {
-  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, ledger: LedgerService.LedgerService): DepositService {
-    { users; txs; ledger };
+  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService): DepositService {
+    { users; txs; byUser; ledger };
   };
 
   public type DepositService = {
     users: UserStorage.UserMap;
     txs: TxStorage.TxList;
+    byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
   };
 
@@ -35,7 +36,7 @@ module {
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?user) {
         let onLedger = await LedgerService.getUserBalance(service.ledger, caller);
-        let credited = TxRepo.getTotalDepositAmount(service.txs, user.id);
+        let credited = TxRepo.getTotalDepositAmount(service.byUser, user.id);
         if (onLedger <= credited) {
           return #err("No new deposits found");
         };
@@ -44,7 +45,7 @@ module {
         let id = UUID.generate();
         let account = AccountHelper.toAccountIdentifier(LedgerService.depositAccount(service.ledger, caller));
         let tx = TxRepo.create(
-          service.txs, id, user.id, #deposit, amount, 0,
+          service.txs, service.byUser, id, user.id, #deposit, amount, 0,
           account, Principal.toText(caller), null, now,
         );
         tx.complete(0, now);

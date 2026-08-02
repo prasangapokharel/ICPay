@@ -20,6 +20,7 @@ let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
 let reserved = ReservedStorage.createReservedUsernameSet();
 let txs = TxStorage.createTxList();
+let txsByUser = TxStorage.createTxByUser();
 let settingsMap = SettingsStorage.createSettingsMap();
 
 let p1 = Principal.fromText("aaaaa-aa");
@@ -27,7 +28,7 @@ let p2 = Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai");
 
 let auth = AuthService.create(users, usernames, usersById, reserved);
 let userSvc = UserService.create(users, usernames, usersById, reserved);
-let txSvc = TransactionService.create(users, txs);
+let txSvc = TransactionService.create(users, txs, txsByUser);
 let settingsSvc = SettingsService.create(users, settingsMap);
 
 switch (AuthService.login(auth, p1)) {

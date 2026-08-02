@@ -17,13 +17,14 @@ import TxStorage "../storage/TransactionStorage";
 import AmountValidator "../validators/AmountValidator";
 
 module {
-  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, ledger: LedgerService.LedgerService): WithdrawService {
-    { users; txs; ledger };
+  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService): WithdrawService {
+    { users; txs; byUser; ledger };
   };
 
   public type WithdrawService = {
     users: UserStorage.UserMap;
     txs: TxStorage.TxList;
+    byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
   };
 
@@ -44,7 +45,7 @@ module {
         let now = Time.now();
         let id = UUID.generate();
         let tx = TxRepo.create(
-          service.txs, id, user.id, #withdraw, amount, fee,
+          service.txs, service.byUser, id, user.id, #withdraw, amount, fee,
           AccountHelper.toAccountIdentifier(source), AccountHelper.toText(destination), null, now,
         );
         let now64 = Nat64.fromNat(Int.abs(now));

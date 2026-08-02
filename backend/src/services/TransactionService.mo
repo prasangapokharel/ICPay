@@ -8,13 +8,14 @@ import UserStorage "../storage/UserStorage";
 import TxStorage "../storage/TransactionStorage";
 
 module {
-  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList): TransactionService {
-    { users; txs };
+  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser): TransactionService {
+    { users; txs; byUser };
   };
 
   public type TransactionService = {
     users: UserStorage.UserMap;
     txs: TxStorage.TxList;
+    byUser: TxStorage.TxByUser;
   };
 
   public func list(service: TransactionService, caller: Principal, page: Nat, pageSize: Nat): Types.ApiResult<{ items: [Types.TransactionPublic]; total: Nat; page: Nat; pageSize: Nat }> {
@@ -23,8 +24,8 @@ module {
         let requested = if (pageSize == 0) { Config.PAGE_SIZE } else { pageSize };
         let limit = if (requested > Config.MAX_PAGE_SIZE) { Config.MAX_PAGE_SIZE } else { requested };
         let offset = page * limit;
-        let txs = TxRepo.getByUser(service.txs, user.id, limit, offset);
-        let total = TxRepo.getUserTxCount(service.txs, user.id);
+        let txs = TxRepo.getByUser(service.byUser, user.id, limit, offset);
+        let total = TxRepo.getUserTxCount(service.byUser, user.id);
         let items = List.map<Types.Transaction, Types.TransactionPublic>(
           List.fromArray(txs),
           func(tx) { Types.txToPublic(tx) }

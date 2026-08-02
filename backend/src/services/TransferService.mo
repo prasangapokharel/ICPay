@@ -26,15 +26,17 @@ module {
     users: UserStorage.UserMap,
     usernames: UserStorage.UsernameMap,
     txs: TxStorage.TxList,
+    byUser: TxStorage.TxByUser,
     ledger: LedgerService.LedgerService,
   ) : TransferService {
-    { users; usernames; txs; ledger };
+    { users; usernames; txs; byUser; ledger };
   };
 
   public type TransferService = {
     users: UserStorage.UserMap;
     usernames: UserStorage.UsernameMap;
     txs: TxStorage.TxList;
+    byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
   };
 
@@ -123,7 +125,7 @@ module {
         let id = UUID.generate();
         let fromLabel = AccountHelper.toAccountIdentifier(source);
         let tx = TxRepo.create(
-          service.txs, id, userId, #transfer, amount, fee,
+          service.txs, service.byUser, id, userId, #transfer, amount, fee,
           fromLabel, accountIdHex, memo, now,
         );
         let now64 = Nat64.fromNat(Int.abs(now));
@@ -146,7 +148,7 @@ module {
               case (?recipient) {
                 if (recipient.principal != caller) {
                   let rx = TxRepo.create(
-                    service.txs, UUID.generate(), recipient.id, #deposit, amount, 0,
+                    service.txs, service.byUser, UUID.generate(), recipient.id, #deposit, amount, 0,
                     fromLabel, accountIdHex, memo, now,
                   );
                   rx.complete(blockIdx, now);
@@ -181,7 +183,7 @@ module {
         let id = UUID.generate();
         let fromLabel = AccountHelper.toAccountIdentifier(source);
         let tx = TxRepo.create(
-          service.txs, id, userId, #transfer, amount, fee,
+          service.txs, service.byUser, id, userId, #transfer, amount, fee,
           fromLabel, toLabel, memo, now,
         );
         let memoBlob = switch (memo) {
@@ -233,7 +235,7 @@ module {
       case (?recipient) {
         if (recipient.principal == sender) { return };
         let rx = TxRepo.create(
-          service.txs, UUID.generate(), recipient.id, #deposit, amount, 0,
+          service.txs, service.byUser, UUID.generate(), recipient.id, #deposit, amount, 0,
           fromLabel, AccountHelper.toAccountIdentifier(destination), memo, now,
         );
         rx.complete(blockIndex, now);

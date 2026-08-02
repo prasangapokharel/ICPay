@@ -2,6 +2,7 @@ import UserStorage "storage/UserStorage";
 import ReservedUsernameStorage "storage/ReservedUsernameStorage";
 import TxStorage "storage/TransactionStorage";
 import SettingsStorage "storage/SettingsStorage";
+import TxRepo "repositories/TransactionRepository";
 import LedgerService "services/LedgerService";
 import AuthService "services/AuthService";
 import UserService "services/UserService";
@@ -39,18 +40,24 @@ persistent actor self {
   let usersById = UserStorage.createUserIdMap();
   let reservedUsernames = ReservedUsernameStorage.createReservedUsernameSet();
   let transactions = TxStorage.createTxList();
+  let transactionsByUser = TxStorage.createTxByUser();
   let settings = SettingsStorage.createSettingsMap();
   transient let ledger = LedgerService.create(Principal.fromActor(self));
+
+  // The index is derived state, so it is rebuilt from the log at startup rather
+  // than migrated. That covers the upgrade that introduces it, where the field
+  // arrives empty while `transactions` already holds every prior record.
+  TxRepo.reindex(transactions, transactionsByUser);
 
   transient let authService = AuthService.create(users, usernames, usersById, reservedUsernames);
   transient let userService = UserService.create(users, usernames, usersById, reservedUsernames);
   transient let adminService = AdminService.create(reservedUsernames, users, usernames);
-  transient let dashboardService = DashboardService.create(users, transactions, ledger);
-  transient let depositService = DepositService.create(users, transactions, ledger);
-  transient let withdrawService = WithdrawService.create(users, transactions, ledger);
-  transient let transferService = TransferService.create(users, usernames, transactions, ledger);
+  transient let dashboardService = DashboardService.create(users, transactions, transactionsByUser, ledger);
+  transient let depositService = DepositService.create(users, transactions, transactionsByUser, ledger);
+  transient let withdrawService = WithdrawService.create(users, transactions, transactionsByUser, ledger);
+  transient let transferService = TransferService.create(users, usernames, transactions, transactionsByUser, ledger);
   transient let usernameSaleService = UsernameSaleService.create(users, usernames, reservedUsernames, transferService);
-  transient let transactionService = TransactionService.create(users, transactions);
+  transient let transactionService = TransactionService.create(users, transactions, transactionsByUser);
   transient let settingsService = SettingsService.create(users, settings);
 
   include HealthApi();

@@ -33,6 +33,7 @@ let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
 let reserved = ReservedStorage.createReservedUsernameSet();
 let txs = TxStorage.createTxList();
+let txsByUser = TxStorage.createTxByUser();
 let settingsMap = SettingsStorage.createSettingsMap();
 
 let u1 = UserRepo.create(users, usernames, usersById, "uid-1", user1Principal, ?"alice", "Alice", now);
@@ -49,13 +50,13 @@ switch (UserService.updateUsername(userSvc, user1Principal, "bob")) {
   case (#err(msg)) { Debug.print("PASS [SEC]: duplicate username rejected: " # msg) };
 };
 
-let txService = TransactionService.create(users, txs);
+let txService = TransactionService.create(users, txs, txsByUser);
 switch (TransactionService.getDetail(txService, user1Principal, "non-existent")) {
   case (#ok(_)) { assert(false); Debug.print("FAIL [SEC]: should not find non-existent tx") };
   case (#err(msg)) { Debug.print("PASS [SEC]: non-existent tx rejected: " # msg) };
 };
 
-let _tx1 = TxRepo.create(txs, "tx-1", "uid-2", #deposit, 100_000_000, 0, "bob", "bob", null, now);
+let _tx1 = TxRepo.create(txs, txsByUser, "tx-1", "uid-2", #deposit, 100_000_000, 0, "bob", "bob", null, now);
 switch (TransactionService.getDetail(txService, user1Principal, "tx-1")) {
   case (#ok(_)) { assert(false); Debug.print("FAIL [SEC]: user1 accessed user2's transaction") };
   case (#err(msg)) { Debug.print("PASS [SEC]: cross-user tx access rejected: " # msg) };
