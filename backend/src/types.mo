@@ -124,7 +124,6 @@ module {
   public type DashboardData = {
     user: UserPublic;
     principal: Principal;
-    icpBalance: Nat;
     depositAddress: ICRC1Account;
     depositAccountIdentifier: Text;
     recentTransactions: [TransactionPublic];

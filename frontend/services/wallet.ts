@@ -121,7 +121,6 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const DashboardData = IDL.Record({
     user: UserPublic,
     principal: IDL.Principal,
-    icpBalance: IDL.Nat,
     depositAddress: IDL.Record({
       owner: IDL.Principal,
       subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)),
@@ -197,7 +196,7 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     getUsernamePrice: IDL.Func([IDL.Text], [IDL.Nat], ["query"]),
     getUsernameTreasury: IDL.Func([], [IDL.Principal], ["query"]),
     purchaseUsername: IDL.Func([IDL.Text], [ApiResult_9], []),
-    getDashboard: IDL.Func([], [ApiResult_8], []),
+    getDashboard: IDL.Func([], [ApiResult_8], ["query"]),
     getDepositAddress: IDL.Func([], [IDL.Record({ owner: IDL.Principal, subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)) })], ["query"]),
     getDepositAccountIdentifier: IDL.Func([], [IDL.Text], ["query"]),
     syncDeposits: IDL.Func([], [ApiResult_1], []),

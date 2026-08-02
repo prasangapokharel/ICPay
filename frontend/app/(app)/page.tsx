@@ -39,8 +39,8 @@ export default function DashboardPage() {
     <div className="space-y-6 pt-2">
       <UsernamePrompt username={data.user.username?.[0]} />
       <BalanceCard
-        balance={formatE8s(liveBalance ?? data.icpBalance)}
-        balanceE8s={liveBalance ?? data.icpBalance}
+        balance={formatE8s(liveBalance ?? 0n)}
+        balanceE8s={liveBalance ?? 0n}
         price={price}
         hidden={hidden}
         onToggleHidden={() => setHidden((v) => !v)}

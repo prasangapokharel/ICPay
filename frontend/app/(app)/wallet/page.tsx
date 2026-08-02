@@ -31,7 +31,7 @@ export default function WalletPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-4xl font-bold tracking-tight">{formatE8s(liveBalance ?? data.icpBalance)}</div>
+          <div className="text-4xl font-bold tracking-tight">{formatE8s(liveBalance ?? 0n)}</div>
           <p className="mt-1 text-sm text-primary-foreground/70">ICP</p>
         </CardContent>
       </Card>

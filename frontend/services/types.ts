@@ -57,7 +57,6 @@ export type ICRC1Account = {
 export type DashboardData = {
   user: UserPublic
   principal: Principal
-  icpBalance: bigint
   depositAddress: ICRC1Account
   depositAccountIdentifier: string
   recentTransactions: TransactionPublic[]
