@@ -1,5 +1,45 @@
 # Changelog
 
+## v1.4 — Public release
+
+Everything a stranger needs in order to decide whether to trust ICPay with
+real money, and the repository opened so they can check the answer.
+
+**Legal and transparency**
+- Terms of Service, Privacy Policy and a Security & Transparency page, on
+  their own unguarded route group so they are readable signed-out and by a
+  crawler. Every claim on them traces to code or to a mainnet call, not to
+  a template.
+- Transparency lists the backend canister, the frontend asset canister, the
+  controller principal, the sale treasury and the ICP ledger, next to what
+  the operator cannot do and what the controller can. It does not claim
+  decentralisation ICPay does not have: one principal controls the canister
+  and can upgrade it, and the page says so.
+- Privacy states plainly that usernames, display names and transfer memos
+  are permanent and world-readable, and that there is no deletion path —
+  because there is not one, and promising otherwise would be a lie the
+  chain would expose.
+- Terms and Privacy are linked from the login screen before sign-in, and
+  from the menu page after it.
+
+**Open source**
+- MIT licence, a README, a contributor guide and a security policy.
+- Local agent tooling and dfx identity material are untracked and ignored.
+  An exported identity is the key to the canister; it must never reach a
+  public remote.
+
+**UI**
+- Send and Receive are both filled buttons on the dashboard.
+- The Preferences section is gone from the menu page — it wrote settings
+  nothing read.
+
+**Fixes**
+- An account holding bought handle aliases appears once in the ICPverse
+  list rather than once per alias.
+- Account stats are keyed by custodian and read off the query path, so a
+  page load no longer costs an update call.
+- The success chime plays on mobile and no longer fires while priming.
+
 ## v1.3 — Premium usernames
 
 Short handles are the scarce inventory, so they are now sold instead of
