@@ -16,6 +16,10 @@ import {
   Coins01Icon,
   Logout01Icon,
   Search01Icon,
+  ShieldKeyIcon,
+  File01Icon,
+  LockKeyIcon,
+  ArrowRight01Icon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -58,6 +62,14 @@ const SECTIONS: { title: string; items: Service[] }[] = [
       { href: "/", label: "Balance", icon: Wallet01Icon, keywords: "home dashboard" },
     ],
   },
+]
+
+// Kept out of SECTIONS so the service search does not filter them away: these
+// are the pages someone goes looking for deliberately, not features to browse.
+const LEGAL: { href: string; label: string; icon: IconSvgElement }[] = [
+  { href: "/transparency", label: "Security & Transparency", icon: ShieldKeyIcon },
+  { href: "/terms", label: "Terms of Service", icon: File01Icon },
+  { href: "/privacy", label: "Privacy Policy", icon: LockKeyIcon },
 ]
 
 export default function MenuPage() {
@@ -130,6 +142,26 @@ export default function MenuPage() {
           Nothing matches &ldquo;{query.trim()}&rdquo;.
         </p>
       )}
+
+      <div className="space-y-3">
+        <h2 className="text-sm font-semibold">Legal</h2>
+        <div className="overflow-hidden rounded-2xl border">
+          {LEGAL.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex items-center gap-3 border-b px-4 py-3.5 text-sm transition-colors last:border-0 hover:bg-accent"
+            >
+              <HugeiconsIcon icon={item.icon} className="size-4.5 shrink-0 text-muted-foreground" />
+              <span className="flex-1">{item.label}</span>
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                className="size-4 shrink-0 text-muted-foreground"
+              />
+            </Link>
+          ))}
+        </div>
+      </div>
 
       <button
         type="button"
