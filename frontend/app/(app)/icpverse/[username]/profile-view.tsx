@@ -16,6 +16,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor, shortPrincipal } from "@/lib/avatar"
 import { shareReceipt } from "@/lib/receipt"
+import { useIcpPrice } from "@/lib/use-icp-price"
 import { useResolvedUsername, useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -25,6 +26,7 @@ export function ProfileView() {
   const pathname = usePathname()
   const router = useRouter()
   const { identity } = useAuth()
+  const { price } = useIcpPrice()
   const { data: dashboard } = useDashboard()
   const refreshWallet = useRefreshWallet()
   const [tipOpen, setTipOpen] = useState(false)
@@ -68,6 +70,7 @@ export function ProfileView() {
           recipient: `@${username}`,
           blockIndex: result.ok.blockIndex,
           memo: message,
+          usdPrice: price?.usd,
         }
         toast.add({
           title: "Tip sent",

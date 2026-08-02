@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { formatE8s, explorerTxUrl } from "@/lib/wallet-utils"
 import { shareReceipt } from "@/lib/receipt"
+import { useIcpPrice } from "@/lib/use-icp-price"
 import { toast } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
 
@@ -24,6 +25,7 @@ type SendSuccessProps = {
 
 export function SendSuccess({ amount, recipient, blockIndex, memo, onDone }: SendSuccessProps) {
   const [sharing, setSharing] = useState(false)
+  const { price } = useIcpPrice()
 
   const avatarUri = useMemo(
     () => createAvatar(adventurer, { seed: recipient }).toDataUri(),
@@ -33,7 +35,13 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, onDone }: Sen
   const handleShare = async () => {
     setSharing(true)
     try {
-      const outcome = await shareReceipt({ amount, recipient, blockIndex, memo })
+      const outcome = await shareReceipt({
+        amount,
+        recipient,
+        blockIndex,
+        memo,
+        usdPrice: price?.usd,
+      })
       if (outcome === "downloaded") {
         toast.add({ title: "Receipt saved", description: "Check your downloads." })
       }
