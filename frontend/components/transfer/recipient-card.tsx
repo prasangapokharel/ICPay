@@ -1,6 +1,7 @@
 "use client"
 
-import Image from "next/image"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { GiftIcon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
 import { avatarUriFor } from "@/lib/avatar"
@@ -40,13 +41,9 @@ export function RecipientCard({
           </p>
         )}
       </div>
-      <Image
-        src="/images/logo/logo.png"
-        alt="Verified ICPay account"
-        width={40}
-        height={40}
-        className="size-5 shrink-0 object-contain"
-      />
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <HugeiconsIcon icon={GiftIcon} className="size-4" />
+      </span>
     </div>
   )
 }

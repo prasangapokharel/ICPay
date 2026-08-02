@@ -1,11 +1,10 @@
 "use client"
 
-import Image from "next/image"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon, Share08Icon } from "@hugeicons/core-free-icons"
+import { LinkSquare02Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -76,9 +75,11 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
 
   return (
     <div className="flex flex-col items-center pt-6 text-center">
-      <span className="flex size-24 items-center justify-center rounded-full bg-muted/50 ring-8 ring-muted/20">
-        <Image src="/images/logo/logo.png" alt="" width={56} height={56} className="size-14" />
-      </span>
+      <div className="animate-in fade-in zoom-in-75 mb-5 flex size-18 items-center justify-center rounded-full bg-green-100 duration-300 ease-out dark:bg-green-950">
+        <span className="flex size-13 items-center justify-center rounded-full bg-green-600 text-white shadow-sm">
+          <HugeiconsIcon icon={Tick02Icon} className="size-8" strokeWidth={3} />
+        </span>
+      </div>
 
       <h1 className="mt-6 text-2xl font-bold tracking-tight">{HEADING[kind]}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
