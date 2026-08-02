@@ -41,7 +41,11 @@ export function getIdentityProvider(): string {
 // Must stay identical to public/.well-known/ii-alternative-origins, which the
 // canister serves and II actually checks against. An origin missing here just
 // falls back to its own principal instead of the shared one.
-const ALTERNATIVE_ORIGINS = ["https://ic-pay.vercel.app"]
+const ALTERNATIVE_ORIGINS = [
+  "https://ic-pay.vercel.app",
+  "https://icpay.app",
+  "https://www.icpay.app",
+]
 
 // Internet Identity derives a principal from the origin that asked for it, so
 // the same II account yields a different principal -- and therefore a different
