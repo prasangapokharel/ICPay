@@ -10,11 +10,15 @@ Debug.print("PASS: ICP_DECIMALS is 8");
 assert(Config.ICP_FEE == 10_000);
 Debug.print("PASS: ICP_FEE is 10_000");
 
-assert(Config.MAX_USERNAME_LENGTH == 32);
-Debug.print("PASS: MAX_USERNAME_LENGTH is 32");
+assert(Config.MAX_USERNAME_LENGTH == 8);
+Debug.print("PASS: MAX_USERNAME_LENGTH is 8");
 
-assert(Config.MIN_USERNAME_LENGTH == 3);
-Debug.print("PASS: MIN_USERNAME_LENGTH is 3");
+assert(Config.MIN_USERNAME_LENGTH == 1);
+Debug.print("PASS: MIN_USERNAME_LENGTH is 1");
+
+assert(Config.FREE_MIN_USERNAME_LENGTH == 5);
+assert(Config.FREE_MIN_USERNAME_LENGTH > Config.MIN_USERNAME_LENGTH);
+Debug.print("PASS: free claims start at 5 chars, leaving 1-4 purchasable");
 
 assert(Config.PAGE_SIZE == 20);
 Debug.print("PASS: PAGE_SIZE is 20");

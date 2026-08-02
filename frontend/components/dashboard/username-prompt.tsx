@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { USERNAME_FREE_MIN_LENGTH } from "@/lib/username"
 
 // A username is required rather than suggested: without one, nobody can send
 // this account ICP by name. So there is no dismiss path -- no close button, no
@@ -35,8 +36,9 @@ export function UsernamePrompt({ username }: { username?: string }) {
           </div>
           <DialogTitle className="text-center">Claim your username</DialogTitle>
           <DialogDescription className="text-center">
-            Usernames are first come, first served. Claim yours before someone else
-            does, and let people send you ICP without a long principal address.
+            Usernames are first come, first served. Pick a free one of{" "}
+            {USERNAME_FREE_MIN_LENGTH}+ characters and let people send you ICP
+            without a long principal address.
           </DialogDescription>
         </DialogHeader>
 

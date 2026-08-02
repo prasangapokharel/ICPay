@@ -8,7 +8,7 @@ import { UsernamePrompt } from "@/components/dashboard/username-prompt"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import { ArrowUpRight01Icon, Download01Icon } from "@hugeicons/core-free-icons"
+import { ArrowUpRight01Icon, Download01Icon, ShoppingBag01Icon } from "@hugeicons/core-free-icons"
 import { formatE8s } from "@/lib/wallet-utils"
 import { useIcpPrice } from "@/lib/use-icp-price"
 import { useDashboard, useLiveBalance } from "@/hooks/use-wallet-data"
@@ -46,8 +46,9 @@ export default function DashboardPage() {
         onToggleHidden={() => setHidden((v) => !v)}
       />
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         <ActionButton href="/transfer" label="Send" icon={ArrowUpRight01Icon} primary />
+        <ActionButton href="/username" label="Buy" icon={ShoppingBag01Icon} />
         <ActionButton href="/deposit" label="Receive" icon={Download01Icon} />
       </div>
 
@@ -86,7 +87,8 @@ function DashboardSkeleton() {
   return (
     <div className="space-y-6 pt-2">
       <Skeleton className="h-40 w-full rounded-3xl" />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-3">
+        <Skeleton className="h-12 rounded-full" />
         <Skeleton className="h-12 rounded-full" />
         <Skeleton className="h-12 rounded-full" />
       </div>

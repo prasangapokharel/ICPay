@@ -50,10 +50,10 @@ switch (AuthService.register(auth, newUserPrincipal, "testuser")) {
   case (#err(msg)) { assert(false); Debug.print("FAIL: register failed: " # msg) };
 };
 
-switch (AuthService.register(auth, userPrincipal, "anotheruser")) {
+switch (AuthService.register(auth, userPrincipal, "another")) {
   case (#ok(result)) {
     assert(result.isNew == false);
-    assert(result.user.username == ?"anotheruser");
+    assert(result.user.username == ?"another");
     Debug.print("PASS: register adds username to existing user");
   };
   case (#err(msg)) { assert(false); Debug.print("FAIL: register for existing user failed: " # msg) };

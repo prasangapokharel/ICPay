@@ -44,7 +44,7 @@ module {
       case (?err) { return #err(err) };
       case (null) {};
     };
-    switch (UsernameValidator.validate(username)) {
+    switch (UsernameValidator.validateFreeClaim(username)) {
       case (?err) { return #err(err) };
       case (null) {};
     };

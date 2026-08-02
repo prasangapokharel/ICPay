@@ -30,7 +30,7 @@ module {
   // to it. Letting it be reassigned would let one user inherit another's inbound
   // tips, so the first claim is permanent and there is no release path.
   public func updateUsername(service: UserService, caller: Principal, newUsername: Types.Username): Types.ApiResult<Types.UserPublic> {
-    switch (UsernameValidator.validate(newUsername)) {
+    switch (UsernameValidator.validateFreeClaim(newUsername)) {
       case (?err) { return #err(err) };
       case (null) {};
     };

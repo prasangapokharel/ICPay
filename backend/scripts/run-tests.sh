@@ -44,6 +44,7 @@ run_test "$ROOT/testing/config/Config.test.mo" "Config"
 
 echo "--- Utils Tests ---"
 run_test "$ROOT/testing/utils/UUID.test.mo" "UUID"
+run_test "$ROOT/testing/utils/DateTime.test.mo" "DateTime"
 
 echo "--- Validator Tests ---"
 run_test "$ROOT/testing/validators/PrincipalValidator.test.mo" "PrincipalValidator"

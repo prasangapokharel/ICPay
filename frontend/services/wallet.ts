@@ -10,6 +10,7 @@ import type {
   ApiResult_3,
   ApiResult_7,
   ApiResult_8,
+  ApiResult_9,
   UserPublic,
   ICRC1Account,
   TxId,
@@ -25,6 +26,9 @@ export interface WalletActor {
   checkUsername: (name: string) => Promise<boolean>
   searchUsers: (searchText: string) => Promise<UserPublic[]>
   resolveUsername: (name: string) => Promise<[] | [Principal]>
+  getUsernamePrice: (name: string) => Promise<bigint>
+  getUsernameTreasury: () => Promise<Principal>
+  purchaseUsername: (name: string) => Promise<ApiResult_9>
   getDashboard: () => Promise<ApiResult_8>
   getDepositAddress: () => Promise<ICRC1Account>
   getDepositAccountIdentifier: () => Promise<string>
@@ -169,6 +173,18 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     err: IDL.Text,
   })
 
+  const Purchase = IDL.Record({
+    blockIndex: IDL.Nat64,
+    price: IDL.Nat,
+    txId: TxId,
+    username: IDL.Text,
+  })
+
+  const ApiResult_9 = IDL.Variant({
+    ok: Purchase,
+    err: IDL.Text,
+  })
+
   return IDL.Service({
     health: IDL.Func([], [IDL.Text], ["query"]),
     login: IDL.Func([], [AuthResult], []),
@@ -178,6 +194,9 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     checkUsername: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     searchUsers: IDL.Func([IDL.Text], [IDL.Vec(UserPublic)], ["query"]),
     resolveUsername: IDL.Func([IDL.Text], [IDL.Opt(IDL.Principal)], ["query"]),
+    getUsernamePrice: IDL.Func([IDL.Text], [IDL.Nat], ["query"]),
+    getUsernameTreasury: IDL.Func([], [IDL.Principal], ["query"]),
+    purchaseUsername: IDL.Func([IDL.Text], [ApiResult_9], []),
     getDashboard: IDL.Func([], [ApiResult_8], []),
     getDepositAddress: IDL.Func([], [IDL.Record({ owner: IDL.Principal, subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)) })], ["query"]),
     getDepositAccountIdentifier: IDL.Func([], [IDL.Text], ["query"]),

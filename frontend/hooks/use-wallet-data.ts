@@ -193,6 +193,31 @@ export function useResolvedUsername(name: string) {
   return { principal: data ?? null, isLoading: enabled && isLoading }
 }
 
+// checkUsername is a query call, so this can run as the buyer types. Availability
+// is a state read and cannot be derived locally the way the price can.
+export function useUsernameAvailability(name: string) {
+  const { identity } = useAuth()
+  const trimmed = name.trim().toLowerCase()
+
+  const { data, isLoading } = useSWR(
+    trimmed ? keyFor(identity, "check-username", trimmed) : null,
+    async () => {
+      const actor = await getWalletActor(identity!)
+      return actor.checkUsername(trimmed)
+    },
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      // Showing the previous name's verdict against the new text would read as
+      // a confident answer about the wrong name.
+      keepPreviousData: false,
+      dedupingInterval: 30_000,
+    }
+  )
+
+  return { available: data ?? null, isLoading: trimmed !== "" && isLoading }
+}
+
 // Passing an empty string matches every username, which is what fills the
 // suggestion list before anyone searches.
 export function useUserSearch(search: string, limit = 10) {

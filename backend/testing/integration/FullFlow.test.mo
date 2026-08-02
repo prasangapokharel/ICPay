@@ -56,9 +56,9 @@ switch (AuthService.login(auth, p2)) {
   case (#err(msg)) { assert(false); Debug.print("FAIL [FLOW]: user2 login: " # msg) };
 };
 
-switch (UserService.updateUsername(userSvc, p2, "bob")) {
+switch (UserService.updateUsername(userSvc, p2, "bobby")) {
   case (#ok(result)) {
-    assert(result.username == ?"bob");
+    assert(result.username == ?"bobby");
     Debug.print("PASS [FLOW]: user2 updates username");
   };
   case (#err(msg)) { assert(false); Debug.print("FAIL [FLOW]: user2 username: " # msg) };
@@ -72,7 +72,7 @@ switch (UserService.resolveUsername(userSvc, "alice")) {
   case (null) { assert(false); Debug.print("FAIL [FLOW]: resolve alice failed") };
 };
 
-switch (UserService.resolveUsername(userSvc, "bob")) {
+switch (UserService.resolveUsername(userSvc, "bobby")) {
   case (?p) {
     assert(p == p2);
     Debug.print("PASS [FLOW]: resolve bob -> user2");
@@ -125,13 +125,13 @@ switch (UserService.getProfile(userSvc, p1)) {
 
 switch (UserService.getProfile(userSvc, p2)) {
   case (?profile) {
-    assert(profile.username == ?"bob");
+    assert(profile.username == ?"bobby");
     Debug.print("PASS [FLOW]: user2 profile matches");
   };
   case (null) { assert(false) };
 };
 
-switch (UserService.updateUsername(userSvc, p1, "alice_updated")) {
+switch (UserService.updateUsername(userSvc, p1, "alice_2")) {
   case (#ok(_)) { assert(false); Debug.print("FAIL [FLOW]: username must be permanent") };
   case (#err(_)) { Debug.print("PASS [FLOW]: user1 cannot rename after claiming") };
 };
@@ -144,7 +144,7 @@ switch (UserService.resolveUsername(userSvc, "alice")) {
   case (null) { assert(false); Debug.print("FAIL [FLOW]: claimed username stopped resolving") };
 };
 
-switch (UserService.checkAvailability(userSvc, "alice_updated")) {
+switch (UserService.checkAvailability(userSvc, "alice_2")) {
   case (true) { Debug.print("PASS [FLOW]: rejected name was never claimed") };
   case (false) { assert(false); Debug.print("FAIL [FLOW]: rejected name must stay free") };
 };

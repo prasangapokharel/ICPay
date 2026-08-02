@@ -71,7 +71,7 @@ switch (UserService.updateUsername(svc, Principal.fromText("ryjl3-tyaaa-aaaaa-aa
   case (#err(msg)) { Debug.print("PASS: updateUsername for unknown user rejected: " # msg) };
 };
 
-let available = UserService.checkAvailability(svc, "availableuser");
+let available = UserService.checkAvailability(svc, "availab");
 assert(available == true);
 Debug.print("PASS: checkAvailability returns true for available name");
 
@@ -79,9 +79,15 @@ let notAvailable = UserService.checkAvailability(svc, "bob");
 assert(notAvailable == false);
 Debug.print("PASS: checkAvailability returns false for taken name");
 
-let invalidCheck = UserService.checkAvailability(svc, "ab");
+let invalidCheck = UserService.checkAvailability(svc, "a b");
 assert(invalidCheck == false);
 Debug.print("PASS: checkAvailability returns false for invalid name");
+
+// A short name is well-formed and unclaimed, so it reports available: it is
+// simply not free. Price, not availability, is what gates it.
+let shortAvailable = UserService.checkAvailability(svc, "ab");
+assert(shortAvailable == true);
+Debug.print("PASS: a short unclaimed name is available to buy");
 
 let caseVariantTaken = UserService.checkAvailability(svc, "BoB");
 assert(caseVariantTaken == false);

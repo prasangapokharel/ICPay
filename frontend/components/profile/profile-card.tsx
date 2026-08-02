@@ -11,6 +11,12 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { UserIcon, Tick02Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
 import type { UserPublic } from "@/services/types"
 import { formatPrincipal } from "@/lib/wallet-utils"
+import Link from "next/link"
+import {
+  validateFreeUsername,
+  USERNAME_MAX_LENGTH,
+  USERNAME_FREE_MIN_LENGTH,
+} from "@/lib/username"
 
 type ProfileCardProps = {
   user: UserPublic
@@ -32,12 +38,21 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
     setCheckResult(available)
   }
 
+  const trimmed = username.trim()
+  const tooShortToClaim =
+    trimmed !== "" && trimmed.length < USERNAME_FREE_MIN_LENGTH
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-    if (!username.trim()) { setError("Username is required"); return }
+    const name = username.trim()
+    if (!name) { setError("Username is required"); return }
+    // Checked here so a short name explains itself and offers the buy path,
+    // rather than costing a round trip to learn it is not free.
+    const invalid = validateFreeUsername(name)
+    if (invalid) { setError(invalid); return }
     setLoading(true)
-    const err = await onUpdateUsername(username.trim())
+    const err = await onUpdateUsername(name)
     if (err) setError(err)
     else setCheckResult(null)
     setLoading(false)
@@ -82,15 +97,30 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
                   value={username}
                   onChange={(e) => { setUsername(e.target.value); setCheckResult(null) }}
                   onBlur={handleCheck}
+                  maxLength={USERNAME_MAX_LENGTH}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                 />
                 {checkResult === true && <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-success" />}
                 {checkResult === false && <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-destructive" />}
               </div>
-              {checkResult === true && <p className="text-xs text-success">Username is available</p>}
+              {checkResult === true && !tooShortToClaim && <p className="text-xs text-success">Username is available</p>}
               {checkResult === false && <p className="text-xs text-destructive">Username is taken</p>}
-              <p className="text-xs text-muted-foreground">
-                You can only set this once — choose carefully.
-              </p>
+              {tooShortToClaim ? (
+                <p className="text-xs text-muted-foreground">
+                  Free usernames need {USERNAME_FREE_MIN_LENGTH}+ characters.{" "}
+                  <Link href="/username" className="font-medium text-primary underline underline-offset-2">
+                    Buy a shorter one
+                  </Link>
+                  .
+                </p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  {USERNAME_FREE_MIN_LENGTH}-{USERNAME_MAX_LENGTH} characters, free.
+                  You can only set this once — choose carefully.
+                </p>
+              )}
             </div>
             {error && (
               <Alert variant="destructive">

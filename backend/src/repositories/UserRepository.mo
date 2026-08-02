@@ -69,6 +69,20 @@ module {
     user.setUsername(newUsername, now);
   };
 
+  // A purchase keeps every handle the buyer has ever held pointing at them:
+  // people memorise a handle as a payment address, so releasing the old one
+  // would let a stranger claim it and collect funds meant for the buyer. Only
+  // the primary display handle moves.
+  public func addAlias(
+    usernames: UserStorage.UsernameMap,
+    user: Types.User,
+    newUsername: Types.Username,
+    now: Int,
+  ) {
+    usernames.add(UsernameValidator.normalize(newUsername), user.principal);
+    user.setUsername(newUsername, now);
+  };
+
   public func searchByUsername(usernames: UserStorage.UsernameMap, users: UserStorage.UserMap, search: Text): [Types.UserPublic] {
     let needle = UsernameValidator.normalize(search);
     let results = List.empty<Types.UserPublic>();

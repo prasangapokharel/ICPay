@@ -78,6 +78,13 @@ export type PaginatedResult = {
   pageSize: bigint
 }
 
+export type Purchase = {
+  blockIndex: bigint
+  price: bigint
+  txId: string
+  username: string
+}
+
 export type AuthResult = { ok: { user: UserPublic; isNew: boolean } } | { err: string }
 export type ApiResult = { ok: TransferResult } | { err: string }
 export type ApiResult_1 = { ok: TransactionPublic } | { err: string }
@@ -85,3 +92,4 @@ export type ApiResult_2 = { ok: UserPublic } | { err: string }
 export type ApiResult_3 = { ok: SettingsPublic } | { err: string }
 export type ApiResult_7 = { ok: PaginatedResult } | { err: string }
 export type ApiResult_8 = { ok: DashboardData } | { err: string }
+export type ApiResult_9 = { ok: Purchase } | { err: string }

@@ -10,6 +10,7 @@ import DashboardService "services/DashboardService";
 import DepositService "services/DepositService";
 import WithdrawService "services/WithdrawService";
 import TransferService "services/TransferService";
+import UsernameSaleService "services/UsernameSaleService";
 import TransactionService "services/TransactionService";
 import SettingsService "services/SettingsService";
 import HealthApi "api/v1/Health";
@@ -20,6 +21,7 @@ import DashboardApi "api/v1/Dashboard";
 import DepositApi "api/v1/Deposit";
 import WithdrawApi "api/v1/Withdraw";
 import TransferApi "api/v1/Transfer";
+import UsernameSaleApi "api/v1/UsernameSale";
 import TransactionsApi "api/v1/Transactions";
 import SettingsApi "api/v1/Settings";
 import MiddlewareAuth "middleware/Auth";
@@ -47,6 +49,7 @@ persistent actor self {
   transient let depositService = DepositService.create(users, transactions, ledger);
   transient let withdrawService = WithdrawService.create(users, transactions, ledger);
   transient let transferService = TransferService.create(users, usernames, transactions, ledger);
+  transient let usernameSaleService = UsernameSaleService.create(users, usernames, reservedUsernames, transferService);
   transient let transactionService = TransactionService.create(users, transactions);
   transient let settingsService = SettingsService.create(users, settings);
 
@@ -58,6 +61,7 @@ persistent actor self {
   include DepositApi(depositService, mwConfig);
   include WithdrawApi(withdrawService, mwConfig);
   include TransferApi(transferService, mwConfig);
+  include UsernameSaleApi(usernameSaleService, mwConfig);
   include TransactionsApi(transactionService, mwConfig);
   include SettingsApi(settingsService, mwConfig);
 };
