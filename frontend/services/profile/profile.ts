@@ -1,5 +1,6 @@
 import type { Identity } from "@dfinity/agent"
 import { call, query, type Outcome } from "@/services/client"
+import { getWalletActor } from "@/services/wallet"
 import type { UserPublic } from "@/services/types"
 
 // Returns null for a principal with no account yet, which is how the caller
@@ -32,12 +33,14 @@ export function searchUsers(
 }
 
 // Resolves a handle to the principal behind it, or null when unclaimed.
-export function resolveUsername(
+// The canister method takes no caller, so this runs anonymously rather than
+// through query(), which rejects without an identity -- a public payment link
+// has to resolve for a stranger with no account.
+export async function resolveUsername(
   identity: Identity | undefined,
   name: string
 ): Promise<string | null> {
-  return query(identity, async (actor) => {
-    const [principal] = await actor.resolveUsername(name)
-    return principal ? principal.toText() : null
-  })
+  const actor = await getWalletActor(identity)
+  const [principal] = await actor.resolveUsername(name)
+  return principal ? principal.toText() : null
 }

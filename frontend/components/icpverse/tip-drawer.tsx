@@ -19,7 +19,6 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { GiftIcon } from "@hugeicons/core-free-icons"
 import {
-  formatAmount,
   memoByteLength,
   MEMO_MAX_BYTES,
   parseIcp,
@@ -191,15 +190,6 @@ export function TipDrawer({
             )}
           </div>
 
-          {insufficient && !error && (
-            <Alert variant="destructive">
-              <AlertDescription>
-                Not enough balance. Sending {formatAmount(amount!)} ICP costs{" "}
-                {formatAmount(total!)} ICP with the fee.
-              </AlertDescription>
-            </Alert>
-          )}
-
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
@@ -208,13 +198,16 @@ export function TipDrawer({
         </div>
 
         <DrawerFooter>
+          {/* Insufficient balance is said on the button rather than in an alert
+              above it: the button is already locked, so a second element saying
+              so only pushes the form around. */}
           <Button className="h-12 text-base" disabled={!canSend} onClick={handleSend}>
             {loading ? (
               <Spinner className="size-4" />
             ) : (
               <HugeiconsIcon icon={GiftIcon} className="size-4" />
             )}
-            {loading ? "Sending…" : "Send tip"}
+            {loading ? "Sending…" : insufficient ? "Insufficient balance" : "Send tip"}
           </Button>
         </DrawerFooter>
       </DrawerContent>

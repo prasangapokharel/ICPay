@@ -166,6 +166,9 @@ export function usePatchDashboardUser() {
 }
 
 // resolveUsername is a query call, so this is safe to run while the user types.
+// The key deliberately omits the principal: this is an unauthenticated lookup
+// and keyFor would return null for a signed-out visitor, which reads as "no
+// such user" on the public profile page rather than as "not fetched".
 export function useResolvedUsername(name: string) {
   const { identity } = useAuth()
   const trimmed = name.trim().toLowerCase()
@@ -173,7 +176,7 @@ export function useResolvedUsername(name: string) {
   const enabled = trimmed.length >= 3
 
   const { data, isLoading } = useSWR(
-    enabled ? keyFor(identity, "resolve-username", trimmed) : null,
+    enabled ? (["resolve-username", trimmed] as const) : null,
     () => resolveUsername(identity, trimmed),
     // keepPreviousData would show the previous match against the new text, so
     // it is deliberately off.

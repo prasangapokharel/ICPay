@@ -6,22 +6,12 @@ import { useTheme } from "next-themes"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { UserIcon, Settings01Icon, Logout01Icon, Sun01Icon, Moon02Icon } from "@hugeicons/core-free-icons"
+import { Sun01Icon, Moon02Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
-import { shortPrincipal } from "@/lib/wallet-utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 export function AppHeader() {
-  const { identity, logout } = useAuth()
+  const { identity } = useAuth()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -30,7 +20,6 @@ export function AppHeader() {
   useEffect(() => setMounted(true), [])
 
   const principal = identity?.getPrincipal().toText() ?? ""
-  const short = shortPrincipal(principal)
 
   const avatarUri = useMemo(
     () => (principal ? createAvatar(adventurer, { seed: principal }).toDataUri() : ""),
@@ -41,41 +30,20 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between bg-background/80 px-4 backdrop-blur-xl">
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          aria-label="Account menu"
-          className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Avatar className="size-9">
-            {avatarUri && <AvatarImage src={avatarUri} alt="" />}
-            <AvatarFallback className="bg-muted text-xs font-medium">
-              {principal.slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-56">
-          <DropdownMenuGroup>
-            <DropdownMenuLabel className="font-normal">
-              <span className="block text-xs text-muted-foreground">Signed in as</span>
-              <span className="block truncate font-mono text-xs">{short}</span>
-            </DropdownMenuLabel>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem render={<Link href="/profile" />}>
-            <HugeiconsIcon icon={UserIcon} className="size-4" />
-            Profile
-          </DropdownMenuItem>
-          <DropdownMenuItem render={<Link href="/settings" />}>
-            <HugeiconsIcon icon={Settings01Icon} className="size-4" />
-            Settings
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive" onSelect={() => logout()}>
-            <HugeiconsIcon icon={Logout01Icon} className="size-4" />
-            Sign out
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      {/* Straight to the profile rather than a dropdown: every entry it held --
+          profile, settings, sign out -- is already on the menu page. */}
+      <Link
+        href="/profile"
+        aria-label="Your profile"
+        className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <Avatar className="size-9">
+          {avatarUri && <AvatarImage src={avatarUri} alt="" />}
+          <AvatarFallback className="bg-muted text-xs font-medium">
+            {principal.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+      </Link>
 
       <button
         type="button"

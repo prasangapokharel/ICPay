@@ -6,7 +6,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { Principal } from "@dfinity/principal"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
+import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon, UserQuestion01Icon } from "@hugeicons/core-free-icons"
@@ -14,7 +15,7 @@ import { PayQr } from "@/components/profile/pay-qr"
 import { QuickPayDrawer } from "@/components/profile/quick-pay-drawer"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText } from "@/lib/wallet-utils"
-import { icrc1Account } from "@/lib/account-id"
+import { accountIdentifier, icrc1Account } from "@/lib/account-id"
 import { isPossibleHandle, isReservedHandle } from "@/lib/reserved-handles"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { custodialSubaccount } from "@/services/tokens"
@@ -29,6 +30,7 @@ export function PublicProfile() {
   const refreshWallet = useRefreshWallet()
   const [payOpen, setPayOpen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [legacy, setLegacy] = useState(false)
 
   // Read from the path, not useParams: under output "export" this is served as
   // the /u shell via a rewrite, so useParams would report "u" for every visitor.
@@ -46,12 +48,16 @@ export function PublicProfile() {
   // principal itself land outside the subaccount the canister credits. Derived
   // here because getDepositAddress is scoped to its caller and a visitor is
   // anonymous.
-  const payAddress = principal
-    ? icrc1Account(
-        Principal.fromText(WALLET_CANISTER_ID),
-        custodialSubaccount(Principal.fromText(principal))
-      )
-    : ""
+  //
+  // Both encodings name that same account -- ICRC-1 for ICP wallets, the legacy
+  // identifier for exchanges that will not take the long form.
+  const subaccount = principal ? custodialSubaccount(Principal.fromText(principal)) : undefined
+  const canister = Principal.fromText(WALLET_CANISTER_ID)
+  const payAddress = !subaccount
+    ? ""
+    : legacy
+      ? accountIdentifier(canister, subaccount)
+      : icrc1Account(canister, subaccount)
 
   const handleCopy = async () => {
     if (!payAddress) return
@@ -101,16 +107,16 @@ export function PublicProfile() {
       <h1 className="pt-4 text-2xl font-bold tracking-tight">@{username}</h1>
       <p className="pt-1 text-sm text-muted-foreground">Scan or tap to send ICP</p>
 
-      <PayQr value={payAddress} className="pt-7" />
+      <PayQr value={payAddress} className="pt-8" />
 
       <button
         type="button"
         onClick={handleCopy}
         aria-label="Copy payment address"
-        className="mt-6 flex w-full items-center gap-3 rounded-2xl border bg-muted/40 p-4 text-left transition-colors hover:bg-muted active:scale-[0.99]"
+        className="mt-7 flex w-full items-center gap-3 rounded-2xl border bg-muted/40 p-4 text-left transition-colors hover:bg-muted active:scale-[0.99]"
       >
         <span className="min-w-0 flex-1 truncate font-mono text-xs">
-          {payAddress.slice(0, 12)}…{payAddress.slice(-8)}
+          {payAddress.slice(0, 14)}…{payAddress.slice(-10)}
         </span>
         <HugeiconsIcon
           icon={copied ? Tick02Icon : Copy01Icon}
@@ -118,12 +124,21 @@ export function PublicProfile() {
         />
       </button>
 
+      {/* Both forms address the same custodial subaccount, so the choice is only
+          about which one the sender's wallet accepts. */}
+      <label className="mt-3 flex w-full items-center justify-between gap-3 px-1">
+        <span className="text-xs text-muted-foreground">
+          {legacy ? "Account ID — for exchanges" : "ICRC-1 — for ICP wallets"}
+        </span>
+        <Switch checked={legacy} onCheckedChange={setLegacy} />
+      </label>
+
       {isSelf ? (
-        <p className="mt-4 text-center text-xs text-muted-foreground">
+        <p className="mt-6 text-center text-xs text-muted-foreground">
           This is your payment link. Share it to get paid.
         </p>
       ) : (
-        <Button className="mt-4 h-13 w-full text-base" onClick={handlePayClick}>
+        <Button className="mt-6 h-13 w-full text-base" onClick={handlePayClick}>
           Pay
         </Button>
       )}
@@ -190,13 +205,8 @@ function Footer() {
 
 function ProfileSkeleton() {
   return (
-    <main className="flex flex-1 flex-col items-center px-5 pt-12">
-      <Skeleton className="size-24 rounded-full" />
-      <Skeleton className="mt-4 h-7 w-36" />
-      <Skeleton className="mt-2 h-4 w-44" />
-      <Skeleton className="mt-7 size-44 rounded-2xl" />
-      <Skeleton className="mt-6 h-14 w-full rounded-2xl" />
-      <Skeleton className="mt-4 h-13 w-full rounded-2xl" />
+    <main className="flex flex-1 items-center justify-center">
+      <Spinner className="size-6 text-muted-foreground" />
     </main>
   )
 }

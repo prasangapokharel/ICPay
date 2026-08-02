@@ -23,9 +23,6 @@ import {
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { useAuth } from "@/components/auth/auth-provider"
-import { shortPrincipal } from "@/lib/wallet-utils"
-import { avatarUriFor } from "@/lib/avatar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
 type Service = {
@@ -73,10 +70,8 @@ const LEGAL: { href: string; label: string; icon: IconSvgElement }[] = [
 ]
 
 export default function MenuPage() {
-  const { identity, logout } = useAuth()
+  const { logout } = useAuth()
   const [query, setQuery] = useState("")
-
-  const principal = identity?.getPrincipal().toText() ?? ""
 
   const needle = query.trim().toLowerCase()
   const sections = needle
@@ -94,24 +89,6 @@ export default function MenuPage() {
         <h1 className="text-xl font-bold tracking-tight">Menu</h1>
         <p className="text-sm text-muted-foreground">Every ICPay feature in one place</p>
       </div>
-
-      <Link
-        href="/profile"
-        className="flex items-center gap-3 rounded-2xl border p-3 transition-colors hover:bg-accent"
-      >
-        <Avatar className="size-11">
-          {principal && <AvatarImage src={avatarUriFor(principal)} alt="" />}
-          <AvatarFallback className="bg-muted text-xs font-medium">
-            {principal.slice(0, 2).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold">Your account</p>
-          <p className="truncate font-mono text-xs text-muted-foreground">
-            {shortPrincipal(principal)}
-          </p>
-        </div>
-      </Link>
 
       <div className="relative">
         <HugeiconsIcon

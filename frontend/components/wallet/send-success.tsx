@@ -109,19 +109,22 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
         </div>
       </div>
 
-      <div className="mt-8 grid w-full gap-2.5">
+      <div className="mt-8 flex w-full items-center gap-2">
+        <Button className="h-12 flex-1 text-base" onClick={onDone}>
+          Done
+        </Button>
         {/* A purchase pays the treasury, so the receipt card -- which is framed
             around who received the money -- would read as a transfer to us. */}
         {kind !== "purchase" && (
           <>
-            <Button
-              variant="outline"
-              className="h-12 w-full text-base"
+            <button
+              type="button"
               onClick={() => setPreviewOpen(true)}
+              aria-label="Share receipt"
+              className="flex size-12 shrink-0 items-center justify-center rounded-2xl ring-1 ring-border transition-colors hover:bg-accent active:scale-95"
             >
-              <HugeiconsIcon icon={Share08Icon} className="size-4" />
-              Share receipt
-            </Button>
+              <HugeiconsIcon icon={Share08Icon} className="size-4.5" />
+            </button>
             <ReceiptPreview
               open={previewOpen}
               onOpenChange={setPreviewOpen}
@@ -129,9 +132,6 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
             />
           </>
         )}
-        <Button className="h-12 w-full text-base" onClick={onDone}>
-          Done
-        </Button>
       </div>
     </div>
   )

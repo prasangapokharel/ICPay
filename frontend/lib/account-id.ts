@@ -1,4 +1,5 @@
 import type { Principal } from "@dfinity/principal"
+import { sha224 } from "@noble/hashes/sha2"
 
 const CRC32_TABLE = (() => {
   const table = new Uint32Array(256)
@@ -65,4 +66,34 @@ export function icrc1Account(owner: Principal, subaccount?: Uint8Array | number[
 
   const trimmed = toHex(sub).replace(/^0+/, "")
   return `${owner.toText()}-${checksum}.${trimmed}`
+}
+
+const ACCOUNT_ID_DOMAIN = new TextEncoder().encode("\x0Aaccount-id")
+
+/**
+ * The legacy account identifier for the same account: crc32 ++ sha224 over a
+ * domain-separated owner and subaccount. Mirrors Principal.toLedgerAccount on
+ * the canister side, verified byte-for-byte against getDepositAccountIdentifier.
+ *
+ * Derived rather than fetched because that endpoint is scoped to its caller, so
+ * a visitor looking at someone else's profile cannot ask for it.
+ */
+export function accountIdentifier(owner: Principal, subaccount?: Uint8Array | number[]): string {
+  const sub = subaccount
+    ? subaccount instanceof Uint8Array
+      ? subaccount
+      : new Uint8Array(subaccount)
+    : new Uint8Array(32)
+
+  const ownerBytes = owner.toUint8Array()
+  const payload = new Uint8Array(ACCOUNT_ID_DOMAIN.length + ownerBytes.length + sub.length)
+  payload.set(ACCOUNT_ID_DOMAIN, 0)
+  payload.set(ownerBytes, ACCOUNT_ID_DOMAIN.length)
+  payload.set(sub, ACCOUNT_ID_DOMAIN.length + ownerBytes.length)
+
+  const hash = sha224(payload)
+  const out = new Uint8Array(4 + hash.length)
+  new DataView(out.buffer).setUint32(0, crc32(hash), false)
+  out.set(hash, 4)
+  return toHex(out)
 }

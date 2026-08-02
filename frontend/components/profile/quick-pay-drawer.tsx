@@ -3,11 +3,17 @@
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Drawer,
   DrawerContent,
@@ -17,23 +23,39 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { FlashIcon, LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { LinkSquare02Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
 import { avatarUriFor } from "@/lib/avatar"
 import { primeSuccessChime, playSuccessChime } from "@/lib/success-chime"
 import {
   E8S,
   ICP_FEE,
-  MEMO_MAX_BYTES,
+  copyText,
   explorerTxUrl,
-  formatAmount,
   formatE8s,
-  memoByteLength,
   parseIcp,
 } from "@/lib/wallet-utils"
 import { cn } from "@/lib/utils"
 
 const PRESETS = [1n, 5n, 10n] as const
+
+// Sent as the ledger memo, so every label is kept inside MEMO_MAX_BYTES (32) --
+// a longer one would be rejected by the canister at the point of transfer.
+// Fixed options rather than free text: the memo is written on-chain, publicly
+// and permanently, and a typed note invites people to put things there they
+// cannot take back.
+const PURPOSES = [
+  "Payment",
+  "Tip",
+  "Utility bill",
+  "Entertainment",
+  "Food & drink",
+  "Transport",
+  "Shopping",
+  "Gift",
+  "Donation",
+  "Other",
+] as const
 
 type Sent = { amount: bigint; blockIndex: bigint }
 
@@ -52,7 +74,7 @@ export function QuickPayDrawer({
 }) {
   const [selected, setSelected] = useState<bigint | null>(E8S)
   const [custom, setCustom] = useState("")
-  const [message, setMessage] = useState("")
+  const [purpose, setPurpose] = useState<string>(PURPOSES[0])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState<Sent | null>(null)
@@ -63,8 +85,7 @@ export function QuickPayDrawer({
   // The fee is charged on top, so the most that can be sent is balance - fee.
   const sendable = balance === undefined ? undefined : balance > ICP_FEE ? balance - ICP_FEE : 0n
   const insufficient = total !== null && balance !== undefined && total > balance
-  const memoTooLong = memoByteLength(message.trim()) > MEMO_MAX_BYTES
-  const canSend = amount !== null && amount > 0n && !insufficient && !memoTooLong && !loading
+  const canSend = amount !== null && amount > 0n && !insufficient && !loading
 
   const handleSend = async () => {
     if (amount === null) return
@@ -73,7 +94,7 @@ export function QuickPayDrawer({
     primeSuccessChime()
     setLoading(true)
     setError(null)
-    const result = await onPay(amount, message.trim() || undefined)
+    const result = await onPay(amount, purpose)
     setLoading(false)
     if (typeof result === "string") {
       setError(result)
@@ -89,7 +110,7 @@ export function QuickPayDrawer({
     if (next) return
     setSent(null)
     setError(null)
-    setMessage("")
+    setPurpose(PURPOSES[0])
     setCustom("")
     setSelected(E8S)
   }
@@ -190,39 +211,23 @@ export function QuickPayDrawer({
               )}
 
               <div className="space-y-2">
-                <div className="flex items-baseline justify-between">
-                  <Label htmlFor="quick-pay-message">Message (optional)</Label>
-                  <span
-                    className={cn(
-                      "text-xs tabular-nums",
-                      memoTooLong ? "font-medium text-destructive" : "text-muted-foreground"
-                    )}
-                  >
-                    {memoByteLength(message.trim())}/{MEMO_MAX_BYTES}
-                  </span>
-                </div>
-                <Input
-                  id="quick-pay-message"
-                  placeholder="Add a message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="h-12 rounded-2xl"
-                />
-                {memoTooLong && (
-                  <p className="text-xs text-destructive">
-                    The ledger only stores {MEMO_MAX_BYTES} bytes. Shorten the message.
-                  </p>
-                )}
+                <Label htmlFor="quick-pay-purpose">What is this for?</Label>
+                <Select
+                  value={purpose}
+                  onValueChange={(value) => setPurpose(value ?? PURPOSES[0])}
+                >
+                  <SelectTrigger id="quick-pay-purpose" className="h-12 w-full rounded-2xl">
+                    <SelectValue placeholder="Choose a reason" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {PURPOSES.map((option) => (
+                      <SelectItem key={option} value={option}>
+                        {option}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-
-              {insufficient && !error && (
-                <Alert variant="destructive">
-                  <AlertDescription>
-                    Not enough balance. Sending {formatAmount(amount!)} ICP costs{" "}
-                    {formatAmount(total!)} ICP with the fee.
-                  </AlertDescription>
-                </Alert>
-              )}
 
               {error && (
                 <Alert variant="destructive">
@@ -231,14 +236,13 @@ export function QuickPayDrawer({
               )}
             </div>
 
-            <DrawerFooter>
+            <DrawerFooter className="pt-4">
+              {/* Insufficient balance is said on the button rather than in an
+                  alert above it: the button is already locked, so a second
+                  element saying so only pushes the form around. */}
               <Button className="h-12 text-base" disabled={!canSend} onClick={handleSend}>
-                {loading ? (
-                  <Spinner className="size-4" />
-                ) : (
-                  <HugeiconsIcon icon={FlashIcon} className="size-4" />
-                )}
-                {loading ? "Sending…" : "Confirm"}
+                {loading && <Spinner className="size-4" />}
+                {loading ? "Sending…" : insufficient ? "Insufficient balance" : "Confirm"}
               </Button>
             </DrawerFooter>
           </>
@@ -268,6 +272,31 @@ function PaySuccess({
     playSuccessChime()
   }, [])
 
+  const [shared, setShared] = useState(false)
+  const link = explorerTxUrl(blockIndex)
+
+  // Share sheet where the browser has one, copy everywhere else. Dismissing the
+  // sheet rejects with AbortError, which is a choice rather than a failure and
+  // must not fall through to a surprise copy.
+  const handleShare = async () => {
+    const payload = {
+      title: "ICPay payment",
+      text: `Sent ${formatE8s(amount)} ICP to @${username}`,
+      url: link,
+    }
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share(payload)
+        return
+      } catch (e) {
+        if (e instanceof Error && e.name === "AbortError") return
+      }
+    }
+    await copyText(link)
+    setShared(true)
+    setTimeout(() => setShared(false), 1500)
+  }
+
   return (
     <div className="flex flex-col items-center px-4 pb-8 pt-10 text-center">
       <div className="animate-in fade-in zoom-in-75 flex size-18 items-center justify-center rounded-full bg-green-100 duration-300 ease-out dark:bg-green-950">
@@ -291,9 +320,21 @@ function PaySuccess({
         <HugeiconsIcon icon={LinkSquare02Icon} className="size-3" />
       </a>
 
-      <Button className="mt-8 h-12 w-full text-base" onClick={onDone}>
-        Done
-      </Button>
+      <div className="mt-8 flex w-full items-center gap-2">
+        <Button className="h-12 flex-1 text-base" onClick={onDone}>
+          Done
+        </Button>
+        {/* Square, so Done keeps the full width it had and the row does not read
+            as two competing actions. */}
+        <button
+          type="button"
+          onClick={handleShare}
+          aria-label="Share receipt"
+          className="flex size-12 shrink-0 items-center justify-center rounded-2xl ring-1 ring-border transition-colors hover:bg-accent active:scale-95"
+        >
+          <HugeiconsIcon icon={shared ? Tick02Icon : Share08Icon} className="size-4.5" />
+        </button>
+      </div>
     </div>
   )
 }
