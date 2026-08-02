@@ -7,7 +7,10 @@
 AGENTS.md
 CLAUDE.md
 .DS_Store
-docs/
+# git will not descend into an excluded directory, so this has to exclude the
+# contents rather than the directory itself for the launch runbook to survive.
+docs/*
+!docs/launch/
 
 # Environment files and credentials
 **/.env*
