@@ -213,6 +213,10 @@ export function receiptFilename(blockIndex: bigint): string {
   return `icpay-receipt-${blockIndex}.png`
 }
 
+export function downloadReceipt(blob: Blob, blockIndex: bigint): void {
+  triggerDownload(blob, receiptFilename(blockIndex))
+}
+
 function triggerDownload(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob)
   const a = document.createElement("a")
@@ -227,9 +231,12 @@ export type ShareOutcome = "shared" | "downloaded" | "cancelled"
 // Share sheet where available, download otherwise. canShare is checked with the
 // actual file because iOS Safari advertises navigator.share but rejects file
 // payloads, which would otherwise throw after the user had already tapped.
-export async function shareReceipt(receipt: Receipt): Promise<ShareOutcome> {
-  const blob = await receiptPng(receipt)
-  const filename = receiptFilename(receipt.blockIndex)
+//
+// Takes a rendered blob so the preview can hand over the image already on
+// screen: re-rasterising here would spend a second between the tap and the
+// share sheet, and on iOS that gap is long enough to lose the user gesture.
+export async function shareReceipt(blob: Blob, blockIndex: bigint): Promise<ShareOutcome> {
+  const filename = receiptFilename(blockIndex)
   const file = new File([blob], filename, { type: "image/png" })
 
   if (typeof navigator !== "undefined" && navigator.canShare?.({ files: [file] })) {

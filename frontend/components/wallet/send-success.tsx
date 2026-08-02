@@ -7,9 +7,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
 import { formatE8s, explorerTxUrl } from "@/lib/wallet-utils"
-import { shareReceipt } from "@/lib/receipt"
+import { ReceiptPreview } from "@/components/wallet/receipt-preview"
 import { useIcpPrice } from "@/lib/use-icp-price"
 import { playSuccessChime } from "@/lib/success-chime"
 import { cn } from "@/lib/utils"
@@ -30,8 +29,7 @@ type SendSuccessProps = {
 }
 
 export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send", onDone }: SendSuccessProps) {
-  const [sharing, setSharing] = useState(false)
-  const [shareNote, setShareNote] = useState<string | null>(null)
+  const [previewOpen, setPreviewOpen] = useState(false)
   const { price } = useIcpPrice()
 
   // Ref-guarded so the chime belongs to the payment, not to the render: a dev
@@ -48,24 +46,12 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
     [recipient]
   )
 
-  const handleShare = async () => {
-    setSharing(true)
-    setShareNote(null)
-    try {
-      const outcome = await shareReceipt({
-        amount,
-        recipient,
-        blockIndex,
-        memo,
-        usdPrice: price?.usd,
-      })
-      if (outcome === "downloaded") setShareNote("Receipt saved to your downloads.")
-    } catch {
-      setShareNote("Could not create the receipt. Please try again.")
-    } finally {
-      setSharing(false)
-    }
-  }
+  // Identity-stable so the preview does not re-render the card on every parent
+  // render; the price settling is a real change and should refresh it.
+  const receipt = useMemo(
+    () => ({ amount, recipient, blockIndex, memo, usdPrice: price?.usd }),
+    [amount, recipient, blockIndex, memo, price?.usd]
+  )
 
   const label = recipient.startsWith("@")
     ? recipient
@@ -131,17 +117,16 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
             <Button
               variant="outline"
               className="h-12 w-full text-base"
-              onClick={handleShare}
-              disabled={sharing}
+              onClick={() => setPreviewOpen(true)}
             >
-              {sharing ? (
-                <Spinner className="size-4" />
-              ) : (
-                <HugeiconsIcon icon={Share08Icon} className="size-4" />
-              )}
-              {sharing ? "Preparing…" : "Share receipt"}
+              <HugeiconsIcon icon={Share08Icon} className="size-4" />
+              Share receipt
             </Button>
-            {shareNote && <p className="text-xs text-muted-foreground">{shareNote}</p>}
+            <ReceiptPreview
+              open={previewOpen}
+              onOpenChange={setPreviewOpen}
+              receipt={receipt}
+            />
           </>
         )}
         <Button className="h-12 w-full text-base" onClick={onDone}>
