@@ -1,6 +1,13 @@
 # Local tooling and operating-system files
 .claude/
+.agents/
+.opencode/
+.cursor/
+.windsurf/
+AGENTS.md
+CLAUDE.md
 .DS_Store
+docs/
 
 # Environment files and credentials
 **/.env*
@@ -8,6 +15,16 @@
 backend/freemodel/cookies.json
 *.pem
 *.key
+*.p12
+*.pfx
+id_rsa*
+# dfx identities are the keys to the canister; an exported one must never be
+# committed, and identity.json carries the active identity's material.
+**/identity.json
+**/.config/dfx/
+*.identity.json
+seed.txt
+mnemonic.txt
 
 # Frontend dependencies and build output
 frontend/node_modules/
@@ -21,6 +38,7 @@ frontend/next-env.d.ts
 # Backend dependencies and local canister output
 backend/.dfx/
 backend/.mops/
+.dfx/
 
 # Package-manager and debug logs
 *.log

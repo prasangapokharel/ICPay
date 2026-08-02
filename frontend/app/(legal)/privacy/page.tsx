@@ -176,14 +176,15 @@ export default function PrivacyPage() {
 
       <Section title="Where this page is served from">
         <p>
-          The ICPay backend is a canister on the Internet Computer. This
-          interface, however, is a static site hosted on Vercel, so your IP
-          address and browser details are visible to Vercel when the page loads.
-          The{" "}
+          The ICPay backend is a canister on the Internet Computer, and this
+          interface is published to an asset canister too — so it can be loaded
+          entirely from the chain. Most visitors, however, reach a copy hosted on
+          Vercel, which sees your IP address and browser details when the page
+          loads. The{" "}
           <Link href="/transparency" className="underline underline-offset-2">
             Transparency
           </Link>{" "}
-          page explains the split, and why it matters.
+          page lists both addresses.
         </p>
       </Section>
 

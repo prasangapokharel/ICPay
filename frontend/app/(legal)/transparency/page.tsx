@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 }
 
 const CANISTER_ID = "6vbhm-nqaaa-aaaan-q6muq-cai"
+const FRONTEND_CANISTER_ID = "63dke-waaaa-aaaan-q6mvq-cai"
 const CONTROLLER = "or2yr-zj6k5-5gi2u-qo3tj-5pyn6-lbgwr-gqgpq-ubmff-ih4t4-yopxz-lqe"
 const TREASURY = "ni5n2-efxui-dyqdu-2mnpr-atclq-d6snc-zdq5q-u6ibz-ibpkq-brjpj-gqe"
 const ICP_LEDGER = "ryjl3-tyaaa-aaaaa-aaaba-cai"
@@ -33,6 +34,7 @@ export default function TransparencyPage() {
       <Section title="Addresses">
         <div className="rounded-xl border px-3.5 py-1">
           <Row label="ICPay canister" value={CANISTER_ID} />
+          <Row label="Frontend asset canister" value={FRONTEND_CANISTER_ID} />
           <Row label="Controller (can upgrade the canister)" value={CONTROLLER} />
           <Row label="Username treasury (receives handle purchases)" value={TREASURY} />
           <Row label="ICP ledger" value={ICP_LEDGER} />
@@ -122,11 +124,26 @@ export default function TransparencyPage() {
           Computer, with no external database and no server holding user data.
         </p>
         <p>
-          The interface you are reading is not. It is a static site served by
-          Vercel, so page loads go to a conventional host even though every
-          action goes to the chain. A compromised frontend could show you
-          misleading information — which is the reason the addresses above are
-          worth checking against the dashboard rather than trusted here.
+          This interface is published to an asset canister as well, listed
+          above, so it can be served entirely from the Internet Computer at{" "}
+          <a
+            href={`https://${FRONTEND_CANISTER_ID}.icp0.io`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2"
+          >
+            {FRONTEND_CANISTER_ID}.icp0.io
+          </a>
+          . The same build is also hosted on Vercel, which is what most visitors
+          reach; loading it there exposes your IP address to a conventional host
+          even though every action still goes to the chain.
+        </p>
+        <p>
+          The on-chain copy is the one to prefer if you want the whole path
+          verifiable, and it may lag the Vercel copy between deployments. Either
+          way, a frontend can only misrepresent — it cannot move funds — which is
+          why the addresses above are worth checking against the dashboard
+          rather than trusted from this page.
         </p>
       </Section>
 
