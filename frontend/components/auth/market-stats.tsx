@@ -3,8 +3,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useIcpPrice } from "@/lib/use-icp-price"
 
-// Eases toward the target on every change, so the digits visibly tick up or
-// down when the live price refreshes instead of snapping.
 function useEasedPrice(target: number, duration = 500) {
   const [value, setValue] = useState(target)
   const fromRef = useRef(target)
