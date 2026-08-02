@@ -9,7 +9,7 @@ import type { DashboardData, UserPublic } from "@/services/types"
 import { getDashboard } from "@/services/dashboard/dashboard"
 import { getDepositAddress } from "@/services/deposit/deposit"
 import { getTransactions } from "@/services/transactions/transactions"
-import { resolveUsername, searchUsers } from "@/services/profile/profile"
+import { getProfile, resolveUsername, searchUsers } from "@/services/profile/profile"
 import { checkUsername } from "@/services/buy/buy"
 import { fetchAccountStats, type AccountStats } from "@/services/account/account"
 import {
@@ -217,7 +217,7 @@ export function useUsernameAvailability(name: string) {
 export function useUserSearch(search: string, limit = 10) {
   const { identity } = useAuth()
   const trimmed = search.trim().toLowerCase()
-  const { data: dashboard } = useDashboard()
+  const ownId = useOwnUserId()
 
   const { data, isLoading } = useSWR(
     keyFor(identity, "search-users", trimmed),
@@ -228,18 +228,31 @@ export function useUserSearch(search: string, limit = 10) {
     { revalidateOnFocus: true, keepPreviousData: true, dedupingInterval: 2_000 }
   )
 
-  // Compared by username, not id: UserPublic.id is a UUID and searchUsers
-  // returns no principal, so the username is the only shared identifier.
-  const ownUsername = dashboard?.user.username?.[0]
-
+  // Matched on id, not username: an account that bought a handle keeps its old
+  // ones as aliases, and every alias renders the current username. Comparing
+  // strings dropped every one of those rows, so the buyer vanished from the
+  // list entirely rather than appearing once.
   return {
     users: dedupeById(data ?? [])
       // Only usernamed accounts are addressable, and tipping yourself is not a
       // thing, so neither belongs in the list.
-      .filter((u) => u.username.length > 0 && u.username[0] !== ownUsername)
+      .filter((u) => u.username.length > 0 && u.id !== ownId)
       .slice(0, limit),
-    isLoading,
+    // The list is withheld until the viewer is known, otherwise their own row
+    // renders for a moment and then disappears once the filter can be applied.
+    isLoading: isLoading || ownId === undefined,
   }
+}
+
+// getUser is a query answering in about a second, where the same record inside
+// getDashboard rides a ~6.6s update call. The self-filter needs it before the
+// list paints, so it is read from the fast path.
+function useOwnUserId(): string | undefined {
+  const { identity } = useAuth()
+  const { data } = useSWRImmutable(keyFor(identity, "own-profile"), () =>
+    getProfile(identity)
+  )
+  return data?.id
 }
 
 // Buying a handle keeps the old one as an alias, and a canister that still
