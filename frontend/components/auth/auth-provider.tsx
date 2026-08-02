@@ -55,14 +55,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (provider?: string) => {
     const id = await iiLogin(provider)
-    if (id) {
-      setIdentity(id)
-      try {
-        await openBackendSession(id)
-      } catch (e) {
-        console.error("Backend login error:", e)
-      }
+    if (!id) return
+    // Publishing the identity is what unlocks every data hook, so it has to wait
+    // for login() to create the user record: getDashboard answers "User not
+    // found" for a principal the canister has never seen, and the first screen
+    // after sign-in would render that error until a manual refresh.
+    try {
+      await openBackendSession(id)
+    } catch (e) {
+      console.error("Backend login error:", e)
     }
+    setIdentity(id)
   }, [])
 
   const logout = useCallback(async () => {
