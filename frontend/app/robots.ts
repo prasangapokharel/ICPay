@@ -14,7 +14,18 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/wallet", "/deposit", "/withdraw", "/transfer", "/transactions", "/profile", "/settings", "/u"],
+      disallow: [
+        "/wallet",
+        "/deposit",
+        "/withdraw",
+        "/transfer",
+        "/transactions",
+        "/profile",
+        "/settings",
+        "/username",
+        "/icpverse",
+        "/u",
+      ],
     },
     sitemap: `${siteUrl}/sitemap.xml`,
   }

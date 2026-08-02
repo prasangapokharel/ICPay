@@ -72,6 +72,19 @@ const jsonLd = {
     "Internet Identity sign-in without a seed phrase",
     "Transaction history with on-chain block links",
   ],
+  // Named so the sitelinks a search result shows are the pages a stranger can
+  // actually read, rather than whichever signed-in route was crawled first.
+  sameAs: ["https://github.com/prasangapokharel/ICPay"],
+  isPartOf: {
+    "@type": "WebSite",
+    name: "ICPay",
+    url: siteUrl,
+    hasPart: [
+      { "@type": "WebPage", name: "About", url: `${siteUrl}/about` },
+      { "@type": "WebPage", name: "FAQ", url: `${siteUrl}/faq` },
+      { "@type": "WebPage", name: "Transparency", url: `${siteUrl}/transparency` },
+    ],
+  },
 }
 
 export default function RootLayout({

@@ -19,6 +19,8 @@ import {
   ShieldKeyIcon,
   File01Icon,
   LockKeyIcon,
+  InformationCircleIcon,
+  HelpCircleIcon,
   ArrowRight01Icon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
@@ -64,6 +66,8 @@ const SECTIONS: { title: string; items: Service[] }[] = [
 // Kept out of SECTIONS so the service search does not filter them away: these
 // are the pages someone goes looking for deliberately, not features to browse.
 const LEGAL: { href: string; label: string; icon: IconSvgElement }[] = [
+  { href: "/about", label: "About ICPay", icon: InformationCircleIcon },
+  { href: "/faq", label: "FAQ", icon: HelpCircleIcon },
   { href: "/transparency", label: "Security & Transparency", icon: ShieldKeyIcon },
   { href: "/terms", label: "Terms of Service", icon: File01Icon },
   { href: "/privacy", label: "Privacy Policy", icon: LockKeyIcon },

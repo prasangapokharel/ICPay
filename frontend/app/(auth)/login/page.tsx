@@ -142,6 +142,21 @@ export default function LoginPage() {
             </Link>
             .
           </p>
+
+          {/* The only crawlable entry point, so it is where /about and /faq get
+              their inbound links -- every other route redirects a signed-out
+              visitor before a crawler sees anything. */}
+          <nav className="flex justify-center gap-4 text-xs text-muted-foreground">
+            <Link href="/about" className="underline underline-offset-2">
+              About
+            </Link>
+            <Link href="/faq" className="underline underline-offset-2">
+              FAQ
+            </Link>
+            <Link href="/transparency" className="underline underline-offset-2">
+              Transparency
+            </Link>
+          </nav>
         </div>
       </div>
     </div>
