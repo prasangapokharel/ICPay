@@ -208,7 +208,10 @@ export function useUserSearch(search: string, limit = 10) {
   const { data, isLoading } = useSWR(
     keyFor(identity, "search-users", trimmed),
     () => searchUsers(identity, trimmed),
-    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 30_000 }
+    // searchUsers is a query call, so a refetch costs no cycles. It is the one
+    // list that changes underneath you -- someone buys a handle and the old row
+    // has to go -- so it revalidates on focus and only dedupes typing bursts.
+    { revalidateOnFocus: true, keepPreviousData: true, dedupingInterval: 2_000 }
   )
 
   // Compared by username, not id: UserPublic.id is a UUID and searchUsers
@@ -216,13 +219,22 @@ export function useUserSearch(search: string, limit = 10) {
   const ownUsername = dashboard?.user.username?.[0]
 
   return {
-    users: (data ?? [])
+    users: dedupeById(data ?? [])
       // Only usernamed accounts are addressable, and tipping yourself is not a
       // thing, so neither belongs in the list.
       .filter((u) => u.username.length > 0 && u.username[0] !== ownUsername)
       .slice(0, limit),
     isLoading,
   }
+}
+
+// Buying a handle keeps the old one as an alias, and a canister that still
+// keys the listing by handle emits the account once per handle it has held.
+// Every copy renders the current username, so one person shows up as several
+// identical rows. Deduping here keeps the list right whatever the canister does.
+function dedupeById(users: UserPublic[]): UserPublic[] {
+  const seen = new Set<string>()
+  return users.filter((u) => !seen.has(u.id) && seen.add(u.id))
 }
 
 // Read straight from each ICRC-1 ledger, never through the wallet canister:
