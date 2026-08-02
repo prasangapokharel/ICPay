@@ -32,6 +32,7 @@ import { useResolvedUsername } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
 import { Principal } from "@dfinity/principal"
 import { QrScanner, takeScannedAddress } from "@/components/scan/scan"
+import { primeSuccessChime } from "@/lib/success-chime"
 import { addressText, type ScannedAddress } from "@/lib/icp-address"
 import type { TransferMode } from "@/services/transfer/transfer"
 
@@ -142,6 +143,7 @@ export function TransferForm({
 
   const handleConfirm = async () => {
     if (parsed === null) return
+    primeSuccessChime()
     setLoading(true)
     setError(null)
     const err = await onTransfer(mode, to.trim(), parsed, memo.trim() || undefined, subaccount ?? undefined)

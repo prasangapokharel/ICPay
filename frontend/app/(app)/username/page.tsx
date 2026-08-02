@@ -18,6 +18,7 @@ import { formatAmount, ICP_FEE } from "@/lib/wallet-utils"
 import { priceFor, tierFor, validateUsername, TIERS, USERNAME_MAX_LENGTH } from "@/lib/username"
 import { useUsernameAvailability } from "@/hooks/use-wallet-data"
 import { SendSuccess } from "@/components/wallet/send-success"
+import { primeSuccessChime } from "@/lib/success-chime"
 import { cn } from "@/lib/utils"
 
 export default function UsernamePage() {
@@ -46,6 +47,7 @@ export default function UsernamePage() {
 
   const handleBuy = async () => {
     if (!identity || !canBuy) return
+    primeSuccessChime()
     setBuying(true)
     setError(null)
     const result = await purchaseUsername(identity, trimmed)

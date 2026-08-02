@@ -12,6 +12,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { formatE8s, explorerTxUrl } from "@/lib/wallet-utils"
 import { shareReceipt } from "@/lib/receipt"
 import { useIcpPrice } from "@/lib/use-icp-price"
+import { playSuccessChime } from "@/lib/success-chime"
 import { cn } from "@/lib/utils"
 
 const HEADING = {
@@ -40,11 +41,7 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
   useEffect(() => {
     if (chimed.current) return
     chimed.current = true
-    const audio = new Audio("/audio/sucess/sucess.mp3")
-    audio.volume = 0.5
-    // Reaching this screen always follows a tap, but a blocked-autoplay
-    // rejection must still be swallowed or it surfaces as an unhandled one.
-    void audio.play().catch(() => {})
+    playSuccessChime()
   }, [])
 
   const avatarUri = useMemo(

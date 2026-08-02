@@ -28,6 +28,7 @@ import {
 } from "@/lib/wallet-utils"
 import { AmountInput } from "@/components/shared/amount-input"
 import { avatarUriFor } from "@/lib/avatar"
+import { primeSuccessChime } from "@/lib/success-chime"
 import { cn } from "@/lib/utils"
 
 const PRESETS = [1n, 5n, 10n] as const
@@ -63,6 +64,7 @@ export function TipDrawer({
 
   const handleSend = async () => {
     if (amount === null) return
+    primeSuccessChime()
     setLoading(true)
     setError(null)
     const err = await onTip(amount, message.trim() || undefined)
@@ -91,9 +93,7 @@ export function TipDrawer({
           </div>
           <DrawerTitle className="text-center">@{username}</DrawerTitle>
           <DrawerDescription className="text-center">
-            {balance === undefined
-              ? "Pick an amount to send."
-              : `Balance ${formatAmount(balance)} ICP`}
+            Pick an amount to send.
           </DrawerDescription>
         </DrawerHeader>
 
