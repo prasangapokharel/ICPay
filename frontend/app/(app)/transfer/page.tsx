@@ -3,13 +3,9 @@
 import { useState } from "react"
 import { TransferForm } from "@/components/transfer/transfer-form"
 import { SendSuccess } from "@/components/wallet/send-success"
-import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useRefreshWallet, useDashboard } from "@/hooks/use-wallet-data"
-import type { TransferMode } from "@/components/transfer/transfer-form"
-import type { ApiResult } from "@/services/types"
-import { Principal } from "@dfinity/principal"
-import { isHexAccountId } from "@/lib/wallet-utils"
+import { transfer, type TransferMode } from "@/services/transfer/transfer"
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
@@ -20,41 +16,17 @@ export default function TransferPage() {
   const [sent, setSent] = useState<Sent | null>(null)
 
   const handleTransfer = async (mode: TransferMode, to: string, amount: bigint, memo?: string): Promise<string | null> => {
-    if (!identity) return "Not authenticated"
-    try {
-      const actor = await getWalletActor(identity)
-      const memoArg = (memo ? [memo] : []) as [] | [string]
-      let result: ApiResult
-      if (isHexAccountId(to)) {
-        result = await actor.transferByAccountId(to, amount, memoArg)
-      } else {
-        switch (mode) {
-          case "username":
-            result = await actor.transferByUsername(to, amount, memoArg)
-            break
-          case "principal":
-            result = await actor.transferByPrincipal(Principal.fromText(to), amount, memoArg)
-            break
-          case "account":
-            result = await actor.transferByAccount({ owner: Principal.fromText(to), subaccount: [] }, amount, memoArg)
-            break
-        }
-      }
-      if ("ok" in result) {
-        refreshWallet()
-        setSent({
-          amount,
-          recipient: mode === "username" && !to.startsWith("@") ? `@${to}` : to,
-          blockIndex: result.ok.blockIndex,
-          memo,
-        })
-        return null
-      }
-      return result.err
-    } catch (e) {
-      console.error(e)
-      return "Transfer failed"
-    }
+    const result = await transfer(identity, mode, to, amount, memo)
+    if ("err" in result) return result.err
+
+    refreshWallet()
+    setSent({
+      amount,
+      recipient: mode === "username" && !to.startsWith("@") ? `@${to}` : to,
+      blockIndex: result.ok.blockIndex,
+      memo,
+    })
+    return null
   }
 
   if (sent) {

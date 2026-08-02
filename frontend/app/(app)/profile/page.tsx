@@ -2,10 +2,10 @@
 
 import useSWR from "swr"
 import { ProfileCard } from "@/components/profile/profile-card"
-import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
 import { usePatchDashboardUser } from "@/hooks/use-wallet-data"
-import type { UserPublic } from "@/services/types"
+import { getProfile, updateUsername } from "@/services/profile/profile"
+import { checkUsername } from "@/services/buy/buy"
 
 export default function ProfilePage() {
   const { identity } = useAuth()
@@ -16,39 +16,25 @@ export default function ProfilePage() {
   // user's profile.
   const { data: user, isLoading, mutate } = useSWR(
     identity ? (["profile", principal] as const) : null,
-    async () => {
-      const actor = await getWalletActor(identity!)
-      const profile = await actor.getUser()
-      return profile.length > 0 ? (profile[0] as UserPublic) : null
-    },
+    () => getProfile(identity),
     { revalidateOnFocus: false, revalidateIfStale: false, keepPreviousData: true }
   )
 
   const handleUpdateUsername = async (username: string): Promise<string | null> => {
-    if (!identity) return "Not authenticated"
-    try {
-      const actor = await getWalletActor(identity)
-      const result = await actor.updateUsername(username)
-      if ("ok" in result) {
-        mutate(result.ok, { revalidate: false })
-        // The dashboard holds its own copy of the user, and the mandatory
-        // username prompt keys off it. The canister already returned the saved
-        // record, so patch it in rather than paying another getDashboard.
-        patchDashboardUser(result.ok)
-        return null
-      }
-      return result.err
-    } catch (e) {
-      console.error(e)
-      return "Failed to update username"
-    }
+    const result = await updateUsername(identity, username)
+    if ("err" in result) return result.err
+
+    mutate(result.ok, { revalidate: false })
+    // The dashboard holds its own copy of the user, and the mandatory username
+    // prompt keys off it. The canister already returned the saved record, so
+    // patch it in rather than paying another getDashboard.
+    patchDashboardUser(result.ok)
+    return null
   }
 
   const handleCheckUsername = async (name: string): Promise<boolean> => {
-    if (!identity) return false
     try {
-      const actor = await getWalletActor(identity)
-      return await actor.checkUsername(name)
+      return await checkUsername(identity, name)
     } catch {
       return false
     }

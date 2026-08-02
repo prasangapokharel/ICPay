@@ -1,14 +1,14 @@
 import { AuthClient } from "@dfinity/auth-client"
 import { getIdentityProvider, getDerivationOrigin } from "@/services/icp"
+import { getWalletActor, clearActorCache } from "@/services/wallet"
 import type { Identity } from "@dfinity/agent"
 
 let clientPromise: Promise<AuthClient> | null = null
 let readyClient: AuthClient | null = null
 
 export async function createAuthClient(): Promise<AuthClient> {
-  // Cached because AuthClient.create() reads IndexedDB. login() must reach
-  // window.open() with no await in front of it, so the resolved instance is
-  // also kept synchronously accessible via readyClient.
+  // Cached because AuthClient.create() reads IndexedDB, and kept in readyClient
+  // so login() can reach window.open() with no await in front of it.
   clientPromise ??= AuthClient.create({
     idleOptions: { disableIdle: true, disableDefaultIdleCallback: true },
   }).then((c) => {
@@ -26,10 +26,8 @@ export class PopupBlockedError extends Error {
 }
 
 export function login(): Promise<Identity | null> {
-  // Deliberately NOT async. auth-client calls window.open() synchronously, and a
-  // popup only opens if the browser still sees the click as the active user
-  // gesture. Any await here -- even on an already-resolved promise -- defers to
-  // a microtask and can spend that activation.
+  // Deliberately NOT async: auth-client calls window.open() synchronously, and
+  // any await defers to a microtask that can spend the click's popup activation.
   const authClient = readyClient
   if (!authClient) {
     void createAuthClient()
@@ -59,9 +57,8 @@ export function login(): Promise<Identity | null> {
         },
       })
       .then(() => {
-        // window.open() returns null when blocked, leaving _idpWindow undefined.
-        // auth-client's own interrupt check is guarded on that handle existing,
-        // so neither callback ever fires and the promise would hang forever.
+        // A blocked window leaves _idpWindow undefined, and auth-client guards
+        // its interrupt check on that handle, so neither callback ever fires.
         const popup = (authClient as unknown as { _idpWindow?: Window })._idpWindow
         if (!popup && !settled) {
           settled = true
@@ -80,12 +77,33 @@ export async function logout(): Promise<void> {
   const authClient = await createAuthClient()
   await authClient.logout()
 
-  // logout() deletes the stored base key but leaves it on the instance, and a
-  // later login only re-persists the delegation. Reusing this client would
-  // leave IndexedDB holding a chain with no key to match it, and the next
-  // reload silently falls back to anonymous. Drop it and prime a fresh one so
-  // login() -- which needs readyClient synchronously -- is ready on arrival.
+  // logout() drops the stored base key but leaves it on the instance, so reusing
+  // this client would leave IndexedDB holding a chain with no matching key and
+  // the next reload would silently fall back to anonymous.
   clientPromise = null
   readyClient = null
   void createAuthClient()
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`timed out after ${ms}ms`)), ms)
+    ),
+  ])
+}
+
+// Creates the user record on first sign-in. Bounded because a hung boundary-node
+// request would otherwise strand the app on its loading screen.
+export async function openBackendSession(identity: Identity): Promise<void> {
+  const actor = await getWalletActor(identity)
+  await withTimeout(actor.login(), 20_000)
+}
+
+// Clears the delegation that the canister just rejected, so the next reload
+// starts anonymous instead of retrying the same dead chain.
+export async function discardRejectedSession(): Promise<void> {
+  await logout()
+  clearActorCache()
 }

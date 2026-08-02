@@ -3,13 +3,10 @@
 import { useState } from "react"
 import { WithdrawForm } from "@/components/withdraw/withdraw-form"
 import { SendSuccess } from "@/components/wallet/send-success"
-import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { ApiResult } from "@/services/types"
-import { Principal } from "@dfinity/principal"
-import { isHexAccountId } from "@/lib/wallet-utils"
+import { withdraw } from "@/services/withdraw/withdraw"
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint }
 
@@ -21,26 +18,14 @@ export default function WithdrawPage() {
   const balance = data?.icpBalance ?? 0n
 
   const handleWithdraw = async (amount: bigint, destination: string): Promise<string | null> => {
-    if (!identity) return "Not authenticated"
-    try {
-      const actor = await getWalletActor(identity)
-      const memo = [] as [] | [string]
-      const result: ApiResult = isHexAccountId(destination)
-        ? await actor.transferByAccountId(destination, amount, memo)
-        : await actor.withdraw(amount, { owner: Principal.fromText(destination), subaccount: [] })
+    const result = await withdraw(identity, amount, destination)
+    if ("err" in result) return result.err
 
-      if ("ok" in result) {
-        // Refetch rather than subtracting locally, so the displayed balance
-        // reflects the fee the ledger actually charged.
-        refreshWallet()
-        setSent({ amount, recipient: destination, blockIndex: result.ok.blockIndex })
-        return null
-      }
-      return result.err
-    } catch (e) {
-      console.error(e)
-      return "Withdrawal failed"
-    }
+    // Refetch rather than subtracting locally, so the displayed balance
+    // reflects the fee the ledger actually charged.
+    refreshWallet()
+    setSent({ amount, recipient: destination, blockIndex: result.ok.blockIndex })
+    return null
   }
 
   if (sent) {

@@ -10,13 +10,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Tick02Icon, Cancel01Icon, ShoppingBag01Icon } from "@hugeicons/core-free-icons"
-import { getWalletActor } from "@/services/wallet"
+import { purchaseUsername } from "@/services/buy/buy"
+import type { Purchase } from "@/services/types"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { formatAmount, ICP_FEE } from "@/lib/wallet-utils"
 import { priceFor, tierFor, validateUsername, TIERS, USERNAME_MAX_LENGTH } from "@/lib/username"
 import { useUsernameAvailability } from "@/hooks/use-wallet-data"
-import { toast } from "@/components/ui/toast"
+import { SendSuccess } from "@/components/wallet/send-success"
 import { cn } from "@/lib/utils"
 
 export default function UsernamePage() {
@@ -27,6 +28,7 @@ export default function UsernamePage() {
   const [name, setName] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [buying, setBuying] = useState(false)
+  const [bought, setBought] = useState<Purchase | null>(null)
 
   const trimmed = name.trim()
   const shapeError = trimmed ? validateUsername(trimmed) : null
@@ -46,25 +48,26 @@ export default function UsernamePage() {
     if (!identity || !canBuy) return
     setBuying(true)
     setError(null)
-    try {
-      const actor = await getWalletActor(identity)
-      const result = await actor.purchaseUsername(trimmed)
-      if ("err" in result) {
-        setError(result.err)
-        return
-      }
-      refreshWallet()
-      toast.add({
-        title: `@${result.ok.username} is yours`,
-        description: `Paid ${formatAmount(result.ok.price)} ICP.`,
-      })
-      router.push("/profile")
-    } catch (e) {
-      console.error(e)
-      setError("Purchase failed")
-    } finally {
-      setBuying(false)
+    const result = await purchaseUsername(identity, trimmed)
+    setBuying(false)
+    if ("err" in result) {
+      setError(result.err)
+      return
     }
+    refreshWallet()
+    setBought(result.ok)
+  }
+
+  if (bought) {
+    return (
+      <SendSuccess
+        amount={bought.price}
+        recipient={`@${bought.username}`}
+        blockIndex={bought.blockIndex}
+        kind="purchase"
+        onDone={() => router.push("/profile")}
+      />
+    )
   }
 
   return (

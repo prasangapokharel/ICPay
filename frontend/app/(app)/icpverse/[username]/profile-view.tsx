@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { TipDrawer } from "@/components/icpverse/tip-drawer"
+import { SendSuccess } from "@/components/wallet/send-success"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowLeft01Icon,
@@ -16,21 +17,20 @@ import {
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
-import { shareReceipt } from "@/lib/receipt"
-import { useIcpPrice } from "@/lib/use-icp-price"
 import { useResolvedUsername, useDashboard, useRefreshWallet } from "@/hooks/use-wallet-data"
-import { getWalletActor } from "@/services/wallet"
+import { tip } from "@/services/transfer/transfer"
 import { useAuth } from "@/components/auth/auth-provider"
-import { toast } from "@/components/ui/toast"
+
+type Tipped = { amount: bigint; blockIndex: bigint; memo?: string }
 
 export function ProfileView() {
   const pathname = usePathname()
   const router = useRouter()
   const { identity } = useAuth()
-  const { price } = useIcpPrice()
   const { data: dashboard } = useDashboard()
   const refreshWallet = useRefreshWallet()
   const [tipOpen, setTipOpen] = useState(false)
+  const [tipped, setTipped] = useState<Tipped | null>(null)
   const [copied, setCopied] = useState(false)
 
   // Read from the path, not useParams: under output "export" this component is
@@ -50,41 +50,12 @@ export function ProfileView() {
   }
 
   const handleTip = async (amount: bigint, message?: string): Promise<string | null> => {
-    if (!identity) return "Not authenticated"
-    try {
-      const actor = await getWalletActor(identity)
-      const memoArg = (message ? [message] : []) as [] | [string]
-      const result = await actor.transferByUsername(username, amount, memoArg)
-      if ("ok" in result) {
-        refreshWallet()
-        const receipt = {
-          amount,
-          recipient: `@${username}`,
-          blockIndex: result.ok.blockIndex,
-          memo: message,
-          usdPrice: price?.usd,
-        }
-        toast.add({
-          title: "Tip sent",
-          description: `You tipped @${username}.`,
-          actionProps: {
-            children: "Share",
-            onClick: () => {
-              // Fire-and-forget: the toast dismisses on click, so there is no
-              // element left to show a pending state on.
-              void shareReceipt(receipt).catch(() => {
-                toast.add({ title: "Could not create receipt" })
-              })
-            },
-          },
-        })
-        return null
-      }
-      return result.err
-    } catch (e) {
-      console.error(e)
-      return "Tip failed"
-    }
+    const result = await tip(identity, username, amount, message)
+    if ("err" in result) return result.err
+
+    refreshWallet()
+    setTipped({ amount, blockIndex: result.ok.blockIndex, memo: message })
+    return null
   }
 
   // An empty username means the mid-transition frame described above. Holding
@@ -105,6 +76,19 @@ export function ProfileView() {
   }
 
   const isSelf = principal === identity?.getPrincipal().toText()
+
+  if (tipped) {
+    return (
+      <SendSuccess
+        amount={tipped.amount}
+        recipient={`@${username}`}
+        blockIndex={tipped.blockIndex}
+        memo={tipped.memo}
+        kind="tip"
+        onDone={() => setTipped(null)}
+      />
+    )
+  }
 
   return (
     <div className="pt-2">

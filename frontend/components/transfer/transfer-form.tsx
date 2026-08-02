@@ -31,8 +31,7 @@ import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-
 import { useResolvedUsername } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
 import { Principal } from "@dfinity/principal"
-
-export type TransferMode = "username" | "principal" | "account"
+import type { TransferMode } from "@/services/transfer/transfer"
 
 const labels: Record<TransferMode, { label: string; placeholder: string }> = {
   username: { label: "Recipient username", placeholder: "username" },

@@ -2,8 +2,13 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react"
 import type { Identity } from "@dfinity/agent"
-import { login as iiLogin, logout as iiLogout, createAuthClient } from "@/services/auth/auth"
-import { getWalletActor, clearActorCache } from "@/services/wallet"
+import {
+  login as iiLogin,
+  logout as iiLogout,
+  createAuthClient,
+  openBackendSession,
+  discardRejectedSession,
+} from "@/services/auth/auth"
 
 type AuthContextType = {
   identity: Identity | undefined
@@ -21,15 +26,6 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => {},
 })
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error(`timed out after ${ms}ms`)), ms)
-    ),
-  ])
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [identity, setIdentity] = useState<Identity | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(true)
@@ -42,13 +38,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (id.getPrincipal().isAnonymous()) return
 
         try {
-          const actor = await getWalletActor(id)
-          await withTimeout(actor.login(), 20_000)
+          await openBackendSession(id)
           setIdentity(id)
         } catch (e) {
           console.warn("Stored delegation rejected, signing out:", e)
-          await authClient.logout()
-          clearActorCache()
+          await discardRejectedSession()
         }
       } catch (e) {
         console.error("Auth init error:", e)
@@ -64,8 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (id) {
       setIdentity(id)
       try {
-        const actor = await getWalletActor(id)
-        await withTimeout(actor.login(), 20_000)
+        await openBackendSession(id)
       } catch (e) {
         console.error("Backend login error:", e)
       }

@@ -2,9 +2,13 @@
 
 import useSWR, { useSWRConfig } from "swr"
 import type { Identity } from "@dfinity/agent"
-import { getWalletActor } from "@/services/wallet"
 import { useAuth } from "@/components/auth/auth-provider"
-import type { DashboardData, TransactionPublic, UserPublic } from "@/services/types"
+import type { DashboardData, UserPublic } from "@/services/types"
+import { getDashboard } from "@/services/dashboard/dashboard"
+import { getDepositAddress } from "@/services/deposit/deposit"
+import { getTransactions } from "@/services/transactions/transactions"
+import { resolveUsername, searchUsers } from "@/services/profile/profile"
+import { checkUsername } from "@/services/buy/buy"
 import {
   listLedgerIds,
   fetchBalances,
@@ -15,14 +19,12 @@ import {
 } from "@/services/tokens"
 
 // Keys are arrays so every page asking for the same data hits one cache entry.
-// The principal is part of the key so switching identity cannot serve the
-// previous user's balance.
+// The principal is included so switching identity cannot serve a stale balance.
 const keyFor = (identity: Identity | undefined, ...parts: string[]) =>
   identity ? ([...parts, identity.getPrincipal().toText()] as const) : null
 
-// getDashboard is an update call -- consensus plus an inter-canister call to the
-// ledger, measured at ~6.6s -- so it is fetched once and refreshed only on
-// explicit action rather than on focus or remount.
+// getDashboard is an update call measured at ~6.6s, so it is fetched once and
+// refreshed on explicit action rather than on focus or remount.
 const FETCH_ONCE = {
   revalidateOnFocus: false,
   revalidateOnReconnect: false,
@@ -36,12 +38,7 @@ export function useDashboard() {
 
   const { data, error, isLoading, mutate } = useSWR(
     keyFor(identity, "dashboard"),
-    async () => {
-      const actor = await getWalletActor(identity!)
-      const result = await actor.getDashboard()
-      if ("err" in result) throw new Error(result.err)
-      return result.ok
-    },
+    () => getDashboard(identity),
     FETCH_ONCE
   )
 
@@ -85,14 +82,7 @@ export function useDepositAddress() {
 
   const { data, error, isLoading } = useSWR(
     keyFor(identity, "deposit-address"),
-    async () => {
-      const actor = await getWalletActor(identity!)
-      const [address, accountId] = await Promise.all([
-        actor.getDepositAddress(),
-        actor.getDepositAccountIdentifier(),
-      ])
-      return { address, accountId }
-    },
+    () => getDepositAddress(identity),
     // A principal's deposit address is derived and never changes.
     { revalidateOnFocus: false, revalidateIfStale: false }
   )
@@ -105,19 +95,14 @@ export function useTransactions(page = 0, pageSize = 20) {
 
   const { data, error, isLoading, mutate } = useSWR(
     keyFor(identity, "transactions", String(page), String(pageSize)),
-    async () => {
-      const actor = await getWalletActor(identity!)
-      const result = await actor.getTransactions(BigInt(page), BigInt(pageSize))
-      if ("err" in result) throw new Error(result.err)
-      return result.ok
-    },
+    () => getTransactions(identity, page, pageSize),
     // History changes only when this user moves funds, and every such action
     // already calls useRefreshWallet.
     FETCH_ONCE
   )
 
   return {
-    items: (data?.items ?? []) as TransactionPublic[],
+    items: data?.items ?? [],
     total: data?.total ?? 0n,
     error,
     isLoading,
@@ -175,11 +160,7 @@ export function useResolvedUsername(name: string) {
 
   const { data, isLoading } = useSWR(
     enabled ? keyFor(identity, "resolve-username", trimmed) : null,
-    async () => {
-      const actor = await getWalletActor(identity!)
-      const [principal] = await actor.resolveUsername(trimmed)
-      return principal ? principal.toText() : null
-    },
+    () => resolveUsername(identity, trimmed),
     // keepPreviousData would show the previous match against the new text, so
     // it is deliberately off.
     {
@@ -201,10 +182,7 @@ export function useUsernameAvailability(name: string) {
 
   const { data, isLoading } = useSWR(
     trimmed ? keyFor(identity, "check-username", trimmed) : null,
-    async () => {
-      const actor = await getWalletActor(identity!)
-      return actor.checkUsername(trimmed)
-    },
+    () => checkUsername(identity, trimmed),
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -227,11 +205,7 @@ export function useUserSearch(search: string, limit = 10) {
 
   const { data, isLoading } = useSWR(
     keyFor(identity, "search-users", trimmed),
-    async () => {
-      const actor = await getWalletActor(identity!)
-      const users = await actor.searchUsers(trimmed)
-      return users
-    },
+    () => searchUsers(identity, trimmed),
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 30_000 }
   )
 

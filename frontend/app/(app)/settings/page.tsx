@@ -21,7 +21,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { SettingsForm } from "@/components/settings/settings-form"
-import { getWalletActor } from "@/services/wallet"
+import { getSettings, updateSettings } from "@/services/settings/settings"
 import { useAuth } from "@/components/auth/auth-provider"
 import { shortPrincipal } from "@/lib/wallet-utils"
 import { avatarUriFor } from "@/lib/avatar"
@@ -75,31 +75,18 @@ export default function MenuPage() {
   // never needs to call the canister again.
   const { data: settings, mutate } = useSWR(
     identity ? (["settings", principal] as const) : null,
-    async () => {
-      const actor = await getWalletActor(identity!)
-      const result = await actor.getSettings()
-      if ("err" in result) throw new Error(result.err)
-      return result.ok
-    },
+    () => getSettings(identity),
     { revalidateOnFocus: false, revalidateIfStale: false, keepPreviousData: true }
   )
 
   const handleSave = async (theme: string, language: string, notifications: boolean): Promise<string | null> => {
-    if (!identity) return "Not authenticated"
-    try {
-      const actor = await getWalletActor(identity)
-      const result = await actor.updateSettings(theme, language, notifications)
-      if ("ok" in result) {
-        // The canister returns the saved record, so the cache can be updated
-        // from it without a follow-up read.
-        mutate(result.ok, { revalidate: false })
-        return null
-      }
-      return result.err
-    } catch (e) {
-      console.error(e)
-      return "Failed to save settings"
-    }
+    const result = await updateSettings(identity, theme, language, notifications)
+    if ("err" in result) return result.err
+
+    // The canister returns the saved record, so the cache can be updated from
+    // it without a follow-up read.
+    mutate(result.ok, { revalidate: false })
+    return null
   }
 
   const needle = query.trim().toLowerCase()
