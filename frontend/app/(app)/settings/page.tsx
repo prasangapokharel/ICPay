@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import useSWR from "swr"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import {
   ArrowUpRight01Icon,
@@ -15,13 +14,10 @@ import {
   UserIcon,
   QrCode01Icon,
   Coins01Icon,
-  Settings01Icon,
   Logout01Icon,
   Search01Icon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
-import { SettingsForm } from "@/components/settings/settings-form"
-import { getSettings, updateSettings } from "@/services/settings/settings"
 import { useAuth } from "@/components/auth/auth-provider"
 import { shortPrincipal } from "@/lib/wallet-utils"
 import { avatarUriFor } from "@/lib/avatar"
@@ -69,25 +65,6 @@ export default function MenuPage() {
   const [query, setQuery] = useState("")
 
   const principal = identity?.getPrincipal().toText() ?? ""
-
-  // Cached like every other read: settings change only when this page writes
-  // them, and the write below seeds the cache directly, so revisiting the page
-  // never needs to call the canister again.
-  const { data: settings, mutate } = useSWR(
-    identity ? (["settings", principal] as const) : null,
-    () => getSettings(identity),
-    { revalidateOnFocus: false, revalidateIfStale: false, keepPreviousData: true }
-  )
-
-  const handleSave = async (theme: string, language: string, notifications: boolean): Promise<string | null> => {
-    const result = await updateSettings(identity, theme, language, notifications)
-    if ("err" in result) return result.err
-
-    // The canister returns the saved record, so the cache can be updated from
-    // it without a follow-up read.
-    mutate(result.ok, { revalidate: false })
-    return null
-  }
 
   const needle = query.trim().toLowerCase()
   const sections = needle
@@ -152,16 +129,6 @@ export default function MenuPage() {
         <p className="py-6 text-center text-sm text-muted-foreground">
           Nothing matches &ldquo;{query.trim()}&rdquo;.
         </p>
-      )}
-
-      {settings && (
-        <div className="space-y-3">
-          <h2 className="flex items-center gap-2 text-sm font-semibold">
-            <HugeiconsIcon icon={Settings01Icon} className="size-4" />
-            Preferences
-          </h2>
-          <SettingsForm settings={settings} onSave={handleSave} />
-        </div>
       )}
 
       <button
