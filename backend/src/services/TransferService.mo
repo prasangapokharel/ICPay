@@ -3,7 +3,6 @@ import Map "mo:core/Map";
 import Time "mo:core/Time";
 import Text "mo:core/Text";
 import Int "mo:core/Int";
-import Nat "mo:core/Nat";
 import Nat64 "mo:core/Nat64";
 import Types "../types";
 import UUID "../utils/UUID";
@@ -13,6 +12,7 @@ import Subaccount "../ledger/Subaccount";
 import Helpers "../utils/Helpers";
 import LedgerService "LedgerService";
 import LedgerTypes "../ledger/Types";
+import TransferError "../ledger/TransferError";
 import TxModel "../models/Transaction";
 import UserRepo "../repositories/UserRepository";
 import TxRepo "../repositories/TransactionRepository";
@@ -83,21 +83,19 @@ module {
     await doTransfer(service, caller, to, amount, AccountHelper.toText(to), memo);
   };
 
-  // Shared precondition for every outgoing transfer: the sender must exist and
-  // their custodial account must cover amount + fee.
-  func checkFunds(service: TransferService, caller: Principal): async* Types.ApiResult<{ userId: Types.UserId; source: LedgerTypes.Account; balance: Nat }> {
+  // Resolves the sender and their custodial account. Deliberately does NOT read
+  // the balance: the ledger checks funds itself and returns the balance in its
+  // #InsufficientFunds error, so a pre-flight read costs a whole extra consensus
+  // round (~3.5s measured) to compute an answer the transfer already gives back.
+  // It was also racy -- the balance can change between the read and the transfer,
+  // so passing the check never guaranteed the transfer would succeed.
+  func resolveSender(service: TransferService, caller: Principal): Types.ApiResult<{ userId: Types.UserId; source: LedgerTypes.Account }> {
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?sender) {
-        let source = LedgerService.depositAccount(service.ledger, caller);
-        let balance = await LedgerService.getBalance(service.ledger, source);
-        #ok({ userId = sender.id; source; balance });
+        #ok({ userId = sender.id; source = LedgerService.depositAccount(service.ledger, caller) });
       };
       case (null) { #err("User not found") };
     };
-  };
-
-  func insufficient(need: Nat, have: Nat): Text {
-    "Insufficient balance (need " # Nat.toText(need) # " e8s, have " # Nat.toText(have) # " e8s)";
   };
 
   public func transferByAccountId(service: TransferService, caller: Principal, accountIdHex: Text, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
@@ -113,14 +111,10 @@ module {
       case (null) {};
     };
     let toBlob = Helpers.hexToBlob(accountIdHex);
-    switch (await* checkFunds(service, caller)) {
+    switch (resolveSender(service, caller)) {
       case (#err(e)) { #err(e) };
-      case (#ok({ userId; source; balance })) {
+      case (#ok({ userId; source })) {
         let fee = Config.ICP_FEE;
-        let totalAmount = amount + fee;
-        if (balance < totalAmount) {
-          return #err(insufficient(totalAmount, balance));
-        };
         let now = Time.now();
         let id = UUID.generate();
         let fromLabel = AccountHelper.toAccountIdentifier(source);
@@ -159,7 +153,7 @@ module {
           };
           case (#Err(e)) {
             tx.fail(now);
-            #err("Transfer failed: " # debug_show e);
+            #err("Transfer failed: " # TransferError.describeOld(e));
           };
         };
       };
@@ -171,14 +165,10 @@ module {
       case (?err) { return #err(err) };
       case (null) {};
     };
-    switch (await* checkFunds(service, caller)) {
+    switch (resolveSender(service, caller)) {
       case (#err(e)) { #err(e) };
-      case (#ok({ userId; source; balance })) {
+      case (#ok({ userId; source })) {
         let fee = Config.ICP_FEE;
-        let totalAmount = amount + fee;
-        if (balance < totalAmount) {
-          return #err(insufficient(totalAmount, balance));
-        };
         let now = Time.now();
         let id = UUID.generate();
         let fromLabel = AccountHelper.toAccountIdentifier(source);
@@ -209,7 +199,7 @@ module {
           };
           case (#Err(e)) {
             tx.fail(now);
-            #err("Transfer failed: " # debug_show e);
+            #err("Transfer failed: " # TransferError.describe(e));
           };
         };
       };

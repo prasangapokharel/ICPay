@@ -1,7 +1,6 @@
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
-import Nat "mo:core/Nat";
 import Nat64 "mo:core/Nat64";
 import Types "../types";
 import UUID "../utils/UUID";
@@ -9,6 +8,7 @@ import Config "../config/Config";
 import AccountHelper "../ledger/Account";
 import LedgerService "LedgerService";
 import LedgerTypes "../ledger/Types";
+import TransferError "../ledger/TransferError";
 import TxModel "../models/Transaction";
 import UserRepo "../repositories/UserRepository";
 import TxRepo "../repositories/TransactionRepository";
@@ -36,12 +36,7 @@ module {
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?user) {
         let fee = Config.ICP_FEE;
-        let totalAmount = amount + fee;
         let source = LedgerService.depositAccount(service.ledger, caller);
-        let balance = await LedgerService.getBalance(service.ledger, source);
-        if (balance < totalAmount) {
-          return #err("Insufficient balance (need " # Nat.toText(totalAmount) # " e8s, have " # Nat.toText(balance) # " e8s)");
-        };
         let now = Time.now();
         let id = UUID.generate();
         let tx = TxRepo.create(
@@ -66,7 +61,7 @@ module {
           };
           case (#Err(e)) {
             tx.fail(now);
-            #err("Transfer failed: " # debug_show e);
+            #err("Transfer failed: " # TransferError.describe(e));
           };
         };
       };
