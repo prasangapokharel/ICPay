@@ -7,11 +7,12 @@
 AGENTS.md
 CLAUDE.md
 .DS_Store
-# Only the README screenshots are public. git will not descend into an excluded
-# directory, so this excludes the contents rather than the directory itself --
-# otherwise the negation below could never match.
+# Only the README screenshots and the command reference are public. git will not
+# descend into an excluded directory, so this excludes the contents rather than
+# the directory itself -- otherwise the negations below could never match.
 docs/*
 !docs/demo/
+!docs/command/
 
 # Environment files and credentials
 **/.env*
