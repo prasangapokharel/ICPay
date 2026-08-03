@@ -1,0 +1,61 @@
+name: CI
+
+# Deliberately never deploys. The backend canister custodies real user ICP, and
+# auto-deploying would mean putting its controller key in a GitHub secret -- a
+# key that can also delete the canister. Shipping stays a local command run by a
+# human: npm run ci backend:deploy / npm run ci frontend:deploy.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The suite compiles each test with moc directly, so dfx is not needed.
+      - run: npm i -g ic-mops
+      - run: mops toolchain init
+      - run: mops install
+        working-directory: backend
+
+      - run: bash scripts/run-tests.sh
+        working-directory: backend
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+        working-directory: frontend
+
+      - run: npm run typecheck
+        working-directory: frontend
+
+      # Lint sits at a known baseline of 5 set-state-in-effect errors, so a bare
+      # eslint call would fail the build. This fails only if the count RISES.
+      - name: Lint (must not exceed baseline)
+        working-directory: frontend
+        run: |
+          count=$(npx eslint services hooks components app lib --ext .ts,.tsx -f json \
+            | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).reduce((n,f)=>n+f.errorCount,0)))')
+          echo "eslint errors: $count (baseline 5)"
+          test "$count" -le 5
+
+      - run: npm run build
+        working-directory: frontend

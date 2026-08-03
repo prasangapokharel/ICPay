@@ -32,11 +32,13 @@ export function BalanceCard({
         <Image src="/images/logo/logo.png" alt="ICP" width={36} height={36} className="size-9" />
       </span>
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl"
-      >
-        <span className="absolute -right-10 -top-16 size-48 rounded-full bg-primary-foreground/10 blur-2xl" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
+        <img
+          src="/images/balancecardbg/ascii-magic-2.gif"
+          alt=""
+          className="h-full w-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-primary/30" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center pt-12">
