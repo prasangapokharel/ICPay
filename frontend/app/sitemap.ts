@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // legal set: everything below is read after a decision, not before it.
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/faq`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${siteUrl}/roadmap`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${siteUrl}/login`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/terms`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.3 },

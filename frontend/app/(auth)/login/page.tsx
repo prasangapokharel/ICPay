@@ -153,6 +153,9 @@ export default function LoginPage() {
             <Link href="/faq" className="underline underline-offset-2">
               FAQ
             </Link>
+            <Link href="/roadmap" className="underline underline-offset-2">
+              Roadmap
+            </Link>
             <Link href="/transparency" className="underline underline-offset-2">
               Transparency
             </Link>
