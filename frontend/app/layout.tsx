@@ -48,7 +48,10 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   robots: { index: true, follow: true },
-  verification: { google: "6jnIRWeq6mzEmElP-A7kd2_VRBtz8PAl8vsUnWZSFoc" },
+  verification: {
+    google: "6jnIRWeq6mzEmElP-A7kd2_VRBtz8PAl8vsUnWZSFoc",
+    yandex: "5ad19f1b1325ba5b",
+  },
 }
 
 export const viewport: Viewport = {
