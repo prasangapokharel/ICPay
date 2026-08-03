@@ -18,6 +18,19 @@ type AuthContextType = {
   logout: () => Promise<void>
 }
 
+// Keyed by principal so a second account still gets its one chime, and so
+// clearing site data resets it the same way it resets the session.
+const SOUND_KEY = "icpay:login-sound:"
+
+function playLoginChimeOnce(principal: string) {
+  const key = SOUND_KEY + principal
+  if (localStorage.getItem(key)) return
+  // Written before playback, not after: a browser that blocks the sound must
+  // not leave the flag unset and retry on every future sign-in.
+  localStorage.setItem(key, "1")
+  void new Audio("/audio/sucess/Login_successful_long_1.wav").play().catch(() => {})
+}
+
 const AuthContext = createContext<AuthContextType>({
   identity: undefined,
   isAuthenticated: false,
@@ -65,6 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (e) {
       console.error("Backend login error:", e)
     }
+    playLoginChimeOnce(id.getPrincipal().toText())
     setIdentity(id)
   }, [])
 
