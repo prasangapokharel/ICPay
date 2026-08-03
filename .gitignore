@@ -53,3 +53,6 @@ pnpm-debug.log*
 
 # staged Next export for the asset canister
 backend/dist/
+
+# Local task runner scripts, kept out of the repo for now
+ci/
