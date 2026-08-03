@@ -12,6 +12,7 @@ CLAUDE.md
 docs/*
 !docs/launch/
 !docs/costing/
+!docs/demo/
 
 # Environment files and credentials
 **/.env*
