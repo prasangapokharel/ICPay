@@ -9,7 +9,7 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Wallet01Icon, ShieldKeyIcon, FlashIcon, Key01Icon, FaceIdIcon } from "@hugeicons/core-free-icons"
+import { Wallet01Icon, ShieldKeyIcon, FlashIcon, Key01Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Typewriter } from "@/components/shared/typewriter"
 import { MarketStats } from "@/components/auth/market-stats"
@@ -114,24 +114,6 @@ export default function LoginPage() {
           <div className="flex flex-col items-center gap-2 pt-1">
             <p className="text-xs text-muted-foreground">Or continue with</p>
             <ButtonGroup>
-              {/* Both buttons start the same delegation flow; only the provider
-                  differs. Internet Identity runs the WebAuthn ceremony in its
-                  own window -- a dApp cannot invoke FaceID itself, because a
-                  credential minted from this origin is unrelated to the user's
-                  principal and could not sign a single canister call. */}
-              <Button
-                variant="outline"
-                className="h-9 px-5 text-xs"
-                onClick={() => handleLogin()}
-                disabled={connecting}
-              >
-                {connecting ? (
-                  <Spinner className="size-3.5" />
-                ) : (
-                  <HugeiconsIcon icon={FaceIdIcon} className="size-4" />
-                )}
-                Face ID
-              </Button>
               <Button
                 variant="outline"
                 className="h-9 px-5 text-xs"
