@@ -70,8 +70,10 @@
       "roadmap": "Roadmap",
       "transparency": "Security & Transparency",
       "terms": "Terms of Service",
-      "privacy": "Privacy Policy"
-    }
+      "privacy": "Privacy Policy",
+      "settings": "Settings"
+    },
+    "preferencesDescription": "Language, currency and legal pages"
   },
   "language": {
     "label": "Language",
@@ -82,6 +84,12 @@
     "label": "Currency",
     "description": "Your balance is converted to this currency.",
     "select": "Select currency"
+  },
+  "theme": {
+    "label": "Appearance",
+    "description": "Switch between light and dark mode.",
+    "light": "Light",
+    "dark": "Dark"
   },
   "login": {
     "heading": "ICP Wallet",
@@ -279,8 +287,7 @@
   },
   "header": {
     "profile": "Your profile",
-    "lightMode": "Switch to light mode",
-    "darkMode": "Switch to dark mode"
+    "settings": "Settings"
   },
   "quickPay": {
     "title": "Pay @{name}",

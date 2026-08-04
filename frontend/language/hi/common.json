@@ -70,8 +70,10 @@
       "roadmap": "रोडमैप",
       "transparency": "सुरक्षा और पारदर्शिता",
       "terms": "सेवा की शर्तें",
-      "privacy": "गोपनीयता नीति"
-    }
+      "privacy": "गोपनीयता नीति",
+      "settings": "सेटिंग्स"
+    },
+    "preferencesDescription": "भाषा, मुद्रा और कानूनी पृष्ठ"
   },
   "language": {
     "label": "भाषा",
@@ -82,6 +84,12 @@
     "label": "मुद्रा",
     "description": "आपका बैलेंस इसी मुद्रा में बदला जाएगा।",
     "select": "मुद्रा चुनें"
+  },
+  "theme": {
+    "label": "रूप-रंग",
+    "description": "लाइट और डार्क मोड के बीच बदलें।",
+    "light": "लाइट",
+    "dark": "डार्क"
   },
   "login": {
     "heading": "ICP वॉलेट",
@@ -279,8 +287,7 @@
   },
   "header": {
     "profile": "आपकी प्रोफ़ाइल",
-    "lightMode": "लाइट मोड पर जाएँ",
-    "darkMode": "डार्क मोड पर जाएँ"
+    "settings": "सेटिंग्स"
   },
   "quickPay": {
     "title": "@{name} को भुगतान करें",

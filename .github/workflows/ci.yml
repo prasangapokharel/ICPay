@@ -6,7 +6,7 @@ name: CI
 # human: npm run ci backend:deploy / npm run ci frontend:deploy.
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
 
 concurrency:
@@ -40,6 +40,11 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
+
+      # The lockfile is written by npm 11, which resolves @swc/core's optional
+      # peer @swc/helpers differently than the npm 10 bundled with node 22 --
+      # so `npm ci` on the bundled version reports the lockfile out of sync.
+      - run: npm i -g npm@11
 
       - run: npm ci
         working-directory: frontend

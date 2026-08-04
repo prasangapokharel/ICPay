@@ -70,8 +70,10 @@
       "roadmap": "路线图",
       "transparency": "安全与透明",
       "terms": "服务条款",
-      "privacy": "隐私政策"
-    }
+      "privacy": "隐私政策",
+      "settings": "设置"
+    },
+    "preferencesDescription": "语言、货币和法律页面"
   },
   "language": {
     "label": "语言",
@@ -82,6 +84,12 @@
     "label": "货币",
     "description": "您的余额将换算为该货币。",
     "select": "选择货币"
+  },
+  "theme": {
+    "label": "外观",
+    "description": "在浅色和深色模式之间切换。",
+    "light": "浅色",
+    "dark": "深色"
   },
   "login": {
     "heading": "ICP 钱包",
@@ -279,8 +287,7 @@
   },
   "header": {
     "profile": "您的个人资料",
-    "lightMode": "切换到浅色模式",
-    "darkMode": "切换到深色模式"
+    "settings": "设置"
   },
   "quickPay": {
     "title": "向 @{name} 付款",

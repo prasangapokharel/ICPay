@@ -70,8 +70,10 @@
       "roadmap": "ロードマップ",
       "transparency": "セキュリティと透明性",
       "terms": "利用規約",
-      "privacy": "プライバシーポリシー"
-    }
+      "privacy": "プライバシーポリシー",
+      "settings": "設定"
+    },
+    "preferencesDescription": "言語・通貨・法務ページ"
   },
   "language": {
     "label": "言語",
@@ -82,6 +84,12 @@
     "label": "通貨",
     "description": "残高はこの通貨に換算されます。",
     "select": "通貨を選択"
+  },
+  "theme": {
+    "label": "外観",
+    "description": "ライトとダークを切り替えます。",
+    "light": "ライト",
+    "dark": "ダーク"
   },
   "login": {
     "heading": "ICP ウォレット",
@@ -279,8 +287,7 @@
   },
   "header": {
     "profile": "あなたのプロフィール",
-    "lightMode": "ライトモードに切り替え",
-    "darkMode": "ダークモードに切り替え"
+    "settings": "設定"
   },
   "quickPay": {
     "title": "@{name} に支払う",

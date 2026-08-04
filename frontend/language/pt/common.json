@@ -70,8 +70,10 @@
       "roadmap": "Roteiro",
       "transparency": "Segurança e transparência",
       "terms": "Termos de serviço",
-      "privacy": "Política de privacidade"
-    }
+      "privacy": "Política de privacidade",
+      "settings": "Configurações"
+    },
+    "preferencesDescription": "Páginas de idioma, moeda e legais"
   },
   "language": {
     "label": "Idioma",
@@ -82,6 +84,12 @@
     "label": "Moeda",
     "description": "Seu saldo é convertido para esta moeda.",
     "select": "Selecionar moeda"
+  },
+  "theme": {
+    "label": "Aparência",
+    "description": "Alterne entre o modo claro e escuro.",
+    "light": "Claro",
+    "dark": "Escuro"
   },
   "login": {
     "heading": "Carteira ICP",
@@ -279,8 +287,7 @@
   },
   "header": {
     "profile": "Seu perfil",
-    "lightMode": "Mudar para o modo claro",
-    "darkMode": "Mudar para o modo escuro"
+    "settings": "Configurações"
   },
   "quickPay": {
     "title": "Pagar @{name}",

@@ -70,8 +70,10 @@
       "roadmap": "Hoja de ruta",
       "transparency": "Seguridad y transparencia",
       "terms": "Términos del servicio",
-      "privacy": "Política de privacidad"
-    }
+      "privacy": "Política de privacidad",
+      "settings": "Ajustes"
+    },
+    "preferencesDescription": "Páginas de idioma, moneda y legales"
   },
   "language": {
     "label": "Idioma",
@@ -82,6 +84,12 @@
     "label": "Moneda",
     "description": "Tu saldo se convierte a esta moneda.",
     "select": "Seleccionar moneda"
+  },
+  "theme": {
+    "label": "Apariencia",
+    "description": "Cambia entre modo claro y oscuro.",
+    "light": "Claro",
+    "dark": "Oscuro"
   },
   "login": {
     "heading": "Monedero ICP",
@@ -279,8 +287,7 @@
   },
   "header": {
     "profile": "Tu perfil",
-    "lightMode": "Cambiar al modo claro",
-    "darkMode": "Cambiar al modo oscuro"
+    "settings": "Ajustes"
   },
   "quickPay": {
     "title": "Pagar a @{name}",
