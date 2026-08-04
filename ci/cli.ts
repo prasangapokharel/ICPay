@@ -29,6 +29,8 @@ const COMMANDS: Record<string, string> = {
   "canister:call": "canister/call.ts",
   "canister:info": "canister/info.ts",
   "cycles:balance": "cycles/balance.ts",
+  "cycles:address": "cycles/address.ts",
+  "cycles:convert": "cycles/convert.ts",
   "cycles:topup": "cycles/topup.ts",
   "ledger:balance": "ledger/balance.ts",
   "ledger:transfer": "ledger/transfer.ts",
