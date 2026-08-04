@@ -1,12 +1,17 @@
 # Local tooling and operating-system files
-.claude/
 .agents/
 .opencode/
 .cursor/
 .windsurf/
-AGENTS.md
-CLAUDE.md
+# Anchored to the root: these are the per-machine agent instruction files. The
+# leading slash matters -- unanchored, they would also swallow .claude/AGENTS.md
+# and frontend/AGENTS.md, which are committed on purpose.
+/AGENTS.md
+/CLAUDE.md
 .DS_Store
+# .claude/ carries the agent map -- the point of it is that a fresh clone gets
+# the same context. Only the per-machine permission grants stay local.
+.claude/settings.local.json
 # Only the README screenshots and the command reference are public. git will not
 # descend into an excluded directory, so this excludes the contents rather than
 # the directory itself -- otherwise the negations below could never match.
