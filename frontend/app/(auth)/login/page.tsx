@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Spinner } from "@/components/ui/spinner"
@@ -16,16 +17,18 @@ import { MarketStats } from "@/components/auth/market-stats"
 import { NFID_PROVIDER } from "@/services/icp"
 
 const features = [
-  { icon: ShieldKeyIcon, title: "Self-custodial", body: "Only you can authorize transfers." },
-  { icon: Key01Icon, title: "No passwords", body: "Internet Identity signs you in." },
-  { icon: FlashIcon, title: "Instant settlement", body: "ICP transfers confirm in seconds." },
-]
+  { icon: ShieldKeyIcon, key: "custodial" },
+  { icon: Key01Icon, key: "passwords" },
+  { icon: FlashIcon, key: "instant" },
+] as const
 
 export default function LoginPage() {
   const { login, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const t = useTranslations("login")
+  const tSettings = useTranslations("settings")
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) router.replace("/")
@@ -45,7 +48,7 @@ export default function LoginPage() {
     try {
       await login(provider)
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not connect. Please try again.")
+      setError(e instanceof Error ? e.message : t("genericError"))
     } finally {
       setConnecting(false)
     }
@@ -73,20 +76,20 @@ export default function LoginPage() {
             priority
             className="mt-6 size-24 object-contain"
           />
-          <h1 className="mt-6 text-2xl font-bold tracking-tight">ICP Wallet</h1>
+          <h1 className="mt-6 text-2xl font-bold tracking-tight">{t("heading")}</h1>
           <p className="mt-2 h-10 text-balance text-sm text-muted-foreground">
-            <Typewriter text="Send, receive and hold ICP with a wallet secured by your Internet Identity." />
+            <Typewriter text={t("tagline")} />
           </p>
 
           <ul className="mt-10 w-full space-y-4 text-left">
-            {features.map(({ icon, title, body }) => (
-              <li key={title} className="flex items-start gap-3">
+            {features.map(({ icon, key }) => (
+              <li key={key} className="flex items-start gap-3">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
                   <HugeiconsIcon icon={icon} className="size-4 text-primary" />
                 </span>
                 <div>
-                  <p className="text-sm font-medium">{title}</p>
-                  <p className="text-xs text-muted-foreground">{body}</p>
+                  <p className="text-sm font-medium">{t(`features.${key}Title`)}</p>
+                  <p className="text-xs text-muted-foreground">{t(`features.${key}Body`)}</p>
                 </div>
               </li>
             ))}
@@ -101,10 +104,10 @@ export default function LoginPage() {
           )}
           <Button className="h-12 w-full text-base" onClick={() => handleLogin()} disabled={connecting}>
             {connecting ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Wallet01Icon} className="size-5" />}
-            {connecting ? "Connecting…" : "Connect Wallet"}
+            {connecting ? t("connecting") : t("connect")}
           </Button>
           <p className="text-center text-xs text-muted-foreground">
-            You&apos;ll be redirected to Internet Identity to approve access.
+            {t("redirectNote")}
           </p>
 
           {/* NFID authorizes through the same delegation flow auth-client
@@ -112,7 +115,7 @@ export default function LoginPage() {
               approve one call at a time and never issue a delegation, so they
               can fund the wallet but cannot open a session. */}
           <div className="flex flex-col items-center gap-2 pt-1">
-            <p className="text-xs text-muted-foreground">Or continue with</p>
+            <p className="text-xs text-muted-foreground">{t("orContinue")}</p>
             <ButtonGroup>
               <Button
                 variant="outline"
@@ -127,18 +130,18 @@ export default function LoginPage() {
                 principal -- a different wallet. Without this line an existing
                 user signing in through it sees an empty balance. */}
             <p className="text-center text-xs text-muted-foreground">
-              NFID creates a separate wallet from Internet Identity.
+              {t("nfidNote")}
             </p>
           </div>
 
           <p className="text-center text-xs text-muted-foreground">
-            By continuing you agree to the{" "}
+            {t("legalPrefix")}{" "}
             <Link href="/terms" className="underline underline-offset-2">
-              Terms
+              {t("legalTerms")}
             </Link>{" "}
-            and{" "}
+            {t("legalAnd")}{" "}
             <Link href="/privacy" className="underline underline-offset-2">
-              Privacy Policy
+              {t("legalPrivacy")}
             </Link>
             .
           </p>
@@ -148,16 +151,16 @@ export default function LoginPage() {
               visitor before a crawler sees anything. */}
           <nav className="flex justify-center gap-4 text-xs text-muted-foreground">
             <Link href="/about" className="underline underline-offset-2">
-              About
+              {tSettings("items.about")}
             </Link>
             <Link href="/faq" className="underline underline-offset-2">
-              FAQ
+              {tSettings("items.faq")}
             </Link>
             <Link href="/roadmap" className="underline underline-offset-2">
-              Roadmap
+              {tSettings("items.roadmap")}
             </Link>
             <Link href="/transparency" className="underline underline-offset-2">
-              Transparency
+              {tSettings("items.transparency")}
             </Link>
           </nav>
         </div>

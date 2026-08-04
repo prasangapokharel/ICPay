@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -29,6 +30,8 @@ function isValidDestination(v: string): boolean {
 }
 
 export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
+  const t = useTranslations("withdraw")
+  const tc = useTranslations("common")
   const [destination, setDestination] = useState("")
   const [amount, setAmount] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -48,15 +51,15 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
 
     const dest = destination.trim()
     if (!isValidDestination(dest)) {
-      setError("Enter a valid principal or 64-character account identifier")
+      setError(t("invalidDestination"))
       return
     }
     if (parsed === null) {
-      setError("Enter an amount greater than 0")
+      setError(t("amountRequired"))
       return
     }
     if (overBalance) {
-      setError("Amount plus network fee exceeds your balance")
+      setError(t("overBalance"))
       return
     }
 
@@ -75,7 +78,7 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <AmountInput
         id="amount"
-        label="Amount"
+        label={tc("amount")}
         value={amount}
         onChange={(v) => {
           setAmount(v)
@@ -86,10 +89,10 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
       />
 
       <div className="space-y-2">
-        <Label htmlFor="destination">Destination</Label>
+        <Label htmlFor="destination">{t("destination")}</Label>
         <Input
           id="destination"
-          placeholder="Principal or account identifier"
+          placeholder={t("destinationPlaceholder")}
           autoComplete="off"
           spellCheck={false}
           value={destination}
@@ -102,9 +105,9 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
       </div>
 
       <div className="space-y-1.5 rounded-2xl bg-muted/40 p-4">
-        <Row label="Network fee" value={`${formatAmount(ICP_FEE)} ICP`} />
+        <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} />
         <Row
-          label="Total deducted"
+          label={t("totalDeducted")}
           value={total === null ? "—" : `${formatAmount(total)} ICP`}
           emphasis
         />
@@ -118,7 +121,7 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
 
       <Button type="submit" className="h-12 w-full text-base" disabled={!canSubmit}>
         {loading ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Upload01Icon} className="size-4" />}
-        {loading ? "Sending…" : "Withdraw ICP"}
+        {loading ? t("sending") : t("submit")}
       </Button>
     </form>
   )

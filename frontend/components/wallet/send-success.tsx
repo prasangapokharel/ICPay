@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -13,12 +14,6 @@ import { useIcpPrice } from "@/lib/use-icp-price"
 import { playSuccessChime } from "@/lib/success-chime"
 import { cn } from "@/lib/utils"
 
-const HEADING = {
-  send: "Send Success",
-  tip: "Tip Sent",
-  purchase: "Purchase Complete",
-} as const
-
 type SendSuccessProps = {
   amount: bigint
   recipient: string
@@ -29,6 +24,8 @@ type SendSuccessProps = {
 }
 
 export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send", onDone }: SendSuccessProps) {
+  const t = useTranslations("success")
+  const tc = useTranslations("common")
   const [previewOpen, setPreviewOpen] = useState(false)
   const { price } = useIcpPrice()
 
@@ -67,23 +64,19 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
         </span>
       </div>
 
-      <h1 className="mt-6 text-2xl font-bold tracking-tight">{HEADING[kind]}</h1>
+      <h1 className="mt-6 text-2xl font-bold tracking-tight">{t(kind)}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {kind === "tip"
-          ? `You tipped ${label} some ICP!`
-          : kind === "purchase"
-            ? `${label} is yours.`
-            : `You've sent ${label} some ICP!`}
+        {t(`${kind}Body`, { name: label })}
       </p>
 
-      <p className="mt-8 text-xs text-muted-foreground">Total</p>
+      <p className="mt-8 text-xs text-muted-foreground">{t("total")}</p>
       <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums">
         {formatE8s(amount)} ICP
       </p>
 
       <div className="mt-8 w-full border-t border-dashed pt-6 text-left">
         <p className="text-xs text-muted-foreground">
-          {kind === "purchase" ? "Username" : "Recipient"}
+          {kind === "purchase" ? t("username") : t("recipient")}
         </p>
         <div className="mt-3 flex items-center gap-3 rounded-2xl bg-muted/50 p-3">
           <Avatar className="size-11 shrink-0">
@@ -102,7 +95,7 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
               rel="noopener noreferrer"
               className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground underline underline-offset-2"
             >
-              View on ICP Dashboard
+              {t("viewOnDashboard")}
               <HugeiconsIcon icon={LinkSquare02Icon} className="size-3" />
             </a>
           </div>
@@ -111,7 +104,7 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
 
       <div className="mt-8 flex w-full items-center gap-2">
         <Button className="h-12 flex-1 text-base" onClick={onDone}>
-          Done
+          {tc("done")}
         </Button>
         {/* A purchase pays the treasury, so the receipt card -- which is framed
             around who received the money -- would read as a transfer to us. */}
@@ -120,7 +113,7 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
             <button
               type="button"
               onClick={() => setPreviewOpen(true)}
-              aria-label="Share receipt"
+              aria-label={t("shareReceipt")}
               className="flex size-12 shrink-0 items-center justify-center rounded-2xl ring-1 ring-border transition-colors hover:bg-accent active:scale-95"
             >
               <HugeiconsIcon icon={Share08Icon} className="size-4.5" />

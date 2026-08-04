@@ -4,6 +4,8 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { ThemeProvider, ThemeColorScript } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth/auth-provider"
+import { LocaleProvider } from "@/components/i18n/locale-provider"
+import { FiatProvider } from "@/components/fiat/fiat-provider"
 import { cn } from "@/lib/utils"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
@@ -111,7 +113,11 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <ThemeProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <LocaleProvider>
+            <FiatProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </FiatProvider>
+          </LocaleProvider>
         </ThemeProvider>
         <Analytics />
       </body>

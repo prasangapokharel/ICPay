@@ -13,17 +13,18 @@ export const PRICE_PREMIUM = 5n * E8S
 export const PRICE_STANDARD = 2n * E8S
 export const PRICE_BASIC = 1n * E8S
 
+// Keys, not display text: the UI resolves them under buyUsername.tiers.
 export type Tier = {
-  label: string
+  labelKey: "ultra" | "premium" | "standard" | "basic"
   price: bigint
-  range: string
+  rangeKey: "ultraRange" | "premiumRange" | "standardRange" | "basicRange"
 }
 
 export const TIERS: Tier[] = [
-  { label: "Ultra premium", price: PRICE_ULTRA_PREMIUM, range: "1-3 characters" },
-  { label: "Premium", price: PRICE_PREMIUM, range: "4 characters" },
-  { label: "Standard", price: PRICE_STANDARD, range: "5 characters" },
-  { label: "Basic", price: PRICE_BASIC, range: "6-8 characters" },
+  { labelKey: "ultra", price: PRICE_ULTRA_PREMIUM, rangeKey: "ultraRange" },
+  { labelKey: "premium", price: PRICE_PREMIUM, rangeKey: "premiumRange" },
+  { labelKey: "standard", price: PRICE_STANDARD, rangeKey: "standardRange" },
+  { labelKey: "basic", price: PRICE_BASIC, rangeKey: "basicRange" },
 ]
 
 export function priceFor(name: string): bigint {
@@ -41,22 +42,22 @@ export function tierFor(name: string): Tier {
 
 const VALID_CHARS = /^[a-zA-Z0-9_]+$/
 
+export type UsernameError = "required" | "tooLong" | "invalidChars" | "notFree"
+
 // Shape only -- says nothing about whether the name is free. Matches
 // UsernameValidator.validate, the rule the paid path uses.
-export function validateUsername(name: string): string | null {
-  if (name.length < USERNAME_MIN_LENGTH) return "Enter a username"
-  if (name.length > USERNAME_MAX_LENGTH) return `Maximum length is ${USERNAME_MAX_LENGTH} characters`
-  if (!VALID_CHARS.test(name)) return "Letters, numbers and underscore only"
+export function validateUsername(name: string): UsernameError | null {
+  if (name.length < USERNAME_MIN_LENGTH) return "required"
+  if (name.length > USERNAME_MAX_LENGTH) return "tooLong"
+  if (!VALID_CHARS.test(name)) return "invalidChars"
   return null
 }
 
 // Matches UsernameValidator.validateFreeClaim: the stricter rule that keeps
 // short names as paid inventory.
-export function validateFreeUsername(name: string): string | null {
+export function validateFreeUsername(name: string): UsernameError | null {
   const err = validateUsername(name)
   if (err) return err
-  if (name.length < USERNAME_FREE_MIN_LENGTH) {
-    return `Free usernames need ${USERNAME_FREE_MIN_LENGTH}+ characters. Shorter names can be bought.`
-  }
+  if (name.length < USERNAME_FREE_MIN_LENGTH) return "notFree"
   return null
 }

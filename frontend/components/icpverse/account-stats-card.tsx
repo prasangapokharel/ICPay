@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Principal } from "@dfinity/principal"
+import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, CheckmarkCircle01Icon } from "@hugeicons/core-free-icons"
@@ -11,6 +12,7 @@ import { useAccountStats } from "@/hooks/use-wallet-data"
 import { cn } from "@/lib/utils"
 
 export function AccountStatsCard({ principal }: { principal: string }) {
+  const t = useTranslations("accountStats")
   const { stats, isLoading } = useAccountStats(principal)
   const { price } = useIcpPrice()
 
@@ -22,21 +24,21 @@ export function AccountStatsCard({ principal }: { principal: string }) {
   return (
     <div className="w-full space-y-px overflow-hidden rounded-2xl bg-border font-mono text-xs">
       <div className="grid grid-cols-2 gap-px bg-border">
-        <Cell label="Balance" value={`${formatAmount(stats.balance)} ICP`} strong />
-        <Cell label="Transactions" value={stats.txCount === 0 ? "—" : String(stats.txCount)} strong />
-        <Cell label="Value" value={usd === null ? "—" : `≈ ${formatUsd(usd)}`} />
+        <Cell label={t("balance")} value={`${formatAmount(stats.balance)} ICP`} strong />
+        <Cell label={t("transactions")} value={stats.txCount === 0 ? "—" : String(stats.txCount)} strong />
+        <Cell label={t("value")} value={usd === null ? "—" : `≈ ${formatUsd(usd)}`} />
         <Cell
-          label="Since block"
+          label={t("sinceBlock")}
           value={stats.firstBlock === undefined ? "—" : compact(stats.firstBlock)}
         />
       </div>
 
       <div className="space-y-2 bg-card px-3.5 py-3">
-        <CopyRow label="Principal" value={principal} />
-        <Row label="Type" value={principalKind(principal)} />
-        <Row label="Bytes" value={String(principalBytes(principal))} />
+        <CopyRow label={t("principal")} value={principal} />
+        <Row label={t("type")} value={t(`kinds.${principalKind(principal)}`)} />
+        <Row label={t("bytes")} value={String(principalBytes(principal))} />
         {stats.lastBlock !== undefined && (
-          <Row label="Last block" value={stats.lastBlock.toString()} />
+          <Row label={t("lastBlock")} value={stats.lastBlock.toString()} />
         )}
       </div>
     </div>
@@ -92,10 +94,10 @@ function CopyRow({ label, value }: { label: string; value: string }) {
 
 // A principal's byte length tags what it is: 29 bytes ends in 0x02 for a
 // self-authenticating identity backed by a key pair, and canister ids are short
-// opaque ones.
-function principalKind(text: string): string {
+// opaque ones. Returned as a catalog key, looked up under accountStats.kinds.
+function principalKind(text: string): "selfAuthenticating" | "anonymous" | "canister" | "opaque" {
   const n = principalBytes(text)
-  if (n === 29) return "self-authenticating"
+  if (n === 29) return "selfAuthenticating"
   if (n === 0) return "anonymous"
   if (n <= 10) return "canister"
   return "opaque"

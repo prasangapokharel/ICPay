@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -12,6 +13,7 @@ import { useUserSearch } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
 
 export default function IcpversePage() {
+  const t = useTranslations("icpverse")
   const [search, setSearch] = useState("")
   const debounced = useDebounced(search)
   // An empty search matches every username server-side, which is what keeps the
@@ -30,7 +32,7 @@ export default function IcpversePage() {
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Find your friends"
+          placeholder={t("searchPlaceholder")}
           autoComplete="off"
           spellCheck={false}
           className="h-12 rounded-full pl-10"
@@ -39,16 +41,14 @@ export default function IcpversePage() {
 
       <section className="space-y-1">
         <h2 className="px-1 pb-2 text-sm font-semibold text-muted-foreground">
-          {searching ? "Search results" : "Suggested for you"}
+          {searching ? t("searchResults") : t("suggested")}
         </h2>
 
         {isLoading && users.length === 0 ? (
           <UserListSkeleton />
         ) : users.length === 0 ? (
           <p className="px-1 py-6 text-center text-sm text-muted-foreground">
-            {searching
-              ? `No one found for “${debounced.trim()}”.`
-              : "No accounts with usernames yet. Be the first."}
+            {searching ? t("noneFound", { query: debounced.trim() }) : t("empty")}
           </p>
         ) : (
           users.map((u) => {

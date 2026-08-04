@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -36,11 +37,11 @@ import { primeSuccessChime } from "@/lib/success-chime"
 import { addressText, type ScannedAddress } from "@/lib/icp-address"
 import type { TransferMode } from "@/services/transfer/transfer"
 
-const labels: Record<TransferMode, { label: string; placeholder: string }> = {
-  username: { label: "Recipient username", placeholder: "username" },
-  principal: { label: "Recipient principal", placeholder: "aaaaa-aa..." },
-  account: { label: "Account identifier", placeholder: "64-character hex" },
-}
+const labelKeys = {
+  username: { label: "labelUsername", placeholder: "placeholderUsername" },
+  principal: { label: "labelPrincipal", placeholder: "placeholderPrincipal" },
+  account: { label: "labelAccount", placeholder: "placeholderAccount" },
+} as const satisfies Record<TransferMode, { label: string; placeholder: string }>
 
 // An ICRC-1 address names an account under a principal, so it fills the
 // principal tab and carries its subaccount alongside.
@@ -85,6 +86,8 @@ export function TransferForm({
   ) => Promise<string | null>
   balance?: bigint
 }) {
+  const t = useTranslations("transfer")
+  const tc = useTranslations("common")
   const [mode, setMode] = useState<TransferMode>("username")
   const [to, setTo] = useState("")
   const [amount, setAmount] = useState("")
@@ -172,15 +175,15 @@ export function TransferForm({
         }}
       >
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="username">Username</TabsTrigger>
-          <TabsTrigger value="principal">Principal</TabsTrigger>
-          <TabsTrigger value="account">Account ID</TabsTrigger>
+          <TabsTrigger value="username">{t("tabUsername")}</TabsTrigger>
+          <TabsTrigger value="principal">{t("tabPrincipal")}</TabsTrigger>
+          <TabsTrigger value="account">{t("tabAccount")}</TabsTrigger>
         </TabsList>
       </Tabs>
 
       <AmountInput
         id="amount"
-        label="Amount"
+        label={tc("amount")}
         value={amount}
         onChange={(v) => {
           setAmount(v)
@@ -191,16 +194,16 @@ export function TransferForm({
       />
       {sendable !== undefined && (
         <p className="text-xs text-muted-foreground">
-          Max sendable {formatAmount(sendable)} ICP after the {formatAmount(ICP_FEE)} ICP fee
+          {t("maxSendable", { amount: formatAmount(sendable), fee: formatAmount(ICP_FEE) })}
         </p>
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="to">{labels[mode].label}</Label>
+        <Label htmlFor="to">{t(labelKeys[mode].label)}</Label>
         <div className="relative">
           <Input
             id="to"
-            placeholder={labels[mode].placeholder}
+            placeholder={t(labelKeys[mode].placeholder)}
             autoComplete="off"
             spellCheck={false}
             value={to}
@@ -215,7 +218,7 @@ export function TransferForm({
           />
           <button
             type="button"
-            aria-label="Scan a QR code"
+            aria-label={t("scanQr")}
             onClick={() => setScanOpen(true)}
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
@@ -235,7 +238,7 @@ export function TransferForm({
 
       <div className="space-y-2">
         <div className="flex items-baseline justify-between">
-          <Label htmlFor="memo">Memo (optional)</Label>
+          <Label htmlFor="memo">{t("memoLabel")}</Label>
           <span
             className={
               memoTooLong
@@ -248,13 +251,13 @@ export function TransferForm({
         </div>
         <Input
           id="memo"
-          placeholder="Payment reference"
+          placeholder={t("memoPlaceholder")}
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
         />
         {memoTooLong && (
           <p className="text-xs text-destructive">
-            The ledger only stores {MEMO_MAX_BYTES} bytes. Shorten the memo.
+            {t("memoTooLong", { max: MEMO_MAX_BYTES })}
           </p>
         )}
       </div>
@@ -262,8 +265,7 @@ export function TransferForm({
       {insufficient && !error && (
         <Alert variant="destructive">
           <AlertDescription>
-            Not enough balance. Sending {formatAmount(parsed!)} ICP costs{" "}
-            {formatAmount(total!)} ICP with the fee.
+            {t("insufficient", { amount: formatAmount(parsed!), total: formatAmount(total!) })}
           </AlertDescription>
         </Alert>
       )}
@@ -280,14 +282,14 @@ export function TransferForm({
         onClick={() => setConfirmOpen(true)}
       >
         <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
-        Review transfer
+        {t("review")}
       </Button>
 
       <Drawer open={confirmOpen} onOpenChange={setConfirmOpen} showSwipeHandle>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Confirm transfer</DrawerTitle>
-            <DrawerDescription>Check the details before sending.</DrawerDescription>
+            <DrawerTitle>{t("confirmTitle")}</DrawerTitle>
+            <DrawerDescription>{t("confirmBody")}</DrawerDescription>
           </DrawerHeader>
 
           <div className="space-y-4 px-4">
@@ -304,28 +306,28 @@ export function TransferForm({
 
             <div className="space-y-2 rounded-2xl border p-4">
               {!(mode === "username" && resolved) && (
-                <Row label="To" value={to.trim()} mono />
+                <Row label={t("rowTo")} value={to.trim()} mono />
               )}
-              {subaccount && <Row label="Subaccount" value={toHex(subaccount)} mono />}
-              <Row label="Network fee" value={`${formatAmount(ICP_FEE)} ICP`} />
+              {subaccount && <Row label={t("rowSubaccount")} value={toHex(subaccount)} mono />}
+              <Row label={t("rowNetworkFee")} value={`${formatAmount(ICP_FEE)} ICP`} />
               <Row
-                label="Total deducted"
+                label={t("rowTotalDeducted")}
                 value={total === null ? "—" : `${formatAmount(total)} ICP`}
                 emphasis
               />
-              {memo.trim() && <Row label="Memo" value={memo.trim()} />}
+              {memo.trim() && <Row label={t("rowMemo")} value={memo.trim()} />}
             </div>
           </div>
 
           <DrawerFooter>
             <Button className="h-12 text-base" onClick={handleConfirm} disabled={loading}>
               {loading ? <Spinner className="size-4" /> : <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />}
-              {loading ? "Sending…" : "Confirm & send"}
+              {loading ? t("sending") : t("confirmSend")}
             </Button>
             <DrawerClose
               render={
                 <Button variant="outline" disabled={loading}>
-                  Cancel
+                  {tc("cancel")}
                 </Button>
               }
             />

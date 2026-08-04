@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import { useTheme } from "next-themes"
+import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -11,6 +12,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function AppHeader() {
+  const t = useTranslations("header")
   const { identity } = useAuth()
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -34,7 +36,7 @@ export function AppHeader() {
           profile, settings, sign out -- is already on the menu page. */}
       <Link
         href="/profile"
-        aria-label="Your profile"
+        aria-label={t("profile")}
         className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Avatar className="size-9">
@@ -47,7 +49,7 @@ export function AppHeader() {
 
       <button
         type="button"
-        aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+        aria-label={isDark ? t("lightMode") : t("darkMode")}
         onClick={() => setTheme(isDark ? "light" : "dark")}
         className="flex size-9 items-center justify-center rounded-full border bg-background text-foreground transition-colors hover:bg-accent active:scale-95"
       >

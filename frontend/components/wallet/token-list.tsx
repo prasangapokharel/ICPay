@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatTokenAmount } from "@/lib/wallet-utils"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
@@ -12,6 +13,7 @@ export function TokenList({
   holdings: TokenHolding[]
   isLoading: boolean
 }) {
+  const t = useTranslations("wallet")
   if (isLoading && holdings.length === 0) {
     return (
       <div className="space-y-2">
@@ -32,7 +34,7 @@ export function TokenList({
   if (holdings.length === 0) {
     return (
       <p className="px-1 py-6 text-center text-sm text-muted-foreground">
-        No tokens yet. Deposits show up here automatically.
+        {t("noTokens")}
       </p>
     )
   }
@@ -47,6 +49,7 @@ export function TokenList({
 }
 
 function TokenRow({ token }: { token: TokenHolding }) {
+  const t = useTranslations("wallet")
   const isIcp = token.ledgerId === ICP_LEDGER_ID
 
   return (
@@ -61,7 +64,7 @@ function TokenRow({ token }: { token: TokenHolding }) {
               a hover affordance would never appear on a phone. */}
           {!isIcp && (
             <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium leading-none text-muted-foreground">
-              Receive only
+              {t("receiveOnly")}
             </span>
           )}
         </div>

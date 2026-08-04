@@ -4,6 +4,7 @@ import { useState } from "react"
 import { usePathname } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { Principal } from "@dfinity/principal"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -24,6 +25,7 @@ import { tip } from "@/services/transfer/transfer"
 import { useAuth } from "@/components/auth/auth-provider"
 
 export function PublicProfile() {
+  const t = useTranslations("publicProfile")
   const pathname = usePathname()
   const { identity, isAuthenticated, login } = useAuth()
   const balance = useLiveBalance()
@@ -105,14 +107,14 @@ export function PublicProfile() {
       </Avatar>
 
       <h1 className="pt-4 text-2xl font-bold tracking-tight">@{username}</h1>
-      <p className="pt-1 text-sm text-muted-foreground">Scan or tap to send ICP</p>
+      <p className="pt-1 text-sm text-muted-foreground">{t("tagline")}</p>
 
       <PayQr value={payAddress} className="pt-8" />
 
       <button
         type="button"
         onClick={handleCopy}
-        aria-label="Copy payment address"
+        aria-label={t("copyAddress")}
         className="mt-7 flex w-full items-center gap-3 rounded-2xl border bg-muted/40 p-4 text-left transition-colors hover:bg-muted active:scale-[0.99]"
       >
         <span className="min-w-0 flex-1 truncate font-mono text-xs">
@@ -128,23 +130,23 @@ export function PublicProfile() {
           about which one the sender's wallet accepts. */}
       <label className="mt-3 flex w-full items-center justify-between gap-3 px-1">
         <span className="text-xs text-muted-foreground">
-          {legacy ? "Account ID — for exchanges" : "ICRC-1 — for ICP wallets"}
+          {legacy ? t("formatLegacy") : t("formatIcrc")}
         </span>
         <Switch checked={legacy} onCheckedChange={setLegacy} />
       </label>
 
       {isSelf ? (
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          This is your payment link. Share it to get paid.
+          {t("ownLink")}
         </p>
       ) : (
         <Button className="mt-6 h-13 w-full text-base" onClick={handlePayClick}>
-          Pay
+          {t("pay")}
         </Button>
       )}
 
       <p className="mt-5 text-center text-[11px] text-muted-foreground">
-        Only send ICP to this address. Other tokens will be lost.
+        {t("onlyIcp")}
       </p>
 
       <Footer />
@@ -161,6 +163,7 @@ export function PublicProfile() {
 }
 
 function Unclaimed({ username }: { username: string }) {
+  const t = useTranslations("publicProfile")
   return (
     <main className="flex flex-1 flex-col items-center px-5 pb-10 pt-16 text-center">
       <span className="flex size-16 items-center justify-center rounded-full bg-muted">
@@ -169,7 +172,7 @@ function Unclaimed({ username }: { username: string }) {
 
       <h1 className="pt-5 text-xl font-bold tracking-tight">@{username}</h1>
       <p className="pt-2 max-w-xs text-sm text-muted-foreground">
-        No one holds this username yet, so there is nowhere to send funds.
+        {t("unclaimed")}
       </p>
 
       <Button
@@ -177,7 +180,7 @@ function Unclaimed({ username }: { username: string }) {
         nativeButton={false}
         render={<Link href="/login" />}
       >
-        Claim @{username}
+        {t("claim", { name: username })}
       </Button>
 
       <Footer />
@@ -186,6 +189,7 @@ function Unclaimed({ username }: { username: string }) {
 }
 
 function Footer() {
+  const t = useTranslations("publicProfile")
   return (
     <div className="mt-auto flex flex-col items-center pt-12">
       <Link href="/" className="flex items-center gap-2 text-sm font-semibold tracking-tight">
@@ -198,7 +202,7 @@ function Footer() {
         />
         ICPay
       </Link>
-      <p className="pt-1 text-[11px] text-muted-foreground">Send ICP by username</p>
+      <p className="pt-1 text-[11px] text-muted-foreground">{t("footerTagline")}</p>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
@@ -10,6 +11,8 @@ import { profileUrlFor } from "@/lib/profile-url"
 // The link is the product here: it is what the user hands to someone else to
 // get paid, so it is shown in full rather than truncated.
 export function ShareProfileCard({ username }: { username: string }) {
+  const t = useTranslations("profile")
+  const tc = useTranslations("common")
   const url = profileUrlFor(username)
   const [copied, setCopied] = useState(false)
 
@@ -24,8 +27,8 @@ export function ShareProfileCard({ username }: { username: string }) {
   // must not fall through to a surprise copy.
   const handleShare = async () => {
     const payload = {
-      title: `Pay @${username} on ICPay`,
-      text: `Send me ICP at @${username}`,
+      title: t("shareSheetTitle", { name: username }),
+      text: t("shareSheetText", { name: username }),
       url,
     }
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -43,9 +46,9 @@ export function ShareProfileCard({ username }: { username: string }) {
     <Card>
       <CardContent className="space-y-3">
         <div>
-          <p className="text-sm font-medium">Your payment link</p>
+          <p className="text-sm font-medium">{t("shareTitle")}</p>
           <p className="text-xs text-muted-foreground">
-            Anyone can open this to pay you — no account needed.
+            {t("shareBody")}
           </p>
         </div>
 
@@ -63,7 +66,7 @@ export function ShareProfileCard({ username }: { username: string }) {
               icon={copied ? Tick02Icon : Copy01Icon}
               className={copied ? "size-4 text-primary" : "size-4"}
             />
-            {copied ? "Copied" : "Copy"}
+            {copied ? tc("copied") : tc("copy")}
           </button>
           <button
             type="button"
@@ -71,7 +74,7 @@ export function ShareProfileCard({ username }: { username: string }) {
             className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80 active:scale-[0.99]"
           >
             <HugeiconsIcon icon={Share08Icon} className="size-4" />
-            Share
+            {tc("share")}
           </button>
         </div>
       </CardContent>

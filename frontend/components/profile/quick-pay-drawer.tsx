@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -44,18 +45,23 @@ const PRESETS = [1n, 5n, 10n] as const
 // Fixed options rather than free text: the memo is written on-chain, publicly
 // and permanently, and a typed note invites people to put things there they
 // cannot take back.
+//
+// The memo stays English in every locale: it is on-chain data the recipient
+// reads in their own language, not UI copy. Only the picker label translates.
 const PURPOSES = [
-  "Payment",
-  "Tip",
-  "Utility bill",
-  "Entertainment",
-  "Food & drink",
-  "Transport",
-  "Shopping",
-  "Gift",
-  "Donation",
-  "Other",
+  { key: "payment", memo: "Payment" },
+  { key: "tip", memo: "Tip" },
+  { key: "utility", memo: "Utility bill" },
+  { key: "entertainment", memo: "Entertainment" },
+  { key: "food", memo: "Food & drink" },
+  { key: "transport", memo: "Transport" },
+  { key: "shopping", memo: "Shopping" },
+  { key: "gift", memo: "Gift" },
+  { key: "donation", memo: "Donation" },
+  { key: "other", memo: "Other" },
 ] as const
+
+type PurposeKey = (typeof PURPOSES)[number]["key"]
 
 type Sent = { amount: bigint; blockIndex: bigint }
 
@@ -72,9 +78,11 @@ export function QuickPayDrawer({
   balance?: bigint
   onPay: (amount: bigint, message?: string) => Promise<{ blockIndex: bigint } | string>
 }) {
+  const t = useTranslations("quickPay")
+  const tc = useTranslations("common")
   const [selected, setSelected] = useState<bigint | null>(E8S)
   const [custom, setCustom] = useState("")
-  const [purpose, setPurpose] = useState<string>(PURPOSES[0])
+  const [purpose, setPurpose] = useState<PurposeKey>(PURPOSES[0].key)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState<Sent | null>(null)
@@ -94,7 +102,7 @@ export function QuickPayDrawer({
     primeSuccessChime()
     setLoading(true)
     setError(null)
-    const result = await onPay(amount, purpose)
+    const result = await onPay(amount, PURPOSES.find((p) => p.key === purpose)?.memo)
     setLoading(false)
     if (typeof result === "string") {
       setError(result)
@@ -110,7 +118,7 @@ export function QuickPayDrawer({
     if (next) return
     setSent(null)
     setError(null)
-    setPurpose(PURPOSES[0])
+    setPurpose(PURPOSES[0].key)
     setCustom("")
     setSelected(E8S)
   }
@@ -136,9 +144,9 @@ export function QuickPayDrawer({
                   </AvatarFallback>
                 </Avatar>
               </div>
-              <DrawerTitle className="text-center">Pay @{username}</DrawerTitle>
+              <DrawerTitle className="text-center">{t("title", { name: username })}</DrawerTitle>
               <DrawerDescription className="text-center">
-                Pick an amount to send.
+                {t("subtitle")}
               </DrawerDescription>
             </DrawerHeader>
 
@@ -192,14 +200,14 @@ export function QuickPayDrawer({
                   )}
                 >
                   <span className="text-base leading-none">···</span>
-                  Custom
+                  {t("custom")}
                 </button>
               </div>
 
               {selected === null && (
                 <AmountInput
                   id="quick-pay-amount"
-                  label="Amount"
+                  label={tc("amount")}
                   value={custom}
                   onChange={(v) => {
                     setCustom(v)
@@ -211,18 +219,18 @@ export function QuickPayDrawer({
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="quick-pay-purpose">What is this for?</Label>
+                <Label htmlFor="quick-pay-purpose">{t("purposeLabel")}</Label>
                 <Select
                   value={purpose}
-                  onValueChange={(value) => setPurpose(value ?? PURPOSES[0])}
+                  onValueChange={(value) => setPurpose((value as PurposeKey) ?? PURPOSES[0].key)}
                 >
                   <SelectTrigger id="quick-pay-purpose" className="h-12 w-full rounded-2xl">
-                    <SelectValue placeholder="Choose a reason" />
+                    <SelectValue placeholder={t("purposePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {PURPOSES.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
+                      <SelectItem key={option.key} value={option.key}>
+                        {t(`purposes.${option.key}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -242,7 +250,7 @@ export function QuickPayDrawer({
                   element saying so only pushes the form around. */}
               <Button className="h-12 text-base" disabled={!canSend} onClick={handleSend}>
                 {loading && <Spinner className="size-4" />}
-                {loading ? "Sending…" : insufficient ? "Insufficient balance" : "Confirm"}
+                {loading ? t("sending") : insufficient ? t("insufficient") : t("confirm")}
               </Button>
             </DrawerFooter>
           </>
@@ -263,6 +271,8 @@ function PaySuccess({
   blockIndex: bigint
   onDone: () => void
 }) {
+  const t = useTranslations("quickPay")
+  const tc = useTranslations("common")
   // Ref-guarded so the chime belongs to the payment, not to the render: a
   // parent state change would otherwise replay it on-screen.
   const chimed = useRef(false)
@@ -280,8 +290,8 @@ function PaySuccess({
   // must not fall through to a surprise copy.
   const handleShare = async () => {
     const payload = {
-      title: "ICPay payment",
-      text: `Sent ${formatE8s(amount)} ICP to @${username}`,
+      title: t("shareSheetTitle"),
+      text: t("shareSheetText", { amount: formatE8s(amount), name: username }),
       url: link,
     }
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -308,7 +318,7 @@ function PaySuccess({
       <p className="mt-6 text-3xl font-bold tracking-tight tabular-nums">
         {formatE8s(amount)} ICP
       </p>
-      <p className="mt-2 text-sm text-muted-foreground">Sent to @{username}</p>
+      <p className="mt-2 text-sm text-muted-foreground">{t("sentTo", { name: username })}</p>
 
       <a
         href={explorerTxUrl(blockIndex)}
@@ -316,20 +326,20 @@ function PaySuccess({
         rel="noopener noreferrer"
         className="mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground underline underline-offset-2"
       >
-        View on ICP Dashboard
+        {t("viewOnDashboard")}
         <HugeiconsIcon icon={LinkSquare02Icon} className="size-3" />
       </a>
 
       <div className="mt-8 flex w-full items-center gap-2">
         <Button className="h-12 flex-1 text-base" onClick={onDone}>
-          Done
+          {tc("done")}
         </Button>
         {/* Square, so Done keeps the full width it had and the row does not read
             as two competing actions. */}
         <button
           type="button"
           onClick={handleShare}
-          aria-label="Share receipt"
+          aria-label={t("shareReceipt")}
           className="flex size-12 shrink-0 items-center justify-center rounded-2xl ring-1 ring-border transition-colors hover:bg-accent active:scale-95"
         >
           <HugeiconsIcon icon={shared ? Tick02Icon : Share08Icon} className="size-4.5" />

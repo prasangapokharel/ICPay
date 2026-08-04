@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -31,6 +32,7 @@ export function AmountInput({
   balance?: bigint
   maxE8s?: bigint
 }) {
+  const t = useTranslations("common")
   const { price } = useIcpPrice()
   const parsed = parseIcp(value)
   const usd = parsed !== null && price ? (Number(parsed) / Number(E8S)) * price.usd : null
@@ -44,7 +46,7 @@ export function AmountInput({
         <Label htmlFor={id}>{label}</Label>
         {balance !== undefined && (
           <span className="text-xs text-muted-foreground">
-            Balance{" "}
+            {t("balance")}{" "}
             <span className="font-medium tabular-nums text-foreground">
               {formatAmount(balance)} ICP
             </span>
@@ -67,7 +69,7 @@ export function AmountInput({
             onClick={() => setAmount(max)}
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-muted/70"
           >
-            Max
+            {t("max")}
           </button>
         )}
       </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,19 +33,30 @@ import { cn } from "@/lib/utils"
 
 const PRESETS = [1n, 5n, 10n] as const
 
+// Stamped onto the memo so the recipient can tell who tipped -- the ledger only
+// carries the canister's own principal as the sender. English in every locale:
+// it is on-chain data the recipient reads, not UI copy.
+function tipPrefix(sender: string): string {
+  return `Tip by @${sender}`
+}
+
 export function TipDrawer({
   open,
   onOpenChange,
   username,
+  senderUsername,
   balance,
   onTip,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   username: string
+  senderUsername?: string
   balance?: bigint
   onTip: (amount: bigint, message?: string) => Promise<string | null>
 }) {
+  const t = useTranslations("tip")
+  const tc = useTranslations("common")
   const [selected, setSelected] = useState<bigint | null>(E8S)
   const [custom, setCustom] = useState("")
   const [message, setMessage] = useState("")
@@ -57,7 +69,13 @@ export function TipDrawer({
   // The fee is charged on top, so the most that can be tipped is balance - fee.
   const sendable = balance === undefined ? undefined : balance > ICP_FEE ? balance - ICP_FEE : 0n
   const insufficient = total !== null && balance !== undefined && total > balance
-  const memoTooLong = memoByteLength(message.trim()) > MEMO_MAX_BYTES
+  // The prefix is charged against the same 32-byte ledger memo, so the field
+  // only gets what is left after it -- otherwise a full-length message would be
+  // accepted here and rejected by the canister.
+  const prefix = senderUsername ? tipPrefix(senderUsername) : ""
+  const prefixBytes = prefix ? memoByteLength(`${prefix}: `) : 0
+  const messageBudget = MEMO_MAX_BYTES - prefixBytes
+  const memoTooLong = memoByteLength(message.trim()) > messageBudget
   const canSend =
     amount !== null && amount > 0n && !insufficient && !memoTooLong && !loading
 
@@ -66,7 +84,9 @@ export function TipDrawer({
     primeSuccessChime()
     setLoading(true)
     setError(null)
-    const err = await onTip(amount, message.trim() || undefined)
+    const note = message.trim()
+    const memo = prefix ? (note ? `${prefix}: ${note}` : prefix) : note || undefined
+    const err = await onTip(amount, memo)
     setLoading(false)
     if (err) {
       setError(err)
@@ -92,7 +112,7 @@ export function TipDrawer({
           </div>
           <DrawerTitle className="text-center">@{username}</DrawerTitle>
           <DrawerDescription className="text-center">
-            Pick an amount to send.
+            {t("subtitle")}
           </DrawerDescription>
         </DrawerHeader>
 
@@ -146,14 +166,14 @@ export function TipDrawer({
               )}
             >
               <span className="text-base leading-none">···</span>
-              Custom
+              {t("custom")}
             </button>
           </div>
 
           {selected === null && (
             <AmountInput
               id="tip-amount"
-              label="Amount"
+              label={tc("amount")}
               value={custom}
               onChange={(v) => {
                 setCustom(v)
@@ -166,26 +186,26 @@ export function TipDrawer({
 
           <div className="space-y-2">
             <div className="flex items-baseline justify-between">
-              <Label htmlFor="tip-message">Message (optional)</Label>
+              <Label htmlFor="tip-message">{t("messageLabel")}</Label>
               <span
                 className={cn(
                   "text-xs tabular-nums",
                   memoTooLong ? "font-medium text-destructive" : "text-muted-foreground"
                 )}
               >
-                {memoByteLength(message.trim())}/{MEMO_MAX_BYTES}
+                {memoByteLength(message.trim())}/{messageBudget}
               </span>
             </div>
             <Input
               id="tip-message"
-              placeholder="Add a message"
+              placeholder={t("messagePlaceholder")}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="h-12 rounded-2xl"
             />
             {memoTooLong && (
               <p className="text-xs text-destructive">
-                The ledger only stores {MEMO_MAX_BYTES} bytes. Shorten the message.
+                {t("memoTooLong", { max: messageBudget })}
               </p>
             )}
           </div>
@@ -207,7 +227,7 @@ export function TipDrawer({
             ) : (
               <HugeiconsIcon icon={GiftIcon} className="size-4" />
             )}
-            {loading ? "Sending…" : insufficient ? "Insufficient balance" : "Send tip"}
+            {loading ? t("sending") : insufficient ? t("insufficient") : t("send")}
           </Button>
         </DrawerFooter>
       </DrawerContent>

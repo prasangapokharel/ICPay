@@ -1,6 +1,7 @@
 "use client"
 
 import useSWR from "swr"
+import { useTranslations } from "next-intl"
 import { ProfileCard } from "@/components/profile/profile-card"
 import { ShareProfileCard } from "@/components/profile/share-profile-card"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -9,6 +10,8 @@ import { getProfile, updateUsername } from "@/services/profile/profile"
 import { checkUsername } from "@/services/buy/buy"
 
 export default function ProfilePage() {
+  const t = useTranslations("profile")
+  const tc = useTranslations("common")
   const { identity } = useAuth()
   const patchDashboardUser = usePatchDashboardUser()
   const principal = identity?.getPrincipal().toText() ?? ""
@@ -41,7 +44,7 @@ export default function ProfilePage() {
     }
   }
 
-  if (isLoading && !user) return <div className="flex justify-center py-12"><p className="text-muted-foreground">Loading...</p></div>
+  if (isLoading && !user) return <div className="flex justify-center py-12"><p className="text-muted-foreground">{tc("loading")}</p></div>
   if (!user) return null
 
   const claimed = user.username?.[0]
@@ -49,8 +52,8 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-lg space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-        <p className="text-sm text-muted-foreground">Manage your wallet profile</p>
+        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
       {claimed && <ShareProfileCard username={claimed} />}
       <ProfileCard

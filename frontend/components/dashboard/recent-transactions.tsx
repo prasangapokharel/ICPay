@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useMemo } from "react"
+import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -18,10 +19,11 @@ type RecentTransactionsProps = {
 }
 
 export function RecentTransactions({ transactions }: RecentTransactionsProps) {
+  const t = useTranslations("dashboard")
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold">Latest Transactions</h2>
+        <h2 className="text-sm font-semibold">{t("latestTransactions")}</h2>
         {transactions.length > 0 && (
           <Button
             variant="ghost"
@@ -30,7 +32,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
             nativeButton={false}
             render={<Link href="/transactions" />}
           >
-            See more
+            {t("seeMore")}
             <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" />
           </Button>
         )}
@@ -39,8 +41,8 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
       {transactions.length === 0 ? (
         <div className="rounded-2xl border border-dashed py-10 text-center">
           <HugeiconsIcon icon={InboxIcon} className="mx-auto size-6 text-muted-foreground/50" />
-          <p className="mt-3 text-sm font-medium">No transactions yet</p>
-          <p className="mt-1 text-xs text-muted-foreground">Deposit ICP to get started</p>
+          <p className="mt-3 text-sm font-medium">{t("noTransactions")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("noTransactionsHint")}</p>
         </div>
       ) : (
         <ul className="divide-y rounded-2xl border">
@@ -54,6 +56,8 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
 }
 
 function TransactionRow({ tx }: { tx: TransactionPublic }) {
+  const t = useTranslations("transactions")
+  const tp = useTranslations("profileView")
   const type = txTypeLabel(tx.txType)
   const incoming = type === "deposit"
   const status = txStatusLabel(tx.status)
@@ -65,21 +69,40 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
     [counterparty]
   )
 
+  // Only a username resolves to an ICPverse profile; a raw principal or account
+  // identifier has no page to open.
+  const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
+
   return (
     <li className="flex items-center gap-3 px-4 py-3.5">
-      <Avatar className="size-10 shrink-0">
-        <AvatarImage src={avatarUri} alt="" />
-        <AvatarFallback className="bg-muted text-xs">
-          {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
+      {handle ? (
+        <Link
+          href={`/icpverse/${handle}`}
+          aria-label={tp("viewProfile", { name: handle })}
+          className="shrink-0 rounded-full outline-none transition-transform focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
+        >
+          <Avatar className="size-10">
+            <AvatarImage src={avatarUri} alt="" />
+            <AvatarFallback className="bg-muted text-xs">
+              {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </Link>
+      ) : (
+        <Avatar className="size-10 shrink-0">
+          <AvatarImage src={avatarUri} alt="" />
+          <AvatarFallback className="bg-muted text-xs">
+            {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+      )}
 
       <div className="min-w-0 flex-1">
         <p className={cn("truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
           {shortenCounterparty(counterparty)}
         </p>
         <p className="mt-0.5 text-xs text-muted-foreground/80">
-          <span className="capitalize">{type}</span> · {formatTime(tx.createdAt)}
+          <span>{t(`type.${type}`)}</span> · {formatTime(tx.createdAt)}
         </p>
         {memo && (
           <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
@@ -101,7 +124,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
         </p>
         {status !== "completed" && (
           <Badge variant={getTxStatusVariant(tx.status)} className="mt-0.5 text-[10px]">
-            {status}
+            {t(`status.${status}`)}
           </Badge>
         )}
       </div>

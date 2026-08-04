@@ -1,6 +1,7 @@
 "use client"
 
 import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
+import { useTranslations } from "next-intl"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -10,6 +11,7 @@ import { icrc1Account } from "@/lib/account-id"
 import { copyText } from "@/lib/wallet-utils"
 
 export default function DepositPage() {
+  const t = useTranslations("deposit")
   const { data, error, isLoading } = useDepositAddress()
 
   const icrcAddress = data ? icrc1Account(data.address.owner, data.address.subaccount[0]) : ""
@@ -18,8 +20,8 @@ export default function DepositPage() {
   return (
     <div className="space-y-6 pt-2">
       <div>
-        <h1 className="text-xl font-bold tracking-tight">Deposit</h1>
-        <p className="text-sm text-muted-foreground">Send ICP to your wallet address</p>
+        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       {isLoading ? (
@@ -31,7 +33,7 @@ export default function DepositPage() {
       ) : error ? (
         <Alert variant="destructive">
           <AlertDescription>
-            {error instanceof Error ? error.message : "Failed to load deposit address"}
+            {error instanceof Error ? error.message : t("loadFailed")}
           </AlertDescription>
         </Alert>
       ) : (
@@ -44,7 +46,7 @@ export default function DepositPage() {
 
           <p className="flex items-start gap-2 text-xs text-muted-foreground">
             <HugeiconsIcon icon={Alert02Icon} className="mt-px size-3.5 shrink-0" />
-            Only send ICP to this address. Other tokens will be lost.
+            {t("warning")}
           </p>
         </>
       )}

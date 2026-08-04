@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -15,13 +16,14 @@ import type { Purchase } from "@/services/types"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useRefreshWallet } from "@/hooks/use-wallet-data"
 import { formatAmount, ICP_FEE } from "@/lib/wallet-utils"
-import { priceFor, tierFor, validateUsername, TIERS, USERNAME_MAX_LENGTH } from "@/lib/username"
+import { priceFor, tierFor, validateUsername, TIERS, USERNAME_MAX_LENGTH, USERNAME_FREE_MIN_LENGTH } from "@/lib/username"
 import { useUsernameAvailability, useLiveBalance } from "@/hooks/use-wallet-data"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { primeSuccessChime } from "@/lib/success-chime"
 import { cn } from "@/lib/utils"
 
 export default function UsernamePage() {
+  const t = useTranslations("buyUsername")
   const router = useRouter()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
@@ -74,14 +76,12 @@ export default function UsernamePage() {
   return (
     <div className="space-y-6 pt-2">
       <div>
-        <h1 className="text-xl font-bold tracking-tight">Buy a username</h1>
-        <p className="text-sm text-muted-foreground">
-          Short names are premium. The shorter it is, the more it costs.
-        </p>
+        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="buy-username">Username</Label>
+        <Label htmlFor="buy-username">{t("label")}</Label>
         <div className="relative">
           <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-base text-muted-foreground">
             @
@@ -112,19 +112,23 @@ export default function UsernamePage() {
             <Spinner className="absolute right-4 top-1/2 size-4 -translate-y-1/2" />
           )}
         </div>
-        {shapeError && <p className="text-xs text-destructive">{shapeError}</p>}
+        {shapeError && (
+          <p className="text-xs text-destructive">
+            {t(`errors.${shapeError}`, { max: USERNAME_MAX_LENGTH, min: USERNAME_FREE_MIN_LENGTH })}
+          </p>
+        )}
         {!shapeError && available === false && (
-          <p className="text-xs text-destructive">@{trimmed} is already taken</p>
+          <p className="text-xs text-destructive">{t("taken", { name: trimmed })}</p>
         )}
         {!shapeError && available === true && (
-          <p className="text-xs text-success">@{trimmed} is available</p>
+          <p className="text-xs text-success">{t("availableName", { name: trimmed })}</p>
         )}
       </div>
 
       {trimmed !== "" && !shapeError && tier && (
         <div className="space-y-3 rounded-2xl bg-muted/40 p-4">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">{tier.label}</span>
+            <span className="text-sm text-muted-foreground">{t(`tiers.${tier.labelKey}`)}</span>
             <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
               <Image
                 src="/images/logo/logo.png"
@@ -137,11 +141,11 @@ export default function UsernamePage() {
             </span>
           </div>
           <div className="flex items-baseline justify-between text-xs text-muted-foreground">
-            <span>Network fee</span>
+            <span>{t("networkFee")}</span>
             <span className="tabular-nums">{formatAmount(ICP_FEE)} ICP</span>
           </div>
           <div className="flex items-baseline justify-between border-t pt-3 text-sm font-medium">
-            <span>Total</span>
+            <span>{t("total")}</span>
             <span className="tabular-nums">{formatAmount(total)} ICP</span>
           </div>
         </div>
@@ -150,7 +154,7 @@ export default function UsernamePage() {
       {insufficient && (
         <Alert variant="destructive">
           <AlertDescription>
-            Not enough balance. This costs {formatAmount(total)} ICP with the fee.
+            {t("insufficient", { total: formatAmount(total) })}
           </AlertDescription>
         </Alert>
       )}
@@ -167,32 +171,29 @@ export default function UsernamePage() {
         ) : (
           <HugeiconsIcon icon={ShoppingBag01Icon} className="size-4" />
         )}
-        {buying ? "Buying…" : "Buy username"}
+        {buying ? t("buying") : t("buy")}
       </Button>
 
       <div className="space-y-2">
-        <p className="text-xs font-medium text-muted-foreground">Pricing</p>
+        <p className="text-xs font-medium text-muted-foreground">{t("pricing")}</p>
         <div className="overflow-hidden rounded-2xl border">
-          {TIERS.map((t, i) => (
+          {TIERS.map((tier, i) => (
             <div
-              key={t.label}
+              key={tier.labelKey}
               className={cn(
                 "flex items-baseline justify-between px-4 py-3 text-sm",
                 i > 0 && "border-t"
               )}
             >
               <div>
-                <p className="font-medium">{t.label}</p>
-                <p className="text-xs text-muted-foreground">{t.range}</p>
+                <p className="font-medium">{t(`tiers.${tier.labelKey}`)}</p>
+                <p className="text-xs text-muted-foreground">{t(`tiers.${tier.rangeKey}`)}</p>
               </div>
-              <span className="tabular-nums font-semibold">{formatAmount(t.price)} ICP</span>
+              <span className="tabular-nums font-semibold">{formatAmount(tier.price)} ICP</span>
             </div>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground">
-          A bought name becomes your primary handle. Any name you already hold
-          keeps pointing at you, so older payment links never break.
-        </p>
+        <p className="text-xs text-muted-foreground">{t("note")}</p>
       </div>
     </div>
   )

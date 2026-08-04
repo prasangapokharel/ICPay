@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { TransferForm } from "@/components/transfer/transfer-form"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -10,6 +11,7 @@ import { transfer, type TransferMode } from "@/services/transfer/transfer"
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
 export default function TransferPage() {
+  const t = useTranslations("transfer")
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
   const balance = useLiveBalance()
@@ -50,8 +52,8 @@ export default function TransferPage() {
   return (
     <div className="space-y-6 pt-2">
       <div>
-        <h1 className="text-xl font-bold tracking-tight">Send</h1>
-        <p className="text-sm text-muted-foreground">Transfer ICP to another wallet</p>
+        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
       <TransferForm onTransfer={handleTransfer} balance={balance} />
     </div>

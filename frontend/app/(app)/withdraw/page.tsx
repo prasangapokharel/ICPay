@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { WithdrawForm } from "@/components/withdraw/withdraw-form"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -11,6 +12,7 @@ import { withdraw } from "@/services/withdraw/withdraw"
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint }
 
 export default function WithdrawPage() {
+  const t = useTranslations("withdraw")
   const { identity } = useAuth()
   const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
@@ -41,8 +43,8 @@ export default function WithdrawPage() {
   return (
     <div className="space-y-6 pt-2">
       <div>
-        <h1 className="text-xl font-bold tracking-tight">Withdraw</h1>
-        <p className="text-sm text-muted-foreground">Send ICP to an external wallet</p>
+        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       {balance === undefined ? (

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { BalanceCard } from "@/components/dashboard/balance-card"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { UsernamePrompt } from "@/components/dashboard/username-prompt"
@@ -18,6 +19,7 @@ export default function DashboardPage() {
   const { data, error, isLoading } = useDashboard()
   const liveBalance = useLiveBalance()
   const [hidden, setHidden] = useState(false)
+  const t = useTranslations()
 
   if (isLoading && !data) return <DashboardSkeleton />
 
@@ -26,7 +28,7 @@ export default function DashboardPage() {
       <div className="pt-6">
         <Alert variant="destructive">
           <AlertDescription>
-            {error instanceof Error ? error.message : "Failed to load your wallet"}
+            {error instanceof Error ? error.message : t("dashboard.loadFailed")}
           </AlertDescription>
         </Alert>
       </div>
@@ -47,8 +49,8 @@ export default function DashboardPage() {
       />
 
       <div className="grid grid-cols-2 gap-3">
-        <ActionButton href="/transfer" label="Send" icon={ArrowUpRight01Icon} primary />
-        <ActionButton href="/deposit" label="Receive" icon={Download01Icon} primary />
+        <ActionButton href="/transfer" label={t("common.send")} icon={ArrowUpRight01Icon} primary />
+        <ActionButton href="/deposit" label={t("common.receive")} icon={Download01Icon} primary />
       </div>
 
       <RecentTransactions transactions={data.recentTransactions} />

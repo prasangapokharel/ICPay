@@ -13,6 +13,7 @@ CLAUDE.md
 docs/*
 !docs/demo/
 !docs/command/
+!docs/language/
 
 # Environment files and credentials
 **/.env*

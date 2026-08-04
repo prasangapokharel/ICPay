@@ -1,6 +1,7 @@
 "use client"
 
 import { HugeiconsIcon } from "@hugeicons/react"
+import { useTranslations } from "next-intl"
 import { GiftIcon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
@@ -57,6 +58,7 @@ export function RecipientLookup({
   principal: string | null
   isLoading: boolean
 }) {
+  const t = useTranslations("transfer")
   const trimmed = username.trim()
   if (trimmed.length < 3) return null
 
@@ -64,7 +66,7 @@ export function RecipientLookup({
     return (
       <div className="flex items-center gap-3 rounded-2xl bg-muted/40 p-3 ring-1 ring-border/60">
         <Spinner className="size-4 text-muted-foreground" />
-        <p className="text-xs text-muted-foreground">Looking up @{trimmed}…</p>
+        <p className="text-xs text-muted-foreground">{t("lookingUp", { name: trimmed })}</p>
       </div>
     )
   }
@@ -72,7 +74,7 @@ export function RecipientLookup({
   if (!principal) {
     return (
       <p className="px-1 text-xs text-muted-foreground">
-        No ICPay account found for @{trimmed}.
+        {t("noAccount", { name: trimmed })}
       </p>
     )
   }

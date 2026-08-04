@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -26,6 +27,8 @@ type ProfileCardProps = {
 }
 
 export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername }: ProfileCardProps) {
+  const t = useTranslations("profile")
+  const te = useTranslations("buyUsername.errors")
   const claimed = user.username?.[0]
   const [username, setUsername] = useState("")
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
@@ -55,11 +58,14 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
     e.preventDefault()
     setError(null)
     const name = username.trim()
-    if (!name) { setError("Username is required"); return }
+    if (!name) { setError(t("required")); return }
     // Checked here so a short name explains itself and offers the buy path,
     // rather than costing a round trip to learn it is not free.
     const invalid = validateFreeUsername(name)
-    if (invalid) { setError(invalid); return }
+    if (invalid) {
+      setError(te(invalid, { max: USERNAME_MAX_LENGTH, min: USERNAME_FREE_MIN_LENGTH }))
+      return
+    }
     setLoading(true)
     const err = await onUpdateUsername(name)
     if (err) setError(err)
@@ -72,17 +78,17 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <HugeiconsIcon icon={UserIcon} className="h-5 w-5" />
-          Profile
+          {t("title")}
         </CardTitle>
-        <CardDescription>Manage your wallet profile and username</CardDescription>
+        <CardDescription>{t("cardDescription")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">Principal</Label>
+          <Label className="text-xs text-muted-foreground">{t("principal")}</Label>
           <button
             type="button"
             onClick={handleCopyPrincipal}
-            aria-label="Copy principal"
+            aria-label={t("copyPrincipal")}
             className="flex w-full items-center gap-2 rounded-lg text-left transition-colors hover:bg-accent active:scale-[0.99]"
           >
             <span className="min-w-0 flex-1 truncate font-mono text-sm">
@@ -99,23 +105,22 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
           </button>
         </div>
         <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">User ID</Label>
+          <Label className="text-xs text-muted-foreground">{t("userId")}</Label>
           <p className="font-mono text-xs text-muted-foreground">{user.id}</p>
         </div>
         <Separator />
         {claimed ? (
           <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Username</Label>
+            <Label className="text-xs text-muted-foreground">{t("username")}</Label>
             <p className="text-sm font-medium">@{claimed}</p>
             <p className="text-xs text-muted-foreground">
-              Usernames are permanent. People send you funds at this name, so it
-              cannot be changed or transferred.
+              {t("permanentNote")}
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Choose a username</Label>
+              <Label htmlFor="username">{t("choose")}</Label>
               <div className="flex gap-2">
                 <Input
                   id="username"
@@ -131,20 +136,19 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
                 {checkResult === true && <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-success" />}
                 {checkResult === false && <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-destructive" />}
               </div>
-              {checkResult === true && !tooShortToClaim && <p className="text-xs text-success">Username is available</p>}
-              {checkResult === false && <p className="text-xs text-destructive">Username is taken</p>}
+              {checkResult === true && !tooShortToClaim && <p className="text-xs text-success">{t("available")}</p>}
+              {checkResult === false && <p className="text-xs text-destructive">{t("taken")}</p>}
               {tooShortToClaim ? (
                 <p className="text-xs text-muted-foreground">
-                  Free usernames need {USERNAME_FREE_MIN_LENGTH}+ characters.{" "}
+                  {t("tooShort", { min: USERNAME_FREE_MIN_LENGTH })}{" "}
                   <Link href="/username" className="font-medium text-primary underline underline-offset-2">
-                    Buy a shorter one
+                    {t("buyShorter")}
                   </Link>
                   .
                 </p>
               ) : (
                 <p className="text-xs text-muted-foreground">
-                  {USERNAME_FREE_MIN_LENGTH}-{USERNAME_MAX_LENGTH} characters, free.
-                  You can only set this once — choose carefully.
+                  {t("freeRange", { min: USERNAME_FREE_MIN_LENGTH, max: USERNAME_MAX_LENGTH })}
                 </p>
               )}
             </div>
@@ -154,7 +158,7 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
               </Alert>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Saving..." : "Claim Username"}
+              {loading ? t("saving") : t("claim")}
             </Button>
           </form>
         )}
@@ -164,7 +168,7 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
         >
           <span className="flex items-center gap-2 text-xs text-muted-foreground">
             <HugeiconsIcon icon={ShoppingBag01Icon} className="size-4 shrink-0" />
-            Want something shorter? Buy a premium username
+            {t("upsell")}
           </span>
           <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 shrink-0 text-muted-foreground" />
         </Link>

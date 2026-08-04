@@ -1,9 +1,11 @@
 "use client"
 
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
-import { formatUsdPrecise, type IcpPrice } from "@/lib/use-icp-price"
+import type { IcpPrice } from "@/lib/use-icp-price"
+import { useFiatValue } from "@/lib/fiat/use-fiat-value"
 
 type BalanceCardProps = {
   balance: string
@@ -22,7 +24,9 @@ export function BalanceCard({
   hidden,
   onToggleHidden,
 }: BalanceCardProps) {
+  const t = useTranslations("dashboard")
   const usdValue = price ? (Number(balanceE8s) / E8S) * price.usd : null
+  const fiat = useFiatValue(usdValue)
 
   return (
     <div className="relative mt-7 rounded-3xl bg-primary px-5 pb-6 pt-0 text-primary-foreground shadow-lg">
@@ -48,7 +52,7 @@ export function BalanceCard({
             ICP
             <button
               type="button"
-              aria-label={hidden ? "Show balance" : "Hide balance"}
+              aria-label={hidden ? t("showBalance") : t("hideBalance")}
               onClick={onToggleHidden}
               className="flex items-center transition-colors hover:text-primary-foreground active:scale-95"
             >
@@ -58,7 +62,7 @@ export function BalanceCard({
         </div>
 
         <span className="mt-3 inline-flex items-center rounded-full bg-primary-foreground/15 px-3 py-0.5 text-xs font-medium tabular-nums text-primary-foreground/90">
-          {hidden || usdValue === null ? "••••" : formatUsdPrecise(usdValue)}
+          {hidden || !fiat.formatted ? "••••" : `${fiat.symbol} ${fiat.formatted}`}
         </span>
       </div>
     </div>

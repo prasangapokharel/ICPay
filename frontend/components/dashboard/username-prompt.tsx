@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -17,6 +18,7 @@ import { USERNAME_FREE_MIN_LENGTH } from "@/lib/username"
 // this account ICP by name. So there is no dismiss path -- no close button, no
 // outside click, no escape key.
 export function UsernamePrompt({ username }: { username?: string }) {
+  const t = useTranslations("username")
   if (username) return null
 
   return (
@@ -34,17 +36,15 @@ export function UsernamePrompt({ username }: { username?: string }) {
               />
             </span>
           </div>
-          <DialogTitle className="text-center">Claim your username</DialogTitle>
+          <DialogTitle className="text-center">{t("promptTitle")}</DialogTitle>
           <DialogDescription className="text-center">
-            Usernames are first come, first served. Pick a free one of{" "}
-            {USERNAME_FREE_MIN_LENGTH}+ characters and let people send you ICP
-            without a long principal address.
+            {t("promptBody", { min: USERNAME_FREE_MIN_LENGTH })}
           </DialogDescription>
         </DialogHeader>
 
         <DialogFooter>
           <Button className="h-11 text-base" nativeButton={false} render={<Link href="/profile" />}>
-            Claim username
+            {t("promptAction")}
           </Button>
         </DialogFooter>
       </DialogContent>

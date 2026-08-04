@@ -2,6 +2,7 @@
 
 import { lazy, Suspense, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -22,13 +23,19 @@ const Scanner = lazy(() =>
 
 const SCAN_KEY = "icpay:scan"
 
-const cameraMessages: Partial<Record<ScannerErrorKind, string>> = {
-  "permission-denied": "Camera access was denied. Allow it in your browser settings to scan.",
-  "no-camera": "No camera was found on this device.",
-  "in-use": "Another app is using the camera. Close it and try again.",
-  "overconstrained": "This device's camera cannot be used for scanning.",
-  "insecure-context": "Scanning needs a secure (https) connection.",
-  "unsupported": "This browser cannot open the camera.",
+// The kinds the catalog has copy for, under scan.errors. Anything else falls
+// back to the generic message.
+const KNOWN_ERRORS = [
+  "permission-denied",
+  "no-camera",
+  "in-use",
+  "overconstrained",
+  "insecure-context",
+  "unsupported",
+] as const
+
+function isKnownError(kind: ScannerErrorKind): kind is (typeof KNOWN_ERRORS)[number] {
+  return (KNOWN_ERRORS as readonly string[]).includes(kind)
 }
 
 export function QrScanner({
@@ -41,6 +48,7 @@ export function QrScanner({
   onScan?: (hit: ScannedAddress) => void
 }) {
   const router = useRouter()
+  const t = useTranslations("scan")
   const [error, setError] = useState<string | null>(null)
 
   const handleDetected = (codes: IDetectedBarcode[]) => {
@@ -51,7 +59,7 @@ export function QrScanner({
     // A wrong code is far more likely than a broken camera, so the stream stays
     // live and the user can just point at the right one.
     if (!hit) {
-      setError("That QR code is not an ICP address.")
+      setError(t("notAddress"))
       return
     }
 
@@ -80,9 +88,9 @@ export function QrScanner({
     >
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Scan to send</DrawerTitle>
+          <DrawerTitle>{t("title")}</DrawerTitle>
           <DrawerDescription>
-            Point at a QR code holding a principal, account identifier or username.
+            {t("description")}
           </DrawerDescription>
         </DrawerHeader>
 
@@ -94,7 +102,7 @@ export function QrScanner({
                 <Scanner
                   onScan={handleDetected}
                   onError={(err: IScannerError) =>
-                    setError(cameraMessages[err.kind] ?? "The camera could not be started.")
+                    setError(isKnownError(err.kind) ? t(`errors.${err.kind}`) : t("failed"))
                   }
                   formats={["qr_code"]}
                   components={{ finder: true, torch: true }}

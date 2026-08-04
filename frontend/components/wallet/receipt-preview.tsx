@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Share08Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
@@ -28,6 +29,8 @@ export function ReceiptPreview({
   onOpenChange: (open: boolean) => void
   receipt: Receipt
 }) {
+  const t = useTranslations("receipt")
+  const tc = useTranslations("common")
   const [url, setUrl] = useState<string | null>(null)
   const [blob, setBlob] = useState<Blob | null>(null)
   const [error, setError] = useState(false)
@@ -70,9 +73,9 @@ export function ReceiptPreview({
     try {
       const outcome = await shareReceipt(blob, receipt.blockIndex)
       if (outcome === "shared") onOpenChange(false)
-      else if (outcome === "downloaded") setNote("Receipt saved to your downloads.")
+      else if (outcome === "downloaded") setNote(t("saved"))
     } catch {
-      setNote("Could not share the receipt. Please try again.")
+      setNote(t("shareFailed"))
     } finally {
       setBusy(false)
     }
@@ -82,8 +85,8 @@ export function ReceiptPreview({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="gap-4">
         <DialogHeader>
-          <DialogTitle>Your receipt</DialogTitle>
-          <DialogDescription>This is the image that will be shared.</DialogDescription>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
 
         <div
@@ -92,13 +95,13 @@ export function ReceiptPreview({
         >
           {error ? (
             <div className="flex size-full items-center justify-center p-6 text-center text-xs text-muted-foreground">
-              Could not create the receipt image.
+              {t("renderFailed")}
             </div>
           ) : url ? (
             // Plain img: the source is a blob URL for a canvas we just rendered,
             // and images are unoptimized under static export anyway.
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={url} alt="Transaction receipt" className="size-full object-contain" />
+            <img src={url} alt={t("imageAlt")} className="size-full object-contain" />
           ) : (
             <Skeleton className="size-full rounded-none" />
           )}
@@ -109,7 +112,7 @@ export function ReceiptPreview({
         <DialogFooter>
           <Button className="h-12 text-base" onClick={handleShare} disabled={!blob || busy}>
             <HugeiconsIcon icon={Share08Icon} className="size-4" />
-            Share
+            {tc("share")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -115,14 +115,16 @@ export function formatTime(t: bigint): string {
   })
 }
 
-export function txTypeLabel(txType: TxTypeVariant): string {
+// Returned as catalog keys, not display text: callers look them up under the
+// transactions.type / transactions.status namespaces.
+export function txTypeLabel(txType: TxTypeVariant): "deposit" | "withdraw" | "transfer" | "fee" {
   if ("deposit" in txType) return "deposit"
   if ("withdraw" in txType) return "withdraw"
   if ("transfer" in txType) return "transfer"
   return "fee"
 }
 
-export function txStatusLabel(status: TxStatusVariant): string {
+export function txStatusLabel(status: TxStatusVariant): "completed" | "pending" | "failed" | "cancelled" {
   if ("completed" in status) return "completed"
   if ("pending" in status) return "pending"
   if ("failed" in status) return "failed"

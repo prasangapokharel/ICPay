@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -18,18 +19,23 @@ import {
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
-import { useResolvedUsername, useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useResolvedUsername, useLiveBalance, useRefreshWallet, useDashboard } from "@/hooks/use-wallet-data"
 import { tip } from "@/services/transfer/transfer"
 import { useAuth } from "@/components/auth/auth-provider"
 
 type Tipped = { amount: bigint; blockIndex: bigint; memo?: string }
 
 export function ProfileView() {
+  const t = useTranslations("profileView")
   const pathname = usePathname()
   const router = useRouter()
   const { identity } = useAuth()
   const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
+  // Shares the dashboard cache rather than refetching: the sender's own handle
+  // is only needed to stamp the memo.
+  const { data: dashboard } = useDashboard()
+  const senderUsername = dashboard?.user.username?.[0]
   const [tipOpen, setTipOpen] = useState(false)
   const [tipped, setTipped] = useState<Tipped | null>(null)
   const [copied, setCopied] = useState(false)
@@ -69,7 +75,7 @@ export function ProfileView() {
         <BackButton onClick={() => router.back()} />
         <Alert variant="destructive">
           <AlertDescription>
-            No ICPay account found for @{username}.
+            {t("notFound", { name: username })}
           </AlertDescription>
         </Alert>
       </div>
@@ -109,7 +115,7 @@ export function ProfileView() {
           type="button"
           onClick={handleCopy}
           className="mt-1.5 flex items-center gap-1.5 rounded-full px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent active:scale-95"
-          aria-label="Copy principal"
+          aria-label={t("copyPrincipal")}
         >
           <span className="font-mono text-xs">{shortPrincipal(principal)}</span>
           <HugeiconsIcon
@@ -124,7 +130,7 @@ export function ProfileView() {
             onClick={() => setTipOpen(true)}
           >
             <HugeiconsIcon icon={GiftIcon} className="size-4" />
-            Tip
+            {t("tip")}
           </Button>
         )}
 
@@ -137,6 +143,7 @@ export function ProfileView() {
         open={tipOpen}
         onOpenChange={setTipOpen}
         username={username}
+        senderUsername={senderUsername}
         balance={balance}
         onTip={handleTip}
       />
@@ -145,12 +152,13 @@ export function ProfileView() {
 }
 
 function BackButton({ onClick }: { onClick: () => void }) {
+  const tc = useTranslations("common")
   return (
     <button
       type="button"
       onClick={onClick}
       className="flex size-9 items-center justify-center rounded-full border bg-background transition-colors hover:bg-accent active:scale-95"
-      aria-label="Back"
+      aria-label={tc("back")}
     >
       <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
     </button>
