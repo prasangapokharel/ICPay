@@ -270,7 +270,8 @@
     "searchResults": "検索結果",
     "suggested": "おすすめ",
     "noneFound": "“{query}” に一致する人は見つかりませんでした。",
-    "empty": "ユーザー名を持つアカウントはまだありません。最初の一人になりましょう。"
+    "empty": "ユーザー名を持つアカウントはまだありません。最初の一人になりましょう。",
+    "premium": "認証済みプレミアムハンドル"
   },
   "success": {
     "send": "送金完了",
@@ -374,12 +375,14 @@
     "onlyIcp": "このアドレスには ICP のみを送ってください。他のトークンは失われます。",
     "unclaimed": "このユーザー名はまだ誰も取得していないため、送金先がありません。",
     "claim": "@{name} を取得",
-    "footerTagline": "ユーザー名で ICP を送金"
+    "footerTagline": "ユーザー名で ICP を送金",
+    "premium": "認証済みプレミアムハンドル"
   },
   "profileView": {
     "notFound": "@{name} の ICPay アカウントが見つかりません。",
     "copyPrincipal": "principal をコピー",
     "tip": "チップ",
-    "viewProfile": "@{name} のプロフィールを見る"
+    "viewProfile": "@{name} のプロフィールを見る",
+    "premium": "認証済みプレミアムハンドル"
   }
 }

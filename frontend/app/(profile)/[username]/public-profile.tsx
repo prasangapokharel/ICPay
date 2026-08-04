@@ -11,7 +11,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon, UserQuestion01Icon } from "@hugeicons/core-free-icons"
+import { Copy01Icon, Tick02Icon, UserQuestion01Icon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
 import { PayQr } from "@/components/profile/pay-qr"
 import { QuickPayDrawer } from "@/components/profile/quick-pay-drawer"
 import { avatarUriFor } from "@/lib/avatar"
@@ -106,7 +106,17 @@ export function PublicProfile() {
         </AvatarFallback>
       </Avatar>
 
-      <h1 className="pt-4 text-2xl font-bold tracking-tight">@{username}</h1>
+      <h1 className="flex items-center gap-1.5 pt-4 text-2xl font-bold tracking-tight">
+        {username}
+        {/* 3-4 char handles are the rarest premium tier the sale issues. */}
+        {username.length >= 3 && username.length <= 4 && (
+          <HugeiconsIcon
+            icon={BadgeCheckIcon}
+            className="size-5 shrink-0 text-blue-500"
+            aria-label={t("premium")}
+          />
+        )}
+      </h1>
       <p className="pt-1 text-sm text-muted-foreground">{t("tagline")}</p>
 
       <PayQr value={payAddress} className="pt-8" />
@@ -170,7 +180,7 @@ function Unclaimed({ username }: { username: string }) {
         <HugeiconsIcon icon={UserQuestion01Icon} className="size-7 text-muted-foreground" />
       </span>
 
-      <h1 className="pt-5 text-xl font-bold tracking-tight">@{username}</h1>
+      <h1 className="pt-5 text-xl font-bold tracking-tight">{username}</h1>
       <p className="pt-2 max-w-xs text-sm text-muted-foreground">
         {t("unclaimed")}
       </p>
