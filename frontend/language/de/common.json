@@ -270,7 +270,10 @@
     "send": "Senden",
     "depositTitle": "Einzahlungsadresse",
     "depositSubtitle": "Sende {symbol} hierhin, um dein Wallet aufzuladen.",
-    "warning": "Sende nur {symbol} an diese Adresse. Andere Token gehen verloren."
+    "warning": "Sende nur {symbol} an diese Adresse. Andere Token gehen verloren.",
+    "owner": "Eigentümer (Canister)",
+    "subaccount": "Ihr Unterkonto",
+    "breakdownHint": "Beide Teile sind erforderlich. Verwenden Sie immer die vollständige Adresse oben — eine Sendung nur an das Owner-Principal wird Ihrer Wallet nicht gutgeschrieben."
   },
   "icpverse": {
     "searchPlaceholder": "Finde deine Freunde",

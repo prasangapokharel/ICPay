@@ -270,7 +270,10 @@
     "send": "Envoyer",
     "depositTitle": "Adresse de dépôt",
     "depositSubtitle": "Envoyez des {symbol} ici pour recharger votre portefeuille.",
-    "warning": "N'envoyez que des {symbol} à cette adresse. Les autres jetons seront perdus."
+    "warning": "N'envoyez que des {symbol} à cette adresse. Les autres jetons seront perdus.",
+    "owner": "Propriétaire (canister)",
+    "subaccount": "Votre sous-compte",
+    "breakdownHint": "Les deux parties sont requises. Utilisez toujours l'adresse complète ci-dessus : envoyer uniquement au principal du propriétaire ne créditera pas votre portefeuille."
   },
   "icpverse": {
     "searchPlaceholder": "Trouvez vos amis",

@@ -10,7 +10,7 @@ import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, Alert02Icon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { copyText, formatTokenAmount } from "@/lib/wallet-utils"
-import { icrc1Account } from "@/lib/account-id"
+import { icrc1Account, toHex } from "@/lib/account-id"
 import { useTokenHolding, useDepositAddress } from "@/hooks/use-wallet-data"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 
@@ -58,8 +58,11 @@ export function TokenView() {
       <div className="flex flex-col items-center gap-3 text-center">
         <TokenLogo token={token} className="size-14" />
         <div>
+          {/* Full precision here, unlike the wallet list: ckETH's 18 decimals put
+              a real balance below the list's 6-digit cutoff, where it rendered as
+              "<0.000001" and read as empty. */}
           <p className="text-3xl font-bold tracking-tight tabular-nums">
-            {formatTokenAmount(token.balance, token.decimals)}
+            {formatTokenAmount(token.balance, token.decimals, token.decimals)}
           </p>
           <p className="text-sm font-medium text-muted-foreground">{token.symbol}</p>
         </div>
@@ -85,14 +88,20 @@ export function TokenView() {
         </div>
 
         {icrcAddress ? (
-          <DepositAddressCard
-            icrcAddress={icrcAddress}
-            // Account identifiers only exist on the ICP ledger, so the legacy
-            // tab is offered there and nowhere else.
-            accountId={isIcp ? deposit?.accountId : undefined}
-            logo={token.logo}
-            onCopy={copyText}
-          />
+          <>
+            <DepositAddressCard
+              icrcAddress={icrcAddress}
+              // Account identifiers only exist on the ICP ledger, so the legacy
+              // tab is offered there and nowhere else.
+              accountId={isIcp ? deposit?.accountId : undefined}
+              logo={token.logo}
+              onCopy={copyText}
+            />
+            <AccountBreakdown
+              owner={deposit!.address.owner.toText()}
+              subaccount={toHex(Uint8Array.from(deposit!.address.subaccount[0] ?? []))}
+            />
+          </>
         ) : (
           <div className="flex flex-col items-center gap-4">
             <Skeleton className="size-52 rounded-2xl" />
@@ -105,6 +114,32 @@ export function TokenView() {
           {t("warning", { symbol: token.symbol })}
         </p>
       </div>
+    </div>
+  )
+}
+
+// The two halves of the ICRC-1 address above, shown but deliberately not
+// copyable. A custodial deposit is only credited when it carries the subaccount,
+// so a user who copies the bare owner principal sends to the canister's default
+// account and the funds are unattributable.
+function AccountBreakdown({ owner, subaccount }: { owner: string; subaccount: string }) {
+  const t = useTranslations("token")
+  return (
+    <div className="space-y-2 rounded-2xl border bg-muted/30 p-4">
+      <Field label={t("owner")} value={owner} />
+      <Field label={t("subaccount")} value={subaccount} />
+      <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
+        {t("breakdownHint")}
+      </p>
+    </div>
+  )
+}
+
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="space-y-0.5">
+      <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
+      <p className="break-all font-mono text-xs leading-relaxed">{value}</p>
     </div>
   )
 }

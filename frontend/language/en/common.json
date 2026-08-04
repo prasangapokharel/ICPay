@@ -270,7 +270,10 @@
     "send": "Send",
     "depositTitle": "Deposit address",
     "depositSubtitle": "Send {symbol} here to top up your wallet.",
-    "warning": "Send only {symbol} to this address. Other tokens will be lost."
+    "warning": "Send only {symbol} to this address. Other tokens will be lost.",
+    "owner": "Owner (canister)",
+    "subaccount": "Your subaccount",
+    "breakdownHint": "Both parts are required. Always use the full address above — sending to the owner principal alone will not credit your wallet."
   },
   "icpverse": {
     "searchPlaceholder": "Find your friends",

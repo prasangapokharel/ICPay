@@ -18,6 +18,7 @@ import {
   fetchTokenMetadata,
   custodialSubaccount,
   ICP_LEDGER_ID,
+  PINNED_LEDGER_IDS,
   type TokenHolding,
 } from "@/services/tokens"
 
@@ -65,30 +66,35 @@ function useCustodian(): Principal | undefined {
   return deposit?.address.owner
 }
 
-// The balance is read straight from the ledger as a query rather than through
-// the dashboard, so a page that only needs a number never pays for an update
-// call.
-export function useLiveBalance() {
+// One ledger's balance for the signed-in user, read straight from that ledger as
+// a query rather than through the dashboard, so a page that only needs a number
+// never pays for an update call. Every caller shares one key per ledger, which
+// is what keeps /wallet and a token page from asking twice for the same balance.
+function useLedgerBalance(ledgerId: string | null) {
   const { identity } = useAuth()
   const custodian = useCustodian()
 
-  const { data } = useSWR(
-    custodian && identity ? keyFor(identity, "live-balance") : null,
+  const { data, isLoading } = useSWR(
+    ledgerId && custodian && identity ? keyFor(identity, "token-balance", ledgerId) : null,
     async () => {
       const balances = await fetchBalances(
-        [ICP_LEDGER_ID],
+        [ledgerId!],
         custodian!,
         custodialSubaccount(identity!.getPrincipal()),
         identity
       )
-      return balances.get(ICP_LEDGER_ID) ?? 0n
+      return balances.get(ledgerId!) ?? 0n
     },
-    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 30_000 }
+    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
-  // undefined until the ledger answers, which callers render as a skeleton.
-  // Returning 0n instead would show a real holder an empty wallet.
-  return data
+  return { balance: data, isLoading }
+}
+
+// undefined until the ledger answers, which callers render as a skeleton.
+// Returning 0n instead would show a real holder an empty wallet.
+export function useLiveBalance() {
+  return useLedgerBalance(ICP_LEDGER_ID).balance
 }
 
 export function useDepositAddress() {
@@ -127,7 +133,7 @@ export function useTransactions(page = 0, pageSize = 20) {
 // Only these change when funds move. Matching every key for the principal would
 // also refetch the deposit address (derived, constant) and cached username
 // lookups, turning one transfer into a burst of calls.
-const FUNDS_KEYS = ["dashboard", "live-balance", "transactions", "token-balances"]
+const FUNDS_KEYS = ["dashboard", "token-balance", "transactions", "token-balances"]
 
 export function useRefreshWallet() {
   const { identity } = useAuth()
@@ -285,57 +291,63 @@ export function useTokenHoldings() {
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
-  // Phase 2 -- metadata for held tokens only, keyed by the held ledger ids so it
-  // refetches when a new token appears rather than on every balance change.
-  // A ledger's symbol and decimals are immutable in practice, so once fetched it
-  // is never revalidated.
-  const heldIds = balances ? [...balances.keys()].sort() : []
+  // Phase 2 -- metadata for the rows that will actually render: the pinned
+  // tokens, plus anything held. Fetching it for every discovered SNS ledger
+  // would be ~50 extra calls to name tokens nobody is holding. Keyed by that id
+  // list so it refetches when a new token appears rather than on every balance
+  // change, and immutable because a symbol and decimals never change.
+  const shownIds = balances
+    ? [...balances.keys()]
+        .filter((id) => PINNED_LEDGER_IDS.includes(id) || balances.get(id)! > 0n)
+        .sort()
+    : []
   const { data: metadata, isLoading: loadingMetadata } = useSWRImmutable(
-    heldIds.length ? (["token-metadata", heldIds.join(",")] as const) : null,
+    shownIds.length ? (["token-metadata", shownIds.join(",")] as const) : null,
     async () => {
-      const entries = await Promise.all(heldIds.map((id) => fetchTokenMetadata(id, identity)))
+      const entries = await Promise.all(shownIds.map((id) => fetchTokenMetadata(id, identity)))
       return new Map(entries.flatMap((m) => (m ? [[m.ledgerId, m] as const] : [])))
     }
   )
 
-  const holdings: TokenHolding[] = heldIds.flatMap((ledgerId) => {
+  const holdings: TokenHolding[] = shownIds.flatMap((ledgerId) => {
     const meta = metadata?.get(ledgerId)
-    // A held token whose metadata has not landed is withheld rather than shown
-    // as "UNKNOWN", so the list never flashes placeholder symbols.
+    // A row whose metadata has not landed is withheld rather than shown as
+    // "UNKNOWN", so the list never flashes placeholder symbols.
     if (!meta) return []
     return [{ ...meta, balance: balances!.get(ledgerId)! }]
   })
 
   return {
-    // ICP first; the rest by balance so the biggest holding leads.
+    // ICP first, then held tokens by symbol, then the unheld pinned ones -- a
+    // zero balance is offered as somewhere to deposit, not as a holding.
     holdings: holdings.sort((a, b) => {
       if (a.ledgerId === ICP_LEDGER_ID) return -1
       if (b.ledgerId === ICP_LEDGER_ID) return 1
+      if (a.balance > 0n !== b.balance > 0n) return a.balance > 0n ? -1 : 1
       return a.symbol.localeCompare(b.symbol)
     }),
-    isLoading: loadingBalances || (heldIds.length > 0 && loadingMetadata && !metadata),
+    isLoading: loadingBalances || (shownIds.length > 0 && loadingMetadata && !metadata),
   }
 }
 
-// One token by ledger id. Deliberately built on useTokenHoldings rather than a
-// fresh pair of calls: the sweep is already cached, so opening a token page
-// after the wallet list costs nothing. A token the user holds none of is absent
-// from the sweep, so its metadata is fetched on its own -- the page still has to
-// render an address to deposit *to*.
+// One token by ledger id. Reads that single ledger rather than mounting
+// useTokenHoldings: the sweep is ~50 balance calls and this page renders one row,
+// so a deep link or a refresh here paid for the whole wallet. It shares
+// useLedgerBalance's key, so arriving from /wallet reuses the cached balance.
 export function useTokenHolding(ledgerId: string | null) {
   const { identity } = useAuth()
-  const { holdings, isLoading } = useTokenHoldings()
-  const held = ledgerId ? holdings.find((h) => h.ledgerId === ledgerId) : undefined
+  const { balance, isLoading: loadingBalance } = useLedgerBalance(ledgerId)
 
   const { data: meta, isLoading: loadingMeta } = useSWRImmutable(
-    ledgerId && !held && !isLoading ? (["token-metadata-one", ledgerId] as const) : null,
+    ledgerId ? (["token-metadata-one", ledgerId] as const) : null,
     () => fetchTokenMetadata(ledgerId!, identity)
   )
 
-  const token: TokenHolding | undefined =
-    held ?? (meta ? { ...meta, balance: 0n } : undefined)
+  // The balance is not awaited before rendering: the symbol and logo are what
+  // identify the page, and 0n reads correctly for a token held in no amount.
+  const token: TokenHolding | undefined = meta ? { ...meta, balance: balance ?? 0n } : undefined
 
-  return { token, isLoading: isLoading || loadingMeta }
+  return { token, isLoading: loadingMeta || (loadingBalance && balance === undefined) }
 }
 
 // Public account stats for any principal, read straight from the NNS index
