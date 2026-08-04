@@ -5,6 +5,7 @@ module {
     id: Types.TxId,
     userId: Types.UserId,
     txType: Types.TxType,
+    ledgerId: Text,
     amount: Nat,
     fee: Nat,
     from: Text,
@@ -16,6 +17,7 @@ module {
       id;
       userId;
       txType;
+      ledgerId;
       amount;
       fee;
       from;

@@ -1,7 +1,21 @@
 module {
   public let ICP_LEDGER_CANISTER_ID: Text = "ryjl3-tyaaa-aaaaa-aaaba-cai";
   public let ICP_DECIMALS: Nat = 8;
-  public let ICP_FEE: Nat = 10_000;
+
+  // Not SNS-launched, so SNS-W does not list them. Compiled in rather than
+  // discovered, so a cold or unreachable SNS-W can never make ICP unspendable.
+  // Mirrors CK_LEDGER_IDS in frontend/services/tokens.ts.
+  public let CHAIN_KEY_LEDGERS: [Text] = [
+    ICP_LEDGER_CANISTER_ID,
+    "mxzaz-hqaaa-aaaar-qaada-cai", // ckBTC
+    "ss2fx-dyaaa-aaaar-qacoq-cai", // ckETH
+    "xevnm-gaaaa-aaaar-qafnq-cai", // ckUSDC
+    "cngnf-vqaaa-aaaar-qag4q-cai", // ckUSDT
+  ];
+
+  // The NNS SNS-W canister, which knows every SNS ever deployed.
+  public let SNS_WASM_CANISTER_ID: Text = "qaa6y-5yaaa-aaaaa-aaafa-cai";
+
   // Short handles are the scarce inventory, so 1-4 chars are sold rather than
   // given away. Handles already claimed under the old 32-char ceiling keep
   // resolving; this only gates new claims.

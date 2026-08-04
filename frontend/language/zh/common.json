@@ -262,8 +262,15 @@
     "totalDeposits": "充值总额",
     "totalWithdrawals": "提现总额",
     "transfers": "转账",
-    "noTokens": "暂无代币。充值后会自动显示在这里。",
-    "receiveOnly": "仅可接收"
+    "noTokens": "暂无代币。充值后会自动显示在这里。"
+  },
+  "token": {
+    "back": "钱包",
+    "notFound": "无法加载此代币。",
+    "send": "发送",
+    "depositTitle": "充值地址",
+    "depositSubtitle": "将 {symbol} 发送至此以充值钱包。",
+    "warning": "请仅向此地址转入 {symbol}，其他代币将会丢失。"
   },
   "icpverse": {
     "searchPlaceholder": "查找好友",

@@ -5,7 +5,6 @@ import Text "mo:core/Text";
 import Int "mo:core/Int";
 import Nat64 "mo:core/Nat64";
 import Types "../types";
-import UUID "../utils/UUID";
 import Config "../config/Config";
 import AccountHelper "../ledger/Account";
 import Subaccount "../ledger/Subaccount";
@@ -20,6 +19,7 @@ import UserStorage "../storage/UserStorage";
 import TxStorage "../storage/TransactionStorage";
 import AmountValidator "../validators/AmountValidator";
 import TransferValidator "../validators/TransferValidator";
+import AccountValidator "../validators/AccountValidator";
 
 module {
   public func create(
@@ -28,8 +28,9 @@ module {
     txs: TxStorage.TxList,
     byUser: TxStorage.TxByUser,
     ledger: LedgerService.LedgerService,
+    nextId: () -> Text,
   ) : TransferService {
-    { users; usernames; txs; byUser; ledger };
+    { users; usernames; txs; byUser; ledger; nextId };
   };
 
   public type TransferService = {
@@ -38,10 +39,11 @@ module {
     txs: TxStorage.TxList;
     byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
+    nextId: () -> Text;
   };
 
-  public func transferByUsername(service: TransferService, caller: Principal, username: Types.Username, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
-    switch (AmountValidator.validate(amount)) {
+  public func transferByUsername(service: TransferService, caller: Principal, ledgerId: Text, username: Types.Username, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    switch (validateRequest(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
     };
@@ -52,14 +54,14 @@ module {
           case (null) {};
         };
         let destination = LedgerService.depositAccount(service.ledger, recipient.principal);
-        await doTransfer(service, caller, destination, amount, "@" # username, memo);
+        await doTransfer(service, caller, ledgerId, destination, amount, "@" # username, memo);
       };
       case (null) { #err("Username not found: @" # username) };
     };
   };
 
-  public func transferByPrincipal(service: TransferService, caller: Principal, to: Principal, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
-    switch (AmountValidator.validate(amount)) {
+  public func transferByPrincipal(service: TransferService, caller: Principal, ledgerId: Text, to: Principal, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    switch (validateRequest(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
     };
@@ -72,15 +74,26 @@ module {
       case (?_) { LedgerService.depositAccount(service.ledger, to) };
       case (null) { AccountHelper.defaultAccount(to) };
     };
-    await doTransfer(service, caller, destination, amount, Principal.toText(to), memo);
+    await doTransfer(service, caller, ledgerId, destination, amount, Principal.toText(to), memo);
   };
 
-  public func transferByAccount(service: TransferService, caller: Principal, to: LedgerTypes.Account, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
-    switch (AmountValidator.validate(amount)) {
+  public func transferByAccount(service: TransferService, caller: Principal, ledgerId: Text, to: LedgerTypes.Account, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    switch (validateRequest(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
     };
-    await doTransfer(service, caller, to, amount, AccountHelper.toText(to), memo);
+    await doTransfer(service, caller, ledgerId, to, amount, AccountHelper.toText(to), memo);
+  };
+
+  // The ledger allowlist is a security boundary, not a convenience check: an
+  // unvalidated id reaching actor(id) lets a caller point the custodian at a
+  // canister they wrote, which can return a forged #Ok and write a bogus
+  // "received" row into someone else's history.
+  func validateRequest(service: TransferService, ledgerId: Text, amount: Nat): ?Text {
+    if (not LedgerService.isAllowed(service.ledger, ledgerId)) {
+      return ?("Unsupported token ledger: " # ledgerId);
+    };
+    AmountValidator.validate(amount);
   };
 
   // Resolves the sender and their custodial account. Deliberately does NOT read
@@ -107,13 +120,18 @@ module {
     };
   };
 
+  // ICP-only by nature: account identifiers are an ICP-ledger concept and no
+  // other ICRC-1 ledger implements the legacy transfer method. Its fee field is
+  // required rather than optional, so this is the one path that must send a
+  // real number.
   public func transferByAccountId(service: TransferService, caller: Principal, accountIdHex: Text, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
     switch (AmountValidator.validate(amount)) {
       case (?err) { return #err(err) };
       case (null) {};
     };
-    if (accountIdHex.size() != 64) {
-      return #err("Account identifier must be 64 hex characters");
+    switch (AccountValidator.validateAccountId(accountIdHex)) {
+      case (?err) { return #err(err) };
+      case (null) {};
     };
     switch (TransferValidator.validateMemo(memo)) {
       case (?err) { return #err(err) };
@@ -123,12 +141,13 @@ module {
     switch (resolveSender(service, caller)) {
       case (#err(e)) { #err(e) };
       case (#ok({ userId; source; senderName })) {
-        let fee = Config.ICP_FEE;
+        let ledgerId = Config.ICP_LEDGER_CANISTER_ID;
+        let fee = await LedgerService.getFee(ledgerId);
         let now = Time.now();
-        let id = UUID.generate();
+        let id = service.nextId();
         let fromLabel = AccountHelper.toAccountIdentifier(source);
         let tx = TxRepo.create(
-          service.txs, service.byUser, id, userId, #transfer, amount, fee,
+          service.txs, service.byUser, id, userId, #transfer, ledgerId, amount, fee,
           fromLabel, accountIdHex, memo, now,
         );
         let now64 = Nat64.fromNat(Int.abs(now));
@@ -140,7 +159,7 @@ module {
           from_subaccount = source.subaccount;
           created_at_time = ?{ timestamp_nanos = now64 };
         };
-        let result = await LedgerService.transferToAccountIdentifier(service.ledger, oldArgs);
+        let result = await LedgerService.transferToAccountIdentifier(oldArgs);
         switch (result) {
           case (#Ok(blockIdx)) {
             tx.complete(blockIdx, now);
@@ -151,7 +170,7 @@ module {
               case (?recipient) {
                 if (recipient.principal != caller) {
                   let rx = TxRepo.create(
-                    service.txs, service.byUser, UUID.generate(), recipient.id, #deposit, amount, 0,
+                    service.txs, service.byUser, service.nextId(), recipient.id, #deposit, ledgerId, amount, 0,
                     senderName, accountIdHex, memo, now,
                   );
                   rx.complete(blockIdx, now);
@@ -169,7 +188,7 @@ module {
     };
   };
 
-  func doTransfer(service: TransferService, caller: Principal, destination: LedgerTypes.Account, amount: Nat, toLabel: Text, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+  func doTransfer(service: TransferService, caller: Principal, ledgerId: Text, destination: LedgerTypes.Account, amount: Nat, toLabel: Text, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
     switch (TransferValidator.validateMemo(memo)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -177,12 +196,15 @@ module {
     switch (resolveSender(service, caller)) {
       case (#err(e)) { #err(e) };
       case (#ok({ userId; source; senderName })) {
-        let fee = Config.ICP_FEE;
+        // Recorded for display only. The ledger is not told this number -- see
+        // the null fee below -- so a stale read misreports a row rather than
+        // failing a transfer.
+        let fee = await LedgerService.getFee(ledgerId);
         let now = Time.now();
-        let id = UUID.generate();
+        let id = service.nextId();
         let fromLabel = AccountHelper.toAccountIdentifier(source);
         let tx = TxRepo.create(
-          service.txs, service.byUser, id, userId, #transfer, amount, fee,
+          service.txs, service.byUser, id, userId, #transfer, ledgerId, amount, fee,
           fromLabel, toLabel, memo, now,
         );
         let memoBlob = switch (memo) {
@@ -194,16 +216,32 @@ module {
           from_subaccount = source.subaccount;
           to = destination;
           amount;
-          fee = ?fee;
+          // Null means "charge whatever you charge". Sending a number instead
+          // makes every ledger whose fee differs from our guess fail with
+          // #BadFee -- and a fetched fee is still a guess, since it can change
+          // between the read and this call. It also keeps burns working, which
+          // require an absent or zero fee.
+          fee = null;
           memo = memoBlob;
           created_at_time = ?now64;
         };
-        let result = await LedgerService.transfer(service.ledger, transferArgs);
+        let result = await LedgerService.transfer(ledgerId, transferArgs);
         switch (result) {
           case (#Ok(blockIdx)) {
             let blockIdx64 = Nat64.fromNat(blockIdx);
             tx.complete(blockIdx64, now);
-            creditRecipient(service, caller, destination, amount, senderName, memo, blockIdx64, now);
+            creditRecipient(service, caller, ledgerId, destination, amount, senderName, memo, blockIdx64, now);
+            #ok({ blockIndex = blockIdx64; txId = id });
+          };
+          // A retried request can come back #Duplicate: the ledger already settled
+          // this transfer on the earlier attempt. Still a success -- the funds
+          // moved at the returned block -- and the recipient must still be
+          // credited, or the arrived funds would later read as an unattributed
+          // deposit and be credited twice.
+          case (#Err(#Duplicate({ duplicate_of }))) {
+            let blockIdx64 = Nat64.fromNat(duplicate_of);
+            tx.complete(blockIdx64, now);
+            creditRecipient(service, caller, ledgerId, destination, amount, senderName, memo, blockIdx64, now);
             #ok({ blockIndex = blockIdx64; txId = id });
           };
           case (#Err(e)) {
@@ -222,6 +260,7 @@ module {
   func creditRecipient(
     service: TransferService,
     sender: Principal,
+    ledgerId: Text,
     destination: LedgerTypes.Account,
     amount: Nat,
     senderLabel: Text,
@@ -234,7 +273,7 @@ module {
       case (?recipient) {
         if (recipient.principal == sender) { return };
         let rx = TxRepo.create(
-          service.txs, service.byUser, UUID.generate(), recipient.id, #deposit, amount, 0,
+          service.txs, service.byUser, service.nextId(), recipient.id, #deposit, ledgerId, amount, 0,
           senderLabel, AccountHelper.toAccountIdentifier(destination), memo, now,
         );
         rx.complete(blockIndex, now);

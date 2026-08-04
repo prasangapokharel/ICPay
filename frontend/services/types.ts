@@ -32,6 +32,7 @@ export type TransactionPublic = {
   id: TxId
   userId: UserId
   txType: TxTypeVariant
+  ledgerId: string
   amount: bigint
   fee: bigint
   from: string

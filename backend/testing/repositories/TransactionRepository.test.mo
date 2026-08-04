@@ -7,16 +7,18 @@ let txsByUser = TxStorage.createTxByUser();
 let now = 1000;
 let userId = "user-1";
 let otherUserId = "user-2";
+let icp = "ryjl3-tyaaa-aaaaa-aaaba-cai";
+let ckbtc = "mxzaz-hqaaa-aaaar-qaada-cai";
 
-let tx1 = TxRepo.create(txs, txsByUser, "tx-1", userId, #deposit, 100_000_000, 0, "alice", "bob", null, now);
+let tx1 = TxRepo.create(txs, txsByUser, "tx-1", userId, #deposit, icp, 100_000_000, 0, "alice", "bob", null, now);
 assert(tx1.id == "tx-1");
 Debug.print("PASS: create deposit transaction");
 
-let tx2 = TxRepo.create(txs, txsByUser, "tx-2", userId, #withdraw, 50_000_000, 10_000, "alice", "carol", null, now);
+let tx2 = TxRepo.create(txs, txsByUser, "tx-2", userId, #withdraw, icp, 50_000_000, 10_000, "alice", "carol", null, now);
 assert(tx2.id == "tx-2");
 Debug.print("PASS: create withdraw transaction");
 
-let tx3 = TxRepo.create(txs, txsByUser, "tx-3", otherUserId, #transfer, 25_000_000, 10_000, "carol", "dave", ?"payment", now);
+let tx3 = TxRepo.create(txs, txsByUser, "tx-3", otherUserId, #transfer, ckbtc, 25_000_000, 10_000, "carol", "dave", ?"payment", now);
 assert(tx3.id == "tx-3");
 Debug.print("PASS: create transfer transaction for other user");
 
@@ -86,7 +88,7 @@ let failedFail = TxRepo.failTx(txs, "non-existent", now);
 assert(failedFail == false);
 Debug.print("PASS: failTx returns false for unknown tx");
 
-let depositTotal = TxRepo.getTotalDepositAmount(txsByUser, userId);
+let depositTotal = TxRepo.getTotalDepositAmount(txsByUser, userId, icp);
 assert(depositTotal == 100_000_000);
 Debug.print("PASS: getTotalDepositAmount for user-1 counts only completed deposits");
 
@@ -146,20 +148,20 @@ assert(TxRepo.getUserTxCount(rebuilt, userId) == TxRepo.getUserTxCount(txsByUser
 assert(TxRepo.getUserTxCount(rebuilt, otherUserId) == TxRepo.getUserTxCount(txsByUser, otherUserId));
 Debug.print("PASS: reindex reproduces per-user counts");
 
-let liveTotals = TxRepo.getUserTotals(txsByUser, userId);
-let rebuiltTotals = TxRepo.getUserTotals(rebuilt, userId);
+let liveTotals = TxRepo.getUserTotals(txsByUser, userId, icp);
+let rebuiltTotals = TxRepo.getUserTotals(rebuilt, userId, icp);
 assert(liveTotals.deposits == rebuiltTotals.deposits);
 assert(liveTotals.withdrawals == rebuiltTotals.withdrawals);
 assert(liveTotals.transfers == rebuiltTotals.transfers);
 Debug.print("PASS: reindex reproduces per-user totals");
 
-assert(TxRepo.getTotalDepositAmount(rebuilt, userId) == TxRepo.getTotalDepositAmount(txsByUser, userId));
+assert(TxRepo.getTotalDepositAmount(rebuilt, userId, icp) == TxRepo.getTotalDepositAmount(txsByUser, userId, icp));
 Debug.print("PASS: reindex reproduces the credited-deposit guard");
 
 // Status is mutated in place after creation, so the index must observe the
 // change through the shared reference rather than a stale copy.
 let _ = TxRepo.completeTx(txs, "tx-3", 99, now);
-assert(TxRepo.getUserTotals(txsByUser, otherUserId).transfers == 1);
+assert(TxRepo.getUserTotals(txsByUser, otherUserId, ckbtc).transfers == 1);
 Debug.print("PASS: index sees in-place status mutation");
 
 // A user with no transactions must read as empty, not trap on a missing key.

@@ -262,8 +262,15 @@
     "totalDeposits": "कुल जमा",
     "totalWithdrawals": "कुल निकासी",
     "transfers": "ट्रांसफ़र",
-    "noTokens": "अभी कोई टोकन नहीं। जमा यहाँ अपने आप दिखेंगे।",
-    "receiveOnly": "केवल प्राप्ति"
+    "noTokens": "अभी कोई टोकन नहीं। जमा यहाँ अपने आप दिखेंगे।"
+  },
+  "token": {
+    "back": "वॉलेट",
+    "notFound": "यह टोकन लोड नहीं हो सका।",
+    "send": "भेजें",
+    "depositTitle": "जमा पता",
+    "depositSubtitle": "अपना वॉलेट भरने के लिए {symbol} यहाँ भेजें।",
+    "warning": "इस पते पर केवल {symbol} भेजें। अन्य टोकन खो जाएँगे।"
   },
   "icpverse": {
     "searchPlaceholder": "अपने दोस्त खोजें",

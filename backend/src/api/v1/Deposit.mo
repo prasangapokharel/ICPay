@@ -11,7 +11,7 @@ mixin (deposit: DepositService.DepositService, mwConfig: MiddlewareAuth.Config) 
     DepositService.getDepositAccountIdentifier(deposit, MiddlewareAuth.effectiveCaller(mwConfig, caller));
   };
 
-  public shared ({ caller }) func syncDeposits() : async Types.ApiResult<Types.TransactionPublic> {
-    await DepositService.syncDeposits(deposit, MiddlewareAuth.effectiveCaller(mwConfig, caller));
+  public shared ({ caller }) func syncDeposits(ledgerId: Text) : async Types.ApiResult<Types.TransactionPublic> {
+    await DepositService.syncDeposits(deposit, MiddlewareAuth.effectiveCaller(mwConfig, caller), ledgerId);
   };
 };

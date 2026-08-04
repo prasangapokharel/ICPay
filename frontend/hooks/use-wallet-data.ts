@@ -317,6 +317,27 @@ export function useTokenHoldings() {
   }
 }
 
+// One token by ledger id. Deliberately built on useTokenHoldings rather than a
+// fresh pair of calls: the sweep is already cached, so opening a token page
+// after the wallet list costs nothing. A token the user holds none of is absent
+// from the sweep, so its metadata is fetched on its own -- the page still has to
+// render an address to deposit *to*.
+export function useTokenHolding(ledgerId: string | null) {
+  const { identity } = useAuth()
+  const { holdings, isLoading } = useTokenHoldings()
+  const held = ledgerId ? holdings.find((h) => h.ledgerId === ledgerId) : undefined
+
+  const { data: meta, isLoading: loadingMeta } = useSWRImmutable(
+    ledgerId && !held && !isLoading ? (["token-metadata-one", ledgerId] as const) : null,
+    () => fetchTokenMetadata(ledgerId!, identity)
+  )
+
+  const token: TokenHolding | undefined =
+    held ?? (meta ? { ...meta, balance: 0n } : undefined)
+
+  return { token, isLoading: isLoading || loadingMeta }
+}
+
 // Public account stats for any principal, read straight from the NNS index
 // canister by query -- the ICPay canister is never involved, so viewing a
 // profile costs it nothing.

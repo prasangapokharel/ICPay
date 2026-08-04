@@ -262,8 +262,15 @@
     "totalDeposits": "총 입금액",
     "totalWithdrawals": "총 출금액",
     "transfers": "송금",
-    "noTokens": "아직 토큰이 없습니다. 입금하면 여기에 자동으로 표시됩니다.",
-    "receiveOnly": "받기 전용"
+    "noTokens": "아직 토큰이 없습니다. 입금하면 여기에 자동으로 표시됩니다."
+  },
+  "token": {
+    "back": "지갑",
+    "notFound": "이 토큰을 불러올 수 없습니다.",
+    "send": "보내기",
+    "depositTitle": "입금 주소",
+    "depositSubtitle": "지갑을 충전하려면 여기로 {symbol}을 보내세요.",
+    "warning": "이 주소로는 {symbol}만 보내세요. 다른 토큰은 잃게 됩니다."
   },
   "icpverse": {
     "searchPlaceholder": "친구 찾기",

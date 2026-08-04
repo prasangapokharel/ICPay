@@ -1,7 +1,6 @@
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
 import Types "../types";
-import UUID "../utils/UUID";
 import UserRepo "../repositories/UserRepository";
 import UserStorage "../storage/UserStorage";
 import ReservedRepo "../repositories/ReservedUsernameRepository";
@@ -10,8 +9,8 @@ import PrincipalValidator "../validators/PrincipalValidator";
 import UsernameValidator "../validators/UsernameValidator";
 
 module {
-  public func create(users: UserStorage.UserMap, usernames: UserStorage.UsernameMap, usersById: UserStorage.UserIdMap, reserved: ReservedStorage.ReservedUsernameSet): AuthService {
-    { users; usernames; usersById; reserved };
+  public func create(users: UserStorage.UserMap, usernames: UserStorage.UsernameMap, usersById: UserStorage.UserIdMap, reserved: ReservedStorage.ReservedUsernameSet, nextId: () -> Text): AuthService {
+    { users; usernames; usersById; reserved; nextId };
   };
 
   public type AuthService = {
@@ -19,6 +18,7 @@ module {
     usernames: UserStorage.UsernameMap;
     usersById: UserStorage.UserIdMap;
     reserved: ReservedStorage.ReservedUsernameSet;
+    nextId: () -> Text;
   };
 
   public func login(service: AuthService, caller: Principal): Types.AuthResult {
@@ -31,7 +31,7 @@ module {
         #ok({ user = Types.userToPublic(user); isNew = false });
       };
       case (null) {
-        let id = UUID.generate();
+        let id = service.nextId();
         let now = Time.now();
         let user = UserRepo.create(service.users, service.usernames, service.usersById, id, caller, null, "", now);
         #ok({ user = Types.userToPublic(user); isNew = true });
@@ -64,7 +64,7 @@ module {
         #ok({ user = Types.userToPublic(user); isNew = false });
       };
       case (null) {
-        let id = UUID.generate();
+        let id = service.nextId();
         let now = Time.now();
         let user = UserRepo.create(service.users, service.usernames, service.usersById, id, caller, ?username, username, now);
         #ok({ user = Types.userToPublic(user); isNew = true });

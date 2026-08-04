@@ -262,8 +262,15 @@
     "totalDeposits": "Einzahlungen gesamt",
     "totalWithdrawals": "Auszahlungen gesamt",
     "transfers": "Überweisungen",
-    "noTokens": "Noch keine Token. Einzahlungen erscheinen hier automatisch.",
-    "receiveOnly": "Nur Empfang"
+    "noTokens": "Noch keine Token. Einzahlungen erscheinen hier automatisch."
+  },
+  "token": {
+    "back": "Wallet",
+    "notFound": "Dieses Token konnte nicht geladen werden.",
+    "send": "Senden",
+    "depositTitle": "Einzahlungsadresse",
+    "depositSubtitle": "Sende {symbol} hierhin, um dein Wallet aufzuladen.",
+    "warning": "Sende nur {symbol} an diese Adresse. Andere Token gehen verloren."
   },
   "icpverse": {
     "searchPlaceholder": "Finde deine Freunde",

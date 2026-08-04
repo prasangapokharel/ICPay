@@ -262,8 +262,15 @@
     "totalDeposits": "入金合計",
     "totalWithdrawals": "出金合計",
     "transfers": "送金",
-    "noTokens": "トークンはまだありません。入金すると自動で表示されます。",
-    "receiveOnly": "受け取り専用"
+    "noTokens": "トークンはまだありません。入金すると自動で表示されます。"
+  },
+  "token": {
+    "back": "ウォレット",
+    "notFound": "このトークンを読み込めませんでした。",
+    "send": "送金",
+    "depositTitle": "入金アドレス",
+    "depositSubtitle": "ウォレットに入金するには、ここに {symbol} を送ってください。",
+    "warning": "このアドレスには {symbol} のみを送ってください。他のトークンは失われます。"
   },
   "icpverse": {
     "searchPlaceholder": "友達を探す",

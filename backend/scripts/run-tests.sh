@@ -74,6 +74,9 @@ run_test "$ROOT/testing/services/AdminService.test.mo" "AdminService"
 run_test "$ROOT/testing/services/TransactionService.test.mo" "TransactionService"
 run_test "$ROOT/testing/services/SettingsService.test.mo" "SettingsService"
 
+echo "--- Upgrade / Migration Tests ---"
+run_test "$ROOT/testing/upgrade/StampLedgerId.test.mo" "StampLedgerId"
+
 echo "--- Security Tests ---"
 run_test "$ROOT/testing/security/Security.test.mo" "Security"
 run_test "$ROOT/testing/security/AuthMiddleware.test.mo" "AuthMiddleware"

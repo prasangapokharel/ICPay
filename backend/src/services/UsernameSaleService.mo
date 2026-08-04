@@ -83,7 +83,9 @@ module {
     let destination = AccountHelper.defaultAccount(treasury());
     let memo = saleMemo(name, price, Time.now());
 
-    let result = await TransferService.transferByAccount(service.transfers, caller, destination, price, ?memo);
+    // Prices are denominated in ICP, so a sale settles on the ICP ledger
+    // regardless of which token the buyer was last looking at.
+    let result = await TransferService.transferByAccount(service.transfers, caller, Config.ICP_LEDGER_CANISTER_ID, destination, price, ?memo);
 
     switch (result) {
       case (#err(e)) {

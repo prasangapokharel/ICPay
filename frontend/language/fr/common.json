@@ -262,8 +262,15 @@
     "totalDeposits": "Total des dépôts",
     "totalWithdrawals": "Total des retraits",
     "transfers": "Transferts",
-    "noTokens": "Aucun jeton pour l'instant. Les dépôts apparaissent ici automatiquement.",
-    "receiveOnly": "Réception seule"
+    "noTokens": "Aucun jeton pour l'instant. Les dépôts apparaissent ici automatiquement."
+  },
+  "token": {
+    "back": "Portefeuille",
+    "notFound": "Ce jeton n'a pas pu être chargé.",
+    "send": "Envoyer",
+    "depositTitle": "Adresse de dépôt",
+    "depositSubtitle": "Envoyez des {symbol} ici pour recharger votre portefeuille.",
+    "warning": "N'envoyez que des {symbol} à cette adresse. Les autres jetons seront perdus."
   },
   "icpverse": {
     "searchPlaceholder": "Trouvez vos amis",

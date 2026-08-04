@@ -23,6 +23,7 @@ docs/*
 !docs/language/
 !docs/workflow.md
 !docs/security/
+!docs/phase/
 
 # Environment files and credentials
 **/.env*

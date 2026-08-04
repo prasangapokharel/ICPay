@@ -3,7 +3,7 @@ import DashboardService "../../services/DashboardService";
 import MiddlewareAuth "../../middleware/Auth";
 
 mixin (dashboard: DashboardService.DashboardService, mwConfig: MiddlewareAuth.Config) {
-  public shared query ({ caller }) func getDashboard() : async Types.ApiResult<Types.DashboardData> {
-    DashboardService.getDashboard(dashboard, MiddlewareAuth.effectiveCaller(mwConfig, caller));
+  public shared query ({ caller }) func getDashboard(ledgerId: Text) : async Types.ApiResult<Types.DashboardData> {
+    DashboardService.getDashboard(dashboard, MiddlewareAuth.effectiveCaller(mwConfig, caller), ledgerId);
   };
 };
