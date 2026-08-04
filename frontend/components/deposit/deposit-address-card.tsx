@@ -9,13 +9,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
 
 type DepositAddressCardProps = {
-  accountId: string
   icrcAddress: string
   onCopy: (text: string) => void
+  // Account identifiers are an ICP-ledger concept, so the legacy tab only exists
+  // when one is supplied. Other ICRC-1 ledgers render the ICRC address alone.
+  accountId?: string
+  // Centred on the QR. Defaults to the ICP mark, which is a local asset; token
+  // pages pass the ledger's own icrc1:logo.
+  logo?: string
 }
 
-export function DepositAddressCard({ accountId, icrcAddress, onCopy }: DepositAddressCardProps) {
+export function DepositAddressCard({
+  accountId,
+  icrcAddress,
+  onCopy,
+  logo,
+}: DepositAddressCardProps) {
   const t = useTranslations("deposit")
+
+  if (accountId === undefined) {
+    return <AddressBlock value={icrcAddress} hint={t("hintIcrc")} onCopy={onCopy} logo={logo} />
+  }
+
   return (
     <Tabs defaultValue="icrc" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
@@ -24,19 +39,11 @@ export function DepositAddressCard({ accountId, icrcAddress, onCopy }: DepositAd
       </TabsList>
 
       <TabsContent value="icrc" className="mt-5">
-        <AddressBlock
-          value={icrcAddress}
-          hint={t("hintIcrc")}
-          onCopy={onCopy}
-        />
+        <AddressBlock value={icrcAddress} hint={t("hintIcrc")} onCopy={onCopy} logo={logo} />
       </TabsContent>
 
       <TabsContent value="legacy" className="mt-5">
-        <AddressBlock
-          value={accountId}
-          hint={t("hintLegacy")}
-          onCopy={onCopy}
-        />
+        <AddressBlock value={accountId} hint={t("hintLegacy")} onCopy={onCopy} logo={logo} />
       </TabsContent>
     </Tabs>
   )
@@ -46,10 +53,12 @@ function AddressBlock({
   value,
   hint,
   onCopy,
+  logo,
 }: {
   value: string
   hint: string
   onCopy: (text: string) => void
+  logo?: string
 }) {
   const t = useTranslations("deposit")
   const [copied, setCopied] = useState(false)
@@ -65,7 +74,7 @@ function AddressBlock({
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <QrCode value={value} />
+      <QrCode value={value} logo={logo} />
 
       <button
         type="button"
@@ -98,7 +107,7 @@ function AddressBlock({
   )
 }
 
-function QrCode({ value }: { value: string }) {
+function QrCode({ value, logo }: { value: string; logo?: string }) {
   const t = useTranslations("deposit")
   const [src, setSrc] = useState<string | null>(null)
 
@@ -126,7 +135,7 @@ function QrCode({ value }: { value: string }) {
     <div className="relative rounded-2xl border bg-white p-3">
       <Image src={src} alt={t("qrAlt")} width={512} height={512} unoptimized className="size-44" />
       <span className="absolute left-1/2 top-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/10">
-        <Image src="/images/logo/logo.png" alt="" width={40} height={40} className="size-6 object-contain" />
+        <Image src={logo ?? "/images/logo/logo.png"} alt="" width={40} height={40} unoptimized className="size-6 object-contain" />
       </span>
     </div>
   )

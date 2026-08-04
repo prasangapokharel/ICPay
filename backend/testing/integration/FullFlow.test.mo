@@ -1,6 +1,7 @@
 import Debug "mo:core/Debug";
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
+import Int "mo:core/Int";
 import UserStorage "../../src/storage/UserStorage";
 import TxStorage "../../src/storage/TransactionStorage";
 import SettingsStorage "../../src/storage/SettingsStorage";
@@ -26,7 +27,13 @@ let settingsMap = SettingsStorage.createSettingsMap();
 let p1 = Principal.fromText("aaaaa-aa");
 let p2 = Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai");
 
-let auth = AuthService.create(users, usernames, usersById, reserved);
+var uidCounter = 0;
+func nextUid(): Text {
+  uidCounter += 1;
+  Time.now().toText() # "-" # Int.toText(uidCounter);
+};
+
+let auth = AuthService.create(users, usernames, usersById, reserved, nextUid);
 let userSvc = UserService.create(users, usernames, usersById, reserved);
 let txSvc = TransactionService.create(users, txs, txsByUser);
 let settingsSvc = SettingsService.create(users, settingsMap);

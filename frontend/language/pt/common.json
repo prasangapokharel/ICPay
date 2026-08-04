@@ -262,8 +262,15 @@
     "totalDeposits": "Total de depósitos",
     "totalWithdrawals": "Total de saques",
     "transfers": "Transferências",
-    "noTokens": "Nenhum token ainda. Os depósitos aparecem aqui automaticamente.",
-    "receiveOnly": "Somente recebimento"
+    "noTokens": "Nenhum token ainda. Os depósitos aparecem aqui automaticamente."
+  },
+  "token": {
+    "back": "Carteira",
+    "notFound": "Não foi possível carregar este token.",
+    "send": "Enviar",
+    "depositTitle": "Endereço de depósito",
+    "depositSubtitle": "Envie {symbol} para cá para recarregar a sua carteira.",
+    "warning": "Envie apenas {symbol} para este endereço. Outros tokens serão perdidos."
   },
   "icpverse": {
     "searchPlaceholder": "Encontre seus amigos",

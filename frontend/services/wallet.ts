@@ -29,15 +29,16 @@ export interface WalletActor {
   getUsernamePrice: (name: string) => Promise<bigint>
   getUsernameTreasury: () => Promise<Principal>
   purchaseUsername: (name: string) => Promise<ApiResult_9>
-  getDashboard: () => Promise<ApiResult_8>
+  getDashboard: (ledgerId: string) => Promise<ApiResult_8>
   getDepositAddress: () => Promise<ICRC1Account>
   getDepositAccountIdentifier: () => Promise<string>
-  syncDeposits: () => Promise<ApiResult_1>
-  withdraw: (amount: bigint, to: AccountType) => Promise<ApiResult>
-  transferByUsername: (username: string, amount: bigint, memo: [] | [string]) => Promise<ApiResult>
-  transferByPrincipal: (to: Principal, amount: bigint, memo: [] | [string]) => Promise<ApiResult>
-  transferByAccount: (to: AccountType, amount: bigint, memo: [] | [string]) => Promise<ApiResult>
+  syncDeposits: (ledgerId: string) => Promise<ApiResult_1>
+  withdraw: (ledgerId: string, amount: bigint, to: AccountType) => Promise<ApiResult>
+  transferByUsername: (ledgerId: string, username: string, amount: bigint, memo: [] | [string]) => Promise<ApiResult>
+  transferByPrincipal: (ledgerId: string, to: Principal, amount: bigint, memo: [] | [string]) => Promise<ApiResult>
+  transferByAccount: (ledgerId: string, to: AccountType, amount: bigint, memo: [] | [string]) => Promise<ApiResult>
   transferByAccountId: (accountId: string, amount: bigint, memo: [] | [string]) => Promise<ApiResult>
+  isLedgerSupported: (ledgerId: string) => Promise<boolean>
   getTransactions: (page: bigint, pageSize: bigint) => Promise<ApiResult_7>
   getTransactionDetail: (txId: TxId) => Promise<ApiResult_1>
   getSettings: () => Promise<ApiResult_3>
@@ -101,6 +102,7 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     id: TxId,
     userId: IDL.Text,
     txType: TxType,
+    ledgerId: IDL.Text,
     amount: IDL.Nat,
     fee: IDL.Nat,
     from: IDL.Text,
@@ -196,15 +198,16 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     getUsernamePrice: IDL.Func([IDL.Text], [IDL.Nat], ["query"]),
     getUsernameTreasury: IDL.Func([], [IDL.Principal], ["query"]),
     purchaseUsername: IDL.Func([IDL.Text], [ApiResult_9], []),
-    getDashboard: IDL.Func([], [ApiResult_8], ["query"]),
+    getDashboard: IDL.Func([IDL.Text], [ApiResult_8], ["query"]),
     getDepositAddress: IDL.Func([], [IDL.Record({ owner: IDL.Principal, subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)) })], ["query"]),
     getDepositAccountIdentifier: IDL.Func([], [IDL.Text], ["query"]),
-    syncDeposits: IDL.Func([], [ApiResult_1], []),
-    withdraw: IDL.Func([IDL.Nat, Account], [ApiResult], []),
-    transferByUsername: IDL.Func([IDL.Text, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
-    transferByPrincipal: IDL.Func([IDL.Principal, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
-    transferByAccount: IDL.Func([Account, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
+    syncDeposits: IDL.Func([IDL.Text], [ApiResult_1], []),
+    withdraw: IDL.Func([IDL.Text, IDL.Nat, Account], [ApiResult], []),
+    transferByUsername: IDL.Func([IDL.Text, IDL.Text, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
+    transferByPrincipal: IDL.Func([IDL.Text, IDL.Principal, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
+    transferByAccount: IDL.Func([IDL.Text, Account, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
     transferByAccountId: IDL.Func([IDL.Text, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
+    isLedgerSupported: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     getTransactions: IDL.Func([IDL.Nat, IDL.Nat], [ApiResult_7], ["query"]),
     getTransactionDetail: IDL.Func([TxId], [ApiResult_1], ["query"]),
     getSettings: IDL.Func([], [ApiResult_3], []),

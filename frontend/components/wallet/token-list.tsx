@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatTokenAmount } from "@/lib/wallet-utils"
@@ -49,31 +50,23 @@ export function TokenList({
 }
 
 function TokenRow({ token }: { token: TokenHolding }) {
-  const t = useTranslations("wallet")
-  const isIcp = token.ledgerId === ICP_LEDGER_ID
-
   return (
-    <li className="flex items-center gap-3 rounded-2xl px-1 py-2.5">
-      <TokenLogo token={token} />
+    <li>
+      <Link
+        href={`/token/${token.ledgerId}`}
+        className="flex items-center gap-3 rounded-2xl px-1 py-2.5 transition-colors hover:bg-muted/60 active:scale-[0.99]"
+      >
+        <TokenLogo token={token} />
 
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5">
+        <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold">{token.symbol}</p>
-          {/* Stated on the row rather than behind a tooltip: these funds really
-              are stuck until the canister learns to spend non-ICP ledgers, and
-              a hover affordance would never appear on a phone. */}
-          {!isIcp && (
-            <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium leading-none text-muted-foreground">
-              {t("receiveOnly")}
-            </span>
-          )}
+          <p className="truncate text-xs text-muted-foreground">{token.name}</p>
         </div>
-        <p className="truncate text-xs text-muted-foreground">{token.name}</p>
-      </div>
 
-      <p className="shrink-0 text-sm font-semibold tabular-nums">
-        {formatTokenAmount(token.balance, token.decimals)}
-      </p>
+        <p className="shrink-0 text-sm font-semibold tabular-nums">
+          {formatTokenAmount(token.balance, token.decimals)}
+        </p>
+      </Link>
     </li>
   )
 }

@@ -1,7 +1,6 @@
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
 import Types "../types";
-import UUID "../utils/UUID";
 import AccountHelper "../ledger/Account";
 import LedgerService "LedgerService";
 import TxModel "../models/Transaction";
@@ -11,8 +10,8 @@ import UserStorage "../storage/UserStorage";
 import TxStorage "../storage/TransactionStorage";
 
 module {
-  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService): DepositService {
-    { users; txs; byUser; ledger };
+  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService, nextId: () -> Text): DepositService {
+    { users; txs; byUser; ledger; nextId };
   };
 
   public type DepositService = {
@@ -20,6 +19,7 @@ module {
     txs: TxStorage.TxList;
     byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
+    nextId: () -> Text;
   };
 
   public func getDepositAddress(service: DepositService, caller: Principal): Types.ICRC1Account {
@@ -32,20 +32,23 @@ module {
 
   // Credits only the difference between the on-ledger balance and the amount
   // already recorded, so repeated calls cannot credit the same funds twice.
-  public func syncDeposits(service: DepositService, caller: Principal): async Types.ApiResult<Types.TransactionPublic> {
+  public func syncDeposits(service: DepositService, caller: Principal, ledgerId: Text): async Types.ApiResult<Types.TransactionPublic> {
+    if (not LedgerService.isAllowed(service.ledger, ledgerId)) {
+      return #err("Unsupported token ledger: " # ledgerId);
+    };
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?user) {
-        let onLedger = await LedgerService.getUserBalance(service.ledger, caller);
-        let credited = TxRepo.getTotalDepositAmount(service.byUser, user.id);
+        let onLedger = await LedgerService.getUserBalance(service.ledger, ledgerId, caller);
+        let credited = TxRepo.getTotalDepositAmount(service.byUser, user.id, ledgerId);
         if (onLedger <= credited) {
           return #err("No new deposits found");
         };
         let amount = onLedger - credited : Nat;
         let now = Time.now();
-        let id = UUID.generate();
+        let id = service.nextId();
         let account = AccountHelper.toAccountIdentifier(LedgerService.depositAccount(service.ledger, caller));
         let tx = TxRepo.create(
-          service.txs, service.byUser, id, user.id, #deposit, amount, 0,
+          service.txs, service.byUser, id, user.id, #deposit, ledgerId, amount, 0,
           account, Principal.toText(caller), null, now,
         );
         tx.complete(0, now);

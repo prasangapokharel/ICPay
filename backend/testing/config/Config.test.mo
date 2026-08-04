@@ -1,14 +1,21 @@
+import Array "mo:core/Array";
 import Debug "mo:core/Debug";
 import Config "../../src/config/Config";
 
 assert(Config.ICP_LEDGER_CANISTER_ID == "ryjl3-tyaaa-aaaaa-aaaba-cai");
 Debug.print("PASS: ICP_LEDGER_CANISTER_ID is correct");
 
-assert(Config.ICP_DECIMALS == 8);
-Debug.print("PASS: ICP_DECIMALS is 8");
+// The chain-key ledgers must always resolve, even when SNS-W is cold: an empty
+// or stale allowlist must never make ICP unspendable.
+assert(Array.contains<Text>(Config.CHAIN_KEY_LEDGERS, func(a, b) { a == b }, "ryjl3-tyaaa-aaaaa-aaaba-cai"));
+assert(Array.contains<Text>(Config.CHAIN_KEY_LEDGERS, func(a, b) { a == b }, "mxzaz-hqaaa-aaaar-qaada-cai")); // ckBTC
+assert(Array.contains<Text>(Config.CHAIN_KEY_LEDGERS, func(a, b) { a == b }, "ss2fx-dyaaa-aaaar-qacoq-cai")); // ckETH
+assert(Array.contains<Text>(Config.CHAIN_KEY_LEDGERS, func(a, b) { a == b }, "xevnm-gaaaa-aaaar-qafnq-cai")); // ckUSDC
+assert(Array.contains<Text>(Config.CHAIN_KEY_LEDGERS, func(a, b) { a == b }, "cngnf-vqaaa-aaaar-qag4q-cai")); // ckUSDT
+Debug.print("PASS: chain-key ledgers compiled into the allowlist");
 
-assert(Config.ICP_FEE == 10_000);
-Debug.print("PASS: ICP_FEE is 10_000");
+assert(Config.SNS_WASM_CANISTER_ID == "qaa6y-5yaaa-aaaaa-aaafa-cai");
+Debug.print("PASS: SNS_WASM_CANISTER_ID is the official SNS-W");
 
 assert(Config.MAX_USERNAME_LENGTH == 8);
 Debug.print("PASS: MAX_USERNAME_LENGTH is 8");

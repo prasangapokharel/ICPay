@@ -7,6 +7,7 @@ import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useRefreshWallet, useLiveBalance } from "@/hooks/use-wallet-data"
 import { transfer, type TransferMode } from "@/services/transfer/transfer"
+import { ICP_LEDGER_ID } from "@/services/tokens"
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
@@ -24,7 +25,7 @@ export default function TransferPage() {
     memo?: string,
     subaccount?: Uint8Array
   ): Promise<string | null> => {
-    const result = await transfer(identity, mode, to, amount, memo, subaccount)
+    const result = await transfer(identity, ICP_LEDGER_ID, mode, to, amount, memo, subaccount)
     if ("err" in result) return result.err
 
     refreshWallet()

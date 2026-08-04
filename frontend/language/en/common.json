@@ -262,8 +262,15 @@
     "totalDeposits": "Total Deposits",
     "totalWithdrawals": "Total Withdrawals",
     "transfers": "Transfers",
-    "noTokens": "No tokens yet. Deposits show up here automatically.",
-    "receiveOnly": "Receive only"
+    "noTokens": "No tokens yet. Deposits show up here automatically."
+  },
+  "token": {
+    "back": "Wallet",
+    "notFound": "This token could not be loaded.",
+    "send": "Send",
+    "depositTitle": "Deposit address",
+    "depositSubtitle": "Send {symbol} here to top up your wallet.",
+    "warning": "Send only {symbol} to this address. Other tokens will be lost."
   },
   "icpverse": {
     "searchPlaceholder": "Find your friends",

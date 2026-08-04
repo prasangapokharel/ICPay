@@ -1,5 +1,7 @@
 import Debug "mo:core/Debug";
 import Principal "mo:core/Principal";
+import Time "mo:core/Time";
+import Int "mo:core/Int";
 import UserStorage "../../src/storage/UserStorage";
 import AuthService "../../src/services/AuthService";
 import ReservedStorage "../../src/storage/ReservedUsernameStorage";
@@ -8,7 +10,12 @@ let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
 let reserved = ReservedStorage.createReservedUsernameSet();
-let auth = AuthService.create(users, usernames, usersById, reserved);
+var uidCounter = 0;
+func nextUid(): Text {
+  uidCounter += 1;
+  Time.now().toText() # "-" # Int.toText(uidCounter);
+};
+let auth = AuthService.create(users, usernames, usersById, reserved, nextUid);
 
 let anon = Principal.fromText("2vxsx-fae");
 switch (AuthService.login(auth, anon)) {

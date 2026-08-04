@@ -3,7 +3,6 @@ import Time "mo:core/Time";
 import Int "mo:core/Int";
 import Nat64 "mo:core/Nat64";
 import Types "../types";
-import UUID "../utils/UUID";
 import Config "../config/Config";
 import AccountHelper "../ledger/Account";
 import LedgerService "LedgerService";
@@ -17,8 +16,8 @@ import TxStorage "../storage/TransactionStorage";
 import AmountValidator "../validators/AmountValidator";
 
 module {
-  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService): WithdrawService {
-    { users; txs; byUser; ledger };
+  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService, nextId: () -> Text): WithdrawService {
+    { users; txs; byUser; ledger; nextId };
   };
 
   public type WithdrawService = {
@@ -26,21 +25,26 @@ module {
     txs: TxStorage.TxList;
     byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
+    nextId: () -> Text;
   };
 
-  public func withdraw(service: WithdrawService, caller: Principal, amount: Nat, destination: LedgerTypes.Account): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+  public func withdraw(service: WithdrawService, caller: Principal, ledgerId: Text, amount: Nat, destination: LedgerTypes.Account): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    if (not LedgerService.isAllowed(service.ledger, ledgerId)) {
+      return #err("Unsupported token ledger: " # ledgerId);
+    };
     switch (AmountValidator.validate(amount)) {
       case (?err) { return #err(err) };
       case (null) {};
     };
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?user) {
-        let fee = Config.ICP_FEE;
+        // Display only; the ledger charges its own -- see the null fee below.
+        let fee = await LedgerService.getFee(ledgerId);
         let source = LedgerService.depositAccount(service.ledger, caller);
         let now = Time.now();
-        let id = UUID.generate();
+        let id = service.nextId();
         let tx = TxRepo.create(
-          service.txs, service.byUser, id, user.id, #withdraw, amount, fee,
+          service.txs, service.byUser, id, user.id, #withdraw, ledgerId, amount, fee,
           AccountHelper.toAccountIdentifier(source), AccountHelper.toText(destination), null, now,
         );
         let now64 = Nat64.fromNat(Int.abs(now));
@@ -48,14 +52,24 @@ module {
           from_subaccount = source.subaccount;
           to = destination;
           amount;
-          fee = ?fee;
+          // The ledger applies its own fee. A withdrawal to a minting account is
+          // a burn, which requires exactly this.
+          fee = null;
           memo = null;
           created_at_time = ?now64;
         };
-        let result = await LedgerService.transfer(service.ledger, transferArgs);
+        let result = await LedgerService.transfer(ledgerId, transferArgs);
         switch (result) {
           case (#Ok(blockIdx)) {
             let blockIdx64 = Nat64.fromNat(blockIdx);
+            tx.complete(blockIdx64, now);
+            #ok({ blockIndex = blockIdx64; txId = id });
+          };
+          // A retried request can come back #Duplicate: the ledger already settled
+          // the identical transfer on the earlier attempt. That is a success --
+          // the funds moved at the returned block -- not a failure to report.
+          case (#Err(#Duplicate({ duplicate_of }))) {
+            let blockIdx64 = Nat64.fromNat(duplicate_of);
             tx.complete(blockIdx64, now);
             #ok({ blockIndex = blockIdx64; txId = id });
           };

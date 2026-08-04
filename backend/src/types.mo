@@ -40,6 +40,9 @@ module {
     id: TxId;
     userId: UserId;
     txType: TxType;
+    // Which ledger settled this. Without it every row renders as ICP and a
+    // 0.5 ckBTC send is indistinguishable from a 0.5 ICP one.
+    ledgerId: Text;
     amount: Nat;
     fee: Nat;
     from: Text;
@@ -55,6 +58,7 @@ module {
     id: TxId;
     userId: UserId;
     txType: TxType;
+    ledgerId: Text;
     amount: Nat;
     fee: Nat;
     from: Text;
@@ -156,6 +160,7 @@ module {
       id = self.id;
       userId = self.userId;
       txType = self.txType;
+      ledgerId = self.ledgerId;
       amount = self.amount;
       fee = self.fee;
       from = self.from;

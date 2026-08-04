@@ -24,7 +24,7 @@ module {
   // ledger for it forced this onto the update path, measured at 67.8M cycles
   // against 210k for the same data served as a query. The client reads the
   // balance straight from the ledger, where it is a query too.
-  public func getDashboard(service: DashboardService, caller: Principal): Types.ApiResult<Types.DashboardData> {
+  public func getDashboard(service: DashboardService, caller: Principal, ledgerId: Text): Types.ApiResult<Types.DashboardData> {
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?user) {
         let depositAccount = LedgerService.depositAccount(service.ledger, caller);
@@ -32,7 +32,7 @@ module {
           .values()
           .map<Types.Transaction, Types.TransactionPublic>(Types.txToPublic)
           .toArray();
-        let totals = TxRepo.getUserTotals(service.byUser, user.id);
+        let totals = TxRepo.getUserTotals(service.byUser, user.id, ledgerId);
         #ok({
           user = Types.userToPublic(user);
           principal = caller;

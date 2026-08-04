@@ -14,6 +14,7 @@ module {
     id: Types.TxId,
     userId: Types.UserId,
     txType: Types.TxType,
+    ledgerId: Text,
     amount: Nat,
     fee: Nat,
     from: Text,
@@ -21,7 +22,7 @@ module {
     memo: ?Text,
     now: Int,
   ): Types.Transaction {
-    let tx = TxModel.new(id, userId, txType, amount, fee, from, to, memo, now);
+    let tx = TxModel.new(id, userId, txType, ledgerId, amount, fee, from, to, memo, now);
     txs.add(tx);
     userTxs(byUser, userId).add(tx);
     tx;
@@ -125,15 +126,19 @@ module {
   // Totals are summed rather than kept as running counters because status is
   // mutated in place after creation, so a counter would need updating at every
   // complete/fail site and would drift the moment one was missed.
-  public func getUserTotals(byUser: TxStorage.TxByUser, userId: Types.UserId): { deposits: Nat; withdrawals: Nat; transfers: Nat } {
+  //
+  // Amounts are scoped to one ledger; only the transfer count spans tokens.
+  // Summing amounts across ledgers would add ckBTC satoshi to ICP e8s and call
+  // the result a balance.
+  public func getUserTotals(byUser: TxStorage.TxByUser, userId: Types.UserId, ledgerId: Text): { deposits: Nat; withdrawals: Nat; transfers: Nat } {
     var deposits = 0;
     var withdrawals = 0;
     var transfers = 0;
     for (tx in userView(byUser, userId).values()) {
       if (tx.status == #completed) {
         switch (tx.txType) {
-          case (#deposit) { deposits += tx.amount };
-          case (#withdraw) { withdrawals += tx.amount };
+          case (#deposit) { if (tx.ledgerId == ledgerId) { deposits += tx.amount } };
+          case (#withdraw) { if (tx.ledgerId == ledgerId) { withdrawals += tx.amount } };
           case (#transfer) { transfers += 1 };
           case (#fee) {};
         };
@@ -150,8 +155,21 @@ module {
     total;
   };
 
-  public func getTotalDepositAmount(byUser: TxStorage.TxByUser, userId: Types.UserId): Nat {
-    sumAmount(byUser, userId, #deposit);
+  // Deposit sync compares this against one ledger's balance, so it must count
+  // only that ledger's rows. Summing across tokens would measure an ICP balance
+  // against an ICP-plus-ckBTC total and credit the difference as a deposit.
+  func sumAmountOnLedger(byUser: TxStorage.TxByUser, userId: Types.UserId, txType: Types.TxType, ledgerId: Text): Nat {
+    var total = 0;
+    for (tx in userView(byUser, userId).values()) {
+      if (tx.txType == txType and tx.status == #completed and tx.ledgerId == ledgerId) {
+        total += tx.amount;
+      };
+    };
+    total;
+  };
+
+  public func getTotalDepositAmount(byUser: TxStorage.TxByUser, userId: Types.UserId, ledgerId: Text): Nat {
+    sumAmountOnLedger(byUser, userId, #deposit, ledgerId);
   };
 
   public func getTotalWithdrawalAmount(byUser: TxStorage.TxByUser, userId: Types.UserId): Nat {
