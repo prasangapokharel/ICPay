@@ -1,8 +1,10 @@
 # Local tooling and operating-system files
-.agents/
 .opencode/
 .cursor/
 .windsurf/
+# Points at itself, so it resolves to nothing. The real skill lives in the
+# global ~/.claude/skills/ and is not part of this repo.
+frontend/.agents/skills/vercel-react-best-practices
 # Anchored to the root: these are the per-machine agent instruction files. The
 # leading slash matters -- unanchored, they would also swallow .claude/AGENTS.md
 # and frontend/AGENTS.md, which are committed on purpose.
