@@ -89,10 +89,19 @@ module {
   // round (~3.5s measured) to compute an answer the transfer already gives back.
   // It was also racy -- the balance can change between the read and the transfer,
   // so passing the check never guaranteed the transfer would succeed.
-  func resolveSender(service: TransferService, caller: Principal): Types.ApiResult<{ userId: Types.UserId; source: LedgerTypes.Account }> {
+  func resolveSender(service: TransferService, caller: Principal): Types.ApiResult<{ userId: Types.UserId; source: LedgerTypes.Account; senderName: Text }> {
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?sender) {
-        #ok({ userId = sender.id; source = LedgerService.depositAccount(service.ledger, caller) });
+        let source = LedgerService.depositAccount(service.ledger, caller);
+        // What the recipient sees in their "from" column. Their row used to carry
+        // the sender's account identifier, which is correct but unreadable -- a
+        // handle is the same account said in a way they can act on. Senders with
+        // no username still fall back to the identifier.
+        let senderName = switch (sender.username) {
+          case (?name) { "@" # name };
+          case (null) { AccountHelper.toAccountIdentifier(source) };
+        };
+        #ok({ userId = sender.id; source; senderName });
       };
       case (null) { #err("User not found") };
     };
@@ -113,7 +122,7 @@ module {
     let toBlob = Helpers.hexToBlob(accountIdHex);
     switch (resolveSender(service, caller)) {
       case (#err(e)) { #err(e) };
-      case (#ok({ userId; source })) {
+      case (#ok({ userId; source; senderName })) {
         let fee = Config.ICP_FEE;
         let now = Time.now();
         let id = UUID.generate();
@@ -143,7 +152,7 @@ module {
                 if (recipient.principal != caller) {
                   let rx = TxRepo.create(
                     service.txs, service.byUser, UUID.generate(), recipient.id, #deposit, amount, 0,
-                    fromLabel, accountIdHex, memo, now,
+                    senderName, accountIdHex, memo, now,
                   );
                   rx.complete(blockIdx, now);
                 };
@@ -167,7 +176,7 @@ module {
     };
     switch (resolveSender(service, caller)) {
       case (#err(e)) { #err(e) };
-      case (#ok({ userId; source })) {
+      case (#ok({ userId; source; senderName })) {
         let fee = Config.ICP_FEE;
         let now = Time.now();
         let id = UUID.generate();
@@ -194,7 +203,7 @@ module {
           case (#Ok(blockIdx)) {
             let blockIdx64 = Nat64.fromNat(blockIdx);
             tx.complete(blockIdx64, now);
-            creditRecipient(service, caller, destination, amount, fromLabel, memo, blockIdx64, now);
+            creditRecipient(service, caller, destination, amount, senderName, memo, blockIdx64, now);
             #ok({ blockIndex = blockIdx64; txId = id });
           };
           case (#Err(e)) {
@@ -215,7 +224,7 @@ module {
     sender: Principal,
     destination: LedgerTypes.Account,
     amount: Nat,
-    fromLabel: Text,
+    senderLabel: Text,
     memo: ?Text,
     blockIndex: Nat64,
     now: Int,
@@ -226,7 +235,7 @@ module {
         if (recipient.principal == sender) { return };
         let rx = TxRepo.create(
           service.txs, service.byUser, UUID.generate(), recipient.id, #deposit, amount, 0,
-          fromLabel, AccountHelper.toAccountIdentifier(destination), memo, now,
+          senderLabel, AccountHelper.toAccountIdentifier(destination), memo, now,
         );
         rx.complete(blockIndex, now);
       };
