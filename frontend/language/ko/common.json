@@ -270,7 +270,8 @@
     "searchResults": "검색 결과",
     "suggested": "추천",
     "noneFound": "“{query}”에 대한 검색 결과가 없습니다.",
-    "empty": "아직 사용자 이름을 등록한 계정이 없습니다. 첫 번째가 되어 보세요."
+    "empty": "아직 사용자 이름을 등록한 계정이 없습니다. 첫 번째가 되어 보세요.",
+    "premium": "인증된 프리미엄 핸들"
   },
   "success": {
     "send": "송금 완료",
@@ -374,12 +375,14 @@
     "onlyIcp": "이 주소로는 ICP만 보내세요. 다른 토큰은 잃게 됩니다.",
     "unclaimed": "아직 이 사용자 이름을 보유한 사람이 없어 송금할 대상이 없습니다.",
     "claim": "@{name} 등록",
-    "footerTagline": "사용자 이름으로 ICP 보내기"
+    "footerTagline": "사용자 이름으로 ICP 보내기",
+    "premium": "인증된 프리미엄 핸들"
   },
   "profileView": {
     "notFound": "@{name}의 ICPay 계정을 찾을 수 없습니다.",
     "copyPrincipal": "Principal 복사",
     "tip": "팁",
-    "viewProfile": "@{name}님의 프로필 보기"
+    "viewProfile": "@{name}님의 프로필 보기",
+    "premium": "인증된 프리미엄 핸들"
   }
 }

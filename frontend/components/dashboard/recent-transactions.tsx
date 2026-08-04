@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
+import { ArrowRight01Icon, InboxIcon, Message01Icon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
 import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, shortenCounterparty } from "@/lib/wallet-utils"
 import { cn } from "@/lib/utils"
@@ -72,6 +72,8 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   // Only a username resolves to an ICPverse profile; a raw principal or account
   // identifier has no page to open.
   const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
+  // 3-4 char handles are the rarest premium tier the sale issues.
+  const verified = !!handle && handle.length >= 3 && handle.length <= 4
 
   return (
     <li className="flex items-center gap-3 px-4 py-3.5">
@@ -98,8 +100,15 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
       )}
 
       <div className="min-w-0 flex-1">
-        <p className={cn("truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
+        <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
           {shortenCounterparty(counterparty)}
+          {verified && (
+            <HugeiconsIcon
+              icon={BadgeCheckIcon}
+              className="size-3.5 shrink-0 text-blue-500"
+              aria-label={tp("premium")}
+            />
+          )}
         </p>
         <p className="mt-0.5 text-xs text-muted-foreground/80">
           <span>{t(`type.${type}`)}</span> · {formatTime(tx.createdAt)}

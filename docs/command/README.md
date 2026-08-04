@@ -77,12 +77,29 @@ npm run ci backend:rollback f6f3c43 0xd8f923ac...
 
 | Command | What it does |
 |---|---|
-| `npm run ci cycles:balance [canister]` | Cycles remaining. |
-| `npm run ci cycles:topup <amount> [canister]` | Deposit cycles. Spends real cycles from your identity's wallet. |
+| `npm run ci cycles:balance [canister]` | Cycles remaining, idle burn, and runway in days. |
+| `npm run ci cycles:address` | The ledger account to send ICP to, and its balance. |
+| `npm run ci cycles:convert <icp>` | Burn ICP into cycles on the cycles ledger. |
+| `npm run ci cycles:topup <cycles> [canister]` | Move cycles from the cycles ledger into the canister. |
+
+Topping up is two steps because minting and depositing are separate:
+
+```bash
+npm run ci cycles:address        # send ICP here
+npm run ci cycles:convert 1      # ICP -> cycles, on the cycles ledger
+npm run ci cycles:topup 1500000000000
+```
+
+There is no cycles wallet canister for this identity, so `dfx canister
+deposit-cycles` does not work — the cycles ledger is the path.
 
 Queries are **not billed** on the IC. Only update calls and idle burn
 (~45k cycles/second) cost anything, so a balance that drifts down while nothing
 is happening is normal.
+
+`cycles:balance` reports runway above the **freezing threshold**, not the raw
+balance: 30 days of idle burn is reserved, and the canister stops accepting
+update calls once it falls into that reserve.
 
 ## Inspecting the canister
 

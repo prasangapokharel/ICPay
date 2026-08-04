@@ -2,7 +2,7 @@
 
 import { HugeiconsIcon } from "@hugeicons/react"
 import { useTranslations } from "next-intl"
-import { GiftIcon } from "@hugeicons/core-free-icons"
+import { GiftIcon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
 import { avatarUriFor } from "@/lib/avatar"
@@ -21,6 +21,10 @@ export function RecipientCard({
   principal?: string | null
   className?: string
 }) {
+  const tp = useTranslations("profileView")
+  // 3-4 char handles are the rarest premium tier the sale issues.
+  const verified = username.length >= 3 && username.length <= 4
+
   return (
     <div
       className={cn(
@@ -35,7 +39,16 @@ export function RecipientCard({
         </AvatarFallback>
       </Avatar>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold">@{username}</p>
+        <p className="flex items-center gap-1 truncate text-sm font-semibold">
+          {username}
+          {verified && (
+            <HugeiconsIcon
+              icon={BadgeCheckIcon}
+              className="size-4 shrink-0 text-blue-500"
+              aria-label={tp("premium")}
+            />
+          )}
+        </p>
         {principal && (
           <p className="truncate font-mono text-xs text-muted-foreground">
             {shortPrincipal(principal)}

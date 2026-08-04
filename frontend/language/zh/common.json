@@ -270,7 +270,8 @@
     "searchResults": "搜索结果",
     "suggested": "为您推荐",
     "noneFound": "未找到与“{query}”相关的用户。",
-    "empty": "暂无设置用户名的账户，快来抢先注册。"
+    "empty": "暂无设置用户名的账户，快来抢先注册。",
+    "premium": "已验证的高级名称"
   },
   "success": {
     "send": "发送成功",
@@ -374,12 +375,14 @@
     "onlyIcp": "请仅向此地址转入 ICP，其他代币将会丢失。",
     "unclaimed": "该用户名尚无人持有，因此无法向其转账。",
     "claim": "领取 @{name}",
-    "footerTagline": "通过用户名发送 ICP"
+    "footerTagline": "通过用户名发送 ICP",
+    "premium": "已验证的高级名称"
   },
   "profileView": {
     "notFound": "未找到 @{name} 的 ICPay 账户。",
     "copyPrincipal": "复制 principal",
     "tip": "打赏",
-    "viewProfile": "查看 @{name} 的资料"
+    "viewProfile": "查看 @{name} 的资料",
+    "premium": "已验证的高级名称"
   }
 }

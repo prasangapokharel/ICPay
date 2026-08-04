@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Search01Icon, ArrowRight01Icon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { useUserSearch } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
@@ -21,6 +21,14 @@ export default function IcpversePage() {
   const { users, isLoading } = useUserSearch(debounced, 10)
 
   const searching = debounced.trim().length > 0
+
+  // Premium (3-4 char) handles lead the list: they are the rarest tier the
+  // username sale issues, so the verified accounts surface before the rest.
+  const sorted = [...users].sort((a, b) => {
+    const pa = isPremiumHandle(a.username[0] ?? "") ? 0 : 1
+    const pb = isPremiumHandle(b.username[0] ?? "") ? 0 : 1
+    return pa - pb
+  })
 
   return (
     <div className="space-y-5 pt-2">
@@ -51,7 +59,7 @@ export default function IcpversePage() {
             {searching ? t("noneFound", { query: debounced.trim() }) : t("empty")}
           </p>
         ) : (
-          users.map((u) => {
+          sorted.map((u) => {
             const name = u.username[0]!
             return (
               <Link
@@ -66,7 +74,18 @@ export default function IcpversePage() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold">@{name}</p>
+                  <p className="flex items-center gap-1 truncate text-sm font-semibold">
+                    {name}
+                    {/* Short handles are premium: 3-4 chars are the rarest tier
+                        the username sale issues, so they carry the verified badge. */}
+                    {isPremiumHandle(name) && (
+                      <HugeiconsIcon
+                        icon={BadgeCheckIcon}
+                        className="size-4 shrink-0 text-blue-500"
+                        aria-label={t("premium")}
+                      />
+                    )}
+                  </p>
                   {u.displayName && (
                     <p className="truncate text-xs text-muted-foreground">
                       {u.displayName}
@@ -84,6 +103,12 @@ export default function IcpversePage() {
       </section>
     </div>
   )
+}
+
+// 3-4 chars is the premium tier the username sale issues; the verified badge
+// and the suggestion ordering both key off it.
+function isPremiumHandle(name: string): boolean {
+  return name.length >= 3 && name.length <= 4
 }
 
 function UserListSkeleton() {

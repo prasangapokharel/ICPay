@@ -16,6 +16,7 @@ import {
   Copy01Icon,
   CheckmarkCircle01Icon,
   GiftIcon,
+  BadgeCheckIcon,
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
@@ -109,7 +110,17 @@ export function ProfileView() {
           </AvatarFallback>
         </Avatar>
 
-        <h1 className="pt-4 text-2xl font-bold">@{username}</h1>
+        <h1 className="flex items-center gap-1.5 pt-4 text-2xl font-bold">
+          {username}
+          {/* 3-4 char handles are the rarest premium tier the sale issues. */}
+          {username.length >= 3 && username.length <= 4 && (
+            <HugeiconsIcon
+              icon={BadgeCheckIcon}
+              className="size-5 shrink-0 text-blue-500"
+              aria-label={t("premium")}
+            />
+          )}
+        </h1>
 
         <button
           type="button"

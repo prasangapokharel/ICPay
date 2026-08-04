@@ -270,7 +270,8 @@
     "searchResults": "Résultats de recherche",
     "suggested": "Suggestions pour vous",
     "noneFound": "Aucun résultat pour “{query}”.",
-    "empty": "Aucun compte avec nom d'utilisateur. Soyez le premier."
+    "empty": "Aucun compte avec nom d'utilisateur. Soyez le premier.",
+    "premium": "Identifiant premium vérifié"
   },
   "success": {
     "send": "Envoi réussi",
@@ -374,12 +375,14 @@
     "onlyIcp": "N'envoyez que des ICP à cette adresse. Les autres jetons seront perdus.",
     "unclaimed": "Personne ne détient encore ce nom d'utilisateur, il n'y a donc nulle part où envoyer des fonds.",
     "claim": "Réserver @{name}",
-    "footerTagline": "Envoyez des ICP par nom d'utilisateur"
+    "footerTagline": "Envoyez des ICP par nom d'utilisateur",
+    "premium": "Identifiant premium vérifié"
   },
   "profileView": {
     "notFound": "Aucun compte ICPay trouvé pour @{name}.",
     "copyPrincipal": "Copier le principal",
     "tip": "Pourboire",
-    "viewProfile": "Voir le profil de @{name}"
+    "viewProfile": "Voir le profil de @{name}",
+    "premium": "Identifiant premium vérifié"
   }
 }

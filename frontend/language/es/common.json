@@ -270,7 +270,8 @@
     "searchResults": "Resultados de búsqueda",
     "suggested": "Sugerencias para ti",
     "noneFound": "No se encontró a nadie para “{query}”.",
-    "empty": "Aún no hay cuentas con nombre de usuario. Sé el primero."
+    "empty": "Aún no hay cuentas con nombre de usuario. Sé el primero.",
+    "premium": "Identificador premium verificado"
   },
   "success": {
     "send": "Envío correcto",
@@ -374,12 +375,14 @@
     "onlyIcp": "Envía solo ICP a esta dirección. Otros tokens se perderán.",
     "unclaimed": "Nadie tiene este nombre de usuario todavía, así que no hay adónde enviar fondos.",
     "claim": "Reclamar @{name}",
-    "footerTagline": "Envía ICP por nombre de usuario"
+    "footerTagline": "Envía ICP por nombre de usuario",
+    "premium": "Identificador premium verificado"
   },
   "profileView": {
     "notFound": "No hay cuenta de ICPay para @{name}.",
     "copyPrincipal": "Copiar principal",
     "tip": "Propina",
-    "viewProfile": "Ver el perfil de @{name}"
+    "viewProfile": "Ver el perfil de @{name}",
+    "premium": "Identificador premium verificado"
   }
 }

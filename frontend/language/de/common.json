@@ -270,7 +270,8 @@
     "searchResults": "Suchergebnisse",
     "suggested": "Für dich vorgeschlagen",
     "noneFound": "Niemand gefunden für “{query}”.",
-    "empty": "Noch keine Konten mit Benutzernamen. Sei der Erste."
+    "empty": "Noch keine Konten mit Benutzernamen. Sei der Erste.",
+    "premium": "Verifizierter Premium-Handle"
   },
   "success": {
     "send": "Erfolgreich gesendet",
@@ -374,12 +375,14 @@
     "onlyIcp": "Sende nur ICP an diese Adresse. Andere Token gehen verloren.",
     "unclaimed": "Diesen Benutzernamen hat noch niemand, daher gibt es kein Ziel für Zahlungen.",
     "claim": "@{name} sichern",
-    "footerTagline": "ICP per Benutzernamen senden"
+    "footerTagline": "ICP per Benutzernamen senden",
+    "premium": "Verifizierter Premium-Handle"
   },
   "profileView": {
     "notFound": "Kein ICPay-Konto für @{name} gefunden.",
     "copyPrincipal": "Principal kopieren",
     "tip": "Trinkgeld",
-    "viewProfile": "Profil von @{name} ansehen"
+    "viewProfile": "Profil von @{name} ansehen",
+    "premium": "Verifizierter Premium-Handle"
   }
 }
