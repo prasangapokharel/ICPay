@@ -66,10 +66,12 @@ installing.
 
 Stating these plainly is more useful than a clean-looking list.
 
-**Single controller.** The canister currently has one controller key. Whoever
-holds it can upgrade the code — including to code that moves user funds — or
-delete the canister outright. There is no multi-signature requirement and no
-timelock. This is the largest risk in the project and it is not a code problem.
+**Controllers are individually trusted.** Any single controller can upgrade the
+code — including to code that moves user funds — or delete the canister
+outright. There is no multi-signature requirement and no timelock. Adding
+controllers is redundancy against *losing* access, not protection against a key
+being *stolen*: more controllers means more keys that each have full power.
+Reducing that is Phase 6 below.
 
 **Custodial by design.** Users do not hold keys to their funds. A compromise of
 the controller is a compromise of every balance. Non-custodial mode is not on
@@ -93,7 +95,8 @@ Reducing controller risk is **Phase 6** of the roadmap:
 - A published incident policy and a private disclosure channel
 
 Until that lands, the honest description is: **funds are as safe as the
-operator's key.**
+operator's keys.** Redundancy against key *loss* is in place (see below);
+protection against key *theft* is not.
 
 ## Operating safely
 
@@ -124,31 +127,31 @@ Record the key's SHA-256 separately. A backup you have never restored is not a
 backup — verify that decrypting reproduces the same checksum, and that importing
 yields the expected principal.
 
-### Add a second controller
+### Add a recovery controller
 
-A single controller means losing one machine loses the canister permanently.
-Adding a second on **separate hardware** removes that single point of failure.
+A single controller means losing one machine loses the canister permanently. No
+one can restore it — not the node providers, not the NNS. Adding a second
+controller is the single highest-value thing an operator can do.
 
-On the second machine:
+The obvious approach is a `dfx` identity on a second machine. But if you only
+have one machine, a second key on the same disk dies with the first and protects
+against nothing.
 
-```bash
-dfx identity new backup-controller --storage-mode password-protected
-dfx identity use backup-controller
-dfx identity get-principal
-```
+**Use an Internet Identity principal instead.** Its key lives in a passkey on a
+phone or hardware security key — already separate hardware, reachable from any
+browser. On [nns.ic0.app](https://nns.ic0.app), log in and copy the principal
+shown under your account.
 
-The principal it prints is public and safe to share.
-
-On the machine that already controls the canister:
+Then, from the machine that already controls the canister:
 
 ```bash
 export DFX_WARNING=-mainnet_plaintext_identity
 
 dfx canister --network ic update-settings <backend-canister-id> \
-  --add-controller <BACKUP_PRINCIPAL>
+  --add-controller <RECOVERY_PRINCIPAL>
 
 dfx canister --network ic update-settings <frontend-canister-id> \
-  --add-controller <BACKUP_PRINCIPAL>
+  --add-controller <RECOVERY_PRINCIPAL>
 ```
 
 Do **both** canisters. Adding only the backend leaves you unable to ship the
@@ -164,27 +167,50 @@ Verify:
 dfx canister --network ic info <canister-id>
 ```
 
-Both principals must be listed. Then prove the backup genuinely works, from the
-second machine:
+Both principals must be listed. Also confirm the original key still works, which
+proves the list was appended to rather than replaced:
 
 ```bash
-dfx identity use backup-controller
 dfx canister --network ic status <canister-id>
 ```
 
-`status` is a controller-only call. If it returns, that key has real control. If
-it errors, fix it now — while the working key still exists.
+`status` is a controller-only call. If it returns, that key has real control.
 
-Two controllers is redundancy against **loss**, not against **theft**: both keys
-have full power. If one is suspected compromised, remove it from the other
-machine:
+Finally, in the NNS dapp use **Link Canister** and enter each canister ID. This
+only works for canisters you already control, so it must come *after* the `dfx`
+step — and it is the real end-to-end proof that the IC accepts the new
+controller, stronger than reading it back locally.
+
+### What a recovery controller can and cannot do
+
+| | NNS dapp | `dfx` |
+|---|---|---|
+| Add / remove controllers | yes | yes |
+| Top up cycles | yes | yes |
+| Status, stop / start | yes | yes |
+| **Install or upgrade WASM** | **no** | yes |
+
+It is a **recovery** controller, not an operating one. After losing the primary
+machine, the path back is: log into the NNS dapp, add a fresh `dfx` principal
+from the new machine, resume deploying. Two steps — but never zero.
+
+### Recovery keys need their own recovery
+
+An Internet Identity anchor with a single passkey on a single phone just moves
+the single point of failure. Add a recovery phrase to the anchor, write it on
+paper, and store it apart from every device that holds a controller key. That
+paper is the real root of trust.
+
+### Removing a controller
+
+More controllers is redundancy against **loss**, not against **theft** — every
+controller has full power. If one is suspected compromised, remove it from a key
+you have already verified:
 
 ```bash
 dfx canister --network ic update-settings <canister-id> \
   --remove-controller <COMPROMISED_PRINCIPAL>
 ```
-
-Only do that from a key you have already verified.
 
 ### Cycles
 

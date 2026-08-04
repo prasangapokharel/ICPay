@@ -45,6 +45,9 @@ AMM. Do not propose building one.
 **Phase 6 — Decentralizing custody.** Move the controller to an SNS- or
 NNS-controlled canister. Reproducible Docker builds, third-party audit,
 `SECURITY.md` with a private disclosure channel, published incident policy.
+Partially mitigated already: both canisters now have redundant recovery
+controllers, so key *loss* no longer means losing the canister. Key *theft* is
+still unmitigated — that is what this phase is for. See `docs/security/guide.md`.
 
 **Phase 7 — Merchants and payments.** Merchant accounts with a verification
 badge; signed, expiring, single-use payment requests; checkout page; webhook
