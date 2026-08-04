@@ -262,7 +262,8 @@
     "totalDeposits": "Einzahlungen gesamt",
     "totalWithdrawals": "Auszahlungen gesamt",
     "transfers": "Überweisungen",
-    "noTokens": "Noch keine Token. Einzahlungen erscheinen hier automatisch."
+    "noTokens": "Noch keine Token. Einzahlungen erscheinen hier automatisch.",
+    "selfCustodyNotice": "Sie halten Guthaben außerhalb von ICPay. Öffnen Sie den Token, um es zu verschieben."
   },
   "token": {
     "back": "Wallet",
@@ -273,7 +274,15 @@
     "warning": "Sende nur {symbol} an diese Adresse. Andere Token gehen verloren.",
     "owner": "Eigentümer (Canister)",
     "subaccount": "Ihr Unterkonto",
-    "breakdownHint": "Beide Teile sind erforderlich. Verwenden Sie immer die vollständige Adresse oben — eine Sendung nur an das Owner-Principal wird Ihrer Wallet nicht gutgeschrieben."
+    "breakdownHint": "Beide Teile sind erforderlich. Verwenden Sie immer die vollständige Adresse oben — eine Sendung nur an das Owner-Principal wird Ihrer Wallet nicht gutgeschrieben.",
+    "selfCustodyTitle": "Außerhalb von ICPay gehalten",
+    "selfCustodyBody": "{amount} {symbol} wurden an Ihr Principal statt an Ihre ICPay-Einzahlungsadresse gesendet und sind daher noch nicht in Ihrer Wallet.",
+    "selfCustodyMove": "Zu ICPay verschieben",
+    "selfCustodyMoving": "Wird verschoben…",
+    "selfCustodyMoved": "In Ihre Wallet verschoben.",
+    "selfCustodyNet": "Sie erhalten",
+    "selfCustodyDust": "Der Betrag liegt unter der {symbol}-Netzwerkgebühr und kann nicht verschoben werden.",
+    "selfCustodyEmpty": "Nichts zu verschieben — dieser Token wurde nicht an Ihr Principal gesendet."
   },
   "icpverse": {
     "searchPlaceholder": "Finde deine Freunde",

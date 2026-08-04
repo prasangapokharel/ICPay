@@ -262,7 +262,8 @@
     "totalDeposits": "Total de depósitos",
     "totalWithdrawals": "Total de saques",
     "transfers": "Transferências",
-    "noTokens": "Nenhum token ainda. Os depósitos aparecem aqui automaticamente."
+    "noTokens": "Nenhum token ainda. Os depósitos aparecem aqui automaticamente.",
+    "selfCustodyNotice": "Tem fundos fora do ICPay. Abra o token para os mover."
   },
   "token": {
     "back": "Carteira",
@@ -273,7 +274,15 @@
     "warning": "Envie apenas {symbol} para este endereço. Outros tokens serão perdidos.",
     "owner": "Proprietário (canister)",
     "subaccount": "Sua subconta",
-    "breakdownHint": "Ambas as partes são necessárias. Use sempre o endereço completo acima — enviar apenas para o principal do proprietário não creditará sua carteira."
+    "breakdownHint": "Ambas as partes são necessárias. Use sempre o endereço completo acima — enviar apenas para o principal do proprietário não creditará sua carteira.",
+    "selfCustodyTitle": "Mantido fora do ICPay",
+    "selfCustodyBody": "{amount} {symbol} foram enviados para o seu principal em vez do seu endereço de depósito do ICPay, por isso ainda não estão na sua carteira.",
+    "selfCustodyMove": "Mover para o ICPay",
+    "selfCustodyMoving": "A mover…",
+    "selfCustodyMoved": "Movido para a sua carteira.",
+    "selfCustodyNet": "Você recebe",
+    "selfCustodyDust": "É inferior à taxa de rede {symbol}, por isso não pode ser movido.",
+    "selfCustodyEmpty": "Nada para mover — este token não foi enviado para o seu principal."
   },
   "icpverse": {
     "searchPlaceholder": "Encontre seus amigos",

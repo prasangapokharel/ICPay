@@ -11,7 +11,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, Alert02Icon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { copyText, formatTokenAmount } from "@/lib/wallet-utils"
 import { icrc1Account, toHex } from "@/lib/account-id"
-import { useTokenHolding, useDepositAddress } from "@/hooks/use-wallet-data"
+import { useTokenHolding, useDepositAddress, useSelfCustodyBalance } from "@/hooks/use-wallet-data"
+import { SelfCustodyCard } from "@/components/wallet/self-custody-card"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 
 export function TokenView() {
@@ -28,6 +29,7 @@ export function TokenView() {
 
   const { token, isLoading } = useTokenHolding(ledgerId || null)
   const { data: deposit } = useDepositAddress()
+  const selfCustody = useSelfCustodyBalance(ledgerId || null)
 
   // An empty id means the mid-transition frame described above, so the skeleton
   // is held rather than asserting the token does not exist.
@@ -113,6 +115,12 @@ export function TokenView() {
           <HugeiconsIcon icon={Alert02Icon} className="mt-px size-3.5 shrink-0" />
           {t("warning", { symbol: token.symbol })}
         </p>
+
+        {/* Rendered even at zero: a card that only appears when funds are stranded
+            is indistinguishable from a broken one the rest of the time. */}
+        {selfCustody !== undefined && (
+          <SelfCustodyCard token={token} balance={selfCustody} />
+        )}
       </div>
     </div>
   )

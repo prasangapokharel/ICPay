@@ -5,8 +5,14 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Money01Icon } from "@hugeicons/core-free-icons"
 import { formatAmount, formatE8s } from "@/lib/wallet-utils"
-import { useDashboard, useTokenHoldings, useLiveBalance } from "@/hooks/use-wallet-data"
+import {
+  useDashboard,
+  useTokenHoldings,
+  useLiveBalance,
+  useSelfCustodyPinned,
+} from "@/hooks/use-wallet-data"
 import { TokenList } from "@/components/wallet/token-list"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function WalletPage() {
   const t = useTranslations("wallet")
@@ -15,6 +21,13 @@ export default function WalletPage() {
   // ~6.6s update call, and it already ran on the page the user came from.
   const { data, isLoading } = useDashboard()
   const { holdings, isLoading: holdingsLoading } = useTokenHoldings()
+  const selfCustody = useSelfCustodyPinned()
+
+  // Only worth flagging when the amount actually exceeds the fee, since anything
+  // below it cannot be moved and the notice would be a dead end.
+  const hasOutside = holdings.some(
+    (h) => (selfCustody?.get(h.ledgerId) ?? 0n) > h.fee
+  )
   const liveBalance = useLiveBalance()
 
   if (isLoading && !data) return <div className="flex justify-center py-12"><p className="text-muted-foreground">{tc("loading")}</p></div>
@@ -42,7 +55,12 @@ export default function WalletPage() {
         <CardHeader>
           <CardTitle className="text-sm font-medium">{t("tokens")}</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
+          {hasOutside && (
+            <Alert>
+              <AlertDescription>{t("selfCustodyNotice")}</AlertDescription>
+            </Alert>
+          )}
           <TokenList holdings={holdings} isLoading={holdingsLoading} />
         </CardContent>
       </Card>

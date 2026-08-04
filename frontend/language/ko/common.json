@@ -262,7 +262,8 @@
     "totalDeposits": "총 입금액",
     "totalWithdrawals": "총 출금액",
     "transfers": "송금",
-    "noTokens": "아직 토큰이 없습니다. 입금하면 여기에 자동으로 표시됩니다."
+    "noTokens": "아직 토큰이 없습니다. 입금하면 여기에 자동으로 표시됩니다.",
+    "selfCustodyNotice": "ICPay 외부에 자금이 있습니다. 토큰을 열어 옮기세요."
   },
   "token": {
     "back": "지갑",
@@ -273,7 +274,15 @@
     "warning": "이 주소로는 {symbol}만 보내세요. 다른 토큰은 잃게 됩니다.",
     "owner": "소유자 (캐니스터)",
     "subaccount": "내 서브계정",
-    "breakdownHint": "두 부분 모두 필요합니다. 항상 위의 전체 주소를 사용하세요 — 소유자 principal로만 보내면 지갑에 입금되지 않습니다."
+    "breakdownHint": "두 부분 모두 필요합니다. 항상 위의 전체 주소를 사용하세요 — 소유자 principal로만 보내면 지갑에 입금되지 않습니다.",
+    "selfCustodyTitle": "ICPay 외부 보유",
+    "selfCustodyBody": "{amount} {symbol}이(가) ICPay 입금 주소가 아닌 사용자 principal로 전송되어 아직 지갑에 없습니다.",
+    "selfCustodyMove": "ICPay로 옮기기",
+    "selfCustodyMoving": "이동 중…",
+    "selfCustodyMoved": "지갑으로 옮겼습니다.",
+    "selfCustodyNet": "받는 금액",
+    "selfCustodyDust": "{symbol} 네트워크 수수료보다 적어 옮길 수 없습니다.",
+    "selfCustodyEmpty": "옮길 항목이 없습니다 — 이 토큰은 사용자 principal로 전송되지 않았습니다."
   },
   "icpverse": {
     "searchPlaceholder": "친구 찾기",

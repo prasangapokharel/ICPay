@@ -116,14 +116,19 @@ export async function listLedgerIds(identity?: Identity): Promise<string[]> {
 // reject the call, so a failure maps to zero rather than failing the sweep.
 // Zero balances are kept in the map, because the caller shows the pinned tokens
 // whether or not they are held.
+// An undefined subaccount reads the owner's own default account, which is where
+// funds land when a sender drops the subaccount suffix from the deposit address.
 export async function fetchBalances(
   ledgerIds: string[],
   owner: Principal,
-  subaccount: Uint8Array,
+  subaccount: Uint8Array | undefined,
   identity?: Identity
 ): Promise<Map<string, bigint>> {
   const agent = await createAgent(identity)
-  const account = { owner, subaccount: [Array.from(subaccount)] as [number[]] }
+  const account = {
+    owner,
+    subaccount: (subaccount ? [Array.from(subaccount)] : []) as [] | [number[]],
+  }
 
   const entries = await Promise.all(
     ledgerIds.map(async (ledgerId): Promise<[string, bigint]> => {

@@ -262,7 +262,8 @@
     "totalDeposits": "Total des dépôts",
     "totalWithdrawals": "Total des retraits",
     "transfers": "Transferts",
-    "noTokens": "Aucun jeton pour l'instant. Les dépôts apparaissent ici automatiquement."
+    "noTokens": "Aucun jeton pour l'instant. Les dépôts apparaissent ici automatiquement.",
+    "selfCustodyNotice": "Vous détenez des fonds hors d'ICPay. Ouvrez le jeton pour les transférer."
   },
   "token": {
     "back": "Portefeuille",
@@ -273,7 +274,15 @@
     "warning": "N'envoyez que des {symbol} à cette adresse. Les autres jetons seront perdus.",
     "owner": "Propriétaire (canister)",
     "subaccount": "Votre sous-compte",
-    "breakdownHint": "Les deux parties sont requises. Utilisez toujours l'adresse complète ci-dessus : envoyer uniquement au principal du propriétaire ne créditera pas votre portefeuille."
+    "breakdownHint": "Les deux parties sont requises. Utilisez toujours l'adresse complète ci-dessus : envoyer uniquement au principal du propriétaire ne créditera pas votre portefeuille.",
+    "selfCustodyTitle": "Détenu hors d'ICPay",
+    "selfCustodyBody": "{amount} {symbol} ont été envoyés à votre principal au lieu de votre adresse de dépôt ICPay, ils ne sont donc pas encore dans votre portefeuille.",
+    "selfCustodyMove": "Transférer vers ICPay",
+    "selfCustodyMoving": "Transfert…",
+    "selfCustodyMoved": "Transféré vers votre portefeuille.",
+    "selfCustodyNet": "Vous recevrez",
+    "selfCustodyDust": "Ce montant est inférieur aux frais de réseau {symbol} et ne peut pas être transféré.",
+    "selfCustodyEmpty": "Rien à transférer — ce jeton n'a pas été envoyé à votre principal."
   },
   "icpverse": {
     "searchPlaceholder": "Trouvez vos amis",
