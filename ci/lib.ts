@@ -74,7 +74,15 @@ export function confirm(action: string): void {
     console.error(`Refusing to ${action} without an interactive terminal.`)
     process.exit(1)
   }
-  const answer = capture("bash", ["-c", `read -r -p "About to ${action}. Type yes: " a; echo "$a"`])
+  // Reads and prompts through /dev/tty rather than stdin, because capture()
+  // spawns with piped stdio: `read` would hit EOF immediately, return empty and
+  // abort every deploy. stderr is redirected too -- `read -p` writes its prompt
+  // there, so without it the prompt is captured and the process waits silently
+  // on what looks like a hang. Only the answer goes to stdout, to be captured.
+  const answer = capture("bash", [
+    "-c",
+    `read -r -p "About to ${action}. Type yes: " a < /dev/tty 2> /dev/tty; echo "$a"`,
+  ])
   if (answer !== "yes") {
     console.log("Aborted.")
     process.exit(1)
