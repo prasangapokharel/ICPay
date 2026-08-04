@@ -101,9 +101,10 @@ existing comments are the reference — match them.
 
 ## Things that will burn you
 
-**`.claude/` is gitignored.** So is `docs/*`, which then re-includes specific
-paths with `!` lines. A new doc under `docs/` is silently ignored by git unless
-you add its own negation line to `.gitignore`.
+**`docs/*` is gitignored**, then re-includes specific paths with `!` lines. A new
+doc under `docs/` is silently ignored by git unless you add its own negation
+line to `.gitignore`. `.claude/` itself is committed on purpose — only
+`.claude/settings.local.json` is ignored.
 
 **`NEXT_PUBLIC_DERIVATION_ORIGIN` must never change.** It is permanently
 `https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io`. Changing it invalidates every

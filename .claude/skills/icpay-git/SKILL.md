@@ -109,7 +109,9 @@ Never `update`, `changes`, `fix`, `final`. Types in use: `feat`, `fix`, `docs`,
 `docs/` is **silently ignored** unless you add its own negation line. Check with
 `git status --short` — if a new doc does not appear, that is why.
 
-`.claude/` is gitignored entirely.
+`.claude/` **is committed** — the agent map is meant to arrive with a fresh
+clone. Only `.claude/settings.local.json` stays local, since it holds
+per-machine permission grants.
 
 ## CI
 
