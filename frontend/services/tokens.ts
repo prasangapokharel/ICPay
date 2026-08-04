@@ -10,7 +10,9 @@ export const ICP_LEDGER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"
 const SNS_WASM_ID = "qaa6y-5yaaa-aaaaa-aaafa-cai"
 
 // The chain-key tokens are not SNS-launched, so SNS-W does not list them.
-const CK_LEDGER_IDS = [
+// Exported because these are also the rows the wallet shows unconditionally: a
+// list that hides ckBTC until you hold some gives you nowhere to deposit it to.
+export const PINNED_LEDGER_IDS = [
   ICP_LEDGER_ID,
   "mxzaz-hqaaa-aaaar-qaada-cai", // ckBTC
   "ss2fx-dyaaa-aaaar-qacoq-cai", // ckETH
@@ -105,13 +107,15 @@ export async function listLedgerIds(identity?: Identity): Promise<string[]> {
     // Discovery is an enhancement, not a requirement: if SNS-W is unreachable
     // the ck tokens below still resolve and the wallet stays usable.
   }
-  const seen = new Set(CK_LEDGER_IDS)
-  return [...CK_LEDGER_IDS, ...sns.filter((id) => !seen.has(id) && seen.add(id))]
+  const seen = new Set(PINNED_LEDGER_IDS)
+  return [...PINNED_LEDGER_IDS, ...sns.filter((id) => !seen.has(id) && seen.add(id))]
 }
 
 // Balance only, never metadata: a symbol and logo cost a second call per ledger
 // and are worthless for the ~50 tokens the user holds none of. Dead SNS ledgers
 // reject the call, so a failure maps to zero rather than failing the sweep.
+// Zero balances are kept in the map, because the caller shows the pinned tokens
+// whether or not they are held.
 export async function fetchBalances(
   ledgerIds: string[],
   owner: Principal,
@@ -134,7 +138,7 @@ export async function fetchBalances(
     })
   )
 
-  return new Map(entries.filter(([, balance]) => balance > 0n))
+  return new Map(entries)
 }
 
 // Called only for tokens the user actually holds, so the cost scales with the

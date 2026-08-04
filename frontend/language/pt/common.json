@@ -270,7 +270,10 @@
     "send": "Enviar",
     "depositTitle": "Endereço de depósito",
     "depositSubtitle": "Envie {symbol} para cá para recarregar a sua carteira.",
-    "warning": "Envie apenas {symbol} para este endereço. Outros tokens serão perdidos."
+    "warning": "Envie apenas {symbol} para este endereço. Outros tokens serão perdidos.",
+    "owner": "Proprietário (canister)",
+    "subaccount": "Sua subconta",
+    "breakdownHint": "Ambas as partes são necessárias. Use sempre o endereço completo acima — enviar apenas para o principal do proprietário não creditará sua carteira."
   },
   "icpverse": {
     "searchPlaceholder": "Encontre seus amigos",
