@@ -262,7 +262,8 @@
     "totalDeposits": "Total Deposits",
     "totalWithdrawals": "Total Withdrawals",
     "transfers": "Transfers",
-    "noTokens": "No tokens yet. Deposits show up here automatically."
+    "noTokens": "No tokens yet. Deposits show up here automatically.",
+    "selfCustodyNotice": "You hold funds outside ICPay. Open the token to move them in."
   },
   "token": {
     "back": "Wallet",
@@ -273,7 +274,15 @@
     "warning": "Send only {symbol} to this address. Other tokens will be lost.",
     "owner": "Owner (canister)",
     "subaccount": "Your subaccount",
-    "breakdownHint": "Both parts are required. Always use the full address above — sending to the owner principal alone will not credit your wallet."
+    "breakdownHint": "Both parts are required. Always use the full address above — sending to the owner principal alone will not credit your wallet.",
+    "selfCustodyTitle": "Held outside ICPay",
+    "selfCustodyBody": "{amount} {symbol} was sent to your principal instead of your ICPay deposit address, so it is not in your wallet yet.",
+    "selfCustodyMove": "Move into ICPay",
+    "selfCustodyMoving": "Moving…",
+    "selfCustodyMoved": "Moved into your wallet.",
+    "selfCustodyNet": "You receive",
+    "selfCustodyDust": "This is below the {symbol} network fee, so it cannot be moved.",
+    "selfCustodyEmpty": "Nothing to move in — this token has not been sent to your principal."
   },
   "icpverse": {
     "searchPlaceholder": "Find your friends",

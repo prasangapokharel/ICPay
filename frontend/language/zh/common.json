@@ -262,7 +262,8 @@
     "totalDeposits": "充值总额",
     "totalWithdrawals": "提现总额",
     "transfers": "转账",
-    "noTokens": "暂无代币。充值后会自动显示在这里。"
+    "noTokens": "暂无代币。充值后会自动显示在这里。",
+    "selfCustodyNotice": "您在 ICPay 之外持有资金。打开该代币以转入。"
   },
   "token": {
     "back": "钱包",
@@ -273,7 +274,15 @@
     "warning": "请仅向此地址转入 {symbol}，其他代币将会丢失。",
     "owner": "所有者（容器）",
     "subaccount": "您的子账户",
-    "breakdownHint": "两部分缺一不可。请始终使用上方的完整地址 — 仅发送至所有者 principal 不会计入您的钱包。"
+    "breakdownHint": "两部分缺一不可。请始终使用上方的完整地址 — 仅发送至所有者 principal 不会计入您的钱包。",
+    "selfCustodyTitle": "在 ICPay 之外持有",
+    "selfCustodyBody": "{amount} {symbol} 被发送到您的 principal，而不是您的 ICPay 充值地址，因此尚未进入您的钱包。",
+    "selfCustodyMove": "转入 ICPay",
+    "selfCustodyMoving": "转入中…",
+    "selfCustodyMoved": "已转入您的钱包。",
+    "selfCustodyNet": "您将收到",
+    "selfCustodyDust": "低于 {symbol} 网络手续费，无法转入。",
+    "selfCustodyEmpty": "没有需要转入的资金 — 该代币未被发送到您的 principal。"
   },
   "icpverse": {
     "searchPlaceholder": "查找好友",

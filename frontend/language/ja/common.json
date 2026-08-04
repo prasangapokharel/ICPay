@@ -262,7 +262,8 @@
     "totalDeposits": "入金合計",
     "totalWithdrawals": "出金合計",
     "transfers": "送金",
-    "noTokens": "トークンはまだありません。入金すると自動で表示されます。"
+    "noTokens": "トークンはまだありません。入金すると自動で表示されます。",
+    "selfCustodyNotice": "ICPay の外に資金があります。トークンを開いて移してください。"
   },
   "token": {
     "back": "ウォレット",
@@ -273,7 +274,15 @@
     "warning": "このアドレスには {symbol} のみを送ってください。他のトークンは失われます。",
     "owner": "オーナー（キャニスター）",
     "subaccount": "あなたのサブアカウント",
-    "breakdownHint": "両方の部分が必要です。必ず上記の完全なアドレスを使用してください — オーナープリンシパルのみに送金してもウォレットには反映されません。"
+    "breakdownHint": "両方の部分が必要です。必ず上記の完全なアドレスを使用してください — オーナープリンシパルのみに送金してもウォレットには反映されません。",
+    "selfCustodyTitle": "ICPay の外で保有",
+    "selfCustodyBody": "{amount} {symbol} は ICPay の入金アドレスではなくご自身のプリンシパルに送られたため、まだウォレットに入っていません。",
+    "selfCustodyMove": "ICPay に移す",
+    "selfCustodyMoving": "移動中…",
+    "selfCustodyMoved": "ウォレットに移しました。",
+    "selfCustodyNet": "受取額",
+    "selfCustodyDust": "{symbol} のネットワーク手数料を下回るため移動できません。",
+    "selfCustodyEmpty": "移すものはありません — このトークンはご自身のプリンシパルに送られていません。"
   },
   "icpverse": {
     "searchPlaceholder": "友達を探す",

@@ -97,6 +97,45 @@ export function useLiveBalance() {
   return useLedgerBalance(ICP_LEDGER_ID).balance
 }
 
+// What the user holds at their OWN principal rather than in ICPay. Funds land
+// there whenever a sender drops the subaccount suffix from the deposit address,
+// which most exchanges do because they only accept a bare principal.
+export function useSelfCustodyBalance(ledgerId: string | null) {
+  const { identity } = useAuth()
+
+  const { data } = useSWR(
+    ledgerId && identity ? keyFor(identity, "self-custody", ledgerId) : null,
+    async () => {
+      const balances = await fetchBalances(
+        [ledgerId!],
+        identity!.getPrincipal(),
+        undefined,
+        identity
+      )
+      return balances.get(ledgerId!) ?? 0n
+    },
+    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
+  )
+
+  return data
+}
+
+// Pinned tokens only, not all ~58 ledgers: the mistake that creates this state is
+// an exchange withdrawal typed against a bare principal, which only happens for
+// ICP and the ck tokens. It also matches the set the sweep is allowed to act on --
+// flagging funds we would then refuse to move is worse than staying quiet.
+export function useSelfCustodyPinned() {
+  const { identity } = useAuth()
+
+  const { data } = useSWR(
+    keyFor(identity, "self-custody-pinned"),
+    () => fetchBalances(PINNED_LEDGER_IDS, identity!.getPrincipal(), undefined, identity),
+    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
+  )
+
+  return data
+}
+
 export function useDepositAddress() {
   const { identity } = useAuth()
 
@@ -133,7 +172,14 @@ export function useTransactions(page = 0, pageSize = 20) {
 // Only these change when funds move. Matching every key for the principal would
 // also refetch the deposit address (derived, constant) and cached username
 // lookups, turning one transfer into a burst of calls.
-const FUNDS_KEYS = ["dashboard", "token-balance", "transactions", "token-balances"]
+const FUNDS_KEYS = [
+  "dashboard",
+  "token-balance",
+  "transactions",
+  "token-balances",
+  "self-custody",
+  "self-custody-pinned",
+]
 
 export function useRefreshWallet() {
   const { identity } = useAuth()
