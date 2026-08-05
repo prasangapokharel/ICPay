@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
@@ -15,7 +15,9 @@ import { Copy01Icon, Tick02Icon, UserQuestion01Icon, BadgeCheckIcon } from "@hug
 import { PayQr } from "@/components/profile/pay-qr"
 import { QuickPayDrawer } from "@/components/profile/quick-pay-drawer"
 import { avatarUriFor } from "@/lib/avatar"
-import { copyText } from "@/lib/wallet-utils"
+import { profileUrlFor } from "@/lib/profile-url"
+import { parsePaymentLink } from "@/services/pay/pay"
+import { copyText, formatE8s } from "@/lib/wallet-utils"
 import { accountIdentifier, icrc1Account } from "@/lib/account-id"
 import { isPossibleHandle, isReservedHandle } from "@/lib/reserved-handles"
 import { isPremiumHandle } from "@/lib/verifed/premium-tick"
@@ -40,6 +42,17 @@ export function PublicProfile() {
   const segments = pathname.split("/").filter(Boolean)
   const raw = segments.length > 0 ? decodeURIComponent(segments[segments.length - 1]) : ""
   const username = raw.toLowerCase()
+
+  // A payment link names the amount and the reason, so this visitor is not
+  // browsing a profile -- they were handed a bill. useSearchParams would need a
+  // Suspense boundary under output "export"; the query is read off the live
+  // location instead, after mount so it cannot mismatch the prerendered HTML.
+  const [request, setRequest] = useState<{ amount: bigint; memo?: string } | null>(null)
+  useEffect(() => {
+    const req = parsePaymentLink(window.location.href)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (req?.amount) setRequest({ amount: req.amount, memo: req.memo })
+  }, [])
 
   // A name outside the backend's shape, or one that shadows a real page, can
   // never have been claimed -- so it is resolved as a bad link without paying
@@ -117,33 +130,54 @@ export function PublicProfile() {
           />
         )}
       </h1>
-      <p className="pt-1 text-sm text-muted-foreground">{t("tagline")}</p>
+      <p className="pt-1 text-sm text-muted-foreground">
+        {request ? t("requestTagline") : t("tagline")}
+      </p>
 
-      <PayQr value={payAddress} className="pt-8" />
+      {/* A payment link already answers what to send and what for, so the QR and
+          the raw account -- both answers to "where do I send it" -- would only be
+          asking the payer to solve a problem they no longer have. */}
+      {request && !isSelf ? (
+        <div className="mt-8 w-full space-y-3 rounded-2xl bg-muted/40 p-6 text-center">
+          <p className="text-4xl font-bold tracking-tight tabular-nums">
+            {formatE8s(request.amount)}
+          </p>
+          <p className="text-xs text-muted-foreground">ICP</p>
+          {request.memo && <p className="border-t pt-3 text-sm">{request.memo}</p>}
+        </div>
+      ) : (
+        <>
+          {/* The profile link, not the raw account: a phone camera pointed at an
+              ICRC-1 string offers nothing to open, while this lands the payer on
+              this page. The exact account still leaves via the copy button below,
+              which is what an exchange needs. */}
+          <PayQr value={profileUrlFor(username)} className="pt-8" />
 
-      <Button
-        variant="outline"
-        onClick={handleCopy}
-        aria-label={t("copyAddress")}
-        className="mt-7 h-auto w-full justify-start gap-3 rounded-2xl bg-muted/40 p-4 text-left hover:bg-muted"
-      >
-        <span className="min-w-0 flex-1 truncate font-mono text-xs">
-          {payAddress.slice(0, 14)}…{payAddress.slice(-10)}
-        </span>
-        <HugeiconsIcon
-          icon={copied ? Tick02Icon : Copy01Icon}
-          className={copied ? "size-4 shrink-0 text-primary" : "size-4 shrink-0 text-muted-foreground"}
-        />
-      </Button>
+          <Button
+            variant="outline"
+            onClick={handleCopy}
+            aria-label={t("copyAddress")}
+            className="mt-7 h-auto w-full justify-start gap-3 rounded-2xl bg-muted/40 p-4 text-left hover:bg-muted"
+          >
+            <span className="min-w-0 flex-1 truncate font-mono text-xs">
+              {payAddress.slice(0, 14)}…{payAddress.slice(-10)}
+            </span>
+            <HugeiconsIcon
+              icon={copied ? Tick02Icon : Copy01Icon}
+              className={copied ? "size-4 shrink-0 text-primary" : "size-4 shrink-0 text-muted-foreground"}
+            />
+          </Button>
 
-      {/* Both forms address the same custodial subaccount, so the choice is only
-          about which one the sender's wallet accepts. */}
-      <label className="mt-3 flex w-full items-center justify-between gap-3 px-1">
-        <span className="text-xs text-muted-foreground">
-          {legacy ? t("formatLegacy") : t("formatIcrc")}
-        </span>
-        <Switch checked={legacy} onCheckedChange={setLegacy} />
-      </label>
+          {/* Both forms address the same custodial subaccount, so the choice is
+              only about which one the sender's wallet accepts. */}
+          <label className="mt-3 flex w-full items-center justify-between gap-3 px-1">
+            <span className="text-xs text-muted-foreground">
+              {legacy ? t("formatLegacy") : t("formatIcrc")}
+            </span>
+            <Switch checked={legacy} onCheckedChange={setLegacy} />
+          </label>
+        </>
+      )}
 
       {isSelf ? (
         <p className="mt-6 text-center text-xs text-muted-foreground">
@@ -151,7 +185,7 @@ export function PublicProfile() {
         </p>
       ) : (
         <Button className="mt-6 h-13 w-full text-base" onClick={handlePayClick}>
-          {t("pay")}
+          {request ? t("payAmount", { amount: formatE8s(request.amount) }) : t("pay")}
         </Button>
       )}
 
@@ -166,6 +200,7 @@ export function PublicProfile() {
         onOpenChange={setPayOpen}
         username={username}
         balance={balance}
+        request={request ?? undefined}
         onPay={handlePay}
       />
     </main>

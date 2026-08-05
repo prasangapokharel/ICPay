@@ -45,7 +45,9 @@ export function QrScanner({
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onScan?: (hit: ScannedAddress) => void
+  // The raw scanned text comes through alongside the parsed address: a payment
+  // link also carries an amount and a memo, which are not part of an address.
+  onScan?: (hit: ScannedAddress, raw: string) => void
 }) {
   const router = useRouter()
   const t = useTranslations("scan")
@@ -66,14 +68,18 @@ export function QrScanner({
     setError(null)
     onOpenChange(false)
     if (onScan) {
-      onScan(hit)
+      onScan(hit, raw)
       return
     }
 
     // Handed over in session storage rather than the URL: a static export would
     // need a Suspense boundary for useSearchParams, and an address in browser
     // history outlives the payment it was for.
-    sessionStorage.setItem(SCAN_KEY, hit.kind === "icrc1" ? hit.text : addressText(hit))
+    //
+    // A payment link is stored verbatim so its amount and memo survive the hop;
+    // anything else is normalised, since the parsed form is what the field wants.
+    const handoff = hit.kind === "username" ? raw.trim() : hit.kind === "icrc1" ? hit.text : addressText(hit)
+    sessionStorage.setItem(SCAN_KEY, handoff)
     router.push("/transfer")
   }
 
@@ -124,10 +130,12 @@ export function QrScanner({
 }
 
 // Drains the handoff written by a scan that had no onScan handler. Reparsed
-// rather than stored structured so the parser stays the only decoder.
-export function takeScannedAddress(): ScannedAddress | null {
+// rather than stored structured so the parser stays the only decoder, and the
+// raw text comes back too so a payment link's amount and memo can be read off it.
+export function takeScannedAddress(): { hit: ScannedAddress; raw: string } | null {
   const raw = sessionStorage.getItem(SCAN_KEY)
   if (!raw) return null
   sessionStorage.removeItem(SCAN_KEY)
-  return parseAddress(raw)
+  const hit = parseAddress(raw)
+  return hit ? { hit, raw } : null
 }

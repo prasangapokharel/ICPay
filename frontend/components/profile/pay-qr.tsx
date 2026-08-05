@@ -41,7 +41,7 @@ export function PayQr({ value, className }: { value: string; className?: string 
           unoptimized
           className="size-44"
         />
-        <span className="absolute left-1/2 top-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/10">
+        <span className="absolute left-1/2 top-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-background shadow-sm ring-1 ring-black/10">
           <Image
             src="/images/logo/logo.png"
             alt=""
