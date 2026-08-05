@@ -122,10 +122,11 @@ export function ProfileView() {
           )}
         </h1>
 
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={handleCopy}
-          className="mt-1.5 flex items-center gap-1.5 rounded-full px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent active:scale-95"
+          className="mt-1.5 text-muted-foreground"
           aria-label={t("copyPrincipal")}
         >
           <span className="font-mono text-xs">{shortPrincipal(principal)}</span>
@@ -133,7 +134,7 @@ export function ProfileView() {
             icon={copied ? CheckmarkCircle01Icon : Copy01Icon}
             className={copied ? "size-4 text-primary" : "size-4"}
           />
-        </button>
+        </Button>
 
         {!isSelf && (
           <Button
@@ -165,14 +166,15 @@ export function ProfileView() {
 function BackButton({ onClick }: { onClick: () => void }) {
   const tc = useTranslations("common")
   return (
-    <button
-      type="button"
+    <Button
+      variant="outline"
+      size="icon"
       onClick={onClick}
-      className="flex size-9 items-center justify-center rounded-full border bg-background transition-colors hover:bg-accent active:scale-95"
+      className="rounded-full bg-background"
       aria-label={tc("back")}
     >
       <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-    </button>
+    </Button>
   )
 }
 

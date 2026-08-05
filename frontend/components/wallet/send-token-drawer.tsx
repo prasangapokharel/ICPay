@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
@@ -117,19 +118,20 @@ export function SendTokenDrawer({
           <div className="space-y-2">
             <div className="flex items-baseline justify-between gap-3">
               <Label htmlFor="send-amount">{tc("amount")}</Label>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="xs"
                 onClick={() => {
                   setValue(full(sendable))
                   setError(null)
                 }}
-                className="text-xs text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground"
               >
                 {tc("balance")}{" "}
                 <span className="font-medium tabular-nums text-foreground">
                   {full(token.balance)}
                 </span>
-              </button>
+              </Button>
             </div>
             <Input
               id="send-amount"
@@ -161,12 +163,12 @@ export function SendTokenDrawer({
                 {memoByteLength(memo.trim())}/{MEMO_MAX_BYTES}
               </span>
             </div>
-            <Input
+            <Textarea
               id="send-memo"
               placeholder={t("memoPlaceholder")}
               value={memo}
               onChange={(e) => setMemo(e.target.value)}
-              className="h-12 rounded-2xl"
+              className="rounded-2xl"
             />
           </div>
 

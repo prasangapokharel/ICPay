@@ -121,11 +121,11 @@ export function PublicProfile() {
 
       <PayQr value={payAddress} className="pt-8" />
 
-      <button
-        type="button"
+      <Button
+        variant="outline"
         onClick={handleCopy}
         aria-label={t("copyAddress")}
-        className="mt-7 flex w-full items-center gap-3 rounded-2xl border bg-muted/40 p-4 text-left transition-colors hover:bg-muted active:scale-[0.99]"
+        className="mt-7 h-auto w-full justify-start gap-3 rounded-2xl bg-muted/40 p-4 text-left hover:bg-muted"
       >
         <span className="min-w-0 flex-1 truncate font-mono text-xs">
           {payAddress.slice(0, 14)}…{payAddress.slice(-10)}
@@ -134,7 +134,7 @@ export function PublicProfile() {
           icon={copied ? Tick02Icon : Copy01Icon}
           className={copied ? "size-4 shrink-0 text-primary" : "size-4 shrink-0 text-muted-foreground"}
         />
-      </button>
+      </Button>
 
       {/* Both forms address the same custodial subaccount, so the choice is only
           about which one the sender's wallet accepts. */}

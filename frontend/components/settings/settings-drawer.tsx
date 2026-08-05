@@ -20,6 +20,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
+import { Button } from "@/components/ui/button"
 import { LanguageSelect } from "@/components/i18n/language-select"
 import { FiatSelector } from "@/components/fiat/fiat-selector"
 import { ThemeSelector } from "@/components/settings/theme-selector"
@@ -79,17 +80,17 @@ export function SettingsDrawer({
             ))}
           </div>
 
-          <button
-            type="button"
+          <Button
+            variant="destructive"
             onClick={() => {
               onOpenChange(false)
               logout()
             }}
-            className="flex w-full items-center gap-3 rounded-2xl border px-4 py-3.5 text-left text-sm text-destructive transition-colors hover:bg-destructive/10"
+            className="h-auto w-full justify-start gap-3 rounded-2xl border bg-transparent px-4 py-3.5 text-left text-sm"
           >
             <HugeiconsIcon icon={Logout01Icon} className="size-4.5 shrink-0" />
             <span className="flex-1">{t("signOut")}</span>
-          </button>
+          </Button>
         </div>
       </DrawerContent>
     </Drawer>

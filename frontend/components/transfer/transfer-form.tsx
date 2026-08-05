@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -181,6 +182,50 @@ export function TransferForm({
         </TabsList>
       </Tabs>
 
+      {/* Recipient leads: who is being paid is the decision the user makes
+          first, and a wrong handle wastes the fee no matter what the amount is.
+          It gets the large field the amount used to hold. */}
+      <div className="space-y-2">
+        <Label htmlFor="to">{t(labelKeys[mode].label)}</Label>
+        <div className="relative">
+          <Input
+            id="to"
+            placeholder={t(labelKeys[mode].placeholder)}
+            autoComplete="off"
+            spellCheck={false}
+            value={to}
+            onChange={(e) => {
+              setTo(e.target.value)
+              // A subaccount left over from a scan would silently redirect a
+              // hand-typed principal's payment to a different account.
+              setSubaccount(null)
+              setError(null)
+            }}
+            className={
+              mode === "username"
+                ? "h-14 pr-14 text-lg"
+                : "h-14 pr-14 font-mono text-xs"
+            }
+          />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={t("scanQr")}
+            onClick={() => setScanOpen(true)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg text-muted-foreground"
+          >
+            <HugeiconsIcon icon={QrCodeScanIcon} className="size-5" />
+          </Button>
+        </div>
+        {mode === "username" && (
+          <RecipientLookup
+            username={to}
+            principal={resolved}
+            isLoading={resolving || debouncedTo.trim() !== to.trim()}
+          />
+        )}
+      </div>
+
       <AmountInput
         id="amount"
         label={tc("amount")}
@@ -198,42 +243,6 @@ export function TransferForm({
         </p>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="to">{t(labelKeys[mode].label)}</Label>
-        <div className="relative">
-          <Input
-            id="to"
-            placeholder={t(labelKeys[mode].placeholder)}
-            autoComplete="off"
-            spellCheck={false}
-            value={to}
-            onChange={(e) => {
-              setTo(e.target.value)
-              // A subaccount left over from a scan would silently redirect a
-              // hand-typed principal's payment to a different account.
-              setSubaccount(null)
-              setError(null)
-            }}
-            className={mode === "username" ? "pr-11" : "pr-11 font-mono text-xs"}
-          />
-          <button
-            type="button"
-            aria-label={t("scanQr")}
-            onClick={() => setScanOpen(true)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-          >
-            <HugeiconsIcon icon={QrCodeScanIcon} className="size-5" />
-          </button>
-        </div>
-        {mode === "username" && (
-          <RecipientLookup
-            username={to}
-            principal={resolved}
-            isLoading={resolving || debouncedTo.trim() !== to.trim()}
-          />
-        )}
-      </div>
-
       <QrScanner open={scanOpen} onOpenChange={setScanOpen} onScan={applyScan} />
 
       <div className="space-y-2">
@@ -249,7 +258,7 @@ export function TransferForm({
             {memoByteLength(memo.trim())}/{MEMO_MAX_BYTES}
           </span>
         </div>
-        <Input
+        <Textarea
           id="memo"
           placeholder={t("memoPlaceholder")}
           value={memo}

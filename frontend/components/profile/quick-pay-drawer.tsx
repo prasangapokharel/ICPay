@@ -159,20 +159,18 @@ export function QuickPayDrawer({
                   // the balance loads.
                   const tooBig = sendable !== undefined && value > sendable
                   return (
-                    <button
+                    <Button
                       key={icp.toString()}
-                      type="button"
+                      variant={active ? "default" : "outline"}
                       disabled={tooBig}
                       onClick={() => {
                         setSelected(value)
                         setError(null)
                       }}
                       className={cn(
-                        "flex h-14 items-center justify-center gap-2 rounded-2xl text-base font-semibold ring-1 transition-colors",
-                        active
-                          ? "bg-primary/10 text-primary ring-primary"
-                          : "bg-muted/40 ring-border hover:bg-accent",
-                        tooBig && "pointer-events-none opacity-40"
+                        "h-14 rounded-2xl text-base font-semibold",
+                        active &&
+                          "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
                       )}
                     >
                       <Image
@@ -183,25 +181,24 @@ export function QuickPayDrawer({
                         className="size-5 object-contain"
                       />
                       {icp.toString()}
-                    </button>
+                    </Button>
                   )
                 })}
-                <button
-                  type="button"
+                <Button
+                  variant={selected === null ? "default" : "outline"}
                   onClick={() => {
                     setSelected(null)
                     setError(null)
                   }}
                   className={cn(
-                    "flex h-14 flex-col items-center justify-center rounded-2xl text-xs font-semibold ring-1 transition-colors",
-                    selected === null
-                      ? "bg-primary/10 text-primary ring-primary"
-                      : "bg-muted/40 ring-border hover:bg-accent"
+                    "h-14 flex-col gap-0 rounded-2xl text-xs font-semibold",
+                    selected === null &&
+                      "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
                   )}
                 >
                   <span className="text-base leading-none">···</span>
                   {t("custom")}
-                </button>
+                </Button>
               </div>
 
               {selected === null && (
@@ -309,8 +306,8 @@ function PaySuccess({
 
   return (
     <div className="flex flex-col items-center px-4 pb-8 pt-10 text-center">
-      <div className="animate-in fade-in zoom-in-75 flex size-18 items-center justify-center rounded-full bg-green-100 duration-300 ease-out dark:bg-green-950">
-        <span className="flex size-13 items-center justify-center rounded-full bg-green-600 text-white shadow-sm">
+      <div className="animate-in fade-in zoom-in-75 flex size-18 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
+        <span className="flex size-13 items-center justify-center rounded-full bg-success text-background shadow-sm">
           <HugeiconsIcon icon={Tick02Icon} className="size-8" strokeWidth={3} />
         </span>
       </div>
@@ -336,14 +333,15 @@ function PaySuccess({
         </Button>
         {/* Square, so Done keeps the full width it had and the row does not read
             as two competing actions. */}
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="icon-lg"
           onClick={handleShare}
           aria-label={t("shareReceipt")}
-          className="flex size-12 shrink-0 items-center justify-center rounded-2xl ring-1 ring-border transition-colors hover:bg-accent active:scale-95"
+          className="size-12 rounded-2xl"
         >
           <HugeiconsIcon icon={shared ? Tick02Icon : Share08Icon} className="size-4.5" />
-        </button>
+        </Button>
       </div>
     </div>
   )

@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatAmount, parseIcp, E8S } from "@/lib/wallet-utils"
 import { useIcpPrice } from "@/lib/use-icp-price"
@@ -69,30 +70,32 @@ export function AmountInput({
           className="h-14 pr-16 text-2xl font-semibold tabular-nums"
         />
         {max > 0n && (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="xs"
             onClick={() => setAmount(max)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-muted/70"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted font-semibold text-primary hover:bg-muted/70"
           >
             {t("max")}
-          </button>
+          </Button>
         )}
       </div>
 
       {max > 0n && (
         <div className="flex gap-1.5">
           {PERCENTAGES.map((pct) => (
-            <button
+            <Button
               key={pct}
-              type="button"
+              variant="outline"
+              size="xs"
               onClick={() => setAmount((max * BigInt(pct)) / 100n)}
               className={cn(
-                "h-7 flex-1 rounded-full border border-border bg-background text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
+                "h-7 flex-1 bg-background text-muted-foreground hover:bg-accent hover:text-foreground",
                 pct === 100 && "font-semibold text-primary"
               )}
             >
               {pct}%
-            </button>
+            </Button>
           ))}
         </div>
       )}

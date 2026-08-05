@@ -8,6 +8,7 @@ import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 type DepositAddressCardProps = {
   icrcAddress: string
@@ -100,39 +101,36 @@ function AddressBlock({
     <div className="flex flex-col items-center gap-4">
       <QrCode value={value} logo={logo} />
 
-      {/* Address field: a bordered, compact input whose padding comes from the
-          Input primitive alone -- no px-/py- overrides here. The read-only value
-          truncates into a tail snippet until the user expands it; the trailing
-          button cues the click-to-copy action. */}
-      <div className="flex w-full items-stretch overflow-hidden rounded-2xl border border-input shadow-sm">
+      {/* The wrapper owns the fill and the rounding; the input and the copy
+          button are both transparent and square inside it. The Input primitive
+          is rounded-4xl with its own bg, which peeked out of these squarer
+          corners as pale slivers and read as a seam against the button. */}
+      <div className="flex w-full items-stretch overflow-hidden rounded-2xl border border-input bg-input/30 shadow-sm">
         <Input
           readOnly
           value={expanded || !isLong ? value : `${value.slice(0, 26)}…${value.slice(-6)}`}
           aria-label={t("copyAddress")}
-          className="min-w-0 flex-1 border-0 font-mono text-xs shadow-none focus-visible:ring-0"
+          className="min-w-0 flex-1 rounded-none border-0 bg-transparent font-mono text-xs shadow-none focus-visible:ring-0"
         />
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={handleCopy}
           aria-label={t("copyAddress")}
-          className="shrink-0 border-l border-input bg-muted/40 px-3 transition-colors hover:bg-muted active:scale-[0.98]"
+          className="h-auto shrink-0 rounded-none border-l border-input bg-transparent px-3 text-muted-foreground hover:bg-muted/60"
         >
-          {copied ? (
-            <HugeiconsIcon icon={Tick02Icon} className="size-4 text-muted-foreground" />
-          ) : (
-            <HugeiconsIcon icon={Copy01Icon} className="size-4 text-muted-foreground" />
-          )}
-        </button>
+          <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" />
+        </Button>
       </div>
 
       {isLong && (
-        <button
-          type="button"
+        <Button
+          variant="link"
+          size="xs"
           onClick={() => setExpanded((v) => !v)}
-          className="text-xs font-medium text-primary underline underline-offset-2"
+          className="underline underline-offset-2"
         >
           {expanded ? t("showLess") : t("showFull")}
-        </button>
+        </Button>
       )}
 
       <p className="text-center text-[11px] text-muted-foreground">{hint}</p>
@@ -167,7 +165,7 @@ function QrCode({ value, logo }: { value: string; logo?: string }) {
     // light field, so scanners need that contrast to hold in dark mode too.
     <div className="relative rounded-2xl border p-3">
       <Image src={src} alt={t("qrAlt")} width={512} height={512} unoptimized className="size-44" />
-      <span className="absolute left-1/2 top-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-white shadow-sm ring-1 ring-black/10">
+      <span className="absolute left-1/2 top-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-background shadow-sm ring-1 ring-black/10">
         <Image src={logo ?? "/images/logo/logo.png"} alt="" width={40} height={40} unoptimized className="size-6 object-contain" />
       </span>
     </div>

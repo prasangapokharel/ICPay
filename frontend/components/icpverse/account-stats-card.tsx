@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Principal } from "@dfinity/principal"
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, CheckmarkCircle01Icon } from "@hugeicons/core-free-icons"
 import { formatAmount, copyText, E8S } from "@/lib/wallet-utils"
@@ -80,21 +81,22 @@ function CopyRow({ label, value }: { label: string; value: string }) {
       <span className="shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground">
         {label}
       </span>
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="xs"
         onClick={async () => {
           await copyText(value)
           setCopied(true)
           setTimeout(() => setCopied(false), 1500)
         }}
-        className="flex min-w-0 items-center gap-1.5 transition-colors hover:text-primary"
+        className="h-auto min-w-0 gap-1.5 px-0 text-inherit hover:bg-transparent hover:text-primary"
       >
         <span className="truncate">{value}</span>
         <HugeiconsIcon
           icon={copied ? CheckmarkCircle01Icon : Copy01Icon}
           className={cn("size-3.5 shrink-0", copied && "text-primary")}
         />
-      </button>
+      </Button>
     </div>
   )
 }
