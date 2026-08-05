@@ -113,10 +113,11 @@ export default function MenuPage() {
           className="pointer-events-none absolute left-3.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground"
         />
         <Input
+          variant="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("searchPlaceholder")}
-          className="h-9 rounded-full pl-9 text-sm"
+          className="text-sm"
         />
       </div>
 

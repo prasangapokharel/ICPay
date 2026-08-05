@@ -173,6 +173,8 @@
     "amountInvalid": "유효한 ICP 금액을 입력하세요.",
     "memoTooLong": "원장에 담기도록 {max}바이트 이내로 작성하세요.",
     "hint": "보내는 사람이 스캔하고 확인한 뒤 전송합니다. 모든 항목은 그쪽에서도 수정할 수 있습니다.",
+    "generate": "링크 생성",
+    "copyLink": "링크 복사",
     "shareSheetTitle": "ICPay 결제 요청",
     "shareSheetText": "ICPay에서 {name}에게 결제",
     "shareSheetTextAmount": "ICPay에서 {name}에게 {amount} ICP 결제"

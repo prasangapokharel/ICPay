@@ -63,11 +63,12 @@ export function AmountInput({
       <div className="relative">
         <Input
           id={id}
+          size="amount"
           inputMode="decimal"
           placeholder="0.00"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-14 pr-16 text-2xl font-semibold tabular-nums"
+          className="pr-16"
         />
         {max > 0n && (
           <Button

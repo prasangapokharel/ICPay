@@ -173,6 +173,8 @@
     "amountInvalid": "Введите корректную сумму в ICP.",
     "memoTooLong": "Уложитесь в {max} байт, иначе запись не попадёт в реестр.",
     "hint": "Плательщик сканирует, проверяет и отправляет. Все поля у него остаются доступными для правки.",
+    "generate": "Создать ссылку",
+    "copyLink": "Копировать ссылку",
     "shareSheetTitle": "Запрос платежа ICPay",
     "shareSheetText": "Оплатить {name} в ICPay",
     "shareSheetTextAmount": "Отправить {name} {amount} ICP в ICPay"

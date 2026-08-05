@@ -27,6 +27,8 @@ import { WALLET_CANISTER_ID } from "@/services/icp"
 import { tip } from "@/services/transfer/transfer"
 import { useAuth } from "@/components/auth/auth-provider"
 
+type PayRequest = { amount: bigint; memo?: string }
+
 export function PublicProfile() {
   const t = useTranslations("publicProfile")
   const pathname = usePathname()
@@ -47,12 +49,17 @@ export function PublicProfile() {
   // browsing a profile -- they were handed a bill. useSearchParams would need a
   // Suspense boundary under output "export"; the query is read off the live
   // location instead, after mount so it cannot mismatch the prerendered HTML.
-  const [request, setRequest] = useState<{ amount: bigint; memo?: string } | null>(null)
+  //
+  // null means the URL has not been read yet, which is also what keeps the
+  // prerendered /u shell from claiming every profile is unclaimed: at build time
+  // the path is the placeholder, not the visitor's handle.
+  const [read, setRead] = useState<{ request: PayRequest | null } | null>(null)
   useEffect(() => {
     const req = parsePaymentLink(window.location.href)
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (req?.amount) setRequest({ amount: req.amount, memo: req.memo })
+    setRead({ request: req?.amount ? { amount: req.amount, memo: req.memo } : null })
   }, [])
+  const request = read?.request ?? null
 
   // A name outside the backend's shape, or one that shadows a real page, can
   // never have been claimed -- so it is resolved as a bad link without paying
@@ -105,7 +112,10 @@ export function PublicProfile() {
     }
   }
 
-  if (!username || (claimable && isLoading)) return <ProfileSkeleton />
+  // The spinner covers hydration too, not just the lookup: the shell is
+  // prerendered at the placeholder handle, so rendering before mount would bake
+  // "unclaimed" into the HTML of every real profile and flash it on load.
+  if (!read || !username || (claimable && isLoading)) return <ProfileLoading />
 
   if (!principal) return <Unclaimed username={raw} />
 
@@ -252,7 +262,7 @@ function Footer() {
   )
 }
 
-function ProfileSkeleton() {
+function ProfileLoading() {
   return (
     <main className="flex flex-1 items-center justify-center">
       <Spinner className="size-6 text-muted-foreground" />

@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -47,9 +47,9 @@ export function TokenView() {
   const { data: deposit } = useDepositAddress()
   const selfCustody = useSelfCustodyBalance(ledgerId || null)
 
-  // An empty id means the mid-transition frame described above, so the skeleton
-  // is held rather than asserting the token does not exist.
-  if (isLoading || !ledgerId) return <TokenSkeleton />
+  // An empty id means the mid-transition frame described above, so the loader is
+  // held rather than asserting the token does not exist.
+  if (isLoading || !ledgerId) return <TokenLoading />
 
   if (!token) {
     return (
@@ -167,9 +167,8 @@ export function TokenView() {
               onCopy={copyText}
             />
           ) : (
-            <div className="flex flex-col items-center gap-4">
-              <Skeleton className="size-52 rounded-2xl" />
-              <Skeleton className="h-16 w-full rounded-2xl" />
+            <div className="flex justify-center py-10">
+              <Spinner className="size-5 text-muted-foreground" />
             </div>
           )}
 
@@ -221,17 +220,10 @@ export function TokenLogo({ token, className }: { token: TokenHolding; className
   )
 }
 
-function TokenSkeleton() {
+function TokenLoading() {
   return (
-    <div className="space-y-6 pt-2">
-      <Skeleton className="h-8 w-20 rounded-md" />
-      <div className="flex flex-col items-center gap-3">
-        <Skeleton className="size-14 rounded-full" />
-        <Skeleton className="h-8 w-28" />
-        <Skeleton className="h-3 w-20" />
-      </div>
-      <Skeleton className="mx-auto size-52 rounded-2xl" />
-      <Skeleton className="h-16 w-full rounded-2xl" />
+    <div className="flex flex-1 items-center justify-center py-24">
+      <Spinner className="size-6 text-muted-foreground" />
     </div>
   )
 }

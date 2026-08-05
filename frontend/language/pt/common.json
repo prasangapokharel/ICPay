@@ -173,6 +173,8 @@
     "amountInvalid": "Introduza um valor de ICP válido.",
     "memoTooLong": "Mantenha abaixo de {max} bytes para caber no ledger.",
     "hint": "Quem paga digitaliza, confere e envia. Todos os campos continuam editáveis para essa pessoa.",
+    "generate": "Gerar link",
+    "copyLink": "Copiar link",
     "shareSheetTitle": "Pedido de pagamento ICPay",
     "shareSheetText": "Pagar a {name} no ICPay",
     "shareSheetTextAmount": "Pagar {amount} ICP a {name} no ICPay"

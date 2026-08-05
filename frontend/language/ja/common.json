@@ -173,6 +173,8 @@
     "amountInvalid": "有効な ICP の金額を入力してください。",
     "memoTooLong": "台帳に収まるよう {max} バイト以内にしてください。",
     "hint": "支払う側はこれを読み取り、確認して送金します。各項目は相手側でも編集できます。",
+    "generate": "リンクを生成",
+    "copyLink": "リンクをコピー",
     "shareSheetTitle": "ICPay 支払いリクエスト",
     "shareSheetText": "ICPay で {name} に支払う",
     "shareSheetTextAmount": "ICPay で {name} に {amount} ICP 支払う"

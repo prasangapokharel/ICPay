@@ -39,12 +39,13 @@ export default function IcpversePage() {
           className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
         />
         <Input
+          variant="search"
+          size="lg"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("searchPlaceholder")}
           autoComplete="off"
           spellCheck={false}
-          className="h-12 rounded-full pl-10"
         />
       </div>
 
