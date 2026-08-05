@@ -1,4 +1,4 @@
-import { Principal } from "@dfinity/principal"
+import { Principal } from "@icp-sdk/core/principal"
 import { crc32, base32NoPad } from "@/lib/account-id"
 import { isHexAccountId } from "@/lib/wallet-utils"
 import { validateUsername } from "@/lib/username"

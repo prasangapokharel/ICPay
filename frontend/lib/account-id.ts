@@ -1,4 +1,4 @@
-import type { Principal } from "@dfinity/principal"
+import type { Principal } from "@icp-sdk/core/principal"
 import { sha224 } from "@noble/hashes/sha2"
 
 const CRC32_TABLE = (() => {

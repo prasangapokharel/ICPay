@@ -1,4 +1,4 @@
-import type { Identity } from "@dfinity/agent"
+import type { Identity } from "@icp-sdk/core/agent"
 import { query, unwrap } from "@/services/client"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 import type { DashboardData } from "@/services/types"

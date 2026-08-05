@@ -1,6 +1,6 @@
-import { Actor, type Identity } from "@dfinity/agent"
-import type { IDL } from "@dfinity/candid"
-import { Principal } from "@dfinity/principal"
+import { Actor, type Identity } from "@icp-sdk/core/agent"
+import type { IDL } from "@icp-sdk/core/candid"
+import { Principal } from "@icp-sdk/core/principal"
 import { createAgent } from "@/services/icp"
 
 // The NNS ICP index canister. It mirrors the ledger and answers by query, so

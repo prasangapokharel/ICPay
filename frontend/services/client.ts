@@ -1,4 +1,4 @@
-import type { Identity } from "@dfinity/agent"
+import type { Identity } from "@icp-sdk/core/agent"
 import { getWalletActor, type WalletActor } from "@/services/wallet"
 
 // Every canister method that can fail returns this shape.

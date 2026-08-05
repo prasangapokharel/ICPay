@@ -1,6 +1,6 @@
-import { Actor, type Identity } from "@dfinity/agent"
-import type { IDL } from "@dfinity/candid"
-import type { Principal } from "@dfinity/principal"
+import { Actor, type Identity } from "@icp-sdk/core/agent"
+import type { IDL } from "@icp-sdk/core/candid"
+import type { Principal } from "@icp-sdk/core/principal"
 import { createAgent, clearAgentCache, WALLET_CANISTER_ID } from "@/services/icp"
 import type {
   AuthResult,
