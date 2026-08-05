@@ -26,6 +26,7 @@ export function AmountInput({
   onChange,
   balance,
   maxE8s,
+  size,
 }: {
   id: string
   label: string
@@ -33,6 +34,7 @@ export function AmountInput({
   onChange: (v: string) => void
   balance?: bigint
   maxE8s?: bigint
+  size?: "default" | "amount" | "lg" | "xl"
 }) {
   const t = useTranslations("common")
   const { price } = useIcpPrice()
@@ -63,7 +65,7 @@ export function AmountInput({
       <div className="relative">
         <Input
           id={id}
-          size="amount"
+          size={size ?? "amount"}
           inputMode="decimal"
           placeholder="0.00"
           value={value}

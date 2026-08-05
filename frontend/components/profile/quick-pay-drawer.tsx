@@ -267,7 +267,7 @@ export function QuickPayDrawer({
               {/* Insufficient balance is said on the button rather than in an
                   alert above it: the button is already locked, so a second
                   element saying so only pushes the form around. */}
-              <Button className="h-12 text-base" disabled={!canSend} onClick={handleSend}>
+              <Button disabled={!canSend} onClick={handleSend}>
                 {loading && <Spinner className="size-4" />}
                 {loading
                   ? t("sending")
@@ -356,7 +356,7 @@ function PaySuccess({
       </a>
 
       <div className="mt-8 flex w-full items-center gap-2">
-        <Button className="h-12 flex-1 text-base" onClick={onDone}>
+        <Button className="flex-1" onClick={onDone}>
           {tc("done")}
         </Button>
         {/* Square, so Done keeps the full width it had and the row does not read

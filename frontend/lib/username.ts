@@ -18,13 +18,18 @@ export type Tier = {
   labelKey: "ultra" | "premium" | "standard" | "basic"
   price: bigint
   rangeKey: "ultraRange" | "premiumRange" | "standardRange" | "basicRange"
+  // The range this tier covers. Carried as data so the pricing table can ask
+  // premium-tick which badges the row reaches, rather than restating the badge
+  // thresholds next to the prices where the two could drift.
+  minLength: number
+  maxLength: number
 }
 
 export const TIERS: Tier[] = [
-  { labelKey: "ultra", price: PRICE_ULTRA_PREMIUM, rangeKey: "ultraRange" },
-  { labelKey: "premium", price: PRICE_PREMIUM, rangeKey: "premiumRange" },
-  { labelKey: "standard", price: PRICE_STANDARD, rangeKey: "standardRange" },
-  { labelKey: "basic", price: PRICE_BASIC, rangeKey: "basicRange" },
+  { labelKey: "ultra", price: PRICE_ULTRA_PREMIUM, rangeKey: "ultraRange", minLength: USERNAME_MIN_LENGTH, maxLength: 3 },
+  { labelKey: "premium", price: PRICE_PREMIUM, rangeKey: "premiumRange", minLength: 4, maxLength: 4 },
+  { labelKey: "standard", price: PRICE_STANDARD, rangeKey: "standardRange", minLength: 5, maxLength: 5 },
+  { labelKey: "basic", price: PRICE_BASIC, rangeKey: "basicRange", minLength: 6, maxLength: USERNAME_MAX_LENGTH },
 ]
 
 export function priceFor(name: string): bigint {

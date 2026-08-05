@@ -217,7 +217,7 @@ export function TipDrawer({
           {/* Insufficient balance is said on the button rather than in an alert
               above it: the button is already locked, so a second element saying
               so only pushes the form around. */}
-          <Button className="h-12 text-base" disabled={!canSend} onClick={handleSend}>
+          <Button disabled={!canSend} onClick={handleSend}>
             {loading ? (
               <Spinner className="size-4" />
             ) : (

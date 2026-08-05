@@ -46,7 +46,7 @@ export function BalanceCard({
 
       <div className="relative z-10 flex flex-col items-center pt-12">
         <div className="flex items-baseline gap-2">
-          <span className="text-4xl font-bold tracking-tight tabular-nums">
+          <span className="text-[clamp(1.5rem,8vw,2.5rem)] font-bold leading-tight tracking-tight tabular-nums">
             {hidden ? "••••••" : balance}
           </span>
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-foreground/70">

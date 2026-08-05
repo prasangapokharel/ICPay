@@ -9,11 +9,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon, InboxIcon, Message01Icon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
+import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { ArrowRight01Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
 import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, shortenCounterparty } from "@/lib/wallet-utils"
 import { useLedgerSymbol } from "@/hooks/use-wallet-data"
-import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { cn } from "@/lib/utils"
 
 type RecentTransactionsProps = {
@@ -30,7 +30,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 gap-1 text-xs"
+            className="text-xs"
             nativeButton={false}
             render={<Link href="/transactions" />}
           >
@@ -41,7 +41,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
       </div>
 
       {transactions.length === 0 ? (
-        <div className="rounded-2xl border border-dashed py-10 text-center">
+        <div className="rounded-2xl border border-dashed py-5 text-center">
           <HugeiconsIcon icon={InboxIcon} className="mx-auto size-6 text-muted-foreground/50" />
           <p className="mt-3 text-sm font-medium">{t("noTransactions")}</p>
           <p className="mt-1 text-xs text-muted-foreground">{t("noTransactionsHint")}</p>
@@ -75,10 +75,9 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   // Only a username resolves to an ICPverse profile; a raw principal or account
   // identifier has no page to open.
   const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
-  const verified = isPremiumHandle(handle)
 
   return (
-    <li className="flex items-center gap-3 px-4 py-3.5">
+    <li className="flex items-center gap-3 px-4 py-2">
       {handle ? (
         <Link
           href={`/icpverse/${handle}`}
@@ -107,13 +106,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
               as a username rather than a principal, and the avatar and profile
               link already say that. */}
           {handle ?? shortenCounterparty(counterparty)}
-          {verified && (
-            <HugeiconsIcon
-              icon={BadgeCheckIcon}
-              className="size-3.5 shrink-0 text-blue-500"
-              aria-label={tp("premium")}
-            />
-          )}
+          <PremiumBadge name={handle} className="size-3.5" />
         </p>
         <p className="mt-0.5 text-xs text-muted-foreground/80">
           <span>{t(`type.${type}`)}</span> · {formatTime(tx.createdAt)}

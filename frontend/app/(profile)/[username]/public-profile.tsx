@@ -11,7 +11,8 @@ import { Spinner } from "@/components/ui/spinner"
 import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon, UserQuestion01Icon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
+import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { Copy01Icon, Tick02Icon, UserQuestion01Icon } from "@hugeicons/core-free-icons"
 import { PayQr } from "@/components/profile/pay-qr"
 import { QuickPayDrawer } from "@/components/profile/quick-pay-drawer"
 import { avatarUriFor } from "@/lib/avatar"
@@ -20,7 +21,6 @@ import { parsePaymentLink } from "@/services/pay/pay"
 import { copyText, formatE8s } from "@/lib/wallet-utils"
 import { accountIdentifier, icrc1Account } from "@/lib/account-id"
 import { isPossibleHandle, isReservedHandle } from "@/lib/reserved-handles"
-import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { custodialSubaccount } from "@/services/tokens"
 import { WALLET_CANISTER_ID } from "@/services/icp"
@@ -132,13 +132,7 @@ export function PublicProfile() {
 
       <h1 className="flex items-center gap-1.5 pt-4 text-2xl font-bold tracking-tight">
         {username}
-        {isPremiumHandle(username) && (
-          <HugeiconsIcon
-            icon={BadgeCheckIcon}
-            className="size-5 shrink-0 text-blue-500"
-            aria-label={t("premium")}
-          />
-        )}
+        <PremiumBadge name={username} className="size-5" />
       </h1>
       <p className="pt-1 text-sm text-muted-foreground">
         {request ? t("requestTagline") : t("tagline")}
@@ -194,7 +188,7 @@ export function PublicProfile() {
           {t("ownLink")}
         </p>
       ) : (
-        <Button className="mt-6 h-13 w-full text-base" onClick={handlePayClick}>
+        <Button size="lg" className="mt-6 w-full" onClick={handlePayClick}>
           {request ? t("payAmount", { amount: formatE8s(request.amount) }) : t("pay")}
         </Button>
       )}
@@ -231,7 +225,8 @@ function Unclaimed({ username }: { username: string }) {
       </p>
 
       <Button
-        className="mt-7 h-13 w-full text-base"
+        size="lg"
+        className="mt-7 w-full"
         nativeButton={false}
         render={<Link href="/login" />}
       >

@@ -104,7 +104,7 @@ function AddressBlock({
           button are both transparent and square inside it. The Input primitive
           is rounded-4xl with its own bg, which peeked out of these squarer
           corners as pale slivers and read as a seam against the button. */}
-      <div className="flex w-full items-stretch overflow-hidden rounded-2xl border border-input bg-input/30 shadow-sm">
+      <div className="flex w-full items-stretch overflow-hidden rounded-xl border border-input bg-input/30 shadow-sm">
         <Input
           readOnly
           variant="ghost"
@@ -117,9 +117,9 @@ function AddressBlock({
           variant="ghost"
           onClick={handleCopy}
           aria-label={t("copyAddress")}
-          className="h-auto shrink-0 rounded-none border-l border-input bg-transparent px-3 text-muted-foreground hover:bg-muted/60"
+          className="size-8 shrink-0 rounded-none border-l border-input bg-transparent px-0 text-muted-foreground hover:bg-muted/60"
         >
-          <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" />
+          <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5" />
         </Button>
       </div>
 

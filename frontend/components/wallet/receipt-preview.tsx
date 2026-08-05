@@ -110,7 +110,7 @@ export function ReceiptPreview({
         {note && <p className="text-center text-xs text-muted-foreground">{note}</p>}
 
         <DialogFooter>
-          <Button className="h-12 text-base" onClick={handleShare} disabled={!blob || busy}>
+          <Button onClick={handleShare} disabled={!blob || busy}>
             <HugeiconsIcon icon={Share08Icon} className="size-4" />
             {tc("share")}
           </Button>

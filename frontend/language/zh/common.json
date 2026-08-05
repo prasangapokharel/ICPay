@@ -229,6 +229,13 @@
     "buying": "购买中…",
     "buy": "购买用户名",
     "pricing": "价格",
+    "badgeInfoTitle": "认证徽章",
+    "badgeInfo": "少于 {min} 个字符的名称需付费，每个付费名称都带有认证徽章。",
+    "badgeChip": "{lengths} 个字符",
+    "goldBadgeTitle": "金色徽章",
+    "goldBadgeInfo": "购买 {lengths} 个字符的名称，您的账号将带有金色徽章 —— ICPay 发行的最稀有名称。",
+    "blueBadgeTitle": "蓝色徽章",
+    "blueBadgeInfo": "购买 {lengths} 个字符的名称，您的账号将带有蓝色认证徽章。",
     "note": "购买的名称将成为您的主用户名。您已持有的名称仍会指向您，旧的付款链接不会失效。",
     "tiers": {
       "ultra": "超级优质",
@@ -439,7 +446,8 @@
     "copyPrincipal": "复制 principal",
     "tip": "打赏",
     "viewProfile": "查看 @{name} 的资料",
-    "premium": "已验证的高级名称"
+    "premium": "已验证的高级名称",
+    "premiumGold": "金色认证名称"
   },
   "paymentCard": {
     "live": "直播",

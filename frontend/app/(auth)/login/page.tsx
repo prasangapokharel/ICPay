@@ -102,7 +102,7 @@ export default function LoginPage() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          <Button className="h-12 w-full text-base" onClick={() => handleLogin()} disabled={connecting}>
+          <Button size="lg" className="w-full" onClick={() => handleLogin()} disabled={connecting}>
             {connecting ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Wallet01Icon} className="size-5" />}
             {connecting ? t("connecting") : t("connect")}
           </Button>
@@ -119,7 +119,8 @@ export default function LoginPage() {
             <ButtonGroup>
               <Button
                 variant="outline"
-                className="h-9 px-5 text-xs"
+                size="sm"
+                className="px-5"
                 onClick={() => handleLogin(NFID_PROVIDER)}
                 disabled={connecting}
               >

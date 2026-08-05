@@ -63,7 +63,6 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
             <Button
               variant="outline"
               size="sm"
-              className="h-8"
               disabled={!hasPrev}
               onClick={() => onPageChange(page - 1)}
             >
@@ -73,7 +72,6 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
             <Button
               variant="outline"
               size="sm"
-              className="h-8"
               disabled={!hasNext}
               onClick={() => onPageChange(page + 1)}
             >

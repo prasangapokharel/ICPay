@@ -229,6 +229,13 @@
     "buying": "Achat…",
     "buy": "Acheter le nom",
     "pricing": "Tarifs",
+    "badgeInfoTitle": "Badges vérifiés",
+    "badgeInfo": "Les noms de moins de {min} caractères sont payants, et chaque nom payant porte un badge vérifié.",
+    "badgeChip": "{lengths} caractères",
+    "goldBadgeTitle": "Badge doré",
+    "goldBadgeInfo": "Achetez un nom de {lengths} caractères et votre identifiant portera le badge doré — les noms les plus rares qu’émet ICPay.",
+    "blueBadgeTitle": "Badge bleu",
+    "blueBadgeInfo": "Achetez un nom de {lengths} caractères et votre identifiant portera le badge bleu vérifié.",
     "note": "Un nom acheté devient votre identifiant principal. Tout nom que vous détenez déjà continue de pointer vers vous : vos anciens liens de paiement restent valides.",
     "tiers": {
       "ultra": "Ultra premium",
@@ -439,7 +446,8 @@
     "copyPrincipal": "Copier le principal",
     "tip": "Pourboire",
     "viewProfile": "Voir le profil de @{name}",
-    "premium": "Identifiant premium vérifié"
+    "premium": "Identifiant premium vérifié",
+    "premiumGold": "Identifiant doré vérifié"
   },
   "paymentCard": {
     "live": "EN DIRECT",

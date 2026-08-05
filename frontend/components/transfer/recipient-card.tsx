@@ -1,13 +1,13 @@
 "use client"
 
 import { HugeiconsIcon } from "@hugeicons/react"
+import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { useTranslations } from "next-intl"
-import { GiftIcon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
+import { GiftIcon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
 import { avatarUriFor } from "@/lib/avatar"
 import { shortPrincipal } from "@/lib/wallet-utils"
-import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { cn } from "@/lib/utils"
 
 // The confirmation a payment app owes the user before they send money: proof the
@@ -23,7 +23,6 @@ export function RecipientCard({
   className?: string
 }) {
   const tp = useTranslations("profileView")
-  const verified = isPremiumHandle(username)
 
   return (
     <div
@@ -41,13 +40,7 @@ export function RecipientCard({
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-1 truncate text-sm font-semibold">
           {username}
-          {verified && (
-            <HugeiconsIcon
-              icon={BadgeCheckIcon}
-              className="size-4 shrink-0 text-blue-500"
-              aria-label={tp("premium")}
-            />
-          )}
+          <PremiumBadge name={username} />
         </p>
         {principal && (
           <p className="truncate font-mono text-xs text-muted-foreground">

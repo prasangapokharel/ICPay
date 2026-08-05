@@ -107,7 +107,6 @@ export function PaymentLinkDialog({
                 <Label htmlFor="request-amount">{t("amountLabel")}</Label>
                 <Input
                   id="request-amount"
-                  size="lg"
                   inputMode="decimal"
                   autoComplete="off"
                   placeholder={t("amountPlaceholder")}
@@ -132,7 +131,6 @@ export function PaymentLinkDialog({
                 </div>
                 <Input
                   id="request-memo"
-                  size="lg"
                   autoComplete="off"
                   placeholder={t("memoPlaceholder")}
                   value={memo}
@@ -157,7 +155,7 @@ export function PaymentLinkDialog({
             </div>
 
             <DialogFooter>
-              <Button className="h-11 w-full text-base" disabled={!canGenerate} onClick={handleGenerate}>
+              <Button className="w-full" disabled={!canGenerate} onClick={handleGenerate}>
                 {t("generate")}
               </Button>
             </DialogFooter>
@@ -167,7 +165,7 @@ export function PaymentLinkDialog({
                 <p className="break-all font-mono text-xs leading-relaxed text-foreground">
                   {generatedLink.replace(/^https?:\/\//, "")}
                 </p>
-                <Button variant="outline" onClick={handleCopy} className="h-10 w-full">
+                <Button variant="outline" onClick={handleCopy} className="w-full">
                   <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" />
                   {copied ? tc("copied") : t("copyLink")}
                 </Button>
