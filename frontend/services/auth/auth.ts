@@ -1,7 +1,7 @@
-import { AuthClient } from "@dfinity/auth-client"
+import { AuthClient } from "@icp-sdk/auth/client"
 import { getIdentityProvider, getDerivationOrigin } from "@/services/icp"
 import { getWalletActor, clearActorCache } from "@/services/wallet"
-import type { Identity } from "@dfinity/agent"
+import type { Identity } from "@icp-sdk/core/agent"
 
 let clientPromise: Promise<AuthClient> | null = null
 let readyClient: AuthClient | null = null

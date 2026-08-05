@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Principal } from "@dfinity/principal"
+import { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"

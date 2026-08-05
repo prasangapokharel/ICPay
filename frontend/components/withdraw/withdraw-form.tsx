@@ -12,7 +12,7 @@ import { Upload01Icon } from "@hugeicons/core-free-icons"
 import { formatAmount, parseIcp, isHexAccountId, ICP_FEE } from "@/lib/wallet-utils"
 import { AmountInput } from "@/components/shared/amount-input"
 import { primeSuccessChime } from "@/lib/success-chime"
-import { Principal } from "@dfinity/principal"
+import { Principal } from "@icp-sdk/core/principal"
 
 type WithdrawFormProps = {
   balance: bigint
