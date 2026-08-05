@@ -339,16 +339,13 @@ export function useTokenHoldings() {
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
-  // Phase 2 -- metadata for the rows that will actually render: the pinned
-  // tokens, plus anything held. Fetching it for every discovered SNS ledger
-  // would be ~50 extra calls to name tokens nobody is holding. Keyed by that id
-  // list so it refetches when a new token appears rather than on every balance
-  // change, and immutable because a symbol and decimals never change.
-  const shownIds = balances
-    ? [...balances.keys()]
-        .filter((id) => PINNED_LEDGER_IDS.includes(id) || balances.get(id)! > 0n)
-        .sort()
-    : []
+  // Phase 2 -- metadata for every discovered ledger, not just the held ones. A
+  // token nobody holds still needs a name and a logo to be worth depositing to,
+  // and naming all of them is now one request to the NNS token index rather than
+  // one ledger call each. Keyed by the id list so it refetches when a new token
+  // appears rather than on every balance change, and immutable because a symbol
+  // and decimals never change.
+  const shownIds = balances ? [...balances.keys()].sort() : []
   const { data: metadata, isLoading: loadingMetadata } = useSWRImmutable(
     shownIds.length ? (["token-metadata", shownIds.join(",")] as const) : null,
     async () => {
@@ -380,12 +377,16 @@ export function useTokenHoldings() {
   const shown = seeded ?? holdings
 
   return {
-    // ICP first, then held tokens by symbol, then the unheld pinned ones -- a
-    // zero balance is offered as somewhere to deposit, not as a holding.
+    // ICP, then anything held, then the chain-key tokens, then the rest by
+    // symbol. Now that every discovered ledger renders, the pinned ones need
+    // their own tier or they sort into the alphabetical run among ~38 zeros --
+    // the tokens most users came for would be somewhere under "c".
     holdings: shown.slice().sort((a, b) => {
       if (a.ledgerId === ICP_LEDGER_ID) return -1
       if (b.ledgerId === ICP_LEDGER_ID) return 1
       if (a.balance > 0n !== b.balance > 0n) return a.balance > 0n ? -1 : 1
+      const pinnedA = PINNED_LEDGER_IDS.includes(a.ledgerId)
+      if (pinnedA !== PINNED_LEDGER_IDS.includes(b.ledgerId)) return pinnedA ? -1 : 1
       return a.symbol.localeCompare(b.symbol)
     }),
     isLoading:

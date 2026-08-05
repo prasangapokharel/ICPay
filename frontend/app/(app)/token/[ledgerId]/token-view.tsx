@@ -20,6 +20,8 @@ import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import { useAuth } from "@/components/auth/auth-provider"
 import { transfer } from "@/services/transfer/transfer"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
+import { useTokenRegistry } from "@/lib/token-registry"
+import { useFiatValue } from "@/lib/fiat/use-fiat-value"
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
@@ -113,6 +115,7 @@ export function TokenView() {
           {token.name !== token.symbol && (
             <p className="text-xs text-muted-foreground">{token.name}</p>
           )}
+          <TokenValue token={token} />
         </div>
 
         {/* Send opens the swipe-up drawer; Deposit toggles the collapsible below.
@@ -189,6 +192,25 @@ function BackButton({ onClick, label }: { onClick: () => void; label: string }) 
       <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
       {label}
     </Button>
+  )
+}
+
+// Every token gets a fiat line, not just ICP: the price comes from the NNS token
+// index, which quotes SNS and chain-key tokens the ICP-only feed cannot. A token
+// it does not quote renders nothing rather than a zero, which would read as
+// worthless rather than unpriced.
+function TokenValue({ token }: { token: TokenHolding }) {
+  const registry = useTokenRegistry()
+  const price = registry?.get(token.ledgerId)?.priceUsd
+  const amount = Number(token.balance) / 10 ** token.decimals
+  const fiat = useFiatValue(price === undefined ? null : amount * price)
+
+  if (fiat.formatted === null) return null
+  return (
+    <p className="text-sm font-medium text-muted-foreground tabular-nums">
+      ≈ {fiat.symbol}
+      {fiat.formatted} {fiat.currency}
+    </p>
   )
 }
 
