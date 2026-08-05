@@ -58,8 +58,8 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
 
   return (
     <div className="flex flex-col items-center pt-6 text-center">
-      <div className="animate-in fade-in zoom-in-75 mb-5 flex size-18 items-center justify-center rounded-full bg-green-100 duration-300 ease-out dark:bg-green-950">
-        <span className="flex size-13 items-center justify-center rounded-full bg-green-600 text-white shadow-sm">
+      <div className="animate-in fade-in zoom-in-75 mb-5 flex size-18 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
+        <span className="flex size-13 items-center justify-center rounded-full bg-success text-background shadow-sm">
           <HugeiconsIcon icon={Tick02Icon} className="size-8" strokeWidth={3} />
         </span>
       </div>
@@ -110,14 +110,15 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
             around who received the money -- would read as a transfer to us. */}
         {kind !== "purchase" && (
           <>
-            <button
-              type="button"
+            <Button
+              variant="outline"
+              size="icon-lg"
               onClick={() => setPreviewOpen(true)}
               aria-label={t("shareReceipt")}
-              className="flex size-12 shrink-0 items-center justify-center rounded-2xl ring-1 ring-border transition-colors hover:bg-accent active:scale-95"
+              className="size-12 rounded-2xl"
             >
               <HugeiconsIcon icon={Share08Icon} className="size-4.5" />
-            </button>
+            </Button>
             <ReceiptPreview
               open={previewOpen}
               onOpenChange={setPreviewOpen}

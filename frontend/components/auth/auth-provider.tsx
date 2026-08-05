@@ -28,7 +28,7 @@ function playLoginChimeOnce(principal: string) {
   // Written before playback, not after: a browser that blocks the sound must
   // not leave the flag unset and retry on every future sign-in.
   localStorage.setItem(key, "1")
-  void new Audio("/audio/sucess/Login_successful_long_1.wav").play().catch(() => {})
+  void new Audio("/audio/sucess/login.mp3").play().catch(() => {})
 }
 
 const AuthContext = createContext<AuthContextType>({

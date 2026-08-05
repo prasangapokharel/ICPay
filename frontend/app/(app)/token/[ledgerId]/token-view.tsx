@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -8,17 +9,28 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, Alert02Icon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { ArrowLeft01Icon, ArrowDown01Icon, Alert02Icon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { copyText, formatTokenAmount } from "@/lib/wallet-utils"
-import { icrc1Account, toHex } from "@/lib/account-id"
-import { useTokenHolding, useDepositAddress, useSelfCustodyBalance } from "@/hooks/use-wallet-data"
+import { icrc1Account } from "@/lib/account-id"
+import { useTokenHolding, useDepositAddress, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { SelfCustodyCard } from "@/components/wallet/self-custody-card"
+import { SendTokenDrawer } from "@/components/wallet/send-token-drawer"
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
+import { useAuth } from "@/components/auth/auth-provider"
+import { transfer } from "@/services/transfer/transfer"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 
 export function TokenView() {
   const t = useTranslations("token")
   const pathname = usePathname()
   const router = useRouter()
+  const { identity } = useAuth()
+  const refreshWallet = useRefreshWallet()
+  const [sendOpen, setSendOpen] = useState(false)
+  // The deposit details stay hidden until the user asks for them: they see the
+  // QR and address only after tapping Deposit, so the default view stays focused
+  // on the balance, the action buttons, and the custody card below.
+  const [showDeposit, setShowDeposit] = useState(false)
 
   // Read from the path, not useParams: under output "export" this component is
   // served as the /token/token shell via a rewrite, so useParams would report
@@ -53,101 +65,102 @@ export function TokenView() {
     ? icrc1Account(deposit.address.owner, deposit.address.subaccount[0])
     : ""
 
+  const handleSend = async (username: string, amount: bigint, memo?: string) => {
+    const result = await transfer(identity, token.ledgerId, "username", username, amount, memo)
+    if ("err" in result) return result.err
+    refreshWallet()
+    return null
+  }
+
   return (
     <div className="space-y-6 pt-2">
       <BackButton onClick={() => router.push("/wallet")} label={t("back")} />
 
-      <div className="flex flex-col items-center gap-3 text-center">
-        <TokenLogo token={token} className="size-14" />
-        <div>
+      <div>
+        <div className="flex flex-col items-center gap-3 text-center">
+          <TokenLogo token={token} className="size-14" />
           {/* Full precision here, unlike the wallet list: ckETH's 18 decimals put
               a real balance below the list's 6-digit cutoff, where it rendered as
               "<0.000001" and read as empty. */}
           <p className="text-3xl font-bold tracking-tight tabular-nums">
             {formatTokenAmount(token.balance, token.decimals, token.decimals)}
           </p>
+          {/* The symbol renders once, cleanly. Some ledgers (ckETH) carry the
+              same value in name and symbol, so the separate name line is only
+              shown when it is actually distinct. */}
           <p className="text-sm font-medium text-muted-foreground">{token.symbol}</p>
+          {token.name !== token.symbol && (
+            <p className="text-xs text-muted-foreground">{token.name}</p>
+          )}
         </div>
-        <p className="text-xs text-muted-foreground">{token.name}</p>
+
+        {/* Send opens the swipe-up drawer; Deposit toggles the collapsible below.
+            The collapsible only ever opens through this button (or keyboard
+            activation), so the QR + address never appear before the user asks. */}
+        <div className="mt-5 grid grid-cols-2 gap-2">
+          <Button variant="outline" className="w-full" onClick={() => setSendOpen(true)}>
+            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
+            {t("send")}
+          </Button>
+          <Button className="w-full" onClick={() => setShowDeposit((v) => !v)}>
+            <HugeiconsIcon icon={ArrowDown01Icon} className="size-4" />
+            {t("deposit")}
+          </Button>
+        </div>
       </div>
 
-      {/* Only ICP is spendable from this wallet: the send form prices its fee and
-          parses its amount in e8s, so pointing it at an 18-decimal ledger would
-          misread the amount. Other tokens are receive-only until it is generalised. */}
-      {isIcp && (
-        <Button className="w-full" onClick={() => router.push("/transfer")}>
-          <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
-          {t("send")}
-        </Button>
-      )}
+      <SendTokenDrawer
+        open={sendOpen}
+        onOpenChange={setSendOpen}
+        token={token}
+        onSend={handleSend}
+      />
 
-      <div className="space-y-4">
-        <div>
-          <h2 className="text-sm font-semibold">{t("depositTitle")}</h2>
-          <p className="text-xs text-muted-foreground">
-            {t("depositSubtitle", { symbol: token.symbol })}
-          </p>
-        </div>
+      {/* Rendered even at zero: a card that only appears when funds are stranded
+          is indistinguishable from a broken one the rest of the time. Sits above
+          the deposit details so custody is always visible on first load. */}
+      {selfCustody !== undefined && <SelfCustodyCard token={token} balance={selfCustody} />}
 
-        {icrcAddress ? (
-          <>
+      <Collapsible open={showDeposit} onOpenChange={setShowDeposit} className="w-full">
+        {/* keepMounted keeps the panel in the DOM while closed, so toggling
+            Deposit animates between the closed and open keyframes instead of
+            mounting fresh (base-ui suppresses animation on a first mount). */}
+        <CollapsibleContent
+          keepMounted
+          className="overflow-hidden data-open:animate-accordion-down data-closed:animate-accordion-up"
+        >
+          <div className="space-y-4">
+          <div>
+            <h2 className="text-sm font-semibold">{t("depositTitle")}</h2>
+            <p className="text-xs text-muted-foreground">
+              {t("depositSubtitle", { symbol: token.symbol })}
+            </p>
+          </div>
+
+          {icrcAddress ? (
             <DepositAddressCard
               icrcAddress={icrcAddress}
               // Account identifiers only exist on the ICP ledger, so the legacy
               // tab is offered there and nowhere else.
               accountId={isIcp ? deposit?.accountId : undefined}
+              principal={identity?.getPrincipal().toText()}
               logo={token.logo}
               onCopy={copyText}
             />
-            <AccountBreakdown
-              owner={deposit!.address.owner.toText()}
-              subaccount={toHex(Uint8Array.from(deposit!.address.subaccount[0] ?? []))}
-            />
-          </>
-        ) : (
-          <div className="flex flex-col items-center gap-4">
-            <Skeleton className="size-52 rounded-2xl" />
-            <Skeleton className="h-16 w-full rounded-2xl" />
+          ) : (
+            <div className="flex flex-col items-center gap-4">
+              <Skeleton className="size-52 rounded-2xl" />
+              <Skeleton className="h-16 w-full rounded-2xl" />
+            </div>
+          )}
+
+          <p className="flex items-start gap-2 text-xs text-muted-foreground">
+            <HugeiconsIcon icon={Alert02Icon} className="mt-px size-3.5 shrink-0" />
+            {t("warning", { symbol: token.symbol })}
+          </p>
           </div>
-        )}
-
-        <p className="flex items-start gap-2 text-xs text-muted-foreground">
-          <HugeiconsIcon icon={Alert02Icon} className="mt-px size-3.5 shrink-0" />
-          {t("warning", { symbol: token.symbol })}
-        </p>
-
-        {/* Rendered even at zero: a card that only appears when funds are stranded
-            is indistinguishable from a broken one the rest of the time. */}
-        {selfCustody !== undefined && (
-          <SelfCustodyCard token={token} balance={selfCustody} />
-        )}
-      </div>
-    </div>
-  )
-}
-
-// The two halves of the ICRC-1 address above, shown but deliberately not
-// copyable. A custodial deposit is only credited when it carries the subaccount,
-// so a user who copies the bare owner principal sends to the canister's default
-// account and the funds are unattributable.
-function AccountBreakdown({ owner, subaccount }: { owner: string; subaccount: string }) {
-  const t = useTranslations("token")
-  return (
-    <div className="space-y-2 rounded-2xl border bg-muted/30 p-4">
-      <Field label={t("owner")} value={owner} />
-      <Field label={t("subaccount")} value={subaccount} />
-      <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
-        {t("breakdownHint")}
-      </p>
-    </div>
-  )
-}
-
-function Field({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="space-y-0.5">
-      <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
-      <p className="break-all font-mono text-xs leading-relaxed">{value}</p>
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   )
 }

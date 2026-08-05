@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
+import { Button } from "@/components/ui/button"
 import type { IcpPrice } from "@/lib/use-icp-price"
 import { useFiatValue } from "@/lib/fiat/use-fiat-value"
 
@@ -50,14 +51,15 @@ export function BalanceCard({
           </span>
           <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-foreground/70">
             ICP
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon-xs"
               aria-label={hidden ? t("showBalance") : t("hideBalance")}
               onClick={onToggleHidden}
-              className="flex items-center transition-colors hover:text-primary-foreground active:scale-95"
+              className="hover:bg-primary-foreground/15 hover:text-primary-foreground"
             >
               <HugeiconsIcon icon={hidden ? EyeOffIcon : EyeIcon} className="size-4" />
-            </button>
+            </Button>
           </span>
         </div>
 

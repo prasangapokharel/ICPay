@@ -18,6 +18,7 @@ import { avatarUriFor } from "@/lib/avatar"
 import { copyText } from "@/lib/wallet-utils"
 import { accountIdentifier, icrc1Account } from "@/lib/account-id"
 import { isPossibleHandle, isReservedHandle } from "@/lib/reserved-handles"
+import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { custodialSubaccount } from "@/services/tokens"
 import { WALLET_CANISTER_ID } from "@/services/icp"
@@ -108,8 +109,7 @@ export function PublicProfile() {
 
       <h1 className="flex items-center gap-1.5 pt-4 text-2xl font-bold tracking-tight">
         {username}
-        {/* 3-4 char handles are the rarest premium tier the sale issues. */}
-        {username.length >= 3 && username.length <= 4 && (
+        {isPremiumHandle(username) && (
           <HugeiconsIcon
             icon={BadgeCheckIcon}
             className="size-5 shrink-0 text-blue-500"
@@ -121,11 +121,11 @@ export function PublicProfile() {
 
       <PayQr value={payAddress} className="pt-8" />
 
-      <button
-        type="button"
+      <Button
+        variant="outline"
         onClick={handleCopy}
         aria-label={t("copyAddress")}
-        className="mt-7 flex w-full items-center gap-3 rounded-2xl border bg-muted/40 p-4 text-left transition-colors hover:bg-muted active:scale-[0.99]"
+        className="mt-7 h-auto w-full justify-start gap-3 rounded-2xl bg-muted/40 p-4 text-left hover:bg-muted"
       >
         <span className="min-w-0 flex-1 truncate font-mono text-xs">
           {payAddress.slice(0, 14)}…{payAddress.slice(-10)}
@@ -134,7 +134,7 @@ export function PublicProfile() {
           icon={copied ? Tick02Icon : Copy01Icon}
           className={copied ? "size-4 shrink-0 text-primary" : "size-4 shrink-0 text-muted-foreground"}
         />
-      </button>
+      </Button>
 
       {/* Both forms address the same custodial subaccount, so the choice is only
           about which one the sender's wallet accepts. */}

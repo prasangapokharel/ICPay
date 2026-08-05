@@ -7,6 +7,7 @@ import { BalanceCard } from "@/components/dashboard/balance-card"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { UsernamePrompt } from "@/components/dashboard/username-prompt"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import { ArrowUpRight01Icon, Download01Icon } from "@hugeicons/core-free-icons"
@@ -70,17 +71,19 @@ function ActionButton({
   primary?: boolean
 }) {
   return (
-    <Link
-      href={href}
+    <Button
+      variant={primary ? "default" : "outline"}
+      nativeButton={false}
+      render={<Link href={href} />}
       className={
         primary
-          ? "flex h-12 items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/25 transition-all hover:bg-primary/90 active:scale-95"
-          : "flex h-12 items-center justify-center gap-2 rounded-full border border-border bg-background text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-accent active:scale-95"
+          ? "h-12 font-semibold shadow-sm shadow-primary/25"
+          : "h-12 bg-background font-semibold shadow-sm"
       }
     >
       <HugeiconsIcon icon={icon} className="size-4" />
       {label}
-    </Link>
+    </Button>
   )
 }
 

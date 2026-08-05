@@ -19,6 +19,7 @@ import {
   BadgeCheckIcon,
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
+import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet, useDashboard } from "@/hooks/use-wallet-data"
 import { tip } from "@/services/transfer/transfer"
@@ -112,8 +113,7 @@ export function ProfileView() {
 
         <h1 className="flex items-center gap-1.5 pt-4 text-2xl font-bold">
           {username}
-          {/* 3-4 char handles are the rarest premium tier the sale issues. */}
-          {username.length >= 3 && username.length <= 4 && (
+          {isPremiumHandle(username) && (
             <HugeiconsIcon
               icon={BadgeCheckIcon}
               className="size-5 shrink-0 text-blue-500"
@@ -122,10 +122,11 @@ export function ProfileView() {
           )}
         </h1>
 
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={handleCopy}
-          className="mt-1.5 flex items-center gap-1.5 rounded-full px-2 py-1 text-sm text-muted-foreground transition-colors hover:bg-accent active:scale-95"
+          className="mt-1.5 text-muted-foreground"
           aria-label={t("copyPrincipal")}
         >
           <span className="font-mono text-xs">{shortPrincipal(principal)}</span>
@@ -133,7 +134,7 @@ export function ProfileView() {
             icon={copied ? CheckmarkCircle01Icon : Copy01Icon}
             className={copied ? "size-4 text-primary" : "size-4"}
           />
-        </button>
+        </Button>
 
         {!isSelf && (
           <Button
@@ -165,14 +166,15 @@ export function ProfileView() {
 function BackButton({ onClick }: { onClick: () => void }) {
   const tc = useTranslations("common")
   return (
-    <button
-      type="button"
+    <Button
+      variant="outline"
+      size="icon"
       onClick={onClick}
-      className="flex size-9 items-center justify-center rounded-full border bg-background transition-colors hover:bg-accent active:scale-95"
+      className="rounded-full bg-background"
       aria-label={tc("back")}
     >
       <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-    </button>
+    </Button>
   )
 }
 

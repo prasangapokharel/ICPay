@@ -1,10 +1,12 @@
 "use client"
 
+import { useEffect } from "react"
 import useSWR, { useSWRConfig } from "swr"
 import useSWRImmutable from "swr/immutable"
 import type { Identity } from "@dfinity/agent"
 import { Principal } from "@dfinity/principal"
 import { useAuth } from "@/components/auth/auth-provider"
+import { readHoldings, writeHoldings } from "@/lib/holdings-cache"
 import type { DashboardData, UserPublic } from "@/services/types"
 import { getDashboard } from "@/services/dashboard/dashboard"
 import { getDepositAddress } from "@/services/deposit/deposit"
@@ -363,16 +365,32 @@ export function useTokenHoldings() {
     return [{ ...meta, balance: balances!.get(ledgerId)! }]
   })
 
+  const principal = identity?.getPrincipal().toText()
+
+  useEffect(() => {
+    if (principal && holdings.length > 0) writeHoldings(principal, holdings)
+    // Serialised because the array identity changes every render; only a real
+    // change in the numbers should rewrite the cache.
+  }, [principal, holdings.map((h) => `${h.ledgerId}:${h.balance}`).join(",")]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // A reload has an empty SWR cache, so the real list takes a ledger sweep to
+  // arrive and the wallet reads as empty until it does. The last known holdings
+  // stand in for that window rather than a skeleton.
+  const seeded = holdings.length === 0 && principal ? readHoldings(principal) : undefined
+  const shown = seeded ?? holdings
+
   return {
     // ICP first, then held tokens by symbol, then the unheld pinned ones -- a
     // zero balance is offered as somewhere to deposit, not as a holding.
-    holdings: holdings.sort((a, b) => {
+    holdings: shown.slice().sort((a, b) => {
       if (a.ledgerId === ICP_LEDGER_ID) return -1
       if (b.ledgerId === ICP_LEDGER_ID) return 1
       if (a.balance > 0n !== b.balance > 0n) return a.balance > 0n ? -1 : 1
       return a.symbol.localeCompare(b.symbol)
     }),
-    isLoading: loadingBalances || (shownIds.length > 0 && loadingMetadata && !metadata),
+    isLoading:
+      shown.length === 0 &&
+      (loadingBalances || (shownIds.length > 0 && loadingMetadata && !metadata)),
   }
 }
 
@@ -389,11 +407,24 @@ export function useTokenHolding(ledgerId: string | null) {
     () => fetchTokenMetadata(ledgerId!, identity)
   )
 
+  // Same reason as useTokenHoldings: on a reload neither the metadata nor the
+  // balance is cached, so the page held a skeleton for the whole round trip.
+  const principal = identity?.getPrincipal().toText()
+  const cached =
+    !meta && ledgerId && principal
+      ? readHoldings(principal)?.find((h) => h.ledgerId === ledgerId)
+      : undefined
+
   // The balance is not awaited before rendering: the symbol and logo are what
   // identify the page, and 0n reads correctly for a token held in no amount.
-  const token: TokenHolding | undefined = meta ? { ...meta, balance: balance ?? 0n } : undefined
+  const token: TokenHolding | undefined = meta
+    ? { ...meta, balance: balance ?? cached?.balance ?? 0n }
+    : cached
 
-  return { token, isLoading: loadingMeta || (loadingBalance && balance === undefined) }
+  return {
+    token,
+    isLoading: !cached && (loadingMeta || (loadingBalance && balance === undefined)),
+  }
 }
 
 // Public account stats for any principal, read straight from the NNS index

@@ -156,7 +156,9 @@
     "copyAddress": "Copy address",
     "showLess": "Show less",
     "showFull": "Show full address",
-    "qrAlt": "Deposit address QR code"
+    "qrAlt": "Deposit address QR code",
+    "tabPrincipal": "Principal",
+    "hintPrincipal": "For exchanges. Move funds in after they arrive."
   },
   "withdraw": {
     "title": "Withdraw",
@@ -269,12 +271,10 @@
     "back": "Wallet",
     "notFound": "This token could not be loaded.",
     "send": "Send",
+      "deposit": "Deposit",
     "depositTitle": "Deposit address",
     "depositSubtitle": "Send {symbol} here to top up your wallet.",
     "warning": "Send only {symbol} to this address. Other tokens will be lost.",
-    "owner": "Owner (canister)",
-    "subaccount": "Your subaccount",
-    "breakdownHint": "Both parts are required. Always use the full address above — sending to the owner principal alone will not credit your wallet.",
     "selfCustodyTitle": "Held outside ICPay",
     "selfCustodyBody": "{amount} {symbol} was sent to your principal instead of your ICPay deposit address, so it is not in your wallet yet.",
     "selfCustodyMove": "Move into ICPay",
@@ -283,6 +283,19 @@
     "selfCustodyNet": "You receive",
     "selfCustodyDust": "This is below the {symbol} network fee, so it cannot be moved.",
     "selfCustodyEmpty": "Nothing to move in — this token has not been sent to your principal."
+  },
+  "sendToken": {
+    "title": "Send {symbol}",
+    "subtitle": "Send {symbol} to another ICPay user.",
+    "recipient": "Recipient username",
+    "recipientPlaceholder": "username",
+    "badAmount": "Enter an amount with at most {decimals} decimals.",
+    "memoLabel": "Memo (optional)",
+    "memoPlaceholder": "Payment reference",
+    "total": "Total deducted",
+    "insufficient": "Insufficient balance",
+    "send": "Send",
+    "sending": "Sending…"
   },
   "icpverse": {
     "searchPlaceholder": "Find your friends",

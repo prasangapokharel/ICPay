@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Search01Icon, ArrowRight01Icon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
+import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { useUserSearch } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
 
@@ -22,8 +23,8 @@ export default function IcpversePage() {
 
   const searching = debounced.trim().length > 0
 
-  // Premium (3-4 char) handles lead the list: they are the rarest tier the
-  // username sale issues, so the verified accounts surface before the rest.
+  // Paid handles lead the list: they are the scarce tier the username sale
+  // issues, so the verified accounts surface before the free ones.
   const sorted = [...users].sort((a, b) => {
     const pa = isPremiumHandle(a.username[0] ?? "") ? 0 : 1
     const pb = isPremiumHandle(b.username[0] ?? "") ? 0 : 1
@@ -76,8 +77,6 @@ export default function IcpversePage() {
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-1 truncate text-sm font-semibold">
                     {name}
-                    {/* Short handles are premium: 3-4 chars are the rarest tier
-                        the username sale issues, so they carry the verified badge. */}
                     {isPremiumHandle(name) && (
                       <HugeiconsIcon
                         icon={BadgeCheckIcon}
@@ -103,12 +102,6 @@ export default function IcpversePage() {
       </section>
     </div>
   )
-}
-
-// 3-4 chars is the premium tier the username sale issues; the verified badge
-// and the suggestion ordering both key off it.
-function isPremiumHandle(name: string): boolean {
-  return name.length >= 3 && name.length <= 4
 }
 
 function UserListSkeleton() {

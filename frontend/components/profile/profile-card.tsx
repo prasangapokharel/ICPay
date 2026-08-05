@@ -85,11 +85,12 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
       <CardContent className="space-y-4">
         <div className="space-y-1">
           <Label className="text-xs text-muted-foreground">{t("principal")}</Label>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleCopyPrincipal}
             aria-label={t("copyPrincipal")}
-            className="flex w-full items-center gap-2 rounded-lg text-left transition-colors hover:bg-accent active:scale-[0.99]"
+            className="h-auto w-full justify-start gap-2 rounded-lg px-0 py-1 text-left font-normal"
           >
             <span className="min-w-0 flex-1 truncate font-mono text-sm">
               {formatPrincipal(principal)}
@@ -102,7 +103,7 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
                   : "size-4 shrink-0 text-muted-foreground"
               }
             />
-          </button>
+          </Button>
         </div>
         <div className="space-y-1">
           <Label className="text-xs text-muted-foreground">{t("userId")}</Label>

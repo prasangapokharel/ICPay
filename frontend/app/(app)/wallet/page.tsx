@@ -4,7 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Money01Icon } from "@hugeicons/core-free-icons"
-import { formatAmount, formatE8s } from "@/lib/wallet-utils"
+import { formatAmount, E8S } from "@/lib/wallet-utils"
+import { useIcpPrice } from "@/lib/use-icp-price"
+import { useFiatValue } from "@/lib/fiat/use-fiat-value"
 import {
   useDashboard,
   useTokenHoldings,
@@ -29,6 +31,14 @@ export default function WalletPage() {
     (h) => (selfCustody?.get(h.ledgerId) ?? 0n) > h.fee
   )
   const liveBalance = useLiveBalance()
+  const { price } = useIcpPrice()
+
+  // A zero balance is "worth nothing", not "worthless": a fraction of a cent
+  // keeps extra precision so it does not collapse to "$0.00" and read as empty.
+  const usd = price ? (Number(liveBalance ?? 0n) / Number(E8S)) * price.usd : null
+  // Quoted in the currency chosen in settings, not always dollars. Placed above
+  // the early returns below: it is a hook and cannot run conditionally.
+  const fiat = useFiatValue(usd)
 
   if (isLoading && !data) return <div className="flex justify-center py-12"><p className="text-muted-foreground">{tc("loading")}</p></div>
   if (!data) return null
@@ -40,15 +50,22 @@ export default function WalletPage() {
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
       <Card className="bg-primary text-primary-foreground">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <HugeiconsIcon icon={Money01Icon} className="h-5 w-5" />
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium tracking-wide text-primary-foreground/80">
             {t("icpBalance")}
           </CardTitle>
+          <HugeiconsIcon icon={Money01Icon} className="h-4 w-4 opacity-80" />
         </CardHeader>
-        <CardContent>
-          <div className="text-4xl font-bold tracking-tight">{formatE8s(liveBalance ?? 0n)}</div>
-          <p className="mt-1 text-sm text-primary-foreground/70">ICP</p>
+        <CardContent className="space-y-1">
+          <div className="text-3xl font-extrabold tracking-tight tabular-nums">
+            {formatAmount(liveBalance ?? 0n)}{" "}
+            <span className="text-lg font-semibold">ICP</span>
+          </div>
+          <p className="text-xs font-medium text-primary-foreground/70">
+            {fiat.formatted === null
+              ? "\u00a0"
+              : `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}`}
+          </p>
         </CardContent>
       </Card>
       <Card>
@@ -62,37 +79,6 @@ export default function WalletPage() {
             </Alert>
           )}
           <TokenList holdings={holdings} isLoading={holdingsLoading} />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-sm font-medium">{t("accountDetails")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t("username")}</span>
-            <span className="font-mono">{data.user.username?.[0] ?? "─"}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t("principal")}</span>
-            <span className="max-w-[200px] truncate font-mono text-xs">{data.principal.toText()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t("displayName")}</span>
-            <span>{data.user.displayName || "─"}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t("totalDeposits")}</span>
-            <span className="font-mono">{formatAmount(data.totalDeposits)} ICP</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t("totalWithdrawals")}</span>
-            <span className="font-mono">{formatAmount(data.totalWithdrawals)} ICP</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t("transfers")}</span>
-            <span>{data.totalTransfers.toString()}</span>
-          </div>
         </CardContent>
       </Card>
     </div>

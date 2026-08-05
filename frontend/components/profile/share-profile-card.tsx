@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { copyText } from "@/lib/wallet-utils"
@@ -57,25 +58,21 @@ export function ShareProfileCard({ username }: { username: string }) {
         </p>
 
         <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={handleCopy}
-            className="flex h-11 items-center justify-center gap-2 rounded-2xl text-sm font-medium ring-1 ring-border transition-colors hover:bg-accent active:scale-[0.99]"
+            className="h-11 rounded-2xl"
           >
             <HugeiconsIcon
               icon={copied ? Tick02Icon : Copy01Icon}
               className={copied ? "size-4 text-primary" : "size-4"}
             />
             {copied ? tc("copied") : tc("copy")}
-          </button>
-          <button
-            type="button"
-            onClick={handleShare}
-            className="flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/80 active:scale-[0.99]"
-          >
+          </Button>
+          <Button onClick={handleShare} className="h-11 rounded-2xl">
             <HugeiconsIcon icon={Share08Icon} className="size-4" />
             {tc("share")}
-          </button>
+          </Button>
         </div>
       </CardContent>
     </Card>

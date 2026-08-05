@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 export function ServiceTile({
@@ -30,19 +31,24 @@ export function ServiceTile({
   )
 
   const className =
-    "flex flex-col items-center gap-2 text-center transition-transform active:scale-95"
+    "h-auto flex-col gap-2 rounded-none bg-transparent p-0 text-center font-normal hover:bg-transparent"
 
   if (onClick) {
     return (
-      <button type="button" onClick={onClick} className={className}>
+      <Button variant="ghost" onClick={onClick} className={className}>
         {tile}
-      </button>
+      </Button>
     )
   }
 
   return (
-    <Link href={href ?? "#"} className={className}>
+    <Button
+      variant="ghost"
+      nativeButton={false}
+      render={<Link href={href ?? "#"} />}
+      className={className}
+    >
       {tile}
-    </Link>
+    </Button>
   )
 }

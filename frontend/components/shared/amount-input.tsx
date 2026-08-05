@@ -3,9 +3,11 @@
 import { useTranslations } from "next-intl"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatAmount, parseIcp, E8S } from "@/lib/wallet-utils"
-import { formatUsdPrecise, useIcpPrice } from "@/lib/use-icp-price"
+import { useIcpPrice } from "@/lib/use-icp-price"
+import { useFiatValue } from "@/lib/fiat/use-fiat-value"
 
 const PERCENTAGES = [25, 50, 75, 100]
 
@@ -36,6 +38,10 @@ export function AmountInput({
   const { price } = useIcpPrice()
   const parsed = parseIcp(value)
   const usd = parsed !== null && price ? (Number(parsed) / Number(E8S)) * price.usd : null
+  // The quote follows the currency picked in settings. This read "≈ … USD"
+  // regardless of that choice, so a user on NPR saw a number they could not act
+  // on -- and one that silently disagreed with the balance card above it.
+  const fiat = useFiatValue(usd)
   const max = maxE8s ?? 0n
 
   const setAmount = (e8s: bigint) => onChange(toPlainIcp(e8s))
@@ -64,36 +70,40 @@ export function AmountInput({
           className="h-14 pr-16 text-2xl font-semibold tabular-nums"
         />
         {max > 0n && (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="xs"
             onClick={() => setAmount(max)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted px-2.5 py-1 text-xs font-semibold text-primary transition-colors hover:bg-muted/70"
+            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted font-semibold text-primary hover:bg-muted/70"
           >
             {t("max")}
-          </button>
+          </Button>
         )}
       </div>
 
       {max > 0n && (
         <div className="flex gap-1.5">
           {PERCENTAGES.map((pct) => (
-            <button
+            <Button
               key={pct}
-              type="button"
+              variant="outline"
+              size="xs"
               onClick={() => setAmount((max * BigInt(pct)) / 100n)}
               className={cn(
-                "h-7 flex-1 rounded-full border border-border bg-background text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
+                "h-7 flex-1 bg-background text-muted-foreground hover:bg-accent hover:text-foreground",
                 pct === 100 && "font-semibold text-primary"
               )}
             >
               {pct}%
-            </button>
+            </Button>
           ))}
         </div>
       )}
 
       <p className="text-xs text-muted-foreground tabular-nums">
-        {usd === null ? "\u00a0" : `≈ ${formatUsdPrecise(usd)} USD`}
+        {fiat.formatted === null
+          ? "\u00a0"
+          : `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}`}
       </p>
     </div>
   )

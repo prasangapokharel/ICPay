@@ -12,6 +12,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, InboxIcon, Message01Icon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
 import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, shortenCounterparty } from "@/lib/wallet-utils"
+import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { cn } from "@/lib/utils"
 
 type RecentTransactionsProps = {
@@ -72,8 +73,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   // Only a username resolves to an ICPverse profile; a raw principal or account
   // identifier has no page to open.
   const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
-  // 3-4 char handles are the rarest premium tier the sale issues.
-  const verified = !!handle && handle.length >= 3 && handle.length <= 4
+  const verified = isPremiumHandle(handle)
 
   return (
     <li className="flex items-center gap-3 px-4 py-3.5">
@@ -100,8 +100,11 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
       )}
 
       <div className="min-w-0 flex-1">
-        <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
-          {shortenCounterparty(counterparty)}
+        <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !handle && "font-mono text-sm tracking-tight")}>
+          {/* The "@" is stripped: it is storage syntax marking the counterparty
+              as a username rather than a principal, and the avatar and profile
+              link already say that. */}
+          {handle ?? shortenCounterparty(counterparty)}
           {verified && (
             <HugeiconsIcon
               icon={BadgeCheckIcon}
