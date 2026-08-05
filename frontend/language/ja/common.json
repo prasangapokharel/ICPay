@@ -308,6 +308,7 @@
     "subtitle": "他の ICPay ユーザーに {symbol} を送金します。",
     "recipient": "受取人のユーザー名",
     "recipientPlaceholder": "ユーザー名",
+    "accountIdIcpOnly": "アカウント識別子は ICP のみで有効で、{symbol} には使えません。ユーザー名または principal をご利用ください。",
     "badAmount": "小数点以下 {decimals} 桁までの金額を入力してください。",
     "memoLabel": "メモ（任意）",
     "memoPlaceholder": "支払いの参照",
@@ -439,5 +440,23 @@
     "tip": "チップ",
     "viewProfile": "@{name} のプロフィールを見る",
     "premium": "認証済みプレミアムハンドル"
+  },
+  "paymentCard": {
+    "live": "ライブ",
+    "acceptsTokens": "対応トークンの送金を受け付けています",
+    "scanToPay": "スキャンして支払う",
+    "verified": "認証済みプレミアムハンドル",
+    "brand": "ICPay",
+    "urlLabel": "支払い URL",
+    "principalLabel": "Principal",
+    "accountLabel": "アカウント",
+    "supportedLabel": "対応",
+    "payAddressHint": "このアカウントには対応トークンのみ送信してください。その他は失われる可能性があります。",
+    "showFront": "支払い QR",
+    "showBack": "支払い詳細",
+    "pageTitle": "支払いカード",
+    "pageSubtitle": "印刷、共有、またはスキャンして受け取れます。",
+    "needsUsername": "ユーザー名を取得すると、支払いカードが有効になります。",
+    "loading": "読み込み中…"
   }
 }

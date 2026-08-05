@@ -162,3 +162,20 @@ export function addressText(hit: ScannedAddress): string {
       return hit.username
   }
 }
+
+// parseAddress for text a person typed or pasted, rather than scanned.
+//
+// The difference is the bare-username fallback, which is dropped here: it
+// matches almost anything short, so a form that auto-switched on it would yank
+// the user to the username tab on the first character of a principal. Every
+// other form is unambiguous and complete before it parses at all -- a 64-char
+// hex string, a principal with a valid checksum, an ICRC-1 address, a payment
+// link -- so recognising those on the fly can only help.
+export function detectTypedAddress(raw: string): ScannedAddress | null {
+  const hit = parseAddress(raw)
+  if (!hit) return null
+  // A payment link still resolves to a username, and that one is deliberate:
+  // the URL form is unmistakable.
+  if (hit.kind === "username" && !/^https?:\/\//i.test(raw.trim())) return null
+  return hit
+}

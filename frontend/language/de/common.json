@@ -308,6 +308,7 @@
     "subtitle": "Sende {symbol} an einen anderen ICPay-Nutzer.",
     "recipient": "Benutzername des Empfängers",
     "recipientPlaceholder": "benutzername",
+    "accountIdIcpOnly": "Konto-Identifier funktionieren nur für ICP, nicht für {symbol}. Verwende stattdessen einen Benutzernamen oder ein Principal.",
     "badAmount": "Gib einen Betrag mit höchstens {decimals} Nachkommastellen ein.",
     "memoLabel": "Memo (optional)",
     "memoPlaceholder": "Verwendungszweck",
@@ -439,5 +440,23 @@
     "tip": "Trinkgeld",
     "viewProfile": "Profil von @{name} ansehen",
     "premium": "Verifizierter Premium-Handle"
+  },
+  "paymentCard": {
+    "live": "LIVE",
+    "acceptsTokens": "Akzeptiert alle unterstützten Token",
+    "scanToPay": "Zum Bezahlen scannen",
+    "verified": "Verifizierter Premium-Handle",
+    "brand": "ICPay",
+    "urlLabel": "Zahlungs-URL",
+    "principalLabel": "Principal",
+    "accountLabel": "Konto",
+    "supportedLabel": "Unterstützt",
+    "payAddressHint": "Sende nur unterstützte Token an dieses Konto. Andere können verloren gehen.",
+    "showFront": "Zahlungs-QR",
+    "showBack": "Zahlungsdetails",
+    "pageTitle": "Zahlungskarte",
+    "pageSubtitle": "Drucken, teilen oder scannen, um bezahlt zu werden.",
+    "needsUsername": "Fordere einen Benutzernamen an, um deine Zahlungskarte freizuschalten.",
+    "loading": "Laden…"
   }
 }

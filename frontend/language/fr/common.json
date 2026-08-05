@@ -308,6 +308,7 @@
     "subtitle": "Envoyez des {symbol} à un autre utilisateur ICPay.",
     "recipient": "Nom d'utilisateur du destinataire",
     "recipientPlaceholder": "utilisateur",
+    "accountIdIcpOnly": "Les identifiants de compte ne fonctionnent que pour ICP, pas pour {symbol}. Utilisez un nom d'utilisateur ou un principal.",
     "badAmount": "Saisissez un montant avec au plus {decimals} décimales.",
     "memoLabel": "Mémo (facultatif)",
     "memoPlaceholder": "Référence du paiement",
@@ -439,5 +440,23 @@
     "tip": "Pourboire",
     "viewProfile": "Voir le profil de @{name}",
     "premium": "Identifiant premium vérifié"
+  },
+  "paymentCard": {
+    "live": "EN DIRECT",
+    "acceptsTokens": "Accepte tous les jetons pris en charge",
+    "scanToPay": "Scanner pour payer",
+    "verified": "Identifiant premium vérifié",
+    "brand": "ICPay",
+    "urlLabel": "URL de paiement",
+    "principalLabel": "Principal",
+    "accountLabel": "Compte",
+    "supportedLabel": "Supporté",
+    "payAddressHint": "Envoyez uniquement des jetons pris en charge à ce compte. Les autres peuvent être perdus.",
+    "showFront": "QR de paiement",
+    "showBack": "Détails de paiement",
+    "pageTitle": "Carte de paiement",
+    "pageSubtitle": "Imprimez, partagez ou scannez pour être payé.",
+    "needsUsername": "Récupérez un nom d'utilisateur pour déverrouiller votre carte.",
+    "loading": "Chargement…"
   }
 }

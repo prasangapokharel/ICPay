@@ -308,6 +308,7 @@
     "subtitle": "Envie {symbol} para outro usuário do ICPay.",
     "recipient": "Nome de usuário do destinatário",
     "recipientPlaceholder": "usuário",
+    "accountIdIcpOnly": "Identificadores de conta funcionam apenas para ICP, não para {symbol}. Use um nome de usuário ou principal.",
     "badAmount": "Informe um valor com no máximo {decimals} casas decimais.",
     "memoLabel": "Memo (opcional)",
     "memoPlaceholder": "Referência do pagamento",
@@ -439,5 +440,23 @@
     "tip": "Gorjeta",
     "viewProfile": "Ver o perfil de @{name}",
     "premium": "Identificador premium verificado"
+  },
+  "paymentCard": {
+    "live": "AO VIVO",
+    "acceptsTokens": "Aceita todos os tokens compatíveis",
+    "scanToPay": "Escanear para pagar",
+    "verified": "Identificador premium verificado",
+    "brand": "ICPay",
+    "urlLabel": "URL de pagamento",
+    "principalLabel": "Principal",
+    "accountLabel": "Conta",
+    "supportedLabel": "Compatível",
+    "payAddressHint": "Envie apenas tokens compatíveis para esta conta. Outros podem ser perdidos.",
+    "showFront": "QR de pagamento",
+    "showBack": "Detalhes do pagamento",
+    "pageTitle": "Cartão de pagamento",
+    "pageSubtitle": "Imprima, compartilhe ou escaneie para receber.",
+    "needsUsername": "Reivindique um nome de usuário para desbloquear seu cartão.",
+    "loading": "Carregando…"
   }
 }

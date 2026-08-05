@@ -308,6 +308,7 @@
     "subtitle": "Send {symbol} to another ICPay user.",
     "recipient": "Recipient username",
     "recipientPlaceholder": "username",
+    "accountIdIcpOnly": "Account identifiers only work for ICP, not {symbol}. Use a username or principal instead.",
     "badAmount": "Enter an amount with at most {decimals} decimals.",
     "memoLabel": "Memo (optional)",
     "memoPlaceholder": "Payment reference",
@@ -439,5 +440,23 @@
     "tip": "Tip",
     "viewProfile": "View @{name}'s profile",
     "premium": "Verified premium handle"
+  },
+  "paymentCard": {
+    "live": "LIVE",
+    "acceptsTokens": "Accepts all supported tokens",
+    "scanToPay": "Scan to Pay",
+    "verified": "Verified premium handle",
+    "brand": "ICPay",
+    "urlLabel": "Payment URL",
+    "principalLabel": "Principal",
+    "accountLabel": "Account",
+    "supportedLabel": "Supported",
+    "payAddressHint": "Send only supported tokens to this account. Others may be lost.",
+    "showFront": "Pay QR",
+    "showBack": "Payment details",
+    "pageTitle": "Payment card",
+    "pageSubtitle": "Print, share or scan to get paid.",
+    "needsUsername": "Claim a username to unlock your payment card.",
+    "loading": "Loading…"
   }
 }
