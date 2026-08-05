@@ -7,7 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, CheckmarkCircle01Icon } from "@hugeicons/core-free-icons"
 import { formatAmount, copyText, E8S } from "@/lib/wallet-utils"
-import { formatUsd, useIcpPrice } from "@/lib/use-icp-price"
+import { useIcpPrice } from "@/lib/use-icp-price"
+import { useFiatValue } from "@/lib/fiat/use-fiat-value"
 import { useAccountStats } from "@/hooks/use-wallet-data"
 import { cn } from "@/lib/utils"
 
@@ -15,18 +16,24 @@ export function AccountStatsCard({ principal }: { principal: string }) {
   const t = useTranslations("accountStats")
   const { stats, isLoading } = useAccountStats(principal)
   const { price } = useIcpPrice()
+  // Hooks run before the early returns below, which is why the USD figure is
+  // computed from a possibly-absent stats rather than after the guard.
+  const usd = price && stats ? (Number(stats.balance) / Number(E8S)) * price.usd : null
+  // Quoted in the currency chosen in settings, not always dollars.
+  const fiat = useFiatValue(usd)
 
   if (isLoading) return <Skeleton className="h-44 w-full rounded-2xl" />
   if (!stats) return null
-
-  const usd = price ? (Number(stats.balance) / Number(E8S)) * price.usd : null
 
   return (
     <div className="w-full space-y-px overflow-hidden rounded-2xl bg-border font-mono text-xs">
       <div className="grid grid-cols-2 gap-px bg-border">
         <Cell label={t("balance")} value={`${formatAmount(stats.balance)} ICP`} strong />
         <Cell label={t("transactions")} value={stats.txCount === 0 ? "—" : String(stats.txCount)} strong />
-        <Cell label={t("value")} value={usd === null ? "—" : `≈ ${formatUsd(usd)}`} />
+        <Cell
+          label={t("value")}
+          value={fiat.formatted === null ? "—" : `≈ ${fiat.symbol}${fiat.formatted}`}
+        />
         <Cell
           label={t("sinceBlock")}
           value={stats.firstBlock === undefined ? "—" : compact(stats.firstBlock)}

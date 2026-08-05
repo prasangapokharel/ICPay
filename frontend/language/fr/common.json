@@ -156,7 +156,9 @@
     "copyAddress": "Copier l'adresse",
     "showLess": "Réduire",
     "showFull": "Afficher l'adresse complète",
-    "qrAlt": "Code QR de l'adresse de dépôt"
+    "qrAlt": "Code QR de l'adresse de dépôt",
+    "tabPrincipal": "Principal",
+    "hintPrincipal": "Pour les plateformes d'échange. Transférez les fonds à réception."
   },
   "withdraw": {
     "title": "Retirer",
@@ -269,12 +271,10 @@
     "back": "Portefeuille",
     "notFound": "Ce jeton n'a pas pu être chargé.",
     "send": "Envoyer",
+      "deposit": "D\u00e9poser",
     "depositTitle": "Adresse de dépôt",
     "depositSubtitle": "Envoyez des {symbol} ici pour recharger votre portefeuille.",
     "warning": "N'envoyez que des {symbol} à cette adresse. Les autres jetons seront perdus.",
-    "owner": "Propriétaire (canister)",
-    "subaccount": "Votre sous-compte",
-    "breakdownHint": "Les deux parties sont requises. Utilisez toujours l'adresse complète ci-dessus : envoyer uniquement au principal du propriétaire ne créditera pas votre portefeuille.",
     "selfCustodyTitle": "Détenu hors d'ICPay",
     "selfCustodyBody": "{amount} {symbol} ont été envoyés à votre principal au lieu de votre adresse de dépôt ICPay, ils ne sont donc pas encore dans votre portefeuille.",
     "selfCustodyMove": "Transférer vers ICPay",
@@ -283,6 +283,19 @@
     "selfCustodyNet": "Vous recevrez",
     "selfCustodyDust": "Ce montant est inférieur aux frais de réseau {symbol} et ne peut pas être transféré.",
     "selfCustodyEmpty": "Rien à transférer — ce jeton n'a pas été envoyé à votre principal."
+  },
+  "sendToken": {
+    "title": "Envoyer des {symbol}",
+    "subtitle": "Envoyez des {symbol} à un autre utilisateur ICPay.",
+    "recipient": "Nom d'utilisateur du destinataire",
+    "recipientPlaceholder": "utilisateur",
+    "badAmount": "Saisissez un montant avec au plus {decimals} décimales.",
+    "memoLabel": "Mémo (facultatif)",
+    "memoPlaceholder": "Référence du paiement",
+    "total": "Total débité",
+    "insufficient": "Solde insuffisant",
+    "send": "Envoyer",
+    "sending": "Envoi…"
   },
   "icpverse": {
     "searchPlaceholder": "Trouvez vos amis",

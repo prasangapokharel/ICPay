@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
 import { avatarUriFor } from "@/lib/avatar"
 import { shortPrincipal } from "@/lib/wallet-utils"
+import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { cn } from "@/lib/utils"
 
 // The confirmation a payment app owes the user before they send money: proof the
@@ -22,8 +23,7 @@ export function RecipientCard({
   className?: string
 }) {
   const tp = useTranslations("profileView")
-  // 3-4 char handles are the rarest premium tier the sale issues.
-  const verified = username.length >= 3 && username.length <= 4
+  const verified = isPremiumHandle(username)
 
   return (
     <div

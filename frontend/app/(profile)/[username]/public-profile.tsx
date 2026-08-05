@@ -18,6 +18,7 @@ import { avatarUriFor } from "@/lib/avatar"
 import { copyText } from "@/lib/wallet-utils"
 import { accountIdentifier, icrc1Account } from "@/lib/account-id"
 import { isPossibleHandle, isReservedHandle } from "@/lib/reserved-handles"
+import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { custodialSubaccount } from "@/services/tokens"
 import { WALLET_CANISTER_ID } from "@/services/icp"
@@ -108,8 +109,7 @@ export function PublicProfile() {
 
       <h1 className="flex items-center gap-1.5 pt-4 text-2xl font-bold tracking-tight">
         {username}
-        {/* 3-4 char handles are the rarest premium tier the sale issues. */}
-        {username.length >= 3 && username.length <= 4 && (
+        {isPremiumHandle(username) && (
           <HugeiconsIcon
             icon={BadgeCheckIcon}
             className="size-5 shrink-0 text-blue-500"

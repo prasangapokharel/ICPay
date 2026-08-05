@@ -156,7 +156,9 @@
     "copyAddress": "アドレスをコピー",
     "showLess": "表示を減らす",
     "showFull": "アドレス全体を表示",
-    "qrAlt": "入金アドレスの QR コード"
+    "qrAlt": "入金アドレスの QR コード",
+    "tabPrincipal": "プリンシパル",
+    "hintPrincipal": "取引所向け。着金後にウォレットへ移動してください。"
   },
   "withdraw": {
     "title": "出金",
@@ -269,12 +271,10 @@
     "back": "ウォレット",
     "notFound": "このトークンを読み込めませんでした。",
     "send": "送金",
+      "deposit": "\u5165\u91d1",
     "depositTitle": "入金アドレス",
     "depositSubtitle": "ウォレットに入金するには、ここに {symbol} を送ってください。",
     "warning": "このアドレスには {symbol} のみを送ってください。他のトークンは失われます。",
-    "owner": "オーナー（キャニスター）",
-    "subaccount": "あなたのサブアカウント",
-    "breakdownHint": "両方の部分が必要です。必ず上記の完全なアドレスを使用してください — オーナープリンシパルのみに送金してもウォレットには反映されません。",
     "selfCustodyTitle": "ICPay の外で保有",
     "selfCustodyBody": "{amount} {symbol} は ICPay の入金アドレスではなくご自身のプリンシパルに送られたため、まだウォレットに入っていません。",
     "selfCustodyMove": "ICPay に移す",
@@ -283,6 +283,19 @@
     "selfCustodyNet": "受取額",
     "selfCustodyDust": "{symbol} のネットワーク手数料を下回るため移動できません。",
     "selfCustodyEmpty": "移すものはありません — このトークンはご自身のプリンシパルに送られていません。"
+  },
+  "sendToken": {
+    "title": "{symbol} を送金",
+    "subtitle": "他の ICPay ユーザーに {symbol} を送金します。",
+    "recipient": "受取人のユーザー名",
+    "recipientPlaceholder": "ユーザー名",
+    "badAmount": "小数点以下 {decimals} 桁までの金額を入力してください。",
+    "memoLabel": "メモ（任意）",
+    "memoPlaceholder": "支払いの参照",
+    "total": "合計差引額",
+    "insufficient": "残高が不足しています",
+    "send": "送金",
+    "sending": "送金中…"
   },
   "icpverse": {
     "searchPlaceholder": "友達を探す",

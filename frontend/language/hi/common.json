@@ -156,7 +156,9 @@
     "copyAddress": "पता कॉपी करें",
     "showLess": "कम दिखाएँ",
     "showFull": "पूरा पता दिखाएँ",
-    "qrAlt": "जमा पते का QR कोड"
+    "qrAlt": "जमा पते का QR कोड",
+    "tabPrincipal": "प्रिंसिपल",
+    "hintPrincipal": "एक्सचेंज के लिए। आने के बाद फंड अंदर ले जाएँ।"
   },
   "withdraw": {
     "title": "निकालें",
@@ -269,12 +271,10 @@
     "back": "वॉलेट",
     "notFound": "यह टोकन लोड नहीं हो सका।",
     "send": "भेजें",
+      "deposit": "\u091c\u092e\u093e \u0915\u0930\u0947\u0902",
     "depositTitle": "जमा पता",
     "depositSubtitle": "अपना वॉलेट भरने के लिए {symbol} यहाँ भेजें।",
     "warning": "इस पते पर केवल {symbol} भेजें। अन्य टोकन खो जाएँगे।",
-    "owner": "स्वामी (कनिस्टर)",
-    "subaccount": "आपका सबअकाउंट",
-    "breakdownHint": "दोनों भाग आवश्यक हैं। हमेशा ऊपर दिया गया पूरा पता उपयोग करें — केवल ओनर प्रिंसिपल पर भेजने से आपके वॉलेट में राशि जमा नहीं होगी।",
     "selfCustodyTitle": "ICPay के बाहर रखा गया",
     "selfCustodyBody": "{amount} {symbol} आपके ICPay डिपॉज़िट पते के बजाय आपके प्रिंसिपल पर भेजा गया था, इसलिए यह अभी आपके वॉलेट में नहीं है।",
     "selfCustodyMove": "ICPay में लाएँ",
@@ -283,6 +283,19 @@
     "selfCustodyNet": "आपको मिलेगा",
     "selfCustodyDust": "यह {symbol} नेटवर्क शुल्क से कम है, इसलिए इसे भेजा नहीं जा सकता।",
     "selfCustodyEmpty": "लाने के लिए कुछ नहीं है — यह टोकन आपके प्रिंसिपल पर नहीं भेजा गया है।"
+  },
+  "sendToken": {
+    "title": "{symbol} भेजें",
+    "subtitle": "किसी अन्य ICPay उपयोगकर्ता को {symbol} भेजें।",
+    "recipient": "प्राप्तकर्ता उपयोगकर्ता नाम",
+    "recipientPlaceholder": "उपयोगकर्ता नाम",
+    "badAmount": "अधिकतम {decimals} दशमलव वाली राशि दर्ज करें।",
+    "memoLabel": "मेमो (वैकल्पिक)",
+    "memoPlaceholder": "भुगतान संदर्भ",
+    "total": "कुल कटौती",
+    "insufficient": "अपर्याप्त शेष",
+    "send": "भेजें",
+    "sending": "भेजा जा रहा है…"
   },
   "icpverse": {
     "searchPlaceholder": "अपने दोस्त खोजें",

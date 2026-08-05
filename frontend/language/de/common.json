@@ -156,7 +156,9 @@
     "copyAddress": "Adresse kopieren",
     "showLess": "Weniger anzeigen",
     "showFull": "Ganze Adresse anzeigen",
-    "qrAlt": "QR-Code der Einzahlungsadresse"
+    "qrAlt": "QR-Code der Einzahlungsadresse",
+    "tabPrincipal": "Principal",
+    "hintPrincipal": "Für Börsen. Guthaben nach Eingang ins Wallet holen."
   },
   "withdraw": {
     "title": "Auszahlen",
@@ -269,12 +271,10 @@
     "back": "Wallet",
     "notFound": "Dieses Token konnte nicht geladen werden.",
     "send": "Senden",
+      "deposit": "Einzahlen",
     "depositTitle": "Einzahlungsadresse",
     "depositSubtitle": "Sende {symbol} hierhin, um dein Wallet aufzuladen.",
     "warning": "Sende nur {symbol} an diese Adresse. Andere Token gehen verloren.",
-    "owner": "Eigentümer (Canister)",
-    "subaccount": "Ihr Unterkonto",
-    "breakdownHint": "Beide Teile sind erforderlich. Verwenden Sie immer die vollständige Adresse oben — eine Sendung nur an das Owner-Principal wird Ihrer Wallet nicht gutgeschrieben.",
     "selfCustodyTitle": "Außerhalb von ICPay gehalten",
     "selfCustodyBody": "{amount} {symbol} wurden an Ihr Principal statt an Ihre ICPay-Einzahlungsadresse gesendet und sind daher noch nicht in Ihrer Wallet.",
     "selfCustodyMove": "Zu ICPay verschieben",
@@ -283,6 +283,19 @@
     "selfCustodyNet": "Sie erhalten",
     "selfCustodyDust": "Der Betrag liegt unter der {symbol}-Netzwerkgebühr und kann nicht verschoben werden.",
     "selfCustodyEmpty": "Nichts zu verschieben — dieser Token wurde nicht an Ihr Principal gesendet."
+  },
+  "sendToken": {
+    "title": "{symbol} senden",
+    "subtitle": "Sende {symbol} an einen anderen ICPay-Nutzer.",
+    "recipient": "Benutzername des Empfängers",
+    "recipientPlaceholder": "benutzername",
+    "badAmount": "Gib einen Betrag mit höchstens {decimals} Nachkommastellen ein.",
+    "memoLabel": "Memo (optional)",
+    "memoPlaceholder": "Verwendungszweck",
+    "total": "Gesamt abgezogen",
+    "insufficient": "Guthaben reicht nicht",
+    "send": "Senden",
+    "sending": "Wird gesendet…"
   },
   "icpverse": {
     "searchPlaceholder": "Finde deine Freunde",

@@ -156,7 +156,9 @@
     "copyAddress": "Copiar endereço",
     "showLess": "Mostrar menos",
     "showFull": "Mostrar endereço completo",
-    "qrAlt": "Código QR do endereço de depósito"
+    "qrAlt": "Código QR do endereço de depósito",
+    "tabPrincipal": "Principal",
+    "hintPrincipal": "Para corretoras. Traga os fundos após a chegada."
   },
   "withdraw": {
     "title": "Sacar",
@@ -269,12 +271,10 @@
     "back": "Carteira",
     "notFound": "Não foi possível carregar este token.",
     "send": "Enviar",
+      "deposit": "Depositar",
     "depositTitle": "Endereço de depósito",
     "depositSubtitle": "Envie {symbol} para cá para recarregar a sua carteira.",
     "warning": "Envie apenas {symbol} para este endereço. Outros tokens serão perdidos.",
-    "owner": "Proprietário (canister)",
-    "subaccount": "Sua subconta",
-    "breakdownHint": "Ambas as partes são necessárias. Use sempre o endereço completo acima — enviar apenas para o principal do proprietário não creditará sua carteira.",
     "selfCustodyTitle": "Mantido fora do ICPay",
     "selfCustodyBody": "{amount} {symbol} foram enviados para o seu principal em vez do seu endereço de depósito do ICPay, por isso ainda não estão na sua carteira.",
     "selfCustodyMove": "Mover para o ICPay",
@@ -283,6 +283,19 @@
     "selfCustodyNet": "Você recebe",
     "selfCustodyDust": "É inferior à taxa de rede {symbol}, por isso não pode ser movido.",
     "selfCustodyEmpty": "Nada para mover — este token não foi enviado para o seu principal."
+  },
+  "sendToken": {
+    "title": "Enviar {symbol}",
+    "subtitle": "Envie {symbol} para outro usuário do ICPay.",
+    "recipient": "Nome de usuário do destinatário",
+    "recipientPlaceholder": "usuário",
+    "badAmount": "Informe um valor com no máximo {decimals} casas decimais.",
+    "memoLabel": "Memo (opcional)",
+    "memoPlaceholder": "Referência do pagamento",
+    "total": "Total descontado",
+    "insufficient": "Saldo insuficiente",
+    "send": "Enviar",
+    "sending": "Enviando…"
   },
   "icpverse": {
     "searchPlaceholder": "Encontre seus amigos",

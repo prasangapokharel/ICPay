@@ -7,12 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Alert02Icon } from "@hugeicons/core-free-icons"
 import { useDepositAddress } from "@/hooks/use-wallet-data"
+import { useAuth } from "@/components/auth/auth-provider"
 import { icrc1Account } from "@/lib/account-id"
 import { copyText } from "@/lib/wallet-utils"
 
 export default function DepositPage() {
   const t = useTranslations("deposit")
   const { data, error, isLoading } = useDepositAddress()
+  const { identity } = useAuth()
 
   const icrcAddress = data ? icrc1Account(data.address.owner, data.address.subaccount[0]) : ""
   const accountId = data?.accountId ?? ""
@@ -41,6 +43,7 @@ export default function DepositPage() {
           <DepositAddressCard
             accountId={accountId}
             icrcAddress={icrcAddress}
+            principal={identity?.getPrincipal().toText()}
             onCopy={copyText}
           />
 

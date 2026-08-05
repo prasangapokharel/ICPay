@@ -5,7 +5,8 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { formatAmount, parseIcp, E8S } from "@/lib/wallet-utils"
-import { formatUsdPrecise, useIcpPrice } from "@/lib/use-icp-price"
+import { useIcpPrice } from "@/lib/use-icp-price"
+import { useFiatValue } from "@/lib/fiat/use-fiat-value"
 
 const PERCENTAGES = [25, 50, 75, 100]
 
@@ -36,6 +37,10 @@ export function AmountInput({
   const { price } = useIcpPrice()
   const parsed = parseIcp(value)
   const usd = parsed !== null && price ? (Number(parsed) / Number(E8S)) * price.usd : null
+  // The quote follows the currency picked in settings. This read "≈ … USD"
+  // regardless of that choice, so a user on NPR saw a number they could not act
+  // on -- and one that silently disagreed with the balance card above it.
+  const fiat = useFiatValue(usd)
   const max = maxE8s ?? 0n
 
   const setAmount = (e8s: bigint) => onChange(toPlainIcp(e8s))
@@ -93,7 +98,9 @@ export function AmountInput({
       )}
 
       <p className="text-xs text-muted-foreground tabular-nums">
-        {usd === null ? "\u00a0" : `≈ ${formatUsdPrecise(usd)} USD`}
+        {fiat.formatted === null
+          ? "\u00a0"
+          : `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}`}
       </p>
     </div>
   )

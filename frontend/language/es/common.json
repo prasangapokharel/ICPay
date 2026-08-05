@@ -156,7 +156,9 @@
     "copyAddress": "Copiar dirección",
     "showLess": "Ver menos",
     "showFull": "Ver dirección completa",
-    "qrAlt": "Código QR de la dirección de depósito"
+    "qrAlt": "Código QR de la dirección de depósito",
+    "tabPrincipal": "Principal",
+    "hintPrincipal": "Para exchanges. Mueve los fondos al llegar."
   },
   "withdraw": {
     "title": "Retirar",
@@ -269,12 +271,10 @@
     "back": "Cartera",
     "notFound": "No se pudo cargar este token.",
     "send": "Enviar",
+      "deposit": "Depositar",
     "depositTitle": "Dirección de depósito",
     "depositSubtitle": "Envía {symbol} aquí para recargar tu cartera.",
     "warning": "Envía solo {symbol} a esta dirección. Otros tokens se perderán.",
-    "owner": "Propietario (canister)",
-    "subaccount": "Tu subcuenta",
-    "breakdownHint": "Ambas partes son necesarias. Usa siempre la dirección completa de arriba: enviar solo al principal del propietario no acreditará tu monedero.",
     "selfCustodyTitle": "Fuera de ICPay",
     "selfCustodyBody": "Se enviaron {amount} {symbol} a tu principal en lugar de a tu dirección de depósito de ICPay, por lo que aún no están en tu cartera.",
     "selfCustodyMove": "Mover a ICPay",
@@ -283,6 +283,19 @@
     "selfCustodyNet": "Recibirás",
     "selfCustodyDust": "Es inferior a la comisión de red de {symbol}, así que no se puede mover.",
     "selfCustodyEmpty": "Nada que mover: este token no se ha enviado a tu principal."
+  },
+  "sendToken": {
+    "title": "Enviar {symbol}",
+    "subtitle": "Envía {symbol} a otro usuario de ICPay.",
+    "recipient": "Nombre de usuario del destinatario",
+    "recipientPlaceholder": "usuario",
+    "badAmount": "Introduce un importe con {decimals} decimales como máximo.",
+    "memoLabel": "Memo (opcional)",
+    "memoPlaceholder": "Referencia de pago",
+    "total": "Total descontado",
+    "insufficient": "Saldo insuficiente",
+    "send": "Enviar",
+    "sending": "Enviando…"
   },
   "icpverse": {
     "searchPlaceholder": "Encuentra a tus amigos",

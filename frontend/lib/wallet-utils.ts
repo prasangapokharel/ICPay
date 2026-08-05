@@ -26,6 +26,23 @@ export function parseIcp(value: string): bigint | null {
   return BigInt(Math.round(n * Number(E8S)))
 }
 
+// The same parse for any ICRC-1 ledger, done on the digit string rather than
+// through Number(). Float math cannot hold 18 significant digits, so a ckETH
+// amount like 99.999999999999999999 rounds to 100000000000000000000 and sends
+// more than the user typed -- this pads and concatenates instead, so the value
+// is exact at every decimals. Excess precision is rejected, not truncated:
+// silently dropping a digit changes the amount someone is sending.
+export function parseTokenAmount(value: string, decimals: number): bigint | null {
+  const t = value.trim()
+  if (t === "" || t === "." || !/^\d*\.?\d*$/.test(t)) return null
+
+  const [whole, fraction = ""] = t.split(".")
+  if (fraction.length > decimals) return null
+
+  const amount = BigInt(whole || "0") * 10n ** BigInt(decimals) + BigInt(fraction.padEnd(decimals, "0") || "0")
+  return amount > 0n ? amount : null
+}
+
 // Username transfers are stored as "@name" and shown verbatim; addresses and
 // principals are far too long for a mobile row, so they get middle-truncated.
 export function shortenCounterparty(value: string): string {

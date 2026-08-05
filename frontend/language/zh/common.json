@@ -156,7 +156,9 @@
     "copyAddress": "复制地址",
     "showLess": "收起",
     "showFull": "显示完整地址",
-    "qrAlt": "充值地址 QR 码"
+    "qrAlt": "充值地址 QR 码",
+    "tabPrincipal": "主体 ID",
+    "hintPrincipal": "用于交易所。到账后请转入钱包。"
   },
   "withdraw": {
     "title": "提现",
@@ -269,12 +271,10 @@
     "back": "钱包",
     "notFound": "无法加载此代币。",
     "send": "发送",
+      "deposit": "\u5145\u503c",
     "depositTitle": "充值地址",
     "depositSubtitle": "将 {symbol} 发送至此以充值钱包。",
     "warning": "请仅向此地址转入 {symbol}，其他代币将会丢失。",
-    "owner": "所有者（容器）",
-    "subaccount": "您的子账户",
-    "breakdownHint": "两部分缺一不可。请始终使用上方的完整地址 — 仅发送至所有者 principal 不会计入您的钱包。",
     "selfCustodyTitle": "在 ICPay 之外持有",
     "selfCustodyBody": "{amount} {symbol} 被发送到您的 principal，而不是您的 ICPay 充值地址，因此尚未进入您的钱包。",
     "selfCustodyMove": "转入 ICPay",
@@ -283,6 +283,19 @@
     "selfCustodyNet": "您将收到",
     "selfCustodyDust": "低于 {symbol} 网络手续费，无法转入。",
     "selfCustodyEmpty": "没有需要转入的资金 — 该代币未被发送到您的 principal。"
+  },
+  "sendToken": {
+    "title": "发送 {symbol}",
+    "subtitle": "向其他 ICPay 用户发送 {symbol}。",
+    "recipient": "收款人用户名",
+    "recipientPlaceholder": "用户名",
+    "badAmount": "请输入最多 {decimals} 位小数的金额。",
+    "memoLabel": "备注（可选）",
+    "memoPlaceholder": "付款备注",
+    "total": "共计扣除",
+    "insufficient": "余额不足",
+    "send": "发送",
+    "sending": "发送中…"
   },
   "icpverse": {
     "searchPlaceholder": "查找好友",
