@@ -20,13 +20,33 @@ export function getHost(): string {
   return getIsLocal() ? LOCAL_IC_HOST : IC_HOST
 }
 
+// One agent per identity, not one per call. An HttpAgent caches the subnet node
+// keys it needs to verify query signatures, and a fresh agent has an empty cache
+// -- so every balance read was firing a second read_state request for keys the
+// previous agent had already fetched and thrown away. Reusing the agent turns
+// that into one fetch per session.
+let cachedAgent: HttpAgent | null = null
+let cachedFor: Identity | null = null
+
 export async function createAgent(identity?: Identity): Promise<HttpAgent> {
+  if (cachedAgent && cachedFor === (identity ?? null)) return cachedAgent
+
   const host = getHost()
   const agent = HttpAgent.createSync({ identity, host })
   if (getIsLocal()) {
     await agent.fetchRootKey()
   }
+
+  cachedAgent = agent
+  cachedFor = identity ?? null
   return agent
+}
+
+// Signing out has to drop the agent as well as the actor: it holds the
+// delegation, so a reused one would keep signing as the previous user.
+export function clearAgentCache(): void {
+  cachedAgent = null
+  cachedFor = null
 }
 
 export const WALLET_CANISTER_ID = getIsLocal()

@@ -1,7 +1,7 @@
 import { Actor, type Identity } from "@dfinity/agent"
 import type { IDL } from "@dfinity/candid"
 import type { Principal } from "@dfinity/principal"
-import { createAgent, WALLET_CANISTER_ID } from "@/services/icp"
+import { createAgent, clearAgentCache, WALLET_CANISTER_ID } from "@/services/icp"
 import type {
   AuthResult,
   ApiResult,
@@ -67,6 +67,7 @@ export async function getWalletActor(identity?: Identity): Promise<WalletActor> 
 export function clearActorCache(): void {
   cachedActor = null
   cachedIdentity = null
+  clearAgentCache()
 }
 
 const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
