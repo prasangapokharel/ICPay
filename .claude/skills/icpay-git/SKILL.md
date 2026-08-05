@@ -115,8 +115,10 @@ per-machine permission grants.
 
 ## CI
 
-`.github/workflows/ci.yml`, two jobs: `backend` (the 24-test Motoko suite) and
-`frontend` (typecheck, eslint-against-baseline, build). Runs on pushes to `main`
-and `dev`, and on every PR.
+`.github/workflows/ci.yml`, three jobs: `backend` (the 24-test Motoko suite),
+`frontend` (typecheck, eslint-against-baseline, build), and `deploy`. The first
+two run on pushes to `main` and `dev`, and on every PR.
 
-CI **never deploys** — see the ops skill for why.
+`deploy` fires the Vercel hook, and only on a green push to `main` — so a red
+build never reaches icpay.app. CI still **never deploys the backend** — see the
+ops skill for why.
