@@ -34,3 +34,7 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# profile card (generated off-repo while iterating)
+app/(app)/profile/card/
+components/card/
