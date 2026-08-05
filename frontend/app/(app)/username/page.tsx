@@ -10,7 +10,22 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Tick02Icon, Cancel01Icon, ShoppingBag01Icon } from "@hugeicons/core-free-icons"
+import {
+  Tick02Icon,
+  Cancel01Icon,
+  ShoppingBag01Icon,
+  InformationCircleIcon,
+} from "@hugeicons/core-free-icons"
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { BadgeMark, PremiumBadge } from "@/components/verifed/premium-badge"
+import { BADGE_RANGES, tierBadgeSpans, type BadgeSpan } from "@/lib/verifed/premium-tick"
 import { purchaseUsername } from "@/services/buy/buy"
 import type { Purchase } from "@/services/types"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -98,7 +113,7 @@ export default function UsernamePage() {
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
-            className="h-12 rounded-2xl pl-9 pr-10 text-base"
+            className="pl-9 pr-10"
           />
           {trimmed !== "" && !shapeError && !checking && (
             <span className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -128,7 +143,12 @@ export default function UsernamePage() {
       {trimmed !== "" && !shapeError && tier && (
         <div className="space-y-3 rounded-2xl bg-muted/40 p-4">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">{t(`tiers.${tier.labelKey}`)}</span>
+            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              {t(`tiers.${tier.labelKey}`)}
+              {/* Asked of the typed name, not the tier: ultra spans both marks,
+                  so this is the only place the exact badge is knowable. */}
+              <PremiumBadge name={trimmed} className="size-3.5" />
+            </span>
             <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
               <Image
                 src="/images/logo/logo.png"
@@ -165,7 +185,7 @@ export default function UsernamePage() {
         </Alert>
       )}
 
-      <Button className="h-12 w-full text-base" disabled={!canBuy} onClick={handleBuy}>
+      <Button size="lg" className="w-full" disabled={!canBuy} onClick={handleBuy}>
         {buying ? (
           <Spinner className="size-4" />
         ) : (
@@ -175,7 +195,46 @@ export default function UsernamePage() {
       </Button>
 
       <div className="space-y-2">
-        <p className="text-xs font-medium text-muted-foreground">{t("pricing")}</p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-xs font-medium text-muted-foreground">{t("pricing")}</p>
+          {/* A popover, not a tooltip: the badge rule is the reason to pick one
+              tier over another, and on a phone there is no hover to reveal it. */}
+          <Popover>
+            <PopoverTrigger
+              aria-label={t("badgeInfoTitle")}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <HugeiconsIcon icon={InformationCircleIcon} className="size-4" />
+            </PopoverTrigger>
+            <PopoverContent align="start" className="gap-3">
+              <PopoverHeader>
+                <PopoverTitle className="text-sm">{t("badgeInfoTitle")}</PopoverTitle>
+                <PopoverDescription className="text-xs">
+                  {t("badgeInfo", { min: USERNAME_FREE_MIN_LENGTH })}
+                </PopoverDescription>
+              </PopoverHeader>
+              {/* Listed as two rows rather than two ticks in the heading: side
+                  by side they read as a pair a buyer gets together. */}
+              <div className="flex flex-col gap-2 text-xs">
+                {(["gold", "blue"] as const).map((badge) => (
+                  <div key={badge} className="flex items-start gap-2">
+                    <BadgeMark tier={badge} className="mt-px size-3.5" />
+                    <span>
+                      <span className="font-medium text-foreground">
+                        {t(badge === "gold" ? "goldBadgeTitle" : "blueBadgeTitle")}
+                      </span>{" "}
+                      <span className="text-muted-foreground">
+                        {t(badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo", {
+                          lengths: `${BADGE_RANGES[badge].min}-${BADGE_RANGES[badge].max}`,
+                        })}
+                      </span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
         <div className="overflow-hidden rounded-2xl border">
           {TIERS.map((tier, i) => (
             <div
@@ -188,6 +247,15 @@ export default function UsernamePage() {
               <div>
                 <p className="font-medium">{t(`tiers.${tier.labelKey}`)}</p>
                 <p className="text-xs text-muted-foreground">{t(`tiers.${tier.rangeKey}`)}</p>
+                {/* Marked per row rather than described in the note, so the
+                    badge reads as part of what the price buys. Each mark is
+                    labelled with the lengths it covers: ultra spans both, and
+                    two bare ticks read as though the row granted them both. */}
+                <div className="mt-1.5 flex flex-wrap gap-1">
+                  {tierBadgeSpans(tier).map((span) => (
+                    <BadgeChip key={span.badge} span={span} />
+                  ))}
+                </div>
               </div>
               <span className="tabular-nums font-semibold">{formatAmount(tier.price)} ICP</span>
             </div>
@@ -196,5 +264,33 @@ export default function UsernamePage() {
         <p className="text-xs text-muted-foreground">{t("note")}</p>
       </div>
     </div>
+  )
+}
+
+// The mark plus the lengths it covers, tappable for the reason it matters. The
+// label is what stops the ultra row -- which carries both marks -- from reading
+// as though every ultra name were gold.
+function BadgeChip({ span }: { span: BadgeSpan }) {
+  const t = useTranslations("buyUsername")
+  const lengths = span.min === span.max ? `${span.min}` : `${span.min}-${span.max}`
+
+  return (
+    <Popover>
+      <PopoverTrigger className="flex items-center gap-1 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground">
+        <BadgeMark tier={span.badge} className="size-3" />
+        {t("badgeChip", { lengths })}
+      </PopoverTrigger>
+      <PopoverContent align="start" className="gap-2">
+        <PopoverHeader>
+          <PopoverTitle className="flex items-center gap-1.5 text-sm">
+            <BadgeMark tier={span.badge} />
+            {t(span.badge === "gold" ? "goldBadgeTitle" : "blueBadgeTitle")}
+          </PopoverTitle>
+        </PopoverHeader>
+        <PopoverDescription className="text-xs">
+          {t(span.badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo", { lengths })}
+        </PopoverDescription>
+      </PopoverContent>
+    </Popover>
   )
 }

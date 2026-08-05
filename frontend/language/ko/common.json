@@ -229,6 +229,13 @@
     "buying": "구매 중…",
     "buy": "사용자 이름 구매",
     "pricing": "가격",
+    "badgeInfoTitle": "인증 배지",
+    "badgeInfo": "{min}자 미만의 이름은 유료이며, 모든 유료 이름에는 인증 배지가 붙습니다.",
+    "badgeChip": "{lengths}자",
+    "goldBadgeTitle": "골드 배지",
+    "goldBadgeInfo": "{lengths}자 이름을 구매하면 핸들에 골드 배지가 붙습니다 — ICPay가 발급하는 가장 희귀한 이름입니다.",
+    "blueBadgeTitle": "블루 배지",
+    "blueBadgeInfo": "{lengths}자 이름을 구매하면 핸들에 블루 인증 배지가 붙습니다.",
     "note": "구매한 이름이 기본 핸들이 됩니다. 이미 보유한 이름도 계속 연결되므로 기존 결제 링크는 그대로 작동합니다.",
     "tiers": {
       "ultra": "울트라 프리미엄",
@@ -439,7 +446,8 @@
     "copyPrincipal": "Principal 복사",
     "tip": "팁",
     "viewProfile": "@{name}님의 프로필 보기",
-    "premium": "인증된 프리미엄 핸들"
+    "premium": "인증된 프리미엄 핸들",
+    "premiumGold": "골드 인증 핸들"
   },
   "paymentCard": {
     "live": "라이브",

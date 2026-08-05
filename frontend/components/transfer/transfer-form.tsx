@@ -215,7 +215,7 @@ export function TransferForm({
         <div className="relative">
           <Input
             id="to"
-            size="xl"
+            size="lg"
             placeholder={t(labelKeys[mode].placeholder)}
             autoComplete="off"
             spellCheck={false}
@@ -252,6 +252,7 @@ export function TransferForm({
         }}
         balance={balance}
         maxE8s={sendable}
+        size="default"
       />
       {sendable !== undefined && (
         <p className="text-xs text-muted-foreground">
@@ -302,7 +303,7 @@ export function TransferForm({
       )}
 
       <Button
-        className="h-12 w-full text-base"
+        className="w-full"
         disabled={!canReview}
         onClick={() => setConfirmOpen(true)}
       >
@@ -345,7 +346,7 @@ export function TransferForm({
           </div>
 
           <DrawerFooter>
-            <Button className="h-12 text-base" onClick={handleConfirm} disabled={loading}>
+            <Button onClick={handleConfirm} disabled={loading}>
               {loading ? <Spinner className="size-4" /> : <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />}
               {loading ? t("sending") : t("confirmSend")}
             </Button>

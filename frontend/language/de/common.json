@@ -229,6 +229,13 @@
     "buying": "Wird gekauft…",
     "buy": "Namen kaufen",
     "pricing": "Preise",
+    "badgeInfoTitle": "Verifizierte Abzeichen",
+    "badgeInfo": "Namen mit weniger als {min} Zeichen sind kostenpflichtig, und jeder bezahlte Name trägt ein verifiziertes Abzeichen.",
+    "badgeChip": "{lengths} Zeichen",
+    "goldBadgeTitle": "Goldenes Abzeichen",
+    "goldBadgeInfo": "Kaufe einen Namen mit {lengths} Zeichen und dein Handle trägt das goldene Abzeichen — die seltensten Namen, die ICPay vergibt.",
+    "blueBadgeTitle": "Blaues Abzeichen",
+    "blueBadgeInfo": "Kaufe einen Namen mit {lengths} Zeichen und dein Handle trägt das blaue verifizierte Abzeichen.",
     "note": "Ein gekaufter Name wird dein Hauptname. Jeder Name, den du schon hast, zeigt weiter auf dich — alte Zahlungslinks bleiben gültig.",
     "tiers": {
       "ultra": "Ultra Premium",
@@ -439,7 +446,8 @@
     "copyPrincipal": "Principal kopieren",
     "tip": "Trinkgeld",
     "viewProfile": "Profil von @{name} ansehen",
-    "premium": "Verifizierter Premium-Handle"
+    "premium": "Verifizierter Premium-Handle",
+    "premiumGold": "Verifizierter goldener Handle"
   },
   "paymentCard": {
     "live": "LIVE",

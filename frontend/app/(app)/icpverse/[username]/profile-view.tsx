@@ -11,15 +11,14 @@ import { TipDrawer } from "@/components/icpverse/tip-drawer"
 import { AccountStatsCard } from "@/components/icpverse/account-stats-card"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { PremiumBadge } from "@/components/verifed/premium-badge"
 import {
   ArrowLeft01Icon,
   Copy01Icon,
   CheckmarkCircle01Icon,
   GiftIcon,
-  BadgeCheckIcon,
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
-import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet, useDashboard } from "@/hooks/use-wallet-data"
 import { tip } from "@/services/transfer/transfer"
@@ -113,13 +112,7 @@ export function ProfileView() {
 
         <h1 className="flex items-center gap-1.5 pt-4 text-2xl font-bold">
           {username}
-          {isPremiumHandle(username) && (
-            <HugeiconsIcon
-              icon={BadgeCheckIcon}
-              className="size-5 shrink-0 text-blue-500"
-              aria-label={t("premium")}
-            />
-          )}
+          <PremiumBadge name={username} className="size-5" />
         </h1>
 
         <Button
@@ -138,7 +131,8 @@ export function ProfileView() {
 
         {!isSelf && (
           <Button
-            className="mt-6 h-12 w-full max-w-56 text-base"
+            size="lg"
+            className="mt-6 w-full max-w-56"
             onClick={() => setTipOpen(true)}
           >
             <HugeiconsIcon icon={GiftIcon} className="size-4" />

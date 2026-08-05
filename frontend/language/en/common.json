@@ -229,6 +229,13 @@
     "buying": "Buying…",
     "buy": "Buy username",
     "pricing": "Pricing",
+    "badgeInfoTitle": "Verified badges",
+    "badgeInfo": "Names under {min} characters are paid, and every paid name carries a verified badge.",
+    "badgeChip": "{lengths} chars",
+    "goldBadgeTitle": "Gold badge",
+    "goldBadgeInfo": "Buy a {lengths}-character name and your handle carries the gold badge — the rarest names ICPay issues.",
+    "blueBadgeTitle": "Blue badge",
+    "blueBadgeInfo": "Buy a {lengths}-character name and your handle carries the blue verified badge.",
     "note": "A bought name becomes your primary handle. Any name you already hold keeps pointing at you, so older payment links never break.",
     "tiers": {
       "ultra": "Ultra premium",
@@ -439,7 +446,8 @@
     "copyPrincipal": "Copy principal",
     "tip": "Tip",
     "viewProfile": "View @{name}'s profile",
-    "premium": "Verified premium handle"
+    "premium": "Verified premium handle",
+    "premiumGold": "Verified gold handle"
   },
   "paymentCard": {
     "live": "LIVE",

@@ -68,13 +68,13 @@ export function SettingsDrawer({
                 key={item.href}
                 href={item.href}
                 onClick={() => onOpenChange(false)}
-                className="flex items-center gap-3 border-b px-4 py-3.5 text-sm transition-colors last:border-0 hover:bg-accent"
+                className="flex items-center gap-3 border-b px-4 py-2.5 text-sm transition-colors last:border-0 hover:bg-accent"
               >
-                <HugeiconsIcon icon={item.icon} className="size-4.5 shrink-0 text-muted-foreground" />
+                <HugeiconsIcon icon={item.icon} className="size-4 shrink-0 text-muted-foreground" />
                 <span className="flex-1">{t(`items.${item.key}`)}</span>
                 <HugeiconsIcon
                   icon={ArrowRight01Icon}
-                  className="size-4 shrink-0 text-muted-foreground"
+                  className="size-3.5 shrink-0 text-muted-foreground"
                 />
               </Link>
             ))}
@@ -82,13 +82,14 @@ export function SettingsDrawer({
 
           <Button
             variant="destructive"
+            size="sm"
             onClick={() => {
               onOpenChange(false)
               logout()
             }}
-            className="h-auto w-full justify-start gap-3 rounded-2xl border bg-transparent px-4 py-3.5 text-left text-sm"
+            className="h-auto w-full justify-start gap-3 rounded-2xl border bg-transparent px-4 py-2.5 text-left text-sm"
           >
-            <HugeiconsIcon icon={Logout01Icon} className="size-4.5 shrink-0" />
+            <HugeiconsIcon icon={Logout01Icon} className="size-4 shrink-0" />
             <span className="flex-1">{t("signOut")}</span>
           </Button>
         </div>

@@ -43,7 +43,7 @@ export function UsernamePrompt({ username }: { username?: string }) {
         </DialogHeader>
 
         <DialogFooter>
-          <Button className="h-11 text-base" nativeButton={false} render={<Link href="/profile" />}>
+          <Button className="w-full" nativeButton={false} render={<Link href="/profile" />}>
             {t("promptAction")}
           </Button>
         </DialogFooter>

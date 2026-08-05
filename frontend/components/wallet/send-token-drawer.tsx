@@ -319,7 +319,7 @@ export function SendTokenDrawer({
         </div>
 
         <DrawerFooter>
-          <Button className="h-12 text-base" disabled={!canSend} onClick={handleSend}>
+          <Button disabled={!canSend} onClick={handleSend}>
             {loading ? (
               <Spinner className="size-4" />
             ) : (

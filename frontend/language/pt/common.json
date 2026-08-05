@@ -229,6 +229,13 @@
     "buying": "Comprando…",
     "buy": "Comprar nome",
     "pricing": "Preços",
+    "badgeInfoTitle": "Selos verificados",
+    "badgeInfo": "Nomes com menos de {min} caracteres são pagos, e todo nome pago carrega um selo verificado.",
+    "badgeChip": "{lengths} caracteres",
+    "goldBadgeTitle": "Selo dourado",
+    "goldBadgeInfo": "Compre um nome de {lengths} caracteres e o seu handle carrega o selo dourado — os nomes mais raros que a ICPay emite.",
+    "blueBadgeTitle": "Selo azul",
+    "blueBadgeInfo": "Compre um nome de {lengths} caracteres e o seu handle carrega o selo azul de verificação.",
     "note": "O nome comprado vira seu identificador principal. Qualquer nome que você já tenha continua apontando para você, então links de pagamento antigos nunca quebram.",
     "tiers": {
       "ultra": "Ultra premium",
@@ -439,7 +446,8 @@
     "copyPrincipal": "Copiar principal",
     "tip": "Gorjeta",
     "viewProfile": "Ver o perfil de @{name}",
-    "premium": "Identificador premium verificado"
+    "premium": "Identificador premium verificado",
+    "premiumGold": "Handle dourado verificado"
   },
   "paymentCard": {
     "live": "AO VIVO",

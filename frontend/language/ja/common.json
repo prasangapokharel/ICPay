@@ -229,6 +229,13 @@
     "buying": "購入中…",
     "buy": "ユーザー名を購入",
     "pricing": "料金",
+    "badgeInfoTitle": "認証バッジ",
+    "badgeInfo": "{min} 文字未満の名前は有料で、すべての有料名に認証バッジが付きます。",
+    "badgeChip": "{lengths} 文字",
+    "goldBadgeTitle": "ゴールドバッジ",
+    "goldBadgeInfo": "{lengths} 文字の名前を購入すると、ハンドルにゴールドバッジが付きます — ICPay が発行する最も希少な名前です。",
+    "blueBadgeTitle": "ブルーバッジ",
+    "blueBadgeInfo": "{lengths} 文字の名前を購入すると、ハンドルにブルー認証バッジが付きます。",
     "note": "購入した名前が主要なハンドルになります。既にお持ちの名前も引き続きあなたを指すため、以前の支払いリンクが無効になることはありません。",
     "tiers": {
       "ultra": "ウルトラプレミアム",
@@ -439,7 +446,8 @@
     "copyPrincipal": "principal をコピー",
     "tip": "チップ",
     "viewProfile": "@{name} のプロフィールを見る",
-    "premium": "認証済みプレミアムハンドル"
+    "premium": "認証済みプレミアムハンドル",
+    "premiumGold": "ゴールド認証ハンドル"
   },
   "paymentCard": {
     "live": "ライブ",

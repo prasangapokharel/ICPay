@@ -20,22 +20,22 @@ export function ServiceTile({
     <>
       <span
         className={cn(
-          "flex size-14 items-center justify-center rounded-2xl bg-muted/60",
+          "flex size-12 items-center justify-center rounded-xl bg-muted/60",
           "transition-colors hover:bg-accent"
         )}
       >
-        <HugeiconsIcon icon={icon} className="size-6 text-primary" strokeWidth={1.75} />
+        <HugeiconsIcon icon={icon} className="size-5 text-primary" strokeWidth={1.75} />
       </span>
-      <span className="text-[11px] font-medium leading-tight">{label}</span>
+      <span className="text-[10px] font-medium leading-tight">{label}</span>
     </>
   )
 
   const className =
-    "h-auto flex-col gap-2 rounded-none bg-transparent p-0 text-center font-normal hover:bg-transparent"
+    "h-auto flex-col gap-1.5 rounded-none bg-transparent p-0 text-center font-normal hover:bg-transparent"
 
   if (onClick) {
     return (
-      <Button variant="ghost" onClick={onClick} className={className}>
+      <Button variant="ghost" size="sm" onClick={onClick} className={className}>
         {tile}
       </Button>
     )
@@ -44,6 +44,7 @@ export function ServiceTile({
   return (
     <Button
       variant="ghost"
+      size="sm"
       nativeButton={false}
       render={<Link href={href ?? "#"} />}
       className={className}

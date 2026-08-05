@@ -119,7 +119,7 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
         </Alert>
       )}
 
-      <Button type="submit" className="h-12 w-full text-base" disabled={!canSubmit}>
+      <Button type="submit" className="w-full" disabled={!canSubmit}>
         {loading ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Upload01Icon} className="size-4" />}
         {loading ? t("sending") : t("submit")}
       </Button>

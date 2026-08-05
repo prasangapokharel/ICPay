@@ -60,8 +60,9 @@ export function ShareProfileCard({ username }: { username: string }) {
         <div className="grid grid-cols-2 gap-2">
           <Button
             variant="outline"
+            size="sm"
             onClick={handleCopy}
-            className="h-11 rounded-2xl"
+            className="rounded-2xl"
           >
             <HugeiconsIcon
               icon={copied ? Tick02Icon : Copy01Icon}
@@ -69,7 +70,7 @@ export function ShareProfileCard({ username }: { username: string }) {
             />
             {copied ? tc("copied") : tc("copy")}
           </Button>
-          <Button onClick={handleShare} className="h-11 rounded-2xl">
+          <Button size="sm" onClick={handleShare} className="rounded-2xl">
             <HugeiconsIcon icon={Share08Icon} className="size-4" />
             {tc("share")}
           </Button>

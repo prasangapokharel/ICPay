@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon, ArrowRight01Icon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
+import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { Search01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { useUserSearch } from "@/hooks/use-wallet-data"
@@ -40,7 +41,7 @@ export default function IcpversePage() {
         />
         <Input
           variant="search"
-          size="lg"
+          size="default"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("searchPlaceholder")}
@@ -78,13 +79,7 @@ export default function IcpversePage() {
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-1 truncate text-sm font-semibold">
                     {name}
-                    {isPremiumHandle(name) && (
-                      <HugeiconsIcon
-                        icon={BadgeCheckIcon}
-                        className="size-4 shrink-0 text-blue-500"
-                        aria-label={t("premium")}
-                      />
-                    )}
+                    <PremiumBadge name={name} />
                   </p>
                   {u.displayName && (
                     <p className="truncate text-xs text-muted-foreground">

@@ -77,8 +77,8 @@ function ActionButton({
       render={<Link href={href} />}
       className={
         primary
-          ? "h-12 font-semibold shadow-sm shadow-primary/25"
-          : "h-12 bg-background font-semibold shadow-sm"
+          ? "font-semibold shadow-sm shadow-primary/25"
+          : "bg-background font-semibold shadow-sm"
       }
     >
       <HugeiconsIcon icon={icon} className="size-4" />
@@ -92,8 +92,8 @@ function DashboardSkeleton() {
     <div className="space-y-6 pt-2">
       <Skeleton className="h-40 w-full rounded-3xl" />
       <div className="grid grid-cols-2 gap-3">
-        <Skeleton className="h-12 rounded-full" />
-        <Skeleton className="h-12 rounded-full" />
+        <Skeleton className="h-9 rounded-full" />
+        <Skeleton className="h-9 rounded-full" />
       </div>
       <Skeleton className="h-48 w-full rounded-2xl" />
     </div>

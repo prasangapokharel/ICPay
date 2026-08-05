@@ -125,7 +125,7 @@ export function SendSuccess({
       </div>
 
       <div className="mt-8 flex w-full items-center gap-2">
-        <Button className="h-12 flex-1 text-base" onClick={onDone}>
+        <Button className="flex-1" onClick={onDone}>
           {tc("done")}
         </Button>
         {/* A purchase pays the treasury, so the receipt card -- which is framed
