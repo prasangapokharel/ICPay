@@ -107,12 +107,13 @@ export function PaymentLinkDialog({
                 <Label htmlFor="request-amount">{t("amountLabel")}</Label>
                 <Input
                   id="request-amount"
+                  size="lg"
                   inputMode="decimal"
                   autoComplete="off"
                   placeholder={t("amountPlaceholder")}
                   value={amount}
                   onChange={(e) => clearOnEdit(e.target.value, setAmount)}
-                  className="h-12 tabular-nums"
+                  className="tabular-nums"
                 />
               </div>
 
@@ -131,11 +132,11 @@ export function PaymentLinkDialog({
                 </div>
                 <Input
                   id="request-memo"
+                  size="lg"
                   autoComplete="off"
                   placeholder={t("memoPlaceholder")}
                   value={memo}
                   onChange={(e) => clearOnEdit(e.target.value, setMemo)}
-                  className="h-12"
                 />
               </div>
 

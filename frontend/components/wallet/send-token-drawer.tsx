@@ -120,6 +120,7 @@ export function SendTokenDrawer({
             <Label htmlFor="send-username">{t("recipient")}</Label>
             <Input
               id="send-username"
+              size="xl"
               placeholder={t("recipientPlaceholder")}
               value={username}
               autoCapitalize="none"
@@ -129,7 +130,7 @@ export function SendTokenDrawer({
                 setUsername(e.target.value)
                 setError(null)
               }}
-              className="h-14 rounded-2xl text-lg"
+              className="rounded-2xl"
             />
             <RecipientLookup
               username={handle}
@@ -151,6 +152,7 @@ export function SendTokenDrawer({
             <div className="relative">
               <Input
                 id="send-amount"
+                size="amount"
                 inputMode="decimal"
                 placeholder="0.0"
                 value={value}
@@ -158,7 +160,7 @@ export function SendTokenDrawer({
                   setValue(e.target.value)
                   setError(null)
                 }}
-                className="h-14 rounded-2xl pr-16 text-2xl font-semibold tabular-nums"
+                className="rounded-2xl pr-16"
               />
               {sendable > 0n && (
                 <Button

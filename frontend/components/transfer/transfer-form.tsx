@@ -199,6 +199,7 @@ export function TransferForm({
         <div className="relative">
           <Input
             id="to"
+            size="xl"
             placeholder={t(labelKeys[mode].placeholder)}
             autoComplete="off"
             spellCheck={false}
@@ -210,11 +211,7 @@ export function TransferForm({
               setSubaccount(null)
               setError(null)
             }}
-            className={
-              mode === "username"
-                ? "h-14 pr-14 text-lg"
-                : "h-14 pr-14 font-mono text-xs"
-            }
+            className={mode === "username" ? "pr-14" : "pr-14 font-mono text-xs"}
           />
           <Button
             variant="ghost"

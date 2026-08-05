@@ -107,9 +107,11 @@ function AddressBlock({
       <div className="flex w-full items-stretch overflow-hidden rounded-2xl border border-input bg-input/30 shadow-sm">
         <Input
           readOnly
+          variant="ghost"
+          size="auto"
           value={expanded || !isLong ? value : `${value.slice(0, 26)}…${value.slice(-6)}`}
           aria-label={t("copyAddress")}
-          className="min-w-0 flex-1 rounded-none border-0 bg-transparent font-mono text-xs shadow-none focus-visible:ring-0"
+          className="min-w-0 flex-1 rounded-none font-mono text-xs"
         />
         <Button
           variant="ghost"
