@@ -17,7 +17,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { ArrowUpRight01Icon, QrCodeScanIcon } from "@hugeicons/core-free-icons"
 import {
   formatTokenAmount,
   parseTokenAmount,
@@ -28,12 +28,23 @@ import {
 import { primeSuccessChime } from "@/lib/success-chime"
 import { validateUsername } from "@/lib/username"
 import { RecipientLookup } from "@/components/transfer/recipient-card"
+import { QrScanner } from "@/components/scan/scan"
+import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/icp-address"
 import { useResolvedUsername } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
 import { cn } from "@/lib/utils"
 import type { TokenHolding } from "@/services/tokens"
+import { ICP_LEDGER_ID } from "@/services/tokens"
+import type { TransferMode } from "@/services/transfer/transfer"
 
 const PERCENTAGES = [25, 50, 75, 100]
+
+const modeFor: Record<ScannedAddress["kind"], TransferMode> = {
+  account: "account",
+  icrc1: "principal",
+  principal: "principal",
+  username: "username",
+}
 
 export function SendTokenDrawer({
   open,
@@ -44,15 +55,30 @@ export function SendTokenDrawer({
   open: boolean
   onOpenChange: (open: boolean) => void
   token: TokenHolding
-  onSend: (username: string, amount: bigint, memo?: string) => Promise<string | null>
+  onSend: (
+    mode: TransferMode,
+    to: string,
+    amount: bigint,
+    memo?: string,
+    subaccount?: Uint8Array
+  ) => Promise<string | null>
 }) {
   const t = useTranslations("sendToken")
   const tc = useTranslations("common")
+  // The scan button's label already exists under transfer, in all ten catalogs.
+  const tt = useTranslations("transfer")
   const [username, setUsername] = useState("")
   const [value, setValue] = useState("")
   const [memo, setMemo] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [scanOpen, setScanOpen] = useState(false)
+  // Anything but "username" means the field holds a principal or account id, so
+  // the handle lookup is skipped and the raw text is sent as typed.
+  const [mode, setMode] = useState<TransferMode>("username")
+  // Only ever set by an ICRC-1 address, which names one account under a
+  // principal. Held apart from the field, which shows the owner.
+  const [subaccount, setSubaccount] = useState<Uint8Array | null>(null)
 
   // Parsed at the token's own decimals, never through Number(): an 18-decimal
   // amount does not survive float math and would send more than was typed.
@@ -63,6 +89,38 @@ export function SendTokenDrawer({
   const insufficient = total !== null && total > token.balance
   const memoTooLong = memoByteLength(memo.trim()) > MEMO_MAX_BYTES
   const handle = username.trim().replace(/^@/, "").toLowerCase()
+  const recipient = mode === "username" ? handle : username.trim()
+  const isIcp = token.ledgerId === ICP_LEDGER_ID
+
+  const applyAddress = (hit: ScannedAddress) => {
+    // Account identifiers are an ICP-ledger concept: transferByAccountId takes no
+    // ledgerId, and services/transfer routes on hex shape before it looks at the
+    // mode. Accepting one here while sending ckBTC would send ICP instead and
+    // report success, so it is refused rather than silently repointed.
+    if (hit.kind === "account" && !isIcp) {
+      setError(t("accountIdIcpOnly", { symbol: token.symbol }))
+      return
+    }
+    setMode(modeFor[hit.kind])
+    setUsername(addressText(hit))
+    setSubaccount(hit.kind === "icrc1" ? hit.subaccount : null)
+    setError(null)
+  }
+
+  // The same detector the transfer page uses, so a pasted principal or account
+  // id is recognised here rather than failing as an unknown handle. It only
+  // fires on self-delimiting forms, so a half-typed username is left alone.
+  const handleRecipientChange = (raw: string) => {
+    const hit = detectTypedAddress(raw)
+    if (hit) {
+      applyAddress(hit)
+      return
+    }
+    setUsername(raw)
+    setMode("username")
+    setSubaccount(null)
+    setError(null)
+  }
 
   const full = (v: bigint) => formatTokenAmount(v, token.decimals, token.decimals)
   // Written back into the field, so it must be a value parseTokenAmount accepts.
@@ -72,12 +130,13 @@ export function SendTokenDrawer({
   }
   // Only a resolvable handle can be paid here, and the lookup is debounced so it
   // runs per typing pause rather than per keystroke.
-  const debouncedHandle = useDebounced(handle)
+  const debouncedHandle = useDebounced(mode === "username" ? handle : "")
   const { principal: resolved, isLoading: resolving } = useResolvedUsername(debouncedHandle)
   // Validated by shape, not by a length floor: handles run from 1 to 8 chars,
-  // so a minimum of 3 would refuse to send to the ultra-premium tier.
+  // so a minimum of 3 would refuse to send to the ultra-premium tier. A
+  // principal or account id arrived through the parser, so it is already valid.
   const canSend =
-    validateUsername(handle) === null &&
+    (mode === "username" ? validateUsername(handle) === null : recipient.length > 0) &&
     amount !== null &&
     !insufficient &&
     !memoTooLong &&
@@ -88,13 +147,21 @@ export function SendTokenDrawer({
     primeSuccessChime()
     setLoading(true)
     setError(null)
-    const err = await onSend(handle, amount, memo.trim() || undefined)
+    const err = await onSend(
+      mode,
+      recipient,
+      amount,
+      memo.trim() || undefined,
+      subaccount ?? undefined
+    )
     setLoading(false)
     if (err) {
       setError(err)
       return
     }
     setUsername("")
+    setMode("username")
+    setSubaccount(null)
     setValue("")
     setMemo("")
     onOpenChange(false)
@@ -118,26 +185,42 @@ export function SendTokenDrawer({
               whatever the amount is. */}
           <div className="space-y-2">
             <Label htmlFor="send-username">{t("recipient")}</Label>
-            <Input
-              id="send-username"
-              size="xl"
-              placeholder={t("recipientPlaceholder")}
-              value={username}
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              onChange={(e) => {
-                setUsername(e.target.value)
-                setError(null)
-              }}
-              className="rounded-2xl"
-            />
-            <RecipientLookup
-              username={handle}
-              principal={resolved}
-              isLoading={resolving || debouncedHandle !== handle}
-            />
+            <div className="relative">
+              <Input
+                id="send-username"
+                size="xl"
+                placeholder={t("recipientPlaceholder")}
+                value={username}
+                autoCapitalize="none"
+                autoCorrect="off"
+                autoComplete="off"
+                spellCheck={false}
+                onChange={(e) => handleRecipientChange(e.target.value)}
+                className={cn(
+                  "rounded-2xl pr-14",
+                  mode !== "username" && "font-mono text-xs"
+                )}
+              />
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label={tt("scanQr")}
+                onClick={() => setScanOpen(true)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg text-muted-foreground"
+              >
+                <HugeiconsIcon icon={QrCodeScanIcon} className="size-5" />
+              </Button>
+            </div>
+            {mode === "username" && (
+              <RecipientLookup
+                username={handle}
+                principal={resolved}
+                isLoading={resolving || debouncedHandle !== handle}
+              />
+            )}
           </div>
+
+          <QrScanner open={scanOpen} onOpenChange={setScanOpen} onScan={applyAddress} />
 
           <div className="space-y-2">
             <div className="flex items-baseline justify-between gap-3">

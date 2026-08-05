@@ -35,7 +35,7 @@ import { useDebounced } from "@/hooks/use-debounced"
 import { Principal } from "@dfinity/principal"
 import { QrScanner, takeScannedAddress } from "@/components/scan/scan"
 import { primeSuccessChime } from "@/lib/success-chime"
-import { addressText, type ScannedAddress } from "@/lib/icp-address"
+import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/icp-address"
 import { parsePaymentLink, amountFieldValue } from "@/services/pay/pay"
 import type { TransferMode } from "@/services/transfer/transfer"
 
@@ -115,6 +115,22 @@ export function TransferForm({
     if (!req) return
     if (req.amount !== undefined) setAmount(amountFieldValue(req.amount))
     if (req.memo !== undefined) setMemo(req.memo)
+  }
+
+  // Pasting a principal into the username tab used to sit there failing lookup
+  // until the user noticed the tabs. The typed detector only fires on forms that
+  // are unambiguous and self-delimiting, so it cannot steal a half-typed handle.
+  const handleRecipientChange = (raw: string) => {
+    const hit = detectTypedAddress(raw)
+    if (hit) {
+      applyScan(hit, raw)
+      return
+    }
+    setTo(raw)
+    // A subaccount left over from a scan would silently redirect a
+    // hand-typed principal's payment to a different account.
+    setSubaccount(null)
+    setError(null)
   }
 
   // A scan started elsewhere in the app lands here through session storage.
@@ -204,13 +220,7 @@ export function TransferForm({
             autoComplete="off"
             spellCheck={false}
             value={to}
-            onChange={(e) => {
-              setTo(e.target.value)
-              // A subaccount left over from a scan would silently redirect a
-              // hand-typed principal's payment to a different account.
-              setSubaccount(null)
-              setError(null)
-            }}
+            onChange={(e) => handleRecipientChange(e.target.value)}
             className={mode === "username" ? "pr-14" : "pr-14 font-mono text-xs"}
           />
           <Button

@@ -16,6 +16,11 @@ export DFX_WARNING=-mainnet_plaintext_identity
 export NEXT_PUBLIC_DERIVATION_ORIGIN="https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io"
 export NEXT_PUBLIC_SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://icpay.app}"
 
+# Named alone, and with no dependency edge in dfx.json, so this touches only the
+# asset canister. The frontend imports nothing dfx generates from the backend --
+# canister ids are hardcoded in services/icp.ts -- and an edge here only meant
+# every frontend deploy also attempted a backend upgrade, which fails the
+# stable-compatibility check and blocked the release.
 dfx deploy --network ic icp_wallet_frontend
 
 echo

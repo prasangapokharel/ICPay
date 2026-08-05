@@ -1,7 +1,6 @@
 import UserStorage "storage/UserStorage";
 import ReservedUsernameStorage "storage/ReservedUsernameStorage";
 import TxStorage "storage/TransactionStorage";
-import StampLedgerId "migrations/StampLedgerId";
 import SettingsStorage "storage/SettingsStorage";
 import LedgerStorage "storage/LedgerStorage";
 import TxRepo "repositories/TransactionRepository";
@@ -33,7 +32,6 @@ import Principal "mo:core/Principal";
 import Int "mo:core/Int";
 import UUID "utils/UUID";
 
-(with migration = StampLedgerId.migration)
 persistent actor self {
   transient let mwConfig = MiddlewareAuth.prodConfig();
 

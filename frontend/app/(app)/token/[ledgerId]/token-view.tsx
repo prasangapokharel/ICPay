@@ -18,7 +18,7 @@ import { SendTokenDrawer } from "@/components/wallet/send-token-drawer"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import { useAuth } from "@/components/auth/auth-provider"
-import { transfer } from "@/services/transfer/transfer"
+import { transfer, type TransferMode } from "@/services/transfer/transfer"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 import { useTokenRegistry } from "@/lib/token-registry"
 import { useFiatValue } from "@/lib/fiat/use-fiat-value"
@@ -71,11 +71,22 @@ export function TokenView() {
     ? icrc1Account(deposit.address.owner, deposit.address.subaccount[0])
     : ""
 
-  const handleSend = async (username: string, amount: bigint, memo?: string) => {
-    const result = await transfer(identity, token.ledgerId, "username", username, amount, memo)
+  const handleSend = async (
+    mode: TransferMode,
+    to: string,
+    amount: bigint,
+    memo?: string,
+    subaccount?: Uint8Array
+  ) => {
+    const result = await transfer(identity, token.ledgerId, mode, to, amount, memo, subaccount)
     if ("err" in result) return result.err
     refreshWallet()
-    setSent({ amount, recipient: `@${username}`, blockIndex: result.ok.blockIndex, memo })
+    setSent({
+      amount,
+      recipient: mode === "username" ? `@${to}` : to,
+      blockIndex: result.ok.blockIndex,
+      memo,
+    })
     return null
   }
 

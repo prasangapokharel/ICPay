@@ -3,13 +3,13 @@
     "icp_wallet_backend": {
       "type": "motoko",
       "main": "src/main.mo",
-      "dependencies": ["icp_ledger"]
+      "dependencies": ["icp_ledger"],
+      "metadata": [{ "name": "candid:service" }]
     },
     "icp_wallet_frontend": {
       "type": "assets",
       "source": ["dist"],
-      "build": ["bash scripts/build-frontend.sh"],
-      "dependencies": ["icp_wallet_backend"]
+      "build": ["bash scripts/build-frontend.sh"]
     },
     "icp_ledger": {
       "type": "pull",
