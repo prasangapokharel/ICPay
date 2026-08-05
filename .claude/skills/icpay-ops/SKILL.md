@@ -95,6 +95,26 @@ only builds a commit already on `main` and cannot read or move funds, so it does
 not carry the risk the controller key does. Rotate it from the Vercel project's
 Git settings and re-set it with `gh secret set VERCEL_DEPLOY_HOOK_URL`.
 
+**The hook is the only path to production.** Vercel's own GitHub integration
+would otherwise deploy the same commit a second time, in parallel with the hook
+and *without waiting for CI* — so a red build reached icpay.app anyway, which is
+the whole reason the hook exists. `frontend/vercel.json` turns that off:
+
+```json
+"git": { "deploymentEnabled": { "main": false, "dev": false } }
+```
+
+`dev` is off for a different reason: it is the integration branch and every
+push to it was spending a build on a URL nobody opens. Feature branches still
+deploy, so a PR still gets its preview — that is where a change is actually
+reviewed. Deploy hooks are unaffected by this setting; the one thing that
+*would* block them is the deprecated `github.enabled: false`, which is why it is
+not used here.
+
+Because Vercel reads `vercel.json` from the commit being deployed, the merge
+that first lands this setting still double-deploys. Every merge after it does
+not.
+
 So a merge to `main` ships the **frontend only**. A merged backend change is not
 live until someone deploys it.
 
