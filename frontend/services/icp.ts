@@ -1,4 +1,4 @@
-import { HttpAgent, type Identity } from "@dfinity/agent"
+import { HttpAgent, type Identity } from "@icp-sdk/core/agent"
 
 const LOCAL_IC_HOST = "http://127.0.0.1:4943"
 const IC_HOST = "https://icp0.io"

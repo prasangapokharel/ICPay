@@ -1,4 +1,4 @@
-import type { Identity } from "@dfinity/agent"
+import type { Identity } from "@icp-sdk/core/agent"
 import { query } from "@/services/client"
 import type { ICRC1Account } from "@/services/types"
 

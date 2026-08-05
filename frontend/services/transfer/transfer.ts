@@ -1,5 +1,5 @@
-import type { Identity } from "@dfinity/agent"
-import { Principal } from "@dfinity/principal"
+import type { Identity } from "@icp-sdk/core/agent"
+import { Principal } from "@icp-sdk/core/principal"
 import { call, optional, type Outcome } from "@/services/client"
 import { isHexAccountId } from "@/lib/wallet-utils"
 import { ICP_LEDGER_ID } from "@/services/tokens"
