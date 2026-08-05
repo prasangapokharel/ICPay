@@ -2,6 +2,7 @@ import { Actor, type Identity } from "@dfinity/agent"
 import type { IDL } from "@dfinity/candid"
 import { Principal } from "@dfinity/principal"
 import { createAgent } from "@/services/icp"
+import { fetchTokenRegistry } from "@/lib/token-registry"
 
 // Mirrors backend Config.ICP_LEDGER_CANISTER_ID.
 export const ICP_LEDGER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"
@@ -147,12 +148,26 @@ export async function fetchBalances(
 }
 
 // Called only for tokens the user actually holds, so the cost scales with the
-// holdings list rather than with the number of tokens that exist. The logo comes
-// from the ledger's own icrc1:logo entry, a small inline data URI.
+// holdings list rather than with the number of tokens that exist.
+//
+// The NNS token index answers for every ledger in one request, where the ledgers
+// answer one at a time, so it is tried first. It is a third party: a miss or an
+// outage falls through to icrc1_metadata rather than failing, because the ledger
+// is the source of truth and is reachable whenever the wallet works at all.
 export async function fetchTokenMetadata(
   ledgerId: string,
   identity?: Identity
 ): Promise<Omit<TokenHolding, "balance"> | null> {
+  try {
+    const row = (await fetchTokenRegistry()).get(ledgerId)
+    if (row) {
+      const { symbol, name, decimals, fee, logo } = row
+      return { ledgerId, symbol, name, decimals, fee, logo }
+    }
+  } catch {
+    // Falls through to the ledger below.
+  }
+
   const agent = await createAgent(identity)
   try {
     const ledger = Actor.createActor<{
