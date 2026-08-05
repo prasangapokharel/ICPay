@@ -7,21 +7,14 @@ import { Money01Icon } from "@hugeicons/core-free-icons"
 import { formatAmount, E8S } from "@/lib/wallet-utils"
 import { useIcpPrice } from "@/lib/use-icp-price"
 import { useFiatValue } from "@/lib/fiat/use-fiat-value"
-import {
-  useDashboard,
-  useTokenHoldings,
-  useLiveBalance,
-  useSelfCustodyPinned,
-} from "@/hooks/use-wallet-data"
+import { useTokenHoldings, useSelfCustodyPinned } from "@/hooks/use-wallet-data"
+import { ICP_LEDGER_ID } from "@/services/tokens"
 import { TokenList } from "@/components/wallet/token-list"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function WalletPage() {
   const t = useTranslations("wallet")
-  const tc = useTranslations("common")
-  // Shares the dashboard cache instead of calling getDashboard again: that is a
-  // ~6.6s update call, and it already ran on the page the user came from.
-  const { data, isLoading } = useDashboard()
   const { holdings, isLoading: holdingsLoading } = useTokenHoldings()
   const selfCustody = useSelfCustodyPinned()
 
@@ -30,18 +23,17 @@ export default function WalletPage() {
   const hasOutside = holdings.some(
     (h) => (selfCustody?.get(h.ledgerId) ?? 0n) > h.fee
   )
-  const liveBalance = useLiveBalance()
+  // Read out of the sweep this page already runs rather than through
+  // useLiveBalance: that hook keys its own SWR entry, so ICP was fetched twice in
+  // parallel on every visit. ICP is pinned, so the row is always present.
+  const liveBalance = holdings.find((h) => h.ledgerId === ICP_LEDGER_ID)?.balance
   const { price } = useIcpPrice()
 
   // A zero balance is "worth nothing", not "worthless": a fraction of a cent
   // keeps extra precision so it does not collapse to "$0.00" and read as empty.
   const usd = price ? (Number(liveBalance ?? 0n) / Number(E8S)) * price.usd : null
-  // Quoted in the currency chosen in settings, not always dollars. Placed above
-  // the early returns below: it is a hook and cannot run conditionally.
+  // Quoted in the currency chosen in settings, not always dollars.
   const fiat = useFiatValue(usd)
-
-  if (isLoading && !data) return <div className="flex justify-center py-12"><p className="text-muted-foreground">{tc("loading")}</p></div>
-  if (!data) return null
 
   return (
     <div className="space-y-6">
@@ -57,10 +49,17 @@ export default function WalletPage() {
           <HugeiconsIcon icon={Money01Icon} className="h-4 w-4 opacity-80" />
         </CardHeader>
         <CardContent className="space-y-1">
-          <div className="text-3xl font-extrabold tracking-tight tabular-nums">
-            {formatAmount(liveBalance ?? 0n)}{" "}
-            <span className="text-lg font-semibold">ICP</span>
-          </div>
+          {/* The card owns its own loading state now. Gating the whole page on
+              the balance would put every section behind the slowest one, which
+              is what made the wallet look empty for seconds after a refresh. */}
+          {liveBalance === undefined ? (
+            <Skeleton className="h-9 w-40 bg-primary-foreground/20" />
+          ) : (
+            <div className="text-3xl font-extrabold tracking-tight tabular-nums">
+              {formatAmount(liveBalance)}{" "}
+              <span className="text-lg font-semibold">ICP</span>
+            </div>
+          )}
           <p className="text-xs font-medium text-primary-foreground/70">
             {fiat.formatted === null
               ? "\u00a0"

@@ -9,16 +9,19 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, ArrowDown01Icon, Alert02Icon, ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { ArrowLeft01Icon, Alert02Icon } from "@hugeicons/core-free-icons"
 import { copyText, formatTokenAmount } from "@/lib/wallet-utils"
 import { icrc1Account } from "@/lib/account-id"
 import { useTokenHolding, useDepositAddress, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
 import { SelfCustodyCard } from "@/components/wallet/self-custody-card"
 import { SendTokenDrawer } from "@/components/wallet/send-token-drawer"
+import { SendSuccess } from "@/components/wallet/send-success"
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import { useAuth } from "@/components/auth/auth-provider"
 import { transfer } from "@/services/transfer/transfer"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
+
+type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
 export function TokenView() {
   const t = useTranslations("token")
@@ -27,6 +30,7 @@ export function TokenView() {
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
   const [sendOpen, setSendOpen] = useState(false)
+  const [sent, setSent] = useState<Sent | null>(null)
   // The deposit details stay hidden until the user asks for them: they see the
   // QR and address only after tapping Deposit, so the default view stays focused
   // on the balance, the action buttons, and the custody card below.
@@ -69,7 +73,24 @@ export function TokenView() {
     const result = await transfer(identity, token.ledgerId, "username", username, amount, memo)
     if ("err" in result) return result.err
     refreshWallet()
+    setSent({ amount, recipient: `@${username}`, blockIndex: result.ok.blockIndex, memo })
     return null
+  }
+
+  // The success screen replaces the page, as it does after an ICP transfer. A
+  // send that only closed the drawer left no block index and no receipt.
+  if (sent) {
+    return (
+      <SendSuccess
+        amount={sent.amount}
+        recipient={sent.recipient}
+        blockIndex={sent.blockIndex}
+        memo={sent.memo}
+        symbol={token.symbol}
+        decimals={token.decimals}
+        onDone={() => setSent(null)}
+      />
+    )
   }
 
   return (
@@ -99,11 +120,9 @@ export function TokenView() {
             activation), so the QR + address never appear before the user asks. */}
         <div className="mt-5 grid grid-cols-2 gap-2">
           <Button variant="outline" className="w-full" onClick={() => setSendOpen(true)}>
-            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
             {t("send")}
           </Button>
           <Button className="w-full" onClick={() => setShowDeposit((v) => !v)}>
-            <HugeiconsIcon icon={ArrowDown01Icon} className="size-4" />
             {t("deposit")}
           </Button>
         </div>
