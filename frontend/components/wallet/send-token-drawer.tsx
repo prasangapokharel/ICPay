@@ -21,13 +21,19 @@ import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import {
   formatTokenAmount,
   parseTokenAmount,
+  toPlainTokenAmount,
   memoByteLength,
   MEMO_MAX_BYTES,
 } from "@/lib/wallet-utils"
 import { primeSuccessChime } from "@/lib/success-chime"
 import { validateUsername } from "@/lib/username"
+import { RecipientLookup } from "@/components/transfer/recipient-card"
+import { useResolvedUsername } from "@/hooks/use-wallet-data"
+import { useDebounced } from "@/hooks/use-debounced"
 import { cn } from "@/lib/utils"
 import type { TokenHolding } from "@/services/tokens"
+
+const PERCENTAGES = [25, 50, 75, 100]
 
 export function SendTokenDrawer({
   open,
@@ -59,6 +65,15 @@ export function SendTokenDrawer({
   const handle = username.trim().replace(/^@/, "").toLowerCase()
 
   const full = (v: bigint) => formatTokenAmount(v, token.decimals, token.decimals)
+  // Written back into the field, so it must be a value parseTokenAmount accepts.
+  const setAmount = (v: bigint) => {
+    setValue(toPlainTokenAmount(v, token.decimals))
+    setError(null)
+  }
+  // Only a resolvable handle can be paid here, and the lookup is debounced so it
+  // runs per typing pause rather than per keystroke.
+  const debouncedHandle = useDebounced(handle)
+  const { principal: resolved, isLoading: resolving } = useResolvedUsername(debouncedHandle)
   // Validated by shape, not by a length floor: handles run from 1 to 8 chars,
   // so a minimum of 3 would refuse to send to the ultra-premium tier.
   const canSend =
@@ -98,6 +113,9 @@ export function SendTokenDrawer({
         </DrawerHeader>
 
         <div className="space-y-4 px-4">
+          {/* Recipient leads, the same order the transfer page uses: who is
+              being paid is the first decision, and a wrong handle wastes the fee
+              whatever the amount is. */}
           <div className="space-y-2">
             <Label htmlFor="send-username">{t("recipient")}</Label>
             <Input
@@ -111,39 +129,66 @@ export function SendTokenDrawer({
                 setUsername(e.target.value)
                 setError(null)
               }}
-              className="h-12 rounded-2xl"
+              className="h-14 rounded-2xl text-lg"
+            />
+            <RecipientLookup
+              username={handle}
+              principal={resolved}
+              isLoading={resolving || debouncedHandle !== handle}
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex items-baseline justify-between gap-3">
               <Label htmlFor="send-amount">{tc("amount")}</Label>
-              <Button
-                variant="ghost"
-                size="xs"
-                onClick={() => {
-                  setValue(full(sendable))
-                  setError(null)
-                }}
-                className="text-muted-foreground hover:text-foreground"
-              >
+              <span className="text-xs text-muted-foreground">
                 {tc("balance")}{" "}
                 <span className="font-medium tabular-nums text-foreground">
                   {full(token.balance)}
                 </span>
-              </Button>
+              </span>
             </div>
-            <Input
-              id="send-amount"
-              inputMode="decimal"
-              placeholder="0.0"
-              value={value}
-              onChange={(e) => {
-                setValue(e.target.value)
-                setError(null)
-              }}
-              className="h-12 rounded-2xl text-base tabular-nums"
-            />
+            <div className="relative">
+              <Input
+                id="send-amount"
+                inputMode="decimal"
+                placeholder="0.0"
+                value={value}
+                onChange={(e) => {
+                  setValue(e.target.value)
+                  setError(null)
+                }}
+                className="h-14 rounded-2xl pr-16 text-2xl font-semibold tabular-nums"
+              />
+              {sendable > 0n && (
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  onClick={() => setAmount(sendable)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted font-semibold text-primary hover:bg-muted/70"
+                >
+                  {tc("max")}
+                </Button>
+              )}
+            </div>
+            {sendable > 0n && (
+              <div className="flex gap-1.5">
+                {PERCENTAGES.map((pct) => (
+                  <Button
+                    key={pct}
+                    variant="outline"
+                    size="xs"
+                    onClick={() => setAmount((sendable * BigInt(pct)) / 100n)}
+                    className={cn(
+                      "h-7 flex-1 bg-background text-muted-foreground hover:bg-accent hover:text-foreground",
+                      pct === 100 && "font-semibold text-primary"
+                    )}
+                  >
+                    {pct}%
+                  </Button>
+                ))}
+              </div>
+            )}
             {value !== "" && amount === null && (
               <p className="text-xs text-destructive">
                 {t("badAmount", { decimals: token.decimals })}

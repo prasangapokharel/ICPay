@@ -70,12 +70,17 @@ export function QuickPayDrawer({
   onOpenChange,
   username,
   balance,
+  request,
   onPay,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   username: string
   balance?: bigint
+  // Set when the visitor arrived on a payment link. The recipient already said
+  // what they are owed and what for, so there is nothing left to pick -- the
+  // drawer becomes a confirmation.
+  request?: { amount: bigint; memo?: string }
   onPay: (amount: bigint, message?: string) => Promise<{ blockIndex: bigint } | string>
 }) {
   const t = useTranslations("quickPay")
@@ -88,7 +93,8 @@ export function QuickPayDrawer({
   const [sent, setSent] = useState<Sent | null>(null)
 
   // selected === null means the custom field is driving the amount.
-  const amount = selected ?? parseIcp(custom)
+  const amount = request ? request.amount : (selected ?? parseIcp(custom))
+  const memo = request ? request.memo : PURPOSES.find((p) => p.key === purpose)?.memo
   const total = amount === null ? null : amount + ICP_FEE
   // The fee is charged on top, so the most that can be sent is balance - fee.
   const sendable = balance === undefined ? undefined : balance > ICP_FEE ? balance - ICP_FEE : 0n
@@ -102,7 +108,7 @@ export function QuickPayDrawer({
     primeSuccessChime()
     setLoading(true)
     setError(null)
-    const result = await onPay(amount, PURPOSES.find((p) => p.key === purpose)?.memo)
+    const result = await onPay(amount, memo)
     setLoading(false)
     if (typeof result === "string") {
       setError(result)
@@ -146,93 +152,109 @@ export function QuickPayDrawer({
               </div>
               <DrawerTitle className="text-center">{t("title", { name: username })}</DrawerTitle>
               <DrawerDescription className="text-center">
-                {t("subtitle")}
+                {request ? t("requestSubtitle", { name: username }) : t("subtitle")}
               </DrawerDescription>
             </DrawerHeader>
 
             <div className="space-y-4 px-4">
-              <div className="grid grid-cols-2 gap-2.5">
-                {PRESETS.map((icp) => {
-                  const value = icp * E8S
-                  const active = selected === value
-                  // Greyed out rather than hidden, so the row does not reflow as
-                  // the balance loads.
-                  const tooBig = sendable !== undefined && value > sendable
-                  return (
+              {request ? (
+                // Nothing to choose: the amount and the reason came in on the
+                // link, so the drawer only has to show what is about to happen.
+                <div className="space-y-3 rounded-2xl bg-muted/40 p-5 text-center">
+                  <p className="text-4xl font-bold tracking-tight tabular-nums">
+                    {formatE8s(request.amount)}
+                  </p>
+                  <p className="text-xs text-muted-foreground">ICP</p>
+                  {request.memo && (
+                    <p className="border-t pt-3 text-sm">{request.memo}</p>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    {PRESETS.map((icp) => {
+                      const value = icp * E8S
+                      const active = selected === value
+                      // Greyed out rather than hidden, so the row does not reflow
+                      // as the balance loads.
+                      const tooBig = sendable !== undefined && value > sendable
+                      return (
+                        <Button
+                          key={icp.toString()}
+                          variant={active ? "default" : "outline"}
+                          disabled={tooBig}
+                          onClick={() => {
+                            setSelected(value)
+                            setError(null)
+                          }}
+                          className={cn(
+                            "h-14 rounded-2xl text-base font-semibold",
+                            active &&
+                              "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
+                          )}
+                        >
+                          <Image
+                            src="/images/logo/logo.png"
+                            alt=""
+                            width={40}
+                            height={40}
+                            className="size-5 object-contain"
+                          />
+                          {icp.toString()}
+                        </Button>
+                      )
+                    })}
                     <Button
-                      key={icp.toString()}
-                      variant={active ? "default" : "outline"}
-                      disabled={tooBig}
+                      variant={selected === null ? "default" : "outline"}
                       onClick={() => {
-                        setSelected(value)
+                        setSelected(null)
                         setError(null)
                       }}
                       className={cn(
-                        "h-14 rounded-2xl text-base font-semibold",
-                        active &&
+                        "h-14 flex-col gap-0 rounded-2xl text-xs font-semibold",
+                        selected === null &&
                           "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
                       )}
                     >
-                      <Image
-                        src="/images/logo/logo.png"
-                        alt=""
-                        width={40}
-                        height={40}
-                        className="size-5 object-contain"
-                      />
-                      {icp.toString()}
+                      <span className="text-base leading-none">···</span>
+                      {t("custom")}
                     </Button>
-                  )
-                })}
-                <Button
-                  variant={selected === null ? "default" : "outline"}
-                  onClick={() => {
-                    setSelected(null)
-                    setError(null)
-                  }}
-                  className={cn(
-                    "h-14 flex-col gap-0 rounded-2xl text-xs font-semibold",
-                    selected === null &&
-                      "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
+                  </div>
+
+                  {selected === null && (
+                    <AmountInput
+                      id="quick-pay-amount"
+                      label={tc("amount")}
+                      value={custom}
+                      onChange={(v) => {
+                        setCustom(v)
+                        setError(null)
+                      }}
+                      balance={balance}
+                      maxE8s={sendable}
+                    />
                   )}
-                >
-                  <span className="text-base leading-none">···</span>
-                  {t("custom")}
-                </Button>
-              </div>
 
-              {selected === null && (
-                <AmountInput
-                  id="quick-pay-amount"
-                  label={tc("amount")}
-                  value={custom}
-                  onChange={(v) => {
-                    setCustom(v)
-                    setError(null)
-                  }}
-                  balance={balance}
-                  maxE8s={sendable}
-                />
+                  <div className="space-y-2">
+                    <Label htmlFor="quick-pay-purpose">{t("purposeLabel")}</Label>
+                    <Select
+                      value={purpose}
+                      onValueChange={(value) => setPurpose((value as PurposeKey) ?? PURPOSES[0].key)}
+                    >
+                      <SelectTrigger id="quick-pay-purpose" className="h-12 w-full rounded-2xl">
+                        <SelectValue placeholder={t("purposePlaceholder")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PURPOSES.map((option) => (
+                          <SelectItem key={option.key} value={option.key}>
+                            {t(`purposes.${option.key}`)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
               )}
-
-              <div className="space-y-2">
-                <Label htmlFor="quick-pay-purpose">{t("purposeLabel")}</Label>
-                <Select
-                  value={purpose}
-                  onValueChange={(value) => setPurpose((value as PurposeKey) ?? PURPOSES[0].key)}
-                >
-                  <SelectTrigger id="quick-pay-purpose" className="h-12 w-full rounded-2xl">
-                    <SelectValue placeholder={t("purposePlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PURPOSES.map((option) => (
-                      <SelectItem key={option.key} value={option.key}>
-                        {t(`purposes.${option.key}`)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
 
               {error && (
                 <Alert variant="destructive">
@@ -247,7 +269,13 @@ export function QuickPayDrawer({
                   element saying so only pushes the form around. */}
               <Button className="h-12 text-base" disabled={!canSend} onClick={handleSend}>
                 {loading && <Spinner className="size-4" />}
-                {loading ? t("sending") : insufficient ? t("insufficient") : t("confirm")}
+                {loading
+                  ? t("sending")
+                  : insufficient
+                    ? t("insufficient")
+                    : request
+                      ? t("confirmAmount", { amount: formatE8s(request.amount) })
+                      : t("confirm")}
               </Button>
             </DrawerFooter>
           </>

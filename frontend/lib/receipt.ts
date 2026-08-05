@@ -1,4 +1,4 @@
-import { formatAmount, explorerTxUrl } from "@/lib/wallet-utils"
+import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet-utils"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 
@@ -7,8 +7,13 @@ export type Receipt = {
   recipient: string
   blockIndex: bigint
   memo?: string
+  // The card is shared for any ICRC-1 token, so the ticker and its scale travel
+  // with the amount rather than being assumed to be ICP's.
+  symbol?: string
+  decimals?: number
   // Priced at share time from the same feed the dashboard uses. Optional: the
-  // card must still render when CoinGecko is rate-limiting.
+  // card must still render when CoinGecko is rate-limiting, and only ICP has a
+  // quote here at all.
   usdPrice?: number
 }
 
@@ -100,14 +105,15 @@ async function qrDataUri(blockIndex: bigint): Promise<string> {
 }
 
 export async function receiptSvg(receipt: Receipt): Promise<string> {
-  const { amount, recipient, blockIndex, memo, usdPrice } = receipt
+  const { amount, recipient, blockIndex, memo, usdPrice, symbol = "ICP", decimals = 8 } = receipt
   const [logo, qr] = await Promise.all([logoDataUri(), qrDataUri(blockIndex)])
   const avatar = avatarDataUri(recipient)
 
   const to = escapeXml(shortenRecipient(recipient))
-  // formatAmount, not formatE8s: the latter pads to all 8 decimals, so 1.5 ICP
-  // would read "1.50000000" across the widest line on the card.
-  const value = escapeXml(formatAmount(amount))
+  // Capped at 4 decimals rather than the token's own: 18 places of ckETH would
+  // run off the widest line on the card.
+  const value = escapeXml(formatTokenAmount(amount, decimals, 4))
+  const ticker = escapeXml(symbol)
   const block = escapeXml(blockIndex.toString())
   const note = memo?.trim() ? escapeXml(truncate(memo.trim(), 38)) : null
   // SendSuccess also covers withdrawals to one's own account, where "tip" would
@@ -115,14 +121,13 @@ export async function receiptSvg(receipt: Receipt): Promise<string> {
   const heading = recipient.startsWith("@") ? "Tip Sent" : "Sent"
   const date = escapeXml(stamp(new Date()))
 
-  const icp = Number(amount) / 1e8
   // CoinGecko rate-limits anonymous callers, so the price can legitimately be
-  // missing. The whole row is dropped rather than showing a placeholder dash,
-  // which reads as a broken card.
+  // missing, and only ICP is quoted at all. The whole row is dropped rather than
+  // showing a placeholder dash, which reads as a broken card.
   const usd = usdPrice
     ? `  <text x="66" y="880" font-family="system-ui, -apple-system, sans-serif" font-size="36" fill="#8a8a8a">Value</text>
-  <text x="66" y="946" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="600" fill="#ffffff">${escapeXml(formatUsd(icp * usdPrice))}</text>
-  <text x="560" y="880" font-family="system-ui, -apple-system, sans-serif" font-size="36" fill="#8a8a8a">ICP Price</text>
+  <text x="66" y="946" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="600" fill="#ffffff">${escapeXml(formatUsd((Number(amount) / 10 ** decimals) * usdPrice))}</text>
+  <text x="560" y="880" font-family="system-ui, -apple-system, sans-serif" font-size="36" fill="#8a8a8a">${ticker} Price</text>
   <text x="560" y="946" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="600" fill="#ffffff">${escapeXml(formatUsd(usdPrice))}</text>`
     : ""
 
@@ -156,9 +161,9 @@ export async function receiptSvg(receipt: Receipt): Promise<string> {
   <text x="204" y="200" font-family="system-ui, -apple-system, sans-serif" font-size="38" font-weight="500" fill="#d4d4d4">${date}</text>
 
   <text x="66" y="500" font-family="system-ui, -apple-system, sans-serif" font-size="66" font-weight="700" fill="#ffffff">${heading}</text>
-  <text x="66" y="566" font-family="system-ui, -apple-system, sans-serif" font-size="40" font-weight="500" fill="#8a8a8a"><tspan fill="${BRAND_BRIGHT}">ICP</tspan>  |  Block ${block}</text>
+  <text x="66" y="566" font-family="system-ui, -apple-system, sans-serif" font-size="40" font-weight="500" fill="#8a8a8a"><tspan fill="${BRAND_BRIGHT}">${ticker}</tspan>  |  Block ${block}</text>
 
-  <text x="66" y="730" font-family="system-ui, -apple-system, sans-serif" font-weight="700"><tspan font-size="${valueSize}" fill="${BRAND_BRIGHT}">${value}</tspan><tspan font-size="58" fill="#ffffff" dx="10">ICP</tspan></text>
+  <text x="66" y="730" font-family="system-ui, -apple-system, sans-serif" font-weight="700"><tspan font-size="${valueSize}" fill="${BRAND_BRIGHT}">${value}</tspan><tspan font-size="58" fill="#ffffff" dx="10">${ticker}</tspan></text>
 
 ${usd}
 ${note ? `  <text x="66" y="1090" font-family="system-ui, -apple-system, sans-serif" font-size="40" font-style="italic" fill="#9a9a9a">&#8220;${note}&#8221;</text>` : ""}

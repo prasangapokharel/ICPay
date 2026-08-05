@@ -2,6 +2,7 @@ import { Principal } from "@dfinity/principal"
 import { crc32, base32NoPad } from "@/lib/account-id"
 import { isHexAccountId } from "@/lib/wallet-utils"
 import { validateUsername } from "@/lib/username"
+import { isReservedHandle } from "@/lib/reserved-handles"
 
 export type ScannedAddress =
   | { kind: "account"; accountId: string }
@@ -92,9 +93,42 @@ function parseIcrc1(value: string): ScannedAddress | null {
   return { kind: "icrc1", owner: owner.toText(), subaccount, text: value }
 }
 
+// An ICPay payment link names the recipient in its path -- icpay.app/alice. The
+// amount and memo it may also carry are not part of an address, so they are read
+// separately by the form that prefills them (services/pay).
+//
+// Without this, ICPay's own scanner could not read ICPay's own QR: a URL is not
+// hex, not ICRC-1, not a principal, and too long to be a username.
+function usernameFromUrl(raw: string): ScannedAddress | null {
+  if (!/^https?:\/\//i.test(raw)) return null
+
+  let url: URL
+  try {
+    url = new URL(raw)
+  } catch {
+    return null
+  }
+
+  // Exactly one segment. A deeper path is a different page of the app --
+  // /icpverse/alice is a profile to look at, not a request to pay.
+  const segments = url.pathname.split("/").filter(Boolean)
+  if (segments.length !== 1) return null
+
+  const username = decodeURIComponent(segments[0]).replace(/^@/, "").toLowerCase()
+  // A reserved name is a page of the app, not a handle anyone can hold, so a URL
+  // pointing at one is a link to somewhere rather than an address to pay.
+  if (isReservedHandle(username)) return null
+  return validateUsername(username) === null ? { kind: "username", username } : null
+}
+
 // Detection runs most-specific first: every account identifier is also valid
 // hex, and every principal is also a plausible username.
 export function parseAddress(raw: string): ScannedAddress | null {
+  // Tried on the untouched input, since stripUri discards the query tail that
+  // tells a payment link apart from a bare profile link.
+  const fromUrl = usernameFromUrl(raw.trim())
+  if (fromUrl) return fromUrl
+
   const value = stripUri(raw)
   if (!value) return null
 

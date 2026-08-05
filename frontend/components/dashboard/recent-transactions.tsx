@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, InboxIcon, Message01Icon, BadgeCheckIcon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
-import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, shortenCounterparty } from "@/lib/wallet-utils"
+import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, shortenCounterparty } from "@/lib/wallet-utils"
+import { useLedgerSymbol } from "@/hooks/use-wallet-data"
 import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { cn } from "@/lib/utils"
 
@@ -64,6 +65,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   const status = txStatusLabel(tx.status)
   const counterparty = incoming ? tx.from : tx.to
   const memo = tx.memo?.[0]
+  const { symbol, decimals } = useLedgerSymbol(tx.ledgerId)
 
   const avatarUri = useMemo(
     () => createAvatar(adventurer, { seed: counterparty }).toDataUri(),
@@ -132,7 +134,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
           )}
         >
           {incoming ? "+" : "−"}
-          {formatAmount(tx.amount)} ICP
+          {formatTokenAmount(tx.amount, decimals, 4)} {symbol}
         </p>
         {status !== "completed" && (
           <Badge variant={getTxStatusVariant(tx.status)} className="mt-0.5 text-[10px]">

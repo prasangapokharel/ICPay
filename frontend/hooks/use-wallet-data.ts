@@ -394,6 +394,28 @@ export function useTokenHoldings() {
   }
 }
 
+// The symbol and scale for a ledger, without its balance. Transaction rows carry
+// a ledgerId and nothing else, so every row was labelled "ICP" whatever token it
+// actually moved. Shares useTokenHolding's key, and seeds from the holdings cache
+// so a row renders its real ticker on the first paint rather than after a round
+// trip. ICP is the fallback because its ledger publishes no metadata.
+export function useLedgerSymbol(ledgerId: string): { symbol: string; decimals: number } {
+  const { identity } = useAuth()
+  const { data } = useSWRImmutable(["token-metadata-one", ledgerId] as const, () =>
+    fetchTokenMetadata(ledgerId, identity)
+  )
+
+  const principal = identity?.getPrincipal().toText()
+  const cached = data
+    ? undefined
+    : principal
+      ? readHoldings(principal)?.find((h) => h.ledgerId === ledgerId)
+      : undefined
+  const meta = data ?? cached
+
+  return { symbol: meta?.symbol ?? "ICP", decimals: meta?.decimals ?? 8 }
+}
+
 // One token by ledger id. Reads that single ledger rather than mounting
 // useTokenHoldings: the sweep is ~50 balance calls and this page renders one row,
 // so a deep link or a refresh here paid for the whole wallet. It shares

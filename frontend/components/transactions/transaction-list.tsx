@@ -17,7 +17,8 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, ArrowRight01Icon, LinkSquare02Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
-import { formatAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, explorerTxUrl, shortenCounterparty } from "@/lib/wallet-utils"
+import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, explorerTxUrl, shortenCounterparty } from "@/lib/wallet-utils"
+import { useLedgerSymbol } from "@/hooks/use-wallet-data"
 import { cn } from "@/lib/utils"
 
 type TransactionListProps = {
@@ -95,6 +96,7 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
   const status = txStatusLabel(tx.status)
   const counterparty = incoming ? tx.from : tx.to
   const memo = tx.memo?.[0]
+  const { symbol, decimals } = useLedgerSymbol(tx.ledgerId)
 
   const avatarUri = useMemo(
     () => createAvatar(adventurer, { seed: counterparty }).toDataUri(),
@@ -170,7 +172,7 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
             )}
           >
             {incoming ? "+" : "−"}
-            {formatAmount(tx.amount)} ICP
+            {formatTokenAmount(tx.amount, decimals, 4)} {symbol}
           </p>
           {status !== "completed" && (
             <Badge variant={getTxStatusVariant(tx.status)} className="mt-0.5 text-[10px]">
@@ -189,10 +191,10 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
             <span className="break-all font-mono">{tx.to}</span>
           </Row>
           <Row label={t("rowAmount")}>
-            <span className="tabular-nums">{formatAmount(tx.amount)} ICP</span>
+            <span className="tabular-nums">{formatTokenAmount(tx.amount, decimals, decimals)} {symbol}</span>
           </Row>
           <Row label={t("rowNetworkFee")}>
-            <span className="tabular-nums">{formatAmount(tx.fee)} ICP</span>
+            <span className="tabular-nums">{formatTokenAmount(tx.fee, decimals, decimals)} {symbol}</span>
           </Row>
           <Row label={t("rowStatus")}>
             <Badge variant={getTxStatusVariant(tx.status)} className="text-[10px]">

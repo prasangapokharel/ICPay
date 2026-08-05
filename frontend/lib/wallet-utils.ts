@@ -104,6 +104,16 @@ export function formatTokenAmount(amount: bigint, decimals: number, maxFraction 
   return `${whole.toLocaleString()}.${trimmed}`
 }
 
+// What formatTokenAmount is not: a value that parseTokenAmount reads back
+// unchanged. Separators and a capped fraction are right for display and wrong
+// for a field, where they would silently change the amount being sent.
+export function toPlainTokenAmount(amount: bigint, decimals: number): string {
+  const scale = 10n ** BigInt(decimals)
+  const whole = amount / scale
+  const fraction = (amount % scale).toString().padStart(decimals, "0").replace(/0+$/, "")
+  return fraction ? `${whole}.${fraction}` : `${whole}`
+}
+
 // 6/4 split, used wherever a principal is shown inline next to other text.
 // formatPrincipal's 5/5 split is the standalone-field form.
 export function shortPrincipal(text: string): string {

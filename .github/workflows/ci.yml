@@ -1,9 +1,12 @@
 name: CI
 
-# Deliberately never deploys. The backend canister custodies real user ICP, and
-# auto-deploying would mean putting its controller key in a GitHub secret -- a
-# key that can also delete the canister. Shipping stays a local command run by a
-# human: npm run ci backend:deploy / npm run ci frontend:deploy.
+# The backend canister is never deployed from here. It custodies real user ICP,
+# and auto-deploying would mean putting its controller key in a GitHub secret --
+# a key that can also delete the canister. Shipping the backend stays a local
+# command run by a human: npm run ci backend:deploy.
+#
+# The frontend is different: the deploy hook below only triggers a Vercel build
+# of a commit that is already on main, and can neither read nor move funds.
 on:
   push:
     branches: [main, dev]
@@ -64,3 +67,18 @@ jobs:
 
       - run: npm run build
         working-directory: frontend
+
+  # Fires only on main, and only once both suites are green -- a red build must
+  # never reach icpay.app. The hook URL is a secret because anyone holding it can
+  # trigger a production deploy.
+  deploy:
+    needs: [backend, frontend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel deploy
+        run: |
+          code=$(curl -sS -X POST -o /dev/null -w '%{http_code}' \
+            "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}")
+          echo "deploy hook responded $code"
+          test "$code" -ge 200 && test "$code" -lt 300

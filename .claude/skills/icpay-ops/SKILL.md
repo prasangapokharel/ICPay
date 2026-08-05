@@ -84,10 +84,16 @@ the reduction percentage. Never project or estimate.
 npm run ci backend:deploy
 ```
 
-CI **never deploys**. That is deliberate: the canister custodies real ICP, and
-automating the upgrade would mean putting a key that can also *delete* the
-canister into a GitHub secret. Shipping the backend is always a human running
-that command.
+CI **never deploys the backend**. That is deliberate: the canister custodies
+real ICP, and automating the upgrade would mean putting a key that can also
+*delete* the canister into a GitHub secret. Shipping the backend is always a
+human running that command.
+
+CI **does** ship the frontend. Once both suites pass on `main`, a `deploy` job
+fires a Vercel deploy hook held in the `VERCEL_DEPLOY_HOOK_URL` repo secret. It
+only builds a commit already on `main` and cannot read or move funds, so it does
+not carry the risk the controller key does. Rotate it from the Vercel project's
+Git settings and re-set it with `gh secret set VERCEL_DEPLOY_HOOK_URL`.
 
 So a merge to `main` ships the **frontend only**. A merged backend change is not
 live until someone deploys it.

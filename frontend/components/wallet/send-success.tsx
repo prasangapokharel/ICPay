@@ -8,7 +8,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { formatE8s, explorerTxUrl } from "@/lib/wallet-utils"
+import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet-utils"
 import { ReceiptPreview } from "@/components/wallet/receipt-preview"
 import { useIcpPrice } from "@/lib/use-icp-price"
 import { playSuccessChime } from "@/lib/success-chime"
@@ -20,10 +20,23 @@ type SendSuccessProps = {
   blockIndex: bigint
   memo?: string
   kind?: "send" | "tip" | "purchase"
+  // Default to ICP: every caller but the token page sends ICP, and its ledger
+  // ships no metadata to read a symbol from.
+  symbol?: string
+  decimals?: number
   onDone: () => void
 }
 
-export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send", onDone }: SendSuccessProps) {
+export function SendSuccess({
+  amount,
+  recipient,
+  blockIndex,
+  memo,
+  kind = "send",
+  symbol = "ICP",
+  decimals = 8,
+  onDone,
+}: SendSuccessProps) {
   const t = useTranslations("success")
   const tc = useTranslations("common")
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -44,10 +57,19 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
   )
 
   // Identity-stable so the preview does not re-render the card on every parent
-  // render; the price settling is a real change and should refresh it.
+  // render; the price settling is a real change and should refresh it. The ICP
+  // quote only applies to ICP, so another token's card carries no fiat row.
   const receipt = useMemo(
-    () => ({ amount, recipient, blockIndex, memo, usdPrice: price?.usd }),
-    [amount, recipient, blockIndex, memo, price?.usd]
+    () => ({
+      amount,
+      recipient,
+      blockIndex,
+      memo,
+      symbol,
+      decimals,
+      usdPrice: symbol === "ICP" ? price?.usd : undefined,
+    }),
+    [amount, recipient, blockIndex, memo, symbol, decimals, price?.usd]
   )
 
   const label = recipient.startsWith("@")
@@ -71,7 +93,7 @@ export function SendSuccess({ amount, recipient, blockIndex, memo, kind = "send"
 
       <p className="mt-8 text-xs text-muted-foreground">{t("total")}</p>
       <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums">
-        {formatE8s(amount)} ICP
+        {formatTokenAmount(amount, decimals, decimals)} {symbol}
       </p>
 
       <div className="mt-8 w-full border-t border-dashed pt-6 text-left">

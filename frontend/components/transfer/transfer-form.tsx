@@ -36,6 +36,7 @@ import { Principal } from "@dfinity/principal"
 import { QrScanner, takeScannedAddress } from "@/components/scan/scan"
 import { primeSuccessChime } from "@/lib/success-chime"
 import { addressText, type ScannedAddress } from "@/lib/icp-address"
+import { parsePaymentLink, amountFieldValue } from "@/services/pay/pay"
 import type { TransferMode } from "@/services/transfer/transfer"
 
 const labelKeys = {
@@ -101,11 +102,19 @@ export function TransferForm({
   // shows the owner, while the money is owed to one account underneath it.
   const [subaccount, setSubaccount] = useState<Uint8Array | null>(null)
 
-  const applyScan = (hit: ScannedAddress) => {
+  const applyScan = (hit: ScannedAddress, raw: string) => {
     setMode(modeFor[hit.kind])
     setTo(addressText(hit))
     setSubaccount(hit.kind === "icrc1" ? hit.subaccount : null)
     setError(null)
+
+    // A payment link asks for a specific amount, for a specific thing. Filling
+    // both is the whole point of scanning one -- but they stay editable, since
+    // someone tipping above the asking price should be able to.
+    const req = parsePaymentLink(raw)
+    if (!req) return
+    if (req.amount !== undefined) setAmount(amountFieldValue(req.amount))
+    if (req.memo !== undefined) setMemo(req.memo)
   }
 
   // A scan started elsewhere in the app lands here through session storage.
@@ -113,9 +122,9 @@ export function TransferForm({
   // time, where sessionStorage does not exist, so a filled field would mismatch
   // the baked HTML on hydration.
   useEffect(() => {
-    const hit = takeScannedAddress()
+    const scanned = takeScannedAddress()
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (hit) applyScan(hit)
+    if (scanned) applyScan(scanned.hit, scanned.raw)
   }, [])
 
   const parsed = parseIcp(amount)
