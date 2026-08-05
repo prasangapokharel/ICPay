@@ -120,5 +120,8 @@ per-machine permission grants.
 two run on pushes to `main` and `dev`, and on every PR.
 
 `deploy` fires the Vercel hook, and only on a green push to `main` — so a red
-build never reaches icpay.app. CI still **never deploys the backend** — see the
-ops skill for why.
+build never reaches icpay.app. Vercel's own git integration is disabled for
+`main` and `dev` in `frontend/vercel.json`: on `main` it would deploy the same
+commit twice, ignoring CI, and on `dev` it was building a URL nobody opens.
+Feature branches still get previews, so a PR still has one. CI still **never
+deploys the backend** — see the ops skill for why.
