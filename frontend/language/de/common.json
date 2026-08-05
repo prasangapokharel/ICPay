@@ -173,6 +173,8 @@
     "amountInvalid": "Gib einen gültigen ICP-Betrag ein.",
     "memoTooLong": "Halte es unter {max} Bytes, damit es in das Ledger passt.",
     "hint": "Der Zahler scannt, prüft und sendet. Alle Felder bleiben für ihn bearbeitbar.",
+    "generate": "Link generieren",
+    "copyLink": "Link kopieren",
     "shareSheetTitle": "ICPay-Zahlungsanforderung",
     "shareSheetText": "{name} auf ICPay bezahlen",
     "shareSheetTextAmount": "{name} auf ICPay {amount} ICP zahlen"

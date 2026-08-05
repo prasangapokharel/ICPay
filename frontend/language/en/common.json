@@ -173,6 +173,8 @@
     "amountInvalid": "Enter a valid ICP amount.",
     "memoTooLong": "Keep it under {max} bytes so it fits on the ledger.",
     "hint": "The payer scans this, reviews, and sends. Every field stays editable for them.",
+    "generate": "Generate link",
+    "copyLink": "Copy link",
     "shareSheetTitle": "ICPay payment request",
     "shareSheetText": "Pay {name} on ICPay",
     "shareSheetTextAmount": "Pay {name} {amount} ICP on ICPay"

@@ -173,6 +173,8 @@
     "amountInvalid": "Saisissez un montant ICP valide.",
     "memoTooLong": "Restez sous {max} octets pour que cela tienne dans le registre.",
     "hint": "Le payeur scanne, vérifie, puis envoie. Chaque champ reste modifiable de son côté.",
+    "generate": "Générer le lien",
+    "copyLink": "Copier le lien",
     "shareSheetTitle": "Demande de paiement ICPay",
     "shareSheetText": "Payer {name} sur ICPay",
     "shareSheetTextAmount": "Payer {amount} ICP à {name} sur ICPay"

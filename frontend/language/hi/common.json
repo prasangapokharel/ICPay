@@ -173,6 +173,8 @@
     "amountInvalid": "मान्य ICP राशि दर्ज करें।",
     "memoTooLong": "इसे {max} बाइट से कम रखें ताकि यह लेजर पर आ सके।",
     "hint": "भुगतानकर्ता इसे स्कैन करता है, जाँचता है और भेजता है। उसके लिए हर फ़ील्ड संपादन योग्य रहती है।",
+    "generate": "लिंक बनाएँ",
+    "copyLink": "लिंक कॉपी करें",
     "shareSheetTitle": "ICPay भुगतान अनुरोध",
     "shareSheetText": "ICPay पर {name} को भुगतान करें",
     "shareSheetTextAmount": "ICPay पर {name} को {amount} ICP भुगतान करें"

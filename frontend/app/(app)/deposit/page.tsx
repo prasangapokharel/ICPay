@@ -3,7 +3,7 @@
 import { useState } from "react"
 import useSWR from "swr"
 import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
-import { PaymentLinkCard } from "@/components/deposit/payment-link-card"
+import { PaymentLinkDialog } from "@/components/deposit/payment-link-card"
 import { useTranslations } from "next-intl"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -58,9 +58,7 @@ export default function DepositPage() {
         <Switch id="request-toggle" checked={requesting} onCheckedChange={setRequesting} />
       </div>
 
-      {requesting ? (
-        <PaymentLinkCard username={user?.username?.[0]} />
-      ) : isLoading ? (
+      {isLoading ? (
         <div className="space-y-4">
           <Skeleton className="h-10 w-full rounded-xl" />
           <Skeleton className="mx-auto size-52 rounded-2xl" />
@@ -87,6 +85,14 @@ export default function DepositPage() {
           </p>
         </>
       )}
+
+      {/* The request form lives in a modal, opened by the toggle above, so the
+          deposit address stays the page's default view. */}
+      <PaymentLinkDialog
+        open={requesting}
+        onOpenChange={setRequesting}
+        username={user?.username?.[0]}
+      />
     </div>
   )
 }

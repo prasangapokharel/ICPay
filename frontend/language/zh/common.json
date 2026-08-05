@@ -173,6 +173,8 @@
     "amountInvalid": "请输入有效的 ICP 金额。",
     "memoTooLong": "请控制在 {max} 字节以内，才能写入账本。",
     "hint": "付款方扫码、确认、发送。所有字段对他们仍可修改。",
+    "generate": "生成链接",
+    "copyLink": "复制链接",
     "shareSheetTitle": "ICPay 收款请求",
     "shareSheetText": "在 ICPay 上向 {name} 付款",
     "shareSheetTextAmount": "在 ICPay 上向 {name} 付款 {amount} ICP"
