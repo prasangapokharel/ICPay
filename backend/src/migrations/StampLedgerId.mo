@@ -5,6 +5,13 @@ import Config "../config/Config";
 
 // Phase 3 added a required `ledgerId` field to the Transaction record.
 //
+// APPLIED. This ran on the deploy that shipped Phase 3, and the live canister's
+// stable signature already carries `ledgerId`. It must NOT be re-wired into
+// main.mo: with the field already persisted, moc compares the live (new) shape
+// against this module's OldTransaction input and rejects the upgrade with the
+// very M0170 the migration was written to resolve. Kept for the record, and
+// because its test documents the transformation.
+//
 // Adding a record field to the type of a persisted stable variable is an
 // incompatible upgrade (Motoko error M0170): a persistent actor cannot conjure
 // a value for the new field out of thin air, so dfx refuses the upgrade unless
