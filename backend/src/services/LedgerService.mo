@@ -1,5 +1,3 @@
-import Set "mo:core/Set";
-import Text "mo:core/Text";
 import Principal "mo:core/Principal";
 import Config "../config/Config";
 import LedgerTypes "../ledger/Types";
@@ -29,6 +27,13 @@ module {
 
   public func isAllowed(service: LedgerService, ledgerId: Text): Bool {
     LedgerStorage.isAllowed(service.registry, ledgerId);
+  };
+
+  // Tokens this canister launched are not SNS-deployed, so refreshLedgers will
+  // never find them and without this they stay unspendable forever. Returns
+  // whether it was new, so a caller can report how many it actually added.
+  public func registerLedger(service: LedgerService, ledgerId: Text): Bool {
+    LedgerStorage.register(service.registry, ledgerId);
   };
 
   // Deposit accounts are derived from the principal alone, so one account serves
@@ -81,9 +86,7 @@ module {
     for (sns in deployed.instances.vals()) {
       switch (sns.ledger_canister_id) {
         case (?id) {
-          let text = Principal.toText(id);
-          if (not Set.contains(service.registry, Text.compare, text)) {
-            Set.add(service.registry, Text.compare, text);
+          if (LedgerStorage.register(service.registry, Principal.toText(id))) {
             added += 1;
           };
         };

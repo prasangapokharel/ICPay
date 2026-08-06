@@ -101,7 +101,7 @@ persistent actor self {
   transient let settingsService = SettingsService.create(users, settings);
   transient let tokenService = TokenService.create(
     tokens, tokensByLedger, tokensByUser, reservedSymbols, tokenWasm,
-    transferService, users, Principal.fromActor(self), nextUid,
+    transferService, ledger, users, Principal.fromActor(self), nextUid,
   );
 
   // Chain-key symbols are compiled in, so seeding them costs no calls and runs

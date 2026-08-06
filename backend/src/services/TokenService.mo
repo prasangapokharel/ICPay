@@ -32,12 +32,13 @@ module {
     reservedSymbols: TokenStorage.ReservedSymbolSet,
     wasm: TokenWasmService.TokenWasmStore,
     transfers: TransferService.TransferService,
+    ledger: LedgerService.LedgerService,
     users: UserStorage.UserMap,
     self: Principal,
     nextId: () -> Text,
   ): TokenService {
     {
-      tokens; byLedger; byUser; reservedSymbols; wasm; transfers; users; self; nextId;
+      tokens; byLedger; byUser; reservedSymbols; wasm; transfers; ledger; users; self; nextId;
       // Held only for the duration of one launch, so deliberately not persisted:
       // an upgrade landing mid-launch must not strand a symbol behind a lock
       // nobody will ever release.
@@ -52,6 +53,7 @@ module {
     reservedSymbols: TokenStorage.ReservedSymbolSet;
     wasm: TokenWasmService.TokenWasmStore;
     transfers: TransferService.TransferService;
+    ledger: LedgerService.LedgerService;
     users: UserStorage.UserMap;
     // This canister. Owner of the revenue account and, briefly, of every token
     // it is installing.
@@ -143,6 +145,11 @@ module {
         Option.get(service.wasm.moduleHash, "" : Blob),
         Config.LAUNCH_CYCLE_ALLOCATION,
       );
+      // A launched token is not SNS-deployed, so refreshLedgers will never find
+      // it and the custodian would refuse every deposit and transfer of a token
+      // it created itself. Only after markActive: a ledger that failed to
+      // install must not widen the set of canisters this one is willing to call.
+      ignore LedgerService.registerLedger(service.ledger, Principal.toText(canisterId));
       service.pending.remove(symbol);
       #ok(Types.tokenToPublic(token));
     } catch (e) {
@@ -187,7 +194,7 @@ module {
       // immediately after.
       controller = service.self;
       subnet_type = null;
-      subnet_selection = null;
+      subnet_selection = ?#Subnet({ subnet = Principal.fromText(Config.OWN_SUBNET) });
       settings = null;
     })) {
       case (#Ok(id)) { id };
@@ -211,17 +218,23 @@ module {
       store_canister = ?service.self;
       chunk_hashes_list = TokenWasmService.chunkHashList(service.wasm);
       wasm_module_hash = Option.get(service.wasm.moduleHash, "" : Blob);
-      arg = to_candid (ledgerInitArgs(creator, p, symbol));
+      // The ledger's entry point takes `variant { Init; Upgrade }`, not the
+      // record bare. Encoding InitArgs directly decodes as neither and traps
+      // the install -- after the fee is taken and the canister exists.
+      arg = to_candid (#Init(ledgerInitArgs(creator, p, symbol)));
       sender_canister_version = null;
     });
   };
 
-  // The whole supply goes to the creator and the minting account is the creator
-  // too, so nothing here can mint after launch except them. The metadata is
-  // duplicated onto the child ledger on purpose: our record is what ICPay lists
-  // from, the ledger's own metadata is what makes the token legible to wallets
-  // that never heard of ICPay.
-  func ledgerInitArgs(
+  // The whole supply goes to the creator, but the minting account is a
+  // principal nothing can call as, so the supply can never grow past what is
+  // issued here. The metadata is duplicated onto the child ledger on purpose:
+  // our record is what ICPay lists from, the ledger's own metadata is what
+  // makes the token legible to wallets that never heard of ICPay.
+  // Public so a test can decode what install would actually send. The shape is
+  // only exercised for real by a mainnet launch, which costs 5 ICP to discover
+  // is wrong.
+  public func ledgerInitArgs(
     creator: Principal,
     p: TokenValidator.LaunchParams,
     symbol: Text,
@@ -239,35 +252,61 @@ module {
       token_symbol = symbol;
       decimals = ?p.decimals;
       transfer_fee = 10_000;
-      minting_account = creatorAccount;
+      minting_account = { owner = Principal.fromText(Config.TOKEN_MINTING_PRINCIPAL); subaccount = null };
       initial_balances = [(creatorAccount, p.totalSupply)];
       metadata;
+      fee_collector_account = null;
+      max_memo_length = null;
+      index_principal = null;
       archive_options = {
         num_blocks_to_archive = 1_000;
         trigger_threshold = 2_000;
         controller_id = creator;
-        cycles_for_archive_creation = ?0;
+        // The ledger spawns its archive itself, paying out of its own balance,
+        // so a zero here means the spawn fails once trigger_threshold is
+        // crossed and the ledger keeps every block in its own memory instead.
+        cycles_for_archive_creation = ?Config.ARCHIVE_CREATION_CYCLES;
+        max_message_size_bytes = null;
+        node_max_memory_size_bytes = null;
+        max_transactions_per_response = null;
+        more_controller_ids = null;
       };
       feature_flags = ?{ icrc2 = true };
     };
   };
 
+  // Fields and order follow ledger.did from ledger-suite-icrc-2026-03-09. A
+  // record that does not match it decodes as garbage on install, which is only
+  // discoverable after the fee is spent -- so this type is pinned to a release,
+  // not written from memory.
   public type LedgerInitArgs = {
     token_name: Text;
     token_symbol: Text;
     decimals: ?Nat8;
     transfer_fee: Nat;
     minting_account: LedgerTypes.Account;
+    fee_collector_account: ?LedgerTypes.Account;
     initial_balances: [(LedgerTypes.Account, Nat)];
     metadata: [(Text, LedgerTypes.Value)];
+    max_memo_length: ?Nat16;
+    index_principal: ?Principal;
     archive_options: {
       num_blocks_to_archive: Nat64;
+      max_transactions_per_response: ?Nat64;
       trigger_threshold: Nat64;
-      controller_id: Principal;
+      max_message_size_bytes: ?Nat64;
       cycles_for_archive_creation: ?Nat64;
+      node_max_memory_size_bytes: ?Nat64;
+      controller_id: Principal;
+      more_controller_ids: ?[Principal];
     };
     feature_flags: ?{ icrc2: Bool };
   };
+
+  // Only the Init arm is declared. A variant with fewer cases is a Candid
+  // subtype of the ledger's, so this decodes; carrying an Upgrade arm we never
+  // send would mean keeping UpgradeArgs in sync for nothing.
+  public type LedgerArg = { #Init: LedgerInitArgs };
 
   // The last call. ICPay is controller only long enough to install and never
   // again -- co-controlling every launched token would make one compromised key
@@ -312,6 +351,41 @@ module {
       case (#Ok(blockIndex)) { #ok(Nat64.fromNat(blockIndex)) };
       case (#Err(e)) { #err(TransferError.describe(e)) };
     };
+  };
+
+  // A launch that dies between create and install leaves an empty canister this
+  // canister still controls, holding the cycles the fee bought. Control is
+  // handed to a principal that can delete it rather than deleting it here:
+  // Management.mo declares no delete_canister on purpose, and adding one to
+  // recover cycles would give every future bug a way to destroy a live token.
+  //
+  // Refuses any canister id recorded against a token that is not #failed, so an
+  // active ledger can never be signed away by a mistyped argument.
+  public func releaseFailedCanister(
+    service: TokenService,
+    canisterId: Text,
+    to: Principal,
+  ): async Types.ApiResult<()> {
+    switch (TokenRepo.findByLedgerId(service.tokens, service.byLedger, canisterId)) {
+      case (null) { return #err("No launch recorded for " # canisterId) };
+      case (?t) {
+        switch (t.status) {
+          case (#failed(_)) {};
+          case (_) { return #err("Token " # canisterId # " is not a failed launch") };
+        };
+      };
+    };
+    let mgmt: Management.ManagementService = actor (Config.MANAGEMENT_CANISTER_ID);
+    await mgmt.update_settings({
+      canister_id = Principal.fromText(canisterId);
+      settings = {
+        controllers = ?[to];
+        compute_allocation = null;
+        memory_allocation = null;
+        freezing_threshold = null;
+      };
+    });
+    #ok(());
   };
 
   // Rescues a frozen token. notify_top_up needs no controller rights, so this
@@ -381,6 +455,17 @@ module {
   public func listActive(service: TokenService, limit: Nat, offset: Nat): [Types.TokenPublic] {
     let rows = TokenRepo.listActive(service.tokens, limit, offset);
     Array.map<Types.Token, Types.TokenPublic>(rows, Types.tokenToPublic);
+  };
+
+  // Backfill for tokens launched before the launch path registered its own
+  // ledger. Takes no argument on purpose: the ids come from this canister's own
+  // token rows, so it cannot be used to allowlist an arbitrary canister.
+  public func registerLaunchedLedgers(service: TokenService): Nat {
+    var added = 0;
+    for (id in TokenRepo.activeLedgerIds(service.tokens).values()) {
+      if (LedgerService.registerLedger(service.ledger, id)) { added += 1 };
+    };
+    added;
   };
 
   // Free to call, so the form can check as the user types: queries are not

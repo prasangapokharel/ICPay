@@ -86,4 +86,23 @@ mixin (tokens: TokenService.TokenService, mwConfig: MiddlewareAuth.Config) {
     TokenService.seedReservedSymbols(tokens, [symbol]);
     #ok(());
   };
+
+  // Signs an orphaned canister over so its cycles can be recovered. Only ever a
+  // failed launch: the service refuses any id belonging to a live token.
+  public shared ({ caller }) func releaseFailedCanister(canisterId: Text, to: Principal) : async Types.ApiResult<()> {
+    if (not Principal.isController(MiddlewareAuth.effectiveCaller(mwConfig, caller))) {
+      return #err("Not authorized");
+    };
+    await TokenService.releaseFailedCanister(tokens, canisterId, to);
+  };
+
+  // Allowlists every already-launched ledger, for tokens created before the
+  // launch path did this itself. Takes no id, so it cannot widen the set of
+  // canisters the custodian calls beyond the ones it created.
+  public shared ({ caller }) func registerLaunchedLedgers() : async Types.ApiResult<Nat> {
+    if (not Principal.isController(MiddlewareAuth.effectiveCaller(mwConfig, caller))) {
+      return #err("Not authorized");
+    };
+    #ok(TokenService.registerLaunchedLedgers(tokens));
+  };
 };
