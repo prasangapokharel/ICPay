@@ -85,8 +85,14 @@ the reduction percentage. Never project or estimate.
 ## Revenue
 
 Launch fees and username sales accrue in a subaccount of the canister, not in
-the treasury. Nothing sweeps automatically — two ledger calls on every sale to
-move funds that are in no hurry is not worth it.
+the treasury. A 24h timer sweeps it — sweeping on every sale would put two
+ledger calls on the hot path to move funds that are in no hurry.
+
+The timer is armed at actor start, so it survives upgrades by being re-created
+rather than persisted (Motoko timers do not survive an upgrade). The first tick
+is 24h after a deploy, never at install time.
+
+To force one now:
 
 ```bash
 npm run ci backend:sweep
