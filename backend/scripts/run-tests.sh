@@ -60,6 +60,9 @@ run_test "$ROOT/testing/models/Transaction.test.mo" "TransactionModel"
 run_test "$ROOT/testing/models/Settings.test.mo" "SettingsModel"
 run_test "$ROOT/testing/models/Token.test.mo" "TokenModel"
 
+echo "--- Storage Tests ---"
+run_test "$ROOT/testing/storage/LedgerStorage.test.mo" "LedgerStorage"
+
 echo "--- Repository Tests ---"
 run_test "$ROOT/testing/repositories/UserRepository.test.mo" "UserRepository"
 run_test "$ROOT/testing/repositories/TransactionRepository.test.mo" "TransactionRepository"
@@ -77,6 +80,7 @@ run_test "$ROOT/testing/services/UserService.test.mo" "UserService"
 run_test "$ROOT/testing/services/AdminService.test.mo" "AdminService"
 run_test "$ROOT/testing/services/TransactionService.test.mo" "TransactionService"
 run_test "$ROOT/testing/services/SettingsService.test.mo" "SettingsService"
+run_test "$ROOT/testing/services/TokenService.test.mo" "TokenService"
 
 echo "--- Upgrade / Migration Tests ---"
 run_test "$ROOT/testing/upgrade/StampLedgerId.test.mo" "StampLedgerId"

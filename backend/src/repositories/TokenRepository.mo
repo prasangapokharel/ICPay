@@ -183,4 +183,17 @@ module {
     };
     List.toArray(page);
   };
+
+  // Every active token's ledger id, unpaged: the caller registers them in the
+  // allowlist and a page boundary there would silently leave some unspendable.
+  public func activeLedgerIds(tokens: TokenStorage.TokenMap): [Text] {
+    let ids = List.empty<Text>();
+    for (token in tokens.values()) {
+      switch (token.status, token.ledgerId) {
+        case (#active, ?id) { ids.add(id) };
+        case (_, _) {};
+      };
+    };
+    List.toArray(ids);
+  };
 };

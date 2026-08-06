@@ -28,6 +28,13 @@ module {
   // without going through this canister.
   public let TREASURY: Text = "ni5n2-efxui-dyqdu-2mnpr-atclq-d6snc-zdq5q-u6ibz-ibpkq-brjpj-gqe";
 
+  // The minting account of every launched token. In ICRC-1 a transfer *from*
+  // the minting account mints, so naming the creator would let them issue
+  // unlimited new supply after launch -- while the UI promises holders the
+  // supply is fixed. The management canister has no caller, so nothing can ever
+  // transfer out of it and the promise holds.
+  public let TOKEN_MINTING_PRINCIPAL: Text = "aaaaa-aa";
+
   public let PRICE_ULTRA_PREMIUM: Nat = 1_000_000_000; // 1-3 chars, 10 ICP
   public let PRICE_PREMIUM: Nat = 500_000_000; // 4 chars, 5 ICP
   public let PRICE_STANDARD: Nat = 200_000_000; // 5 chars, 2 ICP
@@ -47,11 +54,23 @@ module {
   public let CMC_CANISTER_ID: Text = "rkp4c-7iaaa-aaaaa-aaaca-cai";
   public let MANAGEMENT_CANISTER_ID: Text = "aaaaa-aa";
 
+  // The subnet this canister runs on. install_chunked_code requires the store
+  // canister and the target to share a subnet, and the chunk store is ours, so
+  // every token has to be created here or the install cannot see the chunks.
+  // Left null the CMC picks freely, which fails the install every time.
+  public let OWN_SUBNET: Text = "cv73p-6v7zi-u67oy-7jc3h-qspsz-g5lrj-4fn7k-xrax3-thek2-sl46v-jae";
+
   // A launch costs 5 ICP, of which 2 buys the child's cycles and the rest is
   // revenue. Split here rather than at the call site so the two can never drift
   // apart into a launch that mints more cycles than it charged for.
   public let LAUNCH_FEE: Nat = 500_000_000; // 5 ICP
   public let LAUNCH_CYCLE_ALLOCATION: Nat = 200_000_000; // 2 ICP of the above
+
+  // Paid by the ledger out of its own balance when it first spawns an archive,
+  // so it has to fit inside what LAUNCH_CYCLE_ALLOCATION mints (~3T) and still
+  // leave the ledger able to run. At zero the spawn fails and the ledger keeps
+  // every block in its own memory instead.
+  public let ARCHIVE_CREATION_CYCLES: Nat64 = 1_000_000_000_000; // 1T
 
   // A year of idle burn, reserved rather than spent. It buys the creator time to
   // notice a dying token: frozen still answers queries, and any holder can

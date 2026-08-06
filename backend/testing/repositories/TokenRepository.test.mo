@@ -109,4 +109,37 @@ switch (TokenRepo.findByLedgerId(tokens, byLedger, "ss2fx-dyaaa-aaaar-qacoq-cai"
 };
 Debug.print("PASS: ledger index resolves each token distinctly");
 
+// releaseFailedCanister signs a canister away to whoever asks, so what stops it
+// touching a live token is the status on the row this lookup returns. Asserting
+// the discrimination here because the service call itself is async and cannot
+// run under the interpreter.
+let orphan = TokenRepo.createPending(
+  tokens, byUser, "tok-3", "user-1", alice,
+  "Dead Token", "DEAD", "", null, null, null, null,
+  8, 1_000, false, 99, now,
+);
+TokenRepo.setLedgerId(byLedger, orphan, "god5q-iaaaa-aaaae-qkiea-cai");
+TokenModel.markFailed(orphan, "InstallChunkedCode failed");
+
+switch (TokenRepo.findByLedgerId(tokens, byLedger, "god5q-iaaaa-aaaae-qkiea-cai")) {
+  case (?t) { assert (t.status != #active) };
+  case (null) { assert false };
+};
+// The live one must read as active, or the guard would release a real ledger.
+switch (TokenRepo.findByLedgerId(tokens, byLedger, "ss2fx-dyaaa-aaaar-qacoq-cai")) {
+  case (?t) { assert (t.status == #active) };
+  case (null) { assert false };
+};
+Debug.print("PASS: a failed launch is distinguishable from a live token by status");
+
+// This is what bounds registerLaunchedLedgers: every id it can allowlist comes
+// from here, so a failed launch leaking in would let a canister that never
+// finished installing be called by the custodian.
+let ids = TokenRepo.activeLedgerIds(tokens);
+assert (ids.size() == 2);
+for (id in ids.values()) {
+  assert (id != "god5q-iaaaa-aaaae-qkiea-cai");
+};
+Debug.print("PASS: activeLedgerIds excludes the failed launch");
+
 Debug.print("ALL TOKEN REPOSITORY TESTS PASSED");

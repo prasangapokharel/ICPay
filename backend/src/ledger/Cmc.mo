@@ -7,13 +7,19 @@ import Principal "mo:core/Principal";
 module {
   // The NNS Cycles Minting Canister. Only the two notify endpoints are declared;
   // the rest of its interface is NNS machinery this canister has no business
-  // calling. subnet_selection and settings are opt fields we always pass null
-  // for, so their payload shape is left as unit rather than mirrored.
+  // calling. settings is an opt field we always pass null for, so its payload
+  // shape is left as unit rather than mirrored.
+
+  // Only the Subnet arm is declared -- the CMC's type also carries a Filter
+  // arm, but a variant with fewer cases is a Candid subtype and picking a
+  // specific subnet is the only reason we set this field at all.
+  public type SubnetSelection = { #Subnet: { subnet: Principal } };
+
   public type NotifyCreateCanisterArg = {
     block_index: Nat64;
     controller: Principal;
     subnet_type: ?Text;
-    subnet_selection: ?();
+    subnet_selection: ?SubnetSelection;
     settings: ?();
   };
 
