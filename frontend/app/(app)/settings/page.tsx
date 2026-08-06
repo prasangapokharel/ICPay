@@ -14,6 +14,7 @@ import {
   UserIcon,
   QrCode01Icon,
   Coins01Icon,
+  RocketIcon,
   Search01Icon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons"
@@ -45,6 +46,7 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
       { href: "/deposit", key: "deposit", icon: Download01Icon, keywords: "receive qr address" },
       { href: "/withdraw", key: "withdraw", icon: Upload01Icon, keywords: "cash out" },
       { href: "/wallet", key: "tokens", icon: Coins01Icon, keywords: "balance ckbtc holdings" },
+      { href: "/launch", key: "launch", icon: RocketIcon, keywords: "create token icrc mint deploy" },
     ],
   },
   {

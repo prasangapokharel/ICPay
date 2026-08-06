@@ -16,6 +16,10 @@
       "destination": "/token/token"
     },
     {
+      "source": "/launch/:id",
+      "destination": "/launch/id"
+    },
+    {
       "source": "/:username([A-Za-z0-9_]{1,8})",
       "destination": "/u"
     }
