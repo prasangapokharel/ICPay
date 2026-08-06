@@ -10,9 +10,13 @@ import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 export function TokenList({
   holdings,
   isLoading,
+  outside,
 }: {
   holdings: TokenHolding[]
   isLoading: boolean
+  // Balances sitting at the user's own principal rather than in ICPay, keyed by
+  // ledger. Only the ledgers we can actually sweep are in it.
+  outside?: Map<string, bigint>
 }) {
   const t = useTranslations("wallet")
   if (isLoading && holdings.length === 0) {
@@ -43,13 +47,24 @@ export function TokenList({
   return (
     <ul className="space-y-0.5">
       {holdings.map((token) => (
-        <TokenRow key={token.ledgerId} token={token} />
+        <TokenRow
+          key={token.ledgerId}
+          token={token}
+          // Below the fee it cannot be moved, so naming it would only send the
+          // user to a page whose button is disabled.
+          outside={
+            (outside?.get(token.ledgerId) ?? 0n) > token.fee
+              ? outside!.get(token.ledgerId)!
+              : undefined
+          }
+        />
       ))}
     </ul>
   )
 }
 
-function TokenRow({ token }: { token: TokenHolding }) {
+function TokenRow({ token, outside }: { token: TokenHolding; outside?: bigint }) {
+  const t = useTranslations("wallet")
   return (
     <li>
       <Link
@@ -63,9 +78,21 @@ function TokenRow({ token }: { token: TokenHolding }) {
           <p className="truncate text-xs text-muted-foreground">{token.name}</p>
         </div>
 
-        <p className="shrink-0 text-sm font-semibold tabular-nums">
-          {formatTokenAmount(token.balance, token.decimals)}
-        </p>
+        <div className="shrink-0 text-right">
+          <p className="text-sm font-semibold tabular-nums">
+            {formatTokenAmount(token.balance, token.decimals)}
+          </p>
+          {/* The amount, not just a flag: someone holding their whole launched
+              supply outside custody sees a zero row otherwise, and the number is
+              what tells them the sweep is worth opening. */}
+          {outside !== undefined && (
+            <p className="mt-0.5 text-[11px] font-medium tabular-nums text-primary">
+              {t("outsideAmount", {
+                amount: formatTokenAmount(outside, token.decimals),
+              })}
+            </p>
+          )}
+        </div>
       </Link>
     </li>
   )

@@ -16,6 +16,7 @@ import { checkUsername } from "@/services/buy/buy"
 import { fetchAccountStats, type AccountStats } from "@/services/account/account"
 import {
   listLedgerIds,
+  listLaunchedLedgerIds,
   fetchBalances,
   fetchTokenMetadata,
   custodialSubaccount,
@@ -122,16 +123,21 @@ export function useSelfCustodyBalance(ledgerId: string | null) {
   return data
 }
 
-// Pinned tokens only, not all ~58 ledgers: the mistake that creates this state is
-// an exchange withdrawal typed against a bare principal, which only happens for
-// ICP and the ck tokens. It also matches the set the sweep is allowed to act on --
-// flagging funds we would then refuse to move is worse than staying quiet.
+// Pinned tokens plus the ones ICPay launched, not all ~58 ledgers. Two ways to
+// end up here: an exchange withdrawal typed against a bare principal, which only
+// happens for ICP and the ck tokens; or launching a token, whose whole supply is
+// paid to the creator's own principal. Both are sweepable, and flagging funds we
+// would then refuse to move is worse than staying quiet.
 export function useSelfCustodyPinned() {
   const { identity } = useAuth()
 
   const { data } = useSWR(
     keyFor(identity, "self-custody-pinned"),
-    () => fetchBalances(PINNED_LEDGER_IDS, identity!.getPrincipal(), undefined, identity),
+    async () => {
+      const launched = await listLaunchedLedgerIds(identity)
+      const ids = [...PINNED_LEDGER_IDS, ...launched.filter((id) => !PINNED_LEDGER_IDS.includes(id))]
+      return await fetchBalances(ids, identity!.getPrincipal(), undefined, identity)
+    },
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
