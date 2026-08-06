@@ -315,8 +315,8 @@
   "sendToken": {
     "title": "{symbol} 보내기",
     "subtitle": "다른 ICPay 사용자에게 {symbol}을(를) 보냅니다.",
-    "recipient": "받는 사람 사용자 이름",
-    "recipientPlaceholder": "사용자 이름",
+    "recipient": "받는 사람 사용자 이름 또는 프린시펄",
+    "recipientPlaceholder": "사용자 이름 또는 프린시펄",
     "accountIdIcpOnly": "계정 식별자는 ICP에만 사용할 수 있으며 {symbol}에는 사용할 수 없습니다. 사용자 이름이나 principal을 사용하세요.",
     "badAmount": "소수점 {decimals}자리 이하의 금액을 입력하세요.",
     "memoLabel": "메모(선택)",

@@ -315,8 +315,8 @@
   "sendToken": {
     "title": "Envoyer des {symbol}",
     "subtitle": "Envoyez des {symbol} à un autre utilisateur ICPay.",
-    "recipient": "Nom d'utilisateur du destinataire",
-    "recipientPlaceholder": "utilisateur",
+    "recipient": "Nom d'utilisateur ou principal du destinataire",
+    "recipientPlaceholder": "nom d'utilisateur ou principal",
     "accountIdIcpOnly": "Les identifiants de compte ne fonctionnent que pour ICP, pas pour {symbol}. Utilisez un nom d'utilisateur ou un principal.",
     "badAmount": "Saisissez un montant avec au plus {decimals} décimales.",
     "memoLabel": "Mémo (facultatif)",
