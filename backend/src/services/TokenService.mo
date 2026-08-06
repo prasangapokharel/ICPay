@@ -328,9 +328,9 @@ module {
   };
 
   // Revenue accrues in a subaccount only this canister can spend from, and
-  // TREASURY is a plain principal, so nothing else can move it. Manual and
-  // controller-only: sweeping on every launch would put two ledger calls on the
-  // hot path to move funds that are in no hurry.
+  // TREASURY is a plain principal, so nothing else can move it. Driven by a 24h
+  // timer plus a controller-only endpoint, never by the launch itself: two ledger
+  // calls on the hot path to move funds that are in no hurry is not worth it.
   public func sweepRevenue(service: TokenService): async Types.ApiResult<Nat64> {
     let from = AccountHelper.fixedAccount(service.self, Config.REVENUE_SUBACCOUNT);
     let balance = await LedgerService.getBalance(Config.ICP_LEDGER_CANISTER_ID, from);

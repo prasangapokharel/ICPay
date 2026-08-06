@@ -35,7 +35,7 @@ npm run ci backend:rollback <commit> $(npm run ci backend:hash --silent)
 
 | Command | What it does |
 |---|---|
-| `npm run ci backend:test` | The 31-test suite. |
+| `npm run ci backend:test` | The 32-test suite. |
 | `npm run ci backend:build` | Build the wasm without deploying. |
 | `npm run ci backend:deploy` | tests → build → confirm → deploy. Prints the rollback command afterwards. |
 | `npm run ci frontend:build` | Typecheck and build. |
@@ -139,17 +139,26 @@ answers "what is the balance now", the index is what keeps the per-account log.
 
 ## Revenue
 
-Launch fees and username sales accrue in a subaccount of the canister. Nothing
-sweeps automatically.
+Launch fees and username sales accrue in a subaccount of the canister. A timer
+sweeps it to `Config.TREASURY` every 24 hours, so nothing needs running by hand
+in the normal case.
+
+To move it now rather than waiting for the next tick:
 
 ```bash
 npm run ci backend:sweep
 ```
 
-Moves the whole balance, less the ledger fee, to `Config.TREASURY`. The
-destination is **not an argument** — it is compiled in, so a mistyped or
-compromised call cannot redirect the money. Paying it somewhere else means
-editing `Config.TREASURY` and redeploying, which redirects all future revenue.
+Both paths run the same code and share the same fixed destination — it is **not
+an argument**, it is compiled in, so neither a mistyped call nor a compromised
+controller can redirect the money. Paying it somewhere else means editing
+`Config.TREASURY` and redeploying, which redirects all future revenue.
+
+The timer is armed when the actor starts, which covers a fresh install and every
+upgrade — Motoko timers do not survive an upgrade, so it is re-armed rather than
+persisted. The first tick lands 24 hours after the deploy, never at install
+time. A day with no revenue is a no-op: the manual command reports `Nothing to
+sweep`, the timer stays silent.
 
 To read the balance without moving it:
 
