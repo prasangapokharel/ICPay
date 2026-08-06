@@ -85,6 +85,54 @@ export type Purchase = {
   username: string
 }
 
+export type TokenId = string
+
+export type TokenStatusVariant =
+  | { pending: null }
+  | { active: null }
+  | { failed: string }
+
+export type TokenPublic = {
+  id: TokenId
+  userId: UserId
+  creator: Principal
+  name: string
+  symbol: string
+  description: string
+  logo: [] | [string]
+  website: [] | [string]
+  telegram: [] | [string]
+  twitter: [] | [string]
+  decimals: number
+  totalSupply: bigint
+  immutable: boolean
+  status: TokenStatusVariant
+  ledgerId: [] | [string]
+  // Exposed so a holder can check the deployed code against the published hash
+  // rather than taking "we deploy the audited wasm" on trust.
+  moduleHash: [] | [Uint8Array | number[]]
+  cyclesFunded: [] | [bigint]
+  createdAt: bigint
+}
+
+export type LaunchParams = {
+  name: string
+  symbol: string
+  description: string
+  logo: [] | [string]
+  website: [] | [string]
+  telegram: [] | [string]
+  twitter: [] | [string]
+  decimals: number
+  totalSupply: bigint
+  immutable: boolean
+}
+
+export type LaunchFee = {
+  total: bigint
+  cycles: bigint
+}
+
 export type AuthResult = { ok: { user: UserPublic; isNew: boolean } } | { err: string }
 export type ApiResult = { ok: TransferResult } | { err: string }
 export type ApiResult_1 = { ok: TransactionPublic } | { err: string }
@@ -93,3 +141,4 @@ export type ApiResult_3 = { ok: SettingsPublic } | { err: string }
 export type ApiResult_7 = { ok: PaginatedResult } | { err: string }
 export type ApiResult_8 = { ok: DashboardData } | { err: string }
 export type ApiResult_9 = { ok: Purchase } | { err: string }
+export type ApiResult_15 = { ok: TokenPublic } | { err: string }

@@ -36,7 +36,7 @@ export default function TransparencyPage() {
           <Row label="ICPay canister" value={CANISTER_ID} />
           <Row label="Frontend asset canister" value={FRONTEND_CANISTER_ID} />
           <Row label="Controller (can upgrade the canister)" value={CONTROLLER} />
-          <Row label="Username treasury (receives handle purchases)" value={TREASURY} />
+          <Row label="Treasury (receives handle purchases and token launch fees)" value={TREASURY} />
           <Row label="ICP ledger" value={ICP_LEDGER} />
         </div>
         <p>

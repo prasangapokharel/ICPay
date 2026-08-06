@@ -11,9 +11,14 @@ import type {
   ApiResult_7,
   ApiResult_8,
   ApiResult_9,
+  ApiResult_15,
   UserPublic,
   ICRC1Account,
   TxId,
+  TokenId,
+  TokenPublic,
+  LaunchParams,
+  LaunchFee,
   AccountType,
 } from "@/services/types"
 
@@ -43,6 +48,14 @@ export interface WalletActor {
   getTransactionDetail: (txId: TxId) => Promise<ApiResult_1>
   getSettings: () => Promise<ApiResult_3>
   updateSettings: (theme: string, language: string, notifications: boolean) => Promise<ApiResult_3>
+  launchToken: (params: LaunchParams) => Promise<ApiResult_15>
+  getToken: (canisterId: string) => Promise<[] | [TokenPublic]>
+  getTokenById: (id: TokenId) => Promise<[] | [TokenPublic]>
+  getMyTokens: (limit: bigint, offset: bigint) => Promise<TokenPublic[]>
+  listTokens: (limit: bigint, offset: bigint) => Promise<TokenPublic[]>
+  isSymbolAvailable: (symbol: string) => Promise<boolean>
+  getLaunchFee: () => Promise<LaunchFee>
+  isTokenLaunchReady: () => Promise<boolean>
 }
 
 let cachedActor: WalletActor | null = null
@@ -187,6 +200,53 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     err: IDL.Text,
   })
 
+  const TokenId = IDL.Text
+
+  const TokenStatus = IDL.Variant({
+    pending: IDL.Null,
+    active: IDL.Null,
+    failed: IDL.Text,
+  })
+
+  const TokenPublic = IDL.Record({
+    id: TokenId,
+    userId: IDL.Text,
+    creator: IDL.Principal,
+    name: IDL.Text,
+    symbol: IDL.Text,
+    description: IDL.Text,
+    logo: IDL.Opt(IDL.Text),
+    website: IDL.Opt(IDL.Text),
+    telegram: IDL.Opt(IDL.Text),
+    twitter: IDL.Opt(IDL.Text),
+    decimals: IDL.Nat8,
+    totalSupply: IDL.Nat,
+    immutable: IDL.Bool,
+    status: TokenStatus,
+    ledgerId: IDL.Opt(IDL.Text),
+    moduleHash: IDL.Opt(IDL.Vec(IDL.Nat8)),
+    cyclesFunded: IDL.Opt(IDL.Nat),
+    createdAt: IDL.Int,
+  })
+
+  const LaunchParams = IDL.Record({
+    name: IDL.Text,
+    symbol: IDL.Text,
+    description: IDL.Text,
+    logo: IDL.Opt(IDL.Text),
+    website: IDL.Opt(IDL.Text),
+    telegram: IDL.Opt(IDL.Text),
+    twitter: IDL.Opt(IDL.Text),
+    decimals: IDL.Nat8,
+    totalSupply: IDL.Nat,
+    immutable: IDL.Bool,
+  })
+
+  const ApiResult_15 = IDL.Variant({
+    ok: TokenPublic,
+    err: IDL.Text,
+  })
+
   return IDL.Service({
     health: IDL.Func([], [IDL.Text], ["query"]),
     login: IDL.Func([], [AuthResult], []),
@@ -213,5 +273,13 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     getTransactionDetail: IDL.Func([TxId], [ApiResult_1], ["query"]),
     getSettings: IDL.Func([], [ApiResult_3], []),
     updateSettings: IDL.Func([IDL.Text, IDL.Text, IDL.Bool], [ApiResult_3], []),
+    launchToken: IDL.Func([LaunchParams], [ApiResult_15], []),
+    getToken: IDL.Func([IDL.Text], [IDL.Opt(TokenPublic)], ["query"]),
+    getTokenById: IDL.Func([TokenId], [IDL.Opt(TokenPublic)], ["query"]),
+    getMyTokens: IDL.Func([IDL.Nat, IDL.Nat], [IDL.Vec(TokenPublic)], ["query"]),
+    listTokens: IDL.Func([IDL.Nat, IDL.Nat], [IDL.Vec(TokenPublic)], ["query"]),
+    isSymbolAvailable: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
+    getLaunchFee: IDL.Func([], [IDL.Record({ total: IDL.Nat, cycles: IDL.Nat })], ["query"]),
+    isTokenLaunchReady: IDL.Func([], [IDL.Bool], ["query"]),
   })
 }
