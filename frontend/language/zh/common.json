@@ -315,8 +315,8 @@
   "sendToken": {
     "title": "发送 {symbol}",
     "subtitle": "向其他 ICPay 用户发送 {symbol}。",
-    "recipient": "收款人用户名",
-    "recipientPlaceholder": "用户名",
+    "recipient": "收款人用户名或 Principal",
+    "recipientPlaceholder": "用户名或 Principal",
     "accountIdIcpOnly": "账户标识符仅适用于 ICP，不适用于 {symbol}。请改用用户名或 principal。",
     "badAmount": "请输入最多 {decimals} 位小数的金额。",
     "memoLabel": "备注（可选）",
