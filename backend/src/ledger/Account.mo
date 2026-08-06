@@ -15,6 +15,13 @@ module {
     { owner = custodian; subaccount = ?Subaccount.fromPrincipal(user) };
   };
 
+  // Canister-owned account under a subaccount that belongs to no user, for funds
+  // the platform itself holds. The subaccount is passed in rather than read from
+  // config so this layer keeps no dependencies above it.
+  public func fixedAccount(custodian: Principal, subaccount: Blob): Types.Account {
+    { owner = custodian; subaccount = ?subaccount };
+  };
+
   public func toText(self: Types.Account): Text {
     let ownerText = Principal.toText(self.owner);
     switch (self.subaccount) {

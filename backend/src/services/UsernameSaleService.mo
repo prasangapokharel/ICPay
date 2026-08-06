@@ -50,7 +50,7 @@ module {
   };
 
   public func treasury(): Principal {
-    Principal.fromText(Config.USERNAME_TREASURY);
+    Principal.fromText(Config.TREASURY);
   };
 
   // Buys a handle outright. The payment is made first and the name is only

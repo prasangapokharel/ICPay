@@ -5,6 +5,7 @@ module {
   public type UserId = Text;
   public type Username = Text;
   public type TxId = Text;
+  public type TokenId = Text;
 
   public type User = {
     id: UserId;
@@ -125,6 +126,72 @@ module {
     subaccount: ?Blob;
   };
 
+  public type TokenStatus = {
+    #pending;
+    #active;
+    #failed: Text;
+  };
+
+  public type Token = {
+    // Assigned before the canister exists, so the canister id cannot be the key:
+    // the #pending row is written before creation, and a create that succeeds
+    // followed by an install that traps would otherwise leave a live canister
+    // holding the user's cycles with no row pointing at it.
+    id: TokenId;
+    userId: UserId;
+    creator: Principal;
+    name: Text;
+    symbol: Text;
+    description: Text;
+    logo: ?Text;
+    website: ?Text;
+    telegram: ?Text;
+    twitter: ?Text;
+    decimals: Nat8;
+    totalSupply: Nat;
+    // No controller was set at hand-off, so the wasm can never be replaced.
+    immutable: Bool;
+    // The launch payment. Committed before the first canister call, so a later
+    // trap leaves evidence a refund can be traced to.
+    paymentBlockIndex: Nat64;
+    createdAt: Int;
+    var status: TokenStatus;
+    // Set the instant the CMC returns, which is what makes a failed install
+    // retryable instead of refundable.
+    var ledgerId: ?Text;
+    var moduleHash: ?Blob;
+    // What was funded at creation, not a live reading: this canister gives up
+    // controller rights at hand-off and so cannot call canister_status.
+    var cyclesFunded: ?Nat;
+    // Phase 5. Declared now because adding a field to an already-persisted
+    // record type needs a migration (M0170), and an unused opt does not.
+    var poolId: ?Text;
+  };
+
+  public type TokenPublic = {
+    id: TokenId;
+    userId: UserId;
+    creator: Principal;
+    name: Text;
+    symbol: Text;
+    description: Text;
+    logo: ?Text;
+    website: ?Text;
+    telegram: ?Text;
+    twitter: ?Text;
+    decimals: Nat8;
+    totalSupply: Nat;
+    immutable: Bool;
+    status: TokenStatus;
+    ledgerId: ?Text;
+    // Exposed so a holder can check the deployed wasm against the published
+    // audited hash themselves. "We deploy the audited wasm" is unverifiable
+    // without it.
+    moduleHash: ?Blob;
+    cyclesFunded: ?Nat;
+    createdAt: Int;
+  };
+
   public type DashboardData = {
     user: UserPublic;
     principal: Principal;
@@ -178,6 +245,29 @@ module {
       theme = self.theme;
       language = self.language;
       notifications = self.notifications;
+    };
+  };
+
+  public func tokenToPublic(self: Token): TokenPublic {
+    {
+      id = self.id;
+      userId = self.userId;
+      creator = self.creator;
+      name = self.name;
+      symbol = self.symbol;
+      description = self.description;
+      logo = self.logo;
+      website = self.website;
+      telegram = self.telegram;
+      twitter = self.twitter;
+      decimals = self.decimals;
+      totalSupply = self.totalSupply;
+      immutable = self.immutable;
+      status = self.status;
+      ledgerId = self.ledgerId;
+      moduleHash = self.moduleHash;
+      cyclesFunded = self.cyclesFunded;
+      createdAt = self.createdAt;
     };
   };
 };

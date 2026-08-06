@@ -412,3 +412,4 @@ let f = n.toFloat();
 let timestamp = Time.now();          // requires import Time "mo:core/Time"
 let milliseconds = timestamp / 1_000_000;
 ```
+https://raw.githubusercontent.com/caffeinelabs/motoko/refs/heads/master/.agents/skills/writing-motoko/SKILL.md 
