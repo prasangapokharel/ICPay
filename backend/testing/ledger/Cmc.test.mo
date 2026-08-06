@@ -2,6 +2,7 @@ import Debug "mo:core/Debug";
 import Nat8 "mo:core/Nat8";
 import Principal "mo:core/Principal";
 import Cmc "../../src/ledger/Cmc";
+import Config "../../src/config/Config";
 import Subaccount "../../src/ledger/Subaccount";
 import AccountHelper "../../src/ledger/Account";
 
@@ -50,5 +51,23 @@ Debug.print("PASS: CMC accounts are distinct per target");
 assert (Cmc.MEMO_CREATE_CANISTER == 0x41455243);
 assert (Cmc.MEMO_TOP_UP_CANISTER == 0x50555054);
 Debug.print("PASS: CMC memos");
+
+// install_chunked_code refuses when the store canister and the target are on
+// different subnets, and the chunk store is ours. Passing null here lets the
+// CMC place the token anywhere, which failed every launch that reached the
+// install -- so the request must name our own subnet, not merely be present.
+let arg: Cmc.NotifyCreateCanisterArg = {
+  block_index = 1;
+  controller = self;
+  subnet_type = null;
+  subnet_selection = ?#Subnet({ subnet = Principal.fromText(Config.OWN_SUBNET) });
+  settings = null;
+};
+switch (arg.subnet_selection) {
+  case (?#Subnet({ subnet })) { assert (Principal.toText(subnet) == Config.OWN_SUBNET) };
+  case (null) { assert false };
+};
+assert (Config.OWN_SUBNET == "cv73p-6v7zi-u67oy-7jc3h-qspsz-g5lrj-4fn7k-xrax3-thek2-sl46v-jae");
+Debug.print("PASS: canister creation is pinned to the subnet holding the chunk store");
 
 Debug.print("ALL CMC TESTS PASSED");
