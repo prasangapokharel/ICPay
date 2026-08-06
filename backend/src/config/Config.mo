@@ -53,6 +53,12 @@ module {
   public let LAUNCH_FEE: Nat = 500_000_000; // 5 ICP
   public let LAUNCH_CYCLE_ALLOCATION: Nat = 200_000_000; // 2 ICP of the above
 
+  // Paid by the ledger out of its own balance when it first spawns an archive,
+  // so it has to fit inside what LAUNCH_CYCLE_ALLOCATION mints (~3T) and still
+  // leave the ledger able to run. At zero the spawn fails and the ledger keeps
+  // every block in its own memory instead.
+  public let ARCHIVE_CREATION_CYCLES: Nat64 = 1_000_000_000_000; // 1T
+
   // A year of idle burn, reserved rather than spent. It buys the creator time to
   // notice a dying token: frozen still answers queries, and any holder can
   // top it up because notify_top_up needs no controller rights.

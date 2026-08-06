@@ -211,7 +211,10 @@ module {
       store_canister = ?service.self;
       chunk_hashes_list = TokenWasmService.chunkHashList(service.wasm);
       wasm_module_hash = Option.get(service.wasm.moduleHash, "" : Blob);
-      arg = to_candid (ledgerInitArgs(creator, p, symbol));
+      // The ledger's entry point takes `variant { Init; Upgrade }`, not the
+      // record bare. Encoding InitArgs directly decodes as neither and traps
+      // the install -- after the fee is taken and the canister exists.
+      arg = to_candid (#Init(ledgerInitArgs(creator, p, symbol)));
       sender_canister_version = null;
     });
   };
@@ -221,7 +224,10 @@ module {
   // duplicated onto the child ledger on purpose: our record is what ICPay lists
   // from, the ledger's own metadata is what makes the token legible to wallets
   // that never heard of ICPay.
-  func ledgerInitArgs(
+  // Public so a test can decode what install would actually send. The shape is
+  // only exercised for real by a mainnet launch, which costs 5 ICP to discover
+  // is wrong.
+  public func ledgerInitArgs(
     creator: Principal,
     p: TokenValidator.LaunchParams,
     symbol: Text,
@@ -242,32 +248,58 @@ module {
       minting_account = creatorAccount;
       initial_balances = [(creatorAccount, p.totalSupply)];
       metadata;
+      fee_collector_account = null;
+      max_memo_length = null;
+      index_principal = null;
       archive_options = {
         num_blocks_to_archive = 1_000;
         trigger_threshold = 2_000;
         controller_id = creator;
-        cycles_for_archive_creation = ?0;
+        // The ledger spawns its archive itself, paying out of its own balance,
+        // so a zero here means the spawn fails once trigger_threshold is
+        // crossed and the ledger keeps every block in its own memory instead.
+        cycles_for_archive_creation = ?Config.ARCHIVE_CREATION_CYCLES;
+        max_message_size_bytes = null;
+        node_max_memory_size_bytes = null;
+        max_transactions_per_response = null;
+        more_controller_ids = null;
       };
       feature_flags = ?{ icrc2 = true };
     };
   };
 
+  // Fields and order follow ledger.did from ledger-suite-icrc-2026-03-09. A
+  // record that does not match it decodes as garbage on install, which is only
+  // discoverable after the fee is spent -- so this type is pinned to a release,
+  // not written from memory.
   public type LedgerInitArgs = {
     token_name: Text;
     token_symbol: Text;
     decimals: ?Nat8;
     transfer_fee: Nat;
     minting_account: LedgerTypes.Account;
+    fee_collector_account: ?LedgerTypes.Account;
     initial_balances: [(LedgerTypes.Account, Nat)];
     metadata: [(Text, LedgerTypes.Value)];
+    max_memo_length: ?Nat16;
+    index_principal: ?Principal;
     archive_options: {
       num_blocks_to_archive: Nat64;
+      max_transactions_per_response: ?Nat64;
       trigger_threshold: Nat64;
-      controller_id: Principal;
+      max_message_size_bytes: ?Nat64;
       cycles_for_archive_creation: ?Nat64;
+      node_max_memory_size_bytes: ?Nat64;
+      controller_id: Principal;
+      more_controller_ids: ?[Principal];
     };
     feature_flags: ?{ icrc2: Bool };
   };
+
+  // Only the Init arm is declared. A variant with fewer cases is a Candid
+  // subtype of the ledger's, so this decodes; carrying an Upgrade arm we never
+  // send would mean keeping UpgradeArgs in sync for nothing.
+  public type LedgerArg = { #Init: LedgerInitArgs };
 
   // The last call. ICPay is controller only long enough to install and never
   // again -- co-controlling every launched token would make one compromised key
