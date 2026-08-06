@@ -52,20 +52,24 @@ run_test "$ROOT/testing/validators/UsernameValidator.test.mo" "UsernameValidator
 run_test "$ROOT/testing/validators/AmountValidator.test.mo" "AmountValidator"
 run_test "$ROOT/testing/validators/TransferValidator.test.mo" "TransferValidator"
 run_test "$ROOT/testing/validators/AccountValidator.test.mo" "AccountValidator"
+run_test "$ROOT/testing/validators/TokenValidator.test.mo" "TokenValidator"
 
 echo "--- Model Tests ---"
 run_test "$ROOT/testing/models/User.test.mo" "UserModel"
 run_test "$ROOT/testing/models/Transaction.test.mo" "TransactionModel"
 run_test "$ROOT/testing/models/Settings.test.mo" "SettingsModel"
+run_test "$ROOT/testing/models/Token.test.mo" "TokenModel"
 
 echo "--- Repository Tests ---"
 run_test "$ROOT/testing/repositories/UserRepository.test.mo" "UserRepository"
 run_test "$ROOT/testing/repositories/TransactionRepository.test.mo" "TransactionRepository"
 run_test "$ROOT/testing/repositories/SettingsRepository.test.mo" "SettingsRepository"
+run_test "$ROOT/testing/repositories/TokenRepository.test.mo" "TokenRepository"
 
 echo "--- Ledger Tests ---"
 run_test "$ROOT/testing/ledger/Subaccount.test.mo" "Subaccount"
 run_test "$ROOT/testing/ledger/Account.test.mo" "Account"
+run_test "$ROOT/testing/ledger/Cmc.test.mo" "Cmc"
 
 echo "--- Service Tests ---"
 run_test "$ROOT/testing/services/AuthService.test.mo" "AuthService"

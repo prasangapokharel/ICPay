@@ -3,6 +3,7 @@ import ReservedUsernameStorage "storage/ReservedUsernameStorage";
 import TxStorage "storage/TransactionStorage";
 import SettingsStorage "storage/SettingsStorage";
 import LedgerStorage "storage/LedgerStorage";
+import TokenStorage "storage/TokenStorage";
 import TxRepo "repositories/TransactionRepository";
 import LedgerService "services/LedgerService";
 import AuthService "services/AuthService";
@@ -13,6 +14,8 @@ import DepositService "services/DepositService";
 import WithdrawService "services/WithdrawService";
 import TransferService "services/TransferService";
 import UsernameSaleService "services/UsernameSaleService";
+import TokenWasmService "services/TokenWasmService";
+import TokenService "services/TokenService";
 import TransactionService "services/TransactionService";
 import SettingsService "services/SettingsService";
 import HealthApi "api/v1/Health";
@@ -25,6 +28,7 @@ import WithdrawApi "api/v1/Withdraw";
 import LedgersApi "api/v1/Ledgers";
 import TransferApi "api/v1/Transfer";
 import UsernameSaleApi "api/v1/UsernameSale";
+import TokenApi "api/v1/Token";
 import TransactionsApi "api/v1/Transactions";
 import SettingsApi "api/v1/Settings";
 import MiddlewareAuth "middleware/Auth";
@@ -51,6 +55,16 @@ persistent actor self {
   // landed. Chain-key ledgers are compiled in, so ICP works even when empty.
   let ledgerRegistry = LedgerStorage.createLedgerRegistry();
   transient let ledger = LedgerService.create(Principal.fromActor(self), ledgerRegistry);
+
+  // New stable variables, so they need no migration: nothing of them exists in
+  // stable memory yet. They start empty on the upgrade that introduces them.
+  let tokens = TokenStorage.createTokenMap();
+  let tokensByLedger = TokenStorage.createTokensByLedger();
+  let tokensByUser = TokenStorage.createTokensByUser();
+  let reservedSymbols = TokenStorage.createReservedSymbolSet();
+  // The chunk hashes survive upgrades on purpose: re-uploading the wasm after
+  // every upgrade would make launches fail until an operator noticed.
+  let tokenWasm = TokenWasmService.empty();
 
   // Library modules cannot hold mutable state (moc rejects a top-level `var`
   // outside an actor), so the monotonic id counter that keeps rows unique lives
@@ -85,6 +99,14 @@ persistent actor self {
   transient let usernameSaleService = UsernameSaleService.create(users, usernames, reservedUsernames, transferService);
   transient let transactionService = TransactionService.create(users, transactions, transactionsByUser);
   transient let settingsService = SettingsService.create(users, settings);
+  transient let tokenService = TokenService.create(
+    tokens, tokensByLedger, tokensByUser, reservedSymbols, tokenWasm,
+    transferService, users, Principal.fromActor(self), nextUid,
+  );
+
+  // Chain-key symbols are compiled in, so seeding them costs no calls and runs
+  // on every start rather than needing a migration. Reserving is idempotent.
+  TokenService.seedReservedSymbols(tokenService, ["ICP", "CKBTC", "CKETH", "CKUSDC", "CKUSDT"]);
 
   include HealthApi();
   include AuthApi(authService, mwConfig);
@@ -96,6 +118,7 @@ persistent actor self {
   include LedgersApi(ledger, mwConfig);
   include TransferApi(transferService, mwConfig);
   include UsernameSaleApi(usernameSaleService, mwConfig);
+  include TokenApi(tokenService, mwConfig);
   include TransactionsApi(transactionService, mwConfig);
   include SettingsApi(settingsService, mwConfig);
 };
