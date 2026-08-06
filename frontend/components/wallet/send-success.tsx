@@ -88,7 +88,7 @@ export function SendSuccess({
 
       <h1 className="mt-6 text-2xl font-bold tracking-tight">{t(kind)}</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {t(`${kind}Body`, { name: label })}
+        {t(`${kind}Body`, { name: label, symbol })}
       </p>
 
       <p className="mt-8 text-xs text-muted-foreground">{t("total")}</p>

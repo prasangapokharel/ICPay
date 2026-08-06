@@ -131,7 +131,7 @@
     "memoLabel": "Nota (opcional)",
     "memoPlaceholder": "Referencia del pago",
     "memoTooLong": "El ledger solo guarda {max} bytes. Acorta la nota.",
-    "insufficient": "Saldo insuficiente. Enviar {amount} ICP cuesta {total} ICP con la comisión.",
+    "insufficientShort": "Saldo insuficiente",
     "review": "Revisar transferencia",
     "confirmTitle": "Confirmar transferencia",
     "confirmBody": "Revisa los datos antes de enviar.",
@@ -292,6 +292,7 @@
     "totalWithdrawals": "Retiros totales",
     "transfers": "Transferencias",
     "noTokens": "Aún no hay tokens. Los depósitos aparecen aquí automáticamente.",
+    "outsideAmount": "+{amount} fuera",
     "selfCustodyNotice": "Tienes fondos fuera de ICPay. Abre el token para moverlos."
   },
   "token": {
@@ -337,8 +338,8 @@
     "send": "Envío correcto",
     "tip": "Propina enviada",
     "purchase": "Compra completada",
-    "sendBody": "¡Le enviaste ICP a {name}!",
-    "tipBody": "¡Le diste una propina en ICP a {name}!",
+    "sendBody": "¡Le enviaste {symbol} a {name}!",
+    "tipBody": "¡Le diste una propina en {symbol} a {name}!",
     "purchaseBody": "{name} ya es tuyo.",
     "total": "Total",
     "recipient": "Destinatario",

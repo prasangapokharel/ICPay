@@ -77,7 +77,7 @@ export default function WalletPage() {
               <AlertDescription>{t("selfCustodyNotice")}</AlertDescription>
             </Alert>
           )}
-          <TokenList holdings={holdings} isLoading={holdingsLoading} />
+          <TokenList holdings={holdings} isLoading={holdingsLoading} outside={selfCustody} />
         </CardContent>
       </Card>
     </div>

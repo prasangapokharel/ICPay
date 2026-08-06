@@ -131,7 +131,7 @@
     "memoLabel": "मेमो (वैकल्पिक)",
     "memoPlaceholder": "भुगतान संदर्भ",
     "memoTooLong": "लेजर केवल {max} बाइट रखता है। मेमो छोटा करें।",
-    "insufficient": "बैलेंस कम है। {amount} ICP भेजने पर शुल्क सहित {total} ICP लगेंगे।",
+    "insufficientShort": "अपर्याप्त शेष",
     "review": "ट्रांसफ़र जाँचें",
     "confirmTitle": "ट्रांसफ़र की पुष्टि करें",
     "confirmBody": "भेजने से पहले विवरण जाँच लें।",
@@ -292,6 +292,7 @@
     "totalWithdrawals": "कुल निकासी",
     "transfers": "ट्रांसफ़र",
     "noTokens": "अभी कोई टोकन नहीं। जमा यहाँ अपने आप दिखेंगे।",
+    "outsideAmount": "+{amount} bahar",
     "selfCustodyNotice": "आपके पास ICPay के बाहर धनराशि है। इसे लाने के लिए टोकन खोलें।"
   },
   "token": {
@@ -337,8 +338,8 @@
     "send": "सफलतापूर्वक भेजा",
     "tip": "टिप भेजी गई",
     "purchase": "खरीद पूरी हुई",
-    "sendBody": "आपने {name} को कुछ ICP भेजे!",
-    "tipBody": "आपने {name} को कुछ ICP टिप किए!",
+    "sendBody": "आपने {name} को कुछ {symbol} भेजे!",
+    "tipBody": "आपने {name} को कुछ {symbol} टिप किए!",
     "purchaseBody": "{name} अब आपका है।",
     "total": "कुल",
     "recipient": "प्राप्तकर्ता",

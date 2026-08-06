@@ -288,27 +288,22 @@ export function TransferForm({
         )}
       </div>
 
-      {insufficient && !error && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {t("insufficient", { amount: formatAmount(parsed!), total: formatAmount(total!) })}
-          </AlertDescription>
-        </Alert>
-      )}
-
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
+      {/* Insufficient balance is said on the button rather than in an alert
+          above it: the button is already locked, so a second element saying so
+          only pushes the form around. */}
       <Button
         className="w-full"
         disabled={!canReview}
         onClick={() => setConfirmOpen(true)}
       >
         <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
-        {t("review")}
+        {insufficient ? t("insufficientShort") : t("review")}
       </Button>
 
       <Drawer open={confirmOpen} onOpenChange={setConfirmOpen} showSwipeHandle>

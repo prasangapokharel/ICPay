@@ -131,7 +131,7 @@
     "memoLabel": "메모 (선택)",
     "memoPlaceholder": "결제 참조",
     "memoTooLong": "원장에는 {max}바이트만 저장됩니다. 메모를 줄여 주세요.",
-    "insufficient": "잔액이 부족합니다. {amount} ICP 송금에는 수수료 포함 {total} ICP가 필요합니다.",
+    "insufficientShort": "잔액 부족",
     "review": "송금 검토",
     "confirmTitle": "송금 확인",
     "confirmBody": "보내기 전에 내용을 확인하세요.",
@@ -292,6 +292,7 @@
     "totalWithdrawals": "총 출금액",
     "transfers": "송금",
     "noTokens": "아직 토큰이 없습니다. 입금하면 여기에 자동으로 표시됩니다.",
+    "outsideAmount": "+{amount} 외부",
     "selfCustodyNotice": "ICPay 외부에 자금이 있습니다. 토큰을 열어 옮기세요."
   },
   "token": {
@@ -337,8 +338,8 @@
     "send": "송금 완료",
     "tip": "팁 전송 완료",
     "purchase": "구매 완료",
-    "sendBody": "{name}에게 ICP를 보냈습니다!",
-    "tipBody": "{name}에게 ICP를 팁으로 보냈습니다!",
+    "sendBody": "{name}에게 {symbol}를 보냈습니다!",
+    "tipBody": "{name}에게 {symbol}를 팁으로 보냈습니다!",
     "purchaseBody": "{name}은(는) 이제 회원님의 것입니다.",
     "total": "합계",
     "recipient": "받는 사람",

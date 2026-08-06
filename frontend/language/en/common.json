@@ -131,7 +131,7 @@
     "memoLabel": "Memo (optional)",
     "memoPlaceholder": "Payment reference",
     "memoTooLong": "The ledger only stores {max} bytes. Shorten the memo.",
-    "insufficient": "Not enough balance. Sending {amount} ICP costs {total} ICP with the fee.",
+    "insufficientShort": "Insufficient balance",
     "review": "Review transfer",
     "confirmTitle": "Confirm transfer",
     "confirmBody": "Check the details before sending.",
@@ -292,6 +292,7 @@
     "totalWithdrawals": "Total Withdrawals",
     "transfers": "Transfers",
     "noTokens": "No tokens yet. Deposits show up here automatically.",
+    "outsideAmount": "+{amount} outside",
     "selfCustodyNotice": "You hold funds outside ICPay. Open the token to move them in."
   },
   "token": {
@@ -337,8 +338,8 @@
     "send": "Send Success",
     "tip": "Tip Sent",
     "purchase": "Purchase Complete",
-    "sendBody": "You've sent {name} some ICP!",
-    "tipBody": "You tipped {name} some ICP!",
+    "sendBody": "You've sent {name} some {symbol}!",
+    "tipBody": "You tipped {name} some {symbol}!",
     "purchaseBody": "{name} is yours.",
     "total": "Total",
     "recipient": "Recipient",

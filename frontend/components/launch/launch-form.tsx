@@ -69,7 +69,6 @@ export function LaunchForm({
   const [supply, setSupply] = useState("")
   const [logo, setLogo] = useState<string | null>(null)
   const [socials, setSocials] = useState<Socials>({ website: "", telegram: "", twitter: "" })
-  const [immutable, setImmutable] = useState(true)
   const [socialsOpen, setSocialsOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [launching, setLaunching] = useState(false)
@@ -127,7 +126,10 @@ export function LaunchForm({
       telegram: socials.telegram || undefined,
       twitter: socials.twitter || undefined,
       totalSupply,
-      immutable,
+      // Every launch is immutable. An upgradeable token keeps its creator as a
+      // controller, which ICPay will not list for sending, so offering it only
+      // produced tokens the wallet then refused.
+      immutable: true,
     })
     setLaunching(false)
     if (err) {
@@ -274,24 +276,15 @@ export function LaunchForm({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Two full sentences rather than a checkbox. The choice is irreversible
-          and it decides whether ICPay will list the token for sending, which is
-          not something to bury in a label. */}
+      {/* One statement rather than a choice. The launch is irreversible and the
+          only outcome ICPay will list for sending, so it is stated, not asked. */}
       <div className="space-y-2">
         <Label>{t("controlLabel")}</Label>
-        <div className="grid gap-2">
-          <ControlOption
-            selected={immutable}
-            onSelect={() => setImmutable(true)}
-            title={t("immutableTitle")}
-            body={t("immutableBody")}
-          />
-          <ControlOption
-            selected={!immutable}
-            onSelect={() => setImmutable(false)}
-            title={t("upgradeableTitle")}
-            body={t("upgradeableBody")}
-          />
+        <div className="rounded-2xl border bg-muted/40 p-4">
+          <p className="text-sm font-medium">{t("immutableTitle")}</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+            {t("immutableBody")}
+          </p>
         </div>
       </div>
 
@@ -348,7 +341,7 @@ export function LaunchForm({
               <Row label={t("nameLabel")} value={name.trim()} />
               <Row label={t("symbolLabel")} value={normalizeSymbol(symbol)} mono />
               <Row label={t("supplyLabel")} value={`${supply} ${normalizeSymbol(symbol)}`} />
-              <Row label={t("controlLabel")} value={t(immutable ? "immutableTitle" : "upgradeableTitle")} />
+              <Row label={t("controlLabel")} value={t("immutableTitle")} />
               <Row
                 label={tc("total")}
                 value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
@@ -359,7 +352,7 @@ export function LaunchForm({
             <Alert>
               <HugeiconsIcon icon={Alert02Icon} className="size-4" />
               <AlertDescription>
-                {t(immutable ? "confirmImmutableWarning" : "confirmUpgradeableWarning")}
+                {t("confirmImmutableWarning")}
               </AlertDescription>
             </Alert>
           </div>
@@ -405,43 +398,6 @@ function Field({
         hint && <p className="text-xs text-muted-foreground">{hint}</p>
       )}
     </div>
-  )
-}
-
-function ControlOption({
-  selected,
-  onSelect,
-  title,
-  body,
-}: {
-  selected: boolean
-  onSelect: () => void
-  title: string
-  body: string
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      aria-pressed={selected}
-      className={cn(
-        "rounded-2xl border p-4 text-left transition-colors",
-        selected ? "border-foreground/40 bg-muted/40" : "hover:bg-muted/20"
-      )}
-    >
-      <span className="flex items-center gap-2 text-sm font-medium">
-        <span
-          className={cn(
-            "flex size-4 shrink-0 items-center justify-center rounded-full border",
-            selected && "border-foreground"
-          )}
-        >
-          {selected && <span className="size-2 rounded-full bg-foreground" />}
-        </span>
-        {title}
-      </span>
-      <span className="mt-1.5 block pl-6 text-xs leading-relaxed text-muted-foreground">{body}</span>
-    </button>
   )
 }
 

@@ -131,7 +131,7 @@
     "memoLabel": "メモ（任意）",
     "memoPlaceholder": "支払いの参照情報",
     "memoTooLong": "台帳に保存できるのは {max} バイトまでです。メモを短くしてください。",
-    "insufficient": "残高が不足しています。{amount} ICP の送金には手数料込みで {total} ICP が必要です。",
+    "insufficientShort": "残高が不足しています",
     "review": "送金内容を確認",
     "confirmTitle": "送金の確認",
     "confirmBody": "送金前に内容をご確認ください。",
@@ -292,6 +292,7 @@
     "totalWithdrawals": "出金合計",
     "transfers": "送金",
     "noTokens": "トークンはまだありません。入金すると自動で表示されます。",
+    "outsideAmount": "+{amount} 外部",
     "selfCustodyNotice": "ICPay の外に資金があります。トークンを開いて移してください。"
   },
   "token": {
@@ -337,8 +338,8 @@
     "send": "送金完了",
     "tip": "チップを送りました",
     "purchase": "購入完了",
-    "sendBody": "{name} に ICP を送金しました。",
-    "tipBody": "{name} に ICP をチップしました。",
+    "sendBody": "{name} に {symbol} を送金しました。",
+    "tipBody": "{name} に {symbol} をチップしました。",
     "purchaseBody": "{name} はあなたのものです。",
     "total": "合計",
     "recipient": "受取人",
