@@ -3,7 +3,7 @@ import type { IDL } from "@icp-sdk/core/candid"
 import { Principal } from "@icp-sdk/core/principal"
 import { createAgent } from "@/services/icp"
 import type { Outcome } from "@/services/client"
-import { custodialSubaccount, PINNED_LEDGER_IDS } from "@/services/tokens"
+import { custodialSubaccount, isLedgerSupported } from "@/services/tokens"
 
 export type SweepResult = { blockIndex: bigint; amount: bigint }
 
@@ -78,10 +78,11 @@ export async function sweepToCustody(
   if (!identity) return { err: "Not authenticated" }
   if (amount <= 0n) return { err: "Nothing to move." }
 
-  // A ledger outside the canister's allowlist would take the funds into custody
-  // and then refuse to transfer or withdraw them, so they would be stranded.
-  // The pinned set is the set verified supported by isLedgerSupported.
-  if (!PINNED_LEDGER_IDS.includes(ledgerId)) {
+  // A ledger the canister will not call would take the funds into custody and
+  // then refuse to transfer or withdraw them, so they would be stranded. The
+  // canister is asked directly rather than checked against a local list, so a
+  // token ICPay launched is spendable the moment the backend allows it.
+  if (!(await isLedgerSupported(identity, ledgerId))) {
     return { err: "This token cannot be moved into ICPay." }
   }
 

@@ -14,6 +14,15 @@ module {
 
   public func createLedgerRegistry(): LedgerRegistry { Set.empty<Text>() };
 
+  // Callers must have established that the ledger is one this canister created
+  // or that the NNS vouches for. Nothing here re-checks that, so an unvalidated
+  // id reaching this function widens the boundary described above.
+  public func register(registry: LedgerRegistry, ledgerId: Text): Bool {
+    if (Set.contains(registry, Text.compare, ledgerId)) { return false };
+    Set.add(registry, Text.compare, ledgerId);
+    true;
+  };
+
   public func isAllowed(registry: LedgerRegistry, ledgerId: Text): Bool {
     for (id in Config.CHAIN_KEY_LEDGERS.vals()) {
       if (id == ledgerId) { return true };

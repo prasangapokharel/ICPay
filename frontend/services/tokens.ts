@@ -2,6 +2,8 @@ import { Actor, type Identity } from "@icp-sdk/core/agent"
 import type { IDL } from "@icp-sdk/core/candid"
 import { Principal } from "@icp-sdk/core/principal"
 import { createAgent } from "@/services/icp"
+import { query } from "@/services/client"
+import { listTokens } from "@/services/launch/launch"
 import { fetchTokenRegistry } from "@/lib/token-registry"
 
 // Mirrors backend Config.ICP_LEDGER_CANISTER_ID.
@@ -20,6 +22,11 @@ export const PINNED_LEDGER_IDS = [
   "xevnm-gaaaa-aaaar-qafnq-cai", // ckUSDC
   "cngnf-vqaaa-aaaar-qag4q-cai", // ckUSDT
 ]
+
+// One page of launches is enough until ICPay has launched this many tokens;
+// past that the wallet would need to page. Every id returned costs a balance
+// call per wallet load, so this is a cost ceiling rather than a display limit.
+const LAUNCHED_TOKEN_LIMIT = 50
 
 // Trimmed to the methods this app calls: the full ledger interface would pull in
 // transfer and archive types that are never used here.
@@ -89,9 +96,21 @@ export function custodialSubaccount(user: Principal): Uint8Array {
   return out
 }
 
+// Whether the custodian will call this ledger at all. Asked before moving funds
+// into custody, because a ledger it refuses would strand them there.
+export function isLedgerSupported(
+  identity: Identity | undefined,
+  ledgerId: string
+): Promise<boolean> {
+  return query(identity, (actor) => actor.isLedgerSupported(ledgerId))
+}
+
 // Discovery is one query call to SNS-W rather than the SNS aggregator's REST
 // API, which inlines base64 logos and costs 5.4MB across six requests to return
 // the same canister ids.
+//
+// Tokens ICPay launched are not SNS-deployed, so SNS-W never lists them and the
+// wallet would hide a token the user created here.
 export async function listLedgerIds(identity?: Identity): Promise<string[]> {
   const agent = await createAgent(identity)
   const snsw = Actor.createActor<{
@@ -100,16 +119,27 @@ export async function listLedgerIds(identity?: Identity): Promise<string[]> {
     }>
   }>(snsWasmIdl, { agent, canisterId: SNS_WASM_ID })
 
-  let sns: string[] = []
-  try {
-    const { instances } = await snsw.list_deployed_snses({})
-    sns = instances.flatMap((i) => (i.ledger_canister_id[0] ? [i.ledger_canister_id[0].toText()] : []))
-  } catch {
-    // Discovery is an enhancement, not a requirement: if SNS-W is unreachable
-    // the ck tokens below still resolve and the wallet stays usable.
-  }
+  const [sns, launched] = await Promise.all([
+    snsw
+      .list_deployed_snses({})
+      .then(({ instances }) =>
+        instances.flatMap((i) => (i.ledger_canister_id[0] ? [i.ledger_canister_id[0].toText()] : []))
+      )
+      // Discovery is an enhancement, not a requirement: if SNS-W is unreachable
+      // the ck tokens below still resolve and the wallet stays usable.
+      .catch((): string[] => []),
+    listTokens(identity, LAUNCHED_TOKEN_LIMIT, 0)
+      // ledgerId is a Candid opt, so the empty tuple is the launch that has no
+      // canister yet and flattens away.
+      .then((tokens) => tokens.flatMap((t) => t.ledgerId))
+      .catch((): string[] => []),
+  ])
+
   const seen = new Set(PINNED_LEDGER_IDS)
-  return [...PINNED_LEDGER_IDS, ...sns.filter((id) => !seen.has(id) && seen.add(id))]
+  return [
+    ...PINNED_LEDGER_IDS,
+    ...[...sns, ...launched].filter((id) => !seen.has(id) && seen.add(id)),
+  ]
 }
 
 // Balance only, never metadata: a symbol and logo cost a second call per ledger

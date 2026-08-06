@@ -29,12 +29,15 @@ let args = TokenService.ledgerInitArgs(creator, params, "MTK");
 assert (args.token_name == "My Token");
 assert (args.token_symbol == "MTK");
 assert (args.decimals == ?8);
-// The whole supply goes to the creator, who is also the minting account, so
-// nobody but them can mint after launch.
-assert (args.minting_account.owner == creator);
+// The creator gets the whole supply but is not the minting account: in ICRC-1 a
+// transfer *from* the minting account mints, so naming the creator would let
+// them inflate a supply the UI promises holders is fixed.
+assert (args.minting_account.owner == Principal.fromText(Config.TOKEN_MINTING_PRINCIPAL));
+assert (args.minting_account.owner != creator);
 assert (args.initial_balances.size() == 1);
+assert (args.initial_balances[0].0.owner == creator);
 assert (args.initial_balances[0].1 == 1_000_000);
-Debug.print("PASS: supply and minting account both belong to the creator");
+Debug.print("PASS: the creator owns the whole supply and cannot mint more");
 
 // A zero here means the ledger cannot spawn its archive once trigger_threshold
 // is crossed, and it silently keeps every block in its own memory instead.
