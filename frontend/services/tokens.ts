@@ -105,6 +105,20 @@ export function isLedgerSupported(
   return query(identity, (actor) => actor.isLedgerSupported(ledgerId))
 }
 
+// The ledgers ICPay itself created. Split out because the wallet also checks
+// these for funds sitting outside custody: a launch pays the whole supply to the
+// creator's own principal, so a creator holds their token outside ICPay by
+// default rather than by mistake.
+export function listLaunchedLedgerIds(identity?: Identity): Promise<string[]> {
+  return (
+    listTokens(identity, LAUNCHED_TOKEN_LIMIT, 0)
+      // ledgerId is a Candid opt, so the empty tuple is the launch that has no
+      // canister yet and flattens away.
+      .then((tokens) => tokens.flatMap((t) => t.ledgerId))
+      .catch((): string[] => [])
+  )
+}
+
 // Discovery is one query call to SNS-W rather than the SNS aggregator's REST
 // API, which inlines base64 logos and costs 5.4MB across six requests to return
 // the same canister ids.
@@ -128,11 +142,7 @@ export async function listLedgerIds(identity?: Identity): Promise<string[]> {
       // Discovery is an enhancement, not a requirement: if SNS-W is unreachable
       // the ck tokens below still resolve and the wallet stays usable.
       .catch((): string[] => []),
-    listTokens(identity, LAUNCHED_TOKEN_LIMIT, 0)
-      // ledgerId is a Candid opt, so the empty tuple is the launch that has no
-      // canister yet and flattens away.
-      .then((tokens) => tokens.flatMap((t) => t.ledgerId))
-      .catch((): string[] => []),
+    listLaunchedLedgerIds(identity),
   ])
 
   const seen = new Set(PINNED_LEDGER_IDS)

@@ -131,7 +131,7 @@
     "memoLabel": "Memo (optional)",
     "memoPlaceholder": "Verwendungszweck",
     "memoTooLong": "Das Ledger speichert nur {max} Bytes. Kürze das Memo.",
-    "insufficient": "Zu wenig Guthaben. {amount} ICP kosten mit Gebühr {total} ICP.",
+    "insufficientShort": "Guthaben reicht nicht",
     "review": "Überweisung prüfen",
     "confirmTitle": "Überweisung bestätigen",
     "confirmBody": "Prüfe die Details vor dem Senden.",
@@ -292,6 +292,7 @@
     "totalWithdrawals": "Auszahlungen gesamt",
     "transfers": "Überweisungen",
     "noTokens": "Noch keine Token. Einzahlungen erscheinen hier automatisch.",
+    "outsideAmount": "+{amount} ausserhalb",
     "selfCustodyNotice": "Sie halten Guthaben außerhalb von ICPay. Öffnen Sie den Token, um es zu verschieben."
   },
   "token": {
@@ -337,8 +338,8 @@
     "send": "Erfolgreich gesendet",
     "tip": "Trinkgeld gesendet",
     "purchase": "Kauf abgeschlossen",
-    "sendBody": "Du hast {name} ICP gesendet!",
-    "tipBody": "Du hast {name} ICP als Trinkgeld gesendet!",
+    "sendBody": "Du hast {name} {symbol} gesendet!",
+    "tipBody": "Du hast {name} {symbol} als Trinkgeld gesendet!",
     "purchaseBody": "{name} gehört dir.",
     "total": "Gesamt",
     "recipient": "Empfänger",

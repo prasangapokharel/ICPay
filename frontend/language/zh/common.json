@@ -131,7 +131,7 @@
     "memoLabel": "备注（可选）",
     "memoPlaceholder": "付款说明",
     "memoTooLong": "账本仅可存储 {max} 字节，请缩短备注。",
-    "insufficient": "余额不足。发送 {amount} ICP 含手续费共需 {total} ICP。",
+    "insufficientShort": "余额不足",
     "review": "核对转账",
     "confirmTitle": "确认转账",
     "confirmBody": "发送前请核对详情。",
@@ -292,6 +292,7 @@
     "totalWithdrawals": "提现总额",
     "transfers": "转账",
     "noTokens": "暂无代币。充值后会自动显示在这里。",
+    "outsideAmount": "+{amount} 在外",
     "selfCustodyNotice": "您在 ICPay 之外持有资金。打开该代币以转入。"
   },
   "token": {
@@ -337,8 +338,8 @@
     "send": "发送成功",
     "tip": "打赏已发送",
     "purchase": "购买完成",
-    "sendBody": "您已向 {name} 发送 ICP！",
-    "tipBody": "您已向 {name} 打赏 ICP！",
+    "sendBody": "您已向 {name} 发送 {symbol}！",
+    "tipBody": "您已向 {name} 打赏 {symbol}！",
     "purchaseBody": "{name} 已归您所有。",
     "total": "合计",
     "recipient": "收款人",

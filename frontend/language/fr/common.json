@@ -131,7 +131,7 @@
     "memoLabel": "Mémo (facultatif)",
     "memoPlaceholder": "Référence du paiement",
     "memoTooLong": "Le registre ne stocke que {max} octets. Raccourcissez le mémo.",
-    "insufficient": "Solde insuffisant. Envoyer {amount} ICP coûte {total} ICP avec les frais.",
+    "insufficientShort": "Solde insuffisant",
     "review": "Vérifier le transfert",
     "confirmTitle": "Confirmer le transfert",
     "confirmBody": "Vérifiez les détails avant d'envoyer.",
@@ -292,6 +292,7 @@
     "totalWithdrawals": "Total des retraits",
     "transfers": "Transferts",
     "noTokens": "Aucun jeton pour l'instant. Les dépôts apparaissent ici automatiquement.",
+    "outsideAmount": "+{amount} a l'exterieur",
     "selfCustodyNotice": "Vous détenez des fonds hors d'ICPay. Ouvrez le jeton pour les transférer."
   },
   "token": {
@@ -337,8 +338,8 @@
     "send": "Envoi réussi",
     "tip": "Pourboire envoyé",
     "purchase": "Achat terminé",
-    "sendBody": "Vous avez envoyé des ICP à {name} !",
-    "tipBody": "Vous avez donné des ICP à {name} !",
+    "sendBody": "Vous avez envoyé des {symbol} à {name} !",
+    "tipBody": "Vous avez donné des {symbol} à {name} !",
     "purchaseBody": "{name} est à vous.",
     "total": "Total",
     "recipient": "Destinataire",
