@@ -34,6 +34,9 @@ import SettingsApi "api/v1/Settings";
 import MiddlewareAuth "middleware/Auth";
 import Principal "mo:core/Principal";
 import Int "mo:core/Int";
+import Nat64 "mo:core/Nat64";
+import Debug "mo:core/Debug";
+import Timer "mo:core/Timer";
 import UUID "utils/UUID";
 
 persistent actor self {
@@ -107,6 +110,23 @@ persistent actor self {
   // Chain-key symbols are compiled in, so seeding them costs no calls and runs
   // on every start rather than needing a migration. Reserving is idempotent.
   TokenService.seedReservedSymbols(tokenService, ["ICP", "CKBTC", "CKETH", "CKUSDC", "CKUSDT"]);
+
+  // Timers do not survive an upgrade, so this is armed at actor scope: it runs on
+  // fresh install and again after every deploy, where a postupgrade-only hook
+  // would leave a fresh install with no timer at all. TREASURY is compiled in, so
+  // the timer can move revenue to exactly one place and nowhere else.
+  //
+  // The first tick lands a day after the deploy, never at install time -- an
+  // upgrade should not fire a ledger transfer as a side effect of shipping.
+  ignore Timer.recurringTimer<system>(#hours 24, func(): async () {
+    // The manual sweep reports "Nothing to sweep" as an error to its operator,
+    // which is the right answer to a human who asked for one. A day with no
+    // revenue is the normal case here, so nothing is logged for it.
+    switch (await TokenService.sweepRevenue(tokenService)) {
+      case (#ok(blockIndex)) { Debug.print("swept revenue at block " # Nat64.toText(blockIndex)) };
+      case (#err(_)) {};
+    };
+  });
 
   include HealthApi();
   include AuthApi(authService, mwConfig);

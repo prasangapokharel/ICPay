@@ -63,6 +63,9 @@ run_test "$ROOT/testing/models/Token.test.mo" "TokenModel"
 echo "--- Storage Tests ---"
 run_test "$ROOT/testing/storage/LedgerStorage.test.mo" "LedgerStorage"
 
+echo "--- Treasury Tests ---"
+run_test "$ROOT/testing/treasury/Revenue.test.mo" "Revenue"
+
 echo "--- Repository Tests ---"
 run_test "$ROOT/testing/repositories/UserRepository.test.mo" "UserRepository"
 run_test "$ROOT/testing/repositories/TransactionRepository.test.mo" "TransactionRepository"
