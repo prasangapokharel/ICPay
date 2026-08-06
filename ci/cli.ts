@@ -20,6 +20,7 @@ const COMMANDS: Record<string, string> = {
   "backend:deploy": "backend/deploy.ts",
   "backend:rollback": "backend/rollback.ts",
   "backend:hash": "backend/hash.ts",
+  "backend:wasm": "backend/wasm.ts",
   "backend:logs": "backend/logs.ts",
   "frontend:build": "frontend/build.ts",
   "frontend:deploy": "frontend/deploy.ts",
