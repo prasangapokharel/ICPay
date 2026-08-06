@@ -21,12 +21,16 @@ without a TTY, which is why CI can never trigger one.
 
 | Command | What it does |
 |---|---|
-| `backend:test` | `bash scripts/run-tests.sh` — the 24-file Motoko suite |
+| `backend:test` | `bash scripts/run-tests.sh` — the 30-file Motoko suite |
 | `backend:build` | `dfx build icp_wallet_backend` |
 | `backend:deploy` | test → build → print hash → **confirm** → `dfx deploy --yes` |
 | `backend:rollback <ref> [hash]` | rebuild `<ref>` in a throwaway worktree, verify the hash, **confirm**, `dfx canister install --mode upgrade` |
 | `backend:hash` | live module hash |
 | `backend:logs` | canister logs |
+| `backend:wasm` | download the pinned ICRC-1 ledger wasm, verify its sha256, **confirm**, upload as chunks and seal |
+| `backend:sweep` | **confirm** → move accrued revenue to `Config.TREASURY` |
+| `backend:register` | **confirm** → allowlist every already-launched token ledger |
+| `backend:reclaim <canister-id>` | recover cycles from a canister a failed launch orphaned |
 | `frontend:build` | typecheck + `next build` |
 | `frontend:deploy` | typecheck → **confirm** → upload to the asset canister |
 | `canister:list` / `:status` / `:id` / `:info` / `:call` | inspection; `canister:call <method> ['(args)'] [--update]` |
@@ -77,6 +81,87 @@ transfers a day would.
 
 When reporting cycle numbers, always give **measured** before/after values with
 the reduction percentage. Never project or estimate.
+
+## Revenue
+
+Launch fees and username sales accrue in a subaccount of the canister, not in
+the treasury. Nothing sweeps automatically — two ledger calls on every sale to
+move funds that are in no hurry is not worth it.
+
+```bash
+npm run ci backend:sweep
+```
+
+Sends `balance - fee` to `Config.TREASURY`. The destination is **not** a
+parameter and cannot be passed in: a compromised or mistyped call must not be
+able to redirect the money. Sending revenue somewhere else means editing
+`Config.TREASURY` and redeploying, which redirects *all* future revenue.
+
+To read the balance without moving it, derive the account and ask the ledger:
+
+```bash
+dfx ledger account-id --of-principal <canister> --subaccount \
+  0100000000000000000000000000000000000000000000000000000000000000
+dfx ledger balance <that-account-id> --network ic
+```
+
+The subaccount is `Config.REVENUE_SUBACCOUNT` — a fixed one, so it matches no
+user's derived subaccount and a deposit into it writes no phantom history row.
+
+## Token launches
+
+A launch charges 5 ICP up front, of which 2 buys the child canister's cycles
+from the CMC. The remaining ~3 is revenue. **The fee is debited before the
+canister exists**, so a failure anywhere after that point has already taken the
+money — the error returns a ledger block index precisely so the payment stays
+traceable.
+
+### The wasm has to be uploaded first
+
+`isTokenLaunchReady` is false until an ICRC-1 ledger wasm is uploaded and
+sealed, and every launch is refused while it is false. That refusal is
+protective, not a bug.
+
+```bash
+npm run ci backend:wasm
+```
+
+Downloads the pinned release, **verifies its sha256 before sending a byte**,
+uploads it as chunks to the management canister's chunk store, and seals it
+against the expected module hash. The bytes are sent once; each launch then
+references them by hash. Survives a canister upgrade — `chunkHashes` and
+`moduleHash` are stable, so this does not need re-running after a deploy.
+
+### Launched canisters must share our subnet
+
+`install_chunked_code` refuses when the store canister and the target are on
+different subnets, and the chunk store is ours. So `notify_create_canister` must
+pass `subnet_selection = ?#Subnet({ subnet = Config.OWN_SUBNET })`. Left null
+the CMC places the token wherever it likes and the install fails **every time**,
+after the fee is taken. `Config.OWN_SUBNET` is pinned to the subnet this
+canister runs on; if the canister is ever migrated, that constant has to move
+with it.
+
+### Recovering a failed launch
+
+A launch that dies between create and install leaves an empty canister holding
+the ~2 ICP of cycles the fee bought, controlled by ICPay rather than by the
+operator identity.
+
+```bash
+npm run ci backend:reclaim <canister-id>
+```
+
+ICPay signs it over via `releaseFailedCanister`, then dfx stops and deletes it
+and the cycles land on the **cycles ledger** — send them on with `cycles:topup`.
+The canister does not delete it itself: `Management.mo` declares no
+`delete_canister` on purpose, so no future bug in the launch path can destroy a
+live token. `releaseFailedCanister` refuses any canister id whose row is not
+`#failed`, so a typo cannot sign away a live ledger.
+
+The 5 ICP fee is **not** returned by this — it is already in the revenue
+account, which is your own treasury. Only the cycles are recovered. A failed
+launch also releases its symbol, so the same symbol can be launched again.
 
 ## Deploy
 

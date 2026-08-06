@@ -35,11 +35,12 @@ npm run ci backend:rollback <commit> $(npm run ci backend:hash --silent)
 
 | Command | What it does |
 |---|---|
-| `npm run ci backend:test` | The 24-test suite. |
+| `npm run ci backend:test` | The 31-test suite. |
 | `npm run ci backend:build` | Build the wasm without deploying. |
 | `npm run ci backend:deploy` | tests → build → confirm → deploy. Prints the rollback command afterwards. |
 | `npm run ci frontend:build` | Typecheck and build. |
 | `npm run ci frontend:deploy` | Typecheck → confirm → ship to the asset canister. |
+| `npm run ci backend:wasm` | Upload the ICRC-1 ledger wasm token launches install. Run once. |
 
 Vercel is **not** deployed from here — it rebuilds itself on every push to
 `main`. `frontend:deploy` only updates the on-chain asset canister.
@@ -133,6 +134,86 @@ Amounts are in **e8s**: 1 ICP = 100_000_000 e8s. The ledger fee is 10_000 e8s.
 
 `ledger:history` reads the NNS index canister, not the ledger — the ledger only
 answers "what is the balance now", the index is what keeps the per-account log.
+
+---
+
+## Revenue
+
+Launch fees and username sales accrue in a subaccount of the canister. Nothing
+sweeps automatically.
+
+```bash
+npm run ci backend:sweep
+```
+
+Moves the whole balance, less the ledger fee, to `Config.TREASURY`. The
+destination is **not an argument** — it is compiled in, so a mistyped or
+compromised call cannot redirect the money. Paying it somewhere else means
+editing `Config.TREASURY` and redeploying, which redirects all future revenue.
+
+To read the balance without moving it:
+
+```bash
+dfx ledger account-id --of-principal 6vbhm-nqaaa-aaaan-q6muq-cai --subaccount \
+  0100000000000000000000000000000000000000000000000000000000000000
+dfx ledger balance <that-account-id> --network ic
+```
+
+## Token launches
+
+A launch costs the creator 5 ICP: 2 buys the new canister's cycles from the CMC,
+the rest is revenue. **The fee is taken before the canister exists**, so any
+failure after that point has already charged them — the error carries a ledger
+block index so the payment stays traceable.
+
+### Uploading the ledger wasm
+
+```bash
+npm run ci backend:wasm
+```
+
+`isTokenLaunchReady` is false until this has run, and every launch is refused
+while it is. The command downloads the pinned release, **verifies its sha256
+before uploading anything**, sends it to the chunk store in chunks, and seals it
+against the expected module hash.
+
+Run it once. The bytes are stored once and every launch references them by hash,
+and the record survives canister upgrades — a `backend:deploy` does not require
+re-running it.
+
+### Allowlisting an already-launched token
+
+```bash
+npm run ci backend:register
+```
+
+The custodian only calls ledgers on an allowlist, and a launch registers its own
+ledger. Tokens launched before that existed are unspendable inside ICPay until
+this runs — deposit, transfer and withdraw all refuse them.
+
+It takes no argument on purpose: the ids come from ICPay's own token rows, so it
+cannot be used to point the custodian at a canister ICPay did not create. Safe to
+re-run; it reports how many were newly added, and zero on a second run.
+
+### Recovering a failed launch
+
+A launch that dies between creating the canister and installing the wasm leaves
+an empty canister holding the cycles, controlled by ICPay rather than by you.
+
+```bash
+npm run ci backend:reclaim <canister-id>
+```
+
+ICPay signs it over, then dfx stops and deletes it. The cycles land on the
+**cycles ledger** — `cycles:topup` sends them on to the canister.
+
+This recovers the cycles only. The 5 ICP fee is already in the revenue account,
+which is your own, so nothing is lost — but it is claimed with `backend:sweep`,
+not with this. The symbol is released too, so it can be launched again.
+
+The canister will not delete a canister that has code installed, and
+`releaseFailedCanister` refuses any id whose row is not `#failed`. A live token
+holding real balances can never be signed away by a mistyped argument.
 
 ---
 
