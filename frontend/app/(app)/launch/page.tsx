@@ -3,8 +3,6 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { RocketIcon } from "@hugeicons/core-free-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LaunchForm } from "@/components/launch/launch-form"
 import { TokenCard } from "@/components/launch/token-card"
@@ -57,9 +55,6 @@ export default function LaunchPage() {
         onClick={() => setShowForm(true)}
         className="flex w-full items-center gap-3 rounded-2xl border border-dashed p-4 text-left transition-colors hover:bg-muted/40"
       >
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
-          <HugeiconsIcon icon={RocketIcon} className="size-5" />
-        </span>
         <span className="min-w-0">
           <span className="block text-sm font-medium">{t("createCta")}</span>
           <span className="block text-xs text-muted-foreground">{t("createCtaBody")}</span>

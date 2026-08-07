@@ -9,7 +9,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, Alert02Icon } from "@hugeicons/core-free-icons"
+import { Alert02Icon } from "@hugeicons/core-free-icons"
 import { copyText, formatTokenAmount } from "@/lib/wallet-utils"
 import { icrc1Account } from "@/lib/account-id"
 import { useTokenHolding, useDepositAddress, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
@@ -199,8 +199,7 @@ export function TokenView() {
 
 function BackButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
-    <Button variant="ghost" size="sm" className="-ml-2 gap-1" onClick={onClick}>
-      <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+    <Button variant="ghost" size="sm" className="-ml-2" onClick={onClick}>
       {label}
     </Button>
   )

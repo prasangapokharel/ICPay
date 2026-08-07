@@ -9,8 +9,6 @@ import { UsernamePrompt } from "@/components/dashboard/username-prompt"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import { ArrowUpRight01Icon, Download01Icon } from "@hugeicons/core-free-icons"
 import { formatE8s } from "@/lib/wallet-utils"
 import { useIcpPrice } from "@/lib/use-icp-price"
 import { useDashboard, useLiveBalance } from "@/hooks/use-wallet-data"
@@ -50,8 +48,8 @@ export default function DashboardPage() {
       />
 
       <div className="grid grid-cols-2 gap-3">
-        <ActionButton href="/transfer" label={t("common.send")} icon={ArrowUpRight01Icon} primary />
-        <ActionButton href="/deposit" label={t("common.receive")} icon={Download01Icon} primary />
+        <ActionButton href="/transfer" label={t("common.send")} primary />
+        <ActionButton href="/deposit" label={t("common.receive")} primary />
       </div>
 
       <RecentTransactions transactions={data.recentTransactions} />
@@ -62,12 +60,10 @@ export default function DashboardPage() {
 function ActionButton({
   href,
   label,
-  icon,
   primary,
 }: {
   href: string
   label: string
-  icon: IconSvgElement
   primary?: boolean
 }) {
   return (
@@ -81,7 +77,6 @@ function ActionButton({
           : "bg-background font-semibold shadow-sm"
       }
     >
-      <HugeiconsIcon icon={icon} className="size-4" />
       {label}
     </Button>
   )
