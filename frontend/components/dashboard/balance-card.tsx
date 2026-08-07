@@ -1,10 +1,8 @@
 "use client"
-
 import Image from "next/image"
-import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { EyeIcon, EyeOffIcon, RocketIcon } from "@hugeicons/core-free-icons"
+import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import type { IcpPrice } from "@/lib/use-icp-price"
 import { useFiatValue } from "@/lib/fiat/use-fiat-value"
@@ -27,59 +25,55 @@ export function BalanceCard({
   onToggleHidden,
 }: BalanceCardProps) {
   const t = useTranslations("dashboard")
-  const tl = useTranslations("launch")
   const usdValue = price ? (Number(balanceE8s) / E8S) * price.usd : null
   const fiat = useFiatValue(usdValue)
 
   return (
-    <div className="relative mb-7 mt-7 rounded-3xl bg-primary px-5 pb-6 pt-0 text-primary-foreground shadow-lg">
-      {/* The coin straddles the card's top edge, so the card itself cannot clip
-          it -- the decorative blur is masked in its own layer instead. */}
-      <span className="absolute -top-5 left-1/2 z-10 flex size-14 -translate-x-1/2 items-center justify-center rounded-full border border-primary-foreground/20 bg-primary-foreground/10 shadow-lg backdrop-blur-md">
-        <Image src="/images/logo/logo.png" alt="ICP" width={36} height={36} className="size-9" />
-      </span>
+    <div className="pt-4  bg-blue-200/80 rounded-3xl shadow-accent-foreground ">
+   <div className="relative mt-2 rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg">
+      {/* Top row: metallic EMV-style chip + glass network pill */}
+      <div className="relative z-10 flex items-center justify-between">
+        <span className="relative flex h-7 w-9 overflow-hidden rounded-md bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_-1px_2px_rgba(120,80,10,0.4),0_1px_2px_rgba(0,0,0,0.25)]">
+          {/* Contact-pad grid lines, like a real EMV chip */}
+          <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-amber-800/30" />
+          <span className="absolute inset-y-0 left-1/3 w-px bg-amber-800/30" />
+          <span className="absolute inset-y-0 left-2/3 w-px bg-amber-800/30" />
+          <span className="absolute left-0 top-1/2 h-2.5 w-full -translate-y-1/2 rounded-[2px] border border-amber-800/25" />
+        </span>
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl"
-      >
-        <span className="absolute -right-10 -top-16 size-48 rounded-full bg-primary-foreground/10 blur-2xl" />
-      </div>
-
-      <div className="relative z-10 flex flex-col items-center pt-12">
-        <div className="flex items-baseline gap-2">
-          <span className="text-[clamp(1.5rem,8vw,2.5rem)] font-bold leading-tight tracking-tight tabular-nums">
-            {hidden ? "••••••" : balance}
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-foreground/70">
-            ICP
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              aria-label={hidden ? t("showBalance") : t("hideBalance")}
-              onClick={onToggleHidden}
-              className="hover:bg-primary-foreground/15 hover:text-primary-foreground"
-            >
-              <HugeiconsIcon icon={hidden ? EyeOffIcon : EyeIcon} className="size-4" />
-            </Button>
-          </span>
-        </div>
-
-        <span className="mt-3 inline-flex items-center rounded-full bg-primary-foreground/15 px-3 py-0.5 text-xs font-medium tabular-nums text-primary-foreground/90">
-          {hidden || !fiat.formatted ? "••••" : `${fiat.symbol} ${fiat.formatted}`}
+        <span className="liquid-glass-primary flex items-center gap-1.5 rounded-full px-3 py-1.5">
+          <Image src="/images/logo/logo.png" alt="ICP" width={16} height={16} className="size-4" />
+          <span className="text-[11px] font-semibold tracking-wide">ICP</span>
         </span>
       </div>
 
-      {/* Straddles the bottom edge the way the coin straddles the top, so it
-          reads as attached to the balance rather than as a third action button
-          competing with Send and Receive below. */}
-      <Link
-        href="/launch"
-        className="absolute -bottom-5 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-primary/15 bg-background px-4 py-2.5 text-xs font-semibold text-foreground shadow-lg transition-transform active:scale-95"
-      >
-        <HugeiconsIcon icon={RocketIcon} className="size-4 text-primary" />
-        {tl("createCta")}
-      </Link>
+      {/* Balance */}
+      <div className="relative z-10 mt-8 flex items-baseline gap-2">
+        <span className="text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums">
+          {hidden ? "•• •••• ••••" : balance}
+        </span>
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label={hidden ? t("showBalance") : t("hideBalance")}
+          onClick={onToggleHidden}
+          className="text-primary-foreground/60 hover:bg-primary-foreground/15 hover:text-primary-foreground"
+        >
+          <HugeiconsIcon icon={hidden ? EyeOffIcon : EyeIcon} className="size-4" />
+        </Button>
+      </div>
+
+      {/* Footer row */}
+      <div className="relative z-10 mt-6 flex items-end justify-between">
+        <span className="liquid-glass-primary rounded-full px-2.5 py-1 text-sm font-medium tabular-nums">
+          {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
+        </span>
+        <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary-foreground/40">
+          Internet Computer
+        </span>
+      </div>
     </div>
+    </div>
+ 
   )
 }

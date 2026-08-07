@@ -285,6 +285,7 @@
     "subtitle": "지갑 개요",
     "icpBalance": "ICP 잔액",
     "tokens": "토큰",
+    "searchTokens": "토큰 검색",
     "accountDetails": "계정 정보",
     "username": "사용자 이름",
     "principal": "Principal",
@@ -293,6 +294,7 @@
     "totalWithdrawals": "총 출금액",
     "transfers": "송금",
     "noTokens": "아직 토큰이 없습니다. 입금하면 여기에 자동으로 표시됩니다.",
+    "noTokensFound": "검색과 일치하는 토큰이 없습니다.",
     "outsideAmount": "+{amount} 외부",
     "selfCustodyNotice": "ICPay 외부에 자금이 있습니다. 토큰을 열어 옮기세요."
   },
@@ -487,7 +489,7 @@
     "descriptionLabel": "설명",
     "descriptionPlaceholder": "이 토큰은 무엇을 위한 것인가요?",
     "supplyLabel": "총 발행량",
-    "supplyHint": "발행 시 한 번만 본인에게 민팅됩니다. 이후 추가 발행은 불가능합니다.",
+    "supplyHint": "출시 시 본인에게 한 번만 발행됩니다. 이후 발행 계정은 호출할 수 없게 되므로 더 이상 발행할 수 없습니다.",
     "decimalsLabel": "소수 자릿수",
     "logoLabel": "토큰 로고",
     "logoHint": "정사각형 이미지, 128px로 조정됩니다",
@@ -500,8 +502,8 @@
     "twitterLabel": "X",
     "controlLabel": "제어 권한",
     "immutableTitle": "변경 불가",
-    "immutableBody": "본인을 포함해 누구도 이 토큰의 코드나 발행량을 바꿀 수 없습니다.",
-    "immutableProof": "이 토큰에는 컨트롤러가 없습니다. 위의 모듈 해시가 영구적으로 실행되는 코드이며, 공개된 빌드와 직접 대조해 확인할 수 있습니다.",
+    "immutableBody": "본인을 포함해 누구도 이 토큰의 코드를 바꿀 수 없습니다. 발행량은 출시 시 한 번만 발행되고, 발행 계정은 호출자가 없는 management canister로 지정되므로 더 이상 발행할 수 없습니다.",
+    "immutableProof": "이 토큰에는 컨트롤러가 없으며 발행 계정은 aaaaa-aa입니다. 원장에서 icrc1_minting_account를 호출해 직접 확인하세요. 발행량이 고정된 근거는 우리의 말이 아니라 그 사실입니다.",
     "upgradeableTitle": "업그레이드 가능",
     "upgradeableBody": "제어 권한이 본인에게 남아 나중에 업그레이드할 수 있습니다. ICPay는 전송 목록에 올리지 않습니다.",
     "creationFee": "생성 수수료",
@@ -556,6 +558,8 @@
     "decimals": "소수점 자리",
     "fee": "전송 수수료",
     "canisterId": "캐니스터 ID",
-    "marketUnavailable": "현재 시장 데이터를 불러올 수 없습니다."
+    "marketUnavailable": "현재 시장 데이터를 불러올 수 없습니다.",
+    "mintingAccount": "발행 계정",
+    "mintingAccountNone": "없음"
   }
 }

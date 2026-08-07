@@ -18,7 +18,7 @@ export type BadgeTier = "gold" | "blue"
 // counterparties are stored with the prefix and profile pages are not.
 export function premiumTier(name: string | null | undefined): BadgeTier | null {
   if (!name) return null
-  const len = (name.startsWith("@") ? name.slice(1) : name).length
+  const len = bareHandle(name).length
   if (len === 0 || len >= USERNAME_FREE_MIN_LENGTH) return null
   return len <= GOLD_MAX_LENGTH ? "gold" : "blue"
 }
@@ -33,6 +33,26 @@ export function isPremiumHandle(name: string | null | undefined): boolean {
 export const BADGE_RANGES: Record<BadgeTier, { min: number; max: number }> = {
   gold: { min: 1, max: GOLD_MAX_LENGTH },
   blue: { min: GOLD_MAX_LENGTH + 1, max: USERNAME_FREE_MIN_LENGTH - 1 },
+}
+
+const SUGGEST_RANK: Record<BadgeTier | "free", number> = { gold: 0, blue: 1, free: 2 }
+
+// Ranks by badge first, then by scarcity inside a paid band -- a 1-character
+// gold handle outranks a 2-character one. Names settle alphabetically so the
+// order is stable: searchByUsername walks a map, so its order is arbitrary and
+// can differ between two calls with identical data.
+export function compareBySuggestion(a: string, b: string): number {
+  const na = bareHandle(a)
+  const nb = bareHandle(b)
+  const ra = SUGGEST_RANK[premiumTier(na) ?? "free"]
+  const rb = SUGGEST_RANK[premiumTier(nb) ?? "free"]
+  if (ra !== rb) return ra - rb
+  if (ra !== SUGGEST_RANK.free && na.length !== nb.length) return na.length - nb.length
+  return na.localeCompare(nb)
+}
+
+function bareHandle(name: string): string {
+  return name.startsWith("@") ? name.slice(1) : name
 }
 
 export type BadgeSpan = { badge: BadgeTier; min: number; max: number }
