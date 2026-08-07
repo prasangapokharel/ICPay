@@ -4,7 +4,7 @@ import { useRef, useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ImageAdd02Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { ImageAdd02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { LOGO_MAX_BYTES } from "@/lib/launch"
@@ -107,7 +107,6 @@ export function LogoPicker({
           }}
           className="h-auto w-24 px-0 text-xs text-muted-foreground"
         >
-          <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
           {t("logoRemove")}
         </Button>
       ) : (

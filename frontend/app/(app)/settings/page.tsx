@@ -15,6 +15,7 @@ import {
   QrCode01Icon,
   Coins01Icon,
   RocketIcon,
+  ChartLineData01Icon,
   Search01Icon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons"
@@ -47,6 +48,7 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
       { href: "/withdraw", key: "withdraw", icon: Upload01Icon, keywords: "cash out" },
       { href: "/wallet", key: "tokens", icon: Coins01Icon, keywords: "balance ckbtc holdings" },
       { href: "/launch", key: "launch", icon: RocketIcon, keywords: "create token icrc mint deploy" },
+      { href: "/icpay", key: "icpayToken", icon: ChartLineData01Icon, keywords: "icpay token price chart buy market" },
     ],
   },
   {

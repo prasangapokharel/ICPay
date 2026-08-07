@@ -1,8 +1,12 @@
 "use client"
 
+import { useMemo, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Search01Icon } from "@hugeicons/core-free-icons"
+import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatTokenAmount } from "@/lib/wallet-utils"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
@@ -19,6 +23,17 @@ export function TokenList({
   outside?: Map<string, bigint>
 }) {
   const t = useTranslations("wallet")
+  const [query, setQuery] = useState("")
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return holdings
+    return holdings.filter(
+      (token) =>
+        token.symbol.toLowerCase().includes(q) || token.name.toLowerCase().includes(q),
+    )
+  }, [holdings, query])
+
   if (isLoading && holdings.length === 0) {
     return (
       <div className="space-y-2">
@@ -45,21 +60,42 @@ export function TokenList({
   }
 
   return (
-    <ul className="space-y-0.5">
-      {holdings.map((token) => (
-        <TokenRow
-          key={token.ledgerId}
-          token={token}
-          // Below the fee it cannot be moved, so naming it would only send the
-          // user to a page whose button is disabled.
-          outside={
-            (outside?.get(token.ledgerId) ?? 0n) > token.fee
-              ? outside!.get(token.ledgerId)!
-              : undefined
-          }
+    <div className="space-y-3">
+      <div className="relative">
+        <HugeiconsIcon
+          icon={Search01Icon}
+          className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
         />
-      ))}
-    </ul>
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t("searchTokens")}
+          className="rounded-full bg-muted/60 pl-10 shadow-none focus-visible:bg-background"
+        />
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="px-1 py-6 text-center text-sm text-muted-foreground">
+          {t("noTokensFound")}
+        </p>
+      ) : (
+        <ul className="space-y-0.5">
+          {filtered.map((token) => (
+            <TokenRow
+              key={token.ledgerId}
+              token={token}
+              // Below the fee it cannot be moved, so naming it would only send the
+              // user to a page whose button is disabled.
+              outside={
+                (outside?.get(token.ledgerId) ?? 0n) > token.fee
+                  ? outside!.get(token.ledgerId)!
+                  : undefined
+              }
+            />
+          ))}
+        </ul>
+      )}
+    </div>
   )
 }
 

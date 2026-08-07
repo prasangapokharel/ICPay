@@ -5,8 +5,6 @@ import { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, CheckmarkCircle01Icon } from "@hugeicons/core-free-icons"
 import { formatAmount, copyText, E8S } from "@/lib/wallet-utils"
 import { useIcpPrice } from "@/lib/use-icp-price"
 import { useFiatValue } from "@/lib/fiat/use-fiat-value"
@@ -74,6 +72,7 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 function CopyRow({ label, value }: { label: string; value: string }) {
+  const tc = useTranslations("common")
   const [copied, setCopied] = useState(false)
 
   return (
@@ -89,13 +88,11 @@ function CopyRow({ label, value }: { label: string; value: string }) {
           setCopied(true)
           setTimeout(() => setCopied(false), 1500)
         }}
-        className="h-auto min-w-0 gap-1.5 px-0 text-inherit hover:bg-transparent hover:text-primary"
+        className="h-auto min-w-0 px-0 text-inherit hover:bg-transparent hover:text-primary"
       >
-        <span className="truncate">{value}</span>
-        <HugeiconsIcon
-          icon={copied ? CheckmarkCircle01Icon : Copy01Icon}
-          className={cn("size-3.5 shrink-0", copied && "text-primary")}
-        />
+        <span className={cn("truncate", copied && "text-primary")}>
+          {copied ? tc("copied") : value}
+        </span>
       </Button>
     </div>
   )

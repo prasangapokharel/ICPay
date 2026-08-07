@@ -4,11 +4,9 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  RocketIcon,
   Tick02Icon,
   Cancel01Icon,
   Alert02Icon,
-  ArrowDown01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -139,7 +137,7 @@ export function LaunchForm({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {ready === false && (
         <Alert variant="destructive">
           <HugeiconsIcon icon={Alert02Icon} className="size-4" />
@@ -147,10 +145,10 @@ export function LaunchForm({
         </Alert>
       )}
 
-      <div className="flex gap-4">
+      <div className="flex gap-3">
         <LogoPicker value={logo} onChange={setLogo} disabled={launching} />
 
-        <div className="min-w-0 flex-1 space-y-4">
+        <div className="min-w-0 flex-1 space-y-3">
           <Field
             id="token-name"
             label={t("nameLabel")}
@@ -204,7 +202,7 @@ export function LaunchForm({
       </div>
 
       {symbolSettled && available === false && (
-        <p className="text-xs text-destructive">{t("symbolTaken", { symbol })}</p>
+        <p className="-mt-2 text-xs text-destructive">{t("symbolTaken", { symbol })}</p>
       )}
 
       <Field
@@ -219,6 +217,7 @@ export function LaunchForm({
           onChange={(e) => setDescription(e.target.value)}
           placeholder={t("descriptionPlaceholder")}
           maxLength={DESCRIPTION_MAX_LENGTH}
+          className="min-h-20"
         />
       </Field>
 
@@ -245,15 +244,11 @@ export function LaunchForm({
         <CollapsibleTrigger
           render={
             <Button variant="ghost" size="sm" className="h-auto px-0 text-xs text-muted-foreground">
-              <HugeiconsIcon
-                icon={ArrowDown01Icon}
-                className={cn("size-3.5 transition-transform", socialsOpen && "rotate-180")}
-              />
               {t("socialsToggle")}
             </Button>
           }
         />
-        <CollapsibleContent className="space-y-4 pt-3">
+        <CollapsibleContent className="space-y-3 pt-3">
           {SOCIAL_FIELDS.map((field, i) => (
             <Field
               key={field.key}
@@ -278,20 +273,17 @@ export function LaunchForm({
 
       {/* One statement rather than a choice. The launch is irreversible and the
           only outcome ICPay will list for sending, so it is stated, not asked. */}
-      <div className="space-y-2">
-        <Label>{t("controlLabel")}</Label>
-        <div className="rounded-2xl border bg-muted/40 p-4">
-          <p className="text-sm font-medium">{t("immutableTitle")}</p>
-          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-            {t("immutableBody")}
-          </p>
-        </div>
+      <div className="rounded-2xl border bg-muted/40 p-3.5">
+        <p className="text-sm font-medium">{t("immutableTitle")}</p>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          {t("immutableBody")}
+        </p>
       </div>
 
-      <div className="space-y-3 rounded-2xl bg-muted/40 p-4">
+      <div className="space-y-2 rounded-2xl bg-muted/40 p-3.5">
         <Row label={t("creationFee")} value={launchFee === undefined ? "—" : `${formatAmount(launchFee)} ICP`} />
         <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} muted />
-        <div className="border-t pt-3">
+        <div className="border-t pt-2">
           <Row
             label={tc("total")}
             value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
@@ -315,7 +307,6 @@ export function LaunchForm({
       )}
 
       <Button size="lg" className="w-full" disabled={!canReview} onClick={() => setConfirmOpen(true)}>
-        <HugeiconsIcon icon={RocketIcon} className="size-4" />
         {t("review")}
       </Button>
 
@@ -336,30 +327,30 @@ export function LaunchForm({
             <DrawerDescription>{t("confirmBody")}</DrawerDescription>
           </DrawerHeader>
 
-          <div className="space-y-4 px-4">
-            <div className="space-y-2 rounded-2xl border p-4">
+          <div className="space-y-3 px-4">
+            <div className="space-y-1.5 rounded-2xl border p-3.5">
               <Row label={t("nameLabel")} value={name.trim()} />
               <Row label={t("symbolLabel")} value={normalizeSymbol(symbol)} mono />
               <Row label={t("supplyLabel")} value={`${supply} ${normalizeSymbol(symbol)}`} />
               <Row label={t("controlLabel")} value={t("immutableTitle")} />
-              <Row
-                label={tc("total")}
-                value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
-                emphasis
-              />
+              <div className="border-t pt-1.5">
+                <Row
+                  label={tc("total")}
+                  value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
+                  emphasis
+                />
+              </div>
             </div>
 
             <Alert>
               <HugeiconsIcon icon={Alert02Icon} className="size-4" />
-              <AlertDescription>
-                {t("confirmImmutableWarning")}
-              </AlertDescription>
+              <AlertDescription>{t("confirmImmutableWarning")}</AlertDescription>
             </Alert>
           </div>
 
           <DrawerFooter>
             <Button onClick={handleConfirm} disabled={launching}>
-              {launching ? <Spinner className="size-4" /> : <HugeiconsIcon icon={RocketIcon} className="size-4" />}
+              {launching && <Spinner className="size-4" />}
               {launching ? t("launching") : t("confirmLaunch")}
             </Button>
             <DrawerClose render={<Button variant="outline" disabled={launching}>{tc("cancel")}</Button>} />
@@ -386,7 +377,7 @@ function Field({
   children: React.ReactNode
 }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <div className="flex items-baseline justify-between">
         <Label htmlFor={id}>{label}</Label>
         {count && <span className="text-xs tabular-nums text-muted-foreground">{count}</span>}
@@ -416,9 +407,7 @@ function Row({
 }) {
   return (
     <div className="flex items-start justify-between gap-4">
-      <span className={cn("shrink-0 text-xs", muted ? "text-muted-foreground" : "text-muted-foreground")}>
-        {label}
-      </span>
+      <span className="shrink-0 text-xs text-muted-foreground">{label}</span>
       <span
         className={cn(
           "min-w-0 break-all text-right text-sm",

@@ -38,12 +38,12 @@ export function BottomNav() {
           className="absolute -top-6 left-1/2 z-10 flex size-14 -translate-x-1/2 items-center justify-center transition-transform active:scale-95"
         >
           <Image
-            src="/images/navballcenter/1.png"
+            src="/images/navballcenter/2.png"
             alt=""
             width={112}
             height={112}
             priority
-            className="size-14 object-contain drop-shadow-lg"
+            className="size-14 object-contain drop-shadow-lg motion-safe:animate-nav-float"
           />
         </Link>
 

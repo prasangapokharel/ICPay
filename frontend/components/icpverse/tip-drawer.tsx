@@ -17,8 +17,6 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { GiftIcon } from "@hugeicons/core-free-icons"
 import {
   memoByteLength,
   MEMO_MAX_BYTES,
@@ -218,11 +216,7 @@ export function TipDrawer({
               above it: the button is already locked, so a second element saying
               so only pushes the form around. */}
           <Button disabled={!canSend} onClick={handleSend}>
-            {loading ? (
-              <Spinner className="size-4" />
-            ) : (
-              <HugeiconsIcon icon={GiftIcon} className="size-4" />
-            )}
+            {loading && <Spinner className="size-4" />}
             {loading ? t("sending") : insufficient ? t("insufficient") : t("send")}
           </Button>
         </DrawerFooter>

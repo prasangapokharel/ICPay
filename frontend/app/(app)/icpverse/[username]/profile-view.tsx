@@ -10,14 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { TipDrawer } from "@/components/icpverse/tip-drawer"
 import { AccountStatsCard } from "@/components/icpverse/account-stats-card"
 import { SendSuccess } from "@/components/wallet/send-success"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
-import {
-  ArrowLeft01Icon,
-  Copy01Icon,
-  CheckmarkCircle01Icon,
-  GiftIcon,
-} from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet, useDashboard } from "@/hooks/use-wallet-data"
@@ -28,6 +21,7 @@ type Tipped = { amount: bigint; blockIndex: bigint; memo?: string }
 
 export function ProfileView() {
   const t = useTranslations("profileView")
+  const tc = useTranslations("common")
   const pathname = usePathname()
   const router = useRouter()
   const { identity } = useAuth()
@@ -122,11 +116,9 @@ export function ProfileView() {
           className="mt-1.5 text-muted-foreground"
           aria-label={t("copyPrincipal")}
         >
-          <span className="font-mono text-xs">{shortPrincipal(principal)}</span>
-          <HugeiconsIcon
-            icon={copied ? CheckmarkCircle01Icon : Copy01Icon}
-            className={copied ? "size-4 text-primary" : "size-4"}
-          />
+          <span className="font-mono text-xs">
+            {copied ? tc("copied") : shortPrincipal(principal)}
+          </span>
         </Button>
 
         {!isSelf && (
@@ -135,7 +127,6 @@ export function ProfileView() {
             className="mt-6 w-full max-w-56"
             onClick={() => setTipOpen(true)}
           >
-            <HugeiconsIcon icon={GiftIcon} className="size-4" />
             {t("tip")}
           </Button>
         )}
@@ -162,12 +153,11 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <Button
       variant="outline"
-      size="icon"
+      size="sm"
       onClick={onClick}
       className="rounded-full bg-background"
-      aria-label={tc("back")}
     >
-      <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+      {tc("back")}
     </Button>
   )
 }
