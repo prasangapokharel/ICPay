@@ -2,8 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Money01Icon } from "@hugeicons/core-free-icons"
+import Image from "next/image"
 import { formatAmount, E8S } from "@/lib/wallet-utils"
 import { useIcpPrice } from "@/lib/use-icp-price"
 import { useFiatValue } from "@/lib/fiat/use-fiat-value"
@@ -41,32 +40,54 @@ export default function WalletPage() {
         <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
-      <Card className="bg-primary text-primary-foreground">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium tracking-wide text-primary-foreground/80">
-            {t("icpBalance")}
-          </CardTitle>
-          <HugeiconsIcon icon={Money01Icon} className="h-4 w-4 opacity-80" />
-        </CardHeader>
-        <CardContent className="space-y-1">
-          {/* The card owns its own loading state now. Gating the whole page on
-              the balance would put every section behind the slowest one, which
-              is what made the wallet look empty for seconds after a refresh. */}
+
+      {/* ICP balance, styled as a physical card: metallic chip, glass ICP pill,
+          embossed amount, glass fiat pill in the footer. */}
+      <div className="relative rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg">
+        <div className="relative z-10 flex items-center justify-between">
+          <span className="relative flex h-7 w-9 overflow-hidden rounded-md bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_-1px_2px_rgba(120,80,10,0.4),0_1px_2px_rgba(0,0,0,0.25)]">
+            <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-amber-800/30" />
+            <span className="absolute inset-y-0 left-1/3 w-px bg-amber-800/30" />
+            <span className="absolute inset-y-0 left-2/3 w-px bg-amber-800/30" />
+            <span className="absolute left-0 top-1/2 h-2.5 w-full -translate-y-1/2 rounded-[2px] border border-amber-800/25" />
+          </span>
+
+          <span className="liquid-glass-primary flex items-center gap-1.5 rounded-full px-3 py-1.5">
+            <Image src="/images/logo/logo.png" alt="ICP" width={16} height={16} className="size-4" />
+            <span className="text-[11px] font-semibold tracking-wide">
+              {t("icpBalance")}
+            </span>
+          </span>
+        </div>
+
+        <div className="relative z-10 mt-8">
+          {/* The card owns its own loading state. Gating the whole page on the
+              balance would put every section behind the slowest one, which is
+              what made the wallet look empty for seconds after a refresh. */}
           {liveBalance === undefined ? (
-            <Skeleton className="h-9 w-40 bg-primary-foreground/20" />
+            <Skeleton className="h-10 w-44 bg-primary-foreground/20" />
           ) : (
-            <div className="text-3xl font-extrabold tracking-tight tabular-nums">
-              {formatAmount(liveBalance)}{" "}
-              <span className="text-lg font-semibold">ICP</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums">
+                {formatAmount(liveBalance)}
+              </span>
+              <span className="text-sm font-medium text-primary-foreground/60">ICP</span>
             </div>
           )}
-          <p className="text-xs font-medium text-primary-foreground/70">
+        </div>
+
+        <div className="relative z-10 mt-6 flex items-end justify-between">
+          <span className="liquid-glass-primary rounded-full px-2.5 py-1 text-sm font-medium tabular-nums">
             {fiat.formatted === null
               ? "\u00a0"
               : `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}`}
-          </p>
-        </CardContent>
-      </Card>
+          </span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary-foreground/40">
+            Internet Computer
+          </span>
+        </div>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-sm font-medium">{t("tokens")}</CardTitle>

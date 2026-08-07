@@ -13,6 +13,7 @@ import { getDepositAddress } from "@/services/deposit/deposit"
 import { getTransactions } from "@/services/transactions/transactions"
 import { getProfile, resolveUsername, searchUsers } from "@/services/profile/profile"
 import { checkUsername } from "@/services/buy/buy"
+import { compareBySuggestion } from "@/lib/verifed/premium-tick"
 import { fetchAccountStats, type AccountStats } from "@/services/account/account"
 import {
   listLedgerIds,
@@ -298,6 +299,10 @@ export function useUserSearch(search: string, limit = 10) {
       // Only usernamed accounts are addressable, and tipping yourself is not a
       // thing, so neither belongs in the list.
       .filter((u) => u.username.length > 0 && u.id !== ownId)
+      // Ranked before the slice, not after: searchByUsername returns every match
+      // in map order, so slicing first cuts the list arbitrarily and a paid handle
+      // past the cut can never place, however scarce it is.
+      .sort((a, b) => compareBySuggestion(a.username[0] ?? "", b.username[0] ?? ""))
       .slice(0, limit),
     // The list is withheld until the viewer is known, otherwise their own row
     // renders for a moment and then disappears once the filter can be applied.

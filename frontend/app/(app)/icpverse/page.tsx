@@ -10,7 +10,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { Search01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
-import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { useUserSearch } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
 
@@ -23,14 +22,6 @@ export default function IcpversePage() {
   const { users, isLoading } = useUserSearch(debounced, 10)
 
   const searching = debounced.trim().length > 0
-
-  // Paid handles lead the list: they are the scarce tier the username sale
-  // issues, so the verified accounts surface before the free ones.
-  const sorted = [...users].sort((a, b) => {
-    const pa = isPremiumHandle(a.username[0] ?? "") ? 0 : 1
-    const pb = isPremiumHandle(b.username[0] ?? "") ? 0 : 1
-    return pa - pb
-  })
 
   return (
     <div className="space-y-5 pt-2">
@@ -62,7 +53,7 @@ export default function IcpversePage() {
             {searching ? t("noneFound", { query: debounced.trim() }) : t("empty")}
           </p>
         ) : (
-          sorted.map((u) => {
+          users.map((u) => {
             const name = u.username[0]!
             return (
               <Link
