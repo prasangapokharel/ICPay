@@ -93,6 +93,10 @@
     "light": "Hell",
     "dark": "Dunkel"
   },
+  "sound": {
+    "label": "Ton",
+    "description": "Töne beim Anmelden und nach einer Überweisung."
+  },
   "login": {
     "heading": "ICP-Wallet",
     "tagline": "Sende, empfange und verwahre ICP mit einer Wallet, die durch deine Internet Identity geschützt ist.",

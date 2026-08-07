@@ -93,6 +93,10 @@
     "light": "Claro",
     "dark": "Escuro"
   },
+  "sound": {
+    "label": "Som",
+    "description": "Sons ao entrar e após uma transferência."
+  },
   "login": {
     "heading": "Carteira ICP",
     "tagline": "Envie, receba e guarde ICP com uma carteira protegida pela sua Internet Identity.",

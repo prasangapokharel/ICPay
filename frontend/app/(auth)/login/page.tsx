@@ -15,6 +15,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { Typewriter } from "@/components/shared/typewriter"
 import { MarketStats } from "@/components/auth/market-stats"
 import { NFID_PROVIDER } from "@/services/icp"
+import { primeLoginChime } from "@/lib/success-chime"
 
 const features = [
   { icon: ShieldKeyIcon, key: "custodial" },
@@ -43,6 +44,10 @@ export default function LoginPage() {
   }
 
   const handleLogin = async (provider?: string) => {
+    // Primed here rather than where it plays: the chime fires after the
+    // Internet Identity round trip, by which time mobile no longer counts this
+    // tap as a gesture and refuses playback outright.
+    primeLoginChime()
     setError(null)
     setConnecting(true)
     try {

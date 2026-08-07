@@ -9,6 +9,7 @@ import {
   openBackendSession,
   discardRejectedSession,
 } from "@/services/auth/auth"
+import { playLoginChime } from "@/lib/success-chime"
 
 type AuthContextType = {
   identity: Identity | undefined
@@ -28,7 +29,7 @@ function playLoginChimeOnce(principal: string) {
   // Written before playback, not after: a browser that blocks the sound must
   // not leave the flag unset and retry on every future sign-in.
   localStorage.setItem(key, "1")
-  void new Audio("/audio/sucess/login.mp3").play().catch(() => {})
+  playLoginChime()
 }
 
 const AuthContext = createContext<AuthContextType>({
