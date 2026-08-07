@@ -38,7 +38,7 @@ export function IcpayTokenCard() {
     <div className="space-y-6 pt-2">
       <div className="flex flex-col items-center gap-3 text-center">
         <Image
-          src="/images/logo/logo.png"
+          src="/images/logo/icpay/token.png"
           alt=""
           width={56}
           height={56}
