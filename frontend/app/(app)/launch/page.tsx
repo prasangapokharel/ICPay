@@ -53,11 +53,11 @@ export default function LaunchPage() {
       <button
         type="button"
         onClick={() => setShowForm(true)}
-        className="flex w-full items-center gap-3 rounded-2xl border border-dashed p-4 text-left transition-colors hover:bg-muted/40"
+        className="flex w-full items-center gap-3 rounded-2xl border border-dashed bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 p-4 text-left transition-colors hover:bg-muted/40"
       >
         <span className="min-w-0">
-          <span className="block text-sm font-medium">{t("createCta")}</span>
-          <span className="block text-xs text-muted-foreground">{t("createCtaBody")}</span>
+          <span className="block text-sm font-bold text-amber-950">{t("createCta")}</span>
+          <span className="block text-xs font-medium text-amber-900/70">{t("createCtaBody")}</span>
         </span>
       </button>
 

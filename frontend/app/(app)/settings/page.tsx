@@ -37,6 +37,8 @@ type Service = {
   keywords?: string
   // Tiles without a route render as buttons; the settings one opens the drawer.
   onOpen?: () => void
+  // Marks the tile with a "Hot" corner badge.
+  hot?: boolean
 }
 
 const SECTIONS: { key: SectionKey; items: Service[] }[] = [
@@ -47,7 +49,7 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
       { href: "/deposit", key: "deposit", icon: Download01Icon, keywords: "receive qr address" },
       { href: "/withdraw", key: "withdraw", icon: Upload01Icon, keywords: "cash out" },
       { href: "/wallet", key: "tokens", icon: Coins01Icon, keywords: "balance ckbtc holdings" },
-      { href: "/launch", key: "launch", icon: RocketIcon, keywords: "create token icrc mint deploy" },
+      { href: "/launch", key: "launch", icon: RocketIcon, keywords: "create token icrc mint deploy", hot: true },
       { href: "/icpay", key: "icpayToken", icon: ChartLineData01Icon, keywords: "icpay token price chart buy market" },
     ],
   },
@@ -136,6 +138,7 @@ export default function MenuPage() {
                 icon={item.icon}
                 label={t(`items.${item.key}`)}
                 onClick={item.onOpen}
+                hot={item.hot}
               />
             ))}
           </div>
