@@ -1,10 +1,9 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { EyeIcon, EyeOffIcon, RocketIcon } from "@hugeicons/core-free-icons"
+import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import type { IcpPrice } from "@/lib/use-icp-price"
 import { useFiatValue } from "@/lib/fiat/use-fiat-value"
@@ -27,12 +26,11 @@ export function BalanceCard({
   onToggleHidden,
 }: BalanceCardProps) {
   const t = useTranslations("dashboard")
-  const tl = useTranslations("launch")
   const usdValue = price ? (Number(balanceE8s) / E8S) * price.usd : null
   const fiat = useFiatValue(usdValue)
 
   return (
-    <div className="relative mb-7 mt-7 rounded-3xl bg-primary px-5 pb-6 pt-0 text-primary-foreground shadow-lg">
+    <div className="relative mt-7 rounded-3xl bg-primary px-5 pb-6 pt-0 text-primary-foreground shadow-lg">
       {/* The coin straddles the card's top edge, so the card itself cannot clip
           it -- the decorative blur is masked in its own layer instead. */}
       <span className="absolute -top-5 left-1/2 z-10 flex size-14 -translate-x-1/2 items-center justify-center rounded-full border border-primary-foreground/20 bg-primary-foreground/10 shadow-lg backdrop-blur-md">
@@ -69,17 +67,6 @@ export function BalanceCard({
           {hidden || !fiat.formatted ? "••••" : `${fiat.symbol} ${fiat.formatted}`}
         </span>
       </div>
-
-      {/* Straddles the bottom edge the way the coin straddles the top, so it
-          reads as attached to the balance rather than as a third action button
-          competing with Send and Receive below. */}
-      <Link
-        href="/launch"
-        className="absolute -bottom-5 left-1/2 z-10 inline-flex -translate-x-1/2 items-center gap-1.5 whitespace-nowrap rounded-full border border-primary/15 bg-background px-4 py-2.5 text-xs font-semibold text-foreground shadow-lg transition-transform active:scale-95"
-      >
-        <HugeiconsIcon icon={RocketIcon} className="size-4 text-primary" />
-        {tl("createCta")}
-      </Link>
     </div>
   )
 }
