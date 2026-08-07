@@ -20,27 +20,41 @@ Unauthenticated directory search.
 
 **Phase 2 — Multi-token visibility.** Discovers every SNS token from SNS-W plus
 five chain-key ledgers (ckBTC, ckETH, ckUSDC, ckUSDT, ICP), showing balances via
-`icrc1_balance_of`. **Read-only** — there is no non-ICP transfer yet. This is the
-most common wrong assumption about the current state.
+`icrc1_balance_of`. Read-only *at the time this phase closed* — sending arrived
+in Phase 3.
 
 Also shipped outside the phase numbering: 10-language UI, fiat display, avatar
 profile links, settings drawer with theme switching.
 
+**Phase 3 — Multi-token transfers.** `LedgerService.mo` takes a `ledgerId` on
+every call, so one path serves any ICRC-1. Fees read live via `icrc1_fee`, never
+cached. A storage allowlist gates which ledgers can be sent to.
+
+**Phase 4 — Token creation.** `launchToken` charges 5 ICP, creates a canister,
+installs the sealed reference ledger wasm and hands off control. Three things
+differ from what the roadmap originally specified, and the deviations are
+deliberate — do not "fix" them back:
+
+- **ICPay pays the cycles**, not the creator. Requiring the creator to supply
+  cycles would put dfx back in the flow.
+- **Nobody is the controller** — every launch sets `controllers = []`, so the
+  ledger can never be upgraded by anyone, creator included. The freezing
+  threshold is a year to compensate, since there is no reinstall after deletion.
+- **Decimals (8) and transfer fee (10 000 e8s) are fixed**, not form fields.
+
+`TOKEN_MINTING_PRINCIPAL = "aaaaa-aa"` (`Config.mo:36`) is what makes a launched
+token's supply genuinely fixed: the management canister has no caller, and in
+ICRC-1 a transfer *from* the minting account is what mints. **ICPAY itself
+launched before that fix**, so its supply is still mintable and its ledger
+cannot be upgraded to change it — never claim ICPAY has a fixed supply.
+
 ## Next
-
-**Phase 3 — Multi-token transfers.** Generalize `LedgerClient.mo` to any ICRC-1;
-per-token subaccounts; a token parameter on `transferByUsername`; fees read live
-from ledger metadata rather than cached. **This is the next thing to build** —
-prefer it over starting a later phase.
-
-**Phase 4 — Token creation.** Deploy an ICRC-1/ICRC-2 ledger per user launch.
-The user pays the cycles and is the controller, not ICPay. Open questions:
-anti-spam, symbol collision.
 
 **Phase 5 — Liquidity and trading.** ICRC-2 approve + `transfer_from`, swap
 quotes with slippage, LP positions. The roadmap's recommendation is to
 **integrate an existing DEX** (ICPSwap, Sonic, KongSwap) rather than build an
-AMM. Do not propose building one.
+AMM. Do not propose building one. **This is the next thing to build** — prefer
+it over starting a later phase.
 
 **Phase 6 — Decentralizing custody.** Move the controller to an SNS- or
 NNS-controlled canister. Reproducible Docker builds, third-party audit,

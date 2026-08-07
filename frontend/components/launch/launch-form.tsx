@@ -7,6 +7,7 @@ import {
   Tick02Icon,
   Cancel01Icon,
   Alert02Icon,
+  InformationCircleIcon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,6 +25,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
 import { LogoPicker } from "@/components/launch/logo-picker"
 import { useDebounced } from "@/hooks/use-debounced"
 import { useSymbolAvailability, useLaunchFee, useLaunchReady } from "@/hooks/use-launch-data"
@@ -52,6 +58,14 @@ const SOCIAL_FIELDS = [
   { key: "telegram", placeholder: "https://t.me/mytoken" },
   { key: "twitter", placeholder: "https://x.com/mytoken" },
 ] as const satisfies readonly { key: keyof Socials; placeholder: string }[]
+
+// One-tap whole-token supplies, stored already formatted so the field and the
+// canister see the same string the creator would have typed.
+const SUPPLY_PRESETS = [
+  { label: "100M", value: "100,000,000" },
+  { label: "300M", value: "300,000,000" },
+  { label: "500M", value: "500,000,000" },
+] as const
 
 export function LaunchForm({
   onLaunch,
@@ -238,6 +252,24 @@ export function LaunchForm({
           autoComplete="off"
           className="tabular-nums"
         />
+        <div className="flex flex-wrap gap-2 pt-1.5">
+          {SUPPLY_PRESETS.map((preset) => (
+            <Button
+              key={preset.label}
+              type="button"
+              variant="outline"
+              size="sm"
+              className={cn(
+                "h-7 rounded-lg px-3 text-xs",
+                parseSupply(supply) === parseSupply(preset.value) &&
+                  "bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950"
+              )}
+              onClick={() => setSupply(preset.value)}
+            >
+              {preset.label}
+            </Button>
+          ))}
+        </div>
       </Field>
 
       <Collapsible open={socialsOpen} onOpenChange={setSocialsOpen}>
@@ -273,11 +305,21 @@ export function LaunchForm({
 
       {/* One statement rather than a choice. The launch is irreversible and the
           only outcome ICPay will list for sending, so it is stated, not asked. */}
-      <div className="rounded-2xl border bg-muted/40 p-3.5">
+      <div className="flex items-center gap-1.5">
         <p className="text-sm font-medium">{t("immutableTitle")}</p>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-          {t("immutableBody")}
-        </p>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <HugeiconsIcon
+                icon={InformationCircleIcon}
+                className="size-4 shrink-0 cursor-help text-muted-foreground"
+              />
+            }
+          />
+          <TooltipContent side="right" className="max-w-64 text-[11px] leading-relaxed">
+            {t("immutableBody")}
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       <div className="space-y-2 rounded-2xl bg-muted/40 p-3.5">
@@ -292,22 +334,21 @@ export function LaunchForm({
         </div>
       </div>
 
-      {insufficient && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {t("insufficient", { total: total === undefined ? "—" : formatAmount(total) })}
-          </AlertDescription>
-        </Alert>
-      )}
-
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
-      <Button size="lg" className="w-full" disabled={!canReview} onClick={() => setConfirmOpen(true)}>
-        {t("review")}
+      <Button
+        size="lg"
+        className="w-full bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950 hover:from-amber-200 hover:via-yellow-300 hover:to-amber-500"
+        disabled={!canReview}
+        onClick={() => setConfirmOpen(true)}
+      >
+        {insufficient && total !== undefined
+          ? t("insufficient", { total: formatAmount(total) })
+          : t("review")}
       </Button>
 
       {/* The confirm step is not ceremony: the fee is charged before the ledger
@@ -349,7 +390,11 @@ export function LaunchForm({
           </div>
 
           <DrawerFooter>
-            <Button onClick={handleConfirm} disabled={launching}>
+            <Button
+              onClick={handleConfirm}
+              disabled={launching}
+              className="bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950 hover:from-amber-200 hover:via-yellow-300 hover:to-amber-500"
+            >
               {launching && <Spinner className="size-4" />}
               {launching ? t("launching") : t("confirmLaunch")}
             </Button>

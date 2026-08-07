@@ -93,6 +93,10 @@
     "light": "라이트",
     "dark": "다크"
   },
+  "sound": {
+    "label": "소리",
+    "description": "로그인할 때와 전송 후에 알림음이 울립니다."
+  },
   "login": {
     "heading": "ICP 지갑",
     "tagline": "Internet Identity로 보호되는 지갑에서 ICP를 보내고 받고 보관하세요.",

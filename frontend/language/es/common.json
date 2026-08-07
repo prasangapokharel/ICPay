@@ -93,6 +93,10 @@
     "light": "Claro",
     "dark": "Oscuro"
   },
+  "sound": {
+    "label": "Sonido",
+    "description": "Sonidos al iniciar sesión y tras una transferencia."
+  },
   "login": {
     "heading": "Monedero ICP",
     "tagline": "Envía, recibe y guarda ICP con un monedero protegido por tu Internet Identity.",

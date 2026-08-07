@@ -10,21 +10,35 @@ export function ServiceTile({
   label,
   icon,
   onClick,
+  hot,
 }: {
   href?: string
   label: string
   icon: IconSvgElement
   onClick?: () => void
+  hot?: boolean
 }) {
   const tile = (
     <>
-      <span
-        className={cn(
-          "flex size-12 items-center justify-center rounded-xl bg-muted/60",
-          "transition-colors hover:bg-accent"
+      <span className="relative">
+        <span
+          className={cn(
+            "flex size-12 items-center justify-center rounded-xl bg-muted/60",
+            "transition-colors hover:bg-accent"
+          )}
+        >
+          <HugeiconsIcon icon={icon} className="size-5 text-primary" strokeWidth={1.75} />
+        </span>
+        {hot && (
+          <span
+            className={cn(
+              "absolute -right-1.5 -top-1.5 rounded-sm px-1.5 py-px text-[8px] font-bold uppercase leading-none text-foreground",
+              "bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500"
+            )}
+          >
+            Hot
+          </span>
         )}
-      >
-        <HugeiconsIcon icon={icon} className="size-5 text-primary" strokeWidth={1.75} />
       </span>
       <span className="text-[10px] font-medium leading-tight">{label}</span>
     </>

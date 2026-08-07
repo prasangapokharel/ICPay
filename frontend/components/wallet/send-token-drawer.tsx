@@ -16,8 +16,6 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUpRight01Icon, QrCodeScanIcon } from "@hugeicons/core-free-icons"
 import {
   formatTokenAmount,
   parseTokenAmount,
@@ -203,12 +201,11 @@ export function SendTokenDrawer({
               />
               <Button
                 variant="ghost"
-                size="icon-sm"
-                aria-label={tt("scanQr")}
+                size="sm"
                 onClick={() => setScanOpen(true)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg text-muted-foreground"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg text-xs text-muted-foreground"
               >
-                <HugeiconsIcon icon={QrCodeScanIcon} className="size-5" />
+                {tt("scanQr")}
               </Button>
             </div>
             {mode === "username" && (
@@ -320,11 +317,7 @@ export function SendTokenDrawer({
 
         <DrawerFooter>
           <Button disabled={!canSend} onClick={handleSend}>
-            {loading ? (
-              <Spinner className="size-4" />
-            ) : (
-              <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
-            )}
+            {loading && <Spinner className="size-4" />}
             {loading ? t("sending") : insufficient ? t("insufficient") : t("send")}
           </Button>
         </DrawerFooter>

@@ -93,6 +93,10 @@
     "light": "लाइट",
     "dark": "डार्क"
   },
+  "sound": {
+    "label": "ध्वनि",
+    "description": "साइन-इन पर और ट्रांसफ़र के बाद ध्वनि।"
+  },
   "login": {
     "heading": "ICP वॉलेट",
     "tagline": "अपनी Internet Identity से सुरक्षित वॉलेट के साथ ICP भेजें, प्राप्त करें और रखें।",

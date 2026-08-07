@@ -93,6 +93,10 @@
     "light": "Clair",
     "dark": "Sombre"
   },
+  "sound": {
+    "label": "Son",
+    "description": "Sons à la connexion et après un transfert."
+  },
   "login": {
     "heading": "Portefeuille ICP",
     "tagline": "Envoyez, recevez et conservez des ICP avec un portefeuille protégé par votre Internet Identity.",

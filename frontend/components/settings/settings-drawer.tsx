@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button"
 import { LanguageSelect } from "@/components/i18n/language-select"
 import { FiatSelector } from "@/components/fiat/fiat-selector"
 import { ThemeSelector } from "@/components/settings/theme-selector"
+import { SoundSelector } from "@/components/settings/sound-selector"
 import { useAuth } from "@/components/auth/auth-provider"
 import type en from "@/language/en/common.json"
 
@@ -60,6 +61,7 @@ export function SettingsDrawer({
           <LanguageSelect />
           <FiatSelector />
           <ThemeSelector />
+          <SoundSelector />
 
           <h2 className="pt-3 text-sm font-semibold">{t("sections.legal")}</h2>
           <div className="overflow-hidden rounded-2xl border">
