@@ -60,6 +60,7 @@
       "withdraw": "निकालें",
       "tokens": "टोकन",
       "launch": "टोकन लॉन्च",
+      "icpayToken": "ICPAY टोकन",
       "buyName": "नाम खरीदें",
       "profile": "प्रोफ़ाइल",
       "icpverse": "आईसीपीवर्स",
@@ -538,5 +539,23 @@
       "linkScheme": "लिंक https:// से शुरू होने चाहिए",
       "linkTooLong": "लिंक बहुत लंबा है"
     }
+  },
+  "icpayToken": {
+    "title": "ICPAY टोकन",
+    "subtitle": "ICPay के अपने टोकन का लाइव बाज़ार डेटा",
+    "buy": "{symbol} खरीदें",
+    "chart": "चार्ट",
+    "change24h": "24घं",
+    "unpriced": "मूल्य उपलब्ध नहीं",
+    "totalSupply": "कुल आपूर्ति",
+    "fdv": "पूर्ण तनुकृत मूल्य",
+    "tvl": "ICPSwap पर TVL",
+    "volume24h": "24घं वॉल्यूम",
+    "trades24h": "24घं ट्रेड",
+    "range24h": "24घं दायरा",
+    "decimals": "दशमलव",
+    "fee": "ट्रांसफ़र शुल्क",
+    "canisterId": "कैनिस्टर आईडी",
+    "marketUnavailable": "बाज़ार डेटा अभी उपलब्ध नहीं है।"
   }
 }
