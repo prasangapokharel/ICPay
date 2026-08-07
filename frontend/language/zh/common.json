@@ -285,6 +285,7 @@
     "subtitle": "您的钱包概览",
     "icpBalance": "ICP 余额",
     "tokens": "代币",
+    "searchTokens": "搜索代币",
     "accountDetails": "账户详情",
     "username": "用户名",
     "principal": "Principal",
@@ -293,6 +294,7 @@
     "totalWithdrawals": "提现总额",
     "transfers": "转账",
     "noTokens": "暂无代币。充值后会自动显示在这里。",
+    "noTokensFound": "没有符合该搜索的代币。",
     "outsideAmount": "+{amount} 在外",
     "selfCustodyNotice": "您在 ICPay 之外持有资金。打开该代币以转入。"
   },
@@ -487,7 +489,7 @@
     "descriptionLabel": "简介",
     "descriptionPlaceholder": "这个代币用来做什么？",
     "supplyLabel": "总供应量",
-    "supplyHint": "发行时一次性铸造给你，之后无法再增发。",
+    "supplyHint": "发行时一次性铸造给你。之后铸造账户不可调用，因此永远无法再铸造。",
     "decimalsLabel": "小数位",
     "logoLabel": "代币标志",
     "logoHint": "方形图片，将缩放到 128px",
@@ -500,8 +502,8 @@
     "twitterLabel": "X",
     "controlLabel": "控制权",
     "immutableTitle": "不可变",
-    "immutableBody": "包括你在内，任何人都无法再更改此代币的代码或供应量。",
-    "immutableProof": "此代币没有控制者。上方的模块哈希就是永久运行的代码，你可以自行与公开的构建结果核对。",
+    "immutableBody": "包括你在内，任何人都无法更改此代币的代码。全部供应量在发行时一次性铸造，铸造账户被设为管理罐（management canister），没有任何调用者，因此永远无法再铸造。",
+    "immutableProof": "此代币没有控制者，其铸造账户为 aaaaa-aa。你可以自行在账本上调用 icrc1_minting_account 查看——供应量固定是因为这一点，而不是因为我们这么说。",
     "upgradeableTitle": "可升级",
     "upgradeableBody": "你保留控制权并可在之后升级。ICPay 不会将其列入可发送代币。",
     "creationFee": "创建费用",
@@ -556,6 +558,8 @@
     "decimals": "精度",
     "fee": "转账手续费",
     "canisterId": "容器 ID",
-    "marketUnavailable": "当前无法获取行情数据。"
+    "marketUnavailable": "当前无法获取行情数据。",
+    "mintingAccount": "铸造账户",
+    "mintingAccountNone": "无"
   }
 }

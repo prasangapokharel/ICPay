@@ -2,8 +2,6 @@
 
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
@@ -33,6 +31,7 @@ export function IcpayTokenCard() {
   const { market } = stats
   const fdv = fullyDilutedValue(stats)
   const change = market?.priceChange24h ?? 0
+  const minting = stats.mintingAccount
 
   return (
     <div className="space-y-6 pt-2">
@@ -67,20 +66,18 @@ export function IcpayTokenCard() {
         <div className="mt-2 grid w-full grid-cols-2 gap-2">
           <Button
             variant="outline"
-            className="w-full gap-1"
+            className="w-full"
             nativeButton={false}
             render={<a href={ICPAY_INFO_URL} target="_blank" rel="noreferrer noopener" />}
           >
             {t("chart")}
-            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-3.5" />
           </Button>
           <Button
-            className="w-full gap-1"
+            className="w-full"
             nativeButton={false}
             render={<a href={ICPAY_SWAP_URL} target="_blank" rel="noreferrer noopener" />}
           >
             {t("buy", { symbol: stats.symbol })}
-            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-3.5" />
           </Button>
         </div>
       </div>
@@ -105,6 +102,13 @@ export function IcpayTokenCard() {
             value={shortPrincipal(ICPAY_LEDGER_ID)}
             onClick={() => copyText(ICPAY_LEDGER_ID)}
           />
+          {minting && (
+            <Row
+              label={t("mintingAccount")}
+              value={stats.supplyFixed ? t("mintingAccountNone") : shortPrincipal(minting)}
+              onClick={() => copyText(minting)}
+            />
+          )}
         </CardContent>
       </Card>
 

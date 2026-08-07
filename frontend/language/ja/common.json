@@ -285,6 +285,7 @@
     "subtitle": "ウォレットの概要",
     "icpBalance": "ICP 残高",
     "tokens": "トークン",
+    "searchTokens": "トークンを検索",
     "accountDetails": "アカウント詳細",
     "username": "ユーザー名",
     "principal": "principal",
@@ -293,6 +294,7 @@
     "totalWithdrawals": "出金合計",
     "transfers": "送金",
     "noTokens": "トークンはまだありません。入金すると自動で表示されます。",
+    "noTokensFound": "該当するトークンはありません。",
     "outsideAmount": "+{amount} 外部",
     "selfCustodyNotice": "ICPay の外に資金があります。トークンを開いて移してください。"
   },
@@ -487,7 +489,7 @@
     "descriptionLabel": "説明",
     "descriptionPlaceholder": "このトークンは何のためのものですか？",
     "supplyLabel": "総供給量",
-    "supplyHint": "発行時に一度だけあなたへミントされます。後から追加発行する方法はありません。",
+    "supplyHint": "ローンチ時にあなたへ一度だけ発行されます。その後ミント用アカウントは到達不能になるため、追加発行は永久にできません。",
     "decimalsLabel": "小数桁数",
     "logoLabel": "トークンロゴ",
     "logoHint": "正方形の画像、128px にリサイズされます",
@@ -500,8 +502,8 @@
     "twitterLabel": "X",
     "controlLabel": "コントロール",
     "immutableTitle": "変更不可",
-    "immutableBody": "あなたを含め、誰もこのトークンのコードや供給量を変更できません。",
-    "immutableProof": "このトークンにはコントローラーがありません。上のモジュールハッシュが永続的に動作するコードであり、公開ビルドと自分で照合できます。",
+    "immutableBody": "あなたを含め、誰もこのトークンのコードを変更できません。供給量はローンチ時に一度だけ発行され、ミント用アカウントは呼び出し元を持たない management canister に設定されるため、追加発行は永久にできません。",
+    "immutableProof": "このトークンにコントローラーはなく、ミント用アカウントは aaaaa-aa です。台帳に icrc1_minting_account を呼び出せば自分で確認できます。供給量が固定なのはこの事実によるもので、私たちの言葉によるものではありません。",
     "upgradeableTitle": "アップグレード可能",
     "upgradeableBody": "コントロールはあなたに残り、後からアップグレードできます。ICPay は送金対象として掲載しません。",
     "creationFee": "作成手数料",
@@ -556,6 +558,8 @@
     "decimals": "小数点桁数",
     "fee": "送金手数料",
     "canisterId": "キャニスター ID",
-    "marketUnavailable": "現在、市場データを取得できません。"
+    "marketUnavailable": "現在、市場データを取得できません。",
+    "mintingAccount": "ミント用アカウント",
+    "mintingAccountNone": "なし"
   }
 }

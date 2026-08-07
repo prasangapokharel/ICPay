@@ -285,6 +285,7 @@
     "subtitle": "Your wallet overview",
     "icpBalance": "ICP Balance",
     "tokens": "Tokens",
+    "searchTokens": "Search tokens",
     "accountDetails": "Account Details",
     "username": "Username",
     "principal": "Principal",
@@ -293,6 +294,7 @@
     "totalWithdrawals": "Total Withdrawals",
     "transfers": "Transfers",
     "noTokens": "No tokens yet. Deposits show up here automatically.",
+    "noTokensFound": "No tokens match that search.",
     "outsideAmount": "+{amount} outside",
     "selfCustodyNotice": "You hold funds outside ICPay. Open the token to move them in."
   },
@@ -487,7 +489,7 @@
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "What is this token for?",
     "supplyLabel": "Total supply",
-    "supplyHint": "Minted once, to you, at launch. There is no way to mint more later.",
+    "supplyHint": "Minted once, to you, at launch. The minting account is then unreachable, so no more can ever be created.",
     "decimalsLabel": "Decimals",
     "logoLabel": "Token logo",
     "logoHint": "Square image, resized to 128px",
@@ -500,8 +502,8 @@
     "twitterLabel": "X",
     "controlLabel": "Control",
     "immutableTitle": "Immutable",
-    "immutableBody": "Nobody, including you, can ever change this token's code or supply.",
-    "immutableProof": "This token has no controller. The module hash above is what runs, permanently, and you can verify it against the published build yourself.",
+    "immutableBody": "Nobody, including you, can ever change this token's code. The supply is minted once at launch and the minting account is set to the management canister, which nothing can call, so no more can ever be created.",
+    "immutableProof": "This token has no controller, and its minting account is aaaaa-aa. Call icrc1_minting_account on the ledger to see it yourself — that is what makes the supply fixed, not our word for it.",
     "upgradeableTitle": "Upgradeable",
     "upgradeableBody": "You keep control and can upgrade it later. ICPay will not list it for sending.",
     "creationFee": "Creation fee",
@@ -556,6 +558,8 @@
     "decimals": "Decimals",
     "fee": "Transfer fee",
     "canisterId": "Canister ID",
-    "marketUnavailable": "Market data is unavailable right now."
+    "marketUnavailable": "Market data is unavailable right now.",
+    "mintingAccount": "Minting account",
+    "mintingAccountNone": "None"
   }
 }

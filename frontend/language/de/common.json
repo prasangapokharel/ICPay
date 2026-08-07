@@ -285,6 +285,7 @@
     "subtitle": "Deine Wallet-Übersicht",
     "icpBalance": "ICP-Guthaben",
     "tokens": "Token",
+    "searchTokens": "Token suchen",
     "accountDetails": "Kontodetails",
     "username": "Benutzername",
     "principal": "Principal",
@@ -293,6 +294,7 @@
     "totalWithdrawals": "Auszahlungen gesamt",
     "transfers": "Überweisungen",
     "noTokens": "Noch keine Token. Einzahlungen erscheinen hier automatisch.",
+    "noTokensFound": "Keine Token passen zu dieser Suche.",
     "outsideAmount": "+{amount} ausserhalb",
     "selfCustodyNotice": "Sie halten Guthaben außerhalb von ICPay. Öffnen Sie den Token, um es zu verschieben."
   },
@@ -487,7 +489,7 @@
     "descriptionLabel": "Beschreibung",
     "descriptionPlaceholder": "Wofür ist dieser Token gedacht?",
     "supplyLabel": "Gesamtmenge",
-    "supplyHint": "Wird beim Start einmalig an dich geprägt. Später kann nichts nachgeprägt werden.",
+    "supplyHint": "Beim Start einmalig an dich ausgegeben. Danach ist das Minting-Konto nicht mehr erreichbar, mehr kann also nie entstehen.",
     "decimalsLabel": "Nachkommastellen",
     "logoLabel": "Token-Logo",
     "logoHint": "Quadratisches Bild, auf 128 px verkleinert",
@@ -500,8 +502,8 @@
     "twitterLabel": "X",
     "controlLabel": "Kontrolle",
     "immutableTitle": "Unveränderlich",
-    "immutableBody": "Niemand, auch du nicht, kann Code oder Menge dieses Tokens jemals ändern.",
-    "immutableProof": "Dieser Token hat keinen Controller. Der Modul-Hash oben ist das, was dauerhaft läuft, und du kannst ihn selbst gegen den veröffentlichten Build prüfen.",
+    "immutableBody": "Niemand, auch du nicht, kann den Code dieses Tokens jemals ändern. Die Menge wird beim Start einmalig ausgegeben, und das Minting-Konto ist auf den Management-Canister gesetzt, den nichts aufrufen kann – mehr kann also nie entstehen.",
+    "immutableProof": "Dieses Token hat keinen Controller, und sein Minting-Konto ist aaaaa-aa. Ruf icrc1_minting_account auf dem Ledger auf und sieh selbst nach – daran liegt es, dass die Menge fest ist, nicht an unserem Wort.",
     "upgradeableTitle": "Aktualisierbar",
     "upgradeableBody": "Du behältst die Kontrolle und kannst ihn später aktualisieren. ICPay listet ihn nicht zum Senden.",
     "creationFee": "Erstellungsgebühr",
@@ -556,6 +558,8 @@
     "decimals": "Nachkommastellen",
     "fee": "Transfergebühr",
     "canisterId": "Canister-ID",
-    "marketUnavailable": "Marktdaten sind derzeit nicht verfügbar."
+    "marketUnavailable": "Marktdaten sind derzeit nicht verfügbar.",
+    "mintingAccount": "Minting-Konto",
+    "mintingAccountNone": "Keines"
   }
 }
