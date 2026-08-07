@@ -63,9 +63,12 @@ export default function LoginPage() {
           fill
           priority
           sizes="(max-width: 640px) 100vw, 28rem"
-          className="-z-10 object-cover object-center"
+          className="-z-10 object-cover object-center dark:opacity-35"
         />
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-background/50" />
+        {/* The artwork is a light pastel, so in dark mode it is dimmed and sat
+            under a heavier scrim -- at the light-mode 50% it washes the card
+            grey and the body text drops below readable contrast. */}
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-background/50 dark:bg-background/75" />
         <div className="flex flex-1 flex-col items-center justify-center text-center">
           <MarketStats />
           <Image
