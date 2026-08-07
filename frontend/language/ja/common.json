@@ -60,6 +60,7 @@
       "withdraw": "出金",
       "tokens": "トークン",
       "launch": "トークン発行",
+      "icpayToken": "ICPAY トークン",
       "buyName": "名前を購入",
       "profile": "プロフィール",
       "icpverse": "ICPバース",
@@ -538,5 +539,23 @@
       "linkScheme": "リンクは https:// で始まる必要があります",
       "linkTooLong": "リンクが長すぎます"
     }
+  },
+  "icpayToken": {
+    "title": "ICPAY トークン",
+    "subtitle": "ICPay 独自トークンのリアルタイム市場データ",
+    "buy": "{symbol} を購入",
+    "chart": "チャート",
+    "change24h": "24時間",
+    "unpriced": "価格なし",
+    "totalSupply": "総供給量",
+    "fdv": "完全希薄化評価額",
+    "tvl": "ICPSwap の TVL",
+    "volume24h": "24時間出来高",
+    "trades24h": "24時間取引数",
+    "range24h": "24時間レンジ",
+    "decimals": "小数点桁数",
+    "fee": "送金手数料",
+    "canisterId": "キャニスター ID",
+    "marketUnavailable": "現在、市場データを取得できません。"
   }
 }

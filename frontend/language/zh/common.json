@@ -60,6 +60,7 @@
       "withdraw": "提现",
       "tokens": "代币",
       "launch": "发行代币",
+      "icpayToken": "ICPAY 代币",
       "buyName": "购买名称",
       "profile": "个人资料",
       "icpverse": "ICP 宇宙",
@@ -538,5 +539,23 @@
       "linkScheme": "链接必须以 https:// 开头",
       "linkTooLong": "链接过长"
     }
+  },
+  "icpayToken": {
+    "title": "ICPAY 代币",
+    "subtitle": "ICPay 自有代币的实时行情",
+    "buy": "购买 {symbol}",
+    "chart": "图表",
+    "change24h": "24小时",
+    "unpriced": "暂无价格",
+    "totalSupply": "总供应量",
+    "fdv": "完全稀释估值",
+    "tvl": "ICPSwap 上的 TVL",
+    "volume24h": "24小时成交额",
+    "trades24h": "24小时交易数",
+    "range24h": "24小时区间",
+    "decimals": "精度",
+    "fee": "转账手续费",
+    "canisterId": "容器 ID",
+    "marketUnavailable": "当前无法获取行情数据。"
   }
 }

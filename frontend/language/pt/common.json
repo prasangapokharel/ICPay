@@ -60,6 +60,7 @@
       "withdraw": "Sacar",
       "tokens": "Tokens",
       "launch": "Lançar token",
+      "icpayToken": "Token ICPAY",
       "buyName": "Comprar nome",
       "profile": "Perfil",
       "icpverse": "ICPverso",
@@ -538,5 +539,23 @@
       "linkScheme": "Os links devem começar com https://",
       "linkTooLong": "Link muito longo"
     }
+  },
+  "icpayToken": {
+    "title": "Token ICPAY",
+    "subtitle": "Dados de mercado ao vivo do token próprio da ICPay",
+    "buy": "Comprar {symbol}",
+    "chart": "Gráfico",
+    "change24h": "24 h",
+    "unpriced": "Sem preço",
+    "totalSupply": "Fornecimento total",
+    "fdv": "Valor totalmente diluído",
+    "tvl": "TVL na ICPSwap",
+    "volume24h": "Volume 24 h",
+    "trades24h": "Negociações 24 h",
+    "range24h": "Intervalo 24 h",
+    "decimals": "Casas decimais",
+    "fee": "Taxa de transferência",
+    "canisterId": "ID do canister",
+    "marketUnavailable": "Os dados de mercado estão indisponíveis no momento."
   }
 }

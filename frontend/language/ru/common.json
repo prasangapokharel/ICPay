@@ -60,6 +60,7 @@
       "withdraw": "Вывести",
       "tokens": "Токены",
       "launch": "Запуск токена",
+      "icpayToken": "Токен ICPAY",
       "buyName": "Купить имя",
       "profile": "Профиль",
       "icpverse": "ICP-вселенная",
@@ -538,5 +539,23 @@
       "linkScheme": "Ссылки должны начинаться с https://",
       "linkTooLong": "Ссылка слишком длинная"
     }
+  },
+  "icpayToken": {
+    "title": "Токен ICPAY",
+    "subtitle": "Актуальные рыночные данные собственного токена ICPay",
+    "buy": "Купить {symbol}",
+    "chart": "График",
+    "change24h": "24 ч",
+    "unpriced": "Нет цены",
+    "totalSupply": "Общее предложение",
+    "fdv": "Полностью разводнённая оценка",
+    "tvl": "TVL на ICPSwap",
+    "volume24h": "Объём за 24 ч",
+    "trades24h": "Сделок за 24 ч",
+    "range24h": "Диапазон за 24 ч",
+    "decimals": "Знаков после запятой",
+    "fee": "Комиссия за перевод",
+    "canisterId": "ID канистры",
+    "marketUnavailable": "Рыночные данные сейчас недоступны."
   }
 }
