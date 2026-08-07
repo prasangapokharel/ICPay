@@ -93,6 +93,10 @@
     "light": "浅色",
     "dark": "深色"
   },
+  "sound": {
+    "label": "声音",
+    "description": "登录时和转账后播放提示音。"
+  },
   "login": {
     "heading": "ICP 钱包",
     "tagline": "使用由 Internet Identity 保护的钱包收发和持有 ICP。",

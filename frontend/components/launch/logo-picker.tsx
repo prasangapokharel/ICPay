@@ -76,7 +76,9 @@ export function LogoPicker({
         {value ? (
           <Image src={value} alt="" width={SIZE} height={SIZE} className="size-full object-cover" unoptimized />
         ) : (
-          <HugeiconsIcon icon={ImageAdd02Icon} className="size-6 text-muted-foreground" />
+          <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500">
+            <HugeiconsIcon icon={ImageAdd02Icon} className="size-5 text-amber-800" />
+          </span>
         )}
 
         {busy && (

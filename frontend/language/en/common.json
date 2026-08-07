@@ -93,6 +93,10 @@
     "light": "Light",
     "dark": "Dark"
   },
+  "sound": {
+    "label": "Sound",
+    "description": "Chimes on sign-in and after a transfer."
+  },
   "login": {
     "heading": "ICP Wallet",
     "tagline": "Send, receive and hold ICP with a wallet secured by your Internet Identity.",

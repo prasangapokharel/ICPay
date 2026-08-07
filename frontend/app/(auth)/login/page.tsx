@@ -15,6 +15,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { Typewriter } from "@/components/shared/typewriter"
 import { MarketStats } from "@/components/auth/market-stats"
 import { NFID_PROVIDER } from "@/services/icp"
+import { primeLoginChime } from "@/lib/success-chime"
 
 const features = [
   { icon: ShieldKeyIcon, key: "custodial" },
@@ -43,6 +44,10 @@ export default function LoginPage() {
   }
 
   const handleLogin = async (provider?: string) => {
+    // Primed here rather than where it plays: the chime fires after the
+    // Internet Identity round trip, by which time mobile no longer counts this
+    // tap as a gesture and refuses playback outright.
+    primeLoginChime()
     setError(null)
     setConnecting(true)
     try {
@@ -63,9 +68,12 @@ export default function LoginPage() {
           fill
           priority
           sizes="(max-width: 640px) 100vw, 28rem"
-          className="-z-10 object-cover object-center"
+          className="-z-10 object-cover object-center dark:opacity-35"
         />
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-background/50" />
+        {/* The artwork is a light pastel, so in dark mode it is dimmed and sat
+            under a heavier scrim -- at the light-mode 50% it washes the card
+            grey and the body text drops below readable contrast. */}
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-background/50 dark:bg-background/75" />
         <div className="flex flex-1 flex-col items-center justify-center text-center">
           <MarketStats />
           <Image

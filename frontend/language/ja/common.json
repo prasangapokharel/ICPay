@@ -93,6 +93,10 @@
     "light": "ライト",
     "dark": "ダーク"
   },
+  "sound": {
+    "label": "サウンド",
+    "description": "サインイン時と送金後にチャイムが鳴ります。"
+  },
   "login": {
     "heading": "ICP ウォレット",
     "tagline": "Internet Identity で保護されたウォレットで ICP を送受金・保有できます。",
