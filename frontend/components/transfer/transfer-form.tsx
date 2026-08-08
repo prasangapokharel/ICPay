@@ -36,6 +36,7 @@ import { primeSuccessChime } from "@/lib/success-chime"
 import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/icp-address"
 import { parsePaymentLink, amountFieldValue } from "@/services/pay/pay"
 import type { TransferMode } from "@/services/transfer/transfer"
+import { USERNAME_MIN_LENGTH } from "@/lib/username"
 
 const labelKeys = {
   username: { label: "labelUsername", placeholder: "placeholderUsername" },
@@ -70,7 +71,7 @@ function isValidFor(mode: TransferMode, v: string): boolean {
       return false
     }
   }
-  return t.length >= 3
+  return t.length >= USERNAME_MIN_LENGTH
 }
 
 export function TransferForm({
@@ -151,7 +152,7 @@ export function TransferForm({
   // disabled while a valid name is still in flight.
   const unknownRecipient =
     mode === "username" &&
-    to.trim().length >= 3 &&
+    to.trim().length >= USERNAME_MIN_LENGTH &&
     debouncedTo.trim() === to.trim() &&
     !resolving &&
     resolved === null

@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
 import { avatarUriFor } from "@/lib/avatar"
 import { shortPrincipal } from "@/lib/wallet-utils"
+import { USERNAME_MIN_LENGTH } from "@/lib/username"
 import { cn } from "@/lib/utils"
 
 // The confirmation a payment app owes the user before they send money: proof the
@@ -66,7 +67,7 @@ export function RecipientLookup({
 }) {
   const t = useTranslations("transfer")
   const trimmed = username.trim()
-  if (trimmed.length < 3) return null
+  if (trimmed.length < USERNAME_MIN_LENGTH) return null
 
   if (isLoading) {
     return (
