@@ -164,7 +164,11 @@
     "showFull": "显示完整地址",
     "qrAlt": "充值地址 QR 码",
     "tabPrincipal": "主体 ID",
-    "hintPrincipal": "用于交易所。到账后请转入钱包。"
+    "hintPrincipal": "用于交易所。到账后请转入钱包。",
+    "syncTitle": "同步充值",
+    "syncHint": "把已到账的记录加入您的历史。",
+    "syncAction": "同步",
+    "syncFound": "充值已加入您的历史。"
   },
   "paymentLink": {
     "toggleLabel": "收款请求",
@@ -231,7 +235,8 @@
     "availableName": "@{name} 可以使用",
     "networkFee": "网络手续费",
     "total": "合计",
-    "insufficient": "余额不足。含手续费共需 {total} ICP。",
+    "treasuryNote": "款项将转入 ICPay 金库 {principal}。",
+    "insufficient": "余额不足",
     "buying": "购买中…",
     "buy": "购买用户名",
     "pricing": "价格",
@@ -258,7 +263,8 @@
       "tooLong": "最长为 {max} 个字符",
       "invalidChars": "仅限字母、数字和下划线",
       "notFree": "免费用户名需 {min} 个字符以上，更短的名称可以购买。"
-    }
+    },
+    "brandProtectionLink": "Brand protection"
   },
   "profile": {
     "title": "个人资料",
@@ -565,5 +571,21 @@
     "marketUnavailable": "当前无法获取行情数据。",
     "mintingAccount": "铸造账户",
     "mintingAccountNone": "无"
+  },
+  "brandProtection": {
+    "title": "Brand Protection",
+    "subtitle": "Official usernames reserved for real brands. If you own one, claim it.",
+    "searchPlaceholder": "Search a brand…",
+    "allReserved": "{count} brands protected",
+    "results": "{count} matches",
+    "noneFound": "No brand named “{query}” found.",
+    "brandHandle": "Official reserved handle",
+    "reserved": "Reserved",
+    "ownItTitle": "Own this brand?",
+    "ownItBody": "If a reserved name is your official brand, contact us with proof of ownership and your ICPay username.",
+    "contact": "Contact",
+    "copyTemplate": "Copy proof template",
+    "copied": "Copied!",
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
   }
 }

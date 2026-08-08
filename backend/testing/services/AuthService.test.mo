@@ -5,6 +5,7 @@ import Int "mo:core/Int";
 import UserStorage "../../src/storage/UserStorage";
 import AuthService "../../src/services/AuthService";
 import ReservedStorage "../../src/storage/ReservedUsernameStorage";
+import RateLimitStorage "../../src/storage/RateLimitStorage";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
@@ -15,7 +16,7 @@ func nextUid(): Text {
   uidCounter += 1;
   Time.now().toText() # "-" # Int.toText(uidCounter);
 };
-let auth = AuthService.create(users, usernames, usersById, reserved, nextUid);
+let auth = AuthService.create(users, usernames, usersById, reserved, nextUid, RateLimitStorage.createRateLimitMap());
 
 let anon = Principal.fromText("2vxsx-fae");
 switch (AuthService.login(auth, anon)) {

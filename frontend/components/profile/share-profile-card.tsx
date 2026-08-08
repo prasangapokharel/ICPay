@@ -45,36 +45,34 @@ export function ShareProfileCard({ username }: { username: string }) {
 
   return (
     <Card>
-      <CardContent className="space-y-3">
-        <div>
+      <CardContent className="flex items-center gap-3">
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-medium">{t("shareTitle")}</p>
-          <p className="text-xs text-muted-foreground">
-            {t("shareBody")}
+          <p className="truncate font-mono text-xs text-muted-foreground">
+            {url.replace(/^https?:\/\//, "")}
           </p>
         </div>
 
-        <p className="truncate rounded-xl bg-muted/50 px-3 py-2.5 font-mono text-xs">
-          {url.replace(/^https?:\/\//, "")}
-        </p>
-
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopy}
-            className="rounded-2xl"
-          >
-            <HugeiconsIcon
-              icon={copied ? Tick02Icon : Copy01Icon}
-              className={copied ? "size-4 text-primary" : "size-4"}
-            />
-            {copied ? tc("copied") : tc("copy")}
-          </Button>
-          <Button size="sm" onClick={handleShare} className="rounded-2xl">
-            <HugeiconsIcon icon={Share08Icon} className="size-4" />
-            {tc("share")}
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="icon-sm"
+          onClick={handleCopy}
+          aria-label={tc("copy")}
+          className="shrink-0 rounded-full"
+        >
+          <HugeiconsIcon
+            icon={copied ? Tick02Icon : Copy01Icon}
+            className={copied ? "size-4 text-primary" : "size-4"}
+          />
+        </Button>
+        <Button
+          size="icon-sm"
+          onClick={handleShare}
+          aria-label={tc("share")}
+          className="shrink-0 rounded-full"
+        >
+          <HugeiconsIcon icon={Share08Icon} className="size-4" />
+        </Button>
       </CardContent>
     </Card>
   )

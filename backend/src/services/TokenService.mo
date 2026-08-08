@@ -23,6 +23,8 @@ import TokenValidator "../validators/TokenValidator";
 import LedgerService "LedgerService";
 import TransferService "TransferService";
 import TokenWasmService "TokenWasmService";
+import RateLimitService "RateLimitService";
+import RateLimitStorage "../storage/RateLimitStorage";
 
 module {
   public func create(
@@ -36,9 +38,10 @@ module {
     users: UserStorage.UserMap,
     self: Principal,
     nextId: () -> Text,
+    limits: RateLimitStorage.RateLimitMap,
   ): TokenService {
     {
-      tokens; byLedger; byUser; reservedSymbols; wasm; transfers; ledger; users; self; nextId;
+      tokens; byLedger; byUser; reservedSymbols; wasm; transfers; ledger; users; self; nextId; limits;
       // Held only for the duration of one launch, so deliberately not persisted:
       // an upgrade landing mid-launch must not strand a symbol behind a lock
       // nobody will ever release.
@@ -61,6 +64,7 @@ module {
     // Same generator TransferService takes, for the same reason: the row needs a
     // key before the chain has assigned one.
     nextId: () -> Text;
+    limits: RateLimitStorage.RateLimitMap;
     pending: Set.Set<Text>;
   };
 
@@ -69,6 +73,9 @@ module {
     caller: Principal,
     p: TokenValidator.LaunchParams,
   ): async Types.ApiResult<Types.TokenPublic> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_LAUNCH_TOKEN, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_LAUNCH_TOKEN));
+    };
     let userId = switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?u) { u.id };
       case (null) { return #err("User not found") };
@@ -107,7 +114,7 @@ module {
     // One debit, whole, before any canister work. Charging in two parts creates
     // a state where the token is live and the second debit failed.
     let revenue = AccountHelper.fixedAccount(service.self, Config.REVENUE_SUBACCOUNT);
-    let payment = await TransferService.transferByAccount(
+    let payment = await TransferService.transferByAccountInternal(
       service.transfers,
       caller,
       Config.ICP_LEDGER_CANISTER_ID,

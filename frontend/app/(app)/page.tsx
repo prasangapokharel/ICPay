@@ -45,6 +45,7 @@ export default function DashboardPage() {
         price={price}
         hidden={hidden}
         onToggleHidden={() => setHidden((v) => !v)}
+        username={data.user.username?.[0]}
       />
 
       <div className="grid grid-cols-2 gap-3">

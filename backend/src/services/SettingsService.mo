@@ -5,15 +5,19 @@ import UserRepo "../repositories/UserRepository";
 import SettingsRepo "../repositories/SettingsRepository";
 import UserStorage "../storage/UserStorage";
 import SettingsStorage "../storage/SettingsStorage";
+import Config "../config/Config";
+import RateLimitService "RateLimitService";
+import RateLimitStorage "../storage/RateLimitStorage";
 
 module {
-  public func create(users: UserStorage.UserMap, settings: SettingsStorage.SettingsMap): SettingsService {
-    { users; settings };
+  public func create(users: UserStorage.UserMap, settings: SettingsStorage.SettingsMap, limits: RateLimitStorage.RateLimitMap): SettingsService {
+    { users; settings; limits };
   };
 
   public type SettingsService = {
     users: UserStorage.UserMap;
     settings: SettingsStorage.SettingsMap;
+    limits: RateLimitStorage.RateLimitMap;
   };
 
   public func getSettings(service: SettingsService, caller: Principal): Types.ApiResult<Types.SettingsPublic> {
@@ -28,6 +32,9 @@ module {
   };
 
   public func updateSettings(service: SettingsService, caller: Principal, theme: Text, language: Text, notifications: Bool): Types.ApiResult<Types.SettingsPublic> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_UPDATE_SETTINGS, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_UPDATE_SETTINGS));
+    };
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?user) {
         let now = Time.now();

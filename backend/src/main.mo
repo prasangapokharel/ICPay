@@ -18,6 +18,7 @@ import TokenWasmService "services/TokenWasmService";
 import TokenService "services/TokenService";
 import TransactionService "services/TransactionService";
 import SettingsService "services/SettingsService";
+import RateLimitStorage "storage/RateLimitStorage";
 import HealthApi "api/v1/Health";
 import AuthApi "api/v1/Auth";
 import UsersApi "api/v1/Users";
@@ -31,6 +32,7 @@ import UsernameSaleApi "api/v1/UsernameSale";
 import TokenApi "api/v1/Token";
 import TransactionsApi "api/v1/Transactions";
 import SettingsApi "api/v1/Settings";
+import VerifiedApi "api/v1/Verified";
 import MiddlewareAuth "middleware/Auth";
 import Principal "mo:core/Principal";
 import Int "mo:core/Int";
@@ -69,6 +71,19 @@ persistent actor self {
   // every upgrade would make launches fail until an operator noticed.
   let tokenWasm = TokenWasmService.empty();
 
+  // Not transient: an upgrade resetting every counter would be a one-time
+  // amnesty, not a hole, but there is no reason to take even that -- these are
+  // cheap maps that key off the same caller-guard `Principal` already used
+  // everywhere else. One map per named policy, per the ratelimit design doc,
+  // so a caller throttled on one path can still use the others.
+  let claimLimits = RateLimitStorage.createRateLimitMap();
+  let transferLimits = RateLimitStorage.createRateLimitMap();
+  let withdrawLimits = RateLimitStorage.createRateLimitMap();
+  let syncDepositLimits = RateLimitStorage.createRateLimitMap();
+  let settingsLimits = RateLimitStorage.createRateLimitMap();
+  let purchaseUsernameLimits = RateLimitStorage.createRateLimitMap();
+  let launchTokenLimits = RateLimitStorage.createRateLimitMap();
+
   // Library modules cannot hold mutable state (moc rejects a top-level `var`
   // outside an actor), so the monotonic id counter that keeps rows unique lives
   // here in the actor. Time.now() alone is constant for the whole round, so a
@@ -92,19 +107,19 @@ persistent actor self {
   // the stamped rows are new objects, so the index is refreshed after the stamp.
   TxRepo.reindex(transactions, transactionsByUser);
 
-  transient let authService = AuthService.create(users, usernames, usersById, reservedUsernames, nextUid);
-  transient let userService = UserService.create(users, usernames, usersById, reservedUsernames);
+  transient let authService = AuthService.create(users, usernames, usersById, reservedUsernames, nextUid, claimLimits);
+  transient let userService = UserService.create(users, usernames, usersById, reservedUsernames, claimLimits);
   transient let adminService = AdminService.create(reservedUsernames, users, usernames);
   transient let dashboardService = DashboardService.create(users, transactions, transactionsByUser, ledger);
-  transient let depositService = DepositService.create(users, transactions, transactionsByUser, ledger, nextUid);
-  transient let withdrawService = WithdrawService.create(users, transactions, transactionsByUser, ledger, nextUid);
-  transient let transferService = TransferService.create(users, usernames, transactions, transactionsByUser, ledger, nextUid);
-  transient let usernameSaleService = UsernameSaleService.create(users, usernames, reservedUsernames, transferService);
+  transient let depositService = DepositService.create(users, transactions, transactionsByUser, ledger, nextUid, syncDepositLimits);
+  transient let withdrawService = WithdrawService.create(users, transactions, transactionsByUser, ledger, nextUid, withdrawLimits);
+  transient let transferService = TransferService.create(users, usernames, transactions, transactionsByUser, ledger, nextUid, transferLimits);
+  transient let usernameSaleService = UsernameSaleService.create(users, usernames, reservedUsernames, transferService, purchaseUsernameLimits);
   transient let transactionService = TransactionService.create(users, transactions, transactionsByUser);
-  transient let settingsService = SettingsService.create(users, settings);
+  transient let settingsService = SettingsService.create(users, settings, settingsLimits);
   transient let tokenService = TokenService.create(
     tokens, tokensByLedger, tokensByUser, reservedSymbols, tokenWasm,
-    transferService, ledger, users, Principal.fromActor(self), nextUid,
+    transferService, ledger, users, Principal.fromActor(self), nextUid, launchTokenLimits,
   );
 
   // Chain-key symbols are compiled in, so seeding them costs no calls and runs
@@ -141,4 +156,5 @@ persistent actor self {
   include TokenApi(tokenService, mwConfig);
   include TransactionsApi(transactionService, mwConfig);
   include SettingsApi(settingsService, mwConfig);
+  include VerifiedApi(userService);
 };

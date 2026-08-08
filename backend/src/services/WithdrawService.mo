@@ -14,10 +14,12 @@ import TxRepo "../repositories/TransactionRepository";
 import UserStorage "../storage/UserStorage";
 import TxStorage "../storage/TransactionStorage";
 import AmountValidator "../validators/AmountValidator";
+import RateLimitService "RateLimitService";
+import RateLimitStorage "../storage/RateLimitStorage";
 
 module {
-  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService, nextId: () -> Text): WithdrawService {
-    { users; txs; byUser; ledger; nextId };
+  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService, nextId: () -> Text, limits: RateLimitStorage.RateLimitMap): WithdrawService {
+    { users; txs; byUser; ledger; nextId; limits };
   };
 
   public type WithdrawService = {
@@ -26,9 +28,13 @@ module {
     byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
     nextId: () -> Text;
+    limits: RateLimitStorage.RateLimitMap;
   };
 
   public func withdraw(service: WithdrawService, caller: Principal, ledgerId: Text, amount: Nat, destination: LedgerTypes.Account): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_WITHDRAW, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_WITHDRAW));
+    };
     if (not LedgerService.isAllowed(service.ledger, ledgerId)) {
       return #err("Unsupported token ledger: " # ledgerId);
     };

@@ -89,16 +89,21 @@ module {
   // per key listed the same account once per handle it has ever held, each row
   // rendering that account's current username -- so one person showed up as
   // several identical entries.
-  public func searchByUsername(usernames: UserStorage.UsernameMap, users: UserStorage.UserMap, search: Text): [Types.UserPublic] {
+  // Stops once the cap is filled rather than returning every match, so the
+  // response size is bounded by the cap instead of by how many accounts exist.
+  // The caller ranks and trims what it gets, so a cut here only ever removes
+  // rows that were already past the end of any rendered list.
+  public func searchByUsername(usernames: UserStorage.UsernameMap, users: UserStorage.UserMap, search: Text, limit: Nat): [Types.UserPublic] {
     let needle = UsernameValidator.normalize(search);
     let results = List.empty<Types.UserPublic>();
     let seen = Set.empty<Principal>();
-    for ((name, p) in usernames.entries()) {
+    label scan for ((name, p) in usernames.entries()) {
       if (name.contains(#text(needle)) and not seen.contains(p)) {
         switch (users.get(p)) {
           case (?u) {
             seen.add(p);
             results.add(Types.userToPublic(u));
+            if (results.size() >= limit) { break scan };
           };
           case (null) {};
         };

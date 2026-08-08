@@ -164,7 +164,11 @@
     "showFull": "पूरा पता दिखाएँ",
     "qrAlt": "जमा पते का QR कोड",
     "tabPrincipal": "प्रिंसिपल",
-    "hintPrincipal": "एक्सचेंज के लिए। आने के बाद फंड अंदर ले जाएँ।"
+    "hintPrincipal": "एक्सचेंज के लिए। आने के बाद फंड अंदर ले जाएँ।",
+    "syncTitle": "जमा सिंक करें",
+    "syncHint": "लेजर पर आया कुछ भी अपने इतिहास में जोड़ें।",
+    "syncAction": "सिंक करें",
+    "syncFound": "जमा आपके इतिहास में जोड़ दिया गया।"
   },
   "paymentLink": {
     "toggleLabel": "भुगतान अनुरोध",
@@ -231,7 +235,8 @@
     "availableName": "@{name} उपलब्ध है",
     "networkFee": "नेटवर्क शुल्क",
     "total": "कुल",
-    "insufficient": "बैलेंस कम है। शुल्क सहित इसकी कीमत {total} ICP है।",
+    "treasuryNote": "भुगतान ICPay ट्रेज़री {principal} को जाता है।",
+    "insufficient": "अपर्याप्त शेष",
     "buying": "खरीदा जा रहा है…",
     "buy": "यूज़रनेम खरीदें",
     "pricing": "कीमत",
@@ -258,7 +263,8 @@
       "tooLong": "अधिकतम लंबाई {max} अक्षर है",
       "invalidChars": "केवल अक्षर, अंक और अंडरस्कोर",
       "notFree": "मुफ़्त यूज़रनेम के लिए {min}+ अक्षर चाहिए। छोटे नाम खरीदे जा सकते हैं।"
-    }
+    },
+    "brandProtectionLink": "Brand protection"
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -565,5 +571,21 @@
     "marketUnavailable": "बाज़ार डेटा अभी उपलब्ध नहीं है।",
     "mintingAccount": "मिंटिंग खाता",
     "mintingAccountNone": "कोई नहीं"
+  },
+  "brandProtection": {
+    "title": "Brand Protection",
+    "subtitle": "Official usernames reserved for real brands. If you own one, claim it.",
+    "searchPlaceholder": "Search a brand…",
+    "allReserved": "{count} brands protected",
+    "results": "{count} matches",
+    "noneFound": "No brand named “{query}” found.",
+    "brandHandle": "Official reserved handle",
+    "reserved": "Reserved",
+    "ownItTitle": "Own this brand?",
+    "ownItBody": "If a reserved name is your official brand, contact us with proof of ownership and your ICPay username.",
+    "contact": "Contact",
+    "copyTemplate": "Copy proof template",
+    "copied": "Copied!",
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
   }
 }

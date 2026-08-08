@@ -39,18 +39,24 @@ module {
     null;
   };
 
-  // Priced on length alone, so a quote costs no state read and the frontend can
-  // mirror the same rule without a call.
-  public func priceFor(name: Text): Nat {
+  // Priced tier by length alone, so both a quote and a badge cost no state read
+  // and the frontend can mirror the rule without a call.
+  public type Tier = { #ultra; #premium; #standard; #basic };
+
+  public func tierFor(name: Text): Tier {
     let len = name.size();
-    if (len <= 3) {
-      Config.PRICE_ULTRA_PREMIUM;
-    } else if (len == 4) {
-      Config.PRICE_PREMIUM;
-    } else if (len == 5) {
-      Config.PRICE_STANDARD;
-    } else {
-      Config.PRICE_BASIC;
+    if (len <= 3) { #ultra }
+    else if (len == 4) { #premium }
+    else if (len == 5) { #standard }
+    else { #basic };
+  };
+
+  public func priceFor(name: Text): Nat {
+    switch (tierFor(name)) {
+      case (#ultra) { Config.PRICE_ULTRA_PREMIUM };
+      case (#premium) { Config.PRICE_PREMIUM };
+      case (#standard) { Config.PRICE_STANDARD };
+      case (#basic) { Config.PRICE_BASIC };
     };
   };
 

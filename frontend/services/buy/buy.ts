@@ -2,6 +2,12 @@ import type { Identity } from "@icp-sdk/core/agent"
 import { call, query, type Outcome } from "@/services/client"
 import type { Purchase } from "@/services/types"
 
+// The principal the ledger transfer actually lands in. Compiled into the
+// canister, not caller-suppliable -- shown so a buyer can verify it themselves.
+export function getUsernameTreasury(identity: Identity | undefined): Promise<string> {
+  return query(identity, async (actor) => (await actor.getUsernameTreasury()).toText())
+}
+
 // The canister charges the treasury transfer first and assigns the name only
 // once the ledger confirms, so a rejected payment never yields a handle.
 export function purchaseUsername(

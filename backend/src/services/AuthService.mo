@@ -7,10 +7,13 @@ import ReservedRepo "../repositories/ReservedUsernameRepository";
 import ReservedStorage "../storage/ReservedUsernameStorage";
 import PrincipalValidator "../validators/PrincipalValidator";
 import UsernameValidator "../validators/UsernameValidator";
+import RateLimitService "RateLimitService";
+import RateLimitStorage "../storage/RateLimitStorage";
+import Config "../config/Config";
 
 module {
-  public func create(users: UserStorage.UserMap, usernames: UserStorage.UsernameMap, usersById: UserStorage.UserIdMap, reserved: ReservedStorage.ReservedUsernameSet, nextId: () -> Text): AuthService {
-    { users; usernames; usersById; reserved; nextId };
+  public func create(users: UserStorage.UserMap, usernames: UserStorage.UsernameMap, usersById: UserStorage.UserIdMap, reserved: ReservedStorage.ReservedUsernameSet, nextId: () -> Text, claimLimits: RateLimitStorage.RateLimitMap): AuthService {
+    { users; usernames; usersById; reserved; nextId; claimLimits };
   };
 
   public type AuthService = {
@@ -19,6 +22,9 @@ module {
     usersById: UserStorage.UserIdMap;
     reserved: ReservedStorage.ReservedUsernameSet;
     nextId: () -> Text;
+    // Shared with UserService.updateUsername: both are the free-claim path for
+    // the same account, so one budget covers either route to it.
+    claimLimits: RateLimitStorage.RateLimitMap;
   };
 
   public func login(service: AuthService, caller: Principal): Types.AuthResult {
@@ -43,6 +49,9 @@ module {
     switch (PrincipalValidator.validate(caller)) {
       case (?err) { return #err(err) };
       case (null) {};
+    };
+    if (not RateLimitService.allow(service.claimLimits, caller, Config.RATE_CLAIM_USERNAME, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_CLAIM_USERNAME));
     };
     switch (UsernameValidator.validateFreeClaim(username)) {
       case (?err) { return #err(err) };

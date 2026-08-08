@@ -13,7 +13,7 @@ import { SendSuccess } from "@/components/wallet/send-success"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
-import { useResolvedUsername, useLiveBalance, useRefreshWallet, useDashboard } from "@/hooks/use-wallet-data"
+import { useResolvedUsername, useLiveBalance, useRefreshWallet, useOwnProfile } from "@/hooks/use-wallet-data"
 import { tip } from "@/services/transfer/transfer"
 import { useAuth } from "@/components/auth/auth-provider"
 
@@ -27,10 +27,10 @@ export function ProfileView() {
   const { identity } = useAuth()
   const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
-  // Shares the dashboard cache rather than refetching: the sender's own handle
-  // is only needed to stamp the memo.
-  const { data: dashboard } = useDashboard()
-  const senderUsername = dashboard?.user.username?.[0]
+  // A fast query, not the ~6.6s dashboard: the sender's own handle is only
+  // needed to stamp the memo.
+  const { data: ownProfile } = useOwnProfile()
+  const senderUsername = ownProfile?.username?.[0]
   const [tipOpen, setTipOpen] = useState(false)
   const [tipped, setTipped] = useState<Tipped | null>(null)
   const [copied, setCopied] = useState(false)

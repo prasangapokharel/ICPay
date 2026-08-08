@@ -1,0 +1,106 @@
+Let me look at the backend main.mo structure to see the existing wiring pattern, then search for any existing Bookmark API.
+
+The file doesn't exist yet — that's the API you want to create. Let me read the main.mo to see the wiring pattern, plus the middleware/auth and a similar simple API to model the new one on.
+
+I have the main.mo wiring pattern. Let me look at the middleware/auth (for the effectiveCaller pattern) and a similar simple API + storage to model Bookmark against. Let me read `middleware/Auth.mo`, a simple API like `Verified.mo`/`Settings.mo`, and how storage + service + repo are structured.
+
+Let me set up a todo list and look at the storage/service/repo patterns I'll mirror — the simplest service with a `byUser` map. `SettingsStorage` is the right model (a map + bykey pattern), and `SettingsService`/`SettingsRepo` show the transaction of create→wired. Let me read these in parallel.
+
+Let me read the settings storage, service, repo, and one API in parallel to capture the exact patterns.
+
+I have the full service/storage pattern. Let me also read the Types file to see the DTO/mapper conventions and the ApiResult type, plus the UserService's helper accessors (getById) that I'll need for looking up receiverUserId.
+
+I have the full codebase conventions. Let me also quickly check the UserRepository accessors available (getById / getByUsername) to reference in the summary, and how the Settings repo does map inserts with `Map` API.
+
+I have everything I need. Let me also confirm the `SettingsRepository` uses the core `Map` API style for the `put`/`get` so the Bookmark status-summarized. Let me quickly read it.
+
+I have the complete picture of the codebase conventions. Let me update my todos and write the clean summary for creating the new `Bookmark` API.
+
+Here's the clean summary for creating the **Bookmark** API, following the exact conventions I verified in the backend (`api/v1 → services → repositories → storage`, `caller`-based auth, `ApiResult` wrapper, core `Map`).
+
+---
+
+## Bookmark — creation summary
+
+### Purpose / fields
+- **`userId`** — the owner who bookmarks (derived from `caller`, not passed in — matches the auth pattern: only `effectiveCaller`).
+- **`receiverUserId`** — the user being bookmarked (the one the owner wants on their list).
+- **`status`** — defaults to **0**; **1** means Market (a marketplace bookmark). Stored as `Nat`.
+
+---
+
+### 1. Model — `storage/BookmarkStorage.mo`
+One map keyed by owner `userId`, list of bookmark rows:
+
+```motoko
+import Map "mo:core/Map";
+
+module {
+  public type Bookmark = {
+    userId: Types.UserId;          // owner (caller)
+    receiverUserId: Types.UserId;
+    status: Nat;                   // 0 = default, 1 = market
+    createdAt: Int;
+  };
+  public type BookmarkMap = Map.Map<Types.UserId, [Bookmark]>;  // owner -> list
+  public func createBookmarkMap(): BookmarkMap { Map.empty<Types.UserId, [Bookmark]>() };
+};
+```
+
+### 2. Repository — `repositories/BookmarkRepository.mo`
+Pure data access:
+- `listByUser(map, userId): [Bookmark]`
+- `add(map, ownerUserId, receiverUserId, status, now): Bookmark` — append to the owner's array (skip/update if already bookmarked that receiver)
+- `remove(map, ownerUserId, receiverUserId): ?()` — remove by receiver
+- `exists(map, ownerUserId, receiverUserId): Bool`
+
+### 3. Service — `services/BookmarkService.mo`
+Factory + business logic (mirrors `SettingsService`):
+```motoko
+public func create(users: UserStorage.UserMap, bookmarks: BookmarkStorage.BookmarkMap): BookmarkService { { users; bookmarks } };
+```
+Every action resolves the caller:
+- `list(service, caller)` → `#ok([...])` or `#err("User not found")`
+- `add(service, caller, receiverUserId, status): ApiResult<Bookmark>` — validates owner exists, receiver exists via `UserRepo.getById(usersById, ...)`, then repo.add
+- `remove(service, caller, receiverUserId): ApiResult<()>`
+
+### 4. API — `api/v1/Bookmark.mo`
+Exact wiring shape (like `Settings.mo`/`Dashboard.mo`):
+```motoko
+mixin (bookmarks: BookmarkService.BookmarkService, mwConfig: MiddlewareAuth.Config) {
+  public shared ({ caller }) func listBookmarks() : async Types.ApiResult<[Types.BookmarkPublic]> {
+    BookmarkService.list(bookmarks, MiddlewareAuth.effectiveCaller(mwConfig, caller));
+  };
+  public shared ({ caller }) func addBookmark(receiverUserId: Types.UserId, status: Nat) : async Types.ApiResult<Types.BookmarkPublic> {
+    ...
+  };
+  public shared ({ caller }) func removeBookmark(receiverUserId: Types.UserId) : async Types.ApiResult<()> { ... };
+};
+```
+`list`/`add`/`remove` are one of:
+- **query** if read-only (`listBookmarks`) — no cycles
+- **update** (`addBookmark`, `removeBookmark`) since they mutate stable state
+
+### 5. Types (`types.mo`)
+- Add a `BookmarkPublic` (`userId`, `receiverUserId`, `status`, `createdAt`) + a mapper `bookmarkToPublic`.
+
+### 6. Wire into `main.mo`
+Mirror the `Settings` wiring exactly:
+- Import `BookmarkStorage`, `BookmarkService`, `BookmarkApi`
+- `let bookmarks = BookmarkStorage.createBookmarkMap();` (near the other stable maps)
+- `transient let bookmarkService = BookmarkService.create(users, bookmarks);`
+- `include BookmarkApi(bookmarkService, mwConfig);`
+
+---
+
+## Frontend shape (for when you build it)
+- `services/bookmark/bookmark.ts`:
+  - `listBookmarks(identity): Promise<BookmarkPublic[]>` via `query`
+  - `addBookmark(identity, receiverUserId, status): Promise<Outcome<BookmarkPublic>>` via `call`
+  - `removeBookmark(identity, receiverUserId): Promise<Outcome<void>>` via `call`
+
+---
+
+**One design question to decide:** do you want `status` as a plain `Nat` (0/1) as you wrote, or a typed variant (`#default; #market`)? The codebase strongly prefers **variant types** for this kind of enum (e.g. `#deposit; #withdraw` in `TxType`). A raw `Nat` is unidiomatic here and lets callers pass `7`. I recommend `Nat` on the wire if the frontend needs the raw number, but an internal variant mapped to `0/1`. But per your spec I've kept it as `Nat` (0/1).
+
+Want me to generate the actual `Bookmark.*.mo` + `types.mo` + `main.mo` wiring files now?

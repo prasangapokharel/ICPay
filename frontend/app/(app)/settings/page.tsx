@@ -15,7 +15,6 @@ import {
   QrCode01Icon,
   Coins01Icon,
   RocketIcon,
-  ChartLineData01Icon,
   Search01Icon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons"
@@ -45,28 +44,83 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
   {
     key: "money",
     items: [
-      { href: "/transfer", key: "send", icon: ArrowUpRight01Icon, keywords: "transfer pay" },
-      { href: "/deposit", key: "deposit", icon: Download01Icon, keywords: "receive qr address" },
-      { href: "/withdraw", key: "withdraw", icon: Upload01Icon, keywords: "cash out" },
-      { href: "/wallet", key: "tokens", icon: Coins01Icon, keywords: "balance ckbtc holdings" },
-      { href: "/launch", key: "launch", icon: RocketIcon, keywords: "create token icrc mint deploy", hot: true },
-      { href: "/icpay", key: "icpayToken", icon: ChartLineData01Icon, keywords: "icpay token price chart buy market" },
+      {
+        href: "/transfer",
+        key: "send",
+        icon: ArrowUpRight01Icon,
+        keywords: "transfer pay",
+      },
+      {
+        href: "/deposit",
+        key: "deposit",
+        icon: Download01Icon,
+        keywords: "receive qr address",
+      },
+      {
+        href: "/withdraw",
+        key: "withdraw",
+        icon: Upload01Icon,
+        keywords: "cash out",
+      },
+      {
+        href: "/wallet",
+        key: "tokens",
+        icon: Coins01Icon,
+        keywords: "balance ckbtc holdings",
+      },
+      {
+        href: "/launch",
+        key: "launch",
+        icon: RocketIcon,
+        keywords: "create token icrc mint deploy",
+        hot: true,
+      },
     ],
   },
   {
     key: "identity",
     items: [
-      { href: "/username", key: "buyName", icon: ShoppingBag01Icon, keywords: "username premium handle" },
-      { href: "/profile", key: "profile", icon: UserIcon, keywords: "account principal" },
-      { href: "/icpverse", key: "icpverse", icon: UserMultipleIcon, keywords: "people tip discover" },
-      { href: "/deposit", key: "myQr", icon: QrCode01Icon, keywords: "scan code address" },
+      {
+        href: "/username",
+        key: "buyName",
+        icon: ShoppingBag01Icon,
+        keywords: "username premium handle",
+      },
+      {
+        href: "/profile",
+        key: "profile",
+        icon: UserIcon,
+        keywords: "account principal",
+      },
+      {
+        href: "/icpverse",
+        key: "icpverse",
+        icon: UserMultipleIcon,
+        keywords: "people tip discover",
+      },
+      {
+        href: "/deposit",
+        key: "myQr",
+        icon: QrCode01Icon,
+        keywords: "scan code address",
+      },
     ],
   },
   {
     key: "activity",
     items: [
-      { href: "/transactions", key: "history", icon: Clock01Icon, keywords: "activity transactions" },
-      { href: "/", key: "balance", icon: Wallet01Icon, keywords: "home dashboard" },
+      {
+        href: "/transactions",
+        key: "history",
+        icon: Clock01Icon,
+        keywords: "activity transactions",
+      },
+      {
+        href: "/",
+        key: "balance",
+        icon: Wallet01Icon,
+        keywords: "home dashboard",
+      },
     ],
   },
 ]
@@ -85,10 +139,7 @@ export default function MenuPage() {
 
   const sections = SECTIONS.map((s) => ({
     ...s,
-    items:
-      s.key === "activity"
-        ? [...s.items, settingsTile]
-        : s.items,
+    items: s.key === "activity" ? [...s.items, settingsTile] : s.items,
   }))
 
   const needle = query.trim().toLowerCase()
@@ -100,7 +151,9 @@ export default function MenuPage() {
           // keywords, so the box works in the active language and still
           // answers the latin aliases a bilingual user might type.
           items: s.items.filter((i) =>
-            `${t(`items.${i.key}`)} ${i.keywords ?? ""}`.toLowerCase().includes(needle)
+            `${t(`items.${i.key}`)} ${i.keywords ?? ""}`
+              .toLowerCase()
+              .includes(needle)
           ),
         }))
         .filter((s) => s.items.length > 0)
@@ -116,7 +169,7 @@ export default function MenuPage() {
       <div className="relative">
         <HugeiconsIcon
           icon={Search01Icon}
-          className="pointer-events-none absolute left-3.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground"
+          className="pointer-events-none absolute top-1/2 left-3.5 size-3.5 -translate-y-1/2 text-muted-foreground"
         />
         <Input
           variant="search"
@@ -129,7 +182,9 @@ export default function MenuPage() {
 
       {visible.map((section) => (
         <div key={section.key} className="space-y-3">
-          <h2 className="text-sm font-semibold">{t(`sections.${section.key}`)}</h2>
+          <h2 className="text-sm font-semibold">
+            {t(`sections.${section.key}`)}
+          </h2>
           <div className="grid grid-cols-4 gap-y-5">
             {section.items.map((item) => (
               <ServiceTile

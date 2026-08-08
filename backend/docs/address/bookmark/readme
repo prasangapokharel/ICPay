@@ -1,0 +1,251 @@
+# Bookmark API — address book feature
+
+A bookmark = a saved reference from one user (the **owner**) to another (the
+**receiver**). The owner keeps a personal list; the receiver can be anyone with
+an account. A `status` flag splits the list into plain **address-book** entries
+(`0`) and **market** entries (`1`).
+
+Endpoints live on the update path for writes (state changes persist) and a query
+for reads (free, no cycle burn).
+
+## Data model (3 fields)
+
+| Field           | Type   | Meaning                                              |
+|-----------------|--------|------------------------------------------------------|
+| `userId`        | Text   | the owner. **Derived from `caller`, never user-supplied** |
+| `receiverUserId`| Text   | the account being saved                             |
+| `status`        | Nat    | `0` = default / address book, `1` = market           |
+
+Plus `createdAt: Int` for ordering.
+
+`userId` is never a parameter — every action resolves the caller through
+`MiddlewareAuth.effectiveCaller`, exactly like `Settings` and `Dashboard`. The
+frontend only ever passes `receiverUserId` and `status`.
+
+## Storage — `storage/BookmarkStorage.mo`
+
+One map `owner -> list`, so listing one user is a single key lookup.
+
+```motoko
+import Map "mo:core/Map";
+
+module {
+  public type Bookmark {
+    userId: Types.UserId;           // owner (= caller)
+    receiverUserId: Types.UserId;
+    status: Nat;                    // 0 = default, 1 = market
+    createdAt: Int;
+  };
+  // owner userId -> that owner's bookmarks
+  public type BookmarkMap = Map.Map<Types.UserId, [Bookmark]>;
+  public func createBookmarkMap(): BookmarkMap { Map.empty<Types.UserId, [Bookmark]>() };
+};
+```
+
+The map is stable memory, so it survives upgrades (same as `SettingsStorage`).
+
+## Repository — `repositories/BookmarkRepository.mo`
+
+All pure data access. Keys are `Text`, so the `mo:core` Map supplies the compare
+implicitly — the calls read like `SettingsRepository`:
+
+```motoko
+import Map "mo:core/Map";
+import Array "mo:core/Array";
+import Types "../types";
+import BookmarkStorage "../storage/BookmarkStorage";
+
+module {
+  public func listByUser(bookmarks: BookmarkStorage.BookmarkMap, userId: Types.UserId): [BookmarkStorage.Bookmark] {
+    switch (bookmarks.get(userId)) {
+      case (null) { [] };
+      case (?list) { list };
+    };
+  };
+
+  // Append, or no-op if the receiver is already bookmarked (idempotent).
+  public func add(
+    bookmarks: BookmarkStorage.BookmarkMap,
+    ownerUserId: Types.UserId,
+    receiverUserId: Types.UserId,
+    status: Nat,
+    now: Int,
+  ): BookmarkStorage.Bookmark {
+    let current = listByUser(bookmarks, ownerUserId);
+    switch (current.last()) {
+      case (?b) { if (b.receiverUserId == receiverUserId) { return b } };
+      case (null) {};
+    };
+    let b = { userId = ownerUserId; receiverUserId; status; createdAt = now };
+    bookmarks.swap(ownerUserId, current # [b]);
+    b;
+  };
+
+  // Drop the matching receiver, leaving the owner key present (empty list).
+  public func remove(
+    bookmarks: BookmarkStorage.BookmarkMap,
+    ownerUserId: Types.UserId,
+    receiverUserId: Types.UserId,
+  ) {
+    let kept = Array.filter(
+      listByUser(bookmarks, ownerUserId),
+      func b { b.receiverUserId != receiverUserId },
+    );
+    bookmarks.swap(ownerUserId, kept);
+  };
+};
+```
+
+`add` uses `bookmarks.swap(owner, newList)` to **replace** the whole value; the
+imperative `Map.add` only inserts when the key is absent, so `swap` is the
+correct call to rewrite an existing owner's list.
+
+## Service — `services/BookmarkService.mo`
+
+Business rules + caller resolution. Mirrors `SettingsService`.
+
+```motoko
+import Principal "mo:core/Principal";
+import Time "mo:core/Time";
+import Array "mo:core/Array";
+import Types "../types";
+import UserRepo "../repositories/UserRepository";
+import BookmarkRepo "../repositories/BookmarkRepository";
+import BookmarkStorage "../storage/BookmarkStorage";
+import UserStorage "../storage/UserStorage";
+
+module {
+  public func create(users: UserStorage.UserMap, usersById: UserStorage.UserIdMap,
+                     bookmarks: BookmarkStorage.BookmarkMap): BookmarkService {
+    { users; usersById; bookmarks };
+  };
+
+  public type BookmarkService = {
+    users: UserStorage.UserMap;
+    usersById: UserStorage.UserIdMap;
+    bookmarks: BookmarkStorage.BookmarkMap;
+  };
+
+  public func list(service: BookmarkService, caller: Principal): Types.ApiResult<[Types.BookmarkPublic]> {
+    switch (UserRepo.getByPrincipal(service.users, caller)) {
+      case (?user) { #ok(Array.map(BookmarkRepo.listByUser(service.bookmarks, user.id), Types.bookmarkToPublic)) };
+      case (null) { #err("User not found") };
+    };
+  };
+
+  public func add(service: BookmarkService, caller: Principal,
+                  receiverUserId: Types.UserId, status: Nat): Types.ApiResult<Types.BookmarkPublic> {
+    switch (UserRepo.getByPrincipal(service.users, caller)) {
+      case (null) { #err("User not found") };
+      case (?user) {
+        // Can't save yourself, and the receiver must actually exist.
+        if (receiverUserId == user.id) { return #err("Cannot bookmark yourself") };
+        switch (UserRepo.getById(service.usersById, service.users, receiverUserId)) {
+          case (null) { #err("Receiver not found") };
+          case (?_) {
+            #ok(Types.bookmarkToPublic(BookmarkRepo.add(service.bookmarks, user.id, receiverUserId, status, Time.now())));
+          };
+        };
+      };
+    };
+  };
+
+  public func remove(service: BookmarkService, caller: Principal,
+                     receiverUserId: Types.UserId): Types.ApiResult<()> {
+    switch (UserRepo.getByPrincipal(service.users, caller)) {
+      case (null) { #err("User not found") };
+      case (?user) { BookmarkRepo.remove(service.bookmarks, user.id, receiverUserId); #ok };
+    };
+  };
+};
+```
+
+Note the receiver lookup — `UserRepo.getById(usersById, users, receiverUserId)`
+keeps a bookmark from pointing at a nonexistent account.
+
+## API — `api/v1/Bookmark.mo`
+
+```motoko
+mixin (bookmarks: BookmarkService.BookmarkService, mwConfig: MiddlewareAuth.Config) {
+  public shared query ({ caller }) func listBookmarks() : async Types.ApiResult<[Types.BookmarkPublic]> {
+    BookmarkService.list(bookmarks, MiddlewareAuth.effectiveCaller(mwConfig, caller));
+  };
+
+  public shared ({ caller }) func addBookmark(
+    receiverUserId: Types.UserId, status: Nat
+  ) : async Types.ApiResult<Types.BookmarkPublic> {
+    BookmarkService.add(bookmarks, MiddlewareAuth.effectiveCaller(mwConfig, caller), receiverUserId, status);
+  };
+
+  public shared ({ caller }) func removeBookmark(
+    receiverUserId: Types.UserId
+  ) : async Types.ApiResult<()> {
+    BookmarkService.remove(bookmarks, MiddlewareAuth.effectiveCaller(mwConfig, caller), receiverUserId);
+  };
+};
+```
+
+`listBookmarks` is a **query** (read-only). `addBookmark` / `removeBookmark` are
+**updates** — they mutate stable memory.
+
+## Types — `types.mo`
+
+```motoko
+public type BookmarkPublic = {
+  userId: Types.UserId;
+  receiverUserId: Types.UserId;
+  status: Nat;
+  createdAt: Int;
+};
+
+public func bookmarkToPublic(self: Bookmark): BookmarkPublic {
+  { userId = self.userId; receiverUserId = self.receiverUserId; status = self.status; createdAt = self.createdAt };
+};
+```
+
+## Wiring — `main.mo`
+
+Mirror the `Settings` wiring:
+
+```motoko
+import BookmarkStorage "storage/BookmarkStorage";
+import BookmarkService "services/BookmarkService";
+import BookmarkApi "api/v1/Bookmark";
+// ...
+let bookmarks = BookmarkStorage.createBookmarkMap();      // near other stable maps
+// ...
+transient let bookmarkService = BookmarkService.create(users, usersById, bookmarks);
+// ...
+include BookmarkApi(bookmarkService, mwConfig);
+```
+
+New empty stable map — needs **no migration**, it simply arrives empty on the
+next upgrade (same note as `tokens` in `main.mo`).
+
+## Response summary
+
+| Method            | Type    | Returns                                       |
+|-------------------|---------|-----------------------------------------------|
+| `listBookmarks`   | query   | `{ ok: [BookmarkPublic] }` or `{ err: Text }`  |
+| `addBookmark`     | update  | `{ ok: BookmarkPublic }` or `{ err: Text }`    |
+| `removeBookmark`  | update  | `{ ok }` or `{ err: Text }`                    |
+
+Every response is the standard `ApiResult<T>` envelope — no bare option types.
+
+## Frontend (to build)
+
+`services/bookmark/bookmark.ts`:
+- `listBookmarks(identity): Promise<Outcome<BookmarkPublic[]>>` via `query`
+- `addBookmark(identity, receiverUserId, status): Promise<Outcome<BookmarkPublic>>` via `call`
+- `removeBookmark(identity, receiverUserId): Promise<Outcome<void>>` via `call`
+
+Consumer: an address-book list in settings or the icpverse profile picker, with
+the `status` flag toggling a Market tab.
+
+## Design note
+
+`status` is kept as `Nat` (0/1) per your spec. The codebase prefers variant
+types for enums (`TxType`), so if you want to harden it later, replace `Nat`
+with an internal `#default; #market` variant and map to `0/1` on the wire only
+if the frontend needs the raw number. The controller already rejects `0` and
+`1`-only semantics at the service layer.

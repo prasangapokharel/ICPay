@@ -1,0 +1,110 @@
+If you're asking **"How do explorers get all those fields from a Motoko ICRC ledger?"**, the answer is:
+
+### Standard ICRC-1 methods (your token should expose these)
+
+These are the only standard queries an explorer can call directly from your ledger:
+
+```motoko
+icrc1_name() : async Text
+icrc1_symbol() : async Text
+icrc1_decimals() : async Nat8
+icrc1_fee() : async Nat
+icrc1_total_supply() : async Nat
+icrc1_metadata() : async [(Text, Value)]
+icrc1_supported_standards() : async [{ name : Text; url : Text }]
+icrc1_balance_of(account : Account) : async Nat
+```
+
+These are defined by the ICRC-1 standard. ([motoko-book.dev][1])
+
+---
+
+### What comes directly from your Motoko ledger
+
+| Field        | Source                            |
+| ------------ | --------------------------------- |
+| name         | `icrc1_name()`                    |
+| symbol       | `icrc1_symbol()`                  |
+| decimals     | `icrc1_decimals()`                |
+| fee          | `icrc1_fee()`                     |
+| total_supply | `icrc1_total_supply()`            |
+| logo         | `icrc1_metadata()` (`icrc1:logo`) |
+| description  | `icrc1_metadata()`                |
+| website      | custom metadata                   |
+| twitter      | custom metadata                   |
+
+---
+
+### What does NOT come from your Motoko ledger
+
+These fields are **not part of the ICRC standard**:
+
+```text
+holder_count
+rank
+best_pool_id
+fully_diluted_market_cap
+metrics
+price
+volume_24h
+liquidity
+status
+```
+
+These are computed by the explorer/indexer by scanning the blockchain and DEXes, not by calling your ledger. ([scan.piggycell.io][2])
+
+---
+
+### If you want holder_count yourself
+
+Motoko **cannot enumerate all holders** through the ICRC standard.
+
+You must maintain your own index.
+
+Example:
+
+```motoko
+stable var holders = Map.HashMap<Principal, Nat>(0, Principal.equal, Principal.hash);
+
+public query func holder_count() : async Nat {
+    holders.size();
+}
+```
+
+Update `holders` whenever a transfer changes a balance to or from zero.
+
+---
+
+### Custom API
+
+Many projects expose extra methods:
+
+```motoko
+public query func get_stats() : async {
+    holder_count : Nat;
+    total_transfers : Nat;
+    circulating_supply : Nat;
+    burned_supply : Nat;
+}
+```
+
+or
+
+```motoko
+public query func holder_count() : async Nat
+public query func circulating_supply() : async Nat
+public query func burned_supply() : async Nat
+public query func total_transactions() : async Nat
+```
+
+These are **custom APIs**, not part of ICRC-1.
+
+---
+
+So, if you're asking **"How does that JSON get all those fields?"**:
+
+* ✅ `name`, `symbol`, `fee`, `decimals`, `total_supply`, and metadata come from your Motoko ICRC ledger.
+* ❌ `holder_count`, `rank`, `metrics`, `market_cap`, `best_pool_id`, and similar fields are calculated by the explorer/indexer from blockchain activity and liquidity pools—they are not returned by the official ICRC-1 interface. ([motoko-book.dev][1])
+
+[1]: https://motoko-book.dev/internet-computer-standards/icrc1.html?utm_source=chatgpt.com "ICRC1 - The Motoko Programming Language Book"
+[2]: https://scan.piggycell.io/about?utm_source=chatgpt.com "About - ICPScan"

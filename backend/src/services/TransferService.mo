@@ -20,6 +20,8 @@ import TxStorage "../storage/TransactionStorage";
 import AmountValidator "../validators/AmountValidator";
 import TransferValidator "../validators/TransferValidator";
 import AccountValidator "../validators/AccountValidator";
+import RateLimitService "RateLimitService";
+import RateLimitStorage "../storage/RateLimitStorage";
 
 module {
   public func create(
@@ -29,8 +31,9 @@ module {
     byUser: TxStorage.TxByUser,
     ledger: LedgerService.LedgerService,
     nextId: () -> Text,
+    limits: RateLimitStorage.RateLimitMap,
   ) : TransferService {
-    { users; usernames; txs; byUser; ledger; nextId };
+    { users; usernames; txs; byUser; ledger; nextId; limits };
   };
 
   public type TransferService = {
@@ -40,9 +43,15 @@ module {
     byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
     nextId: () -> Text;
+    // One budget across all four transfer* entrypoints -- they are the same
+    // spend from the same account, just addressed differently.
+    limits: RateLimitStorage.RateLimitMap;
   };
 
   public func transferByUsername(service: TransferService, caller: Principal, ledgerId: Text, username: Types.Username, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_TRANSFER, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_TRANSFER));
+    };
     switch (validateRequest(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -61,6 +70,9 @@ module {
   };
 
   public func transferByPrincipal(service: TransferService, caller: Principal, ledgerId: Text, to: Principal, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_TRANSFER, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_TRANSFER));
+    };
     switch (validateRequest(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -78,6 +90,16 @@ module {
   };
 
   public func transferByAccount(service: TransferService, caller: Principal, ledgerId: Text, to: LedgerTypes.Account, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_TRANSFER, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_TRANSFER));
+    };
+    await transferByAccountInternal(service, caller, ledgerId, to, amount, memo);
+  };
+
+  // The paid flows settle through here. They hold their own window already, so
+  // going through the gated entrypoint would charge one purchase against two
+  // budgets and let a few buys lock the caller out of ordinary transfers.
+  public func transferByAccountInternal(service: TransferService, caller: Principal, ledgerId: Text, to: LedgerTypes.Account, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
     switch (validateRequest(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -125,6 +147,9 @@ module {
   // required rather than optional, so this is the one path that must send a
   // real number.
   public func transferByAccountId(service: TransferService, caller: Principal, accountIdHex: Text, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_TRANSFER, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_TRANSFER));
+    };
     switch (AmountValidator.validate(amount)) {
       case (?err) { return #err(err) };
       case (null) {};

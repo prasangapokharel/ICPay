@@ -9,9 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { UserIcon, Tick02Icon, Cancel01Icon, ShoppingBag01Icon, ArrowRight01Icon, Copy01Icon } from "@hugeicons/core-free-icons"
+import { UserIcon, Tick02Icon, Cancel01Icon, ShoppingBag01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import type { UserPublic } from "@/services/types"
-import { copyText, formatPrincipal } from "@/lib/wallet-utils"
 import Link from "next/link"
 import {
   validateFreeUsername,
@@ -21,12 +20,11 @@ import {
 
 type ProfileCardProps = {
   user: UserPublic
-  principal: string
   onUpdateUsername: (username: string) => Promise<string | null>
   onCheckUsername: (name: string) => Promise<boolean>
 }
 
-export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername }: ProfileCardProps) {
+export function ProfileCard({ user, onUpdateUsername, onCheckUsername }: ProfileCardProps) {
   const t = useTranslations("profile")
   const te = useTranslations("buyUsername.errors")
   const claimed = user.username?.[0]
@@ -34,15 +32,6 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
   const [checkResult, setCheckResult] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [copiedPrincipal, setCopiedPrincipal] = useState(false)
-
-  // Copies the full principal, not the truncated form on screen -- a shortened
-  // one pasted into a send field would address nothing.
-  const handleCopyPrincipal = async () => {
-    await copyText(principal)
-    setCopiedPrincipal(true)
-    setTimeout(() => setCopiedPrincipal(false), 1500)
-  }
 
   const handleCheck = async () => {
     if (!username.trim()) { setCheckResult(null); return }
@@ -84,41 +73,16 @@ export function ProfileCard({ user, principal, onUpdateUsername, onCheckUsername
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">{t("principal")}</Label>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopyPrincipal}
-            aria-label={t("copyPrincipal")}
-            className="h-auto w-full justify-start gap-2 rounded-lg px-0 py-1 text-left font-normal"
-          >
-            <span className="min-w-0 flex-1 truncate font-mono text-sm">
-              {formatPrincipal(principal)}
-            </span>
-            <HugeiconsIcon
-              icon={copiedPrincipal ? Tick02Icon : Copy01Icon}
-              className={
-                copiedPrincipal
-                  ? "size-4 shrink-0 text-primary"
-                  : "size-4 shrink-0 text-muted-foreground"
-              }
-            />
-          </Button>
-        </div>
-        <div className="space-y-1">
           <Label className="text-xs text-muted-foreground">{t("userId")}</Label>
           <p className="font-mono text-xs text-muted-foreground">{user.id}</p>
         </div>
-        <Separator />
-        {claimed ? (
-          <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">{t("username")}</Label>
-            <p className="text-sm font-medium">@{claimed}</p>
-            <p className="text-xs text-muted-foreground">
-              {t("permanentNote")}
-            </p>
-          </div>
-        ) : (
+        {claimed && (
+          <>
+            <Separator />
+            <p className="text-xs text-muted-foreground">{t("permanentNote")}</p>
+          </>
+        )}
+        {!claimed && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username">{t("choose")}</Label>

@@ -311,14 +311,18 @@ export function useUserSearch(search: string, limit = 10) {
 }
 
 // getUser is a query answering in about a second, where the same record inside
-// getDashboard rides a ~6.6s update call. The self-filter needs it before the
-// list paints, so it is read from the fast path.
-function useOwnUserId(): string | undefined {
+// getDashboard rides a ~6.6s update call. Anything that only needs the caller's
+// own handle or id should read it from here. Keyed as /profile keys it, so the
+// claim there mutates this too rather than leaving a second copy behind.
+export function useOwnProfile() {
   const { identity } = useAuth()
-  const { data } = useSWRImmutable(keyFor(identity, "own-profile"), () =>
-    getProfile(identity)
-  )
-  return data?.id
+  return useSWRImmutable(keyFor(identity, "profile"), () => getProfile(identity))
+}
+
+// The self-filter needs it before the list paints, so it is read from the fast
+// path.
+function useOwnUserId(): string | undefined {
+  return useOwnProfile().data?.id
 }
 
 // Buying a handle keeps the old one as an alias, and a canister that still

@@ -1,9 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import useSWRImmutable from "swr/immutable"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -25,14 +27,28 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { BadgeMark, PremiumBadge } from "@/components/verifed/premium-badge"
-import { BADGE_RANGES, tierBadgeSpans, type BadgeSpan } from "@/lib/verifed/premium-tick"
-import { purchaseUsername } from "@/services/buy/buy"
+import {
+  BADGE_RANGES,
+  tierBadgeSpans,
+  type BadgeSpan,
+} from "@/lib/verifed/premium-tick"
+import { purchaseUsername, getUsernameTreasury } from "@/services/buy/buy"
 import type { Purchase } from "@/services/types"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useRefreshWallet } from "@/hooks/use-wallet-data"
-import { formatAmount, ICP_FEE } from "@/lib/wallet-utils"
-import { priceFor, tierFor, validateUsername, TIERS, USERNAME_MAX_LENGTH, USERNAME_FREE_MIN_LENGTH } from "@/lib/username"
-import { useUsernameAvailability, useLiveBalance } from "@/hooks/use-wallet-data"
+import { formatAmount, ICP_FEE, shortPrincipal } from "@/lib/wallet-utils"
+import {
+  priceFor,
+  tierFor,
+  validateUsername,
+  TIERS,
+  USERNAME_MAX_LENGTH,
+  USERNAME_FREE_MIN_LENGTH,
+} from "@/lib/username"
+import {
+  useUsernameAvailability,
+  useLiveBalance,
+} from "@/hooks/use-wallet-data"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { primeSuccessChime } from "@/lib/success-chime"
 import { cn } from "@/lib/utils"
@@ -57,9 +73,21 @@ export default function UsernamePage() {
   const tier = trimmed ? tierFor(trimmed) : null
   const total = price + ICP_FEE
   const balance = useLiveBalance()
-  const insufficient = balance !== undefined && trimmed !== "" && total > balance
+  const insufficient =
+    balance !== undefined && trimmed !== "" && total > balance
+
+  // A query, and the treasury never moves, so it is read once per session and
+  // never revalidated.
+  const { data: treasury } = useSWRImmutable(
+    identity ? (["username-treasury"] as const) : null,
+    () => getUsernameTreasury(identity)
+  )
   const canBuy =
-    trimmed !== "" && !shapeError && available === true && !insufficient && !buying
+    trimmed !== "" &&
+    !shapeError &&
+    available === true &&
+    !insufficient &&
+    !buying
 
   const handleBuy = async () => {
     if (!identity || !canBuy) return
@@ -98,7 +126,7 @@ export default function UsernamePage() {
       <div className="space-y-2">
         <Label htmlFor="buy-username">{t("label")}</Label>
         <div className="relative">
-          <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-base text-muted-foreground">
+          <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-base text-muted-foreground">
             @
           </span>
           <Input
@@ -113,30 +141,40 @@ export default function UsernamePage() {
             autoCapitalize="none"
             autoCorrect="off"
             spellCheck={false}
-            className="pl-9 pr-10"
+            className="pr-10 pl-9"
           />
           {trimmed !== "" && !shapeError && !checking && (
-            <span className="absolute right-4 top-1/2 -translate-y-1/2">
+            <span className="absolute top-1/2 right-4 -translate-y-1/2">
               <HugeiconsIcon
                 icon={available ? Tick02Icon : Cancel01Icon}
-                className={cn("size-5", available ? "text-success" : "text-destructive")}
+                className={cn(
+                  "size-5",
+                  available ? "text-success" : "text-destructive"
+                )}
               />
             </span>
           )}
           {checking && (
-            <Spinner className="absolute right-4 top-1/2 size-4 -translate-y-1/2" />
+            <Spinner className="absolute top-1/2 right-4 size-4 -translate-y-1/2" />
           )}
         </div>
         {shapeError && (
           <p className="text-xs text-destructive">
-            {t(`errors.${shapeError}`, { max: USERNAME_MAX_LENGTH, min: USERNAME_FREE_MIN_LENGTH })}
+            {t(`errors.${shapeError}`, {
+              max: USERNAME_MAX_LENGTH,
+              min: USERNAME_FREE_MIN_LENGTH,
+            })}
           </p>
         )}
         {!shapeError && available === false && (
-          <p className="text-xs text-destructive">{t("taken", { name: trimmed })}</p>
+          <p className="text-xs text-destructive">
+            {t("taken", { name: trimmed })}
+          </p>
         )}
         {!shapeError && available === true && (
-          <p className="text-xs text-success">{t("availableName", { name: trimmed })}</p>
+          <p className="text-xs text-success">
+            {t("availableName", { name: trimmed })}
+          </p>
         )}
       </div>
 
@@ -168,15 +206,12 @@ export default function UsernamePage() {
             <span>{t("total")}</span>
             <span className="tabular-nums">{formatAmount(total)} ICP</span>
           </div>
+          {treasury && (
+            <p className="text-xs text-muted-foreground">
+              {t("treasuryNote", { principal: shortPrincipal(treasury) })}
+            </p>
+          )}
         </div>
-      )}
-
-      {insufficient && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {t("insufficient", { total: formatAmount(total) })}
-          </AlertDescription>
-        </Alert>
       )}
 
       {error && (
@@ -185,18 +220,25 @@ export default function UsernamePage() {
         </Alert>
       )}
 
-      <Button size="lg" className="w-full" disabled={!canBuy} onClick={handleBuy}>
+      <Button
+        size="lg"
+        className="w-full"
+        disabled={!canBuy}
+        onClick={handleBuy}
+      >
         {buying ? (
           <Spinner className="size-4" />
         ) : (
           <HugeiconsIcon icon={ShoppingBag01Icon} className="size-4" />
         )}
-        {buying ? t("buying") : t("buy")}
+        {buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}
       </Button>
 
       <div className="space-y-2">
         <div className="flex items-center gap-1.5">
-          <p className="text-xs font-medium text-muted-foreground">{t("pricing")}</p>
+          <p className="text-xs font-medium text-muted-foreground">
+            {t("pricing")}
+          </p>
           {/* A popover, not a tooltip: the badge rule is the reason to pick one
               tier over another, and on a phone there is no hover to reveal it. */}
           <Popover>
@@ -208,7 +250,9 @@ export default function UsernamePage() {
             </PopoverTrigger>
             <PopoverContent align="start" className="gap-3">
               <PopoverHeader>
-                <PopoverTitle className="text-sm">{t("badgeInfoTitle")}</PopoverTitle>
+                <PopoverTitle className="text-sm">
+                  {t("badgeInfoTitle")}
+                </PopoverTitle>
                 <PopoverDescription className="text-xs">
                   {t("badgeInfo", { min: USERNAME_FREE_MIN_LENGTH })}
                 </PopoverDescription>
@@ -221,12 +265,17 @@ export default function UsernamePage() {
                     <BadgeMark tier={badge} className="mt-px size-3.5" />
                     <span>
                       <span className="font-medium text-foreground">
-                        {t(badge === "gold" ? "goldBadgeTitle" : "blueBadgeTitle")}
+                        {t(
+                          badge === "gold" ? "goldBadgeTitle" : "blueBadgeTitle"
+                        )}
                       </span>{" "}
                       <span className="text-muted-foreground">
-                        {t(badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo", {
-                          lengths: `${BADGE_RANGES[badge].min}-${BADGE_RANGES[badge].max}`,
-                        })}
+                        {t(
+                          badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo",
+                          {
+                            lengths: `${BADGE_RANGES[badge].min}-${BADGE_RANGES[badge].max}`,
+                          }
+                        )}
                       </span>
                     </span>
                   </div>
@@ -246,7 +295,9 @@ export default function UsernamePage() {
             >
               <div>
                 <p className="font-medium">{t(`tiers.${tier.labelKey}`)}</p>
-                <p className="text-xs text-muted-foreground">{t(`tiers.${tier.rangeKey}`)}</p>
+                <p className="text-xs text-muted-foreground">
+                  {t(`tiers.${tier.rangeKey}`)}
+                </p>
                 {/* Marked per row rather than described in the note, so the
                     badge reads as part of what the price buys. Each mark is
                     labelled with the lengths it covers: ultra spans both, and
@@ -257,11 +308,19 @@ export default function UsernamePage() {
                   ))}
                 </div>
               </div>
-              <span className="tabular-nums font-semibold">{formatAmount(tier.price)} ICP</span>
+              <span className="font-semibold tabular-nums">
+                {formatAmount(tier.price)} ICP
+              </span>
             </div>
           ))}
         </div>
         <p className="text-xs text-muted-foreground">{t("note")}</p>
+        <Link
+          href="/icpverse/brand-protection"
+          className="inline-block text-xs font-medium text-foreground underline underline-offset-4 transition-colors hover:text-primary"
+        >
+          {t("brandProtectionLink")}
+        </Link>
       </div>
     </div>
   )
@@ -272,7 +331,8 @@ export default function UsernamePage() {
 // as though every ultra name were gold.
 function BadgeChip({ span }: { span: BadgeSpan }) {
   const t = useTranslations("buyUsername")
-  const lengths = span.min === span.max ? `${span.min}` : `${span.min}-${span.max}`
+  const lengths =
+    span.min === span.max ? `${span.min}` : `${span.min}-${span.max}`
 
   return (
     <Popover>
@@ -288,7 +348,9 @@ function BadgeChip({ span }: { span: BadgeSpan }) {
           </PopoverTitle>
         </PopoverHeader>
         <PopoverDescription className="text-xs">
-          {t(span.badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo", { lengths })}
+          {t(span.badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo", {
+            lengths,
+          })}
         </PopoverDescription>
       </PopoverContent>
     </Popover>
