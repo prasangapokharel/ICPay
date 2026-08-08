@@ -15,6 +15,7 @@ import WithdrawService "../../src/services/WithdrawService";
 import TransferService "../../src/services/TransferService";
 import LedgerService "../../src/services/LedgerService";
 import ReservedStorage "../../src/storage/ReservedUsernameStorage";
+import RateLimitStorage "../../src/storage/RateLimitStorage";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
@@ -33,10 +34,10 @@ func nextUid(): Text {
   Time.now().toText() # "-" # Int.toText(uidCounter);
 };
 
-let auth = AuthService.create(users, usernames, usersById, reserved, nextUid);
-let userSvc = UserService.create(users, usernames, usersById, reserved);
+let auth = AuthService.create(users, usernames, usersById, reserved, nextUid, RateLimitStorage.createRateLimitMap());
+let userSvc = UserService.create(users, usernames, usersById, reserved, RateLimitStorage.createRateLimitMap());
 let txSvc = TransactionService.create(users, txs, txsByUser);
-let settingsSvc = SettingsService.create(users, settingsMap);
+let settingsSvc = SettingsService.create(users, settingsMap, RateLimitStorage.createRateLimitMap());
 
 switch (AuthService.login(auth, p1)) {
   case (#ok(result)) {

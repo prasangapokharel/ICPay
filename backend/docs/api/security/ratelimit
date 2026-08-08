@@ -1,0 +1,202 @@
+# Rate limiting — plan
+
+Per-user rolling-window throttle for update methods. Goal: cut abuse cheaply and
+minimally, with no new infra and no external cache.
+
+## Why
+
+There is no rate limiting in the canister today (`Config.mo` has no throttle
+constants, no `rateLimit`/`cooldown` logic exists under `src/`). Every caller-
+guarded update call burns cycles and can write state. A scripted principal can
+spam paid paths (`purchaseUsername`, `launchToken`, `transfer*`, `withdraw`) and
+cheap writes (`updateUsername`, `updateSettings`) to waste cycles and hammer the
+ledger canisters.
+
+**Key IC facts that shape the design:**
+- **Queries are free.** Only `update` calls need throttling, so the state is
+  small and the win is concentrated on the paid/spammy paths.
+- **`Time.now()` is monotone across rounds** and constant within a round — fine
+  as the window clock.
+- **An external cache (Redis etc.) is impossible in Motoko.** A canister is
+  isolated; there is no cheaper or external store. An in-canister stable map is
+  the only option and is exactly the minimal one.
+
+## Design (minimal, layered)
+
+A rolling **sliding-window** counter per caller. State is a stable map
+`Principal -> { windowStart: Int; count: Nat }`, mirrored exactly on the
+existing `settings` pattern (`storage -> repository -> service`).
+
+Helper (in a service): given a policy `{ maxPerWindow: Nat; windowSeconds: Nat }`,
+```
+allow(limits, key, policy, now) : Bool
+```
+- If no entry → start window at `now`, count = 1, allow.
+- If entry is within the window (`now - windowStart < windowSeconds`) →
+  increment; allow while `count <= maxPerWindow`.
+- If entry is stale (`now - windowStart >= windowSeconds`) → reset window,
+  count = 1, allow.
+
+When it returns `false`, the API returns
+`#err("Rate limit exceeded. Retry in <seconds>.")`.
+
+The counter is per **principal** (the effective caller), not per method, unless
+a method needs its own budget — so one busy user cannot starve others.
+
+## What gets throttled
+
+Only caller-guarded **update** methods. Queries and operator/controller funcs
+are untouched.
+
+| Update method | Policy (tune later) | Why |
+|---|---|---|
+| `launchToken` | 1 / hour | 5 ICP; single attempt per window is enough, pre-fee floods waste cycles |
+| `purchaseUsername` | 3 / minute | the paid buy — double-spend / price-point abuse |
+| `register` | 5 / minute | username claim |
+| `updateUsername` | 5 / minute | username claim path |
+| `transferByAccountId` | 5 / minute | repeated transfer attempts |
+| `transferByUsername` | 5 / minute | same |
+| `transferByPrincipal` | 5 / minute | same |
+| `transferByAccount` | 5 / minute | same |
+| `withdraw` | 5 / minute | paid withdraw |
+| `syncDeposits` | 10 / minute | hits the ledger index canister — real cost |
+| `updateSettings` | 10 / 5 min | cheap but writes state |
+
+**Do NOT throttle:** `Admin*`, `Token` operator funcs (`reserveUsername`,
+`sealTokenWasm`, `sweepTokenRevenue`, `refreshLedgers`, `releaseFailedCanister`,
+`registerLaunchedLedgers`, `topUpToken`, `reserveTokenSymbol`,
+`uploadTokenWasmChunk`) — ops/controller paths owned by the CLI.
+
+## Files to add
+
+```
+src/storage/RateLimitStorage.mo        # the stable map type + constructor
+src/repositories/RateLimitRepository.mo # get / bump / reset (leaf, no logic)
+src/services/RateLimitService.mo        # the allow() helper + policies
+src/config/Config.mo                    # policy constants (optional single home)
+src/main.mo                             # wire the map + pass into services
+```
+
+## Storage — `src/storage/RateLimitStorage.mo`
+
+```motoko
+import Map "mo:core/Map";
+
+module {
+  public type Window = { var windowStart: Int; var count: Nat };
+  public type RateLimitMap = Map.Map<Principal, Window>;
+
+  public func createRateLimitMap(): RateLimitMap {
+    Map.empty<Principal, Window>();
+  };
+};
+```
+`Principal` uses the implicit `Hash`/`Bool` compare in `mo:core/Map`, so no
+explicit compare arg is needed — same as `settings.get(userId)` (Text).
+
+## Repository — `src/repositories/RateLimitRepository.mo`
+
+```motoko
+import Map "mo:core/Map";
+import Principal "mo:core/Principal";
+
+module {
+  public func get(limits: RateLimitMap, key: Principal): ?Window {
+    limits.get(key);
+  };
+
+  public func put(limits: RateLimitMap, key: Principal, w: Window) {
+    limits.swap(key, w);
+  };
+};
+```
+Note: `Map.add` only inserts **absent** keys, so a reset/rewrite of an existing
+entry must use **`swap`** — never `add`. New entries are created by the service
+via `put` after building the window.
+
+## Service — `src/services/RateLimitService.mo`
+
+```motoko
+import Principal "mo:core/Principal";
+import Time "mo:core/Time";
+import Nat64 "mo:core/Nat64";
+import RateLimitRepo "../repositories/RateLimitRepository";
+import RateLimitStorage "../storage/RateLimitStorage";
+
+module {
+  public type Policy = { maxPerWindow: Nat; windowSeconds: Nat64 };
+
+  // `now` is nanoseconds from Time.now(), `windowSeconds` is Nat64 so a policy
+  // written as a plain literal (e.g. 60) type-checks without a cast.
+  public func allow(
+    limits: RateLimitStorage.RateLimitMap,
+    key: Principal,
+    policy: Policy,
+    now: Int,
+  ): Bool {
+    let windowNanos = Int.abs(Nat64.toInt(policy.windowSeconds)) * 1_000_000_000;
+    switch (RateLimitRepo.get(limits, key)) {
+      case (null) {
+        RateLimitRepo.put(limits, key, {
+          var windowStart = now;
+          var count = 1;
+        });
+        true;
+      };
+      case (?w) {
+        if (now - w.windowStart >= windowNanos) {
+          w.windowStart := now;
+          w.count := 1;
+          true;
+        } else if (w.count < policy.maxPerWindow) {
+          w.count += 1;
+          true;
+        } else {
+          false;
+        };
+      };
+    };
+  };
+};
+```
+
+## Call-site shape (service)
+
+Guard at the top of the mutation, before any ledger/write work:
+
+```motoko
+// inside e.g. UsernameSaleService.purchaseUsername
+if (not RateLimitService.allow(service.limits, caller, Policy.purchase, Time.now())) {
+  return #err("Rate limit exceeded. Please retry shortly.");
+};
+```
+
+## main.mo wiring — must be persistent
+
+Add the map alongside the other stable variables (NOT inside a `transient`
+service, or it resets on every upgrade):
+
+```motoko
+let rateLimits = RateLimitStorage.createRateLimitMap();
+```
+
+then pass `rateLimits` into each mutating service's `create(...)`. Service
+records gain one field, e.g. `limits: RateLimitStorage.RateLimitMap`.
+
+## Response shape
+
+Additive — existing endpoints keep their `Types.ApiResult<...>` shape. A hit
+simply returns `#err(...)` with a human-readable retry hint; the frontend
+`services/` layer already maps `#err(Text)`, so no API contract breaks.
+
+## Edge cases / notes
+
+- **Controller calls bypass** — apply the guard only on caller paths that need
+  it; ops funcs stay ungated (they are CLI-owned).
+- **Upgrade resets counters** unless the map is persistent — that is acceptable
+  (mostly a one-time reset after a deploy) and not a security hole.
+- **Single shared window per principal** vs per-method: start shared for
+  minimal state; give `launchToken` its own 1/hour window so an active user is
+  not blocked from other ops.
+- Policies are starting points — tune after observing cycle burn. Keep them in
+  `Config.mo` so they compile down to one place.

@@ -164,7 +164,11 @@
     "showFull": "アドレス全体を表示",
     "qrAlt": "入金アドレスの QR コード",
     "tabPrincipal": "プリンシパル",
-    "hintPrincipal": "取引所向け。着金後にウォレットへ移動してください。"
+    "hintPrincipal": "取引所向け。着金後にウォレットへ移動してください。",
+    "syncTitle": "入金を同期",
+    "syncHint": "台帳に着金したものを履歴に取り込みます。",
+    "syncAction": "同期",
+    "syncFound": "入金を履歴に追加しました。"
   },
   "paymentLink": {
     "toggleLabel": "支払いリクエスト",
@@ -231,7 +235,8 @@
     "availableName": "@{name} は利用できます",
     "networkFee": "ネットワーク手数料",
     "total": "合計",
-    "insufficient": "残高が不足しています。手数料込みで {total} ICP かかります。",
+    "treasuryNote": "支払いは ICPay トレジャリー {principal} に送られます。",
+    "insufficient": "残高が不足しています",
     "buying": "購入中…",
     "buy": "ユーザー名を購入",
     "pricing": "料金",
@@ -258,7 +263,8 @@
       "tooLong": "最大 {max} 文字までです",
       "invalidChars": "英字、数字、アンダースコアのみ使用できます",
       "notFree": "無料のユーザー名は {min} 文字以上必要です。より短い名前は購入できます。"
-    }
+    },
+    "brandProtectionLink": "Brand protection"
   },
   "profile": {
     "title": "プロフィール",
@@ -565,5 +571,21 @@
     "marketUnavailable": "現在、市場データを取得できません。",
     "mintingAccount": "ミント用アカウント",
     "mintingAccountNone": "なし"
+  },
+  "brandProtection": {
+    "title": "Brand Protection",
+    "subtitle": "Official usernames reserved for real brands. If you own one, claim it.",
+    "searchPlaceholder": "Search a brand…",
+    "allReserved": "{count} brands protected",
+    "results": "{count} matches",
+    "noneFound": "No brand named “{query}” found.",
+    "brandHandle": "Official reserved handle",
+    "reserved": "Reserved",
+    "ownItTitle": "Own this brand?",
+    "ownItBody": "If a reserved name is your official brand, contact us with proof of ownership and your ICPay username.",
+    "contact": "Contact",
+    "copyTemplate": "Copy proof template",
+    "copied": "Copied!",
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
   }
 }

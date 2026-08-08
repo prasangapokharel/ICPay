@@ -24,6 +24,7 @@ docs/*
 !docs/workflow.md
 !docs/security/
 !docs/phase/
+!docs/icpay/
 
 # Environment files and credentials
 **/.env*

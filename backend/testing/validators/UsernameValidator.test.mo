@@ -109,10 +109,22 @@ assert (Config.PRICE_PREMIUM > Config.PRICE_STANDARD);
 assert (Config.PRICE_STANDARD > Config.PRICE_BASIC);
 Debug.print("PASS: shorter names always cost more");
 
+// --- tierFor(): must agree with priceFor() at every boundary ---
+
+assert (UsernameValidator.tierFor("a") == #ultra);
+assert (UsernameValidator.tierFor("ab") == #ultra);
+assert (UsernameValidator.tierFor("btc") == #ultra);
+assert (UsernameValidator.tierFor("alex") == #premium);
+assert (UsernameValidator.tierFor("alice") == #standard);
+assert (UsernameValidator.tierFor("alicex") == #basic);
+assert (UsernameValidator.tierFor("abcdefgh") == #basic);
+Debug.print("PASS: tierFor matches priceFor's bands");
+
 // --- normalize() ---
 
 assert (UsernameValidator.normalize("ALICE") == "alice");
 assert (UsernameValidator.priceFor("ALICE") == UsernameValidator.priceFor("alice"));
+assert (UsernameValidator.tierFor("ALICE") == UsernameValidator.tierFor("alice"));
 Debug.print("PASS: price does not depend on case");
 
 Debug.print("ALL USERNAME VALIDATOR TESTS PASSED");

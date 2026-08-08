@@ -1,0 +1,448 @@
+For ICPay, keep the staking system **simple, auditable, and modular**. Don't duplicate reward logic across functions. A single reward engine should be reused everywhere.
+
+# Folder Structure
+
+```text
+backend/
+└── src/
+    ├── api/
+    │   └── v1/
+    │       └── stake.mo
+    │
+    ├── models/
+    │   ├── Stake.mo
+    │   └── StakePlan.mo
+    │
+    ├── services/
+    │   ├── StakeService.mo
+    │   ├── RewardService.mo
+    │   └── Validation.mo
+    │
+    ├── utils/
+    │   ├── Time.mo
+    │   └── Math.mo
+    │
+    └── storage/
+        └── StakeStore.mo
+```
+
+No reward calculations should exist inside `stake.mo`.
+
+---
+
+# Models
+
+## StakePlan
+
+```motoko
+public type StakePlan = {
+    id : Nat8;
+    name : Text;
+
+    lockDays : Nat;
+
+    apr : Float;
+
+    flexible : Bool;
+};
+```
+
+Example
+
+```text
+Flexible
+APR = 8%
+lockDays = 0
+
+90 Days
+APR = 15%
+
+120 Days
+APR = 25%
+
+360 Days
+APR = 50%
+```
+
+---
+
+## Stake
+
+```motoko
+public type Stake = {
+
+    id : Nat;
+
+    userId : Principal;
+
+    amount : Nat;
+
+    planId : Nat8;
+
+    apr : Float;
+
+    startedAt : Int;
+
+    unlockAt : Int;
+
+    claimedReward : Nat;
+
+    active : Bool;
+};
+```
+
+Notice
+
+Never store
+
+```
+pendingReward
+```
+
+Always calculate it.
+
+---
+
+# Storage
+
+```text
+HashMap<Principal, [Stake]>
+```
+
+One user
+
+↓
+
+Many stakes
+
+```text
+User
+
+↓
+
+Stake #1
+Stake #2
+Stake #3
+```
+
+Much cleaner than forcing one stake.
+
+---
+
+# API
+
+## Stake
+
+```text
+POST
+
+/api/v1/stake
+```
+
+Body
+
+```json
+{
+    "plan_id":2,
+    "amount":5000
+}
+```
+
+---
+
+## List Stakes
+
+```text
+GET
+
+/api/v1/stakes
+```
+
+Returns
+
+```json
+[
+    {
+        "id":1,
+        "amount":5000,
+        "apr":25,
+        "lock_days":120,
+        "pending_reward":23.55,
+        "remaining_days":118,
+        "status":"active"
+    }
+]
+```
+
+---
+
+## Claim
+
+```text
+POST
+
+/api/v1/stake/{id}/claim
+```
+
+---
+
+## Unstake
+
+```text
+POST
+
+/api/v1/stake/{id}/unstake
+```
+
+---
+
+## Plans
+
+```text
+GET
+
+/api/v1/stake/plans
+```
+
+Returns
+
+```json
+[
+    {
+        "id":1,
+        "name":"Flexible",
+        "apr":8
+    },
+    {
+        "id":2,
+        "name":"90 Days",
+        "apr":15
+    }
+]
+```
+
+---
+
+# Reward Engine
+
+Only ONE function.
+
+```motoko
+calculateReward(
+    amount,
+    apr,
+    startedAt,
+    now,
+    claimedReward
+)
+```
+
+Everything calls this.
+
+* Dashboard
+* Claim
+* Unstake
+* API
+
+Never duplicate reward calculations.
+
+---
+
+# UI
+
+```
+──────────────────────────────
+Available Balance
+
+15,250 ICPAY
+──────────────────────────────
+```
+
+↓
+
+```
+Stake Plans
+
+┌───────────────┐
+ Flexible
+ 8% APR
+
+Unstake Anytime
+
+[Select]
+└───────────────┘
+
+┌───────────────┐
+90 Days
+
+15% APR
+
+[Select]
+└───────────────┘
+
+┌───────────────┐
+120 Days
+
+25% APR
+
+[Select]
+└───────────────┘
+
+┌───────────────┐
+360 Days
+
+50% APR
+
+[Select]
+└───────────────┘
+```
+
+↓
+
+```
+Amount
+
+[ 5000 ICPAY ]
+
+[MAX]
+
+[ Stake ]
+```
+
+---
+
+# Active Stakes
+
+```
+Active Stakes
+
+────────────────────────────
+
+120 Days
+
+5,000 ICPAY
+
+APR
+25%
+
+Reward
+
++18.442 ICPAY
+
+Remaining
+
+113 Days
+
+[Claim]
+
+[Unstake]
+
+────────────────────────────
+```
+
+Supports multiple active stakes:
+
+```
+Stake 1
+
+5000
+
+120 Days
+
+----------------
+
+Stake 2
+
+10000
+
+Flexible
+
+----------------
+
+Stake 3
+
+2500
+
+90 Days
+```
+
+---
+
+# State Flow
+
+```text
+Available Balance
+
+↓
+
+Stake
+
+↓
+
+Validate balance
+
+↓
+
+Transfer tokens
+
+↓
+
+Create Stake
+
+↓
+
+Save
+
+↓
+
+Dashboard updates
+
+↓
+
+Reward Engine
+
+↓
+
+Claim
+
+↓
+
+Available Balance
+
+↓
+
+Continue earning
+
+↓
+
+Unlock reached
+
+↓
+
+Unstake
+
+↓
+
+Claim remaining reward
+
+↓
+
+Return principal
+
+↓
+
+Stake inactive
+```
+
+---
+
+## Recommended improvements
+
+* Support **multiple concurrent stakes** per user instead of a single stake.
+* Store the **APR used at stake creation**, so later plan changes do not affect existing stakes.
+* Calculate rewards on demand from timestamps rather than storing a continuously updated reward value.
+* Use a reusable `RewardService` for all reward calculations.
+* Keep stake plans configurable in one place, making it easy to add or update plans in the future.
+* Expose a clean `/api/v1/stake/plans` endpoint so the frontend never hardcodes APRs or lock durations.
+
+This architecture stays minimal, avoids duplicated logic, and scales cleanly as ICPay grows.

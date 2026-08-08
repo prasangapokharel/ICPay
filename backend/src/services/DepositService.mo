@@ -8,10 +8,13 @@ import UserRepo "../repositories/UserRepository";
 import TxRepo "../repositories/TransactionRepository";
 import UserStorage "../storage/UserStorage";
 import TxStorage "../storage/TransactionStorage";
+import Config "../config/Config";
+import RateLimitService "RateLimitService";
+import RateLimitStorage "../storage/RateLimitStorage";
 
 module {
-  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService, nextId: () -> Text): DepositService {
-    { users; txs; byUser; ledger; nextId };
+  public func create(users: UserStorage.UserMap, txs: TxStorage.TxList, byUser: TxStorage.TxByUser, ledger: LedgerService.LedgerService, nextId: () -> Text, limits: RateLimitStorage.RateLimitMap): DepositService {
+    { users; txs; byUser; ledger; nextId; limits };
   };
 
   public type DepositService = {
@@ -20,6 +23,7 @@ module {
     byUser: TxStorage.TxByUser;
     ledger: LedgerService.LedgerService;
     nextId: () -> Text;
+    limits: RateLimitStorage.RateLimitMap;
   };
 
   public func getDepositAddress(service: DepositService, caller: Principal): Types.ICRC1Account {
@@ -33,6 +37,9 @@ module {
   // Credits only the difference between the on-ledger balance and the amount
   // already recorded, so repeated calls cannot credit the same funds twice.
   public func syncDeposits(service: DepositService, caller: Principal, ledgerId: Text): async Types.ApiResult<Types.TransactionPublic> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_SYNC_DEPOSITS, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_SYNC_DEPOSITS));
+    };
     if (not LedgerService.isAllowed(service.ledger, ledgerId)) {
       return #err("Unsupported token ledger: " # ledgerId);
     };

@@ -6,12 +6,13 @@ import UserService "../../src/services/UserService";
 import UserRepo "../../src/repositories/UserRepository";
 import ReservedStorage "../../src/storage/ReservedUsernameStorage";
 import ReservedRepo "../../src/repositories/ReservedUsernameRepository";
+import RateLimitStorage "../../src/storage/RateLimitStorage";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
 let reserved = ReservedStorage.createReservedUsernameSet();
-let svc = UserService.create(users, usernames, usersById, reserved);
+let svc = UserService.create(users, usernames, usersById, reserved, RateLimitStorage.createRateLimitMap());
 
 let p1 = Principal.fromText("aaaaa-aa");
 let p2 = Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai");
@@ -133,5 +134,26 @@ switch (UserService.resolveUsername(svc, "nonexistent")) {
   case (?_) { assert(false); Debug.print("FAIL: resolveUsername returned principal for unknown") };
   case (null) { Debug.print("PASS: resolveUsername returns null for unknown username") };
 };
+
+assert(UserService.getVerifiedTier(svc, "uid-2") == ?#ultra);
+Debug.print("PASS: getVerifiedTier reports the tier of a claimed handle");
+
+assert(UserService.getVerifiedTier(svc, "uid-3") == ?#basic);
+Debug.print("PASS: getVerifiedTier reflects a later claim, not just the first");
+
+// 5 chars is the first free length, so it is the boundary the badge rule cares
+// about: standard and basic are paid tiers in name only.
+assert(UserService.getVerifiedTier(svc, "uid-1") == ?#standard);
+Debug.print("PASS: getVerifiedTier reports #standard at the free-claim boundary");
+
+assert(UserService.getVerifiedTier(svc, "no-such-id") == null);
+Debug.print("PASS: getVerifiedTier returns null for an unknown user id");
+
+// Null rather than #basic: an account that has claimed nothing has no badge,
+// and #basic would render one on every user who never picked a handle.
+let p4 = Principal.fromText("rno2w-sqaaa-aaaaa-aaacq-cai");
+let _u4 = UserRepo.create(users, usernames, usersById, "uid-4", p4, null, "Dave", now);
+assert(UserService.getVerifiedTier(svc, "uid-4") == null);
+Debug.print("PASS: getVerifiedTier returns null for a user with no handle");
 
 Debug.print("ALL USER SERVICE TESTS PASSED");

@@ -69,14 +69,20 @@ assert(UserRepo.usernameExists(usernames, "alice") == false);
 assert(UserRepo.usernameExists(usernames, "alice_new") == true);
 Debug.print("PASS: setUsername replaces old username");
 
-let results = UserRepo.searchByUsername(usernames, users, "alice");
+let results = UserRepo.searchByUsername(usernames, users, "alice", 25);
 assert(results.size() == 1);
 assert(results[0].username == ?"alice_new");
 Debug.print("PASS: searchByUsername finds matching users");
 
-let noResults = UserRepo.searchByUsername(usernames, users, "xyz123");
+let noResults = UserRepo.searchByUsername(usernames, users, "xyz123", 25);
 assert(noResults.size() == 0);
 Debug.print("PASS: searchByUsername returns empty for no match");
+
+// An empty needle matches every handle, which is what the suggestion list asks
+// for, so it is also the case where an uncapped scan would return the registry.
+assert(UserRepo.searchByUsername(usernames, users, "", 25).size() == 2);
+assert(UserRepo.searchByUsername(usernames, users, "", 1).size() == 1);
+Debug.print("PASS: searchByUsername stops at the cap");
 
 // A bought handle is added as an alias, leaving the buyer under two keys. The
 // listing must still show them once, or one person appears as several identical
@@ -86,7 +92,7 @@ assert(UserRepo.usernameExists(usernames, "alice_new") == true);
 assert(UserRepo.usernameExists(usernames, "alice_bought") == true);
 Debug.print("PASS: addAlias keeps the old handle claimed");
 
-let aliased = UserRepo.searchByUsername(usernames, users, "alice");
+let aliased = UserRepo.searchByUsername(usernames, users, "alice", 25);
 assert(aliased.size() == 1);
 assert(aliased[0].username == ?"alice_bought");
 Debug.print("PASS: searchByUsername lists an aliased user once");

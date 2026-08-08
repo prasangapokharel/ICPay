@@ -16,6 +16,8 @@ import ReservedRepo "../repositories/ReservedUsernameRepository";
 import ReservedStorage "../storage/ReservedUsernameStorage";
 import UserStorage "../storage/UserStorage";
 import UsernameValidator "../validators/UsernameValidator";
+import RateLimitService "RateLimitService";
+import RateLimitStorage "../storage/RateLimitStorage";
 
 module {
   public func create(
@@ -23,11 +25,12 @@ module {
     usernames: UserStorage.UsernameMap,
     reserved: ReservedStorage.ReservedUsernameSet,
     transfers: TransferService.TransferService,
+    limits: RateLimitStorage.RateLimitMap,
   ) : UsernameSaleService {
     // Held only for the duration of one purchase, so it is deliberately not
     // persisted: an upgrade landing between two calls must not strand a name
     // behind a lock nobody will ever release.
-    { users; usernames; reserved; transfers; pending = Set.empty<Text>() };
+    { users; usernames; reserved; transfers; limits; pending = Set.empty<Text>() };
   };
 
   public type UsernameSaleService = {
@@ -35,6 +38,7 @@ module {
     usernames: UserStorage.UsernameMap;
     reserved: ReservedStorage.ReservedUsernameSet;
     transfers: TransferService.TransferService;
+    limits: RateLimitStorage.RateLimitMap;
     pending: Set.Set<Text>;
   };
 
@@ -57,6 +61,9 @@ module {
   // assigned once the ledger confirms it, so a failed transfer never hands out
   // a free handle.
   public func purchase(service: UsernameSaleService, caller: Principal, name: Types.Username): async Types.ApiResult<Purchase> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_PURCHASE_USERNAME, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_PURCHASE_USERNAME));
+    };
     switch (UsernameValidator.validate(name)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -85,7 +92,7 @@ module {
 
     // Prices are denominated in ICP, so a sale settles on the ICP ledger
     // regardless of which token the buyer was last looking at.
-    let result = await TransferService.transferByAccount(service.transfers, caller, Config.ICP_LEDGER_CANISTER_ID, destination, price, ?memo);
+    let result = await TransferService.transferByAccountInternal(service.transfers, caller, Config.ICP_LEDGER_CANISTER_ID, destination, price, ?memo);
 
     switch (result) {
       case (#err(e)) {

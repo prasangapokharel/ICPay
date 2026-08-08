@@ -91,6 +91,7 @@ run_test "$ROOT/testing/upgrade/StampLedgerId.test.mo" "StampLedgerId"
 echo "--- Security Tests ---"
 run_test "$ROOT/testing/security/Security.test.mo" "Security"
 run_test "$ROOT/testing/security/AuthMiddleware.test.mo" "AuthMiddleware"
+run_test "$ROOT/testing/security/RateLimit.test.mo" "RateLimit"
 
 echo "--- Integration Tests ---"
 run_test "$ROOT/testing/integration/FullFlow.test.mo" "FullFlow"

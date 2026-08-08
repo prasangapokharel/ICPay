@@ -5,10 +5,11 @@ import UserStorage "../../src/storage/UserStorage";
 import SettingsStorage "../../src/storage/SettingsStorage";
 import SettingsService "../../src/services/SettingsService";
 import UserRepo "../../src/repositories/UserRepository";
+import RateLimitStorage "../../src/storage/RateLimitStorage";
 
 let users = UserStorage.createUserMap();
 let settings = SettingsStorage.createSettingsMap();
-let svc = SettingsService.create(users, settings);
+let svc = SettingsService.create(users, settings, RateLimitStorage.createRateLimitMap());
 
 let unknownUser = Principal.fromText("2vxsx-fae");
 switch (SettingsService.getSettings(svc, unknownUser)) {

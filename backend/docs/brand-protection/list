@@ -1,0 +1,96 @@
+# Brand protection — reserved username list
+
+Reserved handles are held by the canister so **no one else can claim or buy
+them**, while the future sale-from-hold feature is planned. Reserving does **not**
+sell a name — it blocks it. It is fully reversible with `releaseUsername`.
+
+`reserveUsername` / `releaseUsername` / `listReservedUsernames` are
+**controller-only** (`Principal.isController`), so only the canister controller
+can manage this list — no ordinary user and no stored role.
+
+## Current reserved list
+
+**161 names reserved on mainnet** (checked 2026-08-08 via
+`listReservedUsernames`):
+
+```
+adele adidas adobe adyen algorand amazon amex amm apple aptos arbitrum audi
+bank base bentley beyonce bezos binance bmw btc bugatti burger caiman cartier
+casio chanel cisco coca coin coinbase cycles dell dex dext dior discord disney
+dodge dominic domino drake eminem eth ferrari fifa ford gates gillette google
+gucci haaland hamilton hermes honda hulu hyundai ibm ic icppay icpverse icrc
+ikea intel jeep jobs josh kanye kfc kia kraken lambo ledger lenovo maradona
+mazda mbappe mercedes messi metamask mlb musk nba netflix neurons neymar nfl
+nft nhl nike nissan nns nokia nvidia obama omega opensea oracle pay paypal
+peacock pele pepsi phantom pierre plaid polygon porsche prada puma putin
+reddit reebok revolut rihanna rivian rolex ronaldo samsung seiko shakira snap
+sns sol sony spotify square stock stripe subaru subway sui swap taylor telegram
+tiktok tinder token toyota trezor twitch ufc uni uniswap usdc usdt usdtf venmo
+vimeo visa volvo wallet wasm web3 wechat whatsapp wise youtube zap zara zidane
+```
+
+The page presents a searchable copy; the backend list is always the source of
+truth. If they drift, re-pull with `listReservedUsernames` and refresh both
+this doc and `frontend/app/(app)/icpverse/brand-protection/page.tsx`.
+
+## Reserving a name
+
+```bash
+# from backend/
+DFX_WARNING=-mainnet_plaintext_identity \
+  dfx canister call icp_wallet_backend reserveUsername '("name")' --network ic
+```
+
+Returns `(variant { ok = "name" })` on success. Errors:
+- `"Not authorized"` — caller is not a controller.
+- `"Username already claimed by a user"` — a user already owns it (permanent, cannot be reserved).
+- `"Username is reserved"` / invalid-name messages.
+
+## Releasing a name (removes the hold)
+
+```bash
+DFX_WARNING=-mainnet_plaintext_identity \
+  dfx canister call icp_wallet_backend releaseUsername '("name")' --network ic
+```
+
+Immediately frees the name back to the open pool — the first claimer or buyer
+wins it. There is no grace period or re-list backstop.
+
+## List to reserve (all confirmed available)
+
+`checkUsername` returned `true` (available) for every name below at check time.
+
+### Tier 1 — own platform brands
+```
+icpverse   icppay   ic
+```
+
+### Tier 2 — ICP ecosystem / DFINITY-related
+```
+nns   sns   neurons   cycles   icrc   ledger   caiman   dext   wasm
+```
+
+### Tier 3 — crypto-asset & DeFi umbrella (impersonation / confusion protection)
+```
+btc   eth   usdc   usdt   sol   sui   aptos   polygon   arbitrum   base   uni
+nft   dex   swap   amm   token   web3   wallet   pay   coin   bank   stock   zap   usdtf
+```
+
+### Already taken (do not attempt — permanent, user-owned)
+```
+dfinity   icp   icpay   internetcomputer   internet_computer   dfinity-org   dfinity-ic
+internet-computer   bitcoin   digital-asset   motoko   crypto   ic_pledge
+```
+Plus from the user dump: `Admin`, `icpay`, `bitcoin`, `solana`, `openai`,
+`elonmusk`, `tesla`, `money`, `crypto`, `satoshi`, `token`.
+
+## Notes
+
+- **Reserve ≠ sell.** A reserved name is blocked, not purchasable. The
+  sale-from-hold feature (extend the reserved entry with `status` + `price`)
+  is the future phase.
+- **Length = price tier** (`UsernameValidator.priceFor`): 1-3 chars = ultra
+  (10 ICP), 4 = premium (5 ICP), 5 = standard (2 ICP), 6-8 = basic (1 ICP).
+  Shorter reserved names command the highest price when sale lands.
+- Reserving a name that is **already claimed by a user** is rejected by design
+  (`AdminService`), so the holder and the reservation can never disagree.

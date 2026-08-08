@@ -1,13 +1,20 @@
 "use client"
 
-import useSWR from "swr"
+import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { ProfileCard } from "@/components/profile/profile-card"
 import { ShareProfileCard } from "@/components/profile/share-profile-card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
-import { usePatchDashboardUser } from "@/hooks/use-wallet-data"
-import { getProfile, updateUsername } from "@/services/profile/profile"
+import { usePatchDashboardUser, useOwnProfile } from "@/hooks/use-wallet-data"
+import { updateUsername } from "@/services/profile/profile"
 import { checkUsername } from "@/services/buy/buy"
+import { avatarUriFor } from "@/lib/avatar"
+import { copyText, shortPrincipal } from "@/lib/wallet-utils"
 
 export default function ProfilePage() {
   const t = useTranslations("profile")
@@ -15,14 +22,9 @@ export default function ProfilePage() {
   const { identity } = useAuth()
   const patchDashboardUser = usePatchDashboardUser()
   const principal = identity?.getPrincipal().toText() ?? ""
+  const [copied, setCopied] = useState(false)
 
-  // Principal in the key so switching identity cannot serve the previous
-  // user's profile.
-  const { data: user, isLoading, mutate } = useSWR(
-    identity ? (["profile", principal] as const) : null,
-    () => getProfile(identity),
-    { revalidateOnFocus: false, revalidateIfStale: false, keepPreviousData: true }
-  )
+  const { data: user, isLoading, mutate } = useOwnProfile()
 
   const handleUpdateUsername = async (username: string): Promise<string | null> => {
     const result = await updateUsername(identity, username)
@@ -44,21 +46,54 @@ export default function ProfilePage() {
     }
   }
 
+  // Copies the full principal, not the truncated form on screen -- a shortened
+  // one pasted into a send field would address nothing.
+  const handleCopyPrincipal = async () => {
+    await copyText(principal)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }
+
   if (isLoading && !user) return <div className="flex justify-center py-12"><p className="text-muted-foreground">{tc("loading")}</p></div>
   if (!user) return null
 
   const claimed = user.username?.[0]
 
   return (
-    <div className="mx-auto max-w-lg space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+    <div className="mx-auto max-w-lg space-y-6 pt-2">
+      {/* The handle and the principal are what this page is about, so they lead
+          rather than sitting as two more rows inside a settings card. */}
+      <div className="flex flex-col items-center">
+        <Avatar className="size-20">
+          <AvatarImage src={avatarUriFor(claimed ?? principal)} alt="" />
+          <AvatarFallback className="text-lg font-medium uppercase">
+            {(claimed ?? principal).slice(0, 2)}
+          </AvatarFallback>
+        </Avatar>
+
+        <h1 className="flex items-center gap-1.5 pt-3 text-xl font-bold tracking-tight">
+          {claimed ? `@${claimed}` : t("title")}
+          {claimed && <PremiumBadge name={claimed} className="size-4" />}
+        </h1>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleCopyPrincipal}
+          aria-label={t("copyPrincipal")}
+          className="mt-1 gap-1.5 text-muted-foreground"
+        >
+          <span className="font-mono text-xs">{shortPrincipal(principal)}</span>
+          <HugeiconsIcon
+            icon={copied ? Tick02Icon : Copy01Icon}
+            className={copied ? "size-3.5 text-primary" : "size-3.5"}
+          />
+        </Button>
       </div>
+
       {claimed && <ShareProfileCard username={claimed} />}
       <ProfileCard
         user={user}
-        principal={principal}
         onUpdateUsername={handleUpdateUsername}
         onCheckUsername={handleCheckUsername}
       />

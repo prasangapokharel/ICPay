@@ -164,7 +164,11 @@
     "showFull": "Ver dirección completa",
     "qrAlt": "Código QR de la dirección de depósito",
     "tabPrincipal": "Principal",
-    "hintPrincipal": "Para exchanges. Mueve los fondos al llegar."
+    "hintPrincipal": "Para exchanges. Mueve los fondos al llegar.",
+    "syncTitle": "Sincronizar depósitos",
+    "syncHint": "Añade a tu historial todo lo que haya llegado al ledger.",
+    "syncAction": "Sincronizar",
+    "syncFound": "Depósito añadido a tu historial."
   },
   "paymentLink": {
     "toggleLabel": "Solicitud de pago",
@@ -231,7 +235,8 @@
     "availableName": "@{name} está disponible",
     "networkFee": "Comisión de red",
     "total": "Total",
-    "insufficient": "Saldo insuficiente. Esto cuesta {total} ICP con la comisión.",
+    "treasuryNote": "El pago va a la tesorería de ICPay {principal}.",
+    "insufficient": "Saldo insuficiente",
     "buying": "Comprando…",
     "buy": "Comprar nombre",
     "pricing": "Precios",
@@ -258,7 +263,8 @@
       "tooLong": "La longitud máxima es de {max} caracteres",
       "invalidChars": "Solo letras, números y guion bajo",
       "notFree": "Los nombres gratuitos necesitan {min}+ caracteres. Los más cortos se pueden comprar."
-    }
+    },
+    "brandProtectionLink": "Brand protection"
   },
   "profile": {
     "title": "Perfil",
@@ -565,5 +571,21 @@
     "marketUnavailable": "Los datos de mercado no están disponibles ahora mismo.",
     "mintingAccount": "Cuenta de acuñación",
     "mintingAccountNone": "Ninguna"
+  },
+  "brandProtection": {
+    "title": "Brand Protection",
+    "subtitle": "Official usernames reserved for real brands. If you own one, claim it.",
+    "searchPlaceholder": "Search a brand…",
+    "allReserved": "{count} brands protected",
+    "results": "{count} matches",
+    "noneFound": "No brand named “{query}” found.",
+    "brandHandle": "Official reserved handle",
+    "reserved": "Reserved",
+    "ownItTitle": "Own this brand?",
+    "ownItBody": "If a reserved name is your official brand, contact us with proof of ownership and your ICPay username.",
+    "contact": "Contact",
+    "copyTemplate": "Copy proof template",
+    "copied": "Copied!",
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
   }
 }

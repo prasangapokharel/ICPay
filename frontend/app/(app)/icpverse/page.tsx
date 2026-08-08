@@ -8,7 +8,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
-import { Search01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import {
+  Search01Icon,
+  ArrowRight01Icon,
+  Shield01Icon,
+} from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { useUserSearch } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
@@ -28,7 +32,7 @@ export default function IcpversePage() {
       <div className="relative">
         <HugeiconsIcon
           icon={Search01Icon}
-          className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
         />
         <Input
           variant="search"
@@ -39,6 +43,14 @@ export default function IcpversePage() {
           autoComplete="off"
           spellCheck={false}
         />
+        {/* Link to the protected brand-name list */}
+        <Link
+          href="/icpverse/brand-protection"
+          aria-label="Brand protection"
+          className="absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+        >
+          <HugeiconsIcon icon={Shield01Icon} className="size-4" />
+        </Link>
       </div>
 
       <section className="space-y-1">
@@ -50,7 +62,9 @@ export default function IcpversePage() {
           <UserListSkeleton />
         ) : users.length === 0 ? (
           <p className="px-1 py-6 text-center text-sm text-muted-foreground">
-            {searching ? t("noneFound", { query: debounced.trim() }) : t("empty")}
+            {searching
+              ? t("noneFound", { query: debounced.trim() })
+              : t("empty")}
           </p>
         ) : (
           users.map((u) => {

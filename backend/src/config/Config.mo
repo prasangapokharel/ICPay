@@ -44,6 +44,10 @@ module {
   // size lets one caller's request grow with total canister activity. 50 rows
   // is more history than the UI shows and keeps the per-call cost predictable.
   public let MAX_PAGE_SIZE: Nat = 50;
+  // searchUsers has no caller gate, so an unbounded result would let a public
+  // query's cost grow with total registered users. Comfortably above what the
+  // frontend suggestion list renders (10), never returning the whole registry.
+  public let MAX_SEARCH_RESULTS: Nat = 25;
   // The ICP ledger rejects a memo blob over 32 bytes. Counted in UTF-8 bytes,
   // not characters, because one emoji costs four.
   public let MEMO_MAX_BYTES: Nat = 32;
@@ -96,4 +100,16 @@ module {
   // and served to every holder, so it is capped well below what fits.
   public let MAX_TOKEN_LOGO_BYTES: Nat = 32_000;
   public let MAX_TOKEN_DECIMALS: Nat8 = 18;
+
+  // Update-call throttles. Queries are free on the IC, so only update calls are
+  // gated. Each policy is {maxPerWindow, windowSeconds}, enforced per caller,
+  // one Window per named policy so a caller held off one path can still use
+  // the others.
+  public let RATE_LAUNCH_TOKEN = { maxPerWindow = 1; windowSeconds = 3600 }; // 5 ICP, one attempt per hour is enough
+  public let RATE_PURCHASE_USERNAME = { maxPerWindow = 3; windowSeconds = 60 }; // the paid buy -- double-spend / price abuse
+  public let RATE_CLAIM_USERNAME = { maxPerWindow = 5; windowSeconds = 60 }; // register / updateUsername, the free claim path
+  public let RATE_TRANSFER = { maxPerWindow = 5; windowSeconds = 60 }; // repeated transfer attempts, any destination shape
+  public let RATE_WITHDRAW = { maxPerWindow = 5; windowSeconds = 60 };
+  public let RATE_SYNC_DEPOSITS = { maxPerWindow = 10; windowSeconds = 60 }; // hits the ledger index canister -- real cost
+  public let RATE_UPDATE_SETTINGS = { maxPerWindow = 10; windowSeconds = 300 }; // cheap but writes state
 };
