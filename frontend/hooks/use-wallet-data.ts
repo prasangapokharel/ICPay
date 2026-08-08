@@ -12,6 +12,7 @@ import { getDashboard } from "@/services/dashboard/dashboard"
 import { getDepositAddress } from "@/services/deposit/deposit"
 import { getTransactions } from "@/services/transactions/transactions"
 import { getProfile, resolveUsername, searchUsers } from "@/services/profile/profile"
+import { USERNAME_MIN_LENGTH } from "@/lib/username"
 import { checkUsername } from "@/services/buy/buy"
 import { compareBySuggestion } from "@/lib/verifed/premium-tick"
 import { fetchAccountStats, type AccountStats } from "@/services/account/account"
@@ -233,8 +234,8 @@ export function usePatchDashboardUser() {
 export function useResolvedUsername(name: string) {
   const { identity } = useAuth()
   const trimmed = name.trim().toLowerCase()
-  // 3 is the minimum the transfer form treats as a candidate username.
-  const enabled = trimmed.length >= 3
+  // 1 is the shortest handle the backend can issue (the "ultra" paid tier).
+  const enabled = trimmed.length >= USERNAME_MIN_LENGTH
 
   const { data, isLoading } = useSWR(
     enabled ? (["resolve-username", trimmed] as const) : null,
