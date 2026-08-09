@@ -264,7 +264,7 @@
       "invalidChars": "केवल अक्षर, अंक और अंडरस्कोर",
       "notFree": "मुफ़्त यूज़रनेम के लिए {min}+ अक्षर चाहिए। छोटे नाम खरीदे जा सकते हैं।"
     },
-    "brandProtectionLink": "Brand protection"
+    "brandProtectionLink": "आरक्षित ब्रांड नाम"
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -586,6 +586,18 @@
     "contact": "Contact",
     "copyTemplate": "Copy proof template",
     "copied": "Copied!",
-    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note.",
+    "buyHint": "कोई ऐसा नाम चाहिए जो आरक्षित न हो?",
+    "buyLink": "यूज़रनेम खरीदें"
+  },
+  "trustSignals": {
+    "onPlatform": "ICPay पर है",
+    "ageNew": "नया खाता",
+    "ageRecent": "{days}दिन सक्रिय",
+    "ageEstablished": "स्थापित",
+    "brandWarn": "यह हैंडल किसी ज्ञात ब्रांड से मिलता-जुलता है। भेजने से पहले प्राप्तकर्ता की जाँच करें।",
+    "levelLow": "कम जोखिम ({score})",
+    "levelMedium": "मध्यम जोखिम ({score})",
+    "levelHigh": "उच्च जोखिम ({score})"
   }
 }

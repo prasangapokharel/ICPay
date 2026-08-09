@@ -1,19 +1,16 @@
 "use client"
 
-import { HugeiconsIcon } from "@hugeicons/react"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { ScoreCircle } from "@/components/transfer/trust-signals"
 import { useTranslations } from "next-intl"
-import { GiftIcon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
 import { avatarUriFor } from "@/lib/avatar"
 import { shortPrincipal } from "@/lib/wallet-utils"
 import { USERNAME_MIN_LENGTH } from "@/lib/username"
+import { useRecipientProfile, useRecipientTxCount } from "@/hooks/use-wallet-data"
 import { cn } from "@/lib/utils"
 
-// The confirmation a payment app owes the user before they send money: proof the
-// name they typed resolves to a real account. Mirrors the contact card pattern
-// where entering a name reveals who it belongs to.
 export function RecipientCard({
   username,
   principal,
@@ -23,13 +20,14 @@ export function RecipientCard({
   principal?: string | null
   className?: string
 }) {
-  const tp = useTranslations("profileView")
+  const profile = useRecipientProfile(username, principal ?? null)
+  const txCount = useRecipientTxCount(principal ?? null)
 
   return (
     <div
       className={cn(
         "flex items-center gap-3 rounded-2xl bg-muted/40 p-3 ring-1 ring-border/60",
-        className
+        className,
       )}
     >
       <Avatar className="size-10">
@@ -38,6 +36,7 @@ export function RecipientCard({
           {username.slice(0, 2)}
         </AvatarFallback>
       </Avatar>
+
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-1 truncate text-sm font-semibold">
           {username}
@@ -49,9 +48,13 @@ export function RecipientCard({
           </p>
         )}
       </div>
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-        <HugeiconsIcon icon={GiftIcon} className="size-4" />
-      </span>
+
+      {/* Score circle replaces the gift icon — same slot, same size. */}
+      <ScoreCircle
+        username={username}
+        createdAtNs={profile?.createdAt}
+        txCount={txCount}
+      />
     </div>
   )
 }

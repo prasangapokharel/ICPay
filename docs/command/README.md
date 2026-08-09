@@ -35,7 +35,7 @@ npm run ci backend:rollback <commit> $(npm run ci backend:hash --silent)
 
 | Command | What it does |
 |---|---|
-| `npm run ci backend:test` | The 32-test suite. |
+| `npm run ci backend:test` | The 33-test suite. |
 | `npm run ci backend:build` | Build the wasm without deploying. |
 | `npm run ci backend:deploy` | tests → build → confirm → deploy. Prints the rollback command afterwards. |
 | `npm run ci frontend:build` | Typecheck and build. |
@@ -134,6 +134,31 @@ Amounts are in **e8s**: 1 ICP = 100_000_000 e8s. The ledger fee is 10_000 e8s.
 
 `ledger:history` reads the NNS index canister, not the ledger — the ledger only
 answers "what is the balance now", the index is what keeps the per-account log.
+
+## Users
+
+| Command | What it does |
+|---|---|
+| `npm run ci users:count [n]` | How many users, how many joined today, and the `n` most recent handles. Defaults to 10. |
+
+The canister exposes no count endpoint, so this reconstructs the roll from
+`searchUsers`. **Do not use `canister:call searchUsers` to count** — it caps at
+`Config.MAX_SEARCH_RESULTS` (25), so it answers 25 no matter how many users
+exist, and the number looks real.
+
+`users:count` sweeps instead: one search per character in `a-z0-9_`, deduped by
+id. That is exhaustive rather than a sample, because search matches a substring
+and every handle is at least one character, so every user matches at least one
+needle. Any needle that comes back with a full page is re-run with a second
+character appended; if one is *still* full it says so, and calls the totals a
+floor.
+
+It counts users **who have claimed a username**. An account that logged in and
+never claimed one is not in the username index and is not reachable from any
+public query, so it is not in the total.
+
+The sweep is ~37 query calls, issued in parallel because a mainnet round trip is
+~7s each. Queries are not billed, so it costs no cycles.
 
 ---
 

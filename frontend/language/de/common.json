@@ -264,7 +264,7 @@
       "invalidChars": "Nur Buchstaben, Zahlen und Unterstrich",
       "notFree": "Kostenlose Namen brauchen {min}+ Zeichen. Kürzere sind kaufbar."
     },
-    "brandProtectionLink": "Brand protection"
+    "brandProtectionLink": "Reservierte Markennamen"
   },
   "profile": {
     "title": "Profil",
@@ -586,6 +586,18 @@
     "contact": "Contact",
     "copyTemplate": "Copy proof template",
     "copied": "Copied!",
-    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note.",
+    "buyHint": "Suchen Sie einen Namen, der nicht reserviert ist?",
+    "buyLink": "Benutzernamen kaufen"
+  },
+  "trustSignals": {
+    "onPlatform": "Auf ICPay",
+    "ageNew": "Neues Konto",
+    "ageRecent": "Aktiv {days}T",
+    "ageEstablished": "Etabliertes Konto",
+    "brandWarn": "Dieser Name ähnelt einer bekannten Marke. Bitte den Empfänger vor dem Senden prüfen.",
+    "levelLow": "Geringes Risiko ({score})",
+    "levelMedium": "Mittleres Risiko ({score})",
+    "levelHigh": "Hohes Risiko ({score})"
   }
 }

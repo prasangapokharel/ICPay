@@ -11,7 +11,6 @@ import { PremiumBadge } from "@/components/verifed/premium-badge"
 import {
   Search01Icon,
   ArrowRight01Icon,
-  Shield01Icon,
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { useUserSearch } from "@/hooks/use-wallet-data"
@@ -43,14 +42,6 @@ export default function IcpversePage() {
           autoComplete="off"
           spellCheck={false}
         />
-        {/* Link to the protected brand-name list */}
-        <Link
-          href="/icpverse/brand-protection"
-          aria-label="Brand protection"
-          className="absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-        >
-          <HugeiconsIcon icon={Shield01Icon} className="size-4" />
-        </Link>
       </div>
 
       <section className="space-y-1">

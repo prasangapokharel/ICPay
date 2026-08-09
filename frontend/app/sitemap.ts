@@ -13,6 +13,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/faq`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/roadmap`, changeFrequency: "weekly", priority: 0.6 },
+    // A brand looking its own name up arrives here from a search rather than
+    // from inside the app, so it ranks above the pages read after signing up.
+    { url: `${siteUrl}/brand-protection`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/login`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/terms`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.3 },

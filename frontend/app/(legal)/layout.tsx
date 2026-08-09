@@ -6,6 +6,7 @@ const PAGES = [
   { href: "/about", label: "About" },
   { href: "/faq", label: "FAQ" },
   { href: "/roadmap", label: "Roadmap" },
+  { href: "/brand-protection", label: "Brands" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
   { href: "/transparency", label: "Transparency" },

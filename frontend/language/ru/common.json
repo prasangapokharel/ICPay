@@ -264,7 +264,7 @@
       "invalidChars": "Только буквы, цифры и подчёркивание",
       "notFree": "Бесплатные имена — от {min} символов. Более короткие можно купить."
     },
-    "brandProtectionLink": "Brand protection"
+    "brandProtectionLink": "Зарезервированные бренды"
   },
   "profile": {
     "title": "Профиль",
@@ -586,6 +586,18 @@
     "contact": "Contact",
     "copyTemplate": "Copy proof template",
     "copied": "Copied!",
-    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note.",
+    "buyHint": "Ищете имя, которое не зарезервировано?",
+    "buyLink": "Купить имя пользователя"
+  },
+  "trustSignals": {
+    "onPlatform": "На ICPay",
+    "ageNew": "Новый аккаунт",
+    "ageRecent": "Активен {days} дн.",
+    "ageEstablished": "Опытный пользователь",
+    "brandWarn": "Этот никнейм похож на известный бренд. Проверьте получателя перед отправкой.",
+    "levelLow": "Низкий риск ({score})",
+    "levelMedium": "Средний риск ({score})",
+    "levelHigh": "Высокий риск ({score})"
   }
 }
