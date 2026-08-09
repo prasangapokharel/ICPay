@@ -264,7 +264,7 @@
       "invalidChars": "仅限字母、数字和下划线",
       "notFree": "免费用户名需 {min} 个字符以上，更短的名称可以购买。"
     },
-    "brandProtectionLink": "Brand protection"
+    "brandProtectionLink": "已保留的品牌名称"
   },
   "profile": {
     "title": "个人资料",
@@ -586,6 +586,18 @@
     "contact": "Contact",
     "copyTemplate": "Copy proof template",
     "copied": "Copied!",
-    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note.",
+    "buyHint": "想找一个未被保留的名称？",
+    "buyLink": "购买用户名"
+  },
+  "trustSignals": {
+    "onPlatform": "已在 ICPay",
+    "ageNew": "新账户",
+    "ageRecent": "活跃 {days} 天",
+    "ageEstablished": "老用户",
+    "brandWarn": "此用户名与已知品牌相似，转账前请核实收款人身份。",
+    "levelLow": "低风险 ({score})",
+    "levelMedium": "中等风险 ({score})",
+    "levelHigh": "高风险 ({score})"
   }
 }

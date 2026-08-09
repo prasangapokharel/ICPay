@@ -91,7 +91,7 @@ future problem, not a bug to fix opportunistically.
 
 **Cycles.** Watch `npm run ci cycles:balance`. At zero the canister is deleted.
 
-**Tests.** 24 files. Every new endpoint adds a test in the same commit.
+**Tests.** 33 files. Every new endpoint adds a test in the same commit.
 
 **Docs.** `docs/command/README.md` is the operations reference and is meant to
 stay true. Update it when a command changes.

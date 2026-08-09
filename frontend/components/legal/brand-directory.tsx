@@ -9,182 +9,27 @@ import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Search01Icon,
-  Shield01Icon,
   Crown02Icon,
   ArrowUpRight01Icon,
   Copy01Icon,
 } from "@hugeicons/core-free-icons"
-
-// All brand names reserved on mainnet by the controller. These handles are
-// blocked so nobody can impersonate a real brand. The source of truth lives in
-// the backend (`listReservedUsernames`), kept mirrored here for display.
-const RESERVED_BRANDS = [
-  "adele",
-  "adidas",
-  "adobe",
-  "adyen",
-  "algorand",
-  "amazon",
-  "amex",
-  "amm",
-  "apple",
-  "aptos",
-  "arbitrum",
-  "audi",
-  "bank",
-  "base",
-  "bentley",
-  "beyonce",
-  "bezos",
-  "binance",
-  "bmw",
-  "btc",
-  "bugatti",
-  "burger",
-  "caiman",
-  "cartier",
-  "casio",
-  "chanel",
-  "cisco",
-  "coca",
-  "coin",
-  "coinbase",
-  "cycles",
-  "dell",
-  "dex",
-  "dext",
-  "dior",
-  "discord",
-  "disney",
-  "dodge",
-  "dominic",
-  "domino",
-  "drake",
-  "eminem",
-  "eth",
-  "ferrari",
-  "fifa",
-  "ford",
-  "gates",
-  "gillette",
-  "google",
-  "gucci",
-  "haaland",
-  "hamilton",
-  "hermes",
-  "honda",
-  "hulu",
-  "hyundai",
-  "ibm",
-  "ic",
-  "icppay",
-  "icpverse",
-  "icrc",
-  "ikea",
-  "intel",
-  "jeep",
-  "jobs",
-  "josh",
-  "kanye",
-  "kfc",
-  "kia",
-  "kraken",
-  "lambo",
-  "ledger",
-  "lenovo",
-  "maradona",
-  "mazda",
-  "mbappe",
-  "mercedes",
-  "messi",
-  "metamask",
-  "mlb",
-  "musk",
-  "nba",
-  "netflix",
-  "neurons",
-  "neymar",
-  "nfl",
-  "nft",
-  "nhl",
-  "nike",
-  "nissan",
-  "nns",
-  "nokia",
-  "nvidia",
-  "obama",
-  "omega",
-  "opensea",
-  "oracle",
-  "pay",
-  "paypal",
-  "peacock",
-  "pele",
-  "pepsi",
-  "phantom",
-  "pierre",
-  "plaid",
-  "polygon",
-  "porsche",
-  "prada",
-  "puma",
-  "putin",
-  "reddit",
-  "reebok",
-  "revolut",
-  "rihanna",
-  "rivian",
-  "rolex",
-  "ronaldo",
-  "samsung",
-  "seiko",
-  "shakira",
-  "snap",
-  "sns",
-  "sol",
-  "sony",
-  "spotify",
-  "square",
-  "stock",
-  "stripe",
-  "subaru",
-  "subway",
-  "sui",
-  "swap",
-  "taylor",
-  "telegram",
-  "tiktok",
-  "tinder",
-  "token",
-  "toyota",
-  "trezor",
-  "twitch",
-  "ufc",
-  "uni",
-  "uniswap",
-  "usdc",
-  "usdt",
-  "usdtf",
-  "venmo",
-  "vimeo",
-  "visa",
-  "volvo",
-  "wallet",
-  "wasm",
-  "web3",
-  "wechat",
-  "whatsapp",
-  "wise",
-  "youtube",
-  "zap",
-  "zara",
-  "zidane",
-].sort()
+import { RESERVED_BRANDS } from "@/components/legal/reserved-brands"
 
 const CONTACT_HANDLE = "@IcpayOfficial"
 const CONTACT_LINK = "https://x.com/icpayofficial"
 
-export default function BrandProtectionPage() {
+// Angle brackets are placeholders for the sender to fill, not markup.
+const PROOF_TEMPLATE = [
+  "I officially own the @<brand> brand and want to claim this reserved ICPay username.",
+  "",
+  "My ICPay username: <your-username>",
+  "",
+  "Proof of ownership: <link or document>",
+  "",
+  `Contact: ${CONTACT_HANDLE}`,
+].join("\n")
+
+export function BrandDirectory() {
   const t = useTranslations("brandProtection")
   const [search, setSearch] = useState("")
   const [copied, setCopied] = useState(false)
@@ -196,9 +41,8 @@ export default function BrandProtectionPage() {
   )
 
   const copyProof = async () => {
-    const text = `I officially own the @<brand> brand and want to claim this reserved ICPay username.\n\nMy ICPay username: <your-username>\n\nProof of ownership: <link or document>\n\nContact: @IcpayOfficial`
     try {
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(PROOF_TEMPLATE)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
@@ -207,16 +51,7 @@ export default function BrandProtectionPage() {
   }
 
   return (
-    <div className="space-y-5 pt-2">
-      <header className="space-y-1">
-        <div className="flex items-center gap-2">
-          <HugeiconsIcon icon={Shield01Icon} className="size-5 text-primary" />
-          <h1 className="text-lg font-semibold">{t("title")}</h1>
-        </div>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </header>
-
-      {/* Search */}
+    <div className="space-y-5">
       <div className="relative">
         <HugeiconsIcon
           icon={Search01Icon}
@@ -233,15 +68,12 @@ export default function BrandProtectionPage() {
         />
       </div>
 
-      {/* Reserved list */}
       <section className="space-y-2">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-sm font-semibold text-muted-foreground">
-            {search.trim()
-              ? t("results", { count: filtered.length })
-              : t("allReserved", { count: RESERVED_BRANDS.length })}
-          </h2>
-        </div>
+        <h2 className="px-1 text-sm font-semibold text-muted-foreground">
+          {query
+            ? t("results", { count: filtered.length })
+            : t("allReserved", { count: RESERVED_BRANDS.length })}
+        </h2>
 
         {filtered.length === 0 ? (
           <p className="px-1 py-6 text-center text-sm text-muted-foreground">
@@ -252,16 +84,11 @@ export default function BrandProtectionPage() {
             {filtered.map((name) => (
               <li key={name} className="flex items-center gap-3 py-2.5">
                 <div className="flex size-9 items-center justify-center rounded-xl bg-muted">
-                  <HugeiconsIcon
-                    icon={Crown02Icon}
-                    className="size-4 text-muted-foreground"
-                  />
+                  <HugeiconsIcon icon={Crown02Icon} className="size-4 text-muted-foreground" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">@{name}</p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {t("brandHandle")}
-                  </p>
+                  <p className="truncate text-xs text-muted-foreground">{t("brandHandle")}</p>
                 </div>
                 <Badge variant="secondary">{t("reserved")}</Badge>
               </li>
@@ -270,7 +97,6 @@ export default function BrandProtectionPage() {
         )}
       </section>
 
-      {/* Contact / proof card */}
       <section className="rounded-2xl border border-primary/30 bg-primary/5 p-4">
         <div className="flex items-center gap-2">
           <HugeiconsIcon icon={Crown02Icon} className="size-5 text-primary" />
@@ -279,7 +105,7 @@ export default function BrandProtectionPage() {
         <p className="mt-1.5 text-sm text-muted-foreground">{t("ownItBody")}</p>
 
         <div className="mt-3 flex items-center gap-2">
-          <Link
+          <a
             href={CONTACT_LINK}
             target="_blank"
             rel="noopener noreferrer"
@@ -287,7 +113,7 @@ export default function BrandProtectionPage() {
           >
             {CONTACT_HANDLE}
             <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-3.5" />
-          </Link>
+          </a>
           <Button
             variant="outline"
             size="sm"
@@ -301,6 +127,13 @@ export default function BrandProtectionPage() {
 
         <p className="mt-3 text-xs text-muted-foreground">{t("proofHint")}</p>
       </section>
+
+      <p className="text-xs text-muted-foreground">
+        {t("buyHint")}{" "}
+        <Link href="/username" className="underline underline-offset-2 hover:text-foreground">
+          {t("buyLink")}
+        </Link>
+      </p>
     </div>
   )
 }

@@ -11,7 +11,7 @@ import type { DashboardData, UserPublic } from "@/services/types"
 import { getDashboard } from "@/services/dashboard/dashboard"
 import { getDepositAddress } from "@/services/deposit/deposit"
 import { getTransactions } from "@/services/transactions/transactions"
-import { getProfile, resolveUsername, searchUsers } from "@/services/profile/profile"
+import { getProfile, resolveUsername, searchUsers, getRecipientProfile } from "@/services/profile/profile"
 import { USERNAME_MIN_LENGTH } from "@/lib/username"
 import { checkUsername } from "@/services/buy/buy"
 import { compareBySuggestion } from "@/lib/verifed/premium-tick"
@@ -251,6 +251,41 @@ export function useResolvedUsername(name: string) {
   )
 
   return { principal: data ?? null, isLoading: enabled && isLoading }
+}
+
+// Fetches full UserPublic for a resolved username to get createdAt for trust
+// signals. Fires only once the principal is confirmed — no wasted call on a
+// failed lookup. Same free query path as resolveUsername.
+export function useRecipientProfile(username: string, principal: string | null) {
+  const { identity } = useAuth()
+  const trimmed = username.trim().toLowerCase()
+  const enabled = trimmed.length >= USERNAME_MIN_LENGTH && principal !== null
+
+  const { data } = useSWR(
+    enabled ? (["recipient-profile", trimmed] as const) : null,
+    () => getRecipientProfile(identity, trimmed),
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      keepPreviousData: false,
+      dedupingInterval: 120_000,
+    }
+  )
+
+  return data ?? null
+}
+
+// Fetches raw tx count for a recipient principal from the NNS index (free
+// query). Used only for the risk score — no subaccount needed because the
+// caller wants public on-chain history for that principal, not custodial funds.
+export function useRecipientTxCount(principal: string | null) {
+  const { identity } = useAuth()
+  const { data } = useSWR(
+    principal ? (["recipient-tx-count", principal] as const) : null,
+    () => fetchAccountStats(principal!, undefined, identity).then((s) => s.txCount),
+    { revalidateOnFocus: false, revalidateIfStale: false, dedupingInterval: 120_000 }
+  )
+  return data ?? null
 }
 
 // checkUsername is a query call, so this can run as the buyer types. Availability

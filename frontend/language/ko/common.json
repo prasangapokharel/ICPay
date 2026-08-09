@@ -264,7 +264,7 @@
       "invalidChars": "영문, 숫자, 밑줄만 사용 가능합니다",
       "notFree": "무료 사용자 이름은 {min}자 이상이어야 합니다. 더 짧은 이름은 구매할 수 있습니다."
     },
-    "brandProtectionLink": "Brand protection"
+    "brandProtectionLink": "예약된 브랜드 이름"
   },
   "profile": {
     "title": "프로필",
@@ -586,6 +586,18 @@
     "contact": "Contact",
     "copyTemplate": "Copy proof template",
     "copied": "Copied!",
-    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note.",
+    "buyHint": "예약되지 않은 이름을 찾으시나요?",
+    "buyLink": "사용자 이름 구매"
+  },
+  "trustSignals": {
+    "onPlatform": "ICPay 사용자",
+    "ageNew": "새 계정",
+    "ageRecent": "{days}일 활동",
+    "ageEstablished": "오래된 계정",
+    "brandWarn": "이 핸들은 알려진 브랜드와 유사합니다. 전송 전 수신자를 확인하세요.",
+    "levelLow": "저위험 ({score})",
+    "levelMedium": "중위험 ({score})",
+    "levelHigh": "고위험 ({score})"
   }
 }

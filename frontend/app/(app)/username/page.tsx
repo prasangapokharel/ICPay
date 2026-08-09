@@ -316,7 +316,7 @@ export default function UsernamePage() {
         </div>
         <p className="text-xs text-muted-foreground">{t("note")}</p>
         <Link
-          href="/icpverse/brand-protection"
+          href="/brand-protection"
           className="inline-block text-xs font-medium text-foreground underline underline-offset-4 transition-colors hover:text-primary"
         >
           {t("brandProtectionLink")}

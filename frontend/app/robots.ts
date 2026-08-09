@@ -28,6 +28,7 @@ const PUBLIC = [
   "/about",
   "/faq",
   "/roadmap",
+  "/brand-protection",
   "/terms",
   "/privacy",
   "/transparency",

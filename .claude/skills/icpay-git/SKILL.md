@@ -115,7 +115,7 @@ per-machine permission grants.
 
 ## CI
 
-`.github/workflows/ci.yml`, three jobs: `backend` (the 24-test Motoko suite),
+`.github/workflows/ci.yml`, three jobs: `backend` (the 33-test Motoko suite),
 `frontend` (typecheck, eslint-against-baseline, build), and `deploy`. The first
 two run on pushes to `main` and `dev`, and on every PR.
 

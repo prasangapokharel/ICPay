@@ -264,7 +264,7 @@
       "invalidChars": "英字、数字、アンダースコアのみ使用できます",
       "notFree": "無料のユーザー名は {min} 文字以上必要です。より短い名前は購入できます。"
     },
-    "brandProtectionLink": "Brand protection"
+    "brandProtectionLink": "予約済みブランド名"
   },
   "profile": {
     "title": "プロフィール",
@@ -586,6 +586,18 @@
     "contact": "Contact",
     "copyTemplate": "Copy proof template",
     "copied": "Copied!",
-    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note."
+    "proofHint": "Fill in your brand, your ICPay username and a link to proof (e.g. your official X page). DM @IcpayOfficial with the filled note.",
+    "buyHint": "予約されていない名前をお探しですか？",
+    "buyLink": "ユーザー名を購入"
+  },
+  "trustSignals": {
+    "onPlatform": "ICPay ユーザー",
+    "ageNew": "新規アカウント",
+    "ageRecent": "{days}日前に登録",
+    "ageEstablished": "ベテランユーザー",
+    "brandWarn": "このハンドルは既知のブランド名に似ています。送金前に受取人を確認してください。",
+    "levelLow": "低リスク ({score})",
+    "levelMedium": "中リスク ({score})",
+    "levelHigh": "高リスク ({score})"
   }
 }

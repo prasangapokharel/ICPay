@@ -1,6 +1,6 @@
 // Shared helpers for every ci command. Kept deliberately small: each command
 // file should read as the dfx invocation it wraps, not as plumbing.
-import { spawnSync } from "node:child_process"
+import { spawn, spawnSync } from "node:child_process"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -60,6 +60,24 @@ export const dfx = (args: string[], cwd?: string): void =>
 
 export const dfxOut = (args: string[], cwd?: string): string =>
   capture("dfx", [...args, "--network", network()], cwd)
+
+// A round trip to a mainnet boundary node is ~7s regardless of how trivial the
+// method is, so a command making tens of calls has to overlap them or it takes
+// minutes. Only safe for queries: they are not billed and cannot mutate state.
+export function dfxOutMany(argSets: string[][], cwd?: string): Promise<string[]> {
+  const net = network()
+  return Promise.all(
+    argSets.map(
+      (args) =>
+        new Promise<string>((done) => {
+          const child = spawn("dfx", [...args, "--network", net], { cwd: cwd ?? BACKEND, env })
+          let stdout = ""
+          child.stdout.on("data", (chunk) => (stdout += chunk))
+          child.on("close", () => done(stdout))
+        }),
+    ),
+  )
+}
 
 export function moduleHash(canister: string = CANISTER): string {
   return dfxOut(["canister", "info", canister]).match(/Module hash: (0x[0-9a-f]+)/)?.[1] ?? "unknown"
