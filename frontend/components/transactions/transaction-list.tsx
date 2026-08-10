@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/accordion"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, ArrowRight01Icon, LinkSquare02Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
+import { PremiumBadge } from "@/components/verifed/premium-badge"
 import type { TransactionPublic } from "@/services/types"
 import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, explorerTxUrl, shortenCounterparty } from "@/lib/wallet-utils"
 import { useLedgerSymbol } from "@/hooks/use-wallet-data"
@@ -148,8 +149,9 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
         )}
 
         <div className="min-w-0 flex-1 text-left">
-          <p className={cn("truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
-            {shortenCounterparty(counterparty)}
+          <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
+            {handle ? `@${handle}` : shortenCounterparty(counterparty)}
+            {handle && <PremiumBadge name={handle} className="size-3.5" />}
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground/80">
             <span>{t(`type.${type}`)}</span> · {formatTime(tx.createdAt)}
