@@ -33,6 +33,13 @@ const PUBLIC = [
   "/privacy",
   "/transparency",
   "/login",
+  // Blog — public and crawlable. The (blog) group has no auth guard, so every
+  // post belongs here; add each new route to sitemap.ts as well.
+  "/what-is-icp",
+  "/best-crypto-wallet",
+  "/best-icp-wallet",
+  "/what-is-internet-identity",
+  "/how-to-send-icp",
 ]
 
 export default function robots(): MetadataRoute.Robots {
