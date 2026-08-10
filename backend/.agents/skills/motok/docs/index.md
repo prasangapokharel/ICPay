@@ -48,7 +48,7 @@ Add it to your project's `mops.toml`:
 core = "2.5.0" # Check the latest version at https://mops.one/core
 
 [toolchain]
-moc = "1.8.0" # Check the latest version at https://github.com/caffeinelabs/motoko/releases
+moc = "1.13.0" # Check the latest version at https://github.com/caffeinelabs/motoko/releases
 ```
 
 Then import modules:
