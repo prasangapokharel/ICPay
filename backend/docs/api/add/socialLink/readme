@@ -1,0 +1,114 @@
+# SocialLink API
+
+Users can attach up to one link per platform to their ICPay profile.
+
+Supported platforms: `github`, `linkedin`, `website`
+
+Website domains allowed: `.com`, `.app`, `.ai`, `.shop`, `.net`, `.io`
+
+---
+
+## Design constraints
+
+**No new storage module.** Social links are per-user metadata — they belong on
+the `User` record. A separate map would duplicate a lookup that already exists.
+
+**Field added to `User`**: `socialLinks: [SocialLink]` — a small array, one
+entry per platform (max 3). Adding a field to a stable record needs a migration
+(the upgrade-safety rule in the backend skill). Pattern is established in
+`migrations/StampLedgerId.mo`.
+
+**Candid forward-compatibility.** `UserPublic` is decoded by every client. The
+new field must be `opt [SocialLink]` in the Candid interface so old frontends
+decode it as `null` and new ones get the array. In Motoko: `?[SocialLink]`.
+
+---
+
+## Types (types.mo)
+
+```motoko
+public type SocialPlatform = { #github; #linkedin; #website };
+
+public type SocialLink = {
+  platform: SocialPlatform;
+  url: Text;
+};
+```
+
+`UserPublic` gets: `socialLinks: ?[SocialLink]`
+
+---
+
+## Validator (validators/SocialLinkValidator.mo)
+
+Pure function returning `?Text` on failure — matches the validator convention.
+
+```
+validate(platform, url) -> ?Text
+  must start with https://
+  github   -> must contain github.com/
+  linkedin -> must contain linkedin.com/in/
+  website  -> TLD must be in: .com .app .ai .shop .net .io
+              reject bare IPs and localhost
+```
+
+---
+
+## Service (services/SocialLinkService.mo)
+
+Takes `users: UserStorage.UserMap` only — no new storage.
+
+```
+setSocialLink(service, caller, platform, url) -> ApiResult<UserPublic>
+  1. validate url
+  2. getByPrincipal -> #err "User not found"
+  3. upsert: replace entry for this platform, or append if absent
+  4. return updated UserPublic
+
+removeSocialLink(service, caller, platform) -> ApiResult<UserPublic>
+  1. getByPrincipal
+  2. filter out the entry for this platform
+  3. return updated UserPublic
+```
+
+---
+
+## API (api/v1/SocialLink.mo)
+
+```motoko
+setSocialLink(platform: SocialPlatform, url: Text) : async ApiResult<UserPublic>
+removeSocialLink(platform: SocialPlatform)         : async ApiResult<UserPublic>
+```
+
+`getSocialLinks` is not needed — `getUser()` already returns `UserPublic` which
+includes `socialLinks`.
+
+---
+
+## Migration
+
+`User` gains `socialLinks: [SocialLink]`. The `with migration = ...` clause on
+the `users` stable variable in `main.mo` rewrites every existing row, setting
+`socialLinks = []`. Pattern: `migrations/StampLedgerId.mo`.
+
+---
+
+## Files
+
+| File | New / Modified |
+|---|---|
+| `types.mo` | + `SocialPlatform`, `SocialLink`; `User` + `UserPublic` get the field |
+| `validators/SocialLinkValidator.mo` | new |
+| `services/SocialLinkService.mo` | new (~60 lines) |
+| `api/v1/SocialLink.mo` | new (~15 lines) |
+| `main.mo` | + import, service, include, migration clause |
+| `testing/services/SocialLinkService.test.mo` | new |
+
+---
+
+## NOT built
+
+- Visibility toggle (all links are public via `UserPublic`)
+- Twitter/X (not in spec)
+- Rate limit (add if abuse observed)
+- Link preview / metadata fetch (off-chain)

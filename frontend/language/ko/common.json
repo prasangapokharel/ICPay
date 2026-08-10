@@ -148,7 +148,8 @@
     "sending": "보내는 중…",
     "confirmSend": "확인 후 보내기",
     "lookingUp": "@{name} 조회 중…",
-    "noAccount": "@{name}의 ICPay 계정을 찾을 수 없습니다."
+    "noAccount": "@{name}의 ICPay 계정을 찾을 수 없습니다.",
+    "bookmarks": "북마크"
   },
   "deposit": {
     "title": "입금",
@@ -599,5 +600,30 @@
     "levelLow": "저위험 ({score})",
     "levelMedium": "중위험 ({score})",
     "levelHigh": "고위험 ({score})"
+  },
+  "socialLinks": {
+    "title": "소셜 링크",
+    "addBtn": "소셜 링크 추가",
+    "saveBtn": "저장",
+    "removeBtn": "삭제",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "website": "웹사이트",
+    "urlPlaceholder": {
+      "github": "https://github.com/username",
+      "linkedin": "https://linkedin.com/in/username",
+      "website": "https://yoursite.com"
+    },
+    "saved": "저장됨",
+    "error": "잘못된 URL"
+  },
+  "bookmark": {
+    "add": "북마크",
+    "remove": "북마크 해제",
+    "added": "북마크됨",
+    "sendTo": "@{name}에게 보내기",
+    "title": "북마크",
+    "empty": "북마크 없음",
+    "emptyHint": "빠른 송금을 위해 프로필을 북마크하세요."
   }
 }

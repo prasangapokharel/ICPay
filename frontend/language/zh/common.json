@@ -148,7 +148,8 @@
     "sending": "发送中…",
     "confirmSend": "确认并发送",
     "lookingUp": "正在查找 @{name}…",
-    "noAccount": "未找到 @{name} 的 ICPay 账户。"
+    "noAccount": "未找到 @{name} 的 ICPay 账户。",
+    "bookmarks": "收藏"
   },
   "deposit": {
     "title": "充值",
@@ -599,5 +600,30 @@
     "levelLow": "低风险 ({score})",
     "levelMedium": "中等风险 ({score})",
     "levelHigh": "高风险 ({score})"
+  },
+  "socialLinks": {
+    "title": "社交链接",
+    "addBtn": "添加社交链接",
+    "saveBtn": "保存",
+    "removeBtn": "删除",
+    "github": "GitHub",
+    "linkedin": "领英",
+    "website": "网站",
+    "urlPlaceholder": {
+      "github": "https://github.com/username",
+      "linkedin": "https://linkedin.com/in/username",
+      "website": "https://yoursite.com"
+    },
+    "saved": "已保存",
+    "error": "无效 URL"
+  },
+  "bookmark": {
+    "add": "收藏",
+    "remove": "取消收藏",
+    "added": "已收藏",
+    "sendTo": "向 @{name} 转账",
+    "title": "收藏",
+    "empty": "暂无收藏",
+    "emptyHint": "收藏用户以快速转账。"
   }
 }

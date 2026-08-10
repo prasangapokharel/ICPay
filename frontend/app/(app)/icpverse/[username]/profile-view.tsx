@@ -11,9 +11,11 @@ import { TipDrawer } from "@/components/icpverse/tip-drawer"
 import { AccountStatsCard } from "@/components/icpverse/account-stats-card"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { SocialLinkIcons } from "@/components/profile/social-link-icons"
+import { BookmarkButton } from "@/components/bookmark/bookmark-drawer"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
-import { useResolvedUsername, useLiveBalance, useRefreshWallet, useOwnProfile } from "@/hooks/use-wallet-data"
+import { useResolvedUsername, useLiveBalance, useRefreshWallet, useOwnProfile, useRecipientProfile } from "@/hooks/use-wallet-data"
 import { tip } from "@/services/transfer/transfer"
 import { useAuth } from "@/components/auth/auth-provider"
 
@@ -43,6 +45,8 @@ export function ProfileView() {
   const segments = pathname.split("/").filter(Boolean)
   const username = segments.length > 1 ? decodeURIComponent(segments[segments.length - 1]) : ""
   const { principal, isLoading } = useResolvedUsername(username)
+  const recipientProfile = useRecipientProfile(username, principal ?? null)
+  const socialLinks = recipientProfile?.socialLinks?.[0] ?? []
 
   const handleCopy = async () => {
     if (!principal) return
@@ -121,15 +125,29 @@ export function ProfileView() {
           </span>
         </Button>
 
-        {!isSelf && (
-          <Button
-            size="lg"
-            className="mt-6 w-full max-w-56"
-            onClick={() => setTipOpen(true)}
-          >
-            {t("tip")}
-          </Button>
+        {socialLinks.length > 0 && (
+          <div className="mt-3">
+            <SocialLinkIcons links={socialLinks} />
+          </div>
         )}
+
+        <div className="mt-4 flex items-center gap-2">
+          {!isSelf && (
+            <Button
+              size="lg"
+              className="w-full max-w-40"
+              onClick={() => setTipOpen(true)}
+            >
+              {t("tip")}
+            </Button>
+          )}
+          {!isSelf && recipientProfile && (
+            <BookmarkButton
+              targetUserId={recipientProfile.id}
+              username={username}
+            />
+          )}
+        </div>
 
         <div className="w-full pt-8">
           <AccountStatsCard principal={principal} />

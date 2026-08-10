@@ -148,7 +148,8 @@
     "sending": "Sending…",
     "confirmSend": "Confirm & send",
     "lookingUp": "Looking up @{name}…",
-    "noAccount": "No ICPay account found for @{name}."
+    "noAccount": "No ICPay account found for @{name}.",
+    "bookmarks": "Bookmarks"
   },
   "deposit": {
     "title": "Deposit",
@@ -599,5 +600,30 @@
     "levelLow": "Low risk ({score})",
     "levelMedium": "Medium risk ({score})",
     "levelHigh": "High risk ({score})"
+  },
+  "socialLinks": {
+    "title": "Social Links",
+    "addBtn": "Add social link",
+    "saveBtn": "Save",
+    "removeBtn": "Remove",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "website": "Website",
+    "urlPlaceholder": {
+      "github": "https://github.com/username",
+      "linkedin": "https://linkedin.com/in/username",
+      "website": "https://yoursite.com"
+    },
+    "saved": "Saved",
+    "error": "Invalid URL"
+  },
+  "bookmark": {
+    "add": "Bookmark",
+    "remove": "Remove bookmark",
+    "added": "Bookmarked",
+    "sendTo": "Send to @{name}",
+    "title": "Bookmarks",
+    "empty": "No bookmarks yet",
+    "emptyHint": "Bookmark profiles to quickly send funds."
   }
 }

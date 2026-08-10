@@ -20,6 +20,13 @@ import type {
   LaunchParams,
   LaunchFee,
   AccountType,
+  SocialPlatform,
+  SocialLink,
+  Bookmark,
+  ApiResult_16,
+  ApiResult_17,
+  ApiResult_18,
+  ApiResult_19,
 } from "@/services/types"
 
 export interface WalletActor {
@@ -56,6 +63,11 @@ export interface WalletActor {
   isSymbolAvailable: (symbol: string) => Promise<boolean>
   getLaunchFee: () => Promise<LaunchFee>
   isTokenLaunchReady: () => Promise<boolean>
+  setSocialLink: (platform: SocialPlatform, url: string) => Promise<ApiResult_16>
+  removeSocialLink: (platform: SocialPlatform) => Promise<ApiResult_16>
+  listBookmarks: () => Promise<ApiResult_18>
+  addBookmark: (targetUserId: string) => Promise<ApiResult_17>
+  removeBookmark: (targetUserId: string) => Promise<ApiResult_19>
 }
 
 let cachedActor: WalletActor | null = null
@@ -105,10 +117,28 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)),
   })
 
+  const SocialPlatform = IDL.Variant({
+    github: IDL.Null,
+    linkedin: IDL.Null,
+    website: IDL.Null,
+  })
+
+  const SocialLink = IDL.Record({
+    platform: SocialPlatform,
+    url: IDL.Text,
+  })
+
+  const Bookmark = IDL.Record({
+    ownerUserId: IDL.Text,
+    targetUserId: IDL.Text,
+    createdAt: IDL.Int,
+  })
+
   const UserPublic = IDL.Record({
     id: IDL.Text,
     username: IDL.Opt(IDL.Text),
     displayName: IDL.Text,
+    socialLinks: IDL.Opt(IDL.Vec(SocialLink)),
     createdAt: IDL.Int,
   })
 
@@ -281,5 +311,10 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     isSymbolAvailable: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     getLaunchFee: IDL.Func([], [IDL.Record({ total: IDL.Nat, cycles: IDL.Nat })], ["query"]),
     isTokenLaunchReady: IDL.Func([], [IDL.Bool], ["query"]),
+    setSocialLink: IDL.Func([SocialPlatform, IDL.Text], [IDL.Variant({ ok: UserPublic, err: IDL.Text })], []),
+    removeSocialLink: IDL.Func([SocialPlatform], [IDL.Variant({ ok: UserPublic, err: IDL.Text })], []),
+    listBookmarks: IDL.Func([], [IDL.Variant({ ok: IDL.Vec(Bookmark), err: IDL.Text })], ["query"]),
+    addBookmark: IDL.Func([IDL.Text], [IDL.Variant({ ok: Bookmark, err: IDL.Text })], []),
+    removeBookmark: IDL.Func([IDL.Text], [IDL.Variant({ ok: IDL.Null, err: IDL.Text })], []),
   })
 }

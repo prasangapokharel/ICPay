@@ -12,6 +12,7 @@ import { getDashboard } from "@/services/dashboard/dashboard"
 import { getDepositAddress } from "@/services/deposit/deposit"
 import { getTransactions } from "@/services/transactions/transactions"
 import { getProfile, resolveUsername, searchUsers, getRecipientProfile } from "@/services/profile/profile"
+import { listBookmarks } from "@/services/bookmark/bookmark"
 import { USERNAME_MIN_LENGTH } from "@/lib/username"
 import { checkUsername } from "@/services/buy/buy"
 import { compareBySuggestion } from "@/lib/verifed/premium-tick"
@@ -353,6 +354,16 @@ export function useUserSearch(search: string, limit = 10) {
 export function useOwnProfile() {
   const { identity } = useAuth()
   return useSWRImmutable(keyFor(identity, "profile"), () => getProfile(identity))
+}
+
+export function useBookmarks() {
+  const { identity } = useAuth()
+  const { data, mutate } = useSWR(
+    keyFor(identity, "bookmarks"),
+    () => listBookmarks(identity),
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
+  return { bookmarks: data ?? [], mutate }
 }
 
 // The self-filter needs it before the list paints, so it is read from the fast

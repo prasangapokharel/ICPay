@@ -148,7 +148,8 @@
     "sending": "送金中…",
     "confirmSend": "確認して送金",
     "lookingUp": "@{name} を検索中…",
-    "noAccount": "@{name} の ICPay アカウントが見つかりません。"
+    "noAccount": "@{name} の ICPay アカウントが見つかりません。",
+    "bookmarks": "ブックマーク"
   },
   "deposit": {
     "title": "入金",
@@ -599,5 +600,30 @@
     "levelLow": "低リスク ({score})",
     "levelMedium": "中リスク ({score})",
     "levelHigh": "高リスク ({score})"
+  },
+  "socialLinks": {
+    "title": "ソーシャルリンク",
+    "addBtn": "ソーシャルリンクを追加",
+    "saveBtn": "保存",
+    "removeBtn": "削除",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "website": "ウェブサイト",
+    "urlPlaceholder": {
+      "github": "https://github.com/username",
+      "linkedin": "https://linkedin.com/in/username",
+      "website": "https://yoursite.com"
+    },
+    "saved": "保存済み",
+    "error": "無効なURL"
+  },
+  "bookmark": {
+    "add": "ブックマーク",
+    "remove": "削除",
+    "added": "登録済み",
+    "sendTo": "@{name}に送金",
+    "title": "ブックマーク",
+    "empty": "ブックマークなし",
+    "emptyHint": "プロフィールをブックマークして素早く送金。"
   }
 }

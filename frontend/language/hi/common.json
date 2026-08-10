@@ -148,7 +148,8 @@
     "sending": "भेजा जा रहा है…",
     "confirmSend": "पुष्टि कर भेजें",
     "lookingUp": "@{name} खोजा जा रहा है…",
-    "noAccount": "@{name} के लिए कोई ICPay अकाउंट नहीं मिला।"
+    "noAccount": "@{name} के लिए कोई ICPay अकाउंट नहीं मिला।",
+    "bookmarks": "बुकमार्क"
   },
   "deposit": {
     "title": "जमा करें",
@@ -599,5 +600,30 @@
     "levelLow": "कम जोखिम ({score})",
     "levelMedium": "मध्यम जोखिम ({score})",
     "levelHigh": "उच्च जोखिम ({score})"
+  },
+  "socialLinks": {
+    "title": "सोशल लिंक",
+    "addBtn": "सोशल लिंक जोड़ें",
+    "saveBtn": "सहेजें",
+    "removeBtn": "हटाएं",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "website": "वेबसाइट",
+    "urlPlaceholder": {
+      "github": "https://github.com/username",
+      "linkedin": "https://linkedin.com/in/username",
+      "website": "https://yoursite.com"
+    },
+    "saved": "सहेजा",
+    "error": "अमान्य URL"
+  },
+  "bookmark": {
+    "add": "बुकमार्क",
+    "remove": "हटाएं",
+    "added": "बुकमार्क हो गया",
+    "sendTo": "@{name} को भेजें",
+    "title": "बुकमार्क",
+    "empty": "कोई बुकमार्क नहीं",
+    "emptyHint": "त्वरित भुगतान के लिए प्रोफाइल बुकमार्क करें।"
   }
 }

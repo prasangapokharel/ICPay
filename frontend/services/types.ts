@@ -25,6 +25,20 @@ export type UserPublic = {
   id: UserId
   username: [] | [Username]
   displayName: string
+  socialLinks: [] | [SocialLink[]]
+  createdAt: bigint
+}
+
+export type SocialPlatform = { github: null } | { linkedin: null } | { website: null }
+
+export type SocialLink = {
+  platform: SocialPlatform
+  url: string
+}
+
+export type Bookmark = {
+  ownerUserId: UserId
+  targetUserId: UserId
   createdAt: bigint
 }
 
@@ -142,3 +156,7 @@ export type ApiResult_7 = { ok: PaginatedResult } | { err: string }
 export type ApiResult_8 = { ok: DashboardData } | { err: string }
 export type ApiResult_9 = { ok: Purchase } | { err: string }
 export type ApiResult_15 = { ok: TokenPublic } | { err: string }
+export type ApiResult_16 = { ok: UserPublic } | { err: string }
+export type ApiResult_17 = { ok: Bookmark } | { err: string }
+export type ApiResult_18 = { ok: Bookmark[] } | { err: string }
+export type ApiResult_19 = { ok: null } | { err: string }

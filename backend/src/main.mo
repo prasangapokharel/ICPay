@@ -18,6 +18,10 @@ import TokenWasmService "services/TokenWasmService";
 import TokenService "services/TokenService";
 import TransactionService "services/TransactionService";
 import SettingsService "services/SettingsService";
+import BookmarkStorage "storage/BookmarkStorage";
+import BookmarkService "services/BookmarkService";
+import SocialLinkService "services/SocialLinkService";
+import AddSocialLinks "migrations/AddSocialLinks";
 import RateLimitStorage "storage/RateLimitStorage";
 import HealthApi "api/v1/Health";
 import AuthApi "api/v1/Auth";
@@ -32,6 +36,8 @@ import UsernameSaleApi "api/v1/UsernameSale";
 import TokenApi "api/v1/Token";
 import TransactionsApi "api/v1/Transactions";
 import SettingsApi "api/v1/Settings";
+import BookmarkApi "api/v1/Bookmark";
+import SocialLinkApi "api/v1/SocialLink";
 import VerifiedApi "api/v1/Verified";
 import MiddlewareAuth "middleware/Auth";
 import Principal "mo:core/Principal";
@@ -41,6 +47,7 @@ import Debug "mo:core/Debug";
 import Timer "mo:core/Timer";
 import UUID "utils/UUID";
 
+(with migration = AddSocialLinks.migration)
 persistent actor self {
   transient let mwConfig = MiddlewareAuth.prodConfig();
 
@@ -84,6 +91,9 @@ persistent actor self {
   let purchaseUsernameLimits = RateLimitStorage.createRateLimitMap();
   let launchTokenLimits = RateLimitStorage.createRateLimitMap();
 
+  // New stable variable — no migration needed, starts empty on first upgrade.
+  let bookmarks = BookmarkStorage.createBookmarkMap();
+
   // Library modules cannot hold mutable state (moc rejects a top-level `var`
   // outside an actor), so the monotonic id counter that keeps rows unique lives
   // here in the actor. Time.now() alone is constant for the whole round, so a
@@ -117,6 +127,8 @@ persistent actor self {
   transient let usernameSaleService = UsernameSaleService.create(users, usernames, reservedUsernames, transferService, purchaseUsernameLimits);
   transient let transactionService = TransactionService.create(users, transactions, transactionsByUser);
   transient let settingsService = SettingsService.create(users, settings, settingsLimits);
+  transient let bookmarkService = BookmarkService.create(users, usersById, bookmarks);
+  transient let socialLinkService = SocialLinkService.create(users);
   transient let tokenService = TokenService.create(
     tokens, tokensByLedger, tokensByUser, reservedSymbols, tokenWasm,
     transferService, ledger, users, Principal.fromActor(self), nextUid, launchTokenLimits,
@@ -156,5 +168,7 @@ persistent actor self {
   include TokenApi(tokenService, mwConfig);
   include TransactionsApi(transactionService, mwConfig);
   include SettingsApi(settingsService, mwConfig);
+  include BookmarkApi(bookmarkService, mwConfig);
+  include SocialLinkApi(socialLinkService, mwConfig);
   include VerifiedApi(userService);
 };
