@@ -31,7 +31,8 @@ import { BookmarkAdd01Icon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
 import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-card"
 import { BookmarkDrawer } from "@/components/bookmark/bookmark-drawer"
-import { useResolvedUsername } from "@/hooks/use-wallet-data"
+import { BookmarkButton } from "@/components/bookmark/bookmark-drawer"
+import { useResolvedUsername, useRecipientProfile } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
 import { Principal } from "@icp-sdk/core/principal"
 import { QrScanner, takeScannedAddress } from "@/components/scan/scan"
@@ -152,6 +153,7 @@ export function TransferForm({
   // to look up. Debounced so a lookup runs per typing pause, not per keystroke.
   const debouncedTo = useDebounced(mode === "username" ? to : "")
   const { principal: resolved, isLoading: resolving } = useResolvedUsername(debouncedTo)
+  const recipientProfile = useRecipientProfile(to.trim(), resolved ?? null)
   // True only once the lookup has settled on a miss, so the Review button is not
   // disabled while a valid name is still in flight.
   const unknownRecipient =
@@ -372,6 +374,12 @@ export function TransferForm({
                 </Button>
               }
             />
+            {mode === "username" && recipientProfile && !loading && (
+              <BookmarkButton
+                targetUserId={recipientProfile.id}
+                username={to.trim()}
+              />
+            )}
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
