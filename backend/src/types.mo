@@ -7,11 +7,19 @@ module {
   public type TxId = Text;
   public type TokenId = Text;
 
+  public type SocialPlatform = { #github; #linkedin; #website };
+
+  public type SocialLink = {
+    platform: SocialPlatform;
+    url: Text;
+  };
+
   public type User = {
     id: UserId;
     principal: Principal;
     var username: ?Username;
     var displayName: Text;
+    var socialLinks: [SocialLink];
     createdAt: Int;
     var updatedAt: Int;
   };
@@ -20,6 +28,7 @@ module {
     id: UserId;
     username: ?Username;
     displayName: Text;
+    socialLinks: ?[SocialLink];
     createdAt: Int;
   };
 
@@ -218,6 +227,7 @@ module {
       id = self.id;
       username = self.username;
       displayName = self.displayName;
+      socialLinks = if (self.socialLinks.size() == 0) { null } else { ?self.socialLinks };
       createdAt = self.createdAt;
     };
   };
@@ -246,6 +256,12 @@ module {
       language = self.language;
       notifications = self.notifications;
     };
+  };
+
+  public type Bookmark = {
+    ownerUserId: UserId;
+    targetUserId: UserId;
+    createdAt: Int;
   };
 
   public func tokenToPublic(self: Token): TokenPublic {

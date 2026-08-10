@@ -148,7 +148,8 @@
     "sending": "Wird gesendet…",
     "confirmSend": "Bestätigen & senden",
     "lookingUp": "Suche @{name}…",
-    "noAccount": "Kein ICPay-Konto für @{name} gefunden."
+    "noAccount": "Kein ICPay-Konto für @{name} gefunden.",
+    "bookmarks": "Lesezeichen"
   },
   "deposit": {
     "title": "Einzahlen",
@@ -599,5 +600,30 @@
     "levelLow": "Geringes Risiko ({score})",
     "levelMedium": "Mittleres Risiko ({score})",
     "levelHigh": "Hohes Risiko ({score})"
+  },
+  "socialLinks": {
+    "title": "Soziale Links",
+    "addBtn": "Link hinzufügen",
+    "saveBtn": "Speichern",
+    "removeBtn": "Entfernen",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "website": "Website",
+    "urlPlaceholder": {
+      "github": "https://github.com/username",
+      "linkedin": "https://linkedin.com/in/username",
+      "website": "https://yoursite.com"
+    },
+    "saved": "Gespeichert",
+    "error": "Ungültige URL"
+  },
+  "bookmark": {
+    "add": "Lesezeichen",
+    "remove": "Entfernen",
+    "added": "Gespeichert",
+    "sendTo": "An @{name} senden",
+    "title": "Lesezeichen",
+    "empty": "Keine Lesezeichen",
+    "emptyHint": "Lesezeichen setzen, um schnell Geld zu senden."
   }
 }

@@ -148,7 +148,8 @@
     "sending": "Enviando…",
     "confirmSend": "Confirmar y enviar",
     "lookingUp": "Buscando a @{name}…",
-    "noAccount": "No hay cuenta de ICPay para @{name}."
+    "noAccount": "No hay cuenta de ICPay para @{name}.",
+    "bookmarks": "Marcadores"
   },
   "deposit": {
     "title": "Depositar",
@@ -599,5 +600,30 @@
     "levelLow": "Riesgo bajo ({score})",
     "levelMedium": "Riesgo medio ({score})",
     "levelHigh": "Riesgo alto ({score})"
+  },
+  "socialLinks": {
+    "title": "Redes sociales",
+    "addBtn": "Añadir enlace",
+    "saveBtn": "Guardar",
+    "removeBtn": "Eliminar",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "website": "Sitio web",
+    "urlPlaceholder": {
+      "github": "https://github.com/username",
+      "linkedin": "https://linkedin.com/in/username",
+      "website": "https://yoursite.com"
+    },
+    "saved": "Guardado",
+    "error": "URL no válida"
+  },
+  "bookmark": {
+    "add": "Marcar",
+    "remove": "Quitar marcador",
+    "added": "Marcado",
+    "sendTo": "Enviar a @{name}",
+    "title": "Marcadores",
+    "empty": "Sin marcadores",
+    "emptyHint": "Marca perfiles para enviar fondos rápidamente."
   }
 }

@@ -2,7 +2,7 @@ import Types "../types";
 
 module {
   public func new(id: Types.UserId, principal: Principal, username: ?Types.Username, displayName: Text, now: Int): Types.User {
-    { id; principal; var username; var displayName; createdAt = now; var updatedAt = now };
+    { id; principal; var username; var displayName; var socialLinks = []; createdAt = now; var updatedAt = now };
   };
 
   public func updateDisplayName(self: Types.User, name: Text, now: Int) {

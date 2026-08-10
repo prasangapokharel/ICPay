@@ -148,7 +148,8 @@
     "sending": "Отправка…",
     "confirmSend": "Подтвердить и отправить",
     "lookingUp": "Поиск @{name}…",
-    "noAccount": "Аккаунт ICPay для @{name} не найден."
+    "noAccount": "Аккаунт ICPay для @{name} не найден.",
+    "bookmarks": "Закладки"
   },
   "deposit": {
     "title": "Пополнение",
@@ -599,5 +600,30 @@
     "levelLow": "Низкий риск ({score})",
     "levelMedium": "Средний риск ({score})",
     "levelHigh": "Высокий риск ({score})"
+  },
+  "socialLinks": {
+    "title": "Соцсети",
+    "addBtn": "Добавить ссылку",
+    "saveBtn": "Сохранить",
+    "removeBtn": "Удалить",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "website": "Сайт",
+    "urlPlaceholder": {
+      "github": "https://github.com/username",
+      "linkedin": "https://linkedin.com/in/username",
+      "website": "https://yoursite.com"
+    },
+    "saved": "Сохранено",
+    "error": "Неверный URL"
+  },
+  "bookmark": {
+    "add": "Закладка",
+    "remove": "Удалить",
+    "added": "Добавлено",
+    "sendTo": "Отправить @{name}",
+    "title": "Закладки",
+    "empty": "Нет закладок",
+    "emptyHint": "Добавляйте профили в закладки для быстрых переводов."
   }
 }

@@ -1,5 +1,6 @@
 import Debug "mo:core/Debug";
 import Principal "mo:core/Principal";
+import Types "../../src/types";
 import TransferValidator "../../src/validators/TransferValidator";
 
 let userPrincipal = Principal.fromText("aaaaa-aa");
@@ -35,6 +36,7 @@ let fakeUser = {
   principal = userPrincipal;
   var username = ?"testuser";
   var displayName = "Test";
+  var socialLinks: [Types.SocialLink] = [];
   createdAt = 0 : Int;
   var updatedAt = 0 : Int;
 };

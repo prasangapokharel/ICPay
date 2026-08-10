@@ -26,8 +26,11 @@ import {
   isHexAccountId,
   ICP_FEE,
 } from "@/lib/wallet-utils"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { BookmarkAdd01Icon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
 import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-card"
+import { BookmarkDrawer } from "@/components/bookmark/bookmark-drawer"
 import { useResolvedUsername } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
 import { Principal } from "@icp-sdk/core/principal"
@@ -97,6 +100,7 @@ export function TransferForm({
   const [loading, setLoading] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [scanOpen, setScanOpen] = useState(false)
+  const [bookmarkOpen, setBookmarkOpen] = useState(false)
   // Only ever set by a scan. Held apart from `to` because the recipient field
   // shows the owner, while the money is owed to one account underneath it.
   const [subaccount, setSubaccount] = useState<Uint8Array | null>(null)
@@ -205,12 +209,21 @@ export function TransferForm({
           <TabsTrigger value="account">{t("tabAccount")}</TabsTrigger>
         </TabsList>
       </Tabs>
-
-      {/* Recipient leads: who is being paid is the decision the user makes
-          first, and a wrong handle wastes the fee no matter what the amount is.
-          It gets the large field the amount used to hold. */}
       <div className="space-y-2">
-        <Label htmlFor="to">{t(labelKeys[mode].label)}</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="to">{t(labelKeys[mode].label)}</Label>
+          {mode === "username" && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setBookmarkOpen(true)}
+              className="h-6 gap-1 text-xs text-muted-foreground"
+            >
+              <HugeiconsIcon icon={BookmarkAdd01Icon} className="size-3.5" />
+              {t("bookmarks")}
+            </Button>
+          )}
+        </div>
         <div className="relative">
           <Input
             id="to"
@@ -259,6 +272,16 @@ export function TransferForm({
       )}
 
       <QrScanner open={scanOpen} onOpenChange={setScanOpen} onScan={applyScan} />
+      <BookmarkDrawer
+        open={bookmarkOpen}
+        onOpenChange={setBookmarkOpen}
+        onSelect={(username) => {
+          setMode("username")
+          setTo(username)
+          setSubaccount(null)
+          setError(null)
+        }}
+      />
 
       <div className="space-y-2">
         <div className="flex items-baseline justify-between">
