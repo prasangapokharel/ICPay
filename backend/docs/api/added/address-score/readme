@@ -1,0 +1,94 @@
+Yes. For ICPay, keep `backend/api/address-score/README.md` focused only on what the module does, its API contract, and the scoring flow.
+
+````md
+# Address Score
+
+Recipient address risk scoring for ICPay.
+
+## Purpose
+
+Evaluate a recipient address before payment and return an advisory risk score.
+
+The score helps users identify potentially risky destinations before sending ICP.
+
+## API
+
+`POST /api/v1/address-score`
+
+### Request
+
+```json
+{
+  "address": "recipient-address"
+}
+````
+
+### Response
+
+```json
+{
+  "address": "recipient-address",
+  "score": 12,
+  "level": "low",
+  "reasons": [
+    "No known risk signals"
+  ]
+}
+```
+
+## Score
+
+|  Score | Level    |
+| -----: | -------- |
+|   0–24 | low      |
+|  25–49 | medium   |
+|  50–74 | high     |
+| 75–100 | critical |
+
+Higher score = higher recipient risk.
+
+## Flow
+
+```text
+Recipient Address
+       ↓
+Validate
+       ↓
+Collect Risk Signals
+       ↓
+Calculate Score
+       ↓
+Classify Level
+       ↓
+Return Advisory Result
+```
+
+## Risk Signals
+
+The scorer may evaluate:
+
+* Known scam or malicious reports
+* Spam activity
+* Suspicious transaction patterns
+* Address history
+* Interaction with risky addresses
+* Internal risk records
+
+## Important
+
+The score is advisory only.
+
+A low score does not guarantee that an address is safe.
+
+The module does not block payments by itself. Payment authorization remains separate from risk scoring.
+
+## Versioning
+
+Current API:
+
+`/api/v1/address-score`
+
+```
+
+This keeps the module **small, independent, and reusable** without mixing payment logic, wallet logic, or UI behavior into the address-score backend.
+```

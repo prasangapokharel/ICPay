@@ -20,5 +20,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/terms`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${siteUrl}/transparency`, changeFrequency: "monthly", priority: 0.3 },
+    // Blog — keyword-driven articles. Each new post must also be added to the
+    // PUBLIC allow-list in robots.ts, or it will be disallowed from indexing.
+    { url: `${siteUrl}/what-is-icp`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${siteUrl}/best-crypto-wallet`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${siteUrl}/best-icp-wallet`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${siteUrl}/what-is-internet-identity`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${siteUrl}/how-to-send-icp`, changeFrequency: "monthly", priority: 0.6 },
   ]
 }

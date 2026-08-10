@@ -1,0 +1,59 @@
+Yes. What you are describing is a **token launch / token sale mechanism**, not ordinary liquidity provision.
+
+A clean ICPay architecture would be:
+
+```text
+User connects Internet Identity / wallet
+        ↓
+ICPay Launch page
+        ↓
+User chooses ICP amount
+        ↓
+User sends ICP to sale canister
+        ↓
+Sale canister verifies payment
+        ↓
+Sale canister sends ICPAY
+to the user's Account
+        ↓
+User receives ICPAY
+```
+
+### Then use the raised ICP for liquidity
+
+For example, you could define:
+
+```text
+Target raise: 1,000 ICP
+Token price: 1 ICP = 10,000 ICPAY
+
+User contributes: 1 ICP
+User receives:    10,000 ICPAY
+```
+
+If 1,000 ICP is successfully raised:
+
+```text
+ICP collected:    1,000 ICP
+ICPAY distributed: 10,000,000 ICPAY
+```
+
+You could then use the **1,000 ICP + an appropriate ICPAY allocation** to bootstrap the DEX liquidity.
+
+### But don't mix the two mechanisms
+
+**Token sale**
+
+* User sends ICP
+* User receives ICPAY
+* Sale canister records the allocation
+
+**Liquidity**
+
+* Liquidity provider deposits ICP + ICPAY
+* Provider receives an LP position
+* They can later remove liquidity
+
+So if your goal is **“I don't have ICP; users help bootstrap the initial ICP liquidity”**, a dedicated **launch/sale contract** is the architecture you're looking for.
+
+However, because this involves accepting crypto from the public in exchange for a token, you should get appropriate legal/guardian guidance before launching it publicly. Don't market it as guaranteed profit or investment returns.
