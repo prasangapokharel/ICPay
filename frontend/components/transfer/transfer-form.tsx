@@ -27,7 +27,7 @@ import {
   ICP_FEE,
 } from "@/lib/wallet-utils"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { BookmarkAdd01Icon } from "@hugeicons/core-free-icons"
+import { BookmarkAdd01Icon, QrCodeScanIcon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
 import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-card"
 import { BookmarkDrawer } from "@/components/bookmark/bookmark-drawer"
@@ -239,11 +239,12 @@ export function TransferForm({
           />
           <Button
             variant="ghost"
-            size="sm"
+            size="icon-xs"
             onClick={() => setScanOpen(true)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg text-xs text-muted-foreground"
+            aria-label={t("scanQr")}
+            className="absolute right-2 top-1/2 size-8 -translate-y-1/2 rounded-lg text-muted-foreground"
           >
-            {t("scanQr")}
+            <HugeiconsIcon icon={QrCodeScanIcon} className="size-4" />
           </Button>
         </div>
         {mode === "username" && (

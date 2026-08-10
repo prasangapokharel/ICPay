@@ -4,7 +4,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { BookmarkAdd01Icon, BookmarkRemove01Icon, ArrowUpRight01Icon, InboxIcon } from "@hugeicons/core-free-icons"
+import { BookmarkAdd01Icon, ArrowUpRight01Icon, InboxIcon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { Spinner } from "@/components/ui/spinner"
 import {
   Drawer,
   DrawerContent,
@@ -97,20 +98,22 @@ export function BookmarkButton({
   }
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
+    <button
       onClick={toggle}
       disabled={loading}
-      className="gap-1.5 rounded-full"
       aria-label={isBookmarked ? t("remove") : t("add")}
+      className={[
+        "flex size-9 items-center justify-center rounded-full transition-colors",
+        isBookmarked
+          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+          : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground",
+      ].join(" ")}
     >
-      <HugeiconsIcon
-        icon={isBookmarked ? BookmarkRemove01Icon : BookmarkAdd01Icon}
-        className="size-3.5"
-      />
-      {isBookmarked ? t("remove") : t("add")}
-    </Button>
+      {loading
+        ? <Spinner className="size-4" />
+        : <HugeiconsIcon icon={BookmarkAdd01Icon} className="size-4" />
+      }
+    </button>
   )
 }
 
@@ -162,7 +165,7 @@ function BookmarkRow({
           className="size-7 text-muted-foreground hover:text-destructive"
           onClick={onRemove}
         >
-          <HugeiconsIcon icon={BookmarkRemove01Icon} className="size-3.5" />
+          <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
         </Button>
       </div>
     </div>
