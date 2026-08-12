@@ -1,5 +1,6 @@
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
+import Array "mo:core/Array";
 import Types "../types";
 import UserRepo "../repositories/UserRepository";
 import BookmarkRepo "../repositories/BookmarkRepository";
@@ -24,9 +25,12 @@ module {
   public func list(
     service: BookmarkService,
     caller: Principal,
-  ): Types.ApiResult<[Types.Bookmark]> {
+  ): Types.ApiResult<[Types.BookmarkPublic]> {
     switch (UserRepo.getByPrincipal(service.users, caller)) {
-      case (?user) { #ok(BookmarkRepo.listByUser(service.bookmarks, user.id)) };
+      case (?user) {
+        let items = BookmarkRepo.listByUser(service.bookmarks, user.id);
+        #ok(Array.map<Types.Bookmark, Types.BookmarkPublic>(items, func(b) { toPublic(service, b) }))
+      };
       case (null) { #err("User not found") };
     };
   };
@@ -35,7 +39,7 @@ module {
     service: BookmarkService,
     caller: Principal,
     targetUserId: Types.UserId,
-  ): Types.ApiResult<Types.Bookmark> {
+  ): Types.ApiResult<Types.BookmarkPublic> {
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (null) { #err("User not found") };
       case (?owner) {
@@ -46,7 +50,7 @@ module {
           case (null) { #err("Target user not found") };
           case (?_) {
             let entry = BookmarkRepo.add(service.bookmarks, owner.id, targetUserId, Time.now());
-            #ok(entry);
+            #ok(toPublic(service, entry));
           };
         };
       };
@@ -68,5 +72,17 @@ module {
         };
       };
     };
+  };
+
+  private func toPublic(service: BookmarkService, bookmark: Types.Bookmark) : Types.BookmarkPublic {
+    let username = switch (UserRepo.getById(service.usersById, service.users, bookmark.targetUserId)) {
+      case (?user) user.username;
+      case (null) null;
+    };
+    {
+      targetUserId = bookmark.targetUserId;
+      username = username;
+      createdAt = bookmark.createdAt;
+    }
   };
 };

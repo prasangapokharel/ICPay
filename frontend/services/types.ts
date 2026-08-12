@@ -37,8 +37,8 @@ export type SocialLink = {
 }
 
 export type Bookmark = {
-  ownerUserId: UserId
   targetUserId: UserId
+  username: [] | [Username]
   createdAt: bigint
 }
 

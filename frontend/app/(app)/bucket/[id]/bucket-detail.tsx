@@ -1,6 +1,6 @@
 "use client"
 
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -49,19 +49,17 @@ import {
   toRawCanisterUrl,
 } from "@/lib/bucket/cdn"
 import { cn } from "@/lib/utils"
+import { useRewrittenLastSegment } from "@/lib/rewritten-route"
 
 export function BucketDetail() {
   const t = useTranslations("bucket")
   const tc = useTranslations("common")
-  const pathname = usePathname()
   const router = useRouter()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
   const invalidateBucketCache = useInvalidateBucketCache()
 
-  const segments = pathname.split("/").filter(Boolean)
-  const bucketId =
-    segments.length > 1 ? decodeURIComponent(segments[segments.length - 1]) : ""
+  const bucketId = useRewrittenLastSegment()
 
   const { stats, isLoading: statsLoading, refresh: refreshStats } = useBucketStats(bucketId || null)
   const [renewOpen, setRenewOpen] = useState(false)

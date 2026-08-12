@@ -429,6 +429,12 @@ module {
     createdAt: Int;
   };
 
+  public type BookmarkPublic = {
+    targetUserId: UserId;
+    username: ?Username;
+    createdAt: Int;
+  };
+
   public func tokenToPublic(self: Token): TokenPublic {
     {
       id = self.id;

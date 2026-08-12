@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { usePathname } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
@@ -22,6 +21,7 @@ import { copyText, formatE8s } from "@/lib/wallet-utils"
 import { accountIdentifier, icrc1Account } from "@/lib/account-id"
 import { isPossibleHandle, isReservedHandle } from "@/lib/reserved-handles"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useRewrittenLastSegment } from "@/lib/rewritten-route"
 import { custodialSubaccount } from "@/services/tokens"
 import { WALLET_CANISTER_ID } from "@/services/icp"
 import { tip } from "@/services/transfer/transfer"
@@ -31,19 +31,14 @@ type PayRequest = { amount: bigint; memo?: string }
 
 export function PublicProfile() {
   const t = useTranslations("publicProfile")
-  const pathname = usePathname()
+  const raw = useRewrittenLastSegment()
+  const username = raw.toLowerCase()
   const { identity, isAuthenticated, login } = useAuth()
   const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
   const [payOpen, setPayOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [legacy, setLegacy] = useState(false)
-
-  // Read from the path, not useParams: under output "export" this is served as
-  // the /u shell via a rewrite, so useParams would report "u" for every visitor.
-  const segments = pathname.split("/").filter(Boolean)
-  const raw = segments.length > 0 ? decodeURIComponent(segments[segments.length - 1]) : ""
-  const username = raw.toLowerCase()
 
   // A payment link names the amount and the reason, so this visitor is not
   // browsing a profile -- they were handed a bill. useSearchParams would need a

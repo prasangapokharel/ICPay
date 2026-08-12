@@ -1,4 +1,6 @@
-const CANISTER_ID = "6vbhm-nqaaa-aaaan-q6muq-cai"
+import { WALLET_CANISTER_ID } from "@/services/icp"
+
+export const runtime = "edge"
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -6,26 +8,13 @@ const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Max-Age": "86400",
 }
 
-export const config = {
-  runtime: "edge",
-}
-
-export default async function handler(request: Request): Promise<Response> {
-  if (request.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: CORS_HEADERS })
-  }
-
-  if (request.method !== "GET" && request.method !== "HEAD") {
-    return new Response("Method not allowed", { status: 405 })
-  }
-
-  const { pathname } = new URL(request.url)
-  const rest = pathname.replace(/^\/api\/cloud\/?/, "").replace(/^\/+/, "")
+async function proxy(request: Request, segments: string[] | undefined): Promise<Response> {
+  const rest = (segments ?? []).map((s) => decodeURIComponent(s)).join("/")
   if (!rest || !rest.includes("/")) {
     return new Response("Not found", { status: 404 })
   }
 
-  const target = `https://${CANISTER_ID}.raw.icp0.io/cloud/${rest}`
+  const target = `https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${rest}`
   const upstream = await fetch(target, {
     method: request.method,
     headers: {
@@ -43,4 +32,20 @@ export default async function handler(request: Request): Promise<Response> {
     status: upstream.status,
     headers,
   })
+}
+
+type RouteCtx = { params: Promise<{ path?: string[] }> }
+
+export async function GET(request: Request, ctx: RouteCtx) {
+  const { path } = await ctx.params
+  return proxy(request, path)
+}
+
+export async function HEAD(request: Request, ctx: RouteCtx) {
+  const { path } = await ctx.params
+  return proxy(request, path)
+}
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: CORS_HEADERS })
 }

@@ -41,6 +41,7 @@ import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/icp-
 import { parsePaymentLink, amountFieldValue } from "@/services/pay/pay"
 import type { TransferMode } from "@/services/transfer/transfer"
 import { USERNAME_MIN_LENGTH } from "@/lib/username"
+import { cn } from "@/lib/utils"
 
 const labelKeys = {
   username: { label: "labelUsername", placeholder: "placeholderUsername" },
@@ -212,20 +213,7 @@ export function TransferForm({
         </TabsList>
       </Tabs>
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="to">{t(labelKeys[mode].label)}</Label>
-          {mode === "username" && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setBookmarkOpen(true)}
-              className="h-6 gap-1 text-xs text-muted-foreground"
-            >
-              <HugeiconsIcon icon={BookmarkAdd01Icon} className="size-3.5" />
-              {t("bookmarks")}
-            </Button>
-          )}
-        </div>
+        <Label htmlFor="to">{t(labelKeys[mode].label)}</Label>
         <div className="relative">
           <Input
             id="to"
@@ -235,17 +223,33 @@ export function TransferForm({
             spellCheck={false}
             value={to}
             onChange={(e) => handleRecipientChange(e.target.value)}
-            className={mode === "username" ? "pr-14" : "pr-14 font-mono text-xs"}
+            className={cn(
+              "pr-14 font-mono text-xs",
+              mode === "username" && "pr-[4.5rem] font-sans text-sm",
+            )}
           />
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => setScanOpen(true)}
-            aria-label={t("scanQr")}
-            className="absolute right-2 top-1/2 size-8 -translate-y-1/2 rounded-lg text-muted-foreground"
-          >
-            <HugeiconsIcon icon={QrCodeScanIcon} className="size-4" />
-          </Button>
+          <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
+            {mode === "username" && (
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={() => setBookmarkOpen(true)}
+                aria-label={t("bookmarks")}
+                className="size-8 rounded-lg text-muted-foreground"
+              >
+                <HugeiconsIcon icon={BookmarkAdd01Icon} className="size-4" strokeWidth={1.75} />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={() => setScanOpen(true)}
+              aria-label={t("scanQr")}
+              className="size-8 rounded-lg text-muted-foreground"
+            >
+              <HugeiconsIcon icon={QrCodeScanIcon} className="size-4" strokeWidth={1.75} />
+            </Button>
+          </div>
         </div>
         {mode === "username" && (
           <RecipientLookup
@@ -344,7 +348,20 @@ export function TransferForm({
               <p className="mt-1 text-xs text-muted-foreground">ICP</p>
             </div>
 
-            {mode === "username" && resolved && (
+            {mode === "username" && resolved && recipientProfile && (
+              <div className="flex items-center gap-2">
+                <RecipientCard
+                  username={to.trim()}
+                  principal={resolved}
+                  className="min-w-0 flex-1"
+                />
+                <BookmarkButton
+                  targetUserId={recipientProfile.id}
+                  username={to.trim()}
+                />
+              </div>
+            )}
+            {mode === "username" && resolved && !recipientProfile && (
               <RecipientCard username={to.trim()} principal={resolved} />
             )}
 
@@ -375,12 +392,6 @@ export function TransferForm({
                 </Button>
               }
             />
-            {mode === "username" && recipientProfile && !loading && (
-              <BookmarkButton
-                targetUserId={recipientProfile.id}
-                username={to.trim()}
-              />
-            )}
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

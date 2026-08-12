@@ -3,11 +3,11 @@ import BookmarkService "../../services/BookmarkService";
 import MiddlewareAuth "../../middleware/Auth";
 
 mixin (bookmarks: BookmarkService.BookmarkService, mwConfig: MiddlewareAuth.Config) {
-  public shared query ({ caller }) func listBookmarks() : async Types.ApiResult<[Types.Bookmark]> {
+  public shared query ({ caller }) func listBookmarks() : async Types.ApiResult<[Types.BookmarkPublic]> {
     BookmarkService.list(bookmarks, MiddlewareAuth.effectiveCaller(mwConfig, caller));
   };
 
-  public shared ({ caller }) func addBookmark(targetUserId: Types.UserId) : async Types.ApiResult<Types.Bookmark> {
+  public shared ({ caller }) func addBookmark(targetUserId: Types.UserId) : async Types.ApiResult<Types.BookmarkPublic> {
     BookmarkService.add(bookmarks, MiddlewareAuth.effectiveCaller(mwConfig, caller), targetUserId);
   };
 
