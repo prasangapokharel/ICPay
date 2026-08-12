@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -16,6 +16,7 @@ import { BookmarkButton } from "@/components/bookmark/bookmark-drawer"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet, useOwnProfile, useRecipientProfile } from "@/hooks/use-wallet-data"
+import { useRewrittenLastSegment } from "@/lib/rewritten-route"
 import { tip } from "@/services/transfer/transfer"
 import { useAuth } from "@/components/auth/auth-provider"
 
@@ -24,7 +25,6 @@ type Tipped = { amount: bigint; blockIndex: bigint; memo?: string }
 export function ProfileView() {
   const t = useTranslations("profileView")
   const tc = useTranslations("common")
-  const pathname = usePathname()
   const router = useRouter()
   const { identity } = useAuth()
   const balance = useLiveBalance()
@@ -37,13 +37,9 @@ export function ProfileView() {
   const [tipped, setTipped] = useState<Tipped | null>(null)
   const [copied, setCopied] = useState(false)
 
-  // Read from the path, not useParams: under output "export" this component is
-  // served as the /icpverse/profile shell via a rewrite, so useParams would
-  // report "profile" for everyone. The segment count is checked because this
-  // view stays mounted for a frame while Next transitions back to /icpverse,
-  // where popping the last segment would yield "icpverse".
-  const segments = pathname.split("/").filter(Boolean)
-  const username = segments.length > 1 ? decodeURIComponent(segments[segments.length - 1]) : ""
+  // Vercel rewrites /icpverse/<name> onto the /icpverse/profile shell; read the
+  // real handle from the browser URL, not usePathname() (which reports "profile").
+  const username = useRewrittenLastSegment()
   const { principal, isLoading } = useResolvedUsername(username)
   const recipientProfile = useRecipientProfile(username, principal ?? null)
   const socialLinks = recipientProfile?.socialLinks?.[0] ?? []
@@ -131,23 +127,19 @@ export function ProfileView() {
           </div>
         )}
 
-        <div className="mt-4 flex items-center gap-2">
-          {!isSelf && (
-            <Button
-              size="lg"
-              className="w-full max-w-40"
-              onClick={() => setTipOpen(true)}
-            >
+        {!isSelf && (
+          <div className="mt-4 flex w-full max-w-xs items-center gap-2">
+            <Button size="lg" className="min-w-0 flex-1" onClick={() => setTipOpen(true)}>
               {t("tip")}
             </Button>
-          )}
-          {!isSelf && recipientProfile && (
-            <BookmarkButton 
-              targetUserId={recipientProfile.id}
-              username={username}
-            />
-          )}
-        </div>
+            {recipientProfile && (
+              <BookmarkButton
+                targetUserId={recipientProfile.id}
+                username={username}
+              />
+            )}
+          </div>
+        )}
 
         <div className="w-full pt-8">
           <AccountStatsCard principal={principal} />

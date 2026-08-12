@@ -1,6 +1,6 @@
 "use client"
 
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
@@ -9,18 +9,13 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LaunchStatus } from "@/components/launch/launch-status"
 import { useToken } from "@/hooks/use-launch-data"
+import { useRewrittenLastSegment } from "@/lib/rewritten-route"
 
 export function LaunchDetail() {
   const t = useTranslations("launch")
-  const pathname = usePathname()
   const router = useRouter()
 
-  // Read from the path, not useParams: under output "export" this component is
-  // served as the /launch/id shell via a rewrite, so useParams would report "id"
-  // for every token. The segment count is checked because this view stays
-  // mounted for a frame while Next transitions back to /launch.
-  const segments = pathname.split("/").filter(Boolean)
-  const id = segments.length > 1 ? decodeURIComponent(segments[segments.length - 1]) : ""
+  const id = useRewrittenLastSegment()
 
   const { token, isLoading } = useToken(id || null)
 
