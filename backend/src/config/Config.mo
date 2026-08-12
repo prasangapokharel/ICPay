@@ -86,6 +86,36 @@ module {
   // canister froze partway through.
   public let MIN_CYCLE_RESERVE: Nat = 5_000_000_000_000; // 5T
 
+  // ICPay Cloud bucket billing period (30 days, nanoseconds).
+  public let BUCKET_PERIOD_NS: Int = 2_592_000_000_000_000;
+
+  // Mixed into the per-bucket encryption key. Compiled in — not user-supplied.
+  public let BUCKET_CRYPTO_SALT: Text = "icpay_cloud_v1";
+
+  // Single-upload limit — ICP update call payload bound.
+  public let BUCKET_MAX_FILE_BYTES: Nat = 10_000_000;
+
+  // Max revocable API keys per bucket.
+  public let BUCKET_MAX_API_KEYS: Nat = 10;
+
+  // Universal IC raw HTTP gateway (boundary node). Canister id is supplied separately via ?id=.
+  // ICPay backend canister — public file URLs use https://{id}.raw.icp0.io/…
+  public let BACKEND_CANISTER_ID: Text = "6vbhm-nqaaa-aaaan-q6muq-cai";
+
+  // Clean CDN host (Vercel proxy → canister /cloud/). Null keeps raw.icp0.io URLs.
+  public let CLOUD_CDN_BASE: ?Text = ?"https://cloud.icpay.app";
+
+  // Stats flag when fewer than this many days remain in the paid period.
+  public let BUCKET_EXPIRING_SOON_DAYS: Nat = 3;
+
+  public let BUCKET_PERIOD_DAYS: Nat = 30;
+
+  // IC http_request response limit is 2 MB; stay under for headers margin.
+  public let HTTP_MAX_BODY_BYTES: Nat = 1_900_000;
+  public let HTTP_CHUNK_BYTES: Nat = 1_900_000;
+
+  public let BUCKET_FILE_PAGE_SIZE: Nat = 20;
+
   // Canister-owned account that collects launch fees. Fixed, so it matches no
   // user's derived subaccount and deposits into it write no phantom history row.
   public let REVENUE_SUBACCOUNT: Blob = "\01\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00";
@@ -112,4 +142,16 @@ module {
   public let RATE_WITHDRAW = { maxPerWindow = 5; windowSeconds = 60 };
   public let RATE_SYNC_DEPOSITS = { maxPerWindow = 10; windowSeconds = 60 }; // hits the ledger index canister -- real cost
   public let RATE_UPDATE_SETTINGS = { maxPerWindow = 10; windowSeconds = 300 }; // cheap but writes state
+
+  // Swap module
+  public let ICPSWAP_FACTORY: Text = "4mmnk-kiaaa-aaaag-qbllq-cai";
+  public let SWAP_PLATFORM_FEE_BPS: Nat = 100;   // 100 basis points = 1%
+  public let MAX_SWAP_RETRIES: Nat = 10;         // pending swap auto-retry ceiling
+  public let RATE_SWAP = { maxPerWindow = 3; windowSeconds = 60 };
+
+  // ICPay Cloud — separate maps in main.mo so create/upload/renew do not share a counter.
+  public let RATE_BUCKET_CREATE = { maxPerWindow = 3; windowSeconds = 60 };
+  public let RATE_BUCKET_UPLOAD = { maxPerWindow = 20; windowSeconds = 60 };
+  public let RATE_BUCKET_RENEW = { maxPerWindow = 5; windowSeconds = 60 };
+  public let RATE_BUCKET_API_KEY = { maxPerWindow = 10; windowSeconds = 60 };
 };

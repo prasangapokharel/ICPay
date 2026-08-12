@@ -40,6 +40,7 @@ const PUBLIC = [
   "/best-icp-wallet",
   "/what-is-internet-identity",
   "/how-to-send-icp",
+  "/icp-price",
 ]
 
 export default function robots(): MetadataRoute.Robots {

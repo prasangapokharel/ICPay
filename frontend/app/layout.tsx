@@ -106,6 +106,8 @@ export default function RootLayout({
     >
       <head>
         <ThemeColorScript />
+        {/* On-chain asset canister: load the prerendered shell before Next hydrates. */}
+        <script src="/onchain-shell.js" />
       </head>
       <body>
         <script

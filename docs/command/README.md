@@ -21,6 +21,7 @@ npm run ci cycles:balance -- --local
 |---|---|
 | `npm run ci cycles:balance` | Cycles left. **Watch this one** — at zero the canister is deleted, taking every user record with it. |
 | `npm run ci canister:status` | Cycles, memory, controllers, module hash. |
+| `npm run ci bucket:stats` | Cloud bucket usage, sales rollup, and top-up guidance. |
 | `npm run ci backend:hash` | The live module hash. This is the version marker, and the argument you pass to a rollback. |
 | `npm run ci backend:logs` | Canister logs. |
 | `npm run ci canister:list` | The two canisters this project owns, with their mainnet IDs. |
@@ -159,6 +160,34 @@ public query, so it is not in the total.
 
 The sweep is ~37 query calls, issued in parallel because a mainnet round trip is
 ~7s each. Queries are not billed, so it costs no cycles.
+
+## ICPay Cloud (buckets)
+
+| Command | What it does |
+|---|---|
+| `npm run ci bucket:stats` | Bucket count, storage used vs sold, file count, cycle burn, and a top-up suggestion. |
+
+```bash
+npm run ci bucket:stats
+```
+
+Shows:
+
+- **Buckets** — total, active, expired
+- **Storage** — bytes used vs capacity tiers sold (utilization %)
+- **Revenue** — estimated ICP at list prices (what users paid to treasury at create; not live treasury balance)
+- **Cycles** — balance, storage burn, idle burn, runway in days
+- **Top-up** — suggested `cycles:topup` amount for ~60 days runway
+
+Storage burn comes from `getBucketCloudStats` on the canister. Idle burn comes
+from `canister:status` and is added on top — the canister’s storage-only estimate
+does not include the base ~13B cycles/day idle cost.
+
+If `getBucketCloudStats` is not deployed yet, the command prints cycle balance
+and idle burn only, and asks for a backend deploy.
+
+Rule of thumb: budget **~0.33 ICP worth of cycles** per **1 ICP** of bucket
+revenue when buckets are full (50% margin on storage cost).
 
 ---
 

@@ -1,4 +1,18 @@
-# ICP Wallet Backend (Motoko) Generation Prompt
+# ICP Wallet Backend (Motoko) — Agent Instructions
+
+**This is the original build spec**, written before the code existed. It's useful
+for understanding *intent*, but names modules that were never built
+(`ProfileRepository`, a `Profile` model, per-feature `api/v1/auth/`
+subdirectories).
+
+**Where it disagrees with the code, the code wins.**
+
+Read [`.agents/SKILLS.md`](.agents/SKILLS.md) for the complete skill index and
+reference documentation.
+
+---
+
+# Original Build Specification
 
 You are building the backend for an **ICP Wallet** using **Motoko**.
 

@@ -47,4 +47,12 @@ export const BLOG_POSTS: BlogPost[] = [
     publishedAt: "2026-08-10",
     readingMinutes: 5,
   },
+  {
+    slug: "icp-price",
+    title: "ICP Price Today: Live Price, Technical Analysis & News",
+    description:
+      "Live ICP price, 7-day chart, technical read, and this week's Internet Computer news.",
+    publishedAt: "2026-08-11",
+    readingMinutes: 5,
+  },
 ]

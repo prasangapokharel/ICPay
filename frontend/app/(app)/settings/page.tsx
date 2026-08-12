@@ -17,6 +17,7 @@ import {
   RocketIcon,
   Search01Icon,
   Settings01Icon,
+  ImageAdd02Icon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { ServiceTile } from "@/components/settings/service-tile"
@@ -73,7 +74,6 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
         key: "launch",
         icon: RocketIcon,
         keywords: "create token icrc mint deploy",
-        hot: true,
       },
     ],
   },
@@ -103,6 +103,18 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
         key: "myQr",
         icon: QrCode01Icon,
         keywords: "scan code address",
+      },
+    ],
+  },
+  {
+    key: "storage",
+    items: [
+      {
+        href: "/bucket",
+        key: "bucket",
+        icon: ImageAdd02Icon,
+        keywords: "storage cloud images bucket cdn upload",
+        hot: true,
       },
     ],
   },
