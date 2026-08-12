@@ -164,8 +164,8 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   })
 
   const Bookmark = IDL.Record({
-    ownerUserId: IDL.Text,
     targetUserId: IDL.Text,
+    username: IDL.Opt(IDL.Text),
     createdAt: IDL.Int,
   })
 

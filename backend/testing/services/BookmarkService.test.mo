@@ -20,7 +20,7 @@ let uid2 = "uid-2";
 
 // --- setup: two users ---
 let _ = UserRepo.create(users, usernames, usersById, uid1, p1, null, "", now);
-let _ = UserRepo.create(users, usernames, usersById, uid2, p2, null, "", now);
+let _ = UserRepo.create(users, usernames, usersById, uid2, p2, ?"bob", "bob", now);
 
 // unknown caller is rejected — use a valid but unregistered principal
 switch (BookmarkService.list(svc, Principal.fromText("mk4xk-sqaaa-aaaaa-qadjq-cai"))) {
@@ -40,8 +40,11 @@ switch (BookmarkService.list(svc, p1)) {
 // add bookmark
 switch (BookmarkService.add(svc, p1, uid2)) {
   case (#ok(b)) {
-    assert b.ownerUserId == uid1;
     assert b.targetUserId == uid2;
+    switch (b.username) {
+      case (?name) { assert name == "bob" };
+      case (null) { assert false };
+    };
     Debug.print("PASS: add bookmark");
   };
   case (#err(e)) { assert false; Debug.print("FAIL: add: " # e) };

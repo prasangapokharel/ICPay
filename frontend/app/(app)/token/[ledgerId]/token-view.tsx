@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -13,6 +13,7 @@ import { Alert02Icon } from "@hugeicons/core-free-icons"
 import { copyText, formatTokenAmount } from "@/lib/wallet-utils"
 import { icrc1Account } from "@/lib/account-id"
 import { useTokenHolding, useDepositAddress, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useRewrittenLastSegment } from "@/lib/rewritten-route"
 import { SelfCustodyCard } from "@/components/wallet/self-custody-card"
 import { SendTokenDrawer } from "@/components/wallet/send-token-drawer"
 import { SendSuccess } from "@/components/wallet/send-success"
@@ -27,7 +28,6 @@ type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: stri
 
 export function TokenView() {
   const t = useTranslations("token")
-  const pathname = usePathname()
   const router = useRouter()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
@@ -38,12 +38,8 @@ export function TokenView() {
   // on the balance, the action buttons, and the custody card below.
   const [showDeposit, setShowDeposit] = useState(false)
 
-  // Read from the path, not useParams: under output "export" this component is
-  // served as the /token/token shell via a rewrite, so useParams would report
-  // "token" for every ledger. The segment count is checked because this view
-  // stays mounted for a frame while Next transitions back to /wallet.
-  const segments = pathname.split("/").filter(Boolean)
-  const ledgerId = segments.length > 1 ? decodeURIComponent(segments[segments.length - 1]) : ""
+  // Vercel rewrites /token/<ledgerId> onto the /token/token shell.
+  const ledgerId = useRewrittenLastSegment()
 
   const { token, isLoading } = useTokenHolding(ledgerId || null)
   const { data: deposit } = useDepositAddress()

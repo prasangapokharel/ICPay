@@ -1,10 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { BookmarkAdd01Icon, ArrowUpRight01Icon, InboxIcon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import {
+  BookmarkAdd01Icon,
+  Bookmark02Icon,
+  ArrowUpRight01Icon,
+  InboxIcon,
+  Cancel01Icon,
+} from "@hugeicons/core-free-icons"
 import { Spinner } from "@/components/ui/spinner"
 import {
   Drawer,
@@ -16,12 +21,18 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { avatarUriFor } from "@/lib/avatar"
+import { optionalText } from "@/lib/bucket/bucket"
+import {
+  cacheBookmarkUsername,
+  getCachedBookmarkUsername,
+  removeCachedBookmarkUsername,
+} from "@/lib/bookmark-labels"
 import { useAuth } from "@/components/auth/auth-provider"
 import { addBookmark, removeBookmark } from "@/services/bookmark/bookmark"
 import { useBookmarks } from "@/hooks/use-wallet-data"
+import type { Bookmark } from "@/services/types"
+import { cn } from "@/lib/utils"
 
-// Opens a drawer listing all bookmarked users. Tapping a row fills the
-// transfer recipient (via the onSelect callback) and closes.
 export function BookmarkDrawer({
   open,
   onOpenChange,
@@ -37,8 +48,13 @@ export function BookmarkDrawer({
 
   const handleRemove = async (targetUserId: string) => {
     await removeBookmark(identity, targetUserId)
+    removeCachedBookmarkUsername(targetUserId)
     mutate()
   }
+
+  const usable = bookmarks
+    .map((bm) => ({ bm, username: bookmarkUsername(bm) }))
+    .filter((row): row is { bm: Bookmark; username: string } => row.username !== null)
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange} showSwipeHandle>
@@ -48,17 +64,17 @@ export function BookmarkDrawer({
         </DrawerHeader>
 
         <div className="space-y-0.5 px-4 pb-6">
-          {bookmarks.length === 0 ? (
+          {usable.length === 0 ? (
             <div className="py-10 text-center">
               <HugeiconsIcon icon={InboxIcon} className="mx-auto size-8 text-muted-foreground/40" />
               <p className="mt-3 text-sm font-medium">{t("empty")}</p>
               <p className="mt-1 text-xs text-muted-foreground">{t("emptyHint")}</p>
             </div>
           ) : (
-            bookmarks.map((bm) => (
+            usable.map(({ bm, username }) => (
               <BookmarkRow
                 key={bm.targetUserId}
-                targetUserId={bm.targetUserId}
+                username={username}
                 onSelect={onSelect}
                 onRemove={() => handleRemove(bm.targetUserId)}
                 onClose={() => onOpenChange(false)}
@@ -71,13 +87,14 @@ export function BookmarkDrawer({
   )
 }
 
-// Inline button for adding/removing a bookmark from a user's public profile.
 export function BookmarkButton({
   targetUserId,
   username,
+  className,
 }: {
   targetUserId: string
   username: string
+  className?: string
 }) {
   const t = useTranslations("bookmark")
   const { identity } = useAuth()
@@ -90,8 +107,10 @@ export function BookmarkButton({
     setLoading(true)
     if (isBookmarked) {
       await removeBookmark(identity, targetUserId)
+      removeCachedBookmarkUsername(targetUserId)
     } else {
       await addBookmark(identity, targetUserId)
+      cacheBookmarkUsername(targetUserId, username)
     }
     mutate()
     setLoading(false)
@@ -99,73 +118,99 @@ export function BookmarkButton({
 
   return (
     <button
+      type="button"
       onClick={toggle}
       disabled={loading}
       aria-label={isBookmarked ? t("remove") : t("add")}
-      className={[
-        "flex size-9 items-center justify-center rounded-full transition-colors",
+      className={cn(
+        "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors",
         isBookmarked
           ? "bg-primary text-primary-foreground hover:bg-primary/90"
-          : "bg-muted text-muted-foreground hover:bg-accent hover:text-foreground",
-      ].join(" ")}
+          : "border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground",
+        className
+      )}
     >
-      {loading
-        ? <Spinner className="size-4" />
-        : <HugeiconsIcon icon={BookmarkAdd01Icon} className="size-4" />
-      }
+      {loading ? (
+        <Spinner className="size-4" />
+      ) : (
+        <HugeiconsIcon
+          icon={isBookmarked ? Bookmark02Icon : BookmarkAdd01Icon}
+          className="size-4"
+          strokeWidth={1.75}
+        />
+      )}
     </button>
   )
 }
 
+function bookmarkUsername(bm: Bookmark): string | null {
+  const fromApi = optionalText(bm.username)
+  if (fromApi) return fromApi.toLowerCase()
+  return getCachedBookmarkUsername(bm.targetUserId)
+}
+
 function BookmarkRow({
-  targetUserId,
+  username,
   onSelect,
   onRemove,
   onClose,
 }: {
-  targetUserId: string
+  username: string
   onSelect?: (username: string) => void
   onRemove: () => void
   onClose: () => void
 }) {
   const t = useTranslations("bookmark")
-  // targetUserId may be a username or a raw id; show what we have.
-  const display = targetUserId.startsWith("@") ? targetUserId.slice(1) : targetUserId
+  const tc = useTranslations("common")
+
+  const pick = () => {
+    if (!onSelect) return
+    onSelect(username)
+    onClose()
+  }
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl px-2 py-2.5 hover:bg-muted/50">
-      <Avatar className="size-9 shrink-0">
-        <AvatarFallback className="bg-muted text-xs font-medium uppercase">
-          {display.slice(0, 2)}
-        </AvatarFallback>
-      </Avatar>
-
-      <div className="min-w-0 flex-1">
-        <p className="flex items-center gap-1 truncate text-sm font-semibold">
-          @{display}
-          <PremiumBadge name={display} className="size-3" />
+    <div className="flex items-center gap-2.5 rounded-2xl px-1 py-2 hover:bg-muted/50">
+      <button
+        type="button"
+        className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
+        onClick={pick}
+        disabled={!onSelect}
+      >
+        <Avatar className="size-9 shrink-0">
+          <AvatarImage src={avatarUriFor(username)} alt="" />
+          <AvatarFallback className="bg-muted text-xs font-medium uppercase">
+            {username.slice(0, 2)}
+          </AvatarFallback>
+        </Avatar>
+        <p className="flex min-w-0 items-center gap-1 truncate text-sm font-semibold">
+          @{username}
+          <PremiumBadge name={username} className="size-3 shrink-0" />
         </p>
-      </div>
+      </button>
 
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex shrink-0 items-center gap-0.5">
         {onSelect && (
           <Button
-            variant="default"
-            size="sm"
-            className="h-7 rounded-full text-xs"
-            onClick={() => { onSelect(display); onClose() }}
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="size-8 text-muted-foreground"
+            aria-label={t("sendTo", { name: username })}
+            onClick={pick}
           >
-            {t("sendTo", { name: display })}
-            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-3" />
+            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" strokeWidth={1.75} />
           </Button>
         )}
         <Button
+          type="button"
           variant="ghost"
-          size="icon-xs"
-          className="size-7 text-muted-foreground hover:text-destructive"
+          size="icon-sm"
+          className="size-8 text-muted-foreground hover:text-destructive"
+          aria-label={tc("close")}
           onClick={onRemove}
         >
-          <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+          <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={1.75} />
         </Button>
       </div>
     </div>
