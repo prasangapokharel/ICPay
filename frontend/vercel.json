@@ -10,12 +10,12 @@
     {
       "source": "/cloud/:bucket/:path*",
       "has": [{ "type": "host", "value": "cloud.icpay.app" }],
-      "destination": "https://6vbhm-nqaaa-aaaan-q6muq-cai.raw.icp0.io/cloud/:bucket/:path*"
+      "destination": "/api/cloud/:bucket/:path*"
     },
     {
       "source": "/:bucket/:path*",
       "has": [{ "type": "host", "value": "cloud.icpay.app" }],
-      "destination": "https://6vbhm-nqaaa-aaaan-q6muq-cai.raw.icp0.io/cloud/:bucket/:path*"
+      "destination": "/api/cloud/:bucket/:path*"
     },
     {
       "source": "/icpverse/:username",

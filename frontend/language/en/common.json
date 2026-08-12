@@ -719,6 +719,8 @@
     "apiKeysTitle": "API keys",
     "apiKeysShort": "Keys",
     "publicCdn": "Public CDN",
+    "urlModeCdn": "CDN",
+    "urlModeRaw": "Raw",
     "apiKeysHint": "Keys are scoped to this bucket. The secret is shown once — copy it when created.",
     "apiKeysEmpty": "No API keys yet",
     "apiKeyCreate": "Create key",
