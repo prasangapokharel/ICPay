@@ -6,10 +6,12 @@ import { PHASE_PRODUCTION_BUILD } from "next/constants"
 // against an "export" config. `next dev` is excluded for a second reason -- it
 // treats generateStaticParams as the exhaustive param list for a dynamic route
 // and 500s on anything else, which would break /icpverse/<name> locally.
+// Static export is for the on-chain asset canister only (ICP_STATIC_EXPORT=1 in
+// build-frontend.sh). Vercel keeps a normal Next build so /api/cloud can proxy
+// cloud.icpay.app → *.raw.icp0.io/cloud/* with the correct upstream Host.
+const staticExport = process.env.ICP_STATIC_EXPORT === "1"
+
 export default (phase: string): NextConfig => ({
-  // The app is fully client-rendered, and an ICP asset canister can only serve
-  // static output.
-  output: phase === PHASE_PRODUCTION_BUILD ? "export" : undefined,
-  // next/image optimization needs a server; there is none behind a static export.
+  output: staticExport && phase === PHASE_PRODUCTION_BUILD ? "export" : undefined,
   images: { unoptimized: true },
 })
