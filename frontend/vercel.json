@@ -1,5 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "build": {
+    "env": {
+      "ICP_STATIC_EXPORT": "0"
+    }
+  },
   "git": {
     "deploymentEnabled": {
       "main": false,

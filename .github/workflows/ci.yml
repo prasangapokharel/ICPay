@@ -28,8 +28,15 @@ jobs:
       # The suite compiles each test with moc directly, so dfx is not needed.
       - run: npm i -g ic-mops
       - run: mops toolchain init
-      - run: mops install
+      - name: Install mops packages
         working-directory: backend
+        run: |
+          for i in 1 2 3; do
+            mops install && exit 0
+            echo "mops install failed (attempt $i), retrying..."
+            sleep 5
+          done
+          exit 1
 
       - run: bash scripts/run-tests.sh
         working-directory: backend
