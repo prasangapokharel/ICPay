@@ -5,11 +5,30 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+frontend="$root/../frontend"
+proxy_dir="$frontend/app/api/cloud"
+stash_dir="$frontend/.cdn-proxy-stash"
 
-npm --prefix "$root/../frontend" run build
+restore_proxy() {
+  if [ -d "$stash_dir" ]; then
+    mkdir -p "$(dirname "$proxy_dir")"
+    rm -rf "$proxy_dir"
+    mv "$stash_dir" "$proxy_dir"
+  fi
+}
+
+# CDN proxy is Vercel-only; stash it outside app/ so static export skips it.
+if [ -d "$proxy_dir" ]; then
+  rm -rf "$stash_dir"
+  mv "$proxy_dir" "$stash_dir"
+fi
+trap restore_proxy EXIT
+
+export ICP_STATIC_EXPORT=1
+npm --prefix "$frontend" run build
 
 rm -rf "$root/dist"
 # -a preserves the dotfiles: .well-known/ii-alternative-origins is what lets
 # Internet Identity treat the Vercel domain as the same principal, and
 # .ic-assets.json5 is what makes the asset canister serve it certified.
-cp -a "$root/../frontend/out" "$root/dist"
+cp -a "$frontend/out" "$root/dist"
