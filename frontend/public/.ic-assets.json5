@@ -10,5 +10,17 @@
       "Access-Control-Allow-Origin": "*"
     },
     "ignore": false
+  },
+  {
+    "match": "_next/**/*",
+    "headers": {
+      "Cache-Control": "public, max-age=31536000, immutable"
+    }
+  },
+  {
+    // Deep links with runtime ids 404 without a fallback; onchain-shell.js
+    // then swaps in the prerendered shell HTML before Next hydrates.
+    "match": "**/*",
+    "enable_aliasing": true
   }
 ]

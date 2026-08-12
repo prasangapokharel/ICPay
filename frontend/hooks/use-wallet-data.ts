@@ -398,7 +398,7 @@ export function useTokenHoldings() {
       const subaccount = custodialSubaccount(identity!.getPrincipal())
       return await fetchBalances(ledgerIds, owner, subaccount, identity)
     },
-    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
+    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 300_000 }
   )
 
   // Phase 2 -- metadata for every discovered ledger, not just the held ones. A

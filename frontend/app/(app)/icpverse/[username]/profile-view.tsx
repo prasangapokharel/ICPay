@@ -142,7 +142,7 @@ export function ProfileView() {
             </Button>
           )}
           {!isSelf && recipientProfile && (
-            <BookmarkButton
+            <BookmarkButton 
               targetUserId={recipientProfile.id}
               username={username}
             />

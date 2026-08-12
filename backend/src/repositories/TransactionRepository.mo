@@ -140,7 +140,7 @@ module {
           case (#deposit) { if (tx.ledgerId == ledgerId) { deposits += tx.amount } };
           case (#withdraw) { if (tx.ledgerId == ledgerId) { withdrawals += tx.amount } };
           case (#transfer) { transfers += 1 };
-          case (#fee) {};
+          case (#fee or #swapOut or #swapIn) {};
         };
       };
     };

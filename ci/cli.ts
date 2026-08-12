@@ -33,6 +33,7 @@ const COMMANDS: Record<string, string> = {
   "canister:call": "canister/call.ts",
   "canister:info": "canister/info.ts",
   "users:count": "users/count.ts",
+  "bucket:stats": "bucket/stats.ts",
   "cycles:balance": "cycles/balance.ts",
   "cycles:address": "cycles/address.ts",
   "cycles:convert": "cycles/convert.ts",

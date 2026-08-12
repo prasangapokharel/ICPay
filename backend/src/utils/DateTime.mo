@@ -12,11 +12,11 @@ module {
     let z = days + 719_468;
     let era = z / 146_097;
     let doe = z % 146_097;
-    let yoe = (doe - doe / 1_460 + doe / 36_524 - doe / 146_096) / 365;
-    let doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+    let yoe = ((doe - doe / 1_460 + doe / 36_524 - doe / 146_096 : Nat) / 365 : Nat);
+    let doy = (doe - (365 * yoe + yoe / 4 - yoe / 100) : Nat);
     let mp = (5 * doy + 2) / 153;
-    let d = doy - (153 * mp + 2) / 5 + 1;
-    let m = if (mp < 10) { mp + 3 } else { mp - 9 };
+    let d = (doy - (153 * mp + 2) / 5 + 1 : Nat);
+    let m = if (mp < 10) { mp + 3 } else { (mp - 9 : Nat) };
     let y = yoe + era * 400 + (if (m <= 2) { 1 } else { 0 });
     (y, m, d);
   };

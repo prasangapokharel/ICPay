@@ -1,0 +1,283 @@
+import Map "mo:core/Map";
+import Array "mo:core/Array";
+import Iter "mo:core/Iter";
+import Principal "mo:core/Principal";
+import Blob "mo:core/Blob";
+import Text "mo:core/Text";
+import Types "../types";
+
+module {
+  type Bucket = Types.Bucket;
+  type BucketId = Types.BucketId;
+  type StoredFile = Types.StoredFile;
+  type FileId = Types.FileId;
+
+  public type BucketStore = {
+    buckets: Map.Map<BucketId, Bucket>;
+    files: Map.Map<FileId, StoredFile>;
+    fileData: Map.Map<FileId, Blob>;
+    pathIndex: Map.Map<Text, FileId>;
+    ownerIndex: Map.Map<Principal, [BucketId]>;
+    apiKeys: Map.Map<Text, Types.ApiKey>;
+    keyHashIndex: Map.Map<Text, Text>;
+    bucketKeyIndex: Map.Map<BucketId, [Text]>;
+  };
+
+  public type NameIndex = Map.Map<Text, BucketId>;
+
+  public func empty() : BucketStore {
+    {
+      buckets = Map.empty<BucketId, Bucket>();
+      files = Map.empty<FileId, StoredFile>();
+      fileData = Map.empty<FileId, Blob>();
+      pathIndex = Map.empty<Text, FileId>();
+      ownerIndex = Map.empty<Principal, [BucketId]>();
+      apiKeys = Map.empty<Text, Types.ApiKey>();
+      keyHashIndex = Map.empty<Text, Text>();
+      bucketKeyIndex = Map.empty<BucketId, [Text]>();
+    };
+  };
+
+  public func pathKey(bucketId: BucketId, path: Text) : Text {
+    bucketId # ":" # path
+  };
+
+  public func putBucket(store: BucketStore, names: NameIndex, bucket: Bucket) {
+    store.buckets.add(bucket.id, bucket);
+    names.add(bucket.name, bucket.id);
+    switch (store.ownerIndex.get(bucket.owner)) {
+      case (null) {
+        store.ownerIndex.add(bucket.owner, [bucket.id]);
+      };
+      case (?ids) {
+        if (not arrayContains(ids, bucket.id)) {
+          store.ownerIndex.add(bucket.owner, Array.concat(ids, [bucket.id]));
+        };
+      };
+    };
+  };
+
+  public func getBucket(store: BucketStore, id: BucketId) : ?Bucket {
+    store.buckets.get(id)
+  };
+
+  /** Resolve a CDN path segment — internal bucket id or public bucket name. */
+  public func resolveBucketId(store: BucketStore, names: NameIndex, segment: Text) : ?BucketId {
+    switch (store.buckets.get(segment)) {
+      case (?_) ?segment;
+      case null names.get(segment);
+    }
+  };
+
+  public func bucketNameTaken(names: NameIndex, name: Text) : Bool {
+    switch (names.get(name)) {
+      case (null) false;
+      case (?_) true;
+    }
+  };
+
+  public func reindexNames(store: BucketStore, names: NameIndex) {
+    let stale = Iter.toArray(Iter.map<(Text, BucketId), Text>(names.entries(), func((name, _)) { name }));
+    for (name in stale.vals()) {
+      names.remove(name);
+    };
+    for (bucket in Map.values(store.buckets)) {
+      names.add(bucket.name, bucket.id);
+    };
+  };
+
+  public func countFilesByBucket(store: BucketStore, bucketId: BucketId) : Nat {
+    var count : Nat = 0;
+    for (file in Map.values(store.files)) {
+      if (file.bucketId == bucketId) {
+        count += 1;
+      };
+    };
+    count
+  };
+
+  public func getBucketsByOwner(store: BucketStore, owner: Principal) : [Bucket] {
+    switch (store.ownerIndex.get(owner)) {
+      case (null) { [] };
+      case (?ids) {
+        Iter.toArray(
+          Iter.filterMap<BucketId, Bucket>(ids.vals(), func(id) { store.buckets.get(id) }),
+        )
+      };
+    }
+  };
+
+  public func deleteBucket(store: BucketStore, names: NameIndex, id: BucketId) {
+    switch (store.buckets.get(id)) {
+      case (null) {};
+      case (?bucket) {
+        store.buckets.remove(id);
+        names.remove(bucket.name);
+        switch (store.ownerIndex.get(bucket.owner)) {
+          case (null) {};
+          case (?ids) {
+            let filtered = Array.filter<BucketId>(ids, func(bid) { bid != id });
+            if (filtered.size() > 0) {
+              store.ownerIndex.add(bucket.owner, filtered);
+            } else {
+              store.ownerIndex.remove(bucket.owner);
+            };
+          };
+        };
+      };
+    };
+  };
+
+  public func putFile(store: BucketStore, file: StoredFile, data: Blob) {
+    store.files.add(file.id, file);
+    store.fileData.add(file.id, data);
+    store.pathIndex.add(pathKey(file.bucketId, file.path), file.id);
+  };
+
+  public func getFile(store: BucketStore, id: FileId) : ?StoredFile {
+    store.files.get(id)
+  };
+
+  public func getFileByPath(store: BucketStore, bucketId: BucketId, path: Text) : ?StoredFile {
+    switch (store.pathIndex.get(pathKey(bucketId, path))) {
+      case (null) null;
+      case (?fileId) store.files.get(fileId);
+    }
+  };
+
+  public func getFileData(store: BucketStore, id: FileId) : ?Blob {
+    store.fileData.get(id)
+  };
+
+  public func getFilesByBucket(store: BucketStore, bucketId: BucketId) : [StoredFile] {
+    Iter.toArray(
+      Iter.filter<StoredFile>(Map.values(store.files), func(f) { f.bucketId == bucketId }),
+    )
+  };
+
+  // Returns the deleted file size when a row existed.
+  public func deleteFile(store: BucketStore, id: FileId) : ?Nat {
+    switch (store.files.get(id)) {
+      case (null) null;
+      case (?file) {
+        store.files.remove(id);
+        store.fileData.remove(id);
+        store.pathIndex.remove(pathKey(file.bucketId, file.path));
+        ?file.size
+      };
+    }
+  };
+
+  public func getTotalStorage(store: BucketStore) : Nat {
+    var total : Nat = 0;
+    for (bucket in Map.values(store.buckets)) {
+      total += bucket.storageUsed;
+    };
+    total
+  };
+
+  public func countActiveBuckets(store: BucketStore) : Nat {
+    var count : Nat = 0;
+    for (bucket in Map.values(store.buckets)) {
+      if (bucket.status == #ACTIVE) {
+        count += 1;
+      };
+    };
+    count
+  };
+
+  public func countAllBuckets(store: BucketStore) : Nat {
+    var count : Nat = 0;
+    for (_ in Map.values(store.buckets)) {
+      count += 1;
+    };
+    count
+  };
+
+  public func countExpiredBuckets(store: BucketStore) : Nat {
+    var count : Nat = 0;
+    for (bucket in Map.values(store.buckets)) {
+      if (bucket.status == #EXPIRED) {
+        count += 1;
+      };
+    };
+    count
+  };
+
+  public func getTotalCapacity(store: BucketStore) : Nat {
+    var total : Nat = 0;
+    for (bucket in Map.values(store.buckets)) {
+      total += bucket.capacity;
+    };
+    total
+  };
+
+  public func countFiles(store: BucketStore) : Nat {
+    var count : Nat = 0;
+    for (_ in Map.values(store.files)) {
+      count += 1;
+    };
+    count
+  };
+
+  public func putApiKey(store: BucketStore, key: Types.ApiKey) {
+    store.apiKeys.add(key.id, key);
+    store.keyHashIndex.add(key.keyHash, key.id);
+    switch (store.bucketKeyIndex.get(key.bucketId)) {
+      case (null) {
+        store.bucketKeyIndex.add(key.bucketId, [key.id]);
+      };
+      case (?ids) {
+        if (not arrayContainsText(ids, key.id)) {
+          store.bucketKeyIndex.add(key.bucketId, Array.concat(ids, [key.id]));
+        };
+      };
+    };
+  };
+
+  public func getApiKey(store: BucketStore, id: Text) : ?Types.ApiKey {
+    store.apiKeys.get(id)
+  };
+
+  public func getApiKeyByHash(store: BucketStore, hash: Text) : ?Types.ApiKey {
+    switch (store.keyHashIndex.get(hash)) {
+      case (null) null;
+      case (?id) store.apiKeys.get(id);
+    }
+  };
+
+  public func getApiKeysByBucket(store: BucketStore, bucketId: BucketId) : [Types.ApiKey] {
+    switch (store.bucketKeyIndex.get(bucketId)) {
+      case (null) { [] };
+      case (?ids) {
+        Iter.toArray(
+          Iter.filterMap<Text, Types.ApiKey>(ids.vals(), func(id) { store.apiKeys.get(id) }),
+        )
+      };
+    }
+  };
+
+  public func revokeApiKey(store: BucketStore, id: Text, at: Int) : Bool {
+    switch (store.apiKeys.get(id)) {
+      case (null) false;
+      case (?key) {
+        key.revokedAt := ?at;
+        true
+      };
+    }
+  };
+
+  private func arrayContainsText(arr: [Text], id: Text) : Bool {
+    for (item in arr.vals()) {
+      if (item == id) return true;
+    };
+    false
+  };
+
+  private func arrayContains(arr: [BucketId], id: BucketId) : Bool {
+    for (item in arr.vals()) {
+      if (item == id) return true;
+    };
+    false
+  };
+};

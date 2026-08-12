@@ -4,6 +4,8 @@ import TxStorage "storage/TransactionStorage";
 import SettingsStorage "storage/SettingsStorage";
 import LedgerStorage "storage/LedgerStorage";
 import TokenStorage "storage/TokenStorage";
+import SwapStorage "storage/SwapStorage";
+import BucketStorage "storage/BucketStorage";
 import TxRepo "repositories/TransactionRepository";
 import LedgerService "services/LedgerService";
 import AuthService "services/AuthService";
@@ -21,7 +23,8 @@ import SettingsService "services/SettingsService";
 import BookmarkStorage "storage/BookmarkStorage";
 import BookmarkService "services/BookmarkService";
 import SocialLinkService "services/SocialLinkService";
-import AddSocialLinks "migrations/AddSocialLinks";
+import SwapService "services/SwapService";
+import BucketService "services/BucketService";
 import RateLimitStorage "storage/RateLimitStorage";
 import HealthApi "api/v1/Health";
 import AuthApi "api/v1/Auth";
@@ -39,6 +42,9 @@ import SettingsApi "api/v1/Settings";
 import BookmarkApi "api/v1/Bookmark";
 import SocialLinkApi "api/v1/SocialLink";
 import VerifiedApi "api/v1/Verified";
+import SwapApi "api/v1/Swap";
+import BucketApi "api/v1/Bucket";
+import CloudHttpApi "api/v1/CloudHttp";
 import MiddlewareAuth "middleware/Auth";
 import Principal "mo:core/Principal";
 import Int "mo:core/Int";
@@ -46,8 +52,8 @@ import Nat64 "mo:core/Nat64";
 import Debug "mo:core/Debug";
 import Timer "mo:core/Timer";
 import UUID "utils/UUID";
+import Map "mo:core/Map";
 
-(with migration = AddSocialLinks.migration)
 persistent actor self {
   transient let mwConfig = MiddlewareAuth.prodConfig();
 
@@ -90,9 +96,22 @@ persistent actor self {
   let settingsLimits = RateLimitStorage.createRateLimitMap();
   let purchaseUsernameLimits = RateLimitStorage.createRateLimitMap();
   let launchTokenLimits = RateLimitStorage.createRateLimitMap();
+  let swapLimits = RateLimitStorage.createRateLimitMap();
+  let bucketCreateLimits = RateLimitStorage.createRateLimitMap();
+  let bucketUploadLimits = RateLimitStorage.createRateLimitMap();
+  let bucketRenewLimits = RateLimitStorage.createRateLimitMap();
+  let bucketApiKeyLimits = RateLimitStorage.createRateLimitMap();
 
   // New stable variable — no migration needed, starts empty on first upgrade.
   let bookmarks = BookmarkStorage.createBookmarkMap();
+
+  // Pending swaps survive upgrades: a failed withdraw must not vanish on deploy.
+  let pendingSwaps = SwapStorage.createPendingMap();
+
+  // ICPay Cloud — bucket metadata and file blobs persist across upgrades.
+  let bucketStore = BucketStorage.empty();
+  let bucketNameIndex = Map.empty<Text, Text>();
+  BucketStorage.reindexNames(bucketStore, bucketNameIndex);
 
   // Library modules cannot hold mutable state (moc rejects a top-level `var`
   // outside an actor), so the monotonic id counter that keeps rows unique lives
@@ -133,6 +152,11 @@ persistent actor self {
     tokens, tokensByLedger, tokensByUser, reservedSymbols, tokenWasm,
     transferService, ledger, users, Principal.fromActor(self), nextUid, launchTokenLimits,
   );
+  transient let swapService = SwapService.create(users, transactions, transactionsByUser, ledger, pendingSwaps, nextUid, swapLimits);
+  transient let bucketService = BucketService.create(
+    users, bucketStore, bucketNameIndex, transferService, nextUid,
+    bucketCreateLimits, bucketUploadLimits, bucketRenewLimits, bucketApiKeyLimits,
+  );
 
   // Chain-key symbols are compiled in, so seeding them costs no calls and runs
   // on every start rather than needing a migration. Reserving is idempotent.
@@ -146,13 +170,16 @@ persistent actor self {
   // The first tick lands a day after the deploy, never at install time -- an
   // upgrade should not fire a ledger transfer as a side effect of shipping.
   ignore Timer.recurringTimer<system>(#hours 24, func(): async () {
-    // The manual sweep reports "Nothing to sweep" as an error to its operator,
-    // which is the right answer to a human who asked for one. A day with no
-    // revenue is the normal case here, so nothing is logged for it.
     switch (await TokenService.sweepRevenue(tokenService)) {
       case (#ok(blockIndex)) { Debug.print("swept revenue at block " # Nat64.toText(blockIndex)) };
       case (#err(_)) {};
     };
+  });
+
+  // Retry pending swaps every 60 seconds. Funds stuck in a pool or in ICPay's
+  // default account after a failed withdraw are recovered here automatically.
+  ignore Timer.recurringTimer<system>(#seconds 60, func(): async () {
+    await SwapService.retryPending(swapService);
   });
 
   include HealthApi();
@@ -171,4 +198,8 @@ persistent actor self {
   include BookmarkApi(bookmarkService, mwConfig);
   include SocialLinkApi(socialLinkService, mwConfig);
   include VerifiedApi(userService);
+  include SwapApi(swapService, mwConfig);
+  include BucketApi(bucketService, mwConfig);
+  include CloudHttpApi(bucketService);
+
 };

@@ -37,6 +37,25 @@ module {
     #withdraw;
     #transfer;
     #fee;
+    #swapOut;
+    #swapIn;
+  };
+
+  public type SwapResult = {
+    blockIndex:  Nat64;
+    amountIn:    Nat;
+    amountOut:   Nat;
+    platformFee: Nat;
+    txId:        TxId;
+  };
+
+  public type SwapQuoteResult = {
+    amountOut:    Nat;
+    amountOutRaw: Nat;
+    platformFee:  Nat;
+    swapFee:      Nat;
+    priceImpact:  Text;
+    poolId:       Text;
   };
 
   public type TxStatus = {
@@ -78,6 +97,152 @@ module {
     memo: ?Text;
     createdAt: Int;
     updatedAt: Int;
+  };
+
+  // Bucket types
+  public type BucketId = Text;
+  public type FileId = Text;
+
+  public type BucketVisibility = { #Public; #Private };
+
+  public type BucketStatus = { #ACTIVE; #EXPIRED };
+
+  public type Bucket = {
+    id: BucketId;
+    owner: Principal;
+    var name: Text;
+    capacity: Nat;
+    var storageUsed: Nat;
+    visibility: BucketVisibility;
+    var status: BucketStatus;
+    var expiresAt: Int;
+    createdAt: Int;
+  };
+
+  public type BucketPublic = {
+    id: BucketId;
+    name: Text;
+    capacity: Nat;
+    storageUsed: Nat;
+    visibility: BucketVisibility;
+    status: BucketStatus;
+    expiresAt: Int;
+    createdAt: Int;
+  };
+
+  // Rich dashboard view — computed on read, nothing extra stored.
+  public type BucketStats = {
+    id: BucketId;
+    name: Text;
+    capacity: Nat;
+    storageUsed: Nat;
+    usagePercent: Nat;
+    fileCount: Nat;
+    visibility: BucketVisibility;
+    status: BucketStatus;
+    expiresAt: Int;
+    daysRemaining: Nat;
+    isExpiringSoon: Bool;
+    renewPriceE8s: Nat;
+    periodDays: Nat;
+    publicBaseUrl: ?Text;
+  };
+
+  // Operator rollup — storage sold, cycle burn, and top-up guidance.
+  public type BucketCloudStats = {
+    bucketCount: Nat;
+    activeBuckets: Nat;
+    expiredBuckets: Nat;
+    fileCount: Nat;
+    storageUsedBytes: Nat;
+    capacityBytes: Nat;
+    utilizationPercent: Nat;
+    estimatedCapacityRevenueE8s: Nat;
+    cyclesBalance: Nat;
+    cyclesDailyBurn: Nat;
+    cyclesMonthlyBurn: Nat;
+    cyclesStatus: Text;
+    canAcceptNewBuckets: Bool;
+    estimatedDaysRemaining: Nat;
+    recommendedTopUpCycles: Nat;
+  };
+
+  public type BucketRenewQuote = {
+    bucketId: BucketId;
+    priceE8s: Nat;
+    currentExpiresAt: Int;
+    newExpiresAt: Int;
+    status: BucketStatus;
+  };
+
+  public type BucketRenewResult = {
+    bucketId: BucketId;
+    priceE8s: Nat;
+    expiresAt: Int;
+    status: BucketStatus;
+  };
+
+  public type StoredFile = {
+    id: FileId;
+    bucketId: BucketId;
+    path: Text;
+    size: Nat;
+    contentType: Text;
+    checksum: Text;
+    createdAt: Int;
+  };
+
+  public type FilePublic = {
+    id: FileId;
+    path: Text;
+    size: Nat;
+    contentType: Text;
+    createdAt: Int;
+    publicUrl: ?Text;
+  };
+
+  public type FileListPage = {
+    items: [FilePublic];
+    total: Nat;
+    page: Nat;
+    pageSize: Nat;
+  };
+
+  public type ApiKeyPermissions = {
+    read: Bool;
+    write: Bool;
+    delete: Bool;
+  };
+
+  public type ApiKey = {
+    id: Text;
+    owner: Principal;
+    bucketId: BucketId;
+    name: Text;
+    keyHash: Text;
+    keyHint: Text;
+    permissions: ApiKeyPermissions;
+    createdAt: Int;
+    var revokedAt: ?Int;
+  };
+
+  public type ApiKeyPublic = {
+    id: Text;
+    bucketId: BucketId;
+    name: Text;
+    keyHint: Text;
+    permissions: ApiKeyPermissions;
+    createdAt: Int;
+    revoked: Bool;
+  };
+
+  public type ApiKeyCreateResult = {
+    id: Text;
+    secret: Text;
+    name: Text;
+    bucketId: BucketId;
+    permissions: ApiKeyPermissions;
+    createdAt: Int;
   };
 
   public type Settings = {
