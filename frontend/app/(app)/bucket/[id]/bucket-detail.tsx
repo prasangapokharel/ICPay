@@ -64,7 +64,7 @@ export function BucketDetail() {
   const { stats, isLoading: statsLoading, refresh: refreshStats } = useBucketStats(bucketId || null)
   const [renewOpen, setRenewOpen] = useState(false)
   const [cdnOpen, setCdnOpen] = useState(false)
-  const [urlMode, setUrlMode] = useState<BucketUrlMode>("cdn")
+  const [urlMode, setUrlMode] = useState<BucketUrlMode>("raw")
   const [baseCopied, setBaseCopied] = useState(false)
 
   const active = stats ? isBucketActive(stats.status) : false

@@ -10,24 +10,13 @@ const RAW_CLOUD_RE = new RegExp(
   `^https://(?:[a-z0-9-]+\\.)?raw\\.icp0\\.io/cloud/([^?#]+)`
 )
 
-/** When set, public bucket links use cloud.icpay.app instead of *.raw.icp0.io. */
+/** When NEXT_PUBLIC_BUCKET_CDN_URL is set, helpers may prefer cloud.icpay.app. Default is raw. */
 export function getBucketCdnBase(): string | null {
-  if (typeof window !== "undefined") {
-    const host = window.location.hostname
-    // Local dev always uses the canister raw host — cloud.icpay.app is prod-only.
-    if (host === "localhost" || host === "127.0.0.1") return null
-    if (host === "icpay.app" || host === "www.icpay.app") return BUCKET_CDN_ORIGIN
-  }
-
   const explicit = process.env.NEXT_PUBLIC_BUCKET_CDN_URL
   if (explicit !== undefined) {
     const trimmed = explicit.trim()
     return trimmed ? trimmed.replace(/\/$/, "") : null
   }
-
-  const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "").toLowerCase()
-  if (site.includes("icpay.app")) return BUCKET_CDN_ORIGIN
-
   return null
 }
 
@@ -59,7 +48,7 @@ export function toRawCanisterUrl(url: string): string {
 
 export type BucketUrlMode = "cdn" | "raw"
 
-export function resolvePublicFileUrl(url: string, mode: BucketUrlMode = "cdn"): string {
+export function resolvePublicFileUrl(url: string, mode: BucketUrlMode = "raw"): string {
   const raw = toRawCanisterUrl(url)
   if (mode === "raw") return raw
   const tail = rawCloudTail(raw)
