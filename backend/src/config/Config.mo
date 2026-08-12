@@ -103,7 +103,7 @@ module {
   public let BACKEND_CANISTER_ID: Text = "6vbhm-nqaaa-aaaan-q6muq-cai";
 
   // Clean CDN host (Vercel proxy → canister /cloud/). Null keeps raw.icp0.io URLs.
-  public let CLOUD_CDN_BASE: ?Text = ?"https://cloud.icpay.app";
+  public let CLOUD_CDN_BASE: ?Text = null;
 
   // Stats flag when fewer than this many days remain in the paid period.
   public let BUCKET_EXPIRING_SOON_DAYS: Nat = 3;

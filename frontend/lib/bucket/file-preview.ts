@@ -2,12 +2,12 @@ import { resolvePublicFileUrl, toRawCanisterUrl } from "@/lib/bucket/cdn"
 import { downloadFileBlob } from "@/services/bucket/bucket"
 import type { Identity } from "@icp-sdk/core/agent"
 
-/** Rewrite legacy gateway links, then prefer cloud.icpay.app when configured. */
+/** Rewrite legacy gateway links to the reliable canister raw host. */
 export function normalizePublicFileUrl(url: string): string {
-  return resolvePublicFileUrl(url, "cdn")
+  return resolvePublicFileUrl(url, "raw")
 }
 
-/** CDN first (when public), then authenticated canister download — same fallback as preview. */
+/** Raw canister first (reliable), then CDN — same fallback as preview. */
 export async function fetchBucketFileBlob(opts: {
   publicUrl: string | null
   identity: Identity | undefined
@@ -19,8 +19,8 @@ export async function fetchBucketFileBlob(opts: {
 
   if (publicUrl) {
     const candidates = [
-      resolvePublicFileUrl(publicUrl, "cdn"),
       toRawCanisterUrl(publicUrl),
+      resolvePublicFileUrl(publicUrl, "cdn"),
     ]
     for (const url of candidates) {
       try {
