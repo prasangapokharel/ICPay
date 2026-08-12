@@ -45,6 +45,31 @@ function rawCloudTail(url: string): string | null {
   return null
 }
 
+/** Map any bucket URL form to the canister raw /cloud/ URL. */
+export function toRawCanisterUrl(url: string): string {
+  const tail = rawCloudTail(url)
+  if (tail) return `https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${tail}`
+
+  const legacy = url.match(LEGACY_GATEWAY)
+  if (legacy) {
+    return `https://${WALLET_CANISTER_ID}.raw.icp0.io${legacy[1]}`
+  }
+  return url
+}
+
+export type BucketUrlMode = "cdn" | "raw"
+
+export function resolvePublicFileUrl(url: string, mode: BucketUrlMode = "cdn"): string {
+  const raw = toRawCanisterUrl(url)
+  if (mode === "raw") return raw
+  const tail = rawCloudTail(raw)
+  if (tail) {
+    const cdnBase = getBucketCdnBase() ?? BUCKET_CDN_ORIGIN
+    return `${cdnBase}/${tail}`
+  }
+  return raw
+}
+
 /** Map a canister raw URL (or legacy gateway URL) to the clean CDN host when enabled. */
 export function toBucketCdnUrl(url: string): string {
   const cdnBase = getBucketCdnBase()
