@@ -5,9 +5,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { CAPACITY_TIERS_GB, FILES_PAGE_SIZE, MAX_FILE_BYTES } from "@/lib/bucket/bucket"
-import { formatBytes } from "@/lib/bucket/bucket"
+import { FILES_PAGE_SIZE, MAX_FILE_BYTES, formatBytes } from "@/lib/bucket/bucket"
 import { BUCKET_CDN_ORIGIN, getBucketCdnBase } from "@/lib/bucket/cdn"
 import { WALLET_CANISTER_ID } from "@/services/icp"
 
@@ -54,13 +52,10 @@ export default function BucketDocsPage() {
 
       <section className="space-y-2 rounded-2xl border p-4">
         <h2 className="text-sm font-semibold">{t("docsTiersTitle")}</h2>
-        <div className="flex flex-wrap gap-1.5">
-          {CAPACITY_TIERS_GB.map((gb) => (
-            <Badge key={gb} variant="outline" className="text-[10px]">
-              {gb} GB
-            </Badge>
-          ))}
-        </div>
+        <p className="text-xs leading-relaxed text-muted-foreground">{t("docsTiersBody")}</p>
+        <Button variant="outline" size="sm" className="h-8 text-xs" nativeButton={false} render={<Link href="/bucket/pricing" />}>
+          {t("pricingLink")}
+        </Button>
       </section>
 
       <section className="space-y-2 rounded-2xl border p-4">

@@ -25,7 +25,7 @@ export function BucketFileThumb({
   onClick?: () => void
 }) {
   const { previewUrl, loading, handleImageError } = useBucketFilePreview(bucketId, file)
-  const chip = fileTypeChip(file.contentType)
+  const chip = fileTypeChip(file.contentType, file.path)
   const dim = size === "md" ? "size-12" : "size-10"
 
   const inner = previewUrl && isPreviewableImage(file.contentType) ? (
@@ -86,7 +86,7 @@ export function BucketFilePreviewImage({
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-16">
         <span className="rounded-xl bg-muted px-4 py-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">
-          {fileTypeChip(file.contentType)}
+          {fileTypeChip(file.contentType, file.path)}
         </span>
         <p className="text-xs text-muted-foreground">{file.contentType}</p>
       </div>

@@ -11,10 +11,18 @@ import {
   bucketFilesKey,
   bucketListKey,
   bucketPriceKey,
+  bucketPricingTableKey,
   bucketRenewQuoteKey,
   bucketStatsKey,
   isBucketCacheKey,
 } from "@/lib/bucket/cache-keys"
+import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
+import {
+  buildEstimatedPricingTiers,
+  buildPricingTier,
+  calculatePriceE8s,
+  type BucketPricingTier,
+} from "@/lib/bucket/pricing"
 import {
   getBucketCycleStatus,
   getBucketPrice,
@@ -97,15 +105,52 @@ export function useBucketPrice(capacityGB: number | null) {
   const { identity } = useAuth()
 
   const { data, isLoading } = useSWR(
-    capacityGB !== null ? bucketPriceKey(identity, capacityGB) : null,
-    () => getBucketPrice(identity!, capacityGB!),
+    capacityGB !== null ? bucketPriceKey(capacityGB) : null,
+    () => getBucketPrice(identity, capacityGB!),
     { ...QUERY, dedupingInterval: 60_000 }
   )
 
-  const price = data && "ok" in data ? data.ok : null
+  const price =
+    data && "ok" in data
+      ? data.ok
+      : capacityGB !== null
+        ? calculatePriceE8s(capacityGB)
+        : null
   const priceError = data && "err" in data ? data.err : null
+  const fromCanister = Boolean(data && "ok" in data)
 
-  return { price, priceError, isLoading: capacityGB !== null && isLoading }
+  return {
+    price,
+    priceError,
+    fromCanister,
+    isLoading: capacityGB !== null && isLoading && !data,
+  }
+}
+
+export function useBucketPricingTiers() {
+  const { identity } = useAuth()
+
+  const { data, error, isLoading } = useSWRImmutable(
+    bucketPricingTableKey(),
+    async (): Promise<BucketPricingTier[]> => {
+      const rows = await Promise.all(
+        CAPACITY_TIERS_GB.map(async (gb) => {
+          const res = await getBucketPrice(identity, gb)
+          const priceE8s =
+            "ok" in res ? res.ok : calculatePriceE8s(gb)
+          return buildPricingTier(gb, priceE8s)
+        })
+      )
+      return rows
+    },
+    { ...QUERY, dedupingInterval: 300_000, fallbackData: buildEstimatedPricingTiers() }
+  )
+
+  return {
+    tiers: data ?? buildEstimatedPricingTiers(),
+    error,
+    isLoading: isLoading && !data,
+  }
 }
 
 export function useRenewQuote(bucketId: string | null, enabled: boolean) {

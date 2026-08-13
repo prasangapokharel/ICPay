@@ -28,13 +28,19 @@ export type {
   BucketCycleStatus,
 } from "@/services/bucket/types"
 
-export function getBucketPrice(
+/** Query — no auth required; uses an anonymous agent when logged out. */
+export async function getBucketPrice(
   identity: Identity | undefined,
   capacityGB: number
 ): Promise<Outcome<bigint>> {
-  return call(identity, "Failed to load price", (actor) =>
-    actor.getBucketPrice(BigInt(capacityGB)) as Promise<Outcome<bigint>>
-  )
+  try {
+    const { getWalletActor } = await import("@/services/wallet")
+    const actor = await getWalletActor(identity)
+    return (await actor.getBucketPrice(BigInt(capacityGB))) as Outcome<bigint>
+  } catch (e) {
+    console.error(e)
+    return { err: "Failed to load price" }
+  }
 }
 
 export function createBucket(

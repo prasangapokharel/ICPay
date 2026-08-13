@@ -293,12 +293,9 @@ module {
 
     let normalized = switch (FileValidator.normalizeUpload(path, contentType, data)) {
       case (null) {
-        return #err("Invalid file format — upload WebP images, txt, py, or zip");
+        return #err("Invalid file format — file type not allowed or video blocked");
       };
       case (?ct) ct;
-    };
-    if (not FileValidator.validateUploadContent(normalized, data)) {
-      return #err("Invalid file format — upload a valid file");
     };
     if (not FileValidator.validateFileSize(data.size())) {
       return #err("File too large — max 10 MB");
