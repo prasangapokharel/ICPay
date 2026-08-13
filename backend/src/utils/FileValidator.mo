@@ -13,7 +13,7 @@ module {
   ];
 
   private let ALLOWED : [Text] = [
-    "jpg", "jpeg", "png", "webp", "gif", "svg", "avif", "bmp", "ico", "tif", "tiff",
+    "jpg", "jpeg", "png", "webp", "gif", "svg", "avif", "bmp", "ico", "tif", "tiff", "heic", "heif",
     "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md", "csv", "rtf",
     "odt", "ods", "odp",
     "js", "ts", "tsx", "jsx", "go", "rs", "py", "java", "kt", "swift", "php", "rb",
@@ -64,6 +64,8 @@ module {
       case ("ico") { ?"image/x-icon" };
       case ("tif") { ?"image/tiff" };
       case ("tiff") { ?"image/tiff" };
+      case ("heic") { ?"image/heic" };
+      case ("heif") { ?"image/heif" };
       case ("pdf") { ?"application/pdf" };
       case ("doc") { ?"application/msword" };
       case ("docx") { ?"application/vnd.openxmlformats-officedocument.wordprocessingml.document" };

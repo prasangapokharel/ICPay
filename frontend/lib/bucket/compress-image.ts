@@ -88,6 +88,37 @@ export function formatCompressionSummary(
   return `${fmt(originalBytes)} → ${fmt(compressedBytes)} WebP (−${ratio}%)`
 }
 
+async function decodeToBitmap(file: File): Promise<ImageBitmap | null> {
+  try {
+    return await createImageBitmap(file)
+  } catch {
+    return decodeViaImageElement(file)
+  }
+}
+
+function decodeViaImageElement(file: File): Promise<ImageBitmap | null> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file)
+    const img = new Image()
+    img.onload = () => {
+      void (async () => {
+        try {
+          resolve(await createImageBitmap(img))
+        } catch {
+          resolve(null)
+        } finally {
+          URL.revokeObjectURL(url)
+        }
+      })()
+    }
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      resolve(null)
+    }
+    img.src = url
+  })
+}
+
 /**
  * Raster uploads → WebP on the client before the canister sees them.
  * PNG/JPEG/HEIC from iPhone often land as multi-MB; CDN wants display-sized assets.
@@ -97,11 +128,17 @@ export async function compressRasterToWebp(file: File): Promise<RasterCompressio
 
   const ext = pathExtension(file.name)
   if (SKIP_CONVERSION.has(ext)) return null
-  if (!CONVERT_TO_WEBP.has(ext) && !file.type.startsWith("image/")) return null
+  const isRaster =
+    CONVERT_TO_WEBP.has(ext) ||
+    file.type === "image/heic" ||
+    file.type === "image/heif" ||
+    (file.type.startsWith("image/") && ext !== "gif" && ext !== "svg" && ext !== "ico")
+  if (!isRaster) return null
 
   let bitmap: ImageBitmap | null = null
   try {
-    bitmap = await createImageBitmap(file)
+    bitmap = await decodeToBitmap(file)
+    if (!bitmap) return null
     const budget = targetBytesFor(file.size)
     const blob = await encodeWebpUnderLimit(bitmap, budget)
     if (!blob) return null

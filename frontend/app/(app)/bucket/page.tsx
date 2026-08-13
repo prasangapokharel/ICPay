@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ImageAdd02Icon } from "@hugeicons/core-free-icons"
+import { BucketIcon } from "@hugeicons/core-free-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
@@ -73,7 +73,7 @@ export default function BucketPage() {
         className="flex w-full items-center gap-3 rounded-2xl border border-dashed bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100 p-4 text-left transition-colors hover:bg-muted/40 dark:from-sky-950/40 dark:via-blue-950/30 dark:to-indigo-950/40"
       >
         <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <HugeiconsIcon icon={ImageAdd02Icon} className="size-5" strokeWidth={1.75} />
+          <HugeiconsIcon icon={BucketIcon} className="size-5" strokeWidth={1.75} />
         </span>
         <span className="min-w-0">
           <span className="block text-sm font-bold">{t("createCta")}</span>
