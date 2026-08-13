@@ -46,6 +46,7 @@ export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
         },
       }
     }
+    // WebP encode unavailable or rejected (e.g. Safari PNG fallback) — upload original bytes/path.
   }
 
   const ext = pathExtension(normalized.name)
