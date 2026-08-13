@@ -88,6 +88,10 @@ export interface WalletActor {
   ) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
   uploadFileChunk: (
     uploadId: string,
+    data: Uint8Array
+  ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  uploadFileChunkIndexed: (
+    uploadId: string,
     chunkIndex: bigint,
     data: Uint8Array
   ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
@@ -503,6 +507,11 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
       []
     ),
     uploadFileChunk: IDL.Func(
+      [IDL.Text, IDL.Vec(IDL.Nat8)],
+      [ApiResultNat],
+      []
+    ),
+    uploadFileChunkIndexed: IDL.Func(
       [IDL.Text, IDL.Nat, IDL.Vec(IDL.Nat8)],
       [ApiResultNat],
       []

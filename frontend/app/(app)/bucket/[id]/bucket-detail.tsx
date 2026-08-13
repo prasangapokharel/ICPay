@@ -46,11 +46,7 @@ import {
   optionalText,
 } from "@/lib/bucket/bucket"
 import { copyText } from "@/lib/wallet-utils"
-import {
-  type BucketUrlMode,
-  resolvePublicFileUrl,
-  toRawCanisterUrl,
-} from "@/lib/bucket/cdn"
+import { toRawCanisterUrl } from "@/lib/bucket/cdn"
 import { cn } from "@/lib/utils"
 import { useRewrittenLastSegment } from "@/lib/rewritten-route"
 
@@ -69,7 +65,6 @@ export function BucketDetail() {
   const [uploadOpen, setUploadOpen] = useState(false)
   const [apiKeysOpen, setApiKeysOpen] = useState(false)
   const [cdnOpen, setCdnOpen] = useState(false)
-  const [urlMode, setUrlMode] = useState<BucketUrlMode>("raw")
   const [baseCopied, setBaseCopied] = useState(false)
 
   const active = stats ? isBucketActive(stats.status) : false
@@ -159,8 +154,7 @@ export function BucketDetail() {
   }
 
   const publicBaseRaw = optionalText(stats.publicBaseUrl)
-  const rawBase = publicBaseRaw ? toRawCanisterUrl(publicBaseRaw) : null
-  const displayBase = rawBase ? resolvePublicFileUrl(rawBase, urlMode) : null
+  const displayBase = publicBaseRaw ? toRawCanisterUrl(publicBaseRaw) : null
 
   const handleCopyBase = async () => {
     if (!displayBase) return
@@ -234,7 +228,7 @@ export function BucketDetail() {
           percent={stats.usagePercent}
         />
 
-        {rawBase && (
+        {displayBase && (
           <Collapsible open={cdnOpen} onOpenChange={setCdnOpen}>
             <CollapsibleTrigger
               className="flex w-full items-center justify-between gap-2 rounded-lg py-1 text-left text-xs text-muted-foreground transition-colors hover:text-foreground"
@@ -251,26 +245,6 @@ export function BucketDetail() {
               className="overflow-hidden data-open:animate-accordion-down data-closed:animate-accordion-up"
             >
               <div className="space-y-1.5 pt-1.5">
-                <div className="flex gap-1">
-                  <Button
-                    type="button"
-                    variant={urlMode === "cdn" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="h-6 px-2 text-[10px]"
-                    onClick={() => setUrlMode("cdn")}
-                  >
-                    {t("urlModeCdn")}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={urlMode === "raw" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="h-6 px-2 text-[10px]"
-                    onClick={() => setUrlMode("raw")}
-                  >
-                    {t("urlModeRaw")}
-                  </Button>
-                </div>
                 <div className="flex items-center gap-1">
                   <p className="min-w-0 flex-1 truncate rounded-lg bg-muted/40 px-2 py-1.5 font-mono text-[10px] text-muted-foreground">
                     {displayBase}

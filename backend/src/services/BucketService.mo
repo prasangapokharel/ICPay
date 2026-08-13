@@ -156,6 +156,21 @@ module {
     BucketRepo.resolveBucketId(service.store, service.names, segment)
   };
 
+  private func requireBucket(
+    service: BucketService,
+    segment: Text,
+  ) : { #err: Text; #ok: Types.Bucket } {
+    switch (BucketRepo.resolveBucketId(service.store, service.names, segment)) {
+      case (null) { #err("Bucket not found") };
+      case (?id) {
+        switch (BucketRepo.get(service.store, id)) {
+          case (null) { #err("Bucket not found") };
+          case (?b) { #ok(b) };
+        };
+      };
+    };
+  };
+
   public func getPrice(capacityGB: Nat) : Types.ApiResult<Nat> {
     switch (BillingService.capacityBytesFromGB(capacityGB)) {
       case (null) { #err("Invalid capacity — choose 1, 5, 10, 25, 50, 100, 250, or 500 GB") };
@@ -238,9 +253,9 @@ module {
     caller: Principal,
     id: Types.BucketId,
   ) : Types.ApiResult<Types.BucketPublic> {
-    switch (BucketRepo.get(service.store, id)) {
-      case (null) { #err("Bucket not found") };
-      case (?bucket) {
+    switch (requireBucket(service, id)) {
+      case (#err(e)) { #err(e) };
+      case (#ok(bucket)) {
         if (not canRead(bucket, caller)) {
           return #err("Bucket not found");
         };
@@ -255,9 +270,9 @@ module {
     caller: Principal,
     id: Types.BucketId,
   ) : Types.ApiResult<Types.BucketStats> {
-    switch (BucketRepo.get(service.store, id)) {
-      case (null) { #err("Bucket not found") };
-      case (?bucket) {
+    switch (requireBucket(service, id)) {
+      case (#err(e)) { #err(e) };
+      case (#ok(bucket)) {
         if (not canRead(bucket, caller)) {
           return #err("Bucket not found");
         };
@@ -272,9 +287,9 @@ module {
     caller: Principal,
     bucketId: Types.BucketId,
   ) : Types.ApiResult<Types.BucketRenewQuote> {
-    switch (BucketRepo.get(service.store, bucketId)) {
-      case (null) { #err("Bucket not found") };
-      case (?bucket) {
+    switch (requireBucket(service, bucketId)) {
+      case (#err(e)) { #err(e) };
+      case (#ok(bucket)) {
         if (bucket.owner != caller) {
           return #err("Permission denied");
         };
@@ -354,9 +369,9 @@ module {
       return #err("File too large — max 10 MB");
     };
 
-    let bucket = switch (BucketRepo.get(service.store, bucketId)) {
-      case (null) { return #err("Bucket not found") };
-      case (?b) b;
+    let bucket = switch (requireBucket(service, bucketId)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(b)) b;
     };
     if (bucket.owner != auth.owner) {
       return #err("Permission denied");
@@ -365,7 +380,7 @@ module {
       return #err("Bucket expired — renew to enable uploads");
     };
 
-    let existing = BucketRepo.getFileByPath(service.store, bucketId, path);
+    let existing = BucketRepo.getFileByPath(service.store, bucket.id, path);
     let oldSize = switch (existing) { case (null) 0; case (?f) f.size };
     let baseUsed = if (bucket.storageUsed >= oldSize) {
       Nat.sub(bucket.storageUsed, oldSize)
@@ -378,7 +393,7 @@ module {
     let chunkCount = uploadChunkCount(totalSize);
     let session : Types.FileUploadSession = {
       owner = auth.owner;
-      bucketId = bucketId;
+      bucketId = bucket.id;
       path = path;
       contentType = contentType;
       totalSize = totalSize;
@@ -392,7 +407,57 @@ module {
     #ok(uploadId)
   };
 
-  public func uploadFileChunk(
+  func applyUploadChunk(
+    session: Types.FileUploadSession,
+    chunkIndex: Nat,
+    data: Blob,
+  ) : Types.ApiResult<Nat> {
+    if (chunkIndex >= session.chunkCount) {
+      return #err("Chunk index out of range");
+    };
+    if (data.size() == 0) {
+      return #err("Empty chunk");
+    };
+    if (data.size() > Config.BUCKET_UPLOAD_CHUNK_BYTES) {
+      return #err("Chunk too large");
+    };
+    switch (Map.get(session.chunkParts, Nat.compare, chunkIndex)) {
+      case (?_) { return #err("Duplicate chunk") };
+      case (null) {};
+    };
+    let next = session.received + data.size();
+    if (next > session.totalSize) {
+      return #err("Chunk exceeds declared file size");
+    };
+    Map.add(session.chunkParts, Nat.compare, chunkIndex, data);
+    session.received := next;
+    session.filled += 1;
+    #ok(next)
+  };
+
+  public func uploadFileChunkLegacy(
+    service: BucketService,
+    caller: Principal,
+    uploadId: Text,
+    data: Blob,
+  ) : async Types.ApiResult<Nat> {
+    purgeStaleUploadSessions(service);
+
+    switch (Map.get(service.uploadSessions.map, Text.compare, uploadId)) {
+      case (null) { return #err("Upload session not found or expired") };
+      case (?session) {
+        if (session.owner != caller) {
+          return #err("Permission denied");
+        };
+        if (session.filled >= session.chunkCount) {
+          return #err("Upload already complete");
+        };
+        applyUploadChunk(session, session.filled, data)
+      };
+    }
+  };
+
+  public func uploadFileChunkIndexed(
     service: BucketService,
     caller: Principal,
     uploadId: Text,
@@ -407,29 +472,20 @@ module {
         if (session.owner != caller) {
           return #err("Permission denied");
         };
-        if (chunkIndex >= session.chunkCount) {
-          return #err("Chunk index out of range");
-        };
-        if (data.size() == 0) {
-          return #err("Empty chunk");
-        };
-        if (data.size() > Config.BUCKET_UPLOAD_CHUNK_BYTES) {
-          return #err("Chunk too large");
-        };
-        switch (Map.get(session.chunkParts, Nat.compare, chunkIndex)) {
-          case (?_) { return #err("Duplicate chunk") };
-          case (null) {};
-        };
-        let next = session.received + data.size();
-        if (next > session.totalSize) {
-          return #err("Chunk exceeds declared file size");
-        };
-        Map.add(session.chunkParts, Nat.compare, chunkIndex, data);
-        session.received := next;
-        session.filled += 1;
-        #ok(next)
+        applyUploadChunk(session, chunkIndex, data)
       };
     }
+  };
+
+  /** @deprecated use uploadFileChunkLegacy or uploadFileChunkIndexed */
+  public func uploadFileChunk(
+    service: BucketService,
+    caller: Principal,
+    uploadId: Text,
+    chunkIndex: Nat,
+    data: Blob,
+  ) : async Types.ApiResult<Nat> {
+    await uploadFileChunkIndexed(service, caller, uploadId, chunkIndex, data)
   };
 
   public func completeFileUpload(
@@ -498,9 +554,9 @@ module {
       return #err("File too large — max 10 MB");
     };
 
-    let bucket = switch (BucketRepo.get(service.store, bucketId)) {
-      case (null) { return #err("Bucket not found") };
-      case (?b) b;
+    let bucket = switch (requireBucket(service, bucketId)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(b)) b;
     };
 
     if (bucket.owner != auth.owner) {
@@ -511,7 +567,7 @@ module {
     };
 
     let fileSize = data.size();
-    let existing = BucketRepo.getFileByPath(service.store, bucketId, path);
+    let existing = BucketRepo.getFileByPath(service.store, bucket.id, path);
     let oldSize = switch (existing) {
       case (null) 0;
       case (?f) f.size;
@@ -534,11 +590,11 @@ module {
     };
 
     let fileId = service.nextId();
-    let key = BucketCrypto.deriveKey(bucket.owner, bucketId);
+    let key = BucketCrypto.deriveKey(bucket.owner, bucket.id);
     let sealed = BucketCrypto.seal(data, key);
     let file : Types.StoredFile = {
       id = fileId;
-      bucketId = bucketId;
+      bucketId = bucket.id;
       path = path;
       size = fileSize;
       contentType = normalized;
@@ -547,7 +603,7 @@ module {
     };
 
     BucketRepo.saveFile(service.store, file, sealed.ciphertext);
-    BucketRepo.updateUsage(service.store, service.names, bucketId, newUsed);
+    BucketRepo.updateUsage(service.store, service.names, bucket.id, newUsed);
     #ok(fileId)
   };
 
@@ -717,9 +773,9 @@ module {
       case (null) {};
     };
 
-    let bucket = switch (BucketRepo.get(service.store, bucketId)) {
-      case (null) { return #err("Bucket not found") };
-      case (?b) b;
+    let bucket = switch (requireBucket(service, bucketId)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(b)) b;
     };
 
     switch (bucket.visibility) {
@@ -727,7 +783,7 @@ module {
       case (#Public) {};
     };
 
-    switch (BucketRepo.getFileByPath(service.store, bucketId, path)) {
+    switch (BucketRepo.getFileByPath(service.store, bucket.id, path)) {
       case (null) { #err("File not found") };
       case (?_) {
         #ok(BucketUrls.fileUrl(Config.BACKEND_CANISTER_ID, bucket.name, path))
@@ -751,9 +807,9 @@ module {
       return #err(RateLimitService.message(Config.RATE_BUCKET_UPLOAD));
     };
 
-    let bucket = switch (BucketRepo.get(service.store, bucketId)) {
-      case (null) { return #err("Bucket not found") };
-      case (?b) b;
+    let bucket = switch (requireBucket(service, bucketId)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(b)) b;
     };
 
     if (bucket.owner != auth.owner) {
@@ -763,7 +819,7 @@ module {
       return #err("Bucket expired — renew to enable deletes");
     };
 
-    let file = switch (BucketRepo.getFileByPath(service.store, bucketId, path)) {
+    let file = switch (BucketRepo.getFileByPath(service.store, bucket.id, path)) {
       case (null) { return #err("File not found") };
       case (?f) f;
     };
@@ -776,7 +832,7 @@ module {
         } else {
           0
         };
-        BucketRepo.updateUsage(service.store, service.names, bucketId, newUsed);
+        BucketRepo.updateUsage(service.store, service.names, bucket.id, newUsed);
         #ok()
       };
     }
@@ -789,16 +845,16 @@ module {
     page: Nat,
     pageSize: Nat,
   ) : Types.ApiResult<Types.FileListPage> {
-    let bucket = switch (BucketRepo.get(service.store, bucketId)) {
-      case (null) { return #err("Bucket not found") };
-      case (?b) b;
+    let bucket = switch (requireBucket(service, bucketId)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(b)) b;
     };
 
     if (not canRead(bucket, caller)) {
       return #err("Access denied");
     };
 
-    let files = BucketRepo.getFilesByBucket(service.store, bucketId);
+    let files = BucketRepo.getFilesByBucket(service.store, bucket.id);
     let isPublic = switch (bucket.visibility) {
       case (#Public) true;
       case (#Private) false;
@@ -846,9 +902,9 @@ module {
       return #err(RateLimitService.message(Config.RATE_BUCKET_RENEW));
     };
 
-    let bucket = switch (BucketRepo.get(service.store, bucketId)) {
-      case (null) { return #err("Bucket not found") };
-      case (?b) b;
+    let bucket = switch (requireBucket(service, bucketId)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(b)) b;
     };
 
     if (bucket.owner != caller) {
@@ -1009,10 +1065,14 @@ module {
   private func resolveWriteAuth(
     service: BucketService,
     caller: Principal,
-    bucketId: Types.BucketId,
+    bucketSegment: Types.BucketId,
     apiKey: ?Text,
     action: WriteAction,
   ) : { #err: Text; #ok: WriteAuth } {
+    let resolvedId = switch (BucketRepo.resolveBucketId(service.store, service.names, bucketSegment)) {
+      case (null) { return #err("Bucket not found") };
+      case (?id) id;
+    };
     switch (apiKey) {
       case (null) {
         #ok({ owner = caller; ratePrincipal = caller })
@@ -1021,7 +1081,7 @@ module {
         switch (ApiKeyService.validate(service.store, secret)) {
           case (#err(e)) { #err(e) };
           case (#ok(key)) {
-            if (key.bucketId != bucketId) {
+            if (key.bucketId != resolvedId) {
               return #err("API key not valid for this bucket");
             };
             switch (action) {

@@ -1,20 +1,20 @@
-import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/upload-chunk"
 import {
-  buildFileAcceptList,
   guessFileMime,
-  isUploadCandidate,
   mimeFromExtension,
   normalizeUploadFile,
   pathExtension,
 } from "@/lib/bucket/allowed-files"
 import { compressRasterToWebp } from "@/lib/bucket/compress-image"
-import { replacePathExtension, uploadPathForFile } from "@/lib/bucket/bucket"
+import { buildUploadPath } from "@/lib/bucket/upload-path"
+import { shouldConvertRasterToWebp } from "@/lib/bucket/raster-formats"
+import { uploadValidationError } from "@/lib/bucket/upload-validate"
+
+export { uploadValidationError } from "@/lib/bucket/upload-validate"
 
 export type PreparedUpload = {
   file: File
   path: string
   contentType: string
-  /** Set when a raster was converted/compressed to WebP before upload. */
   compression?: {
     originalBytes: number
     compressedBytes: number
@@ -22,37 +22,38 @@ export type PreparedUpload = {
   }
 }
 
-/** Compress rasters to WebP when possible; other allowed types pass through unchanged. */
+/**
+ * Normalize → compress rasters to WebP → return file, path, and MIME for storeFile.
+ * Non-raster allowed types (PDF, ZIP, GIF, SVG, …) pass through unchanged.
+ */
 export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
+  const err = uploadValidationError(file)
+  if (err) throw new Error("Invalid file format")
+
   const normalized = normalizeUploadFile(file)
 
-  if (!isUploadCandidate(normalized, BUCKET_MAX_FILE_BYTES)) {
-    throw new Error("Invalid file format")
-  }
-
-  const compressed = await compressRasterToWebp(normalized)
-
-  if (compressed) {
-    return {
-      file: compressed.file,
-      path: replacePathExtension(uploadPathForFile(normalized), ".webp"),
-      contentType: "image/webp",
-      compression: {
-        originalBytes: compressed.originalBytes,
-        compressedBytes: compressed.compressedBytes,
-        originalExt: compressed.originalExt,
-      },
+  if (shouldConvertRasterToWebp(normalized)) {
+    const compressed = await compressRasterToWebp(normalized)
+    if (compressed) {
+      return {
+        file: compressed.file,
+        path: buildUploadPath(normalized, true),
+        contentType: "image/webp",
+        compression: {
+          originalBytes: compressed.originalBytes,
+          compressedBytes: compressed.compressedBytes,
+          originalExt: compressed.originalExt,
+        },
+      }
     }
   }
 
   const ext = pathExtension(normalized.name)
-  const contentType = mimeFromExtension(ext) ?? guessFileMime(normalized)
-
   return {
     file: normalized,
-    path: uploadPathForFile(normalized),
-    contentType,
+    path: buildUploadPath(normalized, false),
+    contentType: mimeFromExtension(ext) ?? guessFileMime(normalized),
   }
 }
 
-export { buildFileAcceptList }
+export { buildFileAcceptList } from "@/lib/bucket/allowed-files"

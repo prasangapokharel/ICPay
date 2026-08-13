@@ -1,23 +1,9 @@
 import { pathExtension } from "@/lib/bucket/allowed-files"
+import { sanitizeUploadFilename } from "@/lib/bucket/upload-path"
+import { shouldConvertRasterToWebp } from "@/lib/bucket/raster-formats"
 
 /** Default WebP budget for bucket CDN photos (aggressive — display-sized, not archival). */
 export const RASTER_TARGET_MAX_BYTES = 100_000
-
-const CONVERT_TO_WEBP = new Set([
-  "jpg",
-  "jpeg",
-  "png",
-  "webp",
-  "avif",
-  "bmp",
-  "tif",
-  "tiff",
-  "heic",
-  "heif",
-])
-
-/** Animated / vector — never rasterize. */
-const SKIP_CONVERSION = new Set(["gif", "svg", "ico"])
 
 const QUALITIES = [0.82, 0.72, 0.62, 0.52, 0.42, 0.32, 0.22] as const
 
@@ -126,14 +112,7 @@ function closeRasterSource(source: BitmapSource | null): void {
  * PNG/JPEG/HEIC from iPhone often land as multi-MB; CDN wants display-sized assets.
  */
 export async function compressRasterToWebp(file: File): Promise<RasterCompression | null> {
-  const ext = pathExtension(file.name)
-  if (SKIP_CONVERSION.has(ext)) return null
-  const isRaster =
-    CONVERT_TO_WEBP.has(ext) ||
-    file.type === "image/heic" ||
-    file.type === "image/heif" ||
-    (file.type.startsWith("image/") && ext !== "gif" && ext !== "svg" && ext !== "ico")
-  if (!isRaster) return null
+  if (!shouldConvertRasterToWebp(file)) return null
 
   let source: BitmapSource | null = null
   try {
@@ -143,8 +122,9 @@ export async function compressRasterToWebp(file: File): Promise<RasterCompressio
     const blob = await encodeWebpUnderLimit(source, budget)
     if (!blob) return null
 
-    const stem = file.name.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9._-]/g, "_")
-    const out = new File([blob], `${stem || "photo"}.webp`, {
+    const stem = sanitizeUploadFilename(file.name.replace(/\.[^.]+$/, "") || "photo")
+      .replace(/\.webp$/, "")
+    const out = new File([blob], `${stem}.webp`, {
       type: "image/webp",
       lastModified: file.lastModified,
     })
@@ -152,7 +132,7 @@ export async function compressRasterToWebp(file: File): Promise<RasterCompressio
       file: out,
       originalBytes: file.size,
       compressedBytes: out.size,
-      originalExt: ext || "image",
+      originalExt: pathExtension(file.name) || "image",
     }
   } catch {
     return null

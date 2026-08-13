@@ -114,19 +114,12 @@ export function validateBucketName(name: string): string | null {
   return null
 }
 
-/** CDN object path at bucket root — preserves the original file extension. */
-export function uploadPathForFile(file: File): string {
-  const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").toLowerCase()
-  return `/${Date.now()}-${safe}`
-}
-
-export function replacePathExtension(path: string, ext: string): string {
-  const slash = path.lastIndexOf("/")
-  const base = slash >= 0 ? path.slice(slash + 1) : path
-  const dot = base.lastIndexOf(".")
-  const stem = dot >= 0 ? path.slice(0, slash + 1 + dot) : path
-  return `${stem}${ext.startsWith(".") ? ext : `.${ext}`}`
-}
+export {
+  sanitizeUploadFilename,
+  uploadPathForFile,
+  replacePathExtension,
+  buildUploadPath,
+} from "@/lib/bucket/upload-path"
 
 export function isImageUploadFile(file: File): boolean {
   return guessFileMime(file).startsWith("image/")

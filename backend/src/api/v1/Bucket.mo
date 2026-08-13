@@ -79,10 +79,22 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
 
   public shared ({ caller }) func uploadFileChunk(
     uploadId: Text,
+    data: Blob,
+  ) : async Types.ApiResult<Nat> {
+    await BucketService.uploadFileChunkLegacy(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      uploadId,
+      data,
+    )
+  };
+
+  public shared ({ caller }) func uploadFileChunkIndexed(
+    uploadId: Text,
     chunkIndex: Nat,
     data: Blob,
   ) : async Types.ApiResult<Nat> {
-    await BucketService.uploadFileChunk(
+    await BucketService.uploadFileChunkIndexed(
       buckets,
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       uploadId,
