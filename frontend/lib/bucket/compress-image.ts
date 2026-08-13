@@ -1,7 +1,7 @@
 import { pathExtension } from "@/lib/bucket/allowed-files"
 
-/** Target size for raster uploads — iPhone photos compress here before upload. */
-export const RASTER_TARGET_MAX_BYTES = 1_000_000
+/** Default WebP budget for bucket CDN photos (aggressive — display-sized, not archival). */
+export const RASTER_TARGET_MAX_BYTES = 100_000
 
 const CONVERT_TO_WEBP = new Set([
   "jpg",
@@ -16,8 +16,25 @@ const CONVERT_TO_WEBP = new Set([
   "heif",
 ])
 
-/** Raster types we leave as-is (animated or vector). */
+/** Animated / vector — never rasterize. */
 const SKIP_CONVERSION = new Set(["gif", "svg", "ico"])
+
+const QUALITIES = [0.82, 0.72, 0.62, 0.52, 0.42, 0.32, 0.22] as const
+
+export type RasterCompression = {
+  file: File
+  originalBytes: number
+  compressedBytes: number
+  originalExt: string
+}
+
+/** Larger originals get a tighter byte budget (e.g. 8 MB iPhone PNG → ~50 KB WebP). */
+export function targetBytesFor(originalSize: number): number {
+  if (originalSize >= 5_000_000) return 50_000
+  if (originalSize >= 2_000_000) return 80_000
+  if (originalSize >= 500_000) return 120_000
+  return RASTER_TARGET_MAX_BYTES
+}
 
 function canvasToWebpBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob | null> {
   return new Promise((resolve) => {
@@ -25,43 +42,57 @@ function canvasToWebpBlob(canvas: HTMLCanvasElement, quality: number): Promise<B
   })
 }
 
+function drawScaled(bitmap: ImageBitmap, maxEdge: number): HTMLCanvasElement {
+  const longEdge = Math.max(bitmap.width, bitmap.height, 1)
+  const scale = Math.min(1, maxEdge / longEdge)
+  const w = Math.max(1, Math.round(bitmap.width * scale))
+  const h = Math.max(1, Math.round(bitmap.height * scale))
+  const canvas = document.createElement("canvas")
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext("2d")
+  if (!ctx) throw new Error("Canvas unsupported")
+  ctx.drawImage(bitmap, 0, 0, w, h)
+  return canvas
+}
+
 async function encodeWebpUnderLimit(
   bitmap: ImageBitmap,
   maxBytes: number,
 ): Promise<Blob | null> {
-  let maxDim = Math.max(bitmap.width, bitmap.height, 1)
-  const qualities = [0.88, 0.78, 0.68, 0.58, 0.48, 0.38]
+  let maxEdge = Math.min(Math.max(bitmap.width, bitmap.height), 2560)
 
-  while (maxDim >= 256) {
-    const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height))
-    const w = Math.max(1, Math.round(bitmap.width * scale))
-    const h = Math.max(1, Math.round(bitmap.height * scale))
-    const canvas = document.createElement("canvas")
-    canvas.width = w
-    canvas.height = h
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return null
-    ctx.drawImage(bitmap, 0, 0, w, h)
-
-    for (const q of qualities) {
+  while (maxEdge >= 320) {
+    const canvas = drawScaled(bitmap, maxEdge)
+    for (const q of QUALITIES) {
       const blob = await canvasToWebpBlob(canvas, q)
       if (blob && blob.size <= maxBytes) return blob
     }
-
-    maxDim = Math.floor(maxDim * 0.75)
+    maxEdge = Math.floor(maxEdge * 0.72)
   }
 
   return null
 }
 
+export function formatCompressionSummary(
+  originalBytes: number,
+  compressedBytes: number,
+): string {
+  const fmt = (n: number) =>
+    n >= 1_000_000
+      ? `${(n / 1_000_000).toFixed(1)} MB`
+      : n >= 1000
+        ? `${(n / 1000).toFixed(0)} KB`
+        : `${n} B`
+  const ratio = originalBytes > 0 ? Math.round((1 - compressedBytes / originalBytes) * 100) : 0
+  return `${fmt(originalBytes)} → ${fmt(compressedBytes)} WebP (−${ratio}%)`
+}
+
 /**
- * Compress raster uploads to WebP before they hit the canister.
- * iPhone PNG/JPEG/HEIC → smaller WebP; GIF/SVG/code/archives pass through.
+ * Raster uploads → WebP on the client before the canister sees them.
+ * PNG/JPEG/HEIC from iPhone often land as multi-MB; CDN wants display-sized assets.
  */
-export async function compressRasterToWebp(
-  file: File,
-  maxBytes = RASTER_TARGET_MAX_BYTES,
-): Promise<File | null> {
+export async function compressRasterToWebp(file: File): Promise<RasterCompression | null> {
   if (typeof createImageBitmap === "undefined") return null
 
   const ext = pathExtension(file.name)
@@ -71,12 +102,21 @@ export async function compressRasterToWebp(
   let bitmap: ImageBitmap | null = null
   try {
     bitmap = await createImageBitmap(file)
-    const blob = await encodeWebpUnderLimit(bitmap, maxBytes)
+    const budget = targetBytesFor(file.size)
+    const blob = await encodeWebpUnderLimit(bitmap, budget)
     if (!blob) return null
 
     const stem = file.name.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9._-]/g, "_")
-    const name = `${stem || "photo"}.webp`
-    return new File([blob], name, { type: "image/webp", lastModified: file.lastModified })
+    const out = new File([blob], `${stem || "photo"}.webp`, {
+      type: "image/webp",
+      lastModified: file.lastModified,
+    })
+    return {
+      file: out,
+      originalBytes: file.size,
+      compressedBytes: out.size,
+      originalExt: ext || "image",
+    }
   } catch {
     return null
   } finally {

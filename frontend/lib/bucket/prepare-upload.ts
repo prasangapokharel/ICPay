@@ -13,17 +13,32 @@ export type PreparedUpload = {
   file: File
   path: string
   contentType: string
+  /** Set when a raster was converted/compressed to WebP before upload. */
+  compression?: {
+    originalBytes: number
+    compressedBytes: number
+    originalExt: string
+  }
 }
 
-/** Compress rasters to WebP when possible; other allowed types pass through. */
+/** Compress rasters to WebP when possible; other allowed types pass through unchanged. */
 export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
-  const webp = await compressRasterToWebp(file)
-  if (webp) {
+  const compressed = await compressRasterToWebp(file)
+  if (compressed) {
     const path = replacePathExtension(uploadPathForFile(file), ".webp")
-    if (!isAllowedByExtension(webp, BUCKET_MAX_FILE_BYTES)) {
+    if (!isAllowedByExtension(compressed.file, BUCKET_MAX_FILE_BYTES)) {
       throw new Error("Invalid file format")
     }
-    return { file: webp, path, contentType: "image/webp" }
+    return {
+      file: compressed.file,
+      path,
+      contentType: "image/webp",
+      compression: {
+        originalBytes: compressed.originalBytes,
+        compressedBytes: compressed.compressedBytes,
+        originalExt: compressed.originalExt,
+      },
+    }
   }
 
   const ext = pathExtension(file.name)

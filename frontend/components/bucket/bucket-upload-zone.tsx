@@ -12,6 +12,7 @@ import {
   mapBucketError,
   MAX_FILE_BYTES,
 } from "@/lib/bucket/bucket"
+import { formatCompressionSummary } from "@/lib/bucket/compress-image"
 import { prepareUploadFile } from "@/lib/bucket/prepare-upload"
 
 export function BucketUploadZone({
@@ -32,6 +33,7 @@ export function BucketUploadZone({
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string | null>(null)
+  const [compressNote, setCompressNote] = useState<string | null>(null)
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0 || disabled) return
@@ -47,9 +49,19 @@ export function BucketUploadZone({
     setUploading(true)
     setProgress(0)
     setError(null)
+    setCompressNote(null)
     setFileName(raw.name)
     try {
       const prepared = await prepareUploadFile(raw)
+      if (prepared.compression) {
+        setCompressNote(
+          formatCompressionSummary(
+            prepared.compression.originalBytes,
+            prepared.compression.compressedBytes,
+          ),
+        )
+        setFileName(prepared.file.name)
+      }
       const err = await onUpload(
         prepared.file,
         prepared.path,
@@ -64,6 +76,7 @@ export function BucketUploadZone({
       setUploading(false)
       setProgress(0)
       setFileName(null)
+      setCompressNote(null)
       if (inputRef.current) inputRef.current.value = ""
     }
   }
@@ -99,6 +112,9 @@ export function BucketUploadZone({
       <p className="text-center text-[10px] leading-relaxed text-muted-foreground sm:text-xs">
         {t("uploadHint", { max: formatBytes(MAX_FILE_BYTES) })}
       </p>
+      {compressNote && !error && (
+        <p className="text-center text-[10px] text-muted-foreground sm:text-xs">{compressNote}</p>
+      )}
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
