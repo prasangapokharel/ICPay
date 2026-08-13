@@ -267,22 +267,19 @@ export function isUploadCandidate(file: File, maxBytes: number): boolean {
   const ext = pathExtension(file.name)
   const type = file.type.trim().toLowerCase()
 
-  if (type.startsWith("video/") || (ext && isBlockedExtension(ext))) {
-    return false
+  // Extension is the source of truth — same rule as FileValidator.normalizeUpload.
+  // Some WebP encoders mislabel output as "video/webp" (VP8 shared with WebM).
+  if (ext) {
+    if (isBlockedExtension(ext)) return false
+    if (isAllowedExtension(ext)) return true
   }
 
-  if (ext && isAllowedExtension(ext)) {
-    return true
-  }
+  if (type.startsWith("video/")) return false
 
   // iOS/Safari can provide an image MIME with an unexpected or missing filename.
-  if (type.startsWith("image/")) {
-    return true
-  }
+  if (type.startsWith("image/")) return true
 
-  if (type && Object.values(EXT_TO_MIME).includes(type)) {
-    return true
-  }
+  if (type && Object.values(EXT_TO_MIME).includes(type)) return true
 
   return false
 }
