@@ -105,11 +105,12 @@ module {
   // https://docs.internetcomputer.org/references/resource-limits/
   public let IC_INGRESS_MAX_BYTES: Nat = 2_097_152;
 
-  // Chunk payload — stay well under IC_INGRESS_MAX_BYTES (Candid framing overhead).
-  public let BUCKET_UPLOAD_CHUNK_BYTES: Nat = 700_000;
+  // Chunk payload — ~1.85 MiB leaves headroom for Candid Vec overhead under 2 MiB ingress.
+  // Asset canister sync uses ~1.9 MiB; see forum.dfinity.org/t/optimal-upload-chunk-size
+  public let BUCKET_UPLOAD_CHUNK_BYTES: Nat = 1_850_000;
 
-  // Direct uploadFile() ceiling for API callers — same margin as chunk size.
-  public let BUCKET_UPLOAD_SINGLE_MAX: Nat = 700_000;
+  // Direct uploadFile() ceiling — one round trip for compressed photos under this size.
+  public let BUCKET_UPLOAD_SINGLE_MAX: Nat = 1_850_000;
 
   // Abandon stale chunked sessions after 30 minutes.
   public let BUCKET_UPLOAD_SESSION_TTL_NS: Int = 1_800_000_000_000;

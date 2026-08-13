@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
-import { formatUsd, formatUsdPrecise } from "@/lib/use-icp-price"
+import { formatUsd, formatUsdPrecise } from "@/lib/icp-price"
 import { formatTokenAmount, shortPrincipal, copyText } from "@/lib/wallet-utils"
 import { useIcpayStats } from "@/hooks/use-icpay-stats"
 import {

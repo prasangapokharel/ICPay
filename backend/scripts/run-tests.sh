@@ -95,8 +95,9 @@ run_test "$ROOT/testing/services/SwapService.test.mo" "SwapService"
 #   moc -r testing/bucket/HttpMime.test.mo --package core ~/.cache/mops/packages/core@*/src
 # Fast suite: FileValidator.test.mo checks all 72 extensions → correct MIME at upload.
 
-echo "--- Transfer Tests ---"
-run_test "$ROOT/testing/transfer/TransferIndex.test.mo" "TransferIndex"
+echo "--- DSA / Transfer Index Tests ---"
+run_test "$ROOT/testing/dsa/deposit-index/Correctness.test.mo" "DepositIndex"
+run_test "$ROOT/testing/dsa/bucket-parallel/Concurrency.test.mo" "BucketParallel"
 
 echo "--- Upgrade / Migration Tests ---"
 run_test "$ROOT/testing/upgrade/StampLedgerId.test.mo" "StampLedgerId"

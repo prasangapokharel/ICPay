@@ -22,7 +22,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { transfer, type TransferMode } from "@/services/transfer/transfer"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 import { useTokenRegistry } from "@/lib/token-registry"
-import { useFiatValue } from "@/lib/fiat/use-fiat-value"
+import { useFiatValue } from "@/hooks/use-fiat-value"
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
