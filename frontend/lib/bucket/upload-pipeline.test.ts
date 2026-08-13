@@ -52,10 +52,17 @@ describe("shouldConvertRasterToWebp", () => {
     )
   })
 
-  it("skips video MIME", () => {
+  it("rejects video MIME", () => {
     assert.equal(
       shouldConvertRasterToWebp(mockFile("clip.mp4", "video/mp4")),
       false
+    )
+  })
+
+  it("still converts .webp mislabeled as video/webp", () => {
+    assert.equal(
+      shouldConvertRasterToWebp(mockFile("photo.webp", "video/webp")),
+      true
     )
   })
 })

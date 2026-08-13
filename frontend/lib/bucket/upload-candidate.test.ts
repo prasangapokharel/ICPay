@@ -71,6 +71,11 @@ describe("isUploadCandidate — edge cases", () => {
     assert.equal(isUploadCandidate(file, MAX), false)
   })
 
+  it("accepts .webp when MIME is mislabeled video/webp", () => {
+    const file = mockFile("photo.webp", "video/webp")
+    assert.equal(isUploadCandidate(file, MAX), true)
+  })
+
   it("accepts PDF by extension", () => {
     const file = mockFile("doc.pdf", "application/pdf")
     assert.equal(isUploadCandidate(file, MAX), true)
