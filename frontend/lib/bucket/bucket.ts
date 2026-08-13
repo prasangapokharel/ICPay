@@ -32,6 +32,7 @@ type BucketErrorKey =
   | "errPhotoProcess"
   | "errIngressTooLarge"
   | "invalidFile"
+  | "errVideoBlocked"
   | "errStorageLimit"
   | "errBucketExpired"
   | "errPermissionDenied"

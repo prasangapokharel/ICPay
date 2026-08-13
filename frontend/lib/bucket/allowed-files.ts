@@ -1,4 +1,4 @@
-/** Allowed upload extensions — keep in sync with backend FileValidator.mo */
+/** Video extensions blocked client-side — keep in sync with backend FileValidator.mo BLOCKED. */
 export const BLOCKED_EXTENSIONS = new Set([
   "mp4",
   "webm",
@@ -197,10 +197,8 @@ export function mimeFromExtension(ext: string): string | null {
 }
 
 export function buildFileAcceptList(): string {
-  // Explicit MIME + extension list only — avoid image/* (Safari/WebKit transforms picks).
-  const mimes = [...new Set(Object.values(EXT_TO_MIME))]
-  const exts = [...ALLOWED_EXTENSIONS].map((ext) => `.${ext}`)
-  return [...mimes, ...exts].join(",")
+  // Picker hint only — not validation. Canister FileValidator.mo is authoritative.
+  return "*/*"
 }
 
 const MIME_TO_EXT: Record<string, string> = {
@@ -261,27 +259,17 @@ export function normalizeUploadFile(file: File): File {
   return file
 }
 
+/**
+ * Client-side pre-check only — size + blocked video extensions.
+ * Does not use file.type. Backend validates bytes + extension on upload.
+ */
 export function isUploadCandidate(file: File, maxBytes: number): boolean {
-  if (file.size <= 0 || file.size > maxBytes) return false
+  if (!file || file.size <= 0 || file.size > maxBytes) return false
 
   const ext = pathExtension(file.name)
-  const type = file.type.trim().toLowerCase()
+  if (ext && isBlockedExtension(ext)) return false
 
-  // Extension is the source of truth — same rule as FileValidator.normalizeUpload.
-  // Some WebP encoders mislabel output as "video/webp" (VP8 shared with WebM).
-  if (ext) {
-    if (isBlockedExtension(ext)) return false
-    if (isAllowedExtension(ext)) return true
-  }
-
-  if (type.startsWith("video/")) return false
-
-  // iOS/Safari can provide an image MIME with an unexpected or missing filename.
-  if (type.startsWith("image/")) return true
-
-  if (type && Object.values(EXT_TO_MIME).includes(type)) return true
-
-  return false
+  return true
 }
 
 export function guessFileMime(file: File): string {

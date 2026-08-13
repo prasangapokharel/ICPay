@@ -7,7 +7,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress, ProgressIndicator, ProgressTrack } from "@/components/ui/progress"
 import { Spinner } from "@/components/ui/spinner"
 import {
-  FILE_ACCEPT,
   formatBytes,
   mapBucketError,
   MAX_FILE_BYTES,
@@ -47,7 +46,13 @@ export function BucketUploadZone({
 
     const validation = uploadValidationError(raw)
     if (validation) {
-      setError(validation === "size" ? t("invalidFile") : t("errInvalidFormat"))
+      setError(
+        validation === "size"
+          ? t("invalidFile")
+          : validation === "video"
+            ? t("errVideoBlocked")
+            : t("errInvalidFormat")
+      )
       return
     }
 
@@ -100,7 +105,7 @@ export function BucketUploadZone({
       <input
         ref={inputRef}
         type="file"
-        accept={FILE_ACCEPT}
+        accept="*/*"
         className="hidden"
         disabled={disabled || uploading}
         onChange={(e) => handleFiles(e.target.files)}

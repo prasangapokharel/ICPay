@@ -711,6 +711,7 @@
     "serviceUnavailable": "Storage temporarily unavailable",
     "readOnly": "Read-only — renew to upload",
     "invalidFile": "Choose a supported file under 10 MB",
+    "errVideoBlocked": "Video uploads are not allowed",
     "errInvalidFormat": "Invalid file — check the allowed types list (no video)",
     "errPhotoProcess": "Could not process this photo — try JPEG or PNG",
     "errIngressTooLarge": "File exceeds the network limit — it will upload in smaller pieces automatically. Refresh if this persists.",
