@@ -8,21 +8,18 @@ export {
 } from "@/lib/bucket/upload-chunk"
 
 export {
-  buildFileAcceptList,
+  FILE_ACCEPT,
   guessFileMime,
   fileTypeChip,
   normalizeUploadFile,
 } from "@/lib/bucket/allowed-files"
 
 import {
-  buildFileAcceptList,
   guessFileMime,
   isAllowedUpload as isAllowedByExtension,
   fileTypeChip,
 } from "@/lib/bucket/allowed-files"
 import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/upload-chunk"
-
-export const FILE_ACCEPT = buildFileAcceptList()
 
 /** @deprecated use guessFileMime */
 export const guessImageMime = guessFileMime

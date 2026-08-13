@@ -10,6 +10,7 @@ module {
 
   private let BLOCKED : [Text] = [
     "mp4", "webm", "mov", "avi", "mkv", "m4v", "flv", "wmv", "mpeg", "mpg", "3gp",
+    "3g2", "mts", "m2ts", "ogv",
   ];
 
   private let ALLOWED : [Text] = [

@@ -1,7 +1,7 @@
 import { describe, it } from "node:test"
 import assert from "node:assert/strict"
 import {
-  buildFileAcceptList,
+  FILE_ACCEPT,
   isAllowedUpload,
   isUploadCandidate,
   normalizeUploadFile,
@@ -14,9 +14,9 @@ function mockFile(name: string, type: string, size = 4): File {
   return new File([new Uint8Array(size).fill(0xab)], name, { type })
 }
 
-describe("buildFileAcceptList", () => {
-  it("returns */* for Safari/iOS picker compatibility", () => {
-    assert.equal(buildFileAcceptList(), "*/*")
+describe("FILE_ACCEPT", () => {
+  it("is */* for Safari/iOS picker compatibility", () => {
+    assert.equal(FILE_ACCEPT, "*/*")
   })
 })
 
@@ -46,6 +46,11 @@ describe("isUploadCandidate — no MIME blocking", () => {
 
   it("rejects clip.mov even with image MIME", () => {
     assert.equal(isUploadCandidate(mockFile("clip.mov", "image/jpeg"), MAX), false)
+  })
+
+  it("rejects ogv and mts video extensions", () => {
+    assert.equal(isUploadCandidate(mockFile("clip.ogv", "video/ogg"), MAX), false)
+    assert.equal(isUploadCandidate(mockFile("clip.mts", "video/mp2t"), MAX), false)
   })
 })
 
