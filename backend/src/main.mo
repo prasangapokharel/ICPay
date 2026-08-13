@@ -153,9 +153,11 @@ persistent actor self {
     transferService, ledger, users, Principal.fromActor(self), nextUid, launchTokenLimits,
   );
   transient let swapService = SwapService.create(users, transactions, transactionsByUser, ledger, pendingSwaps, nextUid, swapLimits);
+  transient let bucketUploadSessions = BucketService.createUploadSessionStore();
   transient let bucketService = BucketService.create(
     users, bucketStore, bucketNameIndex, transferService, nextUid,
     bucketCreateLimits, bucketUploadLimits, bucketRenewLimits, bucketApiKeyLimits,
+    bucketUploadSessions,
   );
 
   // Chain-key symbols are compiled in, so seeding them costs no calls and runs

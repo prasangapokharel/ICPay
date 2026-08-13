@@ -208,6 +208,18 @@ module {
     pageSize: Nat;
   };
 
+  /** In-flight chunked upload — transient; chunk blobs joined on complete. */
+  public type FileUploadSession = {
+    owner: Principal;
+    bucketId: BucketId;
+    path: Text;
+    contentType: Text;
+    totalSize: Nat;
+    var received: Nat;
+    var chunks: [Blob];
+    createdAt: Int;
+  };
+
   public type ApiKeyPermissions = {
     read: Bool;
     write: Bool;

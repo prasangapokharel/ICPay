@@ -180,6 +180,10 @@ module {
     bytes[0] == 0x00 and bytes[1] == 0x61 and bytes[2] == 0x73 and bytes[3] == 0x6D
   };
 
+  public func validatePathExtension(path: Text) : Bool {
+    isAllowedExtension(pathExtension(path))
+  };
+
   public func normalizeUpload(path: Text, _contentType: Text, data: Blob) : ?Text {
     let ext = pathExtension(path);
     if (isBlockedExtension(ext)) return null;

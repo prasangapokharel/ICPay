@@ -9,11 +9,6 @@ import AuthService "../../src/services/AuthService";
 import UserService "../../src/services/UserService";
 import TransactionService "../../src/services/TransactionService";
 import SettingsService "../../src/services/SettingsService";
-import DashboardService "../../src/services/DashboardService";
-import DepositService "../../src/services/DepositService";
-import WithdrawService "../../src/services/WithdrawService";
-import TransferService "../../src/services/TransferService";
-import LedgerService "../../src/services/LedgerService";
 import ReservedStorage "../../src/storage/ReservedUsernameStorage";
 import RateLimitStorage "../../src/storage/RateLimitStorage";
 
@@ -121,7 +116,7 @@ switch (SettingsService.getSettings(settingsSvc, p1)) {
     assert(s.theme == "dark");
     Debug.print("PASS [FLOW]: user1 settings persisted");
   };
-  case (#err(msg)) { assert(false) };
+  case (#err(_)) { assert(false) };
 };
 
 switch (UserService.getProfile(userSvc, p1)) {

@@ -1,4 +1,4 @@
-import { MAX_FILE_BYTES } from "@/lib/bucket/bucket"
+import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/upload-chunk"
 import {
   buildFileAcceptList,
   guessFileMime,
@@ -20,7 +20,7 @@ export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
   const contentType = mimeFromExtension(ext) ?? guessFileMime(file)
   const path = uploadPathForFile(file)
 
-  if (!isAllowedByExtension(file, MAX_FILE_BYTES)) {
+  if (!isAllowedByExtension(file, BUCKET_MAX_FILE_BYTES)) {
     throw new Error("Invalid file format")
   }
 

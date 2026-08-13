@@ -1,6 +1,8 @@
 import Debug "mo:core/Debug";
 import Principal "mo:core/Principal";
 import Blob "mo:core/Blob";
+import Array "mo:core/Array";
+import Nat "mo:core/Nat";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
 import Map "mo:core/Map";
@@ -50,6 +52,7 @@ let svc = BucketService.create(
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
+  BucketService.createUploadSessionStore(),
 );
 
 ignore UserRepo.create(users, usernames, usersById, "uid-owner", owner, null, "", now);
@@ -218,6 +221,33 @@ switch (BucketService.getPrice(25)) {
 switch (BucketService.getPrice(3)) {
   case (#ok(_)) { assert false; Debug.print("FAIL [FLOW]: invalid tier accepted") };
   case (#err(_)) { Debug.print("PASS [FLOW]: invalid capacity rejected") };
+};
+
+// Chunked upload (>1.5 MB single-call limit)
+seedBucket("bucket-chunk", #Public, now + Config.BUCKET_PERIOD_NS);
+switch (
+  await BucketService.beginFileUpload(svc, owner, "bucket-chunk", "/big.php", "application/x-php", 2_500_000, null)
+) {
+  case (#ok(uploadId)) {
+    var remaining : Nat = 2_500_000;
+    while (remaining > 0) {
+      let take = if (remaining > Config.BUCKET_UPLOAD_CHUNK_BYTES) {
+        Config.BUCKET_UPLOAD_CHUNK_BYTES
+      } else {
+        remaining
+      };
+      let slice = Blob.fromArray(Array.tabulate<Nat8>(take, func(_) { 0x41 }));
+      switch (await BucketService.uploadFileChunk(svc, owner, uploadId, slice)) {
+        case (#ok(received)) { remaining := Nat.sub(2_500_000, received) };
+        case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk: " # e) };
+      };
+    };
+    switch (await BucketService.completeFileUpload(svc, owner, uploadId, null)) {
+      case (#ok(_)) { Debug.print("PASS [FLOW]: chunked php upload") };
+      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: complete chunk: " # e) };
+    };
+  };
+  case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: begin chunk: " # e) };
 };
 
 Debug.print("Bucket e2e flow tests done");

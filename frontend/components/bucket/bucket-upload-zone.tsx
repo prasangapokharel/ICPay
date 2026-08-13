@@ -7,8 +7,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import {
   FILE_ACCEPT,
+  formatBytes,
   isAllowedUpload,
   mapBucketError,
+  MAX_FILE_BYTES,
 } from "@/lib/bucket/bucket"
 import { prepareUploadFile } from "@/lib/bucket/prepare-upload"
 
@@ -29,20 +31,25 @@ export function BucketUploadZone({
   const [uploading, setUploading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const [fileName, setFileName] = useState<string | null>(null)
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0 || disabled) return
     const raw = files[0]
     if (!isAllowedUpload(raw)) {
-      setError(t("invalidFile"))
+      setError(
+        raw.size > MAX_FILE_BYTES
+          ? t("invalidFile")
+          : t("errInvalidFormat")
+      )
       return
     }
     setUploading(true)
     setProgress(0)
     setError(null)
+    setFileName(raw.name)
     try {
       const prepared = await prepareUploadFile(raw)
-      setProgress(12)
       const err = await onUpload(
         prepared.file,
         prepared.path,
@@ -50,17 +57,19 @@ export function BucketUploadZone({
         setProgress
       )
       if (err) setError(mapBucketError(err, t))
-    } catch {
-      setError(t("invalidFile"))
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : ""
+      setError(msg ? mapBucketError(msg, t) : t("uploadFailed"))
     } finally {
       setUploading(false)
       setProgress(0)
+      setFileName(null)
       if (inputRef.current) inputRef.current.value = ""
     }
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 rounded-xl border border-dashed bg-muted/20 p-3 sm:p-4">
       <input
         ref={inputRef}
         type="file"
@@ -80,14 +89,16 @@ export function BucketUploadZone({
       </Button>
       {uploading && (
         <div className="space-y-1">
-          <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-            <span>{t("uploading")}</span>
-            <span>{Math.round(progress)}%</span>
+          <div className="flex items-center justify-between gap-2 text-[10px] text-muted-foreground">
+            <span className="truncate">{fileName ?? t("uploading")}</span>
+            <span className="shrink-0 tabular-nums">{Math.round(progress)}%</span>
           </div>
           <Progress value={progress} max={100} />
         </div>
       )}
-      <p className="text-center text-[10px] text-muted-foreground">{t("uploadHint")}</p>
+      <p className="text-center text-[10px] leading-relaxed text-muted-foreground sm:text-xs">
+        {t("uploadHint", { max: formatBytes(MAX_FILE_BYTES) })}
+      </p>
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
