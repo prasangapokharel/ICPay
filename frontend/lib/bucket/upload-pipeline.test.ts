@@ -127,6 +127,15 @@ describe("uploadValidationError", () => {
     assert.equal(uploadValidationError(mockFile("clip.mp4", "video/mp4")), "video")
   })
 
+  it("rejects html and js", () => {
+    assert.equal(uploadValidationError(mockFile("page.html", "text/html")), "blocked")
+    assert.equal(uploadValidationError(mockFile("app.js", "text/javascript")), "blocked")
+  })
+
+  it("allows svg for client-side WebP conversion", () => {
+    assert.equal(uploadValidationError(mockFile("icon.svg", "image/svg+xml")), null)
+  })
+
   it("accepts JPEG regardless of MIME", () => {
     assert.equal(uploadValidationError(mockFile("photo.jpg", "image/jpeg")), null)
   })

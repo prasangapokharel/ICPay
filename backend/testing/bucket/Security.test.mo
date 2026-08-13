@@ -31,6 +31,21 @@ switch (FileValidator.normalizeUpload("/clip.mp4", "video/mp4", fake)) {
   case (null) { Debug.print("PASS: mp4 blocked") };
 };
 
+switch (FileValidator.normalizeUpload("/page.html", "text/html", Blob.fromArray([0x3C]))) {
+  case (?_) { assert false; Debug.print("FAIL: html accepted") };
+  case (null) { Debug.print("PASS: html blocked") };
+};
+
+switch (FileValidator.normalizeUpload("/app.js", "text/javascript", Blob.fromArray([0x7B]))) {
+  case (?_) { assert false; Debug.print("FAIL: js accepted") };
+  case (null) { Debug.print("PASS: js blocked") };
+};
+
+switch (FileValidator.normalizeUpload("/raw.svg", "image/svg+xml", Blob.fromArray([0x3C]))) {
+  case (?_) { assert false; Debug.print("FAIL: svg accepted on backend") };
+  case (null) { Debug.print("PASS: raw svg blocked on backend") };
+};
+
 switch (FileValidator.normalizeUpload("/notes.txt", "text/plain", Blob.fromArray([0x68, 0x69]))) {
   case (?ct) {
     assert ct == "text/plain";
