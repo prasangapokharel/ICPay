@@ -95,19 +95,23 @@ describe("upload path for prepared files", () => {
 
 describe("uploadValidationError", () => {
   it("rejects empty files", () => {
-    assert.equal(uploadValidationError(mockFile("x.txt", "text/plain", 0)), "format")
+    assert.equal(uploadValidationError(mockFile("x.txt", "text/plain", 0)), "size")
   })
 
   it("rejects oversize files", () => {
     assert.equal(uploadValidationError(mockFile("big.zip", "application/zip", MAX + 1)), "size")
   })
 
-  it("rejects video", () => {
-    assert.equal(uploadValidationError(mockFile("clip.mp4", "video/mp4")), "format")
+  it("rejects video extension only", () => {
+    assert.equal(uploadValidationError(mockFile("clip.mp4", "video/mp4")), "video")
   })
 
-  it("accepts JPEG", () => {
+  it("accepts JPEG regardless of MIME", () => {
     assert.equal(uploadValidationError(mockFile("photo.jpg", "image/jpeg")), null)
+  })
+
+  it("accepts extensionless file (backend validates)", () => {
+    assert.equal(uploadValidationError(mockFile("photo", "image/png")), null)
   })
 })
 
