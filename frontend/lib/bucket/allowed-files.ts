@@ -197,9 +197,10 @@ export function mimeFromExtension(ext: string): string | null {
 }
 
 export function buildFileAcceptList(): string {
-  // image/* helps iOS photo picker offer camera-roll formats (HEIC, etc.)
+  // Explicit MIME + extension list only — avoid image/* (Safari/WebKit transforms picks).
+  const mimes = [...new Set(Object.values(EXT_TO_MIME))]
   const exts = [...ALLOWED_EXTENSIONS].map((ext) => `.${ext}`)
-  return ["image/*", ...exts].join(",")
+  return [...mimes, ...exts].join(",")
 }
 
 const MIME_TO_EXT: Record<string, string> = {
@@ -261,11 +262,29 @@ export function normalizeUploadFile(file: File): File {
 }
 
 export function isUploadCandidate(file: File, maxBytes: number): boolean {
-  const normalized = normalizeUploadFile(file)
-  if (normalized.size <= 0 || normalized.size > maxBytes) return false
-  const ext = pathExtension(normalized.name)
-  if (!ext) return false
-  return isAllowedExtension(ext)
+  if (file.size <= 0 || file.size > maxBytes) return false
+
+  const ext = pathExtension(file.name)
+  const type = file.type.trim().toLowerCase()
+
+  if (type.startsWith("video/") || (ext && isBlockedExtension(ext))) {
+    return false
+  }
+
+  if (ext && isAllowedExtension(ext)) {
+    return true
+  }
+
+  // iOS/Safari can provide an image MIME with an unexpected or missing filename.
+  if (type.startsWith("image/")) {
+    return true
+  }
+
+  if (type && Object.values(EXT_TO_MIME).includes(type)) {
+    return true
+  }
+
+  return false
 }
 
 export function guessFileMime(file: File): string {
