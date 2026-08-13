@@ -11,90 +11,10 @@ export const BLOCKED_EXTENSIONS = new Set([
   "mpeg",
   "mpg",
   "3gp",
-])
-
-export const ALLOWED_EXTENSIONS = new Set([
-  // Images
-  "jpg",
-  "jpeg",
-  "png",
-  "webp",
-  "gif",
-  "svg",
-  "avif",
-  "bmp",
-  "ico",
-  "tif",
-  "tiff",
-  "heic",
-  "heif",
-  // Documents
-  "pdf",
-  "doc",
-  "docx",
-  "xls",
-  "xlsx",
-  "ppt",
-  "pptx",
-  "txt",
-  "md",
-  "csv",
-  "rtf",
-  "odt",
-  "ods",
-  "odp",
-  // Code
-  "js",
-  "ts",
-  "tsx",
-  "jsx",
-  "go",
-  "rs",
-  "py",
-  "java",
-  "kt",
-  "swift",
-  "php",
-  "rb",
-  "cpp",
-  "c",
-  "h",
-  "hpp",
-  "cs",
-  "dart",
-  "sh",
-  "sql",
-  "html",
-  "css",
-  "scss",
-  "json",
-  "xml",
-  "yaml",
-  "yml",
-  "toml",
-  // Archives
-  "zip",
-  "tar",
-  "gz",
-  "bz2",
-  "7z",
-  "rar",
-  // Audio
-  "mp3",
-  "wav",
-  "ogg",
-  "flac",
-  "m4a",
-  "aac",
-  // Fonts
-  "ttf",
-  "otf",
-  "woff",
-  "woff2",
-  // Other
-  "bin",
-  "dat",
-  "wasm",
+  "3g2",
+  "mts",
+  "m2ts",
+  "ogv",
 ])
 
 const EXT_TO_MIME: Record<string, string> = {
@@ -185,21 +105,14 @@ export function isBlockedExtension(ext: string): boolean {
   return BLOCKED_EXTENSIONS.has(ext.toLowerCase())
 }
 
-export function isAllowedExtension(ext: string): boolean {
-  const e = ext.toLowerCase()
-  if (!e || isBlockedExtension(e)) return false
-  return ALLOWED_EXTENSIONS.has(e)
-}
-
 export function mimeFromExtension(ext: string): string | null {
-  if (!isAllowedExtension(ext)) return null
-  return EXT_TO_MIME[ext.toLowerCase()] ?? "application/octet-stream"
+  const e = ext.toLowerCase()
+  if (!e || isBlockedExtension(e)) return null
+  return EXT_TO_MIME[e] ?? null
 }
 
-export function buildFileAcceptList(): string {
-  // Picker hint only — not validation. Canister FileValidator.mo is authoritative.
-  return "*/*"
-}
+// File input hint only — validation is size + blocked video extensions.
+export const FILE_ACCEPT = "*/*"
 
 const MIME_TO_EXT: Record<string, string> = {
   "image/heic": "heic",

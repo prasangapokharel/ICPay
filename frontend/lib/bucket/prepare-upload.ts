@@ -1,8 +1,6 @@
 import {
   guessFileMime,
-  mimeFromExtension,
   normalizeUploadFile,
-  pathExtension,
 } from "@/lib/bucket/allowed-files"
 import { compressRasterToWebp } from "@/lib/bucket/compress-image"
 import { buildUploadPath } from "@/lib/bucket/upload-path"
@@ -49,12 +47,9 @@ export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
     // WebP encode unavailable or rejected (e.g. Safari PNG fallback) — upload original bytes/path.
   }
 
-  const ext = pathExtension(normalized.name)
   return {
     file: normalized,
     path: buildUploadPath(normalized, false),
-    contentType: mimeFromExtension(ext) ?? guessFileMime(normalized),
+    contentType: guessFileMime(normalized),
   }
 }
-
-export { buildFileAcceptList } from "@/lib/bucket/allowed-files"
