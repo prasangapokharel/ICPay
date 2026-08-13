@@ -194,10 +194,17 @@ switch (
 };
 
 switch (
-  await BucketService.uploadFile(svc, owner, "bucket-flow-1", "/legacy.png", Fixtures.png(), "image/png", null)
+  await BucketService.uploadFile(svc, owner, "bucket-flow-1", "/screenshot.png", Fixtures.png(), "image/png", null)
 ) {
-  case (#ok(_)) { assert false; Debug.print("FAIL [FLOW]: png accepted") };
-  case (#err(_)) { Debug.print("PASS [FLOW]: png rejected — WebP only") };
+  case (#ok(_)) { Debug.print("PASS [FLOW]: png accepted") };
+  case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: png upload: " # e) };
+};
+
+switch (
+  await BucketService.uploadFile(svc, owner, "bucket-flow-1", "/clip.mp4", Blob.fromArray([0, 0, 0, 0]), "video/mp4", null)
+) {
+  case (#ok(_)) { assert false; Debug.print("FAIL [FLOW]: mp4 accepted") };
+  case (#err(_)) { Debug.print("PASS [FLOW]: video blocked") };
 };
 
 switch (BucketService.getPrice(25)) {

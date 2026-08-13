@@ -56,9 +56,15 @@ export default function BucketPage() {
       <div>
         <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-        <Button variant="link" size="sm" className="mt-1 h-auto px-0 text-xs" nativeButton={false} render={<Link href="/bucket/docs" />}>
-          {t("docs")}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button variant="link" size="sm" className="h-auto px-0 text-xs" nativeButton={false} render={<Link href="/bucket/pricing" />}>
+            {t("pricingLink")}
+          </Button>
+          <span className="text-muted-foreground/50">·</span>
+          <Button variant="link" size="sm" className="h-auto px-0 text-xs" nativeButton={false} render={<Link href="/bucket/docs" />}>
+            {t("docs")}
+          </Button>
+        </div>
       </div>
 
       <button

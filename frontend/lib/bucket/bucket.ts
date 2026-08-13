@@ -4,38 +4,20 @@ export const FILES_PAGE_SIZE = 20
 
 export const MAX_FILE_BYTES = 10_000_000
 
-export const IMAGE_ACCEPT =
-  "image/jpeg,image/png,image/gif,image/webp,image/svg+xml,.png,.jpg,.jpeg,.gif,.webp,.svg"
+export {
+  buildFileAcceptList,
+  guessFileMime,
+  fileTypeChip,
+} from "@/lib/bucket/allowed-files"
 
-export const DOCUMENT_ACCEPT = "text/plain,.txt,.py,text/x-python,application/zip,.zip"
+import {
+  buildFileAcceptList,
+  guessFileMime,
+  isAllowedUpload as isAllowedByExtension,
+  fileTypeChip,
+} from "@/lib/bucket/allowed-files"
 
-export const FILE_ACCEPT = `${IMAGE_ACCEPT},${DOCUMENT_ACCEPT}`
-
-const IMAGE_EXT_RE = /\.(png|jpe?g|gif|webp|svg)$/i
-const DOC_EXT_RE = /\.(txt|py|zip)$/i
-
-export function guessFileMime(file: File): string {
-  const type = file.type.trim().toLowerCase()
-  if (type === "image/x-png") return "image/png"
-  if (type === "image/jpg") return "image/jpeg"
-  if (type.startsWith("image/")) return type
-  if (type === "text/x-python" || type === "application/x-python-code") {
-    return "text/x-python"
-  }
-  if (type === "application/x-zip-compressed") return "application/zip"
-  if (type === "text/plain" || type === "application/zip") return type
-
-  const name = file.name.toLowerCase()
-  if (name.endsWith(".png")) return "image/png"
-  if (name.endsWith(".jpg") || name.endsWith(".jpeg")) return "image/jpeg"
-  if (name.endsWith(".gif")) return "image/gif"
-  if (name.endsWith(".webp")) return "image/webp"
-  if (name.endsWith(".svg")) return "image/svg+xml"
-  if (name.endsWith(".txt")) return "text/plain"
-  if (name.endsWith(".py")) return "text/x-python"
-  if (name.endsWith(".zip")) return "application/zip"
-  return type
-}
+export const FILE_ACCEPT = buildFileAcceptList()
 
 /** @deprecated use guessFileMime */
 export const guessImageMime = guessFileMime
@@ -57,7 +39,9 @@ export function mapBucketError(
     err.includes("Only images allowed") ||
     err.includes("Invalid file format") ||
     err.includes("upload WebP images") ||
-    err.includes("upload images, txt, py, or zip")
+    err.includes("upload images, txt, py, or zip") ||
+    err.includes("Video uploads are not allowed") ||
+    err.includes("File type not allowed")
   ) {
     return t("errInvalidFormat")
   }
@@ -112,7 +96,7 @@ export function validateBucketName(name: string): string | null {
   return null
 }
 
-/** CDN object path at bucket root — no /uploads/ folder segment. */
+/** CDN object path at bucket root — preserves the original file extension. */
 export function uploadPathForFile(file: File): string {
   const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_").toLowerCase()
   return `/${Date.now()}-${safe}`
@@ -134,13 +118,7 @@ export function isImageUploadFile(file: File): boolean {
 export const isRasterImageFile = isImageUploadFile
 
 export function isAllowedUpload(file: File): boolean {
-  if (file.size <= 0 || file.size > MAX_FILE_BYTES) return false
-  const mime = guessFileMime(file)
-  if (mime.startsWith("image/")) return true
-  if (mime === "text/plain" || mime === "text/x-python" || mime === "application/zip") {
-    return true
-  }
-  return IMAGE_EXT_RE.test(file.name) || DOC_EXT_RE.test(file.name)
+  return isAllowedByExtension(file, MAX_FILE_BYTES)
 }
 
 /** @deprecated use isAllowedUpload */
@@ -154,18 +132,5 @@ export function optionalText(value: [] | [string]): string | null {
   return value.length === 0 ? null : value[0]
 }
 
-export function fileTypeChip(contentType: string): string {
-  if (contentType.includes("png")) return "PNG"
-  if (contentType.includes("jpeg") || contentType.includes("jpg")) return "JPG"
-  if (contentType.includes("webp")) return "WEBP"
-  if (contentType.includes("gif")) return "GIF"
-  if (contentType.includes("svg")) return "SVG"
-  if (contentType.includes("python") || contentType.endsWith("py")) return "PY"
-  if (contentType.includes("zip")) return "ZIP"
-  if (contentType.includes("plain") || contentType.includes("text")) return "TXT"
-  if (contentType.startsWith("image/")) return "IMG"
-  return "FILE"
-}
-
-/** @deprecated use fileTypeChip */
+/** @deprecated use fileTypeChip from allowed-files */
 export const imageTypeChip = fileTypeChip

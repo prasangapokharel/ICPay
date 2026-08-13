@@ -15,10 +15,13 @@ export function bucketFilesKey(identity: Identity | undefined, bucketId: string,
     : null
 }
 
-export function bucketPriceKey(identity: Identity | undefined, capacityGB: number) {
-  return identity
-    ? (["bucket-price", String(capacityGB), identity.getPrincipal().toText()] as const)
-    : null
+/** Price is global — same for every account; no principal suffix. */
+export function bucketPriceKey(capacityGB: number) {
+  return ["bucket-price", String(capacityGB)] as const
+}
+
+export function bucketPricingTableKey() {
+  return ["bucket-pricing-table"] as const
 }
 
 export function bucketRenewQuoteKey(identity: Identity | undefined, bucketId: string) {
@@ -48,15 +51,16 @@ export function bucketFilePreviewKey(
 }
 
 export function isBucketCacheKey(key: unknown, identity: Identity | undefined): boolean {
-  if (!identity || !Array.isArray(key)) return false
+  if (!Array.isArray(key)) return false
+  const head = key[0]
+  if (head === "bucket-price" || head === "bucket-pricing-table") return true
+  if (!identity) return false
   const principal = identity.getPrincipal().toText()
   if (key[key.length - 1] !== principal) return false
-  const head = key[0]
   return (
     head === "bucket-list" ||
     head === "bucket-stats" ||
     head === "bucket-files" ||
-    head === "bucket-price" ||
     head === "bucket-renew-quote" ||
     head === "bucket-cycle-status" ||
     head === "bucket-file-preview" ||
