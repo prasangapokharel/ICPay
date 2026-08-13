@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { formatAmount, parseIcp, E8S } from "@/lib/wallet-utils"
-import { useIcpPrice } from "@/lib/use-icp-price"
-import { useFiatValue } from "@/lib/fiat/use-fiat-value"
+import { useIcpPrice } from "@/hooks/use-icp-price"
+import { useFiatValue } from "@/hooks/use-fiat-value"
 
 const PERCENTAGES = [25, 50, 75, 100]
 

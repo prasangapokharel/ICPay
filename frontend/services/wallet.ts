@@ -21,8 +21,6 @@ import type {
   LaunchFee,
   AccountType,
   SocialPlatform,
-  SocialLink,
-  Bookmark,
   ApiResult_16,
   ApiResult_17,
   ApiResult_18,
@@ -90,6 +88,7 @@ export interface WalletActor {
   ) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
   uploadFileChunk: (
     uploadId: string,
+    chunkIndex: bigint,
     data: Uint8Array
   ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
   completeFileUpload: (
@@ -504,7 +503,7 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
       []
     ),
     uploadFileChunk: IDL.Func(
-      [IDL.Text, IDL.Vec(IDL.Nat8)],
+      [IDL.Text, IDL.Nat, IDL.Vec(IDL.Nat8)],
       [ApiResultNat],
       []
     ),

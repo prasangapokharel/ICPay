@@ -1,5 +1,5 @@
 import { premiumTier } from "@/lib/verifed/premium-tick"
-import { RESERVED_BRANDS } from "@/components/legal/reserved-brands"
+import { RESERVED_BRANDS } from "@/lib/reserved-brands"
 
 // Higher score = safer recipient. 0–100, clamped.
 // Each signal contributes up to its stated max. Missing data (profile not yet

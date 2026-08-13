@@ -36,8 +36,8 @@ assert(Config.BUCKET_UPLOAD_CHUNK_BYTES < Config.IC_INGRESS_MAX_BYTES);
 assert(Config.BUCKET_UPLOAD_SINGLE_MAX <= Config.BUCKET_UPLOAD_CHUNK_BYTES);
 assert(Config.BUCKET_UPLOAD_SINGLE_MAX < Config.IC_INGRESS_MAX_BYTES);
 assert(Config.BUCKET_MAX_FILE_BYTES > Config.BUCKET_UPLOAD_CHUNK_BYTES);
-// 10 MB max ≈ 15 chunks at 700 KB + begin/complete — fits upload rate window.
-assert(Config.RATE_BUCKET_UPLOAD.maxPerWindow >= 17);
+// 10 MB max ≈ 6 chunks at 1.85 MiB + begin/complete — fits upload rate window.
+assert(Config.RATE_BUCKET_UPLOAD.maxPerWindow >= 8);
 Debug.print("PASS: upload limits respect IC 2 MiB ingress per message");
 
 assert(Config.ICP_ICRC1_TRANSFER_FEE_E8S == 10_000);

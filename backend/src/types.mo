@@ -1,5 +1,8 @@
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
+import Map "mo:core/Map";
+import Blob "mo:core/Blob";
+import Nat "mo:core/Nat";
 
 module {
   public type UserId = Text;
@@ -208,15 +211,17 @@ module {
     pageSize: Nat;
   };
 
-  /** In-flight chunked upload — transient; chunk blobs joined on complete. */
+  /** In-flight chunked upload — transient; parts keyed by index for parallel ingress. */
   public type FileUploadSession = {
     owner: Principal;
     bucketId: BucketId;
     path: Text;
     contentType: Text;
     totalSize: Nat;
+    chunkCount: Nat;
     var received: Nat;
-    var chunks: [Blob];
+    var filled: Nat;
+    var chunkParts: Map.Map<Nat, Blob>;
     createdAt: Int;
   };
 
