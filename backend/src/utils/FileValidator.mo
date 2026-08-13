@@ -192,31 +192,41 @@ module {
   };
 
   public func normalizeUpload(path: Text, _contentType: Text, data: Blob) : ?Text {
+    normalizeUploadFromParts(path, data.size(), [data])
+  };
+
+  public func normalizeUploadFromParts(path: Text, totalSize: Nat, parts: [Blob]) : ?Text {
     let ext = pathExtension(path);
     if (isBlockedExtension(ext)) return null;
     switch (mimeFromExtension(ext)) {
       case (null) null;
       case (?mime) {
-        if (validateUploadContent(ext, mime, data)) { ?mime } else { null }
+        if (totalSize == 0) return null;
+        if (validateUploadParts(ext, mime, parts, totalSize)) { ?mime } else { null }
       };
     }
   };
 
   public func validateUploadContent(ext: Text, _normalizedType: Text, data: Blob) : Bool {
-    if (data.size() == 0) return false;
+    validateUploadParts(ext, _normalizedType, [data], data.size())
+  };
+
+  private func validateUploadParts(ext: Text, _normalizedType: Text, parts: [Blob], totalSize: Nat) : Bool {
+    if (totalSize == 0) return false;
+    let head = if (parts.size() > 0) { parts[0] } else { Blob.fromArray([]) };
     switch (ext) {
-      case ("webp") { validateWebpHeader(data) };
-      case ("png") { validatePngHeader(data) };
-      case ("jpg") { validateJpegHeader(data) };
-      case ("jpeg") { validateJpegHeader(data) };
-      case ("gif") { validateGifHeader(data) };
-      case ("zip") { validateZipHeader(data) };
-      case ("gz") { validateGzipHeader(data) };
-      case ("pdf") { validatePdfHeader(data) };
-      case ("wasm") { validateWasmHeader(data) };
+      case ("webp") { validateWebpHeader(head) };
+      case ("png") { validatePngHeader(head) };
+      case ("jpg") { validateJpegHeader(head) };
+      case ("jpeg") { validateJpegHeader(head) };
+      case ("gif") { validateGifHeader(head) };
+      case ("zip") { validateZipHeader(head) };
+      case ("gz") { validateGzipHeader(head) };
+      case ("pdf") { validatePdfHeader(head) };
+      case ("wasm") { validateWasmHeader(head) };
       case (_) {
         // Text, code, audio, fonts, office docs — extension allow-list is the gate.
-        data.size() > 0
+        totalSize > 0
       };
     }
   };

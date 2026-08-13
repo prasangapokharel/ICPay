@@ -240,8 +240,8 @@ switch (BucketService.listFiles(svc, owner, "my-assets", 0, 20)) {
 
 seedBucket("bucket-chunked", #Public, now + Config.BUCKET_PERIOD_NS);
 
-let chunkSize = Config.BUCKET_UPLOAD_CHUNK_BYTES;
-let totalSize = chunkSize + 512_000;
+let chunkSize = Config.BUCKET_UPLOAD_MIN_CHUNK_BYTES;
+let totalSize = chunkSize * 2 + 512_000;
 let webpHeader = Blob.toArray(Fixtures.webp());
 let part0 = Blob.fromArray(
   Array.tabulate<Nat8>(chunkSize, func(i) {
@@ -249,7 +249,10 @@ let part0 = Blob.fromArray(
   }),
 );
 let part1 = Blob.fromArray(
-  Array.tabulate<Nat8>(totalSize - chunkSize, func(_) { 0x00 }),
+  Array.tabulate<Nat8>(chunkSize, func(_) { 0x00 }),
+);
+let part2 = Blob.fromArray(
+  Array.tabulate<Nat8>(totalSize - chunkSize * 2, func(_) { 0x00 }),
 );
 
 switch (
@@ -263,8 +266,12 @@ switch (
       case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk 0: " # e) };
     };
     switch (await BucketService.uploadFileChunkLegacy(svc, owner, uploadId, part1)) {
-      case (#ok(n)) { assert n == totalSize };
+      case (#ok(n)) { assert n == chunkSize * 2 };
       case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk 1: " # e) };
+    };
+    switch (await BucketService.uploadFileChunkLegacy(svc, owner, uploadId, part2)) {
+      case (#ok(n)) { assert n == totalSize };
+      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk 2: " # e) };
     };
     switch (await BucketService.completeFileUpload(svc, owner, uploadId, null)) {
       case (#ok(_)) { Debug.print("PASS [FLOW]: legacy chunked upload") };

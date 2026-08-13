@@ -4,6 +4,7 @@ import Blob "mo:core/Blob";
 import Nat8 "mo:core/Nat8";
 import Array "mo:core/Array";
 import BucketCrypto "../../src/utils/BucketCrypto";
+import BlobUtil "../../src/utils/BlobUtil";
 
 let owner = Principal.fromText("aaaaa-aa");
 let bucketId = "bucket-crypto-1";
@@ -32,6 +33,13 @@ let sealed = BucketCrypto.seal(big, key);
 let opened = BucketCrypto.open(sealed.ciphertext, key, sealed.fingerprint);
 assert opened == ?big;
 Debug.print("PASS: seal/open round trip with fingerprint");
+
+let partA = Blob.fromArray(Array.tabulate<Nat8>(1024, func(i) { Nat8.fromNat(i % 256) }));
+let partB = Blob.fromArray(Array.tabulate<Nat8>(1024, func(i) { Nat8.fromNat((i + 128) % 256) }));
+let sealedParts = BucketCrypto.sealFromChunks([partA, partB], key);
+let openedParts = BucketCrypto.open(sealedParts.ciphertext, key, sealedParts.fingerprint);
+assert openedParts == ?BlobUtil.join(partA, partB);
+Debug.print("PASS: sealFromChunks matches joined plaintext");
 
 let tampered = Blob.fromArray([0x00]);
 assert BucketCrypto.open(tampered, key, sealed.fingerprint) == null;

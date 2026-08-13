@@ -12,8 +12,11 @@ export const BUCKET_MAX_FILE_BYTES = 10_000_000
 /** IC protocol limit — 2 MiB per update call; cannot be raised. */
 export const IC_INGRESS_MAX_BYTES = 2_097_152
 
-/** Legacy canister chunk size (matches pre-v2 Config.mo on mainnet). */
-export const LEGACY_UPLOAD_CHUNK_BYTES = 700_000
+/** Smallest chunk size legacy clients send — keep in sync with Config.mo BUCKET_UPLOAD_MIN_CHUNK_BYTES. */
+export const LEGACY_UPLOAD_MIN_CHUNK_BYTES = 700_000
+
+/** Legacy canister chunk size (matches pre-v2 frontend on mainnet). */
+export const LEGACY_UPLOAD_CHUNK_BYTES = LEGACY_UPLOAD_MIN_CHUNK_BYTES
 
 /** V2 canister chunk size (~1.85 MiB Candid headroom under 2 MiB ingress). */
 export const V2_UPLOAD_CHUNK_BYTES = 1_850_000

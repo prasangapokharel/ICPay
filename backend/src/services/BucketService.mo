@@ -28,12 +28,12 @@ import Map "mo:core/Map";
 module {
   func uploadChunkCount(totalSize: Nat) : Nat {
     if (totalSize == 0) { 1 } else {
-      (totalSize + Config.BUCKET_UPLOAD_CHUNK_BYTES - 1) / Config.BUCKET_UPLOAD_CHUNK_BYTES
+      (totalSize + Config.BUCKET_UPLOAD_MIN_CHUNK_BYTES - 1) / Config.BUCKET_UPLOAD_MIN_CHUNK_BYTES
     }
   };
 
-  func assembleChunks(parts: Map.Map<Nat, Blob>, chunkCount: Nat) : Blob {
-    let ordered = Array.tabulate<Blob>(
+  func assembleChunks(parts: Map.Map<Nat, Blob>, chunkCount: Nat) : [Blob] {
+    Array.tabulate<Blob>(
       chunkCount,
       func(i) {
         switch (Map.get(parts, Nat.compare, i)) {
@@ -41,8 +41,7 @@ module {
           case (null) { assert(false); Blob.fromArray([]) };
         }
       },
-    );
-    BlobUtil.concat(ordered)
+    )
   };
 
   public type UploadSessionStore = {
@@ -506,9 +505,16 @@ module {
           return #err("Upload incomplete");
         };
         Map.remove(service.uploadSessions.map, Text.compare, uploadId);
-        let data = assembleChunks(session.chunkParts, session.chunkCount);
-        await uploadFileValidated(
-          service, caller, session.bucketId, session.path, data, session.contentType, apiKey,
+        let chunks = assembleChunks(session.chunkParts, session.chunkCount);
+        await uploadChunksValidated(
+          service,
+          caller,
+          session.bucketId,
+          session.path,
+          chunks,
+          session.totalSize,
+          session.contentType,
+          apiKey,
         )
       };
     }
@@ -534,6 +540,21 @@ module {
     contentType: Text,
     apiKey: ?Text,
   ) : async Types.ApiResult<Types.FileId> {
+    await uploadChunksValidated(
+      service, caller, bucketId, path, [data], data.size(), contentType, apiKey,
+    )
+  };
+
+  private func uploadChunksValidated(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    chunks: [Blob],
+    fileSize: Nat,
+    contentType: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FileId> {
     let auth = switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
       case (#err(e)) { return #err(e) };
       case (#ok(a)) a;
@@ -544,13 +565,13 @@ module {
       case (null) {};
     };
 
-    let normalized = switch (FileValidator.normalizeUpload(path, contentType, data)) {
+    let normalized = switch (FileValidator.normalizeUploadFromParts(path, fileSize, chunks)) {
       case (null) {
         return #err("Invalid file format — file type not allowed or video blocked");
       };
       case (?ct) ct;
     };
-    if (not FileValidator.validateFileSize(data.size())) {
+    if (not FileValidator.validateFileSize(fileSize)) {
       return #err("File too large — max 10 MB");
     };
 
@@ -566,7 +587,6 @@ module {
       return #err("Bucket expired — renew to enable uploads");
     };
 
-    let fileSize = data.size();
     let existing = BucketRepo.getFileByPath(service.store, bucket.id, path);
     let oldSize = switch (existing) {
       case (null) 0;
@@ -591,7 +611,7 @@ module {
 
     let fileId = service.nextId();
     let key = BucketCrypto.deriveKey(bucket.owner, bucket.id);
-    let sealed = BucketCrypto.seal(data, key);
+    let sealed = BucketCrypto.sealFromChunks(chunks, key);
     let file : Types.StoredFile = {
       id = fileId;
       bucketId = bucket.id;

@@ -792,6 +792,9 @@
     "apiKeyCreatedBody": "This secret will not be shown again.",
     "apiKeyCopySecret": "Copy secret",
     "docsWebpNote": "Files upload in their native format up to 10 MB. WebP, PNG, JPEG, and other allowed types are served from the CDN with the correct extension and content-type.",
-    "docsCdnVerifyTitle": "Verify with curl"
+    "docsCdnVerifyTitle": "Verify with curl",
+    "uploadChooseFiles": "Choose files",
+    "uploadDropHint": "Drop files here or tap to browse",
+    "uploadProgress": "{current} of {total} — {name}"
   }
 }
