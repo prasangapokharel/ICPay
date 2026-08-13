@@ -8,6 +8,7 @@ import Int "mo:core/Int";
 import Array "mo:core/Array";
 import Config "../config/Config";
 import Sha256 "Sha256";
+import BlobUtil "BlobUtil";
 
 // Per-bucket encryption at rest. Derives a 256-bit key once, then XORs the
 // plaintext in one pass — fast enough for 10 MB uploads on a canister.
@@ -30,22 +31,48 @@ module {
   // Encrypt and fingerprint in one pass over the plaintext — avoids a separate
   // full-file SHA256, which exceeds the 40B instruction limit on multi-MB files.
   public func seal(plaintext: Blob, key: [Nat8]) : SealedBlob {
-    let bytes = Blob.toVarArray(plaintext);
-    let n = bytes.size();
-    if (n == 0 or key.size() == 0) {
-      return { ciphertext = plaintext; fingerprint = fingerprintText(FP_SEED, 0) };
+    sealFromChunks([plaintext], key)
+  };
+
+  // Encrypt + fingerprint in one pass over ordered chunks — avoids assembling a full
+  // plaintext blob before seal (completeFileUpload would otherwise copy twice).
+  public func sealFromChunks(chunks: [Blob], key: [Nat8]) : SealedBlob {
+    if (chunks.size() == 0) {
+      return { ciphertext = Blob.fromArray([]); fingerprint = fingerprintText(FP_SEED, 0) };
     };
     var hash = FP_SEED;
-    var i = 0;
-    while (i < n) {
-      let plain = bytes[i];
-      hash := mixByte(hash, plain);
-      bytes[i] := xor8(plain, key[i % key.size()]);
-      i += 1;
+    var totalSize : Nat = 0;
+    var cipherParts : [Blob] = [];
+    for (chunk in chunks.vals()) {
+      let bytes = Blob.toVarArray(chunk);
+      let n = bytes.size();
+      if (n == 0 or key.size() == 0) {
+        var j = 0;
+        while (j < n) {
+          hash := mixByte(hash, bytes[j]);
+          j += 1;
+        };
+        cipherParts := Array.concat(cipherParts, [chunk]);
+      } else {
+        var j = 0;
+        while (j < n) {
+          let plain = bytes[j];
+          hash := mixByte(hash, plain);
+          bytes[j] := xor8(plain, key[(totalSize + j) % key.size()]);
+          j += 1;
+        };
+        cipherParts := Array.concat(cipherParts, [Blob.fromVarArray(bytes)]);
+      };
+      totalSize += n;
+    };
+    let ciphertext = if (cipherParts.size() == 1) {
+      cipherParts[0]
+    } else {
+      BlobUtil.concat(cipherParts)
     };
     {
-      ciphertext = Blob.fromVarArray(bytes);
-      fingerprint = fingerprintText(hash, n);
+      ciphertext;
+      fingerprint = fingerprintText(hash, totalSize);
     }
   };
 

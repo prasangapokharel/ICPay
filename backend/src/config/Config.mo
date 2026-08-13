@@ -109,6 +109,10 @@ module {
   // Asset canister sync uses ~1.9 MiB; see forum.dfinity.org/t/optimal-upload-chunk-size
   public let BUCKET_UPLOAD_CHUNK_BYTES: Nat = 1_850_000;
 
+  // Smallest chunk size legacy clients send (700 KB). Session slot count uses this so
+  // beginFileUpload accepts enough chunks before completeFileUpload.
+  public let BUCKET_UPLOAD_MIN_CHUNK_BYTES: Nat = 700_000;
+
   // Direct uploadFile() ceiling — one round trip for compressed photos under this size.
   public let BUCKET_UPLOAD_SINGLE_MAX: Nat = 1_850_000;
 
