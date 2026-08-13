@@ -3,6 +3,7 @@ import Principal "mo:core/Principal";
 import Blob "mo:core/Blob";
 import Array "mo:core/Array";
 import Nat "mo:core/Nat";
+import Nat8 "mo:core/Nat8";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
 import Map "mo:core/Map";
@@ -233,6 +234,44 @@ switch (BucketService.listFiles(svc, owner, "my-assets", 0, 20)) {
     Debug.print("PASS [FLOW]: listFiles resolves public bucket name");
   };
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: list by name: " # e) };
+};
+
+// --- Chunked upload (legacy sequential API) -----------------------------------
+
+seedBucket("bucket-chunked", #Public, now + Config.BUCKET_PERIOD_NS);
+
+let chunkSize = Config.BUCKET_UPLOAD_CHUNK_BYTES;
+let totalSize = chunkSize + 512_000;
+let webpHeader = Blob.toArray(Fixtures.webp());
+let part0 = Blob.fromArray(
+  Array.tabulate<Nat8>(chunkSize, func(i) {
+    if (i < webpHeader.size()) { webpHeader[i] } else { 0x00 };
+  }),
+);
+let part1 = Blob.fromArray(
+  Array.tabulate<Nat8>(totalSize - chunkSize, func(_) { 0x00 }),
+);
+
+switch (
+  await BucketService.beginFileUpload(
+    svc, owner, "bucket-chunked", "/large.webp", "image/webp", totalSize, null,
+  )
+) {
+  case (#ok(uploadId)) {
+    switch (await BucketService.uploadFileChunkLegacy(svc, owner, uploadId, part0)) {
+      case (#ok(n)) { assert n == chunkSize };
+      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk 0: " # e) };
+    };
+    switch (await BucketService.uploadFileChunkLegacy(svc, owner, uploadId, part1)) {
+      case (#ok(n)) { assert n == totalSize };
+      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk 1: " # e) };
+    };
+    switch (await BucketService.completeFileUpload(svc, owner, uploadId, null)) {
+      case (#ok(_)) { Debug.print("PASS [FLOW]: legacy chunked upload") };
+      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: complete chunked: " # e) };
+    };
+  };
+  case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: begin chunked: " # e) };
 };
 
 Debug.print("Bucket e2e flow tests done");

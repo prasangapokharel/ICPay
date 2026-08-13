@@ -1,10 +1,8 @@
 /**
  * Store a file in an ICPay bucket.
  *
- * Small files use one `uploadFile` update (~1 round). Larger files use indexed
- * parallel chunks (IC ingress capped at 2 MiB per message).
- *
- * @see https://docs.internetcomputer.org/references/resource-limits/
+ * Uses legacy uploadFileChunk(uploadId, data) on live mainnet by default.
+ * Set NEXT_PUBLIC_BUCKET_UPLOAD_V2=true after backend deploy for indexed parallel chunks.
  */
 
 import type { Identity } from "@icp-sdk/core/agent"
@@ -14,8 +12,7 @@ import { guessFileMime } from "@/lib/bucket/bucket"
 import {
   readFileChunk,
   uploadChunkCount,
-  UPLOAD_CHUNK_CONCURRENCY,
-  UPLOAD_SINGLE_MAX_BYTES,
+  uploadLimits,
 } from "@/lib/bucket/upload-chunk"
 
 export type StoreFileOptions = {
@@ -26,13 +23,46 @@ export type StoreFileOptions = {
   onProgress?: (pct: number) => void
 }
 
-async function sendChunksParallel(
+async function sendChunkLegacy(
+  actor: WalletActor,
+  uploadId: string,
+  bytes: Uint8Array
+): Promise<Outcome<bigint>> {
+  return (await actor.uploadFileChunk(uploadId, bytes)) as Outcome<bigint>
+}
+
+async function sendChunkIndexed(
+  actor: WalletActor,
+  uploadId: string,
+  index: number,
+  bytes: Uint8Array
+): Promise<Outcome<bigint>> {
+  return (await actor.uploadFileChunkIndexed(
+    uploadId,
+    BigInt(index),
+    bytes
+  )) as Outcome<bigint>
+}
+
+async function sendChunks(
   actor: WalletActor,
   uploadId: string,
   file: File,
   onProgress?: (pct: number) => void
 ): Promise<Outcome<null>> {
-  const total = uploadChunkCount(file.size)
+  const limits = uploadLimits()
+  const total = uploadChunkCount(file.size, limits.chunkBytes)
+
+  if (!limits.v2) {
+    for (let i = 0; i < total; i++) {
+      const bytes = await readFileChunk(file, i, limits.chunkBytes)
+      const res = await sendChunkLegacy(actor, uploadId, bytes)
+      if ("err" in res) return { err: res.err }
+      onProgress?.(10 + Math.round(((i + 1) / total) * 80))
+    }
+    return { ok: null }
+  }
+
   let nextIndex = 0
   let completed = 0
   let failure: string | null = null
@@ -44,12 +74,8 @@ async function sendChunksParallel(
       nextIndex += 1
       if (index >= total) return
 
-      const bytes = await readFileChunk(file, index)
-      const res = (await actor.uploadFileChunk(
-        uploadId,
-        BigInt(index),
-        bytes
-      )) as Outcome<bigint>
+      const bytes = await readFileChunk(file, index, limits.chunkBytes)
+      const res = await sendChunkIndexed(actor, uploadId, index, bytes)
       if ("err" in res) {
         failure = res.err
         return
@@ -59,8 +85,9 @@ async function sendChunksParallel(
     }
   }
 
-  const workers = Math.min(UPLOAD_CHUNK_CONCURRENCY, total)
-  await Promise.all(Array.from({ length: workers }, () => worker()))
+  await Promise.all(
+    Array.from({ length: Math.min(limits.concurrency, total) }, () => worker())
+  )
 
   if (failure) return { err: failure }
   return { ok: null }
@@ -70,8 +97,12 @@ async function uploadSingleCall(
   actor: WalletActor,
   file: File,
   options: StoreFileOptions,
-  contentType: string
+  contentType: string,
+  singleMaxBytes: number
 ): Promise<Outcome<string>> {
+  if (file.size > singleMaxBytes) {
+    return { err: "File too large for single upload — use chunked upload" }
+  }
   options.onProgress?.(20)
   const bytes = new Uint8Array(await file.arrayBuffer())
   const res = (await actor.uploadFile(
@@ -92,10 +123,11 @@ export async function storeFile(
   options: StoreFileOptions
 ): Promise<Outcome<string>> {
   const contentType = options.contentType ?? guessFileMime(file)
+  const limits = uploadLimits()
 
   return call(identity, "Upload failed", async (actor) => {
-    if (file.size <= UPLOAD_SINGLE_MAX_BYTES) {
-      return uploadSingleCall(actor, file, options, contentType)
+    if (file.size <= limits.singleMaxBytes) {
+      return uploadSingleCall(actor, file, options, contentType, limits.singleMaxBytes)
     }
 
     options.onProgress?.(5)
@@ -109,7 +141,7 @@ export async function storeFile(
     )) as Outcome<string>
     if ("err" in begin) return begin
 
-    const chunks = await sendChunksParallel(actor, begin.ok, file, options.onProgress)
+    const chunks = await sendChunks(actor, begin.ok, file, options.onProgress)
     if ("err" in chunks) return chunks
 
     options.onProgress?.(95)

@@ -9,12 +9,10 @@ import { Spinner } from "@/components/ui/spinner"
 import {
   FILE_ACCEPT,
   formatBytes,
-  isAllowedUpload,
   mapBucketError,
   MAX_FILE_BYTES,
-  normalizeUploadFile,
 } from "@/lib/bucket/bucket"
-import { prepareUploadFile } from "@/lib/bucket/prepare-upload"
+import { prepareUploadFile, uploadValidationError } from "@/lib/bucket/prepare-upload"
 
 type UploadPhase = "idle" | "preparing" | "uploading"
 
@@ -45,11 +43,11 @@ export function BucketUploadZone({
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0 || disabled) return
-    const raw = normalizeUploadFile(files[0])
-    if (!isAllowedUpload(raw)) {
-      setError(
-        raw.size > MAX_FILE_BYTES ? t("invalidFile") : t("errInvalidFormat")
-      )
+    const raw = files[0]
+
+    const validation = uploadValidationError(raw)
+    if (validation) {
+      setError(validation === "size" ? t("invalidFile") : t("errInvalidFormat"))
       return
     }
 

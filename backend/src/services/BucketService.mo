@@ -407,7 +407,57 @@ module {
     #ok(uploadId)
   };
 
-  public func uploadFileChunk(
+  func applyUploadChunk(
+    session: Types.FileUploadSession,
+    chunkIndex: Nat,
+    data: Blob,
+  ) : Types.ApiResult<Nat> {
+    if (chunkIndex >= session.chunkCount) {
+      return #err("Chunk index out of range");
+    };
+    if (data.size() == 0) {
+      return #err("Empty chunk");
+    };
+    if (data.size() > Config.BUCKET_UPLOAD_CHUNK_BYTES) {
+      return #err("Chunk too large");
+    };
+    switch (Map.get(session.chunkParts, Nat.compare, chunkIndex)) {
+      case (?_) { return #err("Duplicate chunk") };
+      case (null) {};
+    };
+    let next = session.received + data.size();
+    if (next > session.totalSize) {
+      return #err("Chunk exceeds declared file size");
+    };
+    Map.add(session.chunkParts, Nat.compare, chunkIndex, data);
+    session.received := next;
+    session.filled += 1;
+    #ok(next)
+  };
+
+  public func uploadFileChunkLegacy(
+    service: BucketService,
+    caller: Principal,
+    uploadId: Text,
+    data: Blob,
+  ) : async Types.ApiResult<Nat> {
+    purgeStaleUploadSessions(service);
+
+    switch (Map.get(service.uploadSessions.map, Text.compare, uploadId)) {
+      case (null) { return #err("Upload session not found or expired") };
+      case (?session) {
+        if (session.owner != caller) {
+          return #err("Permission denied");
+        };
+        if (session.filled >= session.chunkCount) {
+          return #err("Upload already complete");
+        };
+        applyUploadChunk(session, session.filled, data)
+      };
+    }
+  };
+
+  public func uploadFileChunkIndexed(
     service: BucketService,
     caller: Principal,
     uploadId: Text,
@@ -422,29 +472,20 @@ module {
         if (session.owner != caller) {
           return #err("Permission denied");
         };
-        if (chunkIndex >= session.chunkCount) {
-          return #err("Chunk index out of range");
-        };
-        if (data.size() == 0) {
-          return #err("Empty chunk");
-        };
-        if (data.size() > Config.BUCKET_UPLOAD_CHUNK_BYTES) {
-          return #err("Chunk too large");
-        };
-        switch (Map.get(session.chunkParts, Nat.compare, chunkIndex)) {
-          case (?_) { return #err("Duplicate chunk") };
-          case (null) {};
-        };
-        let next = session.received + data.size();
-        if (next > session.totalSize) {
-          return #err("Chunk exceeds declared file size");
-        };
-        Map.add(session.chunkParts, Nat.compare, chunkIndex, data);
-        session.received := next;
-        session.filled += 1;
-        #ok(next)
+        applyUploadChunk(session, chunkIndex, data)
       };
     }
+  };
+
+  /** @deprecated use uploadFileChunkLegacy or uploadFileChunkIndexed */
+  public func uploadFileChunk(
+    service: BucketService,
+    caller: Principal,
+    uploadId: Text,
+    chunkIndex: Nat,
+    data: Blob,
+  ) : async Types.ApiResult<Nat> {
+    await uploadFileChunkIndexed(service, caller, uploadId, chunkIndex, data)
   };
 
   public func completeFileUpload(

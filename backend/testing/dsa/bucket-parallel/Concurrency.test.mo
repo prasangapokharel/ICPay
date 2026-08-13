@@ -114,7 +114,7 @@ for (idx in [0, 49, 99].vals()) {
     await BucketService.beginFileUpload(svc, owner, bucketId, path, "image/webp", sampleChunk.size(), null)
   ) {
     case (#ok(uploadId)) {
-      switch (await BucketService.uploadFileChunk(svc, owner, uploadId, 0, sampleChunk)) {
+      switch (await BucketService.uploadFileChunkIndexed(svc, owner, uploadId, 0, sampleChunk)) {
         case (#ok(received)) {
           assert(received == sampleChunk.size());
         };
@@ -124,7 +124,7 @@ for (idx in [0, 49, 99].vals()) {
         };
       };
       let stranger = DsaFixtures.principalAt(idx + 1);
-      switch (await BucketService.uploadFileChunk(svc, stranger, uploadId, 0, sampleChunk)) {
+      switch (await BucketService.uploadFileChunkIndexed(svc, stranger, uploadId, 0, sampleChunk)) {
         case (#ok(_)) {
           assert false;
           Debug.print("FAIL: stranger wrote to foreign session");
