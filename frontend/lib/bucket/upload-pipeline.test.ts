@@ -52,6 +52,20 @@ describe("shouldConvertRasterToWebp", () => {
     )
   })
 
+  it("skips SVG by MIME when extension is missing", () => {
+    assert.equal(
+      shouldConvertRasterToWebp(mockFile("icon", "image/svg+xml")),
+      false
+    )
+  })
+
+  it("skips ZIP even when mislabeled as image", () => {
+    assert.equal(
+      shouldConvertRasterToWebp(mockFile("archive.zip", "image/png")),
+      false
+    )
+  })
+
   it("rejects video MIME", () => {
     assert.equal(
       shouldConvertRasterToWebp(mockFile("clip.mp4", "video/mp4")),
