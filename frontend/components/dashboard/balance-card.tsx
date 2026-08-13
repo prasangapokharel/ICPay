@@ -5,8 +5,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
-import type { IcpPrice } from "@/lib/use-icp-price"
-import { useFiatValue } from "@/lib/fiat/use-fiat-value"
+import type { IcpPrice } from "@/lib/icp-price"
+import { useFiatValue } from "@/hooks/use-fiat-value"
 
 type BalanceCardProps = {
   balance: string

@@ -26,6 +26,25 @@ import ApiKeyService "ApiKeyService";
 import Map "mo:core/Map";
 
 module {
+  func uploadChunkCount(totalSize: Nat) : Nat {
+    if (totalSize == 0) { 1 } else {
+      (totalSize + Config.BUCKET_UPLOAD_CHUNK_BYTES - 1) / Config.BUCKET_UPLOAD_CHUNK_BYTES
+    }
+  };
+
+  func assembleChunks(parts: Map.Map<Nat, Blob>, chunkCount: Nat) : Blob {
+    let ordered = Array.tabulate<Blob>(
+      chunkCount,
+      func(i) {
+        switch (Map.get(parts, Nat.compare, i)) {
+          case (?b) b;
+          case (null) { assert(false); Blob.fromArray([]) };
+        }
+      },
+    );
+    BlobUtil.concat(ordered)
+  };
+
   public type UploadSessionStore = {
     var map: Map.Map<Text, Types.FileUploadSession>;
   };
@@ -356,14 +375,17 @@ module {
     };
 
     let uploadId = service.nextId();
+    let chunkCount = uploadChunkCount(totalSize);
     let session : Types.FileUploadSession = {
       owner = auth.owner;
       bucketId = bucketId;
       path = path;
       contentType = contentType;
       totalSize = totalSize;
+      chunkCount = chunkCount;
       var received = 0;
-      var chunks = [];
+      var filled = 0;
+      var chunkParts = Map.empty<Nat, Blob>();
       createdAt = Time.now();
     };
     Map.add(service.uploadSessions.map, Text.compare, uploadId, session);
@@ -374,6 +396,7 @@ module {
     service: BucketService,
     caller: Principal,
     uploadId: Text,
+    chunkIndex: Nat,
     data: Blob,
   ) : async Types.ApiResult<Nat> {
     purgeStaleUploadSessions(service);
@@ -384,18 +407,26 @@ module {
         if (session.owner != caller) {
           return #err("Permission denied");
         };
+        if (chunkIndex >= session.chunkCount) {
+          return #err("Chunk index out of range");
+        };
         if (data.size() == 0) {
           return #err("Empty chunk");
         };
         if (data.size() > Config.BUCKET_UPLOAD_CHUNK_BYTES) {
           return #err("Chunk too large");
         };
+        switch (Map.get(session.chunkParts, Nat.compare, chunkIndex)) {
+          case (?_) { return #err("Duplicate chunk") };
+          case (null) {};
+        };
         let next = session.received + data.size();
         if (next > session.totalSize) {
           return #err("Chunk exceeds declared file size");
         };
-        session.chunks := Array.concat(session.chunks, [data]);
+        Map.add(session.chunkParts, Nat.compare, chunkIndex, data);
         session.received := next;
+        session.filled += 1;
         #ok(next)
       };
     }
@@ -415,11 +446,11 @@ module {
         if (session.owner != caller) {
           return #err("Permission denied");
         };
-        if (session.received != session.totalSize) {
+        if (session.received != session.totalSize or session.filled != session.chunkCount) {
           return #err("Upload incomplete");
         };
         Map.remove(service.uploadSessions.map, Text.compare, uploadId);
-        let data = BlobUtil.concat(session.chunks);
+        let data = assembleChunks(session.chunkParts, session.chunkCount);
         await uploadFileValidated(
           service, caller, session.bucketId, session.path, data, session.contentType, apiKey,
         )

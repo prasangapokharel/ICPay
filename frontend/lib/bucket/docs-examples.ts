@@ -19,7 +19,7 @@ export function uploadExamples(): Record<DocsExampleLang, string> {
   const canister = WALLET_CANISTER_ID
   return {
     typescript: `import { prepareUploadFile } from "@/lib/bucket/prepare-upload"
-import { storeFile } from "@/lib/bucket/store-file"
+import { storeFile } from "@/services/bucket/store-file"
 
 const prepared = await prepareUploadFile(file)
 

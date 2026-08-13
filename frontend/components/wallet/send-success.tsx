@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet-utils"
 import { ReceiptPreview } from "@/components/wallet/receipt-preview"
-import { useIcpPrice } from "@/lib/use-icp-price"
+import { useIcpPrice } from "@/hooks/use-icp-price"
 import { playSuccessChime } from "@/lib/success-chime"
 import { cn } from "@/lib/utils"
 

@@ -1,9 +1,9 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { call, query, unwrap, type Outcome } from "@/services/client"
-import { storeFile } from "@/lib/bucket/store-file"
+import { storeFile } from "@/services/bucket/store-file"
 
-export { storeFile } from "@/lib/bucket/store-file"
-export type { StoreFileOptions } from "@/lib/bucket/store-file"
+export { storeFile } from "@/services/bucket/store-file"
+export type { StoreFileOptions } from "@/services/bucket/store-file"
 import type {
   ApiKeyCreateResult,
   ApiKeyPermissions,
