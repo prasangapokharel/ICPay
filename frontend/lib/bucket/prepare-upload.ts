@@ -2,7 +2,7 @@ import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/upload-chunk"
 import {
   buildFileAcceptList,
   guessFileMime,
-  isAllowedUpload as isAllowedByExtension,
+  isUploadCandidate,
   mimeFromExtension,
   normalizeUploadFile,
   pathExtension,
@@ -25,15 +25,17 @@ export type PreparedUpload = {
 /** Compress rasters to WebP when possible; other allowed types pass through unchanged. */
 export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
   const normalized = normalizeUploadFile(file)
+
+  if (!isUploadCandidate(normalized, BUCKET_MAX_FILE_BYTES)) {
+    throw new Error("Invalid file format")
+  }
+
   const compressed = await compressRasterToWebp(normalized)
+
   if (compressed) {
-    const path = replacePathExtension(uploadPathForFile(normalized), ".webp")
-    if (!isAllowedByExtension(compressed.file, BUCKET_MAX_FILE_BYTES)) {
-      throw new Error("Invalid file format")
-    }
     return {
       file: compressed.file,
-      path,
+      path: replacePathExtension(uploadPathForFile(normalized), ".webp"),
       contentType: "image/webp",
       compression: {
         originalBytes: compressed.originalBytes,
@@ -45,17 +47,12 @@ export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
 
   const ext = pathExtension(normalized.name)
   const contentType = mimeFromExtension(ext) ?? guessFileMime(normalized)
-  const path = uploadPathForFile(normalized)
 
-  if (!isAllowedByExtension(normalized, BUCKET_MAX_FILE_BYTES)) {
-    throw new Error("Invalid file format")
+  return {
+    file: normalized,
+    path: uploadPathForFile(normalized),
+    contentType,
   }
-
-  if (ext === "heic" || ext === "heif") {
-    throw new Error("Could not process this photo")
-  }
-
-  return { file: normalized, path, contentType }
 }
 
 export { buildFileAcceptList }
