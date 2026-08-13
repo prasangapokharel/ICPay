@@ -1,4 +1,7 @@
 import Blob "mo:core/Blob";
+import Array "mo:core/Array";
+import Nat "mo:core/Nat";
+import Nat8 "mo:core/Nat8";
 
 module {
   public func webp() : Blob {
@@ -14,6 +17,17 @@ module {
 
   public func png() : Blob {
     Blob.fromArray([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
+  };
+
+  // ~675 KB — large enough to trap full decrypt in http_request; under single-upload cap.
+  public func largePng() : Blob {
+    let header : [Nat8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+    let size : Nat = 690_000;
+    Blob.fromArray(
+      Array.tabulate<Nat8>(size, func(i) {
+        if (i < header.size()) { header[i] } else { Nat8.fromNat(i % 256) }
+      }),
+    )
   };
 
   public func svg() : Blob {

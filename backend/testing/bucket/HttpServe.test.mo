@@ -43,8 +43,12 @@ func nextUid() : Text {
   now.toText() # "-" # Int.toText(uidCounter);
 };
 
+let depositSubaccounts = UserStorage.createDepositSubaccountIndex();
+let depositAccountIds = UserStorage.createDepositAccountIdIndex();
+
 let transfers = TransferService.create(
   users, usernames, txs, txsByUser, ledger, nextUid, RateLimitStorage.createRateLimitMap(),
+  depositSubaccounts, depositAccountIds,
 );
 let svc = BucketService.create(
   users, store, names, transfers, nextUid,
@@ -55,7 +59,7 @@ let svc = BucketService.create(
   BucketService.createUploadSessionStore(),
 );
 
-ignore UserRepo.create(users, usernames, usersById, "uid-owner", owner, null, "", now);
+ignore UserRepo.create(users, usernames, usersById, "uid-owner", owner, null, "", now, null);
 
 let webp = Fixtures.webp();
 let bucketId = "bucket-http-1";
@@ -127,6 +131,33 @@ switch (CloudHttpService.prepareServe(svc, "cdn-test", filePath)) {
   case (#ok(#Stream(_))) {
     assert false;
     Debug.print("FAIL [HTTP-SERVE]: small file should not stream");
+  };
+};
+
+let largePng = Fixtures.largePng();
+let pngPath = "/photo.png";
+switch (
+  await BucketService.uploadFile(svc, owner, bucketId, pngPath, largePng, "image/png", null)
+) {
+  case (#ok(_)) { Debug.print("PASS [HTTP-SERVE]: upload large png seed") };
+  case (#err(e)) { assert false; Debug.print("FAIL [HTTP-SERVE]: large png upload: " # e) };
+};
+
+switch (CloudHttpService.prepareServe(svc, "cdn-test", pngPath)) {
+  case (#err(resp)) {
+    assert false;
+    Debug.print(
+      "FAIL [HTTP-SERVE]: large png prepareServe status=" # Nat16.toText(resp.status_code),
+    );
+  };
+  case (#ok(#Direct({ contentType; data }))) {
+    assert contentType == "image/png";
+    assert data.size() == largePng.size();
+    Debug.print("PASS [HTTP-SERVE]: GET would return 200 PNG (~700KB slice decrypt)");
+  };
+  case (#ok(#Stream(_))) {
+    assert false;
+    Debug.print("FAIL [HTTP-SERVE]: 700KB png should fit direct response");
   };
 };
 

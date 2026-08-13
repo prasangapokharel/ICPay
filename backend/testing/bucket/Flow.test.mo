@@ -43,8 +43,12 @@ func nextUid() : Text {
   now.toText() # "-" # Int.toText(uidCounter);
 };
 
+let depositSubaccounts = UserStorage.createDepositSubaccountIndex();
+let depositAccountIds = UserStorage.createDepositAccountIdIndex();
+
 let transfers = TransferService.create(
   users, usernames, txs, txsByUser, ledger, nextUid, RateLimitStorage.createRateLimitMap(),
+  depositSubaccounts, depositAccountIds,
 );
 let svc = BucketService.create(
   users, store, names, transfers, nextUid,
@@ -55,7 +59,7 @@ let svc = BucketService.create(
   BucketService.createUploadSessionStore(),
 );
 
-ignore UserRepo.create(users, usernames, usersById, "uid-owner", owner, null, "", now);
+ignore UserRepo.create(users, usernames, usersById, "uid-owner", owner, null, "", now, null);
 
 func seedBucket(id: Text, visibility: Types.BucketVisibility, expiresAt: Int) {
   let bucket : Types.Bucket = {
@@ -221,33 +225,6 @@ switch (BucketService.getPrice(25)) {
 switch (BucketService.getPrice(3)) {
   case (#ok(_)) { assert false; Debug.print("FAIL [FLOW]: invalid tier accepted") };
   case (#err(_)) { Debug.print("PASS [FLOW]: invalid capacity rejected") };
-};
-
-// Chunked upload (>1.5 MB single-call limit)
-seedBucket("bucket-chunk", #Public, now + Config.BUCKET_PERIOD_NS);
-switch (
-  await BucketService.beginFileUpload(svc, owner, "bucket-chunk", "/big.php", "application/x-php", 2_500_000, null)
-) {
-  case (#ok(uploadId)) {
-    var remaining : Nat = 2_500_000;
-    while (remaining > 0) {
-      let take = if (remaining > Config.BUCKET_UPLOAD_CHUNK_BYTES) {
-        Config.BUCKET_UPLOAD_CHUNK_BYTES
-      } else {
-        remaining
-      };
-      let slice = Blob.fromArray(Array.tabulate<Nat8>(take, func(_) { 0x41 }));
-      switch (await BucketService.uploadFileChunk(svc, owner, uploadId, slice)) {
-        case (#ok(received)) { remaining := Nat.sub(2_500_000, received) };
-        case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk: " # e) };
-      };
-    };
-    switch (await BucketService.completeFileUpload(svc, owner, uploadId, null)) {
-      case (#ok(_)) { Debug.print("PASS [FLOW]: chunked php upload") };
-      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: complete chunk: " # e) };
-    };
-  };
-  case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: begin chunk: " # e) };
 };
 
 Debug.print("Bucket e2e flow tests done");

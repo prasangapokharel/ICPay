@@ -18,8 +18,8 @@ let p1 = Principal.fromText("aaaaa-aa");
 let p2 = Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai");
 let now = Time.now();
 
-let _u1 = UserRepo.create(users, usernames, usersById, "uid-1", p1, null, "Alice", now);
-let _u2 = UserRepo.create(users, usernames, usersById, "uid-2", p2, ?"bob", "Bob", now);
+let _u1 = UserRepo.create(users, usernames, usersById, "uid-1", p1, null, "Alice", now, null);
+let _u2 = UserRepo.create(users, usernames, usersById, "uid-2", p2, ?"bob", "Bob", now, null);
 
 switch (UserService.getProfile(svc, p1)) {
   case (?profile) {
@@ -50,7 +50,7 @@ switch (UserService.updateUsername(svc, p1, "alice2")) {
 // Every remaining claim check needs a principal that has not claimed yet,
 // otherwise the permanence rule short-circuits before the check under test.
 let p3 = Principal.fromText("r7inp-6aaaa-aaaaa-aaabq-cai");
-let _u3 = UserRepo.create(users, usernames, usersById, "uid-3", p3, null, "Carol", now);
+let _u3 = UserRepo.create(users, usernames, usersById, "uid-3", p3, null, "Carol", now, null);
 
 switch (UserService.updateUsername(svc, p3, "bob")) {
   case (#ok(_)) { assert(false); Debug.print("FAIL: updateUsername should reject taken name") };
@@ -152,7 +152,7 @@ Debug.print("PASS: getVerifiedTier returns null for an unknown user id");
 // Null rather than #basic: an account that has claimed nothing has no badge,
 // and #basic would render one on every user who never picked a handle.
 let p4 = Principal.fromText("rno2w-sqaaa-aaaaa-aaacq-cai");
-let _u4 = UserRepo.create(users, usernames, usersById, "uid-4", p4, null, "Dave", now);
+let _u4 = UserRepo.create(users, usernames, usersById, "uid-4", p4, null, "Dave", now, null);
 assert(UserService.getVerifiedTier(svc, "uid-4") == null);
 Debug.print("PASS: getVerifiedTier returns null for a user with no handle");
 

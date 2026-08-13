@@ -4,6 +4,7 @@ import Text "mo:core/Text";
 import Nat "mo:core/Nat";
 import Nat8 "mo:core/Nat8";
 import Nat32 "mo:core/Nat32";
+import Int "mo:core/Int";
 import Array "mo:core/Array";
 import Config "../config/Config";
 import Sha256 "Sha256";
@@ -96,7 +97,9 @@ module {
     let n = bytes.size();
     if (offset >= n) return Blob.fromArray([]);
     let end = if (offset + limit > n) { n } else { offset + limit };
-    let len = end - offset;
+    let lenInt = Int.sub(Int.fromNat(end), Int.fromNat(offset));
+    if (lenInt <= 0) return Blob.fromArray([]);
+    let len = Int.toNat(lenInt);
     if (len == 0) return Blob.fromArray([]);
     Blob.fromArray(
       Array.tabulate<Nat8>(len, func(i) {

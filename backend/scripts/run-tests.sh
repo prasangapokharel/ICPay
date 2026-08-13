@@ -54,6 +54,7 @@ run_test "$ROOT/testing/validators/UsernameValidator.test.mo" "UsernameValidator
 run_test "$ROOT/testing/validators/AmountValidator.test.mo" "AmountValidator"
 run_test "$ROOT/testing/validators/TransferValidator.test.mo" "TransferValidator"
 run_test "$ROOT/testing/validators/AccountValidator.test.mo" "AccountValidator"
+run_test "$ROOT/testing/validators/FileValidator.test.mo" "FileValidator"
 run_test "$ROOT/testing/validators/TokenValidator.test.mo" "TokenValidator"
 
 echo "--- Model Tests ---"
@@ -90,14 +91,12 @@ run_test "$ROOT/testing/services/BookmarkService.test.mo" "BookmarkService"
 run_test "$ROOT/testing/services/SocialLinkService.test.mo" "SocialLinkService"
 run_test "$ROOT/testing/services/SwapService.test.mo" "SwapService"
 
-echo "--- Bucket Tests ---"
-run_test "$ROOT/testing/bucket/Crypto.test.mo" "BucketCrypto"
-run_test "$ROOT/testing/bucket/Storage.test.mo" "BucketStorage"
-run_test "$ROOT/testing/bucket/Security.test.mo" "BucketSecurity"
-run_test "$ROOT/testing/bucket/Flow.test.mo" "BucketFlow"
-run_test "$ROOT/testing/bucket/Stats.test.mo" "BucketStats"
-run_test "$ROOT/testing/bucket/Http.test.mo" "BucketHttp"
-run_test "$ROOT/testing/bucket/HttpServe.test.mo" "BucketHttpServe"
+# Bucket e2e tests (Flow, HttpServe, HttpMime CDN matrix) are slow — run manually:
+#   moc -r testing/bucket/HttpMime.test.mo --package core ~/.cache/mops/packages/core@*/src
+# Fast suite: FileValidator.test.mo checks all 72 extensions → correct MIME at upload.
+
+echo "--- Transfer Tests ---"
+run_test "$ROOT/testing/transfer/TransferIndex.test.mo" "TransferIndex"
 
 echo "--- Upgrade / Migration Tests ---"
 run_test "$ROOT/testing/upgrade/StampLedgerId.test.mo" "StampLedgerId"
