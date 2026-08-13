@@ -80,7 +80,9 @@ export default function IcpCloudStoragePage() {
         <p className="text-sm leading-relaxed text-muted-foreground">
           Public buckets expose clean CDN links — the bucket name sits in the path and files live
           at the root, so a logo might be served as{" "}
-          <code className="rounded bg-muted px-1 py-0.5 text-xs">cloud.icpay.app/my-brand/logo.webp</code>.
+          <code className="rounded bg-muted px-1 py-0.5 text-xs">
+            6vbhm-nqaaa-aaaan-q6muq-cai.raw.icp0.io/cloud/my-brand/logo.webp
+          </code>.
           Browsers and curl can fetch these URLs with no wallet or login. Private buckets have no
           public URL; only the owner (or an API key with read permission) can download through
           the canister.

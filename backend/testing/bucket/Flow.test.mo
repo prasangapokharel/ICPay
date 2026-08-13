@@ -227,4 +227,12 @@ switch (BucketService.getPrice(3)) {
   case (#err(_)) { Debug.print("PASS [FLOW]: invalid capacity rejected") };
 };
 
+switch (BucketService.listFiles(svc, owner, "my-assets", 0, 20)) {
+  case (#ok(page)) {
+    assert page.items.size() >= 1;
+    Debug.print("PASS [FLOW]: listFiles resolves public bucket name");
+  };
+  case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: list by name: " # e) };
+};
+
 Debug.print("Bucket e2e flow tests done");

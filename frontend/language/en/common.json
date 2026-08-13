@@ -776,7 +776,7 @@
     "pricingFeatureRenew": "Renew anytime",
     "pricingFooter": "Files stay on-chain in encrypted form. When a plan expires the bucket becomes read-only until you renew.",
     "docsCdnTitle": "Public CDN URLs",
-    "docsCdnBody": "Public buckets use clean links on cloud.icpay.app (proxied to the canister) — bucket name in the path, files at the root (no /uploads/ folder):",
+    "docsCdnBody": "Public buckets are served on the IC raw HTTP gateway — bucket name in the path, files at the root (no /uploads/ folder):",
     "docsCdnPrivate": "Private buckets have no public URL — download with downloadFile while signed in.",
     "docsCdnVerifyTitle": "Verify with curl",
     "docsApiTitle": "Canister API",
