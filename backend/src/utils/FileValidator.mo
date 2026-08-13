@@ -11,19 +11,21 @@ module {
   private let BLOCKED : [Text] = [
     "mp4", "webm", "mov", "avi", "mkv", "m4v", "flv", "wmv", "mpeg", "mpg", "3gp",
     "3g2", "mts", "m2ts", "ogv",
+    // Executable / script / markup — not served from public buckets.
+    "html", "htm", "js", "mjs", "cjs", "ts", "tsx", "jsx", "sh", "bash", "zsh",
+    "ps1", "bat", "cmd", "wasm", "php", "rb", "py", "go", "rs", "java", "kt",
+    "swift", "cs", "dart", "cpp", "c", "h", "hpp", "sql", "css", "scss", "svg",
+    "bin", "dat",
   ];
 
   private let ALLOWED : [Text] = [
-    "jpg", "jpeg", "png", "webp", "gif", "svg", "avif", "bmp", "ico", "tif", "tiff", "heic", "heif",
+    "jpg", "jpeg", "png", "webp", "gif", "avif", "bmp", "ico", "tif", "tiff", "heic", "heif",
     "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md", "csv", "rtf",
     "odt", "ods", "odp",
-    "js", "ts", "tsx", "jsx", "go", "rs", "py", "java", "kt", "swift", "php", "rb",
-    "cpp", "c", "h", "hpp", "cs", "dart", "sh", "sql", "html", "css", "scss", "json",
-    "xml", "yaml", "yml", "toml",
+    "json", "xml", "yaml", "yml", "toml",
     "zip", "tar", "gz", "bz2", "7z", "rar",
     "mp3", "wav", "ogg", "flac", "m4a", "aac",
     "ttf", "otf", "woff", "woff2",
-    "bin", "dat", "wasm",
   ];
 
   public func allowedExtensions() : [Text] { ALLOWED };
@@ -59,7 +61,6 @@ module {
       case ("png") { ?"image/png" };
       case ("webp") { ?"image/webp" };
       case ("gif") { ?"image/gif" };
-      case ("svg") { ?"image/svg+xml" };
       case ("avif") { ?"image/avif" };
       case ("bmp") { ?"image/bmp" };
       case ("ico") { ?"image/x-icon" };
@@ -81,29 +82,6 @@ module {
       case ("odt") { ?"application/vnd.oasis.opendocument.text" };
       case ("ods") { ?"application/vnd.oasis.opendocument.spreadsheet" };
       case ("odp") { ?"application/vnd.oasis.opendocument.presentation" };
-      case ("js") { ?"text/javascript" };
-      case ("ts") { ?"text/typescript" };
-      case ("tsx") { ?"text/typescript" };
-      case ("jsx") { ?"text/javascript" };
-      case ("go") { ?"text/x-go" };
-      case ("rs") { ?"text/x-rust" };
-      case ("py") { ?"text/x-python" };
-      case ("java") { ?"text/x-java" };
-      case ("kt") { ?"text/x-kotlin" };
-      case ("swift") { ?"text/x-swift" };
-      case ("php") { ?"application/x-php" };
-      case ("rb") { ?"application/x-ruby" };
-      case ("cpp") { ?"text/x-c++src" };
-      case ("c") { ?"text/x-c" };
-      case ("h") { ?"text/x-c" };
-      case ("hpp") { ?"text/x-c++src" };
-      case ("cs") { ?"text/x-csharp" };
-      case ("dart") { ?"application/dart" };
-      case ("sh") { ?"application/x-sh" };
-      case ("sql") { ?"application/sql" };
-      case ("html") { ?"text/html" };
-      case ("css") { ?"text/css" };
-      case ("scss") { ?"text/x-scss" };
       case ("json") { ?"application/json" };
       case ("xml") { ?"application/xml" };
       case ("yaml") { ?"text/yaml" };
@@ -125,9 +103,6 @@ module {
       case ("otf") { ?"font/otf" };
       case ("woff") { ?"font/woff" };
       case ("woff2") { ?"font/woff2" };
-      case ("bin") { ?"application/octet-stream" };
-      case ("dat") { ?"application/octet-stream" };
-      case ("wasm") { ?"application/wasm" };
       case (_) { ?"application/octet-stream" };
     }
   };
@@ -223,9 +198,8 @@ module {
       case ("zip") { validateZipHeader(head) };
       case ("gz") { validateGzipHeader(head) };
       case ("pdf") { validatePdfHeader(head) };
-      case ("wasm") { validateWasmHeader(head) };
       case (_) {
-        // Text, code, audio, fonts, office docs — extension allow-list is the gate.
+        // Documents, data, audio, fonts — extension allow-list is the gate.
         totalSize > 0
       };
     }

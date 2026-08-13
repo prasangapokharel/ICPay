@@ -14,7 +14,6 @@ func sampleBlob(ext: Text) : Blob {
     case ("zip") { Blob.fromArray([0x50, 0x4B, 0x03, 0x04, 0x00]) };
     case ("gz") { Blob.fromArray([0x1F, 0x8B, 0x08]) };
     case ("pdf") { Blob.fromArray([0x25, 0x50, 0x44, 0x46, 0x2D, 0x31]) };
-    case ("wasm") { Blob.fromArray([0x00, 0x61, 0x73, 0x6D, 0x01, 0x00]) };
     case (_) { Blob.fromArray([0x41]) };
   }
 };
@@ -41,6 +40,6 @@ for (ext in FileValidator.blockedExtensions().vals()) {
   assert not FileValidator.isAllowedExtension(ext);
   assert FileValidator.mimeFromExtension(ext) == null;
 };
-Debug.print("PASS: blocked video extensions rejected");
+Debug.print("PASS: blocked video and executable extensions rejected");
 
 Debug.print("ALL FILE VALIDATOR TESTS PASSED");

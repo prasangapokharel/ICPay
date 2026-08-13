@@ -1,5 +1,5 @@
-/** Video extensions blocked client-side — keep in sync with backend FileValidator.mo BLOCKED. */
-export const BLOCKED_EXTENSIONS = new Set([
+/** Video extensions blocked — keep in sync with backend FileValidator.mo. */
+export const VIDEO_BLOCKED_EXTENSIONS = new Set([
   "mp4",
   "webm",
   "mov",
@@ -15,6 +15,50 @@ export const BLOCKED_EXTENSIONS = new Set([
   "mts",
   "m2ts",
   "ogv",
+])
+
+/** Executable / script markup blocked before upload (SVG converts to WebP client-side). */
+export const EXECUTABLE_BLOCKED_EXTENSIONS = new Set([
+  "html",
+  "htm",
+  "js",
+  "mjs",
+  "cjs",
+  "ts",
+  "tsx",
+  "jsx",
+  "sh",
+  "bash",
+  "zsh",
+  "ps1",
+  "bat",
+  "cmd",
+  "wasm",
+  "php",
+  "rb",
+  "py",
+  "go",
+  "rs",
+  "java",
+  "kt",
+  "swift",
+  "cs",
+  "dart",
+  "cpp",
+  "c",
+  "h",
+  "hpp",
+  "sql",
+  "css",
+  "scss",
+  "bin",
+  "dat",
+])
+
+/** All client-blocked extensions (video + executable). SVG is allowed — converted to WebP. */
+export const BLOCKED_EXTENSIONS = new Set([
+  ...VIDEO_BLOCKED_EXTENSIONS,
+  ...EXECUTABLE_BLOCKED_EXTENSIONS,
 ])
 
 const EXT_TO_MIME: Record<string, string> = {
@@ -45,29 +89,6 @@ const EXT_TO_MIME: Record<string, string> = {
   odt: "application/vnd.oasis.opendocument.text",
   ods: "application/vnd.oasis.opendocument.spreadsheet",
   odp: "application/vnd.oasis.opendocument.presentation",
-  js: "text/javascript",
-  ts: "text/typescript",
-  tsx: "text/typescript",
-  jsx: "text/javascript",
-  go: "text/x-go",
-  rs: "text/x-rust",
-  py: "text/x-python",
-  java: "text/x-java",
-  kt: "text/x-kotlin",
-  swift: "text/x-swift",
-  php: "application/x-php",
-  rb: "application/x-ruby",
-  cpp: "text/x-c++src",
-  c: "text/x-c",
-  h: "text/x-c",
-  hpp: "text/x-c++src",
-  cs: "text/x-csharp",
-  dart: "application/dart",
-  sh: "application/x-sh",
-  sql: "application/sql",
-  html: "text/html",
-  css: "text/css",
-  scss: "text/x-scss",
   json: "application/json",
   xml: "application/xml",
   yaml: "text/yaml",
@@ -89,9 +110,6 @@ const EXT_TO_MIME: Record<string, string> = {
   otf: "font/otf",
   woff: "font/woff",
   woff2: "font/woff2",
-  bin: "application/octet-stream",
-  dat: "application/octet-stream",
-  wasm: "application/wasm",
 }
 
 export function pathExtension(pathOrName: string): string {

@@ -56,7 +56,9 @@ export function BucketUploadZone({
           ? t("invalidFile")
           : validation === "video"
             ? t("errVideoBlocked")
-            : t("errInvalidFormat")
+            : validation === "blocked"
+              ? t("errScriptBlocked")
+              : t("errInvalidFormat")
       }
 
       setStatusLabel(t("uploadPreparing"))

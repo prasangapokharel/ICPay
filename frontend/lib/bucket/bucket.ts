@@ -27,6 +27,7 @@ export const guessImageMime = guessFileMime
 type BucketErrorKey =
   | "errInvalidFormat"
   | "errPhotoProcess"
+  | "errScriptBlocked"
   | "errIngressTooLarge"
   | "invalidFile"
   | "errVideoBlocked"
@@ -53,14 +54,16 @@ export function mapBucketError(
   if (err.includes("Could not process this photo")) return t("errPhotoProcess")
   if (err.includes("File too large after compression")) return t("invalidFile")
   if (
-    err.includes("Only images allowed") ||
-    err.includes("Invalid file format") ||
-    err.includes("upload WebP images") ||
-    err.includes("upload images, txt, py, or zip") ||
     err.includes("Video uploads are not allowed") ||
-    err.includes("File type not allowed")
+    err.includes("video blocked")
   ) {
-    return t("errInvalidFormat")
+    return t("errVideoBlocked")
+  }
+  if (
+    err.includes("File type not allowed") ||
+    err.includes("not allowed or video blocked")
+  ) {
+    return t("errScriptBlocked")
   }
   if (err.includes("File too large")) return t("invalidFile")
   if (err.includes("Storage limit")) return t("errStorageLimit")
