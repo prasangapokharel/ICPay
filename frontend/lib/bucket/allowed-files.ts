@@ -26,6 +26,8 @@ export const ALLOWED_EXTENSIONS = new Set([
   "ico",
   "tif",
   "tiff",
+  "heic",
+  "heif",
   // Documents
   "pdf",
   "doc",
@@ -107,6 +109,8 @@ const EXT_TO_MIME: Record<string, string> = {
   ico: "image/x-icon",
   tif: "image/tiff",
   tiff: "image/tiff",
+  heic: "image/heic",
+  heif: "image/heif",
   pdf: "application/pdf",
   doc: "application/msword",
   docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -193,7 +197,75 @@ export function mimeFromExtension(ext: string): string | null {
 }
 
 export function buildFileAcceptList(): string {
-  return [...ALLOWED_EXTENSIONS].map((ext) => `.${ext}`).join(",")
+  // image/* helps iOS photo picker offer camera-roll formats (HEIC, etc.)
+  const exts = [...ALLOWED_EXTENSIONS].map((ext) => `.${ext}`)
+  return ["image/*", ...exts].join(",")
+}
+
+const MIME_TO_EXT: Record<string, string> = {
+  "image/heic": "heic",
+  "image/heif": "heif",
+  "image/jpeg": "jpeg",
+  "image/jpg": "jpeg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+  "image/avif": "avif",
+  "image/bmp": "bmp",
+  "image/tiff": "tiff",
+  "image/svg+xml": "svg",
+}
+
+/** Infer extension when iOS omits it from the filename. */
+export function inferExtensionFromMime(mime: string): string | null {
+  const type = mime.trim().toLowerCase()
+  if (MIME_TO_EXT[type]) return MIME_TO_EXT[type]
+  if (type.startsWith("image/")) {
+    const sub = type.slice("image/".length)
+    if (sub && !sub.includes("/")) return sub
+  }
+  return null
+}
+
+/**
+ * iOS often returns HEIC photos with a missing or wrong extension.
+ * Normalize before validation/compression so the pipeline can run.
+ */
+export function normalizeUploadFile(file: File): File {
+  const ext = pathExtension(file.name)
+  const inferred = !ext ? inferExtensionFromMime(file.type) : null
+
+  if (!ext && inferred) {
+    const stem = file.name.replace(/\.$/, "") || "photo"
+    return new File([file], `${stem}.${inferred}`, {
+      type: file.type || mimeFromExtension(inferred) || "application/octet-stream",
+      lastModified: file.lastModified,
+    })
+  }
+
+  // HEIC bytes sometimes arrive as IMG_1234.jpg on iOS
+  if (
+    (file.type === "image/heic" || file.type === "image/heif") &&
+    ext !== "heic" &&
+    ext !== "heif"
+  ) {
+    const stem = file.name.replace(/\.[^.]+$/, "") || "photo"
+    const fixed = file.type === "image/heif" ? "heif" : "heic"
+    return new File([file], `${stem}.${fixed}`, {
+      type: file.type,
+      lastModified: file.lastModified,
+    })
+  }
+
+  return file
+}
+
+export function isUploadCandidate(file: File, maxBytes: number): boolean {
+  const normalized = normalizeUploadFile(file)
+  if (normalized.size <= 0 || normalized.size > maxBytes) return false
+  const ext = pathExtension(normalized.name)
+  if (!ext) return false
+  return isAllowedExtension(ext)
 }
 
 export function guessFileMime(file: File): string {
@@ -214,10 +286,7 @@ export function guessFileMime(file: File): string {
 }
 
 export function isAllowedUpload(file: File, maxBytes: number): boolean {
-  if (file.size <= 0 || file.size > maxBytes) return false
-  const ext = pathExtension(file.name)
-  if (!ext) return false
-  return isAllowedExtension(ext)
+  return isUploadCandidate(file, maxBytes)
 }
 
 export function fileTypeChip(contentType: string, path?: string): string {

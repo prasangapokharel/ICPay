@@ -10,6 +10,7 @@ import {
   Copy01Icon,
   Key01Icon,
   Tick02Icon,
+  Upload01Icon,
 } from "@hugeicons/core-free-icons"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -24,7 +25,7 @@ import {
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import { BucketUsageBar } from "@/components/bucket/bucket-card"
 import { BucketFilesPanel } from "@/components/bucket/bucket-files-panel"
-import { BucketUploadZone } from "@/components/bucket/bucket-upload-zone"
+import { BucketUploadModal } from "@/components/bucket/bucket-upload-modal"
 import { BucketRenewDrawer } from "@/components/bucket/bucket-renew-drawer"
 import { BucketApiKeysModal } from "@/components/bucket/bucket-api-keys-modal"
 import { BucketIconAction } from "@/components/bucket/bucket-icon-action"
@@ -65,6 +66,7 @@ export function BucketDetail() {
 
   const { stats, isLoading: statsLoading, refresh: refreshStats } = useBucketStats(bucketId || null)
   const [renewOpen, setRenewOpen] = useState(false)
+  const [uploadOpen, setUploadOpen] = useState(false)
   const [apiKeysOpen, setApiKeysOpen] = useState(false)
   const [cdnOpen, setCdnOpen] = useState(false)
   const [urlMode, setUrlMode] = useState<BucketUrlMode>("raw")
@@ -84,6 +86,23 @@ export function BucketDetail() {
       <HugeiconsIcon icon={BookOpen01Icon} className="size-3.5" strokeWidth={1.75} />
       {t("docs")}
     </Button>
+  )
+
+  const headerActions = (
+    <div className="flex items-center gap-0.5">
+      {canWrite && (
+        <Button
+          variant="default"
+          size="sm"
+          className="h-7 gap-1 px-2.5 text-xs"
+          onClick={() => setUploadOpen(true)}
+        >
+          <HugeiconsIcon icon={Upload01Icon} className="size-3.5" strokeWidth={1.75} />
+          {t("upload")}
+        </Button>
+      )}
+      {docsLink}
+    </div>
   )
 
   if (!bucketId || (statsLoading && !stats)) {
@@ -170,7 +189,7 @@ export function BucketDetail() {
     <div className="space-y-4 pt-2">
       <div className="flex items-center justify-between gap-2">
         {back}
-        {docsLink}
+        {headerActions}
       </div>
 
       <div className="space-y-2.5 rounded-2xl border p-4">
@@ -275,8 +294,6 @@ export function BucketDetail() {
         </Alert>
       )}
 
-      <BucketUploadZone disabled={!canWrite} onUpload={handleUpload} />
-
       <BucketFilesPanel
         bucketId={bucketId}
         canWrite={canWrite}
@@ -294,6 +311,13 @@ export function BucketDetail() {
         bucketId={bucketId}
         open={apiKeysOpen}
         onOpenChange={setApiKeysOpen}
+      />
+
+      <BucketUploadModal
+        open={uploadOpen}
+        onOpenChange={setUploadOpen}
+        disabled={!canWrite}
+        onUpload={handleUpload}
       />
     </div>
   )

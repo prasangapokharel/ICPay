@@ -55,4 +55,12 @@ export const BLOG_POSTS: BlogPost[] = [
     publishedAt: "2026-08-11",
     readingMinutes: 5,
   },
+  {
+    slug: "icp-cloud-storage",
+    title: "ICP Cloud Storage in 2026: Decentralized File Storage on the Internet Computer",
+    description:
+      "What ICP cloud storage is, how on-chain buckets work, encrypted CDN delivery, pricing in ICP, and how it compares to AWS S3 and IPFS.",
+    publishedAt: "2026-08-13",
+    readingMinutes: 7,
+  },
 ]
