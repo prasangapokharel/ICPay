@@ -8,8 +8,8 @@ import {
 } from "./compress-image"
 
 describe("compression policy constants", () => {
-  it("uses 5 MB / 4096 px / 0.85 quality WebP defaults", () => {
-    assert.equal(COMPRESSION_MAX_SIZE_MB, 5)
+  it("targets sub-700KB WebP for single-call uploads on live canister", () => {
+    assert.equal(COMPRESSION_MAX_SIZE_MB, 0.65)
     assert.equal(COMPRESSION_MAX_EDGE, 4096)
     assert.equal(COMPRESSION_INITIAL_QUALITY, 0.85)
   })

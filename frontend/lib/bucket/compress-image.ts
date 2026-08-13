@@ -4,8 +4,8 @@ import { validateWebpHeader } from "@/lib/bucket/image-bytes"
 import { sanitizeUploadFilename } from "@/lib/bucket/upload-path"
 import { shouldConvertRasterToWebp } from "@/lib/bucket/raster-formats"
 
-/** WebP budget — display-sized, capped under the 10 MB product limit. */
-export const COMPRESSION_MAX_SIZE_MB = 5
+/** Target output size — keeps most photos under the legacy 700 KB single-upload cap. */
+export const COMPRESSION_MAX_SIZE_MB = 0.65
 export const COMPRESSION_MAX_EDGE = 4096
 export const COMPRESSION_INITIAL_QUALITY = 0.85
 
