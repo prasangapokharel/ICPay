@@ -44,13 +44,14 @@ mixin (buckets: BucketService.BucketService) {
           case (#ok(#Direct({ contentType; data }))) {
             #ok(CloudHttpService.buildDirectResponse(contentType, data))
           };
-          case (#ok(#Stream({ contentType; bucketId; path; data }))) {
+          case (#ok(#Stream({ contentType; bucketId; path; firstChunk; totalSize }))) {
             #ok(
               CloudHttpService.buildStreamResponse(
                 contentType,
                 bucketId,
                 path,
-                data,
+                firstChunk,
+                totalSize,
                 http_request_streaming_callback,
               )
             )

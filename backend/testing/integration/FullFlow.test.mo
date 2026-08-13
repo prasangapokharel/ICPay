@@ -29,7 +29,7 @@ func nextUid(): Text {
   Time.now().toText() # "-" # Int.toText(uidCounter);
 };
 
-let auth = AuthService.create(users, usernames, usersById, reserved, nextUid, RateLimitStorage.createRateLimitMap());
+let auth = AuthService.create(users, usernames, usersById, reserved, nextUid, RateLimitStorage.createRateLimitMap(), null);
 let userSvc = UserService.create(users, usernames, usersById, reserved, RateLimitStorage.createRateLimitMap());
 let txSvc = TransactionService.create(users, txs, txsByUser);
 let settingsSvc = SettingsService.create(users, settingsMap, RateLimitStorage.createRateLimitMap());

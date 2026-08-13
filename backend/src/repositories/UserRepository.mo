@@ -1,5 +1,6 @@
 import Principal "mo:core/Principal";
 import Map "mo:core/Map";
+import Blob "mo:core/Blob";
 import Set "mo:core/Set";
 import List "mo:core/List";
 import Text "mo:core/Text";
@@ -7,8 +8,14 @@ import Types "../types";
 import UserModel "../models/User";
 import UserStorage "../storage/UserStorage";
 import UsernameValidator "../validators/UsernameValidator";
+import AccountHelper "../ledger/Account";
 
 module {
+  public type DepositIndexCtx = {
+    subaccounts: UserStorage.DepositSubaccountIndex;
+    accountIds: UserStorage.DepositAccountIdIndex;
+    custodian: Principal;
+  };
   public func getByPrincipal(users: UserStorage.UserMap, p: Principal): ?Types.User {
     users.get(p);
   };
@@ -43,6 +50,7 @@ module {
     username: ?Types.Username,
     displayName: Text,
     now: Int,
+    depositIndex: ?DepositIndexCtx,
   ): Types.User {
     let user = UserModel.new(id, principal, username, displayName, now);
     users.add(principal, user);
@@ -51,7 +59,51 @@ module {
       case (?name) { usernames.add(UsernameValidator.normalize(name), principal) };
       case (null) {};
     };
+    switch (depositIndex) {
+      case (?idx) { indexDepositAccounts(idx, principal) };
+      case (null) {};
+    };
     user;
+  };
+
+  public func indexDepositAccounts(ctx: DepositIndexCtx, user: Principal) {
+    let account = AccountHelper.custodialAccount(ctx.custodian, user);
+    switch (account.subaccount) {
+      case (?sub) { Map.add(ctx.subaccounts, Blob.compare, sub, user) };
+      case (null) {};
+    };
+    Map.add(ctx.accountIds, Text.compare, AccountHelper.toAccountIdentifier(account), user);
+  };
+
+  public func reindexDepositAccounts(
+    users: UserStorage.UserMap,
+    ctx: DepositIndexCtx,
+  ) {
+    for ((p, _) in users.entries()) {
+      indexDepositAccounts(ctx, p);
+    };
+  };
+
+  public func getByDepositSubaccount(
+    subaccounts: UserStorage.DepositSubaccountIndex,
+    users: UserStorage.UserMap,
+    sub: Blob,
+  ): ?Types.User {
+    switch (Map.get(subaccounts, Blob.compare, sub)) {
+      case (?p) { users.get(p) };
+      case (null) { null };
+    }
+  };
+
+  public func getByDepositAccountId(
+    accountIds: UserStorage.DepositAccountIdIndex,
+    users: UserStorage.UserMap,
+    accountIdHex: Text,
+  ): ?Types.User {
+    switch (Map.get(accountIds, Text.compare, accountIdHex)) {
+      case (?p) { users.get(p) };
+      case (null) { null };
+    }
   };
 
   public func setUsername(

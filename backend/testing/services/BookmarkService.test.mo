@@ -19,8 +19,8 @@ let uid1 = "uid-1";
 let uid2 = "uid-2";
 
 // --- setup: two users ---
-let _ = UserRepo.create(users, usernames, usersById, uid1, p1, null, "", now);
-let _ = UserRepo.create(users, usernames, usersById, uid2, p2, ?"bob", "bob", now);
+let _ = UserRepo.create(users, usernames, usersById, uid1, p1, null, "", now, null);
+let _ = UserRepo.create(users, usernames, usersById, uid2, p2, ?"bob", "bob", now, null);
 
 // unknown caller is rejected — use a valid but unregistered principal
 switch (BookmarkService.list(svc, Principal.fromText("mk4xk-sqaaa-aaaaa-qadjq-cai"))) {

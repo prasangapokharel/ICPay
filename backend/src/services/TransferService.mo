@@ -7,7 +7,6 @@ import Nat64 "mo:core/Nat64";
 import Types "../types";
 import Config "../config/Config";
 import AccountHelper "../ledger/Account";
-import Subaccount "../ledger/Subaccount";
 import Helpers "../utils/Helpers";
 import LedgerService "LedgerService";
 import LedgerTypes "../ledger/Types";
@@ -32,8 +31,10 @@ module {
     ledger: LedgerService.LedgerService,
     nextId: () -> Text,
     limits: RateLimitStorage.RateLimitMap,
+    depositSubaccounts: UserStorage.DepositSubaccountIndex,
+    depositAccountIds: UserStorage.DepositAccountIdIndex,
   ) : TransferService {
-    { users; usernames; txs; byUser; ledger; nextId; limits };
+    { users; usernames; txs; byUser; ledger; nextId; limits; depositSubaccounts; depositAccountIds };
   };
 
   public type TransferService = {
@@ -46,6 +47,8 @@ module {
     // One budget across all four transfer* entrypoints -- they are the same
     // spend from the same account, just addressed differently.
     limits: RateLimitStorage.RateLimitMap;
+    depositSubaccounts: UserStorage.DepositSubaccountIndex;
+    depositAccountIds: UserStorage.DepositAccountIdIndex;
   };
 
   public func transferByUsername(service: TransferService, caller: Principal, ledgerId: Text, username: Types.Username, amount: Nat, memo: ?Text): async Types.ApiResult<{ blockIndex: Nat64; txId: Types.TxId }> {
@@ -167,7 +170,7 @@ module {
       case (#err(e)) { #err(e) };
       case (#ok({ userId; source; senderName })) {
         let ledgerId = Config.ICP_LEDGER_CANISTER_ID;
-        let fee = await LedgerService.getFee(ledgerId);
+        let fee = LedgerService.estimatedDisplayFee(ledgerId);
         let now = Time.now();
         let id = service.nextId();
         let fromLabel = AccountHelper.toAccountIdentifier(source);
@@ -221,10 +224,8 @@ module {
     switch (resolveSender(service, caller)) {
       case (#err(e)) { #err(e) };
       case (#ok({ userId; source; senderName })) {
-        // Recorded for display only. The ledger is not told this number -- see
-        // the null fee below -- so a stale read misreports a row rather than
-        // failing a transfer.
-        let fee = await LedgerService.getFee(ledgerId);
+        // Display only; the ledger is not told this number -- see the null fee below.
+        let fee = LedgerService.estimatedDisplayFee(ledgerId);
         let now = Time.now();
         let id = service.nextId();
         let fromLabel = AccountHelper.toAccountIdentifier(source);
@@ -306,27 +307,17 @@ module {
     };
   };
 
-  // Only custodial accounts belong to a user of this wallet: the canister owns
-  // them and the subaccount encodes whose they are. A transfer out to someone's
-  // own ledger account has no local owner and records nothing.
   func recipientOf(service: TransferService, destination: LedgerTypes.Account): ?Types.User {
     if (destination.owner != service.ledger.custodian) { return null };
     switch (destination.subaccount) {
       case (null) { null };
       case (?sub) {
-        for ((p, user) in service.users.entries()) {
-          if (Subaccount.fromPrincipal(p) == sub) { return ?user };
-        };
-        null;
+        UserRepo.getByDepositSubaccount(service.depositSubaccounts, service.users, sub)
       };
     };
   };
 
   func userByAccountIdentifier(service: TransferService, accountIdHex: Text): ?Types.User {
-    for ((p, user) in service.users.entries()) {
-      let account = LedgerService.depositAccount(service.ledger, p);
-      if (AccountHelper.toAccountIdentifier(account) == accountIdHex) { return ?user };
-    };
-    null;
+    UserRepo.getByDepositAccountId(service.depositAccountIds, service.users, accountIdHex)
   };
 };

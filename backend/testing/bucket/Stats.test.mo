@@ -38,8 +38,12 @@ func nextUid() : Text {
   now.toText() # "-" # Int.toText(uidCounter);
 };
 
+let depositSubaccounts = UserStorage.createDepositSubaccountIndex();
+let depositAccountIds = UserStorage.createDepositAccountIdIndex();
+
 let transfers = TransferService.create(
   users, usernames, txs, txsByUser, ledger, nextUid, RateLimitStorage.createRateLimitMap(),
+  depositSubaccounts, depositAccountIds,
 );
 let svc = BucketService.create(
   users, store, names, transfers, nextUid,
@@ -50,7 +54,7 @@ let svc = BucketService.create(
   BucketService.createUploadSessionStore(),
 );
 
-ignore UserRepo.create(users, usernames, usersById, "uid-owner", owner, null, "", now);
+ignore UserRepo.create(users, usernames, usersById, "uid-owner", owner, null, "", now, null);
 
 let webp = Fixtures.webp();
 let future = now + Config.BUCKET_PERIOD_NS;

@@ -12,7 +12,7 @@ let svc = SocialLinkService.create(users);
 
 let p = Principal.fromText("aaaaa-aa");
 let now = Time.now();
-let _ = UserRepo.create(users, usernames, usersById, "uid-1", p, null, "", now);
+let _ = UserRepo.create(users, usernames, usersById, "uid-1", p, null, "", now, null);
 
 // unknown user rejected
 switch (SocialLinkService.setSocialLink(svc, Principal.fromText("mk4xk-sqaaa-aaaaa-qadjq-cai"), #github, "https://github.com/test")) {

@@ -54,7 +54,7 @@ Debug.print("PASS: release clears the reservation in any case");
 // A name already owned must not be reservable, or the holder and the registry
 // would disagree about who controls it.
 let holder = Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai");
-let _u = UserRepo.create(users, usernames, usersById, "uid-1", holder, ?"taken", "Taken", Time.now());
+let _u = UserRepo.create(users, usernames, usersById, "uid-1", holder, ?"taken", "Taken", Time.now(), null);
 assert(UserRepo.usernameExists(usernames, "TAKEN"));
 Debug.print("PASS: claimed names are found case-insensitively");
 

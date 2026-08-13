@@ -16,7 +16,7 @@ func nextUid(): Text {
   uidCounter += 1;
   Time.now().toText() # "-" # Int.toText(uidCounter);
 };
-let auth = AuthService.create(users, usernames, usersById, reserved, nextUid, RateLimitStorage.createRateLimitMap());
+let auth = AuthService.create(users, usernames, usersById, reserved, nextUid, RateLimitStorage.createRateLimitMap(), null);
 
 let anon = Principal.fromText("2vxsx-fae");
 switch (AuthService.login(auth, anon)) {

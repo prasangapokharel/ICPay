@@ -60,6 +60,11 @@ module {
     await ledger(ledgerId).icrc1_fee();
   };
 
+  /** Tx-history estimate — avoids an extra ledger round-trip on the hot transfer path. */
+  public func estimatedDisplayFee(_ledgerId: Text): Nat {
+    Config.ICP_ICRC1_TRANSFER_FEE_E8S
+  };
+
   // Account identifiers are an ICP-ledger concept and no other ICRC-1 ledger
   // implements this method, so this one path stays pinned rather than taking a
   // ledgerId it could not honour.

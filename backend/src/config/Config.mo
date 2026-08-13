@@ -2,6 +2,10 @@ module {
   public let ICP_LEDGER_CANISTER_ID: Text = "ryjl3-tyaaa-aaaaa-aaaba-cai";
   public let ICP_DECIMALS: Nat = 8;
 
+  // Display + legacy account-id transfers. ICRC-1 transfers pass fee = null so
+  // the ledger sets the real charge; this is only for tx history rows.
+  public let ICP_ICRC1_TRANSFER_FEE_E8S: Nat = 10_000;
+
   // Not SNS-launched, so SNS-W does not list them. Compiled in rather than
   // discovered, so a cold or unreachable SNS-W can never make ICP unspendable.
   // Mirrors CK_LEDGER_IDS in frontend/services/tokens.ts.

@@ -44,8 +44,8 @@ module {
     };
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?user) {
-        // Display only; the ledger charges its own -- see the null fee below.
-        let fee = await LedgerService.getFee(ledgerId);
+        // Display only; withdraw passes fee = null to the ledger.
+        let fee = LedgerService.estimatedDisplayFee(ledgerId);
         let source = LedgerService.depositAccount(service.ledger, caller);
         let now = Time.now();
         let id = service.nextId();

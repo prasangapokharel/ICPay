@@ -25,6 +25,10 @@ module {
     "bin", "dat", "wasm",
   ];
 
+  public func allowedExtensions() : [Text] { ALLOWED };
+
+  public func blockedExtensions() : [Text] { BLOCKED };
+
   public func pathExtension(path: Text) : Text {
     let parts = Iter.toArray(Text.split(path, #char '.'));
     if (parts.size() <= 1) return "";

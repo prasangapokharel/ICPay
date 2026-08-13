@@ -123,7 +123,7 @@ switch rMin {
 // caller WITH a profile is required to reach the fee check: 1 e8s * 100 / 1e4
 // == 0, so swap() rejects it as too small. (\08 is not the anonymous \04 blob.)
 let pTiny = Principal.fromBlob("\08");
-let _ = UserRepo.create(users, usernames, usersById, "uid-tiny", pTiny, null, "Tiny", now);
+let _ = UserRepo.create(users, usernames, usersById, "uid-tiny", pTiny, null, "Tiny", now, null);
 let rTiny = await SwapService.swap(svc, pTiny, icp, ckbtc, 1, 1);
 switch rTiny {
   case (#err(msg)) { Debug.print("PASS: swap tiny amount rejected: " # msg) };
