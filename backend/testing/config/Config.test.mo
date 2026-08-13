@@ -40,4 +40,7 @@ assert(Config.BUCKET_MAX_FILE_BYTES > Config.BUCKET_UPLOAD_CHUNK_BYTES);
 assert(Config.RATE_BUCKET_UPLOAD.maxPerWindow >= 17);
 Debug.print("PASS: upload limits respect IC 2 MiB ingress per message");
 
+assert(Config.ICP_ICRC1_TRANSFER_FEE_E8S == 10_000);
+Debug.print("PASS: ICP display transfer fee constant");
+
 Debug.print("ALL CONFIG TESTS PASSED");

@@ -19,7 +19,7 @@ switch (SettingsService.getSettings(svc, unknownUser)) {
 
 let p = Principal.fromText("aaaaa-aa");
 let now = Time.now();
-let _ = UserRepo.create(users, UserStorage.createUsernameMap(), UserStorage.createUserIdMap(), "uid-1", p, null, "Alice", now);
+let _ = UserRepo.create(users, UserStorage.createUsernameMap(), UserStorage.createUserIdMap(), "uid-1", p, null, "Alice", now, null);
 
 switch (SettingsService.getSettings(svc, p)) {
   case (#ok(s)) {

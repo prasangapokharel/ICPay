@@ -23,7 +23,7 @@ switch (TransactionService.list(svc, unknownUser, 0, 20)) {
 let p = Principal.fromText("aaaaa-aa");
 let now = Time.now();
 let icp = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-let _ = UserRepo.create(users, usernames, usersById, "uid-1", p, null, "Alice", now);
+let _ = UserRepo.create(users, usernames, usersById, "uid-1", p, null, "Alice", now, null);
 
 let _tx1 = TxRepo.create(txs, txsByUser, "tx-1", "uid-1", #deposit, icp, 100_000_000, 0, "from", "to", null, now);
 let _tx2 = TxRepo.create(txs, txsByUser, "tx-2", "uid-1", #withdraw, icp, 50_000_000, 10_000, "from", "to", null, now);

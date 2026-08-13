@@ -1,6 +1,4 @@
 import Blob "mo:core/Blob";
-import Array "mo:core/Array";
-import Nat8 "mo:core/Nat8";
 import Text "mo:core/Text";
 import Nat "mo:core/Nat";
 import Nat16 "mo:core/Nat16";
@@ -87,7 +85,7 @@ module {
 
   public type ServeResult = {
     #Direct: { contentType: Text; data: Blob };
-    #Stream: { contentType: Text; bucketId: Text; path: Text; data: Blob };
+    #Stream: { contentType: Text; bucketId: Text; path: Text; firstChunk: Blob; totalSize: Nat };
   };
 
   public func prepareServe(
@@ -110,16 +108,29 @@ module {
       };
       case (?id) id;
     };
-    switch (BucketService.servePublicFile(service, bucketId, path)) {
+    // Never full-decrypt in http_request — query instruction limit traps on ~700KB+.
+    // Slice decrypt matches streaming and stays within the IC query budget.
+    switch (
+      BucketService.servePublicFileChunk(service, bucketId, path, 0, Config.HTTP_MAX_BODY_BYTES)
+    ) {
       case (#err("Bucket not found")) { #err(textResponse(404, "text/plain", "Bucket not found")) };
       case (#err("File not found")) { #err(textResponse(404, "text/plain", "File not found")) };
       case (#err("Bucket is private")) { #err(textResponse(403, "text/plain", "Forbidden")) };
       case (#err(_)) { #err(textResponse(500, "text/plain", "Error")) };
-      case (#ok({ contentType; data })) {
-        if (data.size() <= Config.HTTP_MAX_BODY_BYTES) {
-          #ok(#Direct({ contentType; data }))
+      case (#ok({ contentType; chunk; totalSize })) {
+        if (totalSize <= Config.HTTP_MAX_BODY_BYTES) {
+          if (chunk.size() == totalSize) {
+            #ok(#Direct({ contentType; data = chunk }))
+          } else {
+            switch (BucketService.servePublicFileChunk(service, bucketId, path, 0, totalSize)) {
+              case (#err(_)) { #err(textResponse(500, "text/plain", "Error")) };
+              case (#ok({ contentType = ct; chunk = data; totalSize = _ })) {
+                #ok(#Direct({ contentType = ct; data }))
+              };
+            }
+          }
         } else {
-          #ok(#Stream({ contentType; bucketId; path; data }))
+          #ok(#Stream({ contentType; bucketId; path; firstChunk = chunk; totalSize }))
         }
       };
     }
@@ -138,21 +149,16 @@ module {
     contentType: Text,
     bucketId: Text,
     path: Text,
-    data: Blob,
+    firstChunk: Blob,
+    totalSize: Nat,
     callback: shared query HttpTypes.StreamToken -> async HttpTypes.StreamingCallbackHttpResponse,
   ) : HttpTypes.HttpResponse {
-    let firstEnd = if (Config.HTTP_CHUNK_BYTES > data.size()) {
-      data.size()
-    } else {
-      Config.HTTP_CHUNK_BYTES
-    };
-    let first = blobSlice(data, 0, firstEnd);
-    let nextOffset = firstEnd;
+    let nextOffset = firstChunk.size();
     {
       status_code = 200;
       headers = corsHeaders(contentType);
-      body = first;
-      streaming_strategy = if (nextOffset >= data.size()) {
+      body = firstChunk;
+      streaming_strategy = if (nextOffset >= totalSize) {
         null
       } else {
         ?#Callback({
@@ -195,9 +201,4 @@ module {
     }
   };
 
-  private func blobSlice(data: Blob, start: Nat, end: Nat) : Blob {
-    let bytes = Blob.toArray(data);
-    let len = Nat.sub(end, start);
-    Blob.fromArray(Array.tabulate<Nat8>(len, func(i) { bytes[start + i] }))
-  };
 };

@@ -6,6 +6,7 @@ import LedgerStorage "storage/LedgerStorage";
 import TokenStorage "storage/TokenStorage";
 import SwapStorage "storage/SwapStorage";
 import BucketStorage "storage/BucketStorage";
+import UserRepo "repositories/UserRepository";
 import TxRepo "repositories/TransactionRepository";
 import LedgerService "services/LedgerService";
 import AuthService "services/AuthService";
@@ -136,13 +137,25 @@ persistent actor self {
   // the stamped rows are new objects, so the index is refreshed after the stamp.
   TxRepo.reindex(transactions, transactionsByUser);
 
-  transient let authService = AuthService.create(users, usernames, usersById, reservedUsernames, nextUid, claimLimits);
+  // Derived from `users` — rebuilt at startup so upgrades that predate the index
+  // still resolve transfer recipients in O(1). Not stable: same pattern as
+  // reindexing transactionsByUser after migration.
+  transient let depositSubaccounts = UserStorage.createDepositSubaccountIndex();
+  transient let depositAccountIds = UserStorage.createDepositAccountIdIndex();
+  transient let depositIndexCtx : UserRepo.DepositIndexCtx = {
+    subaccounts = depositSubaccounts;
+    accountIds = depositAccountIds;
+    custodian = Principal.fromActor(self);
+  };
+  UserRepo.reindexDepositAccounts(users, depositIndexCtx);
+
+  transient let authService = AuthService.create(users, usernames, usersById, reservedUsernames, nextUid, claimLimits, ?depositIndexCtx);
   transient let userService = UserService.create(users, usernames, usersById, reservedUsernames, claimLimits);
   transient let adminService = AdminService.create(reservedUsernames, users, usernames);
   transient let dashboardService = DashboardService.create(users, transactions, transactionsByUser, ledger);
   transient let depositService = DepositService.create(users, transactions, transactionsByUser, ledger, nextUid, syncDepositLimits);
   transient let withdrawService = WithdrawService.create(users, transactions, transactionsByUser, ledger, nextUid, withdrawLimits);
-  transient let transferService = TransferService.create(users, usernames, transactions, transactionsByUser, ledger, nextUid, transferLimits);
+  transient let transferService = TransferService.create(users, usernames, transactions, transactionsByUser, ledger, nextUid, transferLimits, depositSubaccounts, depositAccountIds);
   transient let usernameSaleService = UsernameSaleService.create(users, usernames, reservedUsernames, transferService, purchaseUsernameLimits);
   transient let transactionService = TransactionService.create(users, transactions, transactionsByUser);
   transient let settingsService = SettingsService.create(users, settings, settingsLimits);

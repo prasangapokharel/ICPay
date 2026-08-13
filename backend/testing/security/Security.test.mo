@@ -44,8 +44,8 @@ let txsByUser = TxStorage.createTxByUser();
 let settingsMap = SettingsStorage.createSettingsMap();
 let icp = "ryjl3-tyaaa-aaaaa-aaaba-cai";
 
-let u1 = UserRepo.create(users, usernames, usersById, "uid-1", user1Principal, ?"alice", "Alice", now);
-let _u2 = UserRepo.create(users, usernames, usersById, "uid-2", user2Principal, ?"bob", "Bob", now);
+let u1 = UserRepo.create(users, usernames, usersById, "uid-1", user1Principal, ?"alice", "Alice", now, null);
+let _u2 = UserRepo.create(users, usernames, usersById, "uid-2", user2Principal, ?"bob", "Bob", now, null);
 
 let userSvc = UserService.create(users, usernames, usersById, reserved, RateLimitStorage.createRateLimitMap());
 switch (UserService.getProfile(userSvc, anon)) {
@@ -122,7 +122,7 @@ assert(searchResult.size() == 1);
 assert(searchResult[0].username == ?"alice");
 Debug.print("PASS [SEC]: search returns only matching users");
 
-let authService = AuthService.create(users, usernames, usersById, reserved, nextUid, RateLimitStorage.createRateLimitMap());
+let authService = AuthService.create(users, usernames, usersById, reserved, nextUid, RateLimitStorage.createRateLimitMap(), null);
 switch (AuthService.login(authService, anon)) {
   case (#ok(_)) { assert(false); Debug.print("FAIL [SEC]: anonymous login accepted") };
   case (#err(msg)) { Debug.print("PASS [SEC]: anonymous login rejected: " # msg) };

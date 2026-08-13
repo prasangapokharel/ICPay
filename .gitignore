@@ -25,6 +25,18 @@ docs/*
 !docs/security/
 !docs/phase/
 !docs/icpay/
+# docs/bucket/ stays local (PDF exports, not committed)
+
+# Per-machine agent prefs (skills under .claude/skills/ are tracked)
+.claude/user-prefs.md
+
+# Local backend draft notes and agent doc mirrors (not product source)
+backend/docs/api/add/bucket/
+backend/docs/api/add/swap/
+backend/docs/docs/
+backend/.agents/skills/MotokoDocs/
+backend/.agents/skills/motok/Dfinity-docs.md
+backend/.agents/SKILLS.md
 
 # Environment files and credentials
 **/.env*

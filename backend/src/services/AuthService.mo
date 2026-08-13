@@ -12,8 +12,8 @@ import RateLimitStorage "../storage/RateLimitStorage";
 import Config "../config/Config";
 
 module {
-  public func create(users: UserStorage.UserMap, usernames: UserStorage.UsernameMap, usersById: UserStorage.UserIdMap, reserved: ReservedStorage.ReservedUsernameSet, nextId: () -> Text, claimLimits: RateLimitStorage.RateLimitMap): AuthService {
-    { users; usernames; usersById; reserved; nextId; claimLimits };
+  public func create(users: UserStorage.UserMap, usernames: UserStorage.UsernameMap, usersById: UserStorage.UserIdMap, reserved: ReservedStorage.ReservedUsernameSet, nextId: () -> Text, claimLimits: RateLimitStorage.RateLimitMap, depositIndex: ?UserRepo.DepositIndexCtx): AuthService {
+    { users; usernames; usersById; reserved; nextId; claimLimits; depositIndex };
   };
 
   public type AuthService = {
@@ -25,6 +25,7 @@ module {
     // Shared with UserService.updateUsername: both are the free-claim path for
     // the same account, so one budget covers either route to it.
     claimLimits: RateLimitStorage.RateLimitMap;
+    depositIndex: ?UserRepo.DepositIndexCtx;
   };
 
   public func login(service: AuthService, caller: Principal): Types.AuthResult {
@@ -39,7 +40,7 @@ module {
       case (null) {
         let id = service.nextId();
         let now = Time.now();
-        let user = UserRepo.create(service.users, service.usernames, service.usersById, id, caller, null, "", now);
+        let user = UserRepo.create(service.users, service.usernames, service.usersById, id, caller, null, "", now, service.depositIndex);
         #ok({ user = Types.userToPublic(user); isNew = true });
       };
     };
@@ -75,7 +76,7 @@ module {
       case (null) {
         let id = service.nextId();
         let now = Time.now();
-        let user = UserRepo.create(service.users, service.usernames, service.usersById, id, caller, ?username, username, now);
+        let user = UserRepo.create(service.users, service.usernames, service.usersById, id, caller, ?username, username, now, service.depositIndex);
         #ok({ user = Types.userToPublic(user); isNew = true });
       };
     };

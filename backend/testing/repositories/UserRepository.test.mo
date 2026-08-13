@@ -1,8 +1,10 @@
 import Debug "mo:core/Debug";
 import Principal "mo:core/Principal";
+import Blob "mo:core/Blob";
 import Time "mo:core/Time";
 import UserStorage "../../src/storage/UserStorage";
 import UserRepo "../../src/repositories/UserRepository";
+import AccountHelper "../../src/ledger/Account";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
@@ -12,12 +14,12 @@ let p1 = Principal.fromText("aaaaa-aa");
 let p2 = Principal.fromText("rrkah-fqaaa-aaaaa-aaaaq-cai");
 let now = Time.now();
 
-let user1 = UserRepo.create(users, usernames, usersById, "user-id-1", p1, null, "Alice", now);
+let user1 = UserRepo.create(users, usernames, usersById, "user-id-1", p1, null, "Alice", now, null);
 assert(user1.id == "user-id-1");
 assert(user1.principal == p1);
 Debug.print("PASS: create user without username");
 
-let user2 = UserRepo.create(users, usernames, usersById, "user-id-2", p2, ?"bob", "Bob", now);
+let user2 = UserRepo.create(users, usernames, usersById, "user-id-2", p2, ?"bob", "Bob", now, null);
 assert(user2.id == "user-id-2");
 assert(user2.principal == p2);
 assert(user2.username == ?"bob");
@@ -108,5 +110,30 @@ switch (UserRepo.getByUsername(usernames, users, "alice_bought")) {
   case (null) { assert(false) };
 };
 Debug.print("PASS: every alias still resolves to its owner");
+
+let depositSubaccounts = UserStorage.createDepositSubaccountIndex();
+let depositAccountIds = UserStorage.createDepositAccountIdIndex();
+let custodian = Principal.fromText("aaaaa-aa");
+let depositIndex : UserRepo.DepositIndexCtx = {
+  subaccounts = depositSubaccounts;
+  accountIds = depositAccountIds;
+  custodian;
+};
+UserRepo.reindexDepositAccounts(users, depositIndex);
+
+let p1Account = AccountHelper.custodialAccount(custodian, p1);
+let p1Sub = switch (p1Account.subaccount) {
+  case (?s) { s };
+  case (null) { assert(false); Blob.fromArray([]) };
+};
+switch (UserRepo.getByDepositSubaccount(depositSubaccounts, users, p1Sub)) {
+  case (?u) { assert(u.id == "user-id-1") };
+  case (null) { assert(false) };
+};
+switch (UserRepo.getByDepositAccountId(depositAccountIds, users, AccountHelper.toAccountIdentifier(p1Account))) {
+  case (?u) { assert(u.id == "user-id-1") };
+  case (null) { assert(false) };
+};
+Debug.print("PASS: reindexDepositAccounts populates lookup indexes");
 
 Debug.print("ALL USER REPOSITORY TESTS PASSED");
