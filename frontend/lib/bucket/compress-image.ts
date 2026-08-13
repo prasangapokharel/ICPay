@@ -21,6 +21,8 @@ const SKIP_CONVERSION = new Set(["gif", "svg", "ico"])
 
 const QUALITIES = [0.82, 0.72, 0.62, 0.52, 0.42, 0.32, 0.22] as const
 
+type BitmapSource = ImageBitmap | HTMLImageElement
+
 export type RasterCompression = {
   file: File
   originalBytes: number
@@ -42,28 +44,26 @@ function canvasToWebpBlob(canvas: HTMLCanvasElement, quality: number): Promise<B
   })
 }
 
-function drawScaled(bitmap: ImageBitmap, maxEdge: number): HTMLCanvasElement {
-  const longEdge = Math.max(bitmap.width, bitmap.height, 1)
+function drawScaled(source: BitmapSource, maxEdge: number): HTMLCanvasElement {
+  const longEdge = Math.max(source.width, source.height, 1)
   const scale = Math.min(1, maxEdge / longEdge)
-  const w = Math.max(1, Math.round(bitmap.width * scale))
-  const h = Math.max(1, Math.round(bitmap.height * scale))
   const canvas = document.createElement("canvas")
-  canvas.width = w
-  canvas.height = h
+  canvas.width = Math.max(1, Math.round(source.width * scale))
+  canvas.height = Math.max(1, Math.round(source.height * scale))
   const ctx = canvas.getContext("2d")
   if (!ctx) throw new Error("Canvas unsupported")
-  ctx.drawImage(bitmap, 0, 0, w, h)
+  ctx.drawImage(source, 0, 0, canvas.width, canvas.height)
   return canvas
 }
 
 async function encodeWebpUnderLimit(
-  bitmap: ImageBitmap,
+  source: BitmapSource,
   maxBytes: number,
 ): Promise<Blob | null> {
-  let maxEdge = Math.min(Math.max(bitmap.width, bitmap.height), 2560)
+  let maxEdge = Math.min(Math.max(source.width, source.height), 2560)
 
   while (maxEdge >= 320) {
-    const canvas = drawScaled(bitmap, maxEdge)
+    const canvas = drawScaled(source, maxEdge)
     for (const q of QUALITIES) {
       const blob = await canvasToWebpBlob(canvas, q)
       if (blob && blob.size <= maxBytes) return blob
@@ -88,28 +88,24 @@ export function formatCompressionSummary(
   return `${fmt(originalBytes)} → ${fmt(compressedBytes)} WebP (−${ratio}%)`
 }
 
-async function decodeToBitmap(file: File): Promise<ImageBitmap | null> {
+async function decodeToRasterSource(file: File): Promise<BitmapSource | null> {
   try {
-    return await createImageBitmap(file)
+    if (typeof createImageBitmap === "function") {
+      return await createImageBitmap(file)
+    }
   } catch {
-    return decodeViaImageElement(file)
+    // Safari / unsupported format — fall through to <img>
   }
+  return decodeViaImageElement(file)
 }
 
-function decodeViaImageElement(file: File): Promise<ImageBitmap | null> {
+function decodeViaImageElement(file: File): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const url = URL.createObjectURL(file)
     const img = new Image()
     img.onload = () => {
-      void (async () => {
-        try {
-          resolve(await createImageBitmap(img))
-        } catch {
-          resolve(null)
-        } finally {
-          URL.revokeObjectURL(url)
-        }
-      })()
+      URL.revokeObjectURL(url)
+      resolve(img)
     }
     img.onerror = () => {
       URL.revokeObjectURL(url)
@@ -119,13 +115,17 @@ function decodeViaImageElement(file: File): Promise<ImageBitmap | null> {
   })
 }
 
+function closeRasterSource(source: BitmapSource | null): void {
+  if (source && "close" in source && typeof source.close === "function") {
+    source.close()
+  }
+}
+
 /**
  * Raster uploads → WebP on the client before the canister sees them.
  * PNG/JPEG/HEIC from iPhone often land as multi-MB; CDN wants display-sized assets.
  */
 export async function compressRasterToWebp(file: File): Promise<RasterCompression | null> {
-  if (typeof createImageBitmap === "undefined") return null
-
   const ext = pathExtension(file.name)
   if (SKIP_CONVERSION.has(ext)) return null
   const isRaster =
@@ -135,12 +135,12 @@ export async function compressRasterToWebp(file: File): Promise<RasterCompressio
     (file.type.startsWith("image/") && ext !== "gif" && ext !== "svg" && ext !== "ico")
   if (!isRaster) return null
 
-  let bitmap: ImageBitmap | null = null
+  let source: BitmapSource | null = null
   try {
-    bitmap = await decodeToBitmap(file)
-    if (!bitmap) return null
+    source = await decodeToRasterSource(file)
+    if (!source) return null
     const budget = targetBytesFor(file.size)
-    const blob = await encodeWebpUnderLimit(bitmap, budget)
+    const blob = await encodeWebpUnderLimit(source, budget)
     if (!blob) return null
 
     const stem = file.name.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9._-]/g, "_")
@@ -157,6 +157,6 @@ export async function compressRasterToWebp(file: File): Promise<RasterCompressio
   } catch {
     return null
   } finally {
-    bitmap?.close()
+    closeRasterSource(source)
   }
 }
