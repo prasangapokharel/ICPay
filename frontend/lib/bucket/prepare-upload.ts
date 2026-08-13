@@ -2,12 +2,15 @@ import {
   guessFileMime,
   normalizeUploadFile,
 } from "@/lib/bucket/allowed-files"
-import { compressRasterToWebp } from "@/lib/bucket/compress-image"
+import {
+  compressRasterToWebp,
+} from "@/lib/bucket/compress-image"
 import { buildUploadPath } from "@/lib/bucket/upload-path"
 import { shouldConvertRasterToWebp } from "@/lib/bucket/raster-formats"
 import { uploadValidationError } from "@/lib/bucket/upload-validate"
 
 export { uploadValidationError } from "@/lib/bucket/upload-validate"
+export { formatCompressionSummary } from "@/lib/bucket/compress-image"
 
 export type PreparedUpload = {
   file: File
@@ -21,8 +24,8 @@ export type PreparedUpload = {
 }
 
 /**
- * Normalize → compress rasters to WebP → return file, path, and MIME for storeFile.
- * Non-raster allowed types (PDF, ZIP, GIF, SVG, …) pass through unchanged.
+ * Validate → normalize → convert rasters to WebP → verify size → return upload payload.
+ * Non-image types (PDF, ZIP, GIF, …) pass through unchanged.
  */
 export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
   const err = uploadValidationError(file)
@@ -32,19 +35,16 @@ export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
 
   if (shouldConvertRasterToWebp(normalized)) {
     const compressed = await compressRasterToWebp(normalized)
-    if (compressed) {
-      return {
-        file: compressed.file,
-        path: buildUploadPath(normalized, true),
-        contentType: "image/webp",
-        compression: {
-          originalBytes: compressed.originalBytes,
-          compressedBytes: compressed.compressedBytes,
-          originalExt: compressed.originalExt,
-        },
-      }
+    return {
+      file: compressed.file,
+      path: buildUploadPath(normalized, true),
+      contentType: "image/webp",
+      compression: {
+        originalBytes: compressed.originalBytes,
+        compressedBytes: compressed.compressedBytes,
+        originalExt: compressed.originalExt,
+      },
     }
-    // WebP encode unavailable or rejected (e.g. Safari PNG fallback) — upload original bytes/path.
   }
 
   return {
