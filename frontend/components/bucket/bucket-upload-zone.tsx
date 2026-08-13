@@ -13,6 +13,7 @@ import {
   MAX_FILE_BYTES,
 } from "@/lib/bucket/bucket"
 import { prepareUploadFile, uploadValidationError } from "@/lib/bucket/prepare-upload"
+import { formatCompressionSummary } from "@/lib/bucket/compress-image"
 import { cn } from "@/lib/utils"
 
 type UploadPhase = "idle" | "busy"
@@ -62,7 +63,14 @@ export function BucketUploadZone({
       onFileProgress(5)
 
       const prepared = await prepareUploadFile(raw)
-      setStatusLabel(prepared.file.name)
+      setStatusLabel(
+        prepared.compression
+          ? formatCompressionSummary(
+              prepared.compression.originalBytes,
+              prepared.compression.compressedBytes
+            )
+          : prepared.file.name
+      )
       onFileProgress(10)
 
       const err = await onUpload(

@@ -51,6 +51,7 @@ export function mapBucketError(
     return t("errIngressTooLarge")
   }
   if (err.includes("Could not process this photo")) return t("errPhotoProcess")
+  if (err.includes("File too large after compression")) return t("invalidFile")
   if (
     err.includes("Only images allowed") ||
     err.includes("Invalid file format") ||

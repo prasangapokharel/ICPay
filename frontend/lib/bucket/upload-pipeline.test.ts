@@ -38,6 +38,13 @@ describe("shouldConvertRasterToWebp", () => {
     })
   }
 
+  it("converts SVG to WebP pipeline", () => {
+    assert.equal(
+      shouldConvertRasterToWebp(mockFile("icon.svg", "image/svg+xml")),
+      true
+    )
+  })
+
   it("converts HEIC by MIME when extension is wrong", () => {
     assert.equal(
       shouldConvertRasterToWebp(mockFile("IMG_7301.jpg", "image/heic")),
@@ -52,10 +59,10 @@ describe("shouldConvertRasterToWebp", () => {
     )
   })
 
-  it("skips SVG by MIME when extension is missing", () => {
+  it("converts SVG by MIME when extension is missing", () => {
     assert.equal(
       shouldConvertRasterToWebp(mockFile("icon", "image/svg+xml")),
-      false
+      true
     )
   })
 

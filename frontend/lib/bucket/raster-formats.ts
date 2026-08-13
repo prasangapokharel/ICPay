@@ -1,6 +1,6 @@
 import { pathExtension } from "./allowed-files"
 
-/** Raster formats converted to WebP before upload. */
+/** Raster formats converted to WebP before upload. GIF/ICO stay as-is. */
 export const RASTER_TO_WEBP = new Set([
   "jpg",
   "jpeg",
@@ -12,14 +12,14 @@ export const RASTER_TO_WEBP = new Set([
   "tiff",
   "heic",
   "heif",
+  "svg",
 ])
 
-/** Never rasterize — animated GIF, vector SVG, multi-size ICO. */
-export const RASTER_SKIP = new Set(["gif", "svg", "ico"])
+/** Never rasterize — animated GIF, multi-size ICO. */
+export const RASTER_SKIP = new Set(["gif", "ico"])
 
 const RASTER_SKIP_MIMES = new Set([
   "image/gif",
-  "image/svg+xml",
   "image/x-icon",
   "image/vnd.microsoft.icon",
 ])
@@ -33,6 +33,7 @@ const RASTER_MIME_TO_EXT: Record<string, string> = {
   "image/tiff": "tiff",
   "image/heic": "heic",
   "image/heif": "heif",
+  "image/svg+xml": "svg",
 }
 
 /** True when the file should be compressed to WebP on the client. */
