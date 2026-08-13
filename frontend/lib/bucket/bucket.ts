@@ -11,6 +11,7 @@ export {
   buildFileAcceptList,
   guessFileMime,
   fileTypeChip,
+  normalizeUploadFile,
 } from "@/lib/bucket/allowed-files"
 
 import {
@@ -28,6 +29,7 @@ export const guessImageMime = guessFileMime
 
 type BucketErrorKey =
   | "errInvalidFormat"
+  | "errPhotoProcess"
   | "errIngressTooLarge"
   | "invalidFile"
   | "errStorageLimit"
@@ -50,6 +52,7 @@ export function mapBucketError(
   ) {
     return t("errIngressTooLarge")
   }
+  if (err.includes("Could not process this photo")) return t("errPhotoProcess")
   if (
     err.includes("Only images allowed") ||
     err.includes("Invalid file format") ||

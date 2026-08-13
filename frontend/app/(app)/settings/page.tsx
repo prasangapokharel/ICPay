@@ -17,7 +17,7 @@ import {
   RocketIcon,
   Search01Icon,
   Settings01Icon,
-  ImageAdd02Icon,
+  BucketIcon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { ServiceTile } from "@/components/settings/service-tile"
@@ -112,7 +112,7 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
       {
         href: "/bucket",
         key: "bucket",
-        icon: ImageAdd02Icon,
+        icon: BucketIcon,
         keywords: "storage cloud images bucket cdn upload",
         hot: true,
       },

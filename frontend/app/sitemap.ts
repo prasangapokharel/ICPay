@@ -28,5 +28,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/what-is-internet-identity`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/how-to-send-icp`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/icp-price`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/icp-cloud-storage`, changeFrequency: "monthly", priority: 0.7 },
   ]
 }
