@@ -2,7 +2,10 @@ export const CAPACITY_TIERS_GB = [1, 5, 10, 25, 50, 100, 250, 500] as const
 
 export const FILES_PAGE_SIZE = 20
 
-export const MAX_FILE_BYTES = 10_000_000
+export {
+  BUCKET_MAX_FILE_BYTES,
+  BUCKET_MAX_FILE_BYTES as MAX_FILE_BYTES,
+} from "@/lib/bucket/upload-chunk"
 
 export {
   buildFileAcceptList,
@@ -16,6 +19,7 @@ import {
   isAllowedUpload as isAllowedByExtension,
   fileTypeChip,
 } from "@/lib/bucket/allowed-files"
+import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/upload-chunk"
 
 export const FILE_ACCEPT = buildFileAcceptList()
 
@@ -24,6 +28,7 @@ export const guessImageMime = guessFileMime
 
 type BucketErrorKey =
   | "errInvalidFormat"
+  | "errIngressTooLarge"
   | "invalidFile"
   | "errStorageLimit"
   | "errBucketExpired"
@@ -35,6 +40,16 @@ export function mapBucketError(
   err: string,
   t: (key: BucketErrorKey) => string
 ): string {
+  if (
+    err.includes("too large") ||
+    err.includes("2097152") ||
+    err.includes("max allowed") ||
+    err.includes("chunked upload") ||
+    err.includes("Upload session") ||
+    err.includes("Upload incomplete")
+  ) {
+    return t("errIngressTooLarge")
+  }
   if (
     err.includes("Only images allowed") ||
     err.includes("Invalid file format") ||
@@ -118,7 +133,7 @@ export function isImageUploadFile(file: File): boolean {
 export const isRasterImageFile = isImageUploadFile
 
 export function isAllowedUpload(file: File): boolean {
-  return isAllowedByExtension(file, MAX_FILE_BYTES)
+  return isAllowedByExtension(file, BUCKET_MAX_FILE_BYTES)
 }
 
 /** @deprecated use isAllowedUpload */

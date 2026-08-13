@@ -92,8 +92,23 @@ module {
   // Mixed into the per-bucket encryption key. Compiled in — not user-supplied.
   public let BUCKET_CRYPTO_SALT: Text = "icpay_cloud_v1";
 
-  // Single-upload limit — ICP update call payload bound.
+  // --- ICPay Cloud upload limits -------------------------------------------
+  // Product cap (billing policy). IC protocol allows far more via chunking
+  // (stable memory up to 500 GiB per canister — store bytes as Blob, not [Nat8]).
   public let BUCKET_MAX_FILE_BYTES: Nat = 10_000_000;
+
+  // IC ingress: 2 MiB (2_097_152 B) per update message — fixed by the protocol.
+  // https://docs.internetcomputer.org/references/resource-limits/
+  public let IC_INGRESS_MAX_BYTES: Nat = 2_097_152;
+
+  // Chunk payload — stay well under IC_INGRESS_MAX_BYTES (Candid framing overhead).
+  public let BUCKET_UPLOAD_CHUNK_BYTES: Nat = 700_000;
+
+  // Direct uploadFile() ceiling for API callers — same margin as chunk size.
+  public let BUCKET_UPLOAD_SINGLE_MAX: Nat = 700_000;
+
+  // Abandon stale chunked sessions after 30 minutes.
+  public let BUCKET_UPLOAD_SESSION_TTL_NS: Int = 1_800_000_000_000;
 
   // Max revocable API keys per bucket.
   public let BUCKET_MAX_API_KEYS: Nat = 10;
@@ -151,7 +166,7 @@ module {
 
   // ICPay Cloud — separate maps in main.mo so create/upload/renew do not share a counter.
   public let RATE_BUCKET_CREATE = { maxPerWindow = 3; windowSeconds = 60 };
-  public let RATE_BUCKET_UPLOAD = { maxPerWindow = 20; windowSeconds = 60 };
+  public let RATE_BUCKET_UPLOAD = { maxPerWindow = 40; windowSeconds = 60 };
   public let RATE_BUCKET_RENEW = { maxPerWindow = 5; windowSeconds = 60 };
   public let RATE_BUCKET_API_KEY = { maxPerWindow = 10; windowSeconds = 60 };
 };

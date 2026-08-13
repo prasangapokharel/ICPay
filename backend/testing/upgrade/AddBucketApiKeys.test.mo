@@ -21,7 +21,7 @@ let bucket : Types.Bucket = {
   createdAt = 1;
 };
 
-var oldStore : AddBucketApiKeys.OldBucketStore = {
+let oldStore : AddBucketApiKeys.OldBucketStore = {
   buckets = Map.empty<Types.BucketId, Types.Bucket>();
   files = Map.empty<Types.FileId, Types.StoredFile>();
   fileData = Map.empty<Types.FileId, Blob>();

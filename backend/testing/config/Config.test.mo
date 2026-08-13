@@ -30,4 +30,14 @@ Debug.print("PASS: free claims start at 5 chars, leaving 1-4 purchasable");
 assert(Config.PAGE_SIZE == 20);
 Debug.print("PASS: PAGE_SIZE is 20");
 
+// Upload limits — protocol vs product (IC resource limits doc).
+assert(Config.IC_INGRESS_MAX_BYTES == 2_097_152);
+assert(Config.BUCKET_UPLOAD_CHUNK_BYTES < Config.IC_INGRESS_MAX_BYTES);
+assert(Config.BUCKET_UPLOAD_SINGLE_MAX <= Config.BUCKET_UPLOAD_CHUNK_BYTES);
+assert(Config.BUCKET_UPLOAD_SINGLE_MAX < Config.IC_INGRESS_MAX_BYTES);
+assert(Config.BUCKET_MAX_FILE_BYTES > Config.BUCKET_UPLOAD_CHUNK_BYTES);
+// 10 MB max ≈ 15 chunks at 700 KB + begin/complete — fits upload rate window.
+assert(Config.RATE_BUCKET_UPLOAD.maxPerWindow >= 17);
+Debug.print("PASS: upload limits respect IC 2 MiB ingress per message");
+
 Debug.print("ALL CONFIG TESTS PASSED");

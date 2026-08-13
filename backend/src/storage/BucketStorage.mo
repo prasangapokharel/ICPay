@@ -6,6 +6,8 @@ import Blob "mo:core/Blob";
 import Text "mo:core/Text";
 import Types "../types";
 
+/// Bucket stable store — file bytes kept as `Blob` (not `[Nat8]`) in `fileData`.
+/// The actor is `persistent`; maps survive upgrades via orthogonal persistence.
 module {
   type Bucket = Types.Bucket;
   type BucketId = Types.BucketId;

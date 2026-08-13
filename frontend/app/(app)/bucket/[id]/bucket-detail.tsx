@@ -8,6 +8,7 @@ import {
   ArrowDown01Icon,
   BookOpen01Icon,
   Copy01Icon,
+  Key01Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons"
 import Link from "next/link"
@@ -25,6 +26,7 @@ import { BucketUsageBar } from "@/components/bucket/bucket-card"
 import { BucketFilesPanel } from "@/components/bucket/bucket-files-panel"
 import { BucketUploadZone } from "@/components/bucket/bucket-upload-zone"
 import { BucketRenewDrawer } from "@/components/bucket/bucket-renew-drawer"
+import { BucketApiKeysModal } from "@/components/bucket/bucket-api-keys-modal"
 import { BucketIconAction } from "@/components/bucket/bucket-icon-action"
 import {
   useBucketStats,
@@ -63,6 +65,7 @@ export function BucketDetail() {
 
   const { stats, isLoading: statsLoading, refresh: refreshStats } = useBucketStats(bucketId || null)
   const [renewOpen, setRenewOpen] = useState(false)
+  const [apiKeysOpen, setApiKeysOpen] = useState(false)
   const [cdnOpen, setCdnOpen] = useState(false)
   const [urlMode, setUrlMode] = useState<BucketUrlMode>("raw")
   const [baseCopied, setBaseCopied] = useState(false)
@@ -189,6 +192,15 @@ export function BucketDetail() {
             <Button
               variant="outline"
               size="sm"
+              className="h-7 gap-1 px-2.5 text-xs"
+              onClick={() => setApiKeysOpen(true)}
+            >
+              <HugeiconsIcon icon={Key01Icon} className="size-3.5" strokeWidth={1.75} />
+              {t("apiKeysShort")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               className="h-7 px-2.5 text-xs"
               onClick={() => setRenewOpen(true)}
             >
@@ -276,6 +288,12 @@ export function BucketDetail() {
         open={renewOpen}
         onOpenChange={setRenewOpen}
         onRenew={handleRenew}
+      />
+
+      <BucketApiKeysModal
+        bucketId={bucketId}
+        open={apiKeysOpen}
+        onOpenChange={setApiKeysOpen}
       />
     </div>
   )

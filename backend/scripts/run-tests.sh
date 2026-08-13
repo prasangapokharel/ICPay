@@ -46,6 +46,7 @@ echo "--- Utils Tests ---"
 run_test "$ROOT/testing/utils/UUID.test.mo" "UUID"
 run_test "$ROOT/testing/utils/DateTime.test.mo" "DateTime"
 run_test "$ROOT/testing/utils/Memo.test.mo" "Memo"
+run_test "$ROOT/testing/utils/BlobUtil.test.mo" "BlobUtil"
 
 echo "--- Validator Tests ---"
 run_test "$ROOT/testing/validators/PrincipalValidator.test.mo" "PrincipalValidator"

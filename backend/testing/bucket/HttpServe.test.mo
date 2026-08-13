@@ -52,6 +52,7 @@ let svc = BucketService.create(
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
+  BucketService.createUploadSessionStore(),
 );
 
 ignore UserRepo.create(users, usernames, usersById, "uid-owner", owner, null, "", now);

@@ -59,6 +59,48 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
     )
   };
 
+  public shared ({ caller }) func beginFileUpload(
+    bucketId: Types.BucketId,
+    path: Text,
+    contentType: Text,
+    totalSize: Nat,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Text> {
+    await BucketService.beginFileUpload(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      contentType,
+      totalSize,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func uploadFileChunk(
+    uploadId: Text,
+    data: Blob,
+  ) : async Types.ApiResult<Nat> {
+    await BucketService.uploadFileChunk(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      uploadId,
+      data,
+    )
+  };
+
+  public shared ({ caller }) func completeFileUpload(
+    uploadId: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FileId> {
+    await BucketService.completeFileUpload(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      uploadId,
+      apiKey,
+    )
+  };
+
   public shared query ({ caller }) func downloadFile(
     bucketId: Types.BucketId,
     path: Text,

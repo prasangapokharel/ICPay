@@ -21,9 +21,19 @@ import Sha256 "../utils/Sha256";
 import Memo "../utils/Memo";
 import BucketCrypto "../utils/BucketCrypto";
 import BucketUrls "../utils/BucketUrls";
+import BlobUtil "../utils/BlobUtil";
 import ApiKeyService "ApiKeyService";
+import Map "mo:core/Map";
 
 module {
+  public type UploadSessionStore = {
+    var map: Map.Map<Text, Types.FileUploadSession>;
+  };
+
+  public func createUploadSessionStore() : UploadSessionStore {
+    { var map = Map.empty<Text, Types.FileUploadSession>() };
+  };
+
   public func create(
     users: UserStorage.UserMap,
     store: BucketStorage.BucketStore,
@@ -34,6 +44,7 @@ module {
     uploadLimits: RateLimitStorage.RateLimitMap,
     renewLimits: RateLimitStorage.RateLimitMap,
     apiKeyLimits: RateLimitStorage.RateLimitMap,
+    uploadSessions: UploadSessionStore,
   ) : BucketService {
     {
       users;
@@ -45,6 +56,7 @@ module {
       uploadLimits;
       renewLimits;
       apiKeyLimits;
+      uploadSessions;
     }
   };
 
@@ -58,6 +70,7 @@ module {
     uploadLimits: RateLimitStorage.RateLimitMap;
     renewLimits: RateLimitStorage.RateLimitMap;
     apiKeyLimits: RateLimitStorage.RateLimitMap;
+    uploadSessions: UploadSessionStore;
   };
 
   public func getCycleStatus(service: BucketService) : BillingService.CycleStatus {
@@ -277,6 +290,30 @@ module {
     contentType: Text,
     apiKey: ?Text,
   ) : async Types.ApiResult<Types.FileId> {
+    if (data.size() > Config.BUCKET_UPLOAD_SINGLE_MAX) {
+      return #err("File too large for single upload — use chunked upload");
+    };
+    let auth = switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(a)) a;
+    };
+    if (not RateLimitService.allow(service.uploadLimits, auth.ratePrincipal, Config.RATE_BUCKET_UPLOAD, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_BUCKET_UPLOAD));
+    };
+    await uploadFileValidated(service, caller, bucketId, path, data, contentType, apiKey)
+  };
+
+  public func beginFileUpload(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    contentType: Text,
+    totalSize: Nat,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Text> {
+    purgeStaleUploadSessions(service);
+
     let auth = switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
       case (#err(e)) { return #err(e) };
       case (#ok(a)) a;
@@ -284,6 +321,135 @@ module {
 
     if (not RateLimitService.allow(service.uploadLimits, auth.ratePrincipal, Config.RATE_BUCKET_UPLOAD, Time.now())) {
       return #err(RateLimitService.message(Config.RATE_BUCKET_UPLOAD));
+    };
+
+    switch (validatePath(path)) {
+      case (?err) { return #err(err) };
+      case (null) {};
+    };
+
+    if (not FileValidator.validatePathExtension(path)) {
+      return #err("Invalid file format — file type not allowed or video blocked");
+    };
+    if (not FileValidator.validateFileSize(totalSize)) {
+      return #err("File too large — max 10 MB");
+    };
+
+    let bucket = switch (BucketRepo.get(service.store, bucketId)) {
+      case (null) { return #err("Bucket not found") };
+      case (?b) b;
+    };
+    if (bucket.owner != auth.owner) {
+      return #err("Permission denied");
+    };
+    if (not canWrite(bucket)) {
+      return #err("Bucket expired — renew to enable uploads");
+    };
+
+    let existing = BucketRepo.getFileByPath(service.store, bucketId, path);
+    let oldSize = switch (existing) { case (null) 0; case (?f) f.size };
+    let baseUsed = if (bucket.storageUsed >= oldSize) {
+      Nat.sub(bucket.storageUsed, oldSize)
+    } else { 0 };
+    if (baseUsed + totalSize > bucket.capacity) {
+      return #err("Storage limit reached");
+    };
+
+    let uploadId = service.nextId();
+    let session : Types.FileUploadSession = {
+      owner = auth.owner;
+      bucketId = bucketId;
+      path = path;
+      contentType = contentType;
+      totalSize = totalSize;
+      var received = 0;
+      var chunks = [];
+      createdAt = Time.now();
+    };
+    Map.add(service.uploadSessions.map, Text.compare, uploadId, session);
+    #ok(uploadId)
+  };
+
+  public func uploadFileChunk(
+    service: BucketService,
+    caller: Principal,
+    uploadId: Text,
+    data: Blob,
+  ) : async Types.ApiResult<Nat> {
+    purgeStaleUploadSessions(service);
+
+    switch (Map.get(service.uploadSessions.map, Text.compare, uploadId)) {
+      case (null) { return #err("Upload session not found or expired") };
+      case (?session) {
+        if (session.owner != caller) {
+          return #err("Permission denied");
+        };
+        if (data.size() == 0) {
+          return #err("Empty chunk");
+        };
+        if (data.size() > Config.BUCKET_UPLOAD_CHUNK_BYTES) {
+          return #err("Chunk too large");
+        };
+        let next = session.received + data.size();
+        if (next > session.totalSize) {
+          return #err("Chunk exceeds declared file size");
+        };
+        session.chunks := Array.concat(session.chunks, [data]);
+        session.received := next;
+        #ok(next)
+      };
+    }
+  };
+
+  public func completeFileUpload(
+    service: BucketService,
+    caller: Principal,
+    uploadId: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FileId> {
+    purgeStaleUploadSessions(service);
+
+    switch (Map.get(service.uploadSessions.map, Text.compare, uploadId)) {
+      case (null) { return #err("Upload session not found or expired") };
+      case (?session) {
+        if (session.owner != caller) {
+          return #err("Permission denied");
+        };
+        if (session.received != session.totalSize) {
+          return #err("Upload incomplete");
+        };
+        Map.remove(service.uploadSessions.map, Text.compare, uploadId);
+        let data = BlobUtil.concat(session.chunks);
+        await uploadFileValidated(
+          service, caller, session.bucketId, session.path, data, session.contentType, apiKey,
+        )
+      };
+    }
+  };
+
+  private func purgeStaleUploadSessions(service: BucketService) {
+    let cutoff = Time.now() - Config.BUCKET_UPLOAD_SESSION_TTL_NS;
+    let next = Map.empty<Text, Types.FileUploadSession>();
+    for ((id, session) in service.uploadSessions.map.entries()) {
+      if (session.createdAt >= cutoff) {
+        Map.add(next, Text.compare, id, session);
+      };
+    };
+    service.uploadSessions.map := next;
+  };
+
+  private func uploadFileValidated(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    data: Blob,
+    contentType: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FileId> {
+    let auth = switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(a)) a;
     };
 
     switch (validatePath(path)) {

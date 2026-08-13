@@ -75,21 +75,19 @@ curl -sS -I "${curlHost}/{bucketName}/logo.webp"`}</pre>
         <p className="text-xs leading-relaxed text-muted-foreground">{t("docsApiBody")}</p>
         <p className="text-xs font-medium text-foreground">{t("docsTsUploadTitle")}</p>
         <pre className="overflow-x-auto rounded-lg bg-muted/40 p-3 font-mono text-[10px] leading-relaxed text-muted-foreground">{`import { prepareUploadFile } from "@/lib/bucket/prepare-upload"
-import { uploadFile } from "@/services/bucket/bucket"
+import { storeFile } from "@/lib/bucket/store-file"
 
-// App upload — converts PNG/SVG/JPEG → WebP first
 const prepared = await prepareUploadFile(file)
-await uploadFile(
-  identity,
-  bucketId,
-  prepared.path,
-  prepared.file,
-  undefined,
-  prepared.contentType
-)
 
-// Direct API upload — send WebP bytes only (image/webp)
-await uploadFile(identity, bucketId, "/logo.webp", webpFile, undefined, "image/webp")`}</pre>
+// Chunked automatically — IC ingress is 2 MiB per call; max 10 MB per file
+const result = await storeFile(identity, prepared.file, {
+  bucketId,
+  path: prepared.path,
+  contentType: prepared.contentType,
+  onProgress: (pct) => console.log(\`\${pct}%\`),
+})
+
+if ("err" in result) throw new Error(result.err)`}</pre>
         <p className="text-xs font-medium text-foreground">{t("docsTsGetTitle")}</p>
         <pre className="overflow-x-auto rounded-lg bg-muted/40 p-3 font-mono text-[10px] leading-relaxed text-muted-foreground">{`// Public CDN (no auth) — bucket name in the URL
 const url = ${cdnBase ? `\`${BUCKET_CDN_ORIGIN}/\${bucketName}\${path}\`` : `\`https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/\${bucketName}\${path}\``}

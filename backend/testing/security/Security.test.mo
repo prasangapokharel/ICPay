@@ -45,7 +45,7 @@ let settingsMap = SettingsStorage.createSettingsMap();
 let icp = "ryjl3-tyaaa-aaaaa-aaaba-cai";
 
 let u1 = UserRepo.create(users, usernames, usersById, "uid-1", user1Principal, ?"alice", "Alice", now);
-let u2 = UserRepo.create(users, usernames, usersById, "uid-2", user2Principal, ?"bob", "Bob", now);
+let _u2 = UserRepo.create(users, usernames, usersById, "uid-2", user2Principal, ?"bob", "Bob", now);
 
 let userSvc = UserService.create(users, usernames, usersById, reserved, RateLimitStorage.createRateLimitMap());
 switch (UserService.getProfile(userSvc, anon)) {

@@ -18,9 +18,16 @@ export async function call<T>(
   try {
     return await fn(await getWalletActor(identity))
   } catch (e) {
-    // A rejection is a transport or replica fault, not a domain error, and those
-    // messages are not user-legible.
     console.error(e)
+    const msg = e instanceof Error ? e.message : String(e)
+    if (
+      msg.includes("too large") ||
+      msg.includes("413") ||
+      msg.includes("2097152") ||
+      msg.includes("max allowed")
+    ) {
+      return { err: msg }
+    }
     return { err: fallback }
   }
 }

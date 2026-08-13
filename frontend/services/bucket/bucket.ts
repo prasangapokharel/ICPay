@@ -1,6 +1,9 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { call, query, unwrap, type Outcome } from "@/services/client"
-import { guessFileMime } from "@/lib/bucket/bucket"
+import { storeFile } from "@/lib/bucket/store-file"
+
+export { storeFile } from "@/lib/bucket/store-file"
+export type { StoreFileOptions } from "@/lib/bucket/store-file"
 import type {
   ApiKeyCreateResult,
   ApiKeyPermissions,
@@ -115,21 +118,12 @@ export function uploadFile(
   contentType?: string,
   apiKey?: string
 ): Promise<Outcome<string>> {
-  return call(identity, "Upload failed", async (actor) => {
-    onProgress?.(8)
-    const data = new Uint8Array(await file.arrayBuffer())
-    onProgress?.(32)
-    onProgress?.(55)
-    const result = (await actor.uploadFile(
-      bucketId,
-      path,
-      data,
-      contentType ?? guessFileMime(file),
-      apiKey ? [apiKey] : []
-    )) as Outcome<string>
-    onProgress?.(92)
-    onProgress?.(100)
-    return result
+  return storeFile(identity, file, {
+    bucketId,
+    path,
+    contentType,
+    apiKey,
+    onProgress,
   })
 }
 

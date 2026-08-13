@@ -1,6 +1,5 @@
 import Debug "mo:core/Debug";
 import Principal "mo:core/Principal";
-import Blob "mo:core/Blob";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
 import Map "mo:core/Map";
@@ -48,6 +47,7 @@ let svc = BucketService.create(
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
+  BucketService.createUploadSessionStore(),
 );
 
 ignore UserRepo.create(users, usernames, usersById, "uid-owner", owner, null, "", now);

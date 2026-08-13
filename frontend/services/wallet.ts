@@ -81,6 +81,21 @@ export interface WalletActor {
     contentType: string,
     apiKey: [] | [string]
   ) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
+  beginFileUpload: (
+    bucketId: string,
+    path: string,
+    contentType: string,
+    totalSize: bigint,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
+  uploadFileChunk: (
+    uploadId: string,
+    data: Uint8Array
+  ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  completeFileUpload: (
+    uploadId: string,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
   downloadFile: (bucketId: string, path: string) => Promise<{ ok: Uint8Array; err?: never } | { err: string; ok?: never }>
   getPublicFileUrl: (bucketId: string, path: string) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
   deleteFile: (
@@ -480,6 +495,21 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     listBuckets: IDL.Func([], [ApiResultBucketList], ["query"]),
     uploadFile: IDL.Func(
       [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8), IDL.Text, IDL.Opt(IDL.Text)],
+      [ApiResultFileId],
+      []
+    ),
+    beginFileUpload: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Nat, IDL.Opt(IDL.Text)],
+      [ApiResultBucketId],
+      []
+    ),
+    uploadFileChunk: IDL.Func(
+      [IDL.Text, IDL.Vec(IDL.Nat8)],
+      [ApiResultNat],
+      []
+    ),
+    completeFileUpload: IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text)],
       [ApiResultFileId],
       []
     ),
