@@ -14,6 +14,10 @@ import {
 } from "@/lib/bucket/bucket"
 import { prepareUploadFile, uploadValidationError } from "@/lib/bucket/prepare-upload"
 import { formatCompressionSummary } from "@/lib/bucket/compress-image"
+import {
+  BucketUploadDesktopAlert,
+  useBucketUploadDesktopOnly,
+} from "@/components/bucket/bucket-upload-desktop-gate"
 import { cn } from "@/lib/utils"
 
 type UploadPhase = "idle" | "busy"
@@ -35,6 +39,7 @@ export function BucketUploadZone({
   onBusyChange?: (busy: boolean) => void
 }) {
   const t = useTranslations("bucket")
+  const { desktopOnly } = useBucketUploadDesktopOnly()
   const inputRef = useRef<HTMLInputElement>(null)
   const [phase, setPhase] = useState<UploadPhase>("idle")
   const [progress, setProgress] = useState(0)
@@ -86,8 +91,10 @@ export function BucketUploadZone({
     [onUpload, t]
   )
 
+  const blocked = disabled || desktopOnly
+
   const handleFileList = async (files: FileList | null) => {
-    if (!files || files.length === 0 || disabled || busy) return
+    if (desktopOnly || !files || files.length === 0 || disabled || busy) return
 
     const queue = Array.from(files)
     setPhase("busy")
@@ -141,7 +148,7 @@ export function BucketUploadZone({
 
   const onDragOver = (e: React.DragEvent) => {
     e.preventDefault()
-    if (!disabled && !busy) setDragOver(true)
+    if (!blocked && !busy) setDragOver(true)
   }
 
   const onDragLeave = (e: React.DragEvent) => {
@@ -152,8 +159,12 @@ export function BucketUploadZone({
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setDragOver(false)
-    if (disabled || busy) return
+    if (blocked || busy) return
     void handleFileList(e.dataTransfer.files)
+  }
+
+  if (desktopOnly) {
+    return <BucketUploadDesktopAlert />
   }
 
   return (
@@ -164,31 +175,31 @@ export function BucketUploadZone({
         accept="*/*"
         multiple
         className="hidden"
-        disabled={disabled || busy}
+        disabled={blocked || busy}
         onChange={(e) => void handleFileList(e.target.files)}
       />
 
       <div
         role="button"
-        tabIndex={disabled || busy ? -1 : 0}
+        tabIndex={blocked || busy ? -1 : 0}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault()
-            if (!disabled && !busy) inputRef.current?.click()
+            if (!blocked && !busy) inputRef.current?.click()
           }
         }}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
         onClick={() => {
-          if (!disabled && !busy) inputRef.current?.click()
+          if (!blocked && !busy) inputRef.current?.click()
         }}
         className={cn(
           "flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors",
-          dragOver && !disabled && !busy
+          dragOver && !blocked && !busy
             ? "border-primary bg-primary/5"
             : "border-muted-foreground/25 hover:border-muted-foreground/40",
-          (disabled || busy) && "pointer-events-none opacity-60"
+          (blocked || busy) && "pointer-events-none opacity-60"
         )}
       >
         <HugeiconsIcon

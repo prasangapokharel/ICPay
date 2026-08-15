@@ -696,6 +696,7 @@
     "renewConfirm": "Renew for {price} ICP",
     "newExpiry": "New expiry",
     "upload": "Upload",
+    "uploadDesktopOnly": "Uploads are desktop-only — use a desktop browser",
     "uploadChooseFile": "Choose file",
     "uploadChooseFiles": "Choose files",
     "uploadDropHint": "Drop files here or tap to browse",

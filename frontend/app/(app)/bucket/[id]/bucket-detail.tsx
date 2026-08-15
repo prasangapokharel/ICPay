@@ -23,6 +23,10 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
+import {
+  BucketUploadDesktopTrigger,
+  useBucketUploadDesktopOnly,
+} from "@/components/bucket/bucket-upload-desktop-gate"
 import { BucketUsageBar } from "@/components/bucket/bucket-card"
 import { BucketFilesPanel } from "@/components/bucket/bucket-files-panel"
 import { BucketUploadModal } from "@/components/bucket/bucket-upload-modal"
@@ -59,6 +63,7 @@ export function BucketDetail() {
   const invalidateBucketCache = useInvalidateBucketCache()
 
   const bucketId = useRewrittenLastSegment()
+  const { desktopOnly } = useBucketUploadDesktopOnly()
 
   const { stats, isLoading: statsLoading, refresh: refreshStats } = useBucketStats(bucketId || null)
   const [renewOpen, setRenewOpen] = useState(false)
@@ -86,15 +91,19 @@ export function BucketDetail() {
   const headerActions = (
     <div className="flex items-center gap-0.5">
       {canWrite && (
-        <Button
-          variant="default"
-          size="sm"
-          className="h-7 gap-1 px-2.5 text-xs"
-          onClick={() => setUploadOpen(true)}
-        >
-          <HugeiconsIcon icon={Upload01Icon} className="size-3.5" strokeWidth={1.75} />
-          {t("upload")}
-        </Button>
+        <BucketUploadDesktopTrigger>
+          <Button
+            variant="default"
+            size="sm"
+            className="h-7 gap-1 px-2.5 text-xs"
+            onClick={() => {
+              if (!desktopOnly) setUploadOpen(true)
+            }}
+          >
+            <HugeiconsIcon icon={Upload01Icon} className="size-3.5" strokeWidth={1.75} />
+            {t("upload")}
+          </Button>
+        </BucketUploadDesktopTrigger>
       )}
       {docsLink}
     </div>

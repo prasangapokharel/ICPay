@@ -696,6 +696,7 @@
     "renewConfirm": "Renew for {price} ICP",
     "newExpiry": "New expiry",
     "upload": "Upload",
+    "uploadDesktopOnly": "Uploads are desktop-only — use a desktop browser",
     "uploadChooseFile": "Choose file",
     "uploadPreparing": "Preparing…",
     "uploading": "Uploading…",
