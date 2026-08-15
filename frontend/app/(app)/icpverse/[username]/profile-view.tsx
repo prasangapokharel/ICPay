@@ -29,8 +29,8 @@ export function ProfileView() {
   const { identity } = useAuth()
   const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
-  // A fast query, not the ~6.6s dashboard: the sender's own handle is only
-  // needed to stamp the memo.
+  // A fast query, not the heavy ledger-walking dashboard: the sender's own
+  // handle is only needed to stamp the memo.
   const { data: ownProfile } = useOwnProfile()
   const senderUsername = ownProfile?.username?.[0]
   const [tipOpen, setTipOpen] = useState(false)

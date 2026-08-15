@@ -33,10 +33,10 @@ import {
 const keyFor = (identity: Identity | undefined, ...parts: string[]) =>
   identity ? ([...parts, identity.getPrincipal().toText()] as const) : null
 
-// getDashboard is an update call measured at ~6.6s, so it is fetched once and
-// refreshed on explicit action rather than on focus or remount. The retry cap
-// matters here: SWR retries errors forever by default, and an update call that
-// keeps failing would go on burning cycles behind an already-broken screen.
+// getDashboard is a query, but a heavy one — it walks the ledger, so it is
+// fetched once and refreshed on explicit action rather than on focus or
+// remount. Queries are free on the IC, so the retry cap is a courtesy to the
+// ledger, not a cycles concern.
 const FETCH_ONCE = {
   revalidateOnFocus: false,
   revalidateOnReconnect: false,
@@ -211,7 +211,7 @@ export function useRefreshWallet() {
 // /profile has no dashboard subscriber mounted, so invalidating that key there
 // has no fetcher to revalidate with -- and since the dashboard never revalidates
 // on stale, the prompt kept reading the old empty username until a hard refresh.
-// Writing the record straight in also avoids a second ~6.6s getDashboard.
+// Writing the record straight in also avoids a second heavy getDashboard.
 export function usePatchDashboardUser() {
   const { identity } = useAuth()
   const { mutate } = useSWRConfig()
@@ -348,7 +348,7 @@ export function useUserSearch(search: string, limit = 10) {
 }
 
 // getUser is a query answering in about a second, where the same record inside
-// getDashboard rides a ~6.6s update call. Anything that only needs the caller's
+// getDashboard rides a heavy ledger query. Anything that only needs the caller's
 // own handle or id should read it from here. Keyed as /profile keys it, so the
 // claim there mutates this too rather than leaving a second copy behind.
 export function useOwnProfile() {
