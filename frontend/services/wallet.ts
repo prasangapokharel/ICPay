@@ -25,6 +25,12 @@ import type {
   ApiResult_17,
   ApiResult_18,
   ApiResult_19,
+  ApiResult_20,
+  ApiResult_21,
+  AnalyticsData,
+  AnalyticsExportResult,
+  SwapQuoteResult,
+  SwapResult,
 } from "@/services/types"
 
 export interface WalletActor {
@@ -50,6 +56,8 @@ export interface WalletActor {
   transferByAccountId: (accountId: string, amount: bigint, memo: [] | [string]) => Promise<ApiResult>
   isLedgerSupported: (ledgerId: string) => Promise<boolean>
   getTransactions: (page: bigint, pageSize: bigint) => Promise<ApiResult_7>
+  getUserAnalytics: () => Promise<ApiResult_20>
+  exportUserAnalytics: () => Promise<ApiResult_21>
   getTransactionDetail: (txId: TxId) => Promise<ApiResult_1>
   getSettings: () => Promise<ApiResult_3>
   updateSettings: (theme: string, language: string, notifications: boolean) => Promise<ApiResult_3>
@@ -144,6 +152,17 @@ export interface WalletActor {
     bucketId: string,
     keyId: string
   ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
+  getSwapQuote: (
+    tokenIn: string,
+    tokenOut: string,
+    amountIn: bigint
+  ) => Promise<{ ok: SwapQuoteResult; err?: never } | { err: string; ok?: never }>
+  executeSwap: (
+    tokenIn: string,
+    tokenOut: string,
+    amountIn: bigint,
+    amountOutMin: bigint
+  ) => Promise<{ ok: SwapResult; err?: never } | { err: string; ok?: never }>
 }
 
 let cachedActor: WalletActor | null = null
@@ -179,6 +198,8 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     withdraw: IDL.Null,
     transfer: IDL.Null,
     fee: IDL.Null,
+    swapIn: IDL.Null,
+    swapOut: IDL.Null,
   })
 
   const TxStatus = IDL.Variant({
@@ -353,6 +374,54 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     err: IDL.Text,
   })
 
+  const AnalyticsSummary = IDL.Record({
+    totalReceivedE8s: IDL.Nat,
+    totalSentE8s: IDL.Nat,
+    depositCount: IDL.Nat,
+    withdrawCount: IDL.Nat,
+    transferCount: IDL.Nat,
+    tipCount: IDL.Nat,
+    swapInCount: IDL.Nat,
+    swapOutCount: IDL.Nat,
+    completedCount: IDL.Nat,
+    failedCount: IDL.Nat,
+    uniqueCounterparties: IDL.Nat,
+    freeExport: IDL.Bool,
+  })
+
+  const AnalyticsData = IDL.Record({
+    summary: AnalyticsSummary,
+    rows: IDL.Vec(TransactionPublic),
+  })
+
+  const AnalyticsExportResult = IDL.Record({
+    feePaidE8s: IDL.Nat,
+    rows: IDL.Vec(TransactionPublic),
+  })
+
+  const ApiResult_20 = IDL.Variant({ ok: AnalyticsData, err: IDL.Text })
+  const ApiResult_21 = IDL.Variant({ ok: AnalyticsExportResult, err: IDL.Text })
+
+  const SwapQuoteResult = IDL.Record({
+    amountOut: IDL.Nat,
+    amountOutRaw: IDL.Nat,
+    platformFee: IDL.Nat,
+    swapFee: IDL.Nat,
+    priceImpact: IDL.Text,
+    poolId: IDL.Text,
+  })
+
+  const SwapResult = IDL.Record({
+    blockIndex: IDL.Nat64,
+    amountIn: IDL.Nat,
+    amountOut: IDL.Nat,
+    platformFee: IDL.Nat,
+    txId: IDL.Text,
+  })
+
+  const ApiResultSwapQuote = IDL.Variant({ ok: SwapQuoteResult, err: IDL.Text })
+  const ApiResultSwap = IDL.Variant({ ok: SwapResult, err: IDL.Text })
+
   const BucketVisibility = IDL.Variant({
     Public: IDL.Null,
     Private: IDL.Null,
@@ -522,6 +591,8 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     transferByAccountId: IDL.Func([IDL.Text, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResult], []),
     isLedgerSupported: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     getTransactions: IDL.Func([IDL.Nat, IDL.Nat], [ApiResult_7], ["query"]),
+    getUserAnalytics: IDL.Func([], [ApiResult_20], ["query"]),
+    exportUserAnalytics: IDL.Func([], [ApiResult_21], []),
     getTransactionDetail: IDL.Func([TxId], [ApiResult_1], ["query"]),
     getSettings: IDL.Func([], [ApiResult_3], []),
     updateSettings: IDL.Func([IDL.Text, IDL.Text, IDL.Bool], [ApiResult_3], []),
@@ -656,5 +727,15 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
       []
     ),
     deleteBucket: IDL.Func([IDL.Text], [ApiResultUnit], []),
+    getSwapQuote: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat],
+      [ApiResultSwapQuote],
+      ["query"]
+    ),
+    executeSwap: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat],
+      [ApiResultSwap],
+      []
+    ),
   })
 }

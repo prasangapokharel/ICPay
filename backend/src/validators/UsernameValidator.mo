@@ -60,6 +60,16 @@ module {
     };
   };
 
+  // Analytics and free CSV export are tied to the two scarcest paid tiers only.
+  public func hasAnalyticsAccess(name: Text): Bool {
+    let len = name.size();
+    len >= Config.MIN_USERNAME_LENGTH and len <= 4;
+  };
+
+  public func hasFreeAnalyticsExport(name: Text): Bool {
+    hasAnalyticsAccess(name);
+  };
+
   func isValidChar(c: Char): Bool {
     (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or (c >= '0' and c <= '9') or c == '_';
   };

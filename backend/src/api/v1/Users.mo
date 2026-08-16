@@ -22,4 +22,8 @@ mixin (users: UserService.UserService, mwConfig: MiddlewareAuth.Config) {
   public shared query func resolveUsername(name: Text) : async ?Principal {
     UserService.resolveUsername(users, name);
   };
+
+  public shared query func getUsernameCount() : async Nat {
+    UserService.usernameCount(users);
+  };
 };

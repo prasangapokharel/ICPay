@@ -26,7 +26,8 @@
     "total": "合計",
     "done": "完了",
     "share": "共有",
-    "noToken": "一致するトークンはありません"
+    "noToken": "一致するトークンはありません",
+    "swap": "Swap"
   },
   "dashboard": {
     "loadFailed": "ウォレットを読み込めませんでした",
@@ -78,7 +79,8 @@
       "settings": "設定",
       "swap": "スワップ",
       "bucket": "クラウド",
-      "blog": "ブログ"
+      "blog": "ブログ",
+      "analytics": "Analytics"
     },
     "preferencesDescription": "言語・通貨・法務ページ"
   },
@@ -224,7 +226,9 @@
       "deposit": "入金",
       "withdraw": "出金",
       "transfer": "送金",
-      "fee": "手数料"
+      "fee": "手数料",
+      "swapIn": "Swap in",
+      "swapOut": "Swap out"
     },
     "status": {
       "completed": "完了",
@@ -312,7 +316,8 @@
     "noTokens": "トークンはまだありません。入金すると自動で表示されます。",
     "noTokensFound": "該当するトークンはありません。",
     "outsideAmount": "+{amount} 外部",
-    "selfCustodyNotice": "ICPay の外に資金があります。トークンを開いて移してください。"
+    "selfCustodyNotice": "ICPay の外に資金があります。トークンを開いて移してください。",
+    "swapCta": "Swap"
   },
   "token": {
     "back": "ウォレット",
@@ -329,7 +334,8 @@
     "selfCustodyMoved": "ウォレットに移しました。",
     "selfCustodyNet": "受取額",
     "selfCustodyDust": "{symbol} のネットワーク手数料を下回るため移動できません。",
-    "selfCustodyEmpty": "移すものはありません — このトークンはご自身のプリンシパルに送られていません。"
+    "selfCustodyEmpty": "移すものはありません — このトークンはご自身のプリンシパルに送られていません。",
+    "swap": "Swap"
   },
   "sendToken": {
     "title": "{symbol} を送金",
@@ -658,7 +664,22 @@
     "priceInfo": "Current exchange rate between these tokens",
     "feesInfo": "Combined platform and pool fees",
     "priceImpactInfo": "How much this trade affects the token price",
-    "slippageInfo": "Maximum price movement you'll accept"
+    "slippageInfo": "Maximum price movement you'll accept",
+    "insufficientBalance": "Not enough balance for this swap (includes ledger fees).",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for swap.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "searchToken": "Search tokens",
+    "noTokens": "No tokens match your search.",
+    "needTwoTokens": "You need at least two supported tokens to swap.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "ledgerFees": "Ledger fees (est.)",
+    "fetchingQuote": "Fetching quote…",
+    "done": "Done"
   },
   "bucket": {
     "title": "ICPay Cloud",
@@ -815,5 +836,36 @@
     "prevPage": "前へ",
     "nextPage": "次へ",
     "pageOf": "{page} / {total}ページ · {count}ファイル"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Wallet activity summary and export",
+    "received": "Received",
+    "sent": "Sent",
+    "tips": "Tips",
+    "transfers": "Transfers",
+    "deposits": "Deposits",
+    "withdrawals": "Withdrawals",
+    "completed": "Completed",
+    "failed": "Failed",
+    "counterparties": "Counterparties",
+    "swapsIn": "Swaps in",
+    "swapsOut": "Swaps out",
+    "rowCount": "{count} transactions",
+    "refresh": "Refresh",
+    "exportFree": "Export CSV",
+    "exportPaid": "Export CSV ({price} ICP)",
+    "exporting": "Exporting…",
+    "exportFailed": "Export failed",
+    "noRows": "No transactions to show",
+    "colDate": "Date",
+    "colType": "Type",
+    "colAmount": "Amount",
+    "colFrom": "From",
+    "colTo": "To",
+    "colStatus": "Status",
+    "lockedTitle": "Premium analytics",
+    "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
+    "lockedAction": "Buy a shorter name"
   }
 }

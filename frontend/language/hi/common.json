@@ -26,7 +26,8 @@
     "total": "कुल",
     "done": "पूर्ण",
     "share": "साझा करें",
-    "noToken": "कोई मेल खाने वाला टोकन नहीं"
+    "noToken": "कोई मेल खाने वाला टोकन नहीं",
+    "swap": "Swap"
   },
   "dashboard": {
     "loadFailed": "आपका वॉलेट लोड नहीं हो सका",
@@ -78,7 +79,8 @@
       "settings": "सेटिंग्स",
       "swap": "स्वैप",
       "bucket": "क्लाउड",
-      "blog": "ब्लॉग"
+      "blog": "ब्लॉग",
+      "analytics": "Analytics"
     },
     "preferencesDescription": "भाषा, मुद्रा और कानूनी पृष्ठ"
   },
@@ -224,7 +226,9 @@
       "deposit": "जमा",
       "withdraw": "निकासी",
       "transfer": "ट्रांसफ़र",
-      "fee": "शुल्क"
+      "fee": "शुल्क",
+      "swapIn": "Swap in",
+      "swapOut": "Swap out"
     },
     "status": {
       "completed": "पूर्ण",
@@ -312,7 +316,8 @@
     "noTokens": "अभी कोई टोकन नहीं। जमा यहाँ अपने आप दिखेंगे।",
     "noTokensFound": "उस खोज से कोई टोकन मेल नहीं खाता।",
     "outsideAmount": "+{amount} bahar",
-    "selfCustodyNotice": "आपके पास ICPay के बाहर धनराशि है। इसे लाने के लिए टोकन खोलें।"
+    "selfCustodyNotice": "आपके पास ICPay के बाहर धनराशि है। इसे लाने के लिए टोकन खोलें।",
+    "swapCta": "Swap"
   },
   "token": {
     "back": "वॉलेट",
@@ -329,7 +334,8 @@
     "selfCustodyMoved": "आपके वॉलेट में आ गया।",
     "selfCustodyNet": "आपको मिलेगा",
     "selfCustodyDust": "यह {symbol} नेटवर्क शुल्क से कम है, इसलिए इसे भेजा नहीं जा सकता।",
-    "selfCustodyEmpty": "लाने के लिए कुछ नहीं है — यह टोकन आपके प्रिंसिपल पर नहीं भेजा गया है।"
+    "selfCustodyEmpty": "लाने के लिए कुछ नहीं है — यह टोकन आपके प्रिंसिपल पर नहीं भेजा गया है।",
+    "swap": "Swap"
   },
   "sendToken": {
     "title": "{symbol} भेजें",
@@ -658,7 +664,22 @@
     "priceInfo": "Current exchange rate between these tokens",
     "feesInfo": "Combined platform and pool fees",
     "priceImpactInfo": "How much this trade affects the token price",
-    "slippageInfo": "Maximum price movement you'll accept"
+    "slippageInfo": "Maximum price movement you'll accept",
+    "insufficientBalance": "Not enough balance for this swap (includes ledger fees).",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for swap.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "searchToken": "Search tokens",
+    "noTokens": "No tokens match your search.",
+    "needTwoTokens": "You need at least two supported tokens to swap.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "ledgerFees": "Ledger fees (est.)",
+    "fetchingQuote": "Fetching quote…",
+    "done": "Done"
   },
   "bucket": {
     "title": "ICPay Cloud",
@@ -815,5 +836,36 @@
     "prevPage": "पिछला",
     "nextPage": "अगला",
     "pageOf": "पृष्ठ {page} / {total} · {count} फ़ाइलें"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Wallet activity summary and export",
+    "received": "Received",
+    "sent": "Sent",
+    "tips": "Tips",
+    "transfers": "Transfers",
+    "deposits": "Deposits",
+    "withdrawals": "Withdrawals",
+    "completed": "Completed",
+    "failed": "Failed",
+    "counterparties": "Counterparties",
+    "swapsIn": "Swaps in",
+    "swapsOut": "Swaps out",
+    "rowCount": "{count} transactions",
+    "refresh": "Refresh",
+    "exportFree": "Export CSV",
+    "exportPaid": "Export CSV ({price} ICP)",
+    "exporting": "Exporting…",
+    "exportFailed": "Export failed",
+    "noRows": "No transactions to show",
+    "colDate": "Date",
+    "colType": "Type",
+    "colAmount": "Amount",
+    "colFrom": "From",
+    "colTo": "To",
+    "colStatus": "Status",
+    "lockedTitle": "Premium analytics",
+    "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
+    "lockedAction": "Buy a shorter name"
   }
 }

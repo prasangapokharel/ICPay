@@ -135,6 +135,9 @@ switch (UserService.resolveUsername(svc, "nonexistent")) {
   case (null) { Debug.print("PASS: resolveUsername returns null for unknown username") };
 };
 
+assert (UserService.usernameCount(svc) == 3);
+Debug.print("PASS: usernameCount = 3 (alice, bob, dfinity)");
+
 assert(UserService.getVerifiedTier(svc, "uid-2") == ?#ultra);
 Debug.print("PASS: getVerifiedTier reports the tier of a claimed handle");
 

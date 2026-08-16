@@ -24,6 +24,7 @@ npm run ci cycles:balance -- --local
 | `npm run ci bucket:stats` | Cloud bucket usage, sales rollup, and top-up guidance. |
 | `npm run ci backend:hash` | The live module hash. This is the version marker, and the argument you pass to a rollback. |
 | `npm run ci backend:logs` | Canister logs. |
+| `npm run ci users:count` | Claimed @handle total (one query, 0 cycles). |
 | `npm run ci canister:list` | The two canisters this project owns, with their mainnet IDs. |
 
 `backend:hash` prints only the hash on stdout, so it pipes:
@@ -99,6 +100,17 @@ Queries are **not billed** on the IC. Only update calls and idle burn
 (~45k cycles/second) cost anything, so a balance that drifts down while nothing
 is happening is normal.
 
+### Which `ci` commands burn cycles or ICP
+
+| Cost | Commands |
+|---|---|
+| **0 — query only** | `users:count`, `bucket:stats`, `canister:status`, `canister:info`, `canister:call` (default), `ledger:balance`, `ledger:history`, `backend:hash`, `backend:logs`, `cycles:balance`, `cycles:address`, `backend:build`, `backend:test`, `frontend:build` |
+| **Canister update (~67M/call)** | `backend:deploy`, `backend:register`, `backend:sweep`, `backend:wasm`, `backend:reclaim`, `frontend:deploy`, `canister:call … --update` |
+| **ICP from operator wallet** | `cycles:convert`, `ledger:transfer` |
+| **Cycles ledger → canister** | `cycles:topup` |
+
+Every write command above stops at `confirm()` on mainnet. **`canister:call` defaults to `--query`** so a typo cannot mutate state.
+
 `cycles:balance` reports runway above the **freezing threshold**, not the raw
 balance: 30 days of idle burn is reserved, and the canister stops accepting
 update calls once it falls into that reserve.
@@ -140,26 +152,14 @@ answers "what is the balance now", the index is what keeps the per-account log.
 
 | Command | What it does |
 |---|---|
-| `npm run ci users:count [n]` | How many users, how many joined today, and the `n` most recent handles. Defaults to 10. |
+| `npm run ci users:count` | Total claimed @handles — **one free query** (`getUsernameCount`). |
 
-The canister exposes no count endpoint, so this reconstructs the roll from
-`searchUsers`. **Do not use `canister:call searchUsers` to count** — it caps at
-`Config.MAX_SEARCH_RESULTS` (25), so it answers 25 no matter how many users
-exist, and the number looks real.
+Counts users **who have claimed a username** only. Accounts that logged in and
+never claimed a handle are not in the username index.
 
-`users:count` sweeps instead: one search per character in `a-z0-9_`, deduped by
-id. That is exhaustive rather than a sample, because search matches a substring
-and every handle is at least one character, so every user matches at least one
-needle. Any needle that comes back with a full page is re-run with a second
-character appended; if one is *still* full it says so, and calls the totals a
-floor.
-
-It counts users **who have claimed a username**. An account that logged in and
-never claimed one is not in the username index and is not reachable from any
-public query, so it is not in the total.
-
-The sweep is ~37 query calls, issued in parallel because a mainnet round trip is
-~7s each. Queries are not billed, so it costs no cycles.
+**Cycle cost: 0** (query). Requires a backend deploy that exports
+`getUsernameCount`. Do not use `canister:call searchUsers` to count — it caps at
+`Config.MAX_SEARCH_RESULTS` (25).
 
 ## ICPay Cloud (buckets)
 

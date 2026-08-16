@@ -26,7 +26,8 @@
     "total": "Gesamt",
     "done": "Fertig",
     "share": "Teilen",
-    "noToken": "Kein passendes Token"
+    "noToken": "Kein passendes Token",
+    "swap": "Swap"
   },
   "dashboard": {
     "loadFailed": "Wallet konnte nicht geladen werden",
@@ -78,7 +79,8 @@
       "settings": "Einstellungen",
       "swap": "Tauschen",
       "bucket": "Cloud",
-      "blog": "Blog"
+      "blog": "Blog",
+      "analytics": "Analytics"
     },
     "preferencesDescription": "Sprach-, Währungs- und Rechtsseiten"
   },
@@ -224,7 +226,9 @@
       "deposit": "Einzahlung",
       "withdraw": "Auszahlung",
       "transfer": "Überweisung",
-      "fee": "Gebühr"
+      "fee": "Gebühr",
+      "swapIn": "Swap in",
+      "swapOut": "Swap out"
     },
     "status": {
       "completed": "Abgeschlossen",
@@ -312,7 +316,8 @@
     "noTokens": "Noch keine Token. Einzahlungen erscheinen hier automatisch.",
     "noTokensFound": "Keine Token passen zu dieser Suche.",
     "outsideAmount": "+{amount} ausserhalb",
-    "selfCustodyNotice": "Sie halten Guthaben außerhalb von ICPay. Öffnen Sie den Token, um es zu verschieben."
+    "selfCustodyNotice": "Sie halten Guthaben außerhalb von ICPay. Öffnen Sie den Token, um es zu verschieben.",
+    "swapCta": "Swap"
   },
   "token": {
     "back": "Wallet",
@@ -329,7 +334,8 @@
     "selfCustodyMoved": "In Ihre Wallet verschoben.",
     "selfCustodyNet": "Sie erhalten",
     "selfCustodyDust": "Der Betrag liegt unter der {symbol}-Netzwerkgebühr und kann nicht verschoben werden.",
-    "selfCustodyEmpty": "Nichts zu verschieben — dieser Token wurde nicht an Ihr Principal gesendet."
+    "selfCustodyEmpty": "Nichts zu verschieben — dieser Token wurde nicht an Ihr Principal gesendet.",
+    "swap": "Swap"
   },
   "sendToken": {
     "title": "{symbol} senden",
@@ -658,7 +664,22 @@
     "priceInfo": "Current exchange rate between these tokens",
     "feesInfo": "Combined platform and pool fees",
     "priceImpactInfo": "How much this trade affects the token price",
-    "slippageInfo": "Maximum price movement you'll accept"
+    "slippageInfo": "Maximum price movement you'll accept",
+    "insufficientBalance": "Not enough balance for this swap (includes ledger fees).",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for swap.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "searchToken": "Search tokens",
+    "noTokens": "No tokens match your search.",
+    "needTwoTokens": "You need at least two supported tokens to swap.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "ledgerFees": "Ledger fees (est.)",
+    "fetchingQuote": "Fetching quote…",
+    "done": "Done"
   },
   "bucket": {
     "title": "ICPay Cloud",
@@ -815,5 +836,36 @@
     "prevPage": "Zurück",
     "nextPage": "Weiter",
     "pageOf": "Seite {page} von {total} · {count} Dateien"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Wallet activity summary and export",
+    "received": "Received",
+    "sent": "Sent",
+    "tips": "Tips",
+    "transfers": "Transfers",
+    "deposits": "Deposits",
+    "withdrawals": "Withdrawals",
+    "completed": "Completed",
+    "failed": "Failed",
+    "counterparties": "Counterparties",
+    "swapsIn": "Swaps in",
+    "swapsOut": "Swaps out",
+    "rowCount": "{count} transactions",
+    "refresh": "Refresh",
+    "exportFree": "Export CSV",
+    "exportPaid": "Export CSV ({price} ICP)",
+    "exporting": "Exporting…",
+    "exportFailed": "Export failed",
+    "noRows": "No transactions to show",
+    "colDate": "Date",
+    "colType": "Type",
+    "colAmount": "Amount",
+    "colFrom": "From",
+    "colTo": "To",
+    "colStatus": "Status",
+    "lockedTitle": "Premium analytics",
+    "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
+    "lockedAction": "Buy a shorter name"
   }
 }

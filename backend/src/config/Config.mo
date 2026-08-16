@@ -169,6 +169,7 @@ module {
 
   // Swap module
   public let ICPSWAP_FACTORY: Text = "4mmnk-kiaaa-aaaag-qbllq-cai";
+  public let ANALYTICS_EXPORT_FEE_E8S: Nat = 10_000_000; // 0.1 ICP when export is not included with the handle tier
   public let SWAP_PLATFORM_FEE_BPS: Nat = 100;   // 100 basis points = 1%
   public let MAX_SWAP_RETRIES: Nat = 10;         // pending swap auto-retry ceiling
   public let RATE_SWAP = { maxPerWindow = 3; windowSeconds = 60 };

@@ -26,7 +26,8 @@
     "total": "合计",
     "done": "完成",
     "share": "分享",
-    "noToken": "没有匹配的代币"
+    "noToken": "没有匹配的代币",
+    "swap": "Swap"
   },
   "dashboard": {
     "loadFailed": "无法加载您的钱包",
@@ -78,7 +79,8 @@
       "settings": "设置",
       "swap": "兑换",
       "bucket": "云存储",
-      "blog": "博客"
+      "blog": "博客",
+      "analytics": "Analytics"
     },
     "preferencesDescription": "语言、货币和法律页面"
   },
@@ -224,7 +226,9 @@
       "deposit": "充值",
       "withdraw": "提现",
       "transfer": "转账",
-      "fee": "手续费"
+      "fee": "手续费",
+      "swapIn": "Swap in",
+      "swapOut": "Swap out"
     },
     "status": {
       "completed": "已完成",
@@ -312,7 +316,8 @@
     "noTokens": "暂无代币。充值后会自动显示在这里。",
     "noTokensFound": "没有符合该搜索的代币。",
     "outsideAmount": "+{amount} 在外",
-    "selfCustodyNotice": "您在 ICPay 之外持有资金。打开该代币以转入。"
+    "selfCustodyNotice": "您在 ICPay 之外持有资金。打开该代币以转入。",
+    "swapCta": "Swap"
   },
   "token": {
     "back": "钱包",
@@ -329,7 +334,8 @@
     "selfCustodyMoved": "已转入您的钱包。",
     "selfCustodyNet": "您将收到",
     "selfCustodyDust": "低于 {symbol} 网络手续费，无法转入。",
-    "selfCustodyEmpty": "没有需要转入的资金 — 该代币未被发送到您的 principal。"
+    "selfCustodyEmpty": "没有需要转入的资金 — 该代币未被发送到您的 principal。",
+    "swap": "Swap"
   },
   "sendToken": {
     "title": "发送 {symbol}",
@@ -658,7 +664,22 @@
     "priceInfo": "Current exchange rate between these tokens",
     "feesInfo": "Combined platform and pool fees",
     "priceImpactInfo": "How much this trade affects the token price",
-    "slippageInfo": "Maximum price movement you'll accept"
+    "slippageInfo": "Maximum price movement you'll accept",
+    "insufficientBalance": "Not enough balance for this swap (includes ledger fees).",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for swap.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "searchToken": "Search tokens",
+    "noTokens": "No tokens match your search.",
+    "needTwoTokens": "You need at least two supported tokens to swap.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "ledgerFees": "Ledger fees (est.)",
+    "fetchingQuote": "Fetching quote…",
+    "done": "Done"
   },
   "bucket": {
     "title": "ICPay Cloud",
@@ -815,5 +836,36 @@
     "prevPage": "上一页",
     "nextPage": "下一页",
     "pageOf": "第 {page} 页，共 {total} 页 · {count} 个文件"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Wallet activity summary and export",
+    "received": "Received",
+    "sent": "Sent",
+    "tips": "Tips",
+    "transfers": "Transfers",
+    "deposits": "Deposits",
+    "withdrawals": "Withdrawals",
+    "completed": "Completed",
+    "failed": "Failed",
+    "counterparties": "Counterparties",
+    "swapsIn": "Swaps in",
+    "swapsOut": "Swaps out",
+    "rowCount": "{count} transactions",
+    "refresh": "Refresh",
+    "exportFree": "Export CSV",
+    "exportPaid": "Export CSV ({price} ICP)",
+    "exporting": "Exporting…",
+    "exportFailed": "Export failed",
+    "noRows": "No transactions to show",
+    "colDate": "Date",
+    "colType": "Type",
+    "colAmount": "Amount",
+    "colFrom": "From",
+    "colTo": "To",
+    "colStatus": "Status",
+    "lockedTitle": "Premium analytics",
+    "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
+    "lockedAction": "Buy a shorter name"
   }
 }

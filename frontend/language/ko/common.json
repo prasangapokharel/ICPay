@@ -26,7 +26,8 @@
     "total": "합계",
     "done": "완료",
     "share": "공유",
-    "noToken": "일치하는 토큰이 없습니다"
+    "noToken": "일치하는 토큰이 없습니다",
+    "swap": "Swap"
   },
   "dashboard": {
     "loadFailed": "지갑을 불러오지 못했습니다",
@@ -78,7 +79,8 @@
       "settings": "설정",
       "swap": "스왑",
       "bucket": "클라우드",
-      "blog": "블로그"
+      "blog": "블로그",
+      "analytics": "Analytics"
     },
     "preferencesDescription": "언어, 통화 및 법적 페이지"
   },
@@ -224,7 +226,9 @@
       "deposit": "입금",
       "withdraw": "출금",
       "transfer": "송금",
-      "fee": "수수료"
+      "fee": "수수료",
+      "swapIn": "Swap in",
+      "swapOut": "Swap out"
     },
     "status": {
       "completed": "완료",
@@ -312,7 +316,8 @@
     "noTokens": "아직 토큰이 없습니다. 입금하면 여기에 자동으로 표시됩니다.",
     "noTokensFound": "검색과 일치하는 토큰이 없습니다.",
     "outsideAmount": "+{amount} 외부",
-    "selfCustodyNotice": "ICPay 외부에 자금이 있습니다. 토큰을 열어 옮기세요."
+    "selfCustodyNotice": "ICPay 외부에 자금이 있습니다. 토큰을 열어 옮기세요.",
+    "swapCta": "Swap"
   },
   "token": {
     "back": "지갑",
@@ -329,7 +334,8 @@
     "selfCustodyMoved": "지갑으로 옮겼습니다.",
     "selfCustodyNet": "받는 금액",
     "selfCustodyDust": "{symbol} 네트워크 수수료보다 적어 옮길 수 없습니다.",
-    "selfCustodyEmpty": "옮길 항목이 없습니다 — 이 토큰은 사용자 principal로 전송되지 않았습니다."
+    "selfCustodyEmpty": "옮길 항목이 없습니다 — 이 토큰은 사용자 principal로 전송되지 않았습니다.",
+    "swap": "Swap"
   },
   "sendToken": {
     "title": "{symbol} 보내기",
@@ -658,7 +664,22 @@
     "priceInfo": "Current exchange rate between these tokens",
     "feesInfo": "Combined platform and pool fees",
     "priceImpactInfo": "How much this trade affects the token price",
-    "slippageInfo": "Maximum price movement you'll accept"
+    "slippageInfo": "Maximum price movement you'll accept",
+    "insufficientBalance": "Not enough balance for this swap (includes ledger fees).",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for swap.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "searchToken": "Search tokens",
+    "noTokens": "No tokens match your search.",
+    "needTwoTokens": "You need at least two supported tokens to swap.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "ledgerFees": "Ledger fees (est.)",
+    "fetchingQuote": "Fetching quote…",
+    "done": "Done"
   },
   "bucket": {
     "title": "ICPay Cloud",
@@ -815,5 +836,36 @@
     "prevPage": "이전",
     "nextPage": "다음",
     "pageOf": "{page} / {total}페이지 · {count}개 파일"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Wallet activity summary and export",
+    "received": "Received",
+    "sent": "Sent",
+    "tips": "Tips",
+    "transfers": "Transfers",
+    "deposits": "Deposits",
+    "withdrawals": "Withdrawals",
+    "completed": "Completed",
+    "failed": "Failed",
+    "counterparties": "Counterparties",
+    "swapsIn": "Swaps in",
+    "swapsOut": "Swaps out",
+    "rowCount": "{count} transactions",
+    "refresh": "Refresh",
+    "exportFree": "Export CSV",
+    "exportPaid": "Export CSV ({price} ICP)",
+    "exporting": "Exporting…",
+    "exportFailed": "Export failed",
+    "noRows": "No transactions to show",
+    "colDate": "Date",
+    "colType": "Type",
+    "colAmount": "Amount",
+    "colFrom": "From",
+    "colTo": "To",
+    "colStatus": "Status",
+    "lockedTitle": "Premium analytics",
+    "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
+    "lockedAction": "Buy a shorter name"
   }
 }
