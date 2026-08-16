@@ -82,4 +82,7 @@ backend/dist/
 node_modules/
 # Root package.json is CI-only (tsx); lockfile belongs in frontend/
 /package-lock.json
+# Root /pkg only — backend/pkg is the Motoko library and must stay tracked
 /pkg
+!backend/pkg/
+!backend/testing/pkg/
