@@ -5,12 +5,13 @@ import { useTranslations } from "next-intl"
 import { Copy01Icon, Delete02Icon, Key01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
-import { BucketIconAction } from "@/components/bucket/bucket-icon-action"
 import {
   Dialog,
   DialogContent,
@@ -112,12 +113,13 @@ export function BucketApiKeysModal({
           </DialogHeader>
 
           {error && (
-            <Alert variant="destructive" className="py-2">
+            <Alert variant="destructive">
               <AlertDescription className="text-xs">{error}</AlertDescription>
             </Alert>
           )}
 
-          <div className="max-h-[min(40vh,280px)] overflow-y-auto rounded-xl border">
+          <Card size="sm" className="max-h-[min(40vh,280px)] overflow-y-auto py-0">
+            <CardContent className="p-0">
             {isLoading ? (
               <div className="flex justify-center py-8">
                 <Spinner className="size-5 text-muted-foreground" />
@@ -129,31 +131,39 @@ export function BucketApiKeysModal({
             ) : (
               <ul className="divide-y">
                 {keys.map((key) => (
-                  <li key={key.id} className="flex items-center gap-2 px-3 py-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{key.name}</p>
-                      <p className="truncate font-mono text-[10px] text-muted-foreground">
+                  <li key={key.id} className="flex min-w-0 items-center gap-2 px-3 py-2">
+                    <div className="min-w-0 flex-1 overflow-hidden">
+                      <p className="truncate text-sm font-medium" title={key.name}>
+                        {key.name}
+                      </p>
+                      <p className="truncate font-mono text-xs text-muted-foreground" title={key.keyHint}>
                         {key.keyHint}
                       </p>
-                      <p className="text-[10px] text-muted-foreground">{permLabel(key, t)}</p>
+                      <p className="truncate text-xs text-muted-foreground">{permLabel(key, t)}</p>
                     </div>
                     {key.revoked ? (
-                      <Badge variant="secondary" className="shrink-0 text-[10px]">
+                      <Badge variant="secondary" className="shrink-0">
                         {t("apiKeyRevoked")}
                       </Badge>
                     ) : (
-                      <BucketIconAction
-                        icon={Delete02Icon}
-                        label={t("apiKeyRevoke")}
-                        destructive
-                        onClick={() => handleRevoke(key.id)}
-                      />
+                      <ButtonGroup className="shrink-0">
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon-sm"
+                          aria-label={t("apiKeyRevoke")}
+                          onClick={() => handleRevoke(key.id)}
+                        >
+                          <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+                        </Button>
+                      </ButtonGroup>
                     )}
                   </li>
                 ))}
               </ul>
             )}
-          </div>
+            </CardContent>
+          </Card>
 
           <Button
             type="button"
@@ -204,6 +214,7 @@ export function BucketApiKeysModal({
             </div>
             <Button
               type="button"
+              size="sm"
               className="w-full"
               disabled={busy || name.trim().length === 0}
               onClick={handleCreate}
@@ -220,17 +231,28 @@ export function BucketApiKeysModal({
             <DialogTitle>{t("apiKeyCreatedTitle")}</DialogTitle>
             <DialogDescription className="text-xs">{t("apiKeyCreatedBody")}</DialogDescription>
           </DialogHeader>
-          <div className="flex items-center gap-1.5 rounded-lg bg-muted/40 py-2 pl-3 pr-1.5">
-            <pre className="min-w-0 flex-1 overflow-x-auto font-mono text-[10px] break-all">
+          <Card size="sm">
+            <CardContent className="flex min-w-0 items-center gap-1.5 py-2 pl-3 pr-1.5">
+            <pre className="min-w-0 flex-1 truncate font-mono text-xs" title={created?.secret}>
               {created?.secret}
             </pre>
-            <BucketIconAction
-              icon={copied ? Tick02Icon : Copy01Icon}
-              label={copied ? tc("copied") : tc("copy")}
-              variant="outline"
-              onClick={handleCopySecret}
-            />
-          </div>
+            <ButtonGroup className="shrink-0">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon-sm"
+                aria-label={copied ? tc("copied") : tc("copy")}
+                onClick={handleCopySecret}
+              >
+                <HugeiconsIcon
+                  icon={copied ? Tick02Icon : Copy01Icon}
+                  className="size-4"
+                  strokeWidth={1.75}
+                />
+              </Button>
+            </ButtonGroup>
+            </CardContent>
+          </Card>
         </DialogContent>
       </Dialog>
     </>

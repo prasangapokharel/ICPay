@@ -3,7 +3,9 @@
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { fileTypeChip } from "@/lib/bucket/bucket"
 import { useBucketFilePreview } from "@/hooks/use-bucket-file-preview"
 import { cn } from "@/lib/utils"
@@ -26,7 +28,7 @@ export function BucketFileThumb({
 }) {
   const { previewUrl, loading, handleImageError } = useBucketFilePreview(bucketId, file)
   const chip = fileTypeChip(file.contentType, file.path)
-  const dim = size === "md" ? "size-12" : "size-10"
+  const iconSize = size === "md" ? "icon-lg" : "icon-sm"
 
   const inner = previewUrl && isPreviewableImage(file.contentType) ? (
     <Image
@@ -40,30 +42,22 @@ export function BucketFileThumb({
   ) : loading && isPreviewableImage(file.contentType) ? (
     <Skeleton className="size-full rounded-lg" />
   ) : (
-    <span className="flex size-full items-center justify-center text-[10px] font-bold uppercase text-muted-foreground">
+    <span className="text-xs font-bold uppercase text-muted-foreground">
       {chip.slice(0, 3)}
     </span>
   )
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size={iconSize}
       onClick={onClick}
       disabled={!onClick}
-      className={cn(
-        "relative shrink-0 overflow-hidden rounded-lg border border-border/60 bg-muted/40",
-        dim,
-        onClick && "cursor-pointer transition hover:ring-2 hover:ring-primary/40"
-      )}
+      className="relative shrink-0 overflow-hidden rounded-lg"
     >
       {inner}
-      <Badge
-        variant="secondary"
-        className="pointer-events-none absolute -bottom-1 -right-1 h-4 px-1 text-[8px] font-bold uppercase tracking-wide"
-      >
-        {chip}
-      </Badge>
-    </button>
+    </Button>
   )
 }
 
@@ -85,9 +79,7 @@ export function BucketFilePreviewImage({
   if (!isPreviewableImage(file.contentType)) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-16">
-        <span className="rounded-xl bg-muted px-4 py-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">
-          {fileTypeChip(file.contentType, file.path)}
-        </span>
+        <Badge variant="secondary">{fileTypeChip(file.contentType, file.path)}</Badge>
         <p className="text-xs text-muted-foreground">{file.contentType}</p>
       </div>
     )
@@ -131,8 +123,8 @@ export function BucketFilePreviewImage({
 export function BucketAvatarChip({ name }: { name: string }) {
   const initials = name.slice(0, 2).toUpperCase()
   return (
-    <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500/20 to-indigo-500/30 text-[10px] font-bold text-primary">
-      {initials}
-    </div>
+    <Avatar size="sm">
+      <AvatarFallback className="text-xs font-bold text-primary">{initials}</AvatarFallback>
+    </Avatar>
   )
 }

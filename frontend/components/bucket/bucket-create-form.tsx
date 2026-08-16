@@ -6,11 +6,19 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldLabel,
+  FieldTitle,
+} from "@/components/ui/field"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useBucketCycleStatus, useBucketPrice } from "@/hooks/use-bucket"
 import { useLiveBalance } from "@/hooks/use-wallet-data"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
 import { formatAmount, ICP_FEE } from "@/lib/wallet-utils"
-import { cn } from "@/lib/utils"
 import type { BucketVisibilityVariant } from "@/services/bucket/types"
 
 export function BucketCreateForm({
@@ -65,7 +73,6 @@ export function BucketCreateForm({
           onChange={(e) => setName(e.target.value)}
           placeholder="my-assets"
           autoComplete="off"
-          className="h-9"
         />
         <p className="text-xs text-muted-foreground">{t("nameHint")}</p>
         {nameError && name.length > 0 && (
@@ -80,9 +87,8 @@ export function BucketCreateForm({
             <Button
               key={gb}
               type="button"
-              size="sm"
+              size="xs"
               variant={capacityGB === gb ? "default" : "outline"}
-              className="h-7 min-w-[2.5rem] px-2 text-xs"
               onClick={() => setCapacityGB(gb)}
             >
               {gb}G
@@ -93,45 +99,46 @@ export function BucketCreateForm({
 
       <div className="space-y-2">
         <Label>{t("visibility")}</Label>
-        <div className="grid grid-cols-2 gap-2">
-          {(
-            [
-              { key: "public" as const, value: { Public: null } as BucketVisibilityVariant },
-              { key: "private" as const, value: { Private: null } as BucketVisibilityVariant },
-            ] as const
-          ).map(({ key, value }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setVisibility(value)}
-              className={cn(
-                "rounded-xl border px-3 py-2.5 text-left transition-colors",
-                (key === "public" ? "Public" in visibility : "Private" in visibility)
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:bg-muted/40"
-              )}
-            >
-              <span className="block text-xs font-semibold">{t(key)}</span>
-              <span className="block text-[10px] text-muted-foreground">
-                {t(`${key}Hint`)}
-              </span>
-            </button>
-          ))}
-        </div>
+        <RadioGroup
+          value={"Public" in visibility ? "public" : "private"}
+          onValueChange={(value) => {
+            if (value === "public") setVisibility({ Public: null })
+            if (value === "private") setVisibility({ Private: null })
+          }}
+          className="grid gap-2 sm:grid-cols-2"
+        >
+          <FieldLabel htmlFor="bucket-visibility-public">
+            <Field orientation="horizontal">
+              <FieldContent>
+                <FieldTitle>{t("public")}</FieldTitle>
+                <FieldDescription>{t("publicHint")}</FieldDescription>
+              </FieldContent>
+              <RadioGroupItem value="public" id="bucket-visibility-public" />
+            </Field>
+          </FieldLabel>
+          <FieldLabel htmlFor="bucket-visibility-private">
+            <Field orientation="horizontal">
+              <FieldContent>
+                <FieldTitle>{t("private")}</FieldTitle>
+                <FieldDescription>{t("privateHint")}</FieldDescription>
+              </FieldContent>
+              <RadioGroupItem value="private" id="bucket-visibility-private" />
+            </Field>
+          </FieldLabel>
+        </RadioGroup>
       </div>
 
-      <div className="rounded-xl border bg-muted/30 px-3 py-2.5 text-sm">
-        <div className="flex items-center justify-between">
-          <span className="text-muted-foreground">{t("price")}</span>
-          <span className="font-semibold tabular-nums">
-            {priceLoading ? "…" : price !== null ? `${formatAmount(price)} ICP` : "—"}
-            <span className="text-xs font-normal text-muted-foreground"> {t("perMonth")}</span>
-          </span>
-        </div>
-        {insufficient && (
-          <p className="mt-1 text-xs text-destructive">{t("insufficientBalance")}</p>
-        )}
-      </div>
+      <Card size="sm">
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">{t("price")}</span>
+            <span className="font-semibold tabular-nums">
+              {priceLoading ? "…" : price !== null ? `${formatAmount(price)} ICP` : "—"}
+              <span className="text-xs font-normal text-muted-foreground"> {t("perMonth")}</span>
+            </span>
+          </div>
+        </CardContent>
+      </Card>
 
       {error && (
         <Alert variant="destructive">
@@ -141,6 +148,7 @@ export function BucketCreateForm({
 
       <Button
         size="sm"
+        variant={insufficient ? "destructive" : "default"}
         className="w-full"
         disabled={
           submitting ||
@@ -152,7 +160,7 @@ export function BucketCreateForm({
         }
         onClick={handleSubmit}
       >
-        {submitting ? t("creating") : t("create")}
+        {submitting ? t("creating") : insufficient ? t("insufficientBalance") : t("create")}
       </Button>
     </div>
   )

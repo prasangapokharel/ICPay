@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Best Crypto Wallet in 2026: Hot vs Cold, Custodial vs Self-Custody",
   description:
     "How to choose the best crypto wallet in 2026 — custodial vs self-custody, hot vs cold storage, security trade-offs, and where Internet Computer (ICP) wallets fit in.",
-  alternates: { canonical: "/best-crypto-wallet" },
+  alternates: { canonical: "/blog/best-crypto-wallet" },
   openGraph: {
     title: "Best Crypto Wallet in 2026 — ICPay Blog",
     description:
@@ -148,11 +148,11 @@ export default function BestCryptoWalletPage() {
           If ICP is part of your portfolio, ICPay makes a strong everyday wallet: a custodial
           ICP wallet on-chain, with a simple username-based transfer experience. Read more in
           our guide to the{" "}
-          <Link href="/best-icp-wallet" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/best-icp-wallet" className="underline underline-offset-2 hover:text-foreground">
             best ICP wallet
           </Link>{" "}
           and{" "}
-          <Link href="/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
             what is ICP
           </Link>.
         </p>

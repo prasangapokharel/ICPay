@@ -116,7 +116,7 @@ module {
     var name: Text;
     capacity: Nat;
     var storageUsed: Nat;
-    visibility: BucketVisibility;
+    var visibility: BucketVisibility;
     var status: BucketStatus;
     var expiresAt: Int;
     createdAt: Int;
@@ -189,19 +189,43 @@ module {
     id: FileId;
     bucketId: BucketId;
     path: Text;
+    name: Text;
     size: Nat;
     contentType: Text;
     checksum: Text;
     createdAt: Int;
+    updatedAt: ?Int;
+    metadata: ?Text;
+    tags: [Text];
   };
 
   public type FilePublic = {
     id: FileId;
     path: Text;
+    name: Text;
     size: Nat;
     contentType: Text;
     createdAt: Int;
+    updatedAt: ?Int;
+    metadata: ?Text;
+    tags: [Text];
     publicUrl: ?Text;
+  };
+
+  public type FilePathOp = {
+    source: Text;
+    destination: Text;
+  };
+
+  public type UploadStatusPublic = {
+    uploadId: Text;
+    bucketId: BucketId;
+    path: Text;
+    totalSize: Nat;
+    uploadedSize: Nat;
+    chunkSize: Nat;
+    status: Text;
+    createdAt: Int;
   };
 
   public type FileListPage = {

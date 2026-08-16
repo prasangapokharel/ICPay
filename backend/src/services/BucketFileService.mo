@@ -1,0 +1,405 @@
+import Blob "mo:core/Blob";
+import Text "mo:core/Text";
+import Nat "mo:core/Nat";
+import Int "mo:core/Int";
+import Time "mo:core/Time";
+import Array "mo:core/Array";
+import Types "../types";
+import Config "../config/Config";
+import BucketRepo "../repositories/BucketRepository";
+import BucketCrypto "../utils/BucketCrypto";
+import BucketUrls "../utils/BucketUrls";
+import FilePath "../utils/FilePath";
+import FileTags "../utils/FileTags";
+import FileValidator "../utils/FileValidator";
+import BucketStorage "../storage/BucketStorage";
+
+module {
+  public type FileContext = {
+    store: BucketStorage.BucketStore;
+    names: BucketStorage.NameIndex;
+    nextId: () -> Text;
+  };
+  func publicUrlFor(bucket: Types.Bucket, path: Text) : ?Text {
+    switch (bucket.visibility) {
+      case (#Public) BucketUrls.publicFileUrl(Config.BACKEND_CANISTER_ID, bucket.name, path);
+      case (#Private) null;
+    }
+  };
+
+  func filterPublic(
+    bucket: Types.Bucket,
+    files: [Types.StoredFile],
+    keep: Types.StoredFile -> Bool,
+  ) : [Types.FilePublic] {
+    var out : [Types.FilePublic] = [];
+    for (f in files.vals()) {
+      if (keep(f)) {
+        out := Array.concat(out, [toPublic(bucket, f)]);
+      };
+    };
+    out
+  };
+
+  func toPublic(bucket: Types.Bucket, file: Types.StoredFile) : Types.FilePublic {
+    BucketRepo.fileToPublic(file, publicUrlFor(bucket, file.path))
+  };
+
+  func paginate(
+    files: [Types.FilePublic],
+    page: Nat,
+    pageSize: Nat,
+  ) : Types.FileListPage {
+    let total = files.size();
+    let limit = if (pageSize == 0) {
+      Config.BUCKET_FILE_PAGE_SIZE
+    } else if (pageSize > Config.MAX_PAGE_SIZE) {
+      Config.MAX_PAGE_SIZE
+    } else {
+      pageSize
+    };
+    let offset = page * limit;
+    if (offset >= total) {
+      { items = []; total; page; pageSize = limit }
+    } else {
+      let end = if (offset + limit > total) { total } else { offset + limit };
+      let slice = Array.tabulate<Types.FilePublic>(end - offset, func(i) { files[offset + i] });
+      { items = slice; total; page; pageSize = limit }
+    }
+  };
+
+  public func getFile(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    switch (BucketRepo.getFileByPath(ctx.store, bucket.id, path)) {
+      case (null) { #err("File not found") };
+      case (?file) { #ok(toPublic(bucket, file)) };
+    }
+  };
+
+  public func fileExists(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+  ) : Bool {
+    switch (BucketRepo.getFileByPath(ctx.store, bucket.id, path)) {
+      case (null) false;
+      case (?_) true;
+    }
+  };
+
+  public func updateFile(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+    name: ?Text,
+    contentType: ?Text,
+    metadata: ?Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    switch (name, contentType, metadata) {
+      case (null, null, null) { return #err("Nothing to update") };
+      case (_, _, _) {};
+    };
+
+    let file = switch (BucketRepo.getFileByPath(ctx.store, bucket.id, path)) {
+      case (null) { return #err("File not found") };
+      case (?f) f;
+    };
+
+    let newName = switch (name) {
+      case (null) file.name;
+      case (?n) {
+        if (n.size() == 0) { return #err("Name cannot be empty") };
+        n
+      };
+    };
+
+    let newContentType = switch (contentType) {
+      case (null) file.contentType;
+      case (?ct) {
+        if (ct.size() == 0) { return #err("Content type cannot be empty") };
+        ct
+      };
+    };
+
+    let updated : Types.StoredFile = {
+      id = file.id;
+      bucketId = file.bucketId;
+      path = file.path;
+      name = newName;
+      size = file.size;
+      contentType = newContentType;
+      checksum = file.checksum;
+      createdAt = file.createdAt;
+      updatedAt = ?Time.now();
+      metadata = switch (metadata) { case (null) file.metadata; case (?m) ?m };
+      tags = file.tags;
+    };
+    BucketRepo.updateFile(ctx.store, updated);
+    #ok(toPublic(bucket, updated))
+  };
+
+  func validateDestPath(path: Text) : ?Text {
+    if (path.size() == 0) return ?("Path is required");
+    if (not Text.startsWith(path, #text "/")) return ?("Path must start with /");
+    if (Text.contains(path, #text "..")) return ?("Path may not contain ..");
+    let ext = FileValidator.pathExtension(path);
+    if (not FileValidator.isAllowedExtension(ext)) {
+      return ?("Destination path not allowed");
+    };
+    null
+  };
+
+  public func moveFile(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    sourcePath: Text,
+    destinationPath: Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    if (sourcePath == destinationPath) {
+      return #err("Source and destination are the same");
+    };
+    switch (validateDestPath(destinationPath)) {
+      case (?err) { return #err(err) };
+      case (null) {};
+    };
+
+    let file = switch (BucketRepo.getFileByPath(ctx.store, bucket.id, sourcePath)) {
+      case (null) { return #err("File not found") };
+      case (?f) f;
+    };
+
+    if (BucketRepo.getFileByPath(ctx.store, bucket.id, destinationPath) != null) {
+      return #err("Destination path already exists");
+    };
+
+    if (not BucketRepo.relocateFile(ctx.store, file.id, destinationPath)) {
+      return #err("Move failed");
+    };
+
+    let moved = switch (BucketRepo.getFile(ctx.store, file.id)) {
+      case (null) { return #err("Move failed") };
+      case (?f) {
+        let touched : Types.StoredFile = {
+          id = f.id;
+          bucketId = f.bucketId;
+          path = f.path;
+          name = FilePath.fileName(destinationPath);
+          size = f.size;
+          contentType = f.contentType;
+          checksum = f.checksum;
+          createdAt = f.createdAt;
+          updatedAt = ?Time.now();
+          metadata = f.metadata;
+          tags = f.tags;
+        };
+        BucketRepo.updateFile(ctx.store, touched);
+        touched
+      };
+    };
+    #ok(toPublic(bucket, moved))
+  };
+
+  public func copyFile(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    sourcePath: Text,
+    destinationPath: Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    if (sourcePath == destinationPath) {
+      return #err("Source and destination are the same");
+    };
+
+    let file = switch (BucketRepo.getFileByPath(ctx.store, bucket.id, sourcePath)) {
+      case (null) { return #err("File not found") };
+      case (?f) f;
+    };
+
+    if (BucketRepo.getFileByPath(ctx.store, bucket.id, destinationPath) != null) {
+      return #err("Destination path already exists");
+    };
+
+    let stored = switch (BucketRepo.getFileData(ctx.store, file.id)) {
+      case (null) { return #err("File data not found") };
+      case (?data) data;
+    };
+
+    let copyId = ctx.nextId();
+    let copy : Types.StoredFile = {
+      id = copyId;
+      bucketId = bucket.id;
+      path = destinationPath;
+      name = FilePath.fileName(destinationPath);
+      size = file.size;
+      contentType = file.contentType;
+      checksum = file.checksum;
+      createdAt = Time.now();
+      updatedAt = null;
+      metadata = file.metadata;
+      tags = file.tags;
+    };
+
+    let newUsed = bucket.storageUsed + file.size;
+    if (newUsed > bucket.capacity) {
+      return #err("Storage limit reached");
+    };
+
+    BucketRepo.saveFile(ctx.store, copy, stored);
+    BucketRepo.updateUsage(ctx.store, ctx.names, bucket.id, newUsed);
+    #ok(toPublic(bucket, copy))
+  };
+
+  public func listFolder(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    prefix: Text,
+    page: Nat,
+    pageSize: Nat,
+  ) : Types.ApiResult<Types.FileListPage> {
+    let files = BucketRepo.getFilesByBucket(ctx.store, bucket.id);
+    let filtered = filterPublic(bucket, files, func(f) { FilePath.hasPrefix(f.path, prefix) });
+    #ok(paginate(filtered, page, pageSize))
+  };
+
+  public func searchFiles(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    searchQuery: Text,
+    page: Nat,
+    pageSize: Nat,
+  ) : Types.ApiResult<Types.FileListPage> {
+    if (searchQuery.size() == 0) {
+      return #err("Query is required");
+    };
+    let files = BucketRepo.getFilesByBucket(ctx.store, bucket.id);
+    let filtered = filterPublic(
+      bucket,
+      files,
+      func(f) {
+        FilePath.containsIgnoreCase(f.name, searchQuery)
+        or FilePath.containsIgnoreCase(f.path, searchQuery)
+        or FilePath.containsIgnoreCase(f.contentType, searchQuery)
+      },
+    );
+    #ok(paginate(filtered, page, pageSize))
+  };
+
+  public func setFileTags(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+    tags: [Text],
+  ) : Types.ApiResult<Types.FilePublic> {
+    updateTags(ctx, bucket, path, func(_current) { FileTags.setTags([], tags) })
+  };
+
+  public func addFileTags(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+    tags: [Text],
+  ) : Types.ApiResult<Types.FilePublic> {
+    updateTags(ctx, bucket, path, func(current) { FileTags.addTags(current, tags) })
+  };
+
+  public func removeFileTags(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+    tags: [Text],
+  ) : Types.ApiResult<Types.FilePublic> {
+    updateTags(ctx, bucket, path, func(current) { FileTags.removeTags(current, tags) })
+  };
+
+  func updateTags(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+    apply: ([Text]) -> [Text],
+  ) : Types.ApiResult<Types.FilePublic> {
+    let file = switch (BucketRepo.getFileByPath(ctx.store, bucket.id, path)) {
+      case (null) { return #err("File not found") };
+      case (?f) f;
+    };
+    let updated : Types.StoredFile = {
+      id = file.id;
+      bucketId = file.bucketId;
+      path = file.path;
+      name = file.name;
+      size = file.size;
+      contentType = file.contentType;
+      checksum = file.checksum;
+      createdAt = file.createdAt;
+      updatedAt = ?Time.now();
+      metadata = file.metadata;
+      tags = apply(file.tags);
+    };
+    BucketRepo.updateFile(ctx.store, updated);
+    #ok(toPublic(bucket, updated))
+  };
+
+  public func getFileMetadata(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+  ) : Types.ApiResult<Text> {
+    switch (BucketRepo.getFileByPath(ctx.store, bucket.id, path)) {
+      case (null) { #err("File not found") };
+      case (?file) {
+        switch (file.metadata) {
+          case (null) { #ok("") };
+          case (?m) { #ok(m) };
+        }
+      };
+    }
+  };
+
+  public func setFileMetadata(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+    metadata: Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    updateFile(ctx, bucket, path, null, null, ?metadata)
+  };
+
+  public func bulkMove(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    ops: [Types.FilePathOp],
+  ) : Types.ApiResult<Nat> {
+    if (ops.size() == 0) { return #err("No operations provided") };
+    if (ops.size() > Config.BUCKET_BULK_MAX) {
+      return #err("Too many operations — max " # Nat.toText(Config.BUCKET_BULK_MAX));
+    };
+    var count : Nat = 0;
+    for (op in ops.vals()) {
+      switch (moveFile(ctx, bucket, op.source, op.destination)) {
+        case (#err(e)) { return #err(e) };
+        case (#ok(_)) { count += 1 };
+      };
+    };
+    #ok(count)
+  };
+
+  public func bulkCopy(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    ops: [Types.FilePathOp],
+  ) : Types.ApiResult<Nat> {
+    if (ops.size() == 0) { return #err("No operations provided") };
+    if (ops.size() > Config.BUCKET_BULK_MAX) {
+      return #err("Too many operations — max " # Nat.toText(Config.BUCKET_BULK_MAX));
+    };
+    var count : Nat = 0;
+    for (op in ops.vals()) {
+      switch (copyFile(ctx, bucket, op.source, op.destination)) {
+        case (#err(e)) { return #err(e) };
+        case (#ok(_)) { count += 1 };
+      };
+    };
+    #ok(count)
+  };
+};

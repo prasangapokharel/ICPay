@@ -170,6 +170,62 @@ module {
     }
   };
 
+  public func updateFileRecord(store: BucketStore, file: StoredFile) {
+    store.files.add(file.id, file);
+  };
+
+  public func relocateFilePath(store: BucketStore, fileId: FileId, newPath: Text) : Bool {
+    switch (store.files.get(fileId)) {
+      case (null) false;
+      case (?file) {
+        store.pathIndex.remove(pathKey(file.bucketId, file.path));
+        let moved : StoredFile = {
+          id = file.id;
+          bucketId = file.bucketId;
+          path = newPath;
+          name = file.name;
+          size = file.size;
+          contentType = file.contentType;
+          checksum = file.checksum;
+          createdAt = file.createdAt;
+          updatedAt = file.updatedAt;
+          metadata = file.metadata;
+          tags = file.tags;
+        };
+        store.files.add(fileId, moved);
+        store.pathIndex.add(pathKey(file.bucketId, newPath), fileId);
+        true
+      };
+    }
+  };
+
+  public func purgeBucketData(store: BucketStore, bucketId: BucketId) {
+    let fileIds = Iter.toArray(
+      Iter.map<StoredFile, FileId>(
+        Iter.filter(Map.values(store.files), func(f) { f.bucketId == bucketId }),
+        func(f) { f.id },
+      ),
+    );
+    for (id in fileIds.vals()) {
+      ignore deleteFile(store, id);
+    };
+    switch (store.bucketKeyIndex.get(bucketId)) {
+      case (null) {};
+      case (?keyIds) {
+        for (keyId in keyIds.vals()) {
+          switch (store.apiKeys.get(keyId)) {
+            case (null) {};
+            case (?key) {
+              store.keyHashIndex.remove(key.keyHash);
+              store.apiKeys.remove(keyId);
+            };
+          };
+        };
+        store.bucketKeyIndex.remove(bucketId);
+      };
+    };
+  };
+
   public func getTotalStorage(store: BucketStore) : Nat {
     var total : Nat = 0;
     for (bucket in Map.values(store.buckets)) {
@@ -264,6 +320,33 @@ module {
       case (null) false;
       case (?key) {
         key.revokedAt := ?at;
+        true
+      };
+    }
+  };
+
+  public func updateApiKeyRecord(store: BucketStore, key: Types.ApiKey) {
+    store.apiKeys.add(key.id, key);
+  };
+
+  public func rotateApiKeySecret(store: BucketStore, id: Text, newHash: Text, newHint: Text) : Bool {
+    switch (store.apiKeys.get(id)) {
+      case (null) false;
+      case (?old) {
+        store.keyHashIndex.remove(old.keyHash);
+        let updated : Types.ApiKey = {
+          id = old.id;
+          owner = old.owner;
+          bucketId = old.bucketId;
+          name = old.name;
+          keyHash = newHash;
+          keyHint = newHint;
+          permissions = old.permissions;
+          createdAt = old.createdAt;
+          var revokedAt = old.revokedAt;
+        };
+        store.apiKeys.add(id, updated);
+        store.keyHashIndex.add(newHash, id);
         true
       };
     }

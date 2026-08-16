@@ -11,9 +11,29 @@
       "dev": false
     }
   },
+  "redirects": [
+    { "source": "/what-is-icp", "destination": "/blog/what-is-icp", "permanent": true },
+    { "source": "/best-crypto-wallet", "destination": "/blog/best-crypto-wallet", "permanent": true },
+    { "source": "/best-icp-wallet", "destination": "/blog/best-icp-wallet", "permanent": true },
+    { "source": "/what-is-internet-identity", "destination": "/blog/what-is-internet-identity", "permanent": true },
+    { "source": "/how-to-send-icp", "destination": "/blog/how-to-send-icp", "permanent": true },
+    { "source": "/icp-price", "destination": "/blog/icp-price", "permanent": true },
+    { "source": "/icp-cloud-storage", "destination": "/blog/icp-cloud-storage", "permanent": true },
+    { "source": "/internet-computer-chain-fusion", "destination": "/blog/internet-computer-chain-fusion", "permanent": true },
+    { "source": "/how-icp-canisters-work", "destination": "/blog/how-icp-canisters-work", "permanent": true },
+    { "source": "/icp-cycles-explained", "destination": "/blog/icp-cycles-explained", "permanent": true },
+    { "source": "/icp-vs-ethereum", "destination": "/blog/icp-vs-ethereum", "permanent": true },
+    { "source": "/can-icp-replace-cloud-computing", "destination": "/blog/can-icp-replace-cloud-computing", "permanent": true },
+    { "source": "/icp-stable-memory", "destination": "/blog/icp-stable-memory", "permanent": true },
+    { "source": "/icp-subnets-explained", "destination": "/blog/icp-subnets-explained", "permanent": true },
+    { "source": "/icp-reverse-gas-model", "destination": "/blog/icp-reverse-gas-model", "permanent": true },
+    { "source": "/icp-https-outcalls", "destination": "/blog/icp-https-outcalls", "permanent": true },
+    { "source": "/how-to-stake-icp", "destination": "/blog/how-to-stake-icp", "permanent": true },
+    { "source": "/icpay-bucket-sdk", "destination": "/blog/icpay-bucket-sdk", "permanent": true }
+  ],
   "rewrites": [
     {
-      "source": "/:bucket/:path*",
+      "source": "/cloud/:bucket/:path*",
       "has": [{ "type": "host", "value": "cloud.icpay.app" }],
       "destination": "/api/cloud/:bucket/:path*"
     },

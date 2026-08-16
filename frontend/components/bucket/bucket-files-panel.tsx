@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Card, CardContent } from "@/components/ui/card"
 import { BucketFileRow } from "@/components/bucket/bucket-file-row"
 import { BucketFilePagination } from "@/components/bucket/bucket-file-pagination"
 import { BucketFilePreviewModal } from "@/components/bucket/bucket-file-preview-modal"
@@ -52,12 +53,15 @@ export function BucketFilesPanel({
       {isLoading && files.length === 0 ? (
         <Skeleton className="h-20 w-full rounded-2xl" />
       ) : files.length === 0 ? (
-        <p className="rounded-2xl border border-dashed px-4 py-8 text-center text-xs text-muted-foreground">
-          {t("noFiles")}
-        </p>
+        <Card className="border-dashed">
+          <CardContent className="py-8 text-center text-xs text-muted-foreground">
+            {t("noFiles")}
+          </CardContent>
+        </Card>
       ) : (
         <>
-          <div className="divide-y overflow-hidden rounded-2xl border">
+          <Card size="sm" className="min-w-0 overflow-hidden py-0">
+            <CardContent className="divide-y p-0">
             {files.map((file) => (
               <BucketFileRow
                 key={file.id}
@@ -68,7 +72,8 @@ export function BucketFilesPanel({
                 onPreview={setPreviewFile}
               />
             ))}
-          </div>
+            </CardContent>
+          </Card>
           <BucketFilePagination
             page={page}
             totalPages={totalPages}

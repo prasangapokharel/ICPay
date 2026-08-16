@@ -17,6 +17,7 @@ import {
   RocketIcon,
   Search01Icon,
   Settings01Icon,
+  BookOpen01Icon,
   BucketIcon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
@@ -126,6 +127,12 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
         key: "history",
         icon: Clock01Icon,
         keywords: "activity transactions",
+      },
+      {
+        href: "/blog",
+        key: "blog",
+        icon: BookOpen01Icon,
+        keywords: "blog articles guides packages sdk",
       },
       {
         href: "/",

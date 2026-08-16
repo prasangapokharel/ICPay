@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "ICP Cloud Storage in 2026: Decentralized File Storage on the Internet Computer",
   description:
     "ICP cloud storage explained — on-chain encrypted buckets, global CDN URLs, pay-with-ICP pricing, and how Internet Computer file storage compares to AWS S3, IPFS, and Arweave.",
-  alternates: { canonical: "/icp-cloud-storage" },
+  alternates: { canonical: "/blog/icp-cloud-storage" },
   openGraph: {
     title: "ICP Cloud Storage in 2026 — ICPay Blog",
     description:
@@ -184,11 +184,11 @@ export default function IcpCloudStoragePage() {
         </p>
         <p className="text-sm leading-relaxed text-muted-foreground">
           New to the chain itself? Read our{" "}
-          <Link href="/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
             what is ICP guide
           </Link>{" "}
           or our{" "}
-          <Link href="/best-icp-wallet" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/best-icp-wallet" className="underline underline-offset-2 hover:text-foreground">
             best ICP wallet
           </Link>{" "}
           comparison to understand how ICPay custody and Internet Identity fit together.

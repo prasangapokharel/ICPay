@@ -65,7 +65,7 @@ let bucket : Types.Bucket = {
   var name = "cdn-demo";
   capacity = 1_000_000_000;
   var storageUsed = 0;
-  visibility = #Public;
+  var visibility = #Public;
   var status = #ACTIVE;
   var expiresAt = future;
   createdAt = now;
@@ -109,7 +109,7 @@ switch (BucketService.getRenewQuote(svc, owner, "stats-bucket")) {
   case (#err(e)) { assert false; Debug.print("FAIL [STATS]: renew quote: " # e) };
 };
 
-switch (BucketService.listFiles(svc, owner, "stats-bucket", 0, 20)) {
+switch (BucketService.listFiles(svc, owner, "stats-bucket", 0, 20, null)) {
   case (#ok(page)) {
     switch (page.items[0].publicUrl) {
       case (null) { assert false };

@@ -1,12 +1,12 @@
 "use client"
 
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useId, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Upload01Icon } from "@hugeicons/core-free-icons"
-import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Progress } from "@/components/ui/progress"
+import { Card, CardContent } from "@/components/ui/card"
+import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
 import {
   formatBytes,
   mapBucketError,
@@ -27,6 +27,7 @@ export function BucketUploadZone({
   onUpload,
   onSuccess,
   onBusyChange,
+  showHint = true,
 }: {
   disabled: boolean
   onUpload: (
@@ -37,8 +38,11 @@ export function BucketUploadZone({
   ) => Promise<string | null>
   onSuccess?: () => void
   onBusyChange?: (busy: boolean) => void
+  /** When false, the long format hint is omitted (e.g. shown in the dialog header instead). */
+  showHint?: boolean
 }) {
   const t = useTranslations("bucket")
+  const inputId = useId()
   const { desktopOnly } = useBucketUploadDesktopOnly()
   const inputRef = useRef<HTMLInputElement>(null)
   const [phase, setPhase] = useState<UploadPhase>("idle")
@@ -171,81 +175,53 @@ export function BucketUploadZone({
     <div className="space-y-3">
       <input
         ref={inputRef}
+        id={inputId}
         type="file"
         accept="*/*"
         multiple
-        className="hidden"
+        className="sr-only"
         disabled={blocked || busy}
         onChange={(e) => void handleFileList(e.target.files)}
       />
 
-      <div
-        role="button"
-        tabIndex={blocked || busy ? -1 : 0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault()
-            if (!blocked && !busy) inputRef.current?.click()
-          }
-        }}
+      <label
+        htmlFor={inputId}
+        className={cn("block", (blocked || busy) && "pointer-events-none opacity-60")}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
-        onClick={() => {
-          if (!blocked && !busy) inputRef.current?.click()
-        }}
-        className={cn(
-          "flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors",
-          dragOver && !blocked && !busy
-            ? "border-primary bg-primary/5"
-            : "border-muted-foreground/25 hover:border-muted-foreground/40",
-          (blocked || busy) && "pointer-events-none opacity-60"
-        )}
       >
-        <HugeiconsIcon
-          icon={Upload01Icon}
-          className="size-8 text-muted-foreground"
-          strokeWidth={1.5}
-        />
-        <p className="text-sm font-medium">
-          {busy ? t("uploading") : t("uploadDropHint")}
-        </p>
-        {!busy && (
-          <p className="text-[11px] text-muted-foreground">
-            {t("uploadHint", { max: formatBytes(MAX_FILE_BYTES) })}
-          </p>
-        )}
-      </div>
+        <Card
+          size="sm"
+          className={cn(
+            "cursor-pointer border-dashed py-0 transition-colors",
+            dragOver && !blocked && !busy && "border-primary bg-primary/5",
+            busy && "border-primary/30"
+          )}
+        >
+          <CardContent className="flex flex-col items-center gap-2 py-8 text-center">
+            <HugeiconsIcon
+              icon={Upload01Icon}
+              className="size-6 text-muted-foreground"
+              strokeWidth={1.75}
+            />
+            <p className="text-sm font-medium">
+              {busy ? t("uploading") : t("uploadDropHint")}
+            </p>
+            {showHint && !busy && (
+              <p className="max-w-xs text-xs leading-relaxed text-muted-foreground">
+                {t("uploadHint", { max: formatBytes(MAX_FILE_BYTES) })}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </label>
 
       {busy && (
-        <div className="space-y-1.5 rounded-xl bg-muted/30 px-3 py-2.5">
-          {statusLabel && (
-            <p className="truncate text-xs text-muted-foreground">{statusLabel}</p>
-          )}
-          <Progress
-            value={progress}
-            max={100}
-            className="gap-0 [&_[data-slot=progress-track]]:h-1.5"
-          />
-          <p className="text-right text-[10px] tabular-nums text-muted-foreground">
-            {Math.round(progress)}%
-          </p>
-        </div>
-      )}
-
-      {!busy && (
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          disabled={disabled}
-          onClick={(e) => {
-            e.stopPropagation()
-            inputRef.current?.click()
-          }}
-        >
-          {t("uploadChooseFiles")}
-        </Button>
+        <Progress value={progress}>
+          {statusLabel ? <ProgressLabel>{statusLabel}</ProgressLabel> : null}
+          <ProgressValue />
+        </Progress>
       )}
 
       {error && (

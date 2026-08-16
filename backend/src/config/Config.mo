@@ -178,4 +178,8 @@ module {
   public let RATE_BUCKET_UPLOAD = { maxPerWindow = 40; windowSeconds = 60 };
   public let RATE_BUCKET_RENEW = { maxPerWindow = 5; windowSeconds = 60 };
   public let RATE_BUCKET_API_KEY = { maxPerWindow = 10; windowSeconds = 60 };
+  public let RATE_BUCKET_MUTATE = { maxPerWindow = 30; windowSeconds = 60 };
+
+  /** Max paths per bulk delete/move/copy call — IC instruction budget. */
+  public let BUCKET_BULK_MAX: Nat = 20;
 };

@@ -5,10 +5,12 @@ import { useTranslations } from "next-intl"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
 import { BucketUploadZone } from "@/components/bucket/bucket-upload-zone"
+import { formatBytes, MAX_FILE_BYTES } from "@/lib/bucket/bucket"
 
 export function BucketUploadModal({
   open,
@@ -37,12 +39,16 @@ export function BucketUploadModal({
         onOpenChange(next)
       }}
     >
-      <DialogContent className="max-w-sm gap-4">
-        <DialogHeader>
+      <DialogContent className="max-w-sm gap-3" showCloseButton>
+        <DialogHeader className="gap-1">
           <DialogTitle>{t("upload")}</DialogTitle>
+          <DialogDescription className="text-xs leading-relaxed">
+            {t("uploadHint", { max: formatBytes(MAX_FILE_BYTES) })}
+          </DialogDescription>
         </DialogHeader>
         <BucketUploadZone
           disabled={disabled}
+          showHint={false}
           onUpload={onUpload}
           onBusyChange={setBusy}
           onSuccess={() => onOpenChange(false)}

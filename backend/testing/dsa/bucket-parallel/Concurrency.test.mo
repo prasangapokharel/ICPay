@@ -62,7 +62,7 @@ func seedBucket(id: Text, owner: Principal) {
     var name = "assets-" # id;
     capacity = 100_000_000;
     var storageUsed = 0;
-    visibility = #Private;
+    var visibility = #Private;
     var status = #ACTIVE;
     var expiresAt = now + Config.BUCKET_PERIOD_NS;
     createdAt = now;

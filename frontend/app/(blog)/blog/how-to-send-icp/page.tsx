@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "How to Send ICP: The Complete 2026 Guide",
   description:
     "How to send ICP step by step — by account ID or by username, transfer fees, the ICRC-1 standard, and common mistakes that lose funds.",
-  alternates: { canonical: "/how-to-send-icp" },
+  alternates: { canonical: "/blog/how-to-send-icp" },
   openGraph: {
     title: "How to Send ICP — ICPay Blog",
     description:
@@ -120,11 +120,11 @@ export default function HowToSendIcpPage() {
         <p className="text-sm leading-relaxed text-muted-foreground">
           ICPay turns the whole flow into a few taps: sign in with Internet Identity, pick a
           username, and send ICP by name. New to the ecosystem? Read{" "}
-          <Link href="/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
             what is ICP
           </Link>{" "}
           and our picks for the{" "}
-          <Link href="/best-icp-wallet" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/best-icp-wallet" className="underline underline-offset-2 hover:text-foreground">
             best ICP wallet
           </Link>.
         </p>

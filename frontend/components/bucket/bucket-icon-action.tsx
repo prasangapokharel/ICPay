@@ -29,13 +29,9 @@ export function BucketIconAction({
         render={
           <Button
             type="button"
-            variant={variant}
+            variant={destructive ? "destructive" : variant}
             size="icon-sm"
-            className={cn(
-              "shrink-0",
-              destructive && "text-muted-foreground hover:text-destructive",
-              className
-            )}
+            className={cn("shrink-0", className)}
             disabled={disabled}
             onClick={onClick}
             aria-label={label}

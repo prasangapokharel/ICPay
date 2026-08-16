@@ -5,23 +5,16 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  ArrowDown01Icon,
   BookOpen01Icon,
-  Copy01Icon,
   Key01Icon,
-  Tick02Icon,
-  Upload01Icon,
 } from "@hugeicons/core-free-icons"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+import { Card, CardContent } from "@/components/ui/card"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import {
   BucketUploadDesktopTrigger,
@@ -32,7 +25,7 @@ import { BucketFilesPanel } from "@/components/bucket/bucket-files-panel"
 import { BucketUploadModal } from "@/components/bucket/bucket-upload-modal"
 import { BucketRenewDrawer } from "@/components/bucket/bucket-renew-drawer"
 import { BucketApiKeysModal } from "@/components/bucket/bucket-api-keys-modal"
-import { BucketIconAction } from "@/components/bucket/bucket-icon-action"
+import { BucketPublicCdn } from "@/components/bucket/bucket-public-cdn"
 import {
   useBucketStats,
   useInvalidateBucketCache,
@@ -49,14 +42,10 @@ import {
   isPublicVisibility,
   optionalText,
 } from "@/lib/bucket/bucket"
-import { copyText } from "@/lib/wallet-utils"
-import { toRawCanisterUrl } from "@/lib/bucket/cdn"
-import { cn } from "@/lib/utils"
 import { useRewrittenLastSegment } from "@/lib/rewritten-route"
 
 export function BucketDetail() {
   const t = useTranslations("bucket")
-  const tc = useTranslations("common")
   const router = useRouter()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
@@ -69,8 +58,6 @@ export function BucketDetail() {
   const [renewOpen, setRenewOpen] = useState(false)
   const [uploadOpen, setUploadOpen] = useState(false)
   const [apiKeysOpen, setApiKeysOpen] = useState(false)
-  const [cdnOpen, setCdnOpen] = useState(false)
-  const [baseCopied, setBaseCopied] = useState(false)
 
   const active = stats ? isBucketActive(stats.status) : false
   const canWrite = active
@@ -81,32 +68,26 @@ export function BucketDetail() {
 
   const back = <BucketBackButton onClick={() => router.push("/bucket")} />
 
-  const docsLink = (
-    <Button variant="ghost" size="sm" className="h-7 gap-1 px-2 text-xs" nativeButton={false} render={<Link href="/bucket/docs" />}>
-      <HugeiconsIcon icon={BookOpen01Icon} className="size-3.5" strokeWidth={1.75} />
-      {t("docs")}
-    </Button>
-  )
-
   const headerActions = (
-    <div className="flex items-center gap-0.5">
+    <ButtonGroup>
       {canWrite && (
         <BucketUploadDesktopTrigger>
           <Button
             variant="default"
             size="sm"
-            className="h-7 gap-1 px-2.5 text-xs"
             onClick={() => {
               if (!desktopOnly) setUploadOpen(true)
             }}
           >
-            <HugeiconsIcon icon={Upload01Icon} className="size-3.5" strokeWidth={1.75} />
             {t("upload")}
           </Button>
         </BucketUploadDesktopTrigger>
       )}
-      {docsLink}
-    </div>
+      <Button variant="ghost" size="sm" nativeButton={false} render={<Link href="/bucket/docs" />}>
+        <HugeiconsIcon icon={BookOpen01Icon} className="size-3.5" strokeWidth={1.75} />
+        {t("docs")}
+      </Button>
+    </ButtonGroup>
   )
 
   if (!bucketId || (statsLoading && !stats)) {
@@ -114,7 +95,7 @@ export function BucketDetail() {
       <div className="space-y-4 pt-2">
         <div className="flex items-center justify-between gap-2">
           {back}
-          {docsLink}
+          {headerActions}
         </div>
         <Skeleton className="h-24 w-full rounded-2xl" />
         <Skeleton className="h-40 w-full rounded-2xl" />
@@ -127,7 +108,7 @@ export function BucketDetail() {
       <div className="space-y-4 pt-2">
         <div className="flex items-center justify-between gap-2">
           {back}
-          {docsLink}
+          {headerActions}
         </div>
         <Alert variant="destructive">
           <AlertDescription>{t("notFound")}</AlertDescription>
@@ -163,29 +144,15 @@ export function BucketDetail() {
   }
 
   const publicBaseRaw = optionalText(stats.publicBaseUrl)
-  const displayBase = publicBaseRaw ? toRawCanisterUrl(publicBaseRaw) : null
-
-  const handleCopyBase = async () => {
-    if (!displayBase) return
-    await copyText(displayBase)
-    setBaseCopied(true)
-    setTimeout(() => setBaseCopied(false), 2000)
-  }
 
   const statusBadge = active ? (
     stats.isExpiringSoon ? (
-      <Badge variant="secondary" className="h-7 shrink-0 rounded-md px-2 text-[10px]">
-        {t("expiringSoon")}
-      </Badge>
+      <Badge variant="secondary">{t("expiringSoon")}</Badge>
     ) : (
-      <Badge variant="outline" className="h-7 shrink-0 rounded-md px-2 text-[10px]">
-        {t("active")}
-      </Badge>
+      <Badge variant="outline">{t("active")}</Badge>
     )
   ) : (
-    <Badge variant="destructive" className="h-7 shrink-0 rounded-md px-2 text-[10px]">
-      {t("expired")}
-    </Badge>
+    <Badge variant="destructive">{t("expired")}</Badge>
   )
 
   return (
@@ -195,10 +162,25 @@ export function BucketDetail() {
         {headerActions}
       </div>
 
-      <div className="space-y-2.5 rounded-2xl border p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="truncate text-lg font-bold tracking-tight">{stats.name}</h1>
+      <Card size="sm">
+        <CardContent className="space-y-2.5">
+        <div className="space-y-1">
+          <div className="flex items-center justify-between gap-2">
+            <h1 className="min-w-0 truncate text-lg font-bold tracking-tight" title={stats.name}>
+              {stats.name}
+            </h1>
+            <ButtonGroup className="shrink-0">
+              <Button variant="outline" size="sm" onClick={() => setApiKeysOpen(true)}>
+                <HugeiconsIcon icon={Key01Icon} className="size-3.5" strokeWidth={1.75} />
+                {t("apiKeysShort")}
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setRenewOpen(true)}>
+                {t("renew")}
+              </Button>
+            </ButtonGroup>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {statusBadge}
             <p className="text-xs text-muted-foreground">
               {isPublicVisibility(stats.visibility) ? t("public") : t("private")}
               {" · "}
@@ -209,26 +191,6 @@ export function BucketDetail() {
                 : t("readOnly")}
             </p>
           </div>
-          <div className="flex shrink-0 items-center gap-1">
-            {statusBadge}
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 gap-1 px-2.5 text-xs"
-              onClick={() => setApiKeysOpen(true)}
-            >
-              <HugeiconsIcon icon={Key01Icon} className="size-3.5" strokeWidth={1.75} />
-              {t("apiKeysShort")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-2.5 text-xs"
-              onClick={() => setRenewOpen(true)}
-            >
-              {t("renew")}
-            </Button>
-          </div>
         </div>
 
         <BucketUsageBar
@@ -237,43 +199,13 @@ export function BucketDetail() {
           percent={stats.usagePercent}
         />
 
-        {displayBase && (
-          <Collapsible open={cdnOpen} onOpenChange={setCdnOpen}>
-            <CollapsibleTrigger
-              className="flex w-full items-center justify-between gap-2 rounded-lg py-1 text-left text-xs text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <span>{t("publicCdn")}</span>
-              <HugeiconsIcon
-                icon={ArrowDown01Icon}
-                className={cn("size-3.5 shrink-0 transition-transform", cdnOpen && "rotate-180")}
-                strokeWidth={1.75}
-              />
-            </CollapsibleTrigger>
-            <CollapsibleContent
-              keepMounted
-              className="overflow-hidden data-open:animate-accordion-down data-closed:animate-accordion-up"
-            >
-              <div className="space-y-1.5 pt-1.5">
-                <div className="flex items-center gap-1">
-                  <p className="min-w-0 flex-1 truncate rounded-lg bg-muted/40 px-2 py-1.5 font-mono text-[10px] text-muted-foreground">
-                    {displayBase}
-                  </p>
-                  <BucketIconAction
-                    icon={baseCopied ? Tick02Icon : Copy01Icon}
-                    label={baseCopied ? tc("copied") : tc("copy")}
-                    variant="outline"
-                    onClick={handleCopyBase}
-                  />
-                </div>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        )}
-      </div>
+        {publicBaseRaw && <BucketPublicCdn publicBaseUrl={publicBaseRaw} />}
+        </CardContent>
+      </Card>
 
       {!canWrite && (
-        <Alert className="py-2">
-          <AlertDescription className="text-xs">{t("readOnly")}</AlertDescription>
+        <Alert>
+          <AlertDescription>{t("readOnly")}</AlertDescription>
         </Alert>
       )}
 

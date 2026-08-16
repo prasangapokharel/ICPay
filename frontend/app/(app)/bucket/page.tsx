@@ -8,6 +8,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { BucketIcon } from "@hugeicons/core-free-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import { BucketCard } from "@/components/bucket/bucket-card"
 import { BucketCreateForm } from "@/components/bucket/bucket-create-form"
@@ -57,48 +58,53 @@ export default function BucketPage() {
         <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="link" size="sm" className="h-auto px-0 text-xs" nativeButton={false} render={<Link href="/bucket/pricing" />}>
+          <Button variant="link" size="sm" nativeButton={false} render={<Link href="/bucket/pricing" />}>
             {t("pricingLink")}
           </Button>
           <span className="text-muted-foreground/50">·</span>
-          <Button variant="link" size="sm" className="h-auto px-0 text-xs" nativeButton={false} render={<Link href="/bucket/docs" />}>
+          <Button variant="link" size="sm" nativeButton={false} render={<Link href="/bucket/docs" />}>
             {t("docs")}
           </Button>
         </div>
       </div>
 
-      <button
+      <Button
         type="button"
+        variant="outline"
+        className="h-auto w-full justify-start gap-3 border-dashed p-4"
         onClick={() => setShowForm(true)}
-        className="flex w-full items-center gap-3 rounded-2xl border border-dashed bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100 p-4 text-left transition-colors hover:bg-muted/40 dark:from-sky-950/40 dark:via-blue-950/30 dark:to-indigo-950/40"
       >
-        <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <HugeiconsIcon icon={BucketIcon} className="size-5" strokeWidth={1.75} />
-        </span>
-        <span className="min-w-0">
+        <HugeiconsIcon icon={BucketIcon} className="size-5" strokeWidth={1.75} />
+        <span className="min-w-0 text-left">
           <span className="block text-sm font-bold">{t("createCta")}</span>
           <span className="block text-xs font-medium text-muted-foreground">{t("createCtaBody")}</span>
         </span>
-      </button>
+      </Button>
 
       <div className="space-y-2">
         <p className="text-xs font-medium text-muted-foreground">{t("myBuckets")}</p>
         {isLoading && buckets.length === 0 ? (
-          <div className="space-y-2 rounded-2xl border p-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-          </div>
+          <Card size="sm">
+            <CardContent className="space-y-2">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </CardContent>
+          </Card>
         ) : buckets.length === 0 ? (
-          <p className="rounded-2xl border border-dashed px-4 py-8 text-center text-xs text-muted-foreground">
-            {t("empty")}
-            <span className="mt-1 block">{t("emptyHint")}</span>
-          </p>
+          <Card className="border-dashed">
+            <CardContent className="py-8 text-center text-xs text-muted-foreground">
+              {t("empty")}
+              <span className="mt-1 block">{t("emptyHint")}</span>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="divide-y overflow-hidden rounded-2xl border">
+          <Card size="sm" className="overflow-hidden py-0">
+            <CardContent className="divide-y p-0">
             {buckets.map((bucket) => (
               <BucketCard key={bucket.id} bucket={bucket} />
             ))}
-          </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

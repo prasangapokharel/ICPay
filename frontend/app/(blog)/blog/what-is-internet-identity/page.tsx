@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "What is Internet Identity? Internet Computer Login Explained",
   description:
     "Internet Identity is the passkey-based login system of the Internet Computer. How it works, why there is no password or seed phrase, and why ICPay uses it.",
-  alternates: { canonical: "/what-is-internet-identity" },
+  alternates: { canonical: "/blog/what-is-internet-identity" },
   openGraph: {
     title: "What is Internet Identity? — ICPay Blog",
     description:
@@ -97,11 +97,11 @@ export default function WhatIsInternetIdentityPage() {
         </p>
         <p className="text-sm leading-relaxed text-muted-foreground">
           Curious about the platform behind it? Read{" "}
-          <Link href="/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
             what is ICP
           </Link>{" "}
           or see where the Internet Computer fits in our{" "}
-          <Link href="/best-crypto-wallet" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/best-crypto-wallet" className="underline underline-offset-2 hover:text-foreground">
             crypto wallet guide
           </Link>.
         </p>

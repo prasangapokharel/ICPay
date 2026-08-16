@@ -97,13 +97,15 @@ export function listFiles(
   identity: Identity | undefined,
   bucketId: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  apiKey?: string
 ): Promise<FileListPage> {
   return query(identity, async (actor) => {
     const res = (await actor.listFiles(
       bucketId,
       BigInt(page),
-      BigInt(pageSize)
+      BigInt(pageSize),
+      apiKey ? [apiKey] : []
     )) as Outcome<FileListPage>
     return unwrap(res)
   })
@@ -141,10 +143,15 @@ export function deleteFile(
 export function downloadFileBlob(
   identity: Identity | undefined,
   bucketId: string,
-  path: string
+  path: string,
+  apiKey?: string
 ): Promise<Uint8Array> {
   return query(identity, async (actor) => {
-    const res = (await actor.downloadFile(bucketId, path)) as Outcome<Uint8Array>
+    const res = (await actor.downloadFile(
+      bucketId,
+      path,
+      apiKey ? [apiKey] : []
+    )) as Outcome<Uint8Array>
     return unwrap(res)
   })
 }
@@ -197,5 +204,42 @@ export function revokeApiKey(
 ): Promise<Outcome<null>> {
   return call(identity, "Failed to revoke API key", (actor) =>
     actor.revokeApiKey(bucketId, keyId) as Promise<Outcome<null>>
+  )
+}
+
+export function getApiKey(
+  identity: Identity | undefined,
+  bucketId: string,
+  keyId: string
+): Promise<ApiKeyPublic> {
+  return query(identity, async (actor) => {
+    const res = (await actor.getApiKey(bucketId, keyId)) as Outcome<ApiKeyPublic>
+    return unwrap(res)
+  })
+}
+
+export function updateApiKey(
+  identity: Identity | undefined,
+  bucketId: string,
+  keyId: string,
+  opts: { name?: string; permissions?: ApiKeyPermissions }
+): Promise<Outcome<ApiKeyPublic>> {
+  return call(identity, "Failed to update API key", (actor) =>
+    actor.updateApiKey(
+      bucketId,
+      keyId,
+      opts.name !== undefined ? [opts.name] : [],
+      opts.permissions !== undefined ? [opts.permissions] : []
+    ) as Promise<Outcome<ApiKeyPublic>>
+  )
+}
+
+export function regenerateApiKey(
+  identity: Identity | undefined,
+  bucketId: string,
+  keyId: string
+): Promise<Outcome<ApiKeyCreateResult>> {
+  return call(identity, "Failed to regenerate API key", (actor) =>
+    actor.regenerateApiKey(bucketId, keyId) as Promise<Outcome<ApiKeyCreateResult>>
   )
 }
