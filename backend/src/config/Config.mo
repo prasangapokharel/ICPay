@@ -177,6 +177,7 @@ module {
   public let RATE_BUCKET_CREATE = { maxPerWindow = 3; windowSeconds = 60 };
   public let RATE_BUCKET_UPLOAD = { maxPerWindow = 40; windowSeconds = 60 };
   public let RATE_BUCKET_RENEW = { maxPerWindow = 5; windowSeconds = 60 };
+  public let RATE_BUCKET_MANAGE = { maxPerWindow = 5; windowSeconds = 60 };
   public let RATE_BUCKET_API_KEY = { maxPerWindow = 10; windowSeconds = 60 };
   public let RATE_BUCKET_MUTATE = { maxPerWindow = 30; windowSeconds = 60 };
 

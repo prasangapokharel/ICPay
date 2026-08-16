@@ -12,6 +12,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { UserIcon, Tick02Icon, Cancel01Icon, ShoppingBag01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import type { UserPublic } from "@/services/types"
 import Link from "next/link"
+import { useUsernameAvailability } from "@/hooks/use-wallet-data"
 import {
   validateFreeUsername,
   USERNAME_MAX_LENGTH,
@@ -21,25 +22,18 @@ import {
 type ProfileCardProps = {
   user: UserPublic
   onUpdateUsername: (username: string) => Promise<string | null>
-  onCheckUsername: (name: string) => Promise<boolean>
 }
 
-export function ProfileCard({ user, onUpdateUsername, onCheckUsername }: ProfileCardProps) {
+export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
   const t = useTranslations("profile")
   const te = useTranslations("buyUsername.errors")
   const claimed = user.username?.[0]
   const [username, setUsername] = useState("")
-  const [checkResult, setCheckResult] = useState<boolean | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const handleCheck = async () => {
-    if (!username.trim()) { setCheckResult(null); return }
-    const available = await onCheckUsername(username.trim())
-    setCheckResult(available)
-  }
-
   const trimmed = username.trim()
+  const { available, isLoading: checking } = useUsernameAvailability(trimmed)
   const tooShortToClaim =
     trimmed !== "" && trimmed.length < USERNAME_FREE_MIN_LENGTH
 
@@ -58,7 +52,6 @@ export function ProfileCard({ user, onUpdateUsername, onCheckUsername }: Profile
     setLoading(true)
     const err = await onUpdateUsername(name)
     if (err) setError(err)
-    else setCheckResult(null)
     setLoading(false)
   }
 
@@ -91,18 +84,28 @@ export function ProfileCard({ user, onUpdateUsername, onCheckUsername }: Profile
                   id="username"
                   placeholder="@username"
                   value={username}
-                  onChange={(e) => { setUsername(e.target.value); setCheckResult(null) }}
-                  onBlur={handleCheck}
+                  onChange={(e) => {
+                    setUsername(e.target.value)
+                    setError(null)
+                  }}
                   maxLength={USERNAME_MAX_LENGTH}
                   autoCapitalize="none"
                   autoCorrect="off"
                   spellCheck={false}
                 />
-                {checkResult === true && <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-success" />}
-                {checkResult === false && <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-destructive" />}
+                {trimmed !== "" && !tooShortToClaim && !checking && available === true && (
+                  <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-success" />
+                )}
+                {trimmed !== "" && !tooShortToClaim && !checking && available === false && (
+                  <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-destructive" />
+                )}
               </div>
-              {checkResult === true && !tooShortToClaim && <p className="text-xs text-success">{t("available")}</p>}
-              {checkResult === false && <p className="text-xs text-destructive">{t("taken")}</p>}
+              {trimmed !== "" && !tooShortToClaim && !checking && available === true && (
+                <p className="text-xs text-success">{t("available")}</p>
+              )}
+              {trimmed !== "" && !tooShortToClaim && !checking && available === false && (
+                <p className="text-xs text-destructive">{t("taken")}</p>
+              )}
               {tooShortToClaim ? (
                 <p className="text-xs text-muted-foreground">
                   {t("tooShort", { min: USERNAME_FREE_MIN_LENGTH })}{" "}

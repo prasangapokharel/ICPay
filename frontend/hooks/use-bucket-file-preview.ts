@@ -10,6 +10,7 @@ import {
   revokeObjectUrl,
 } from "@/lib/bucket/file-preview"
 import { bucketFilePreviewKey } from "@/lib/bucket/cache-keys"
+import { BUCKET_QUERY } from "@/hooks/use-bucket"
 import { downloadFileBlob } from "@/services/bucket/bucket"
 import type { FilePublic } from "@/services/bucket/types"
 
@@ -35,8 +36,7 @@ export function useBucketFilePreview(bucketId: string, file: FilePublic | null) 
       return bytesToObjectUrl(bytes, file!.contentType)
     },
     {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
+      ...BUCKET_QUERY,
       dedupingInterval: 120_000,
     }
   )

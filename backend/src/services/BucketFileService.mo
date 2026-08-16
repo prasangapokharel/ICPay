@@ -13,6 +13,8 @@ import FilePath "../utils/FilePath";
 import FileTags "../utils/FileTags";
 import FileValidator "../utils/FileValidator";
 import BucketStorage "../storage/BucketStorage";
+import Pagination "../../pkg/pagination/pg";
+import Validate "../../pkg/validate/text";
 
 module {
   public type FileContext = {
@@ -50,22 +52,7 @@ module {
     page: Nat,
     pageSize: Nat,
   ) : Types.FileListPage {
-    let total = files.size();
-    let limit = if (pageSize == 0) {
-      Config.BUCKET_FILE_PAGE_SIZE
-    } else if (pageSize > Config.MAX_PAGE_SIZE) {
-      Config.MAX_PAGE_SIZE
-    } else {
-      pageSize
-    };
-    let offset = page * limit;
-    if (offset >= total) {
-      { items = []; total; page; pageSize = limit }
-    } else {
-      let end = if (offset + limit > total) { total } else { offset + limit };
-      let slice = Array.tabulate<Types.FilePublic>(end - offset, func(i) { files[offset + i] });
-      { items = slice; total; page; pageSize = limit }
-    }
+    Pagination.slice(files, page, pageSize, Config.BUCKET_FILE_PAGE_SIZE, Config.MAX_PAGE_SIZE)
   };
 
   public func getFile(
@@ -142,14 +129,17 @@ module {
   };
 
   func validateDestPath(path: Text) : ?Text {
-    if (path.size() == 0) return ?("Path is required");
-    if (not Text.startsWith(path, #text "/")) return ?("Path must start with /");
-    if (Text.contains(path, #text "..")) return ?("Path may not contain ..");
-    let ext = FileValidator.pathExtension(path);
-    if (not FileValidator.isAllowedExtension(ext)) {
-      return ?("Destination path not allowed");
-    };
-    null
+    switch (Validate.absPath(path)) {
+      case (?e) { ?e };
+      case (null) {
+        let ext = FileValidator.pathExtension(path);
+        if (not FileValidator.isAllowedExtension(ext)) {
+          ?("Destination path not allowed")
+        } else {
+          null
+        }
+      };
+    }
   };
 
   public func moveFile(

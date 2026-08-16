@@ -20,6 +20,7 @@ frontend/.agents/skills/vercel-react-best-practices
 docs/*
 !docs/demo/
 !docs/command/
+!docs/pkg/
 !docs/language/
 !docs/workflow.md
 !docs/security/
@@ -79,3 +80,6 @@ pnpm-debug.log*
 # staged Next export for the asset canister
 backend/dist/
 node_modules/
+# Root package.json is CI-only (tsx); lockfile belongs in frontend/
+/package-lock.json
+/pkg
