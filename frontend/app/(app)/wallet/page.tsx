@@ -1,6 +1,8 @@
 "use client"
 
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
 import { formatAmount, E8S } from "@/lib/wallet-utils"
@@ -36,9 +38,14 @@ export default function WalletPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/swap" />}>
+          {t("swapCta")}
+        </Button>
       </div>
 
       {/* ICP balance, styled as a physical card: metallic chip, glass ICP pill,

@@ -45,6 +45,8 @@ import SocialLinkApi "api/v1/SocialLink";
 import VerifiedApi "api/v1/Verified";
 import SwapApi "api/v1/Swap";
 import BucketApi "api/v1/Bucket";
+import AnalyticsService "services/AnalyticsService";
+import AnalyticsApi "api/v1/Analytics";
 import CloudHttpApi "api/v1/CloudHttp";
 import MiddlewareAuth "middleware/Auth";
 import Principal "mo:core/Principal";
@@ -166,6 +168,7 @@ persistent actor self {
   );
   transient let swapService = SwapService.create(users, transactions, transactionsByUser, ledger, pendingSwaps, nextUid, swapLimits);
   transient let bucketUploadSessions = BucketService.createUploadSessionStore();
+  transient let analyticsService = AnalyticsService.create(users, transactionsByUser, transferService);
   transient let bucketService = BucketService.create(
     users, bucketStore, bucketNameIndex, transferService, nextUid,
     bucketCreateLimits, bucketUploadLimits, bucketRenewLimits, bucketManageLimits, bucketApiKeyLimits,
@@ -214,6 +217,7 @@ persistent actor self {
   include VerifiedApi(userService);
   include SwapApi(swapService, mwConfig);
   include BucketApi(bucketService, mwConfig);
+  include AnalyticsApi(analyticsService, mwConfig);
   include CloudHttpApi(bucketService);
 
 };

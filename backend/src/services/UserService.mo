@@ -1,5 +1,6 @@
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
+import Map "mo:core/Map";
 import Types "../types";
 import UserRepo "../repositories/UserRepository";
 import UserStorage "../storage/UserStorage";
@@ -76,6 +77,11 @@ module {
       case (?user) { ?user.principal };
       case (null) { null };
     };
+  };
+
+  /** Claimed handles only — one query for ops (`npm run ci users:count`). */
+  public func usernameCount(service: UserService): Nat {
+    Map.size(service.usernames);
   };
 
   // Null for a user with no handle rather than #basic: the tier answers "which

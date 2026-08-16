@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
@@ -20,6 +21,7 @@ import { SendSuccess } from "@/components/wallet/send-success"
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import { useAuth } from "@/components/auth/auth-provider"
 import { transfer, type TransferMode } from "@/services/transfer/transfer"
+import { isSwapToken } from "@/lib/swap-tokens"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 import { useTokenRegistry } from "@/lib/token-registry"
 import { useFiatValue } from "@/hooks/use-fiat-value"
@@ -128,13 +130,23 @@ export function TokenView() {
         {/* Send opens the swipe-up drawer; Deposit toggles the collapsible below.
             The collapsible only ever opens through this button (or keyboard
             activation), so the QR + address never appear before the user asks. */}
-        <div className="mt-5 grid grid-cols-2 gap-2">
+        <div className={`mt-5 grid gap-2 ${isSwapToken(token.ledgerId) ? "grid-cols-3" : "grid-cols-2"}`}>
           <Button variant="outline" className="w-full" onClick={() => setSendOpen(true)}>
             {t("send")}
           </Button>
           <Button className="w-full" onClick={() => setShowDeposit((v) => !v)}>
             {t("deposit")}
           </Button>
+          {isSwapToken(token.ledgerId) && (
+            <Button
+              variant="secondary"
+              className="w-full"
+              nativeButton={false}
+              render={<Link href={`/swap?from=${token.ledgerId}`} />}
+            >
+              {t("swap")}
+            </Button>
+          )}
         </div>
       </div>
 

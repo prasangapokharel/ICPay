@@ -418,6 +418,31 @@ module {
     totalTransfers: Nat;
   };
 
+  public type AnalyticsSummary = {
+    totalReceivedE8s: Nat;
+    totalSentE8s: Nat;
+    depositCount: Nat;
+    withdrawCount: Nat;
+    transferCount: Nat;
+    tipCount: Nat;
+    swapInCount: Nat;
+    swapOutCount: Nat;
+    completedCount: Nat;
+    failedCount: Nat;
+    uniqueCounterparties: Nat;
+    freeExport: Bool;
+  };
+
+  public type AnalyticsData = {
+    summary: AnalyticsSummary;
+    rows: [TransactionPublic];
+  };
+
+  public type AnalyticsExportResult = {
+    feePaidE8s: Nat;
+    rows: [TransactionPublic];
+  };
+
   public type AuthResult = {
     #ok: { user: UserPublic; isNew: Bool };
     #err: Text;

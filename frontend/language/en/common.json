@@ -9,6 +9,7 @@
   "common": {
     "send": "Send",
     "receive": "Receive",
+    "swap": "Swap",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "close": "Close",
@@ -78,7 +79,8 @@
       "settings": "Settings",
       "swap": "Swap",
       "bucket": "Bucket",
-      "blog": "Blog"
+      "blog": "Blog",
+      "analytics": "Analytics"
     },
     "preferencesDescription": "Language, currency and legal pages"
   },
@@ -224,7 +226,9 @@
       "deposit": "Deposit",
       "withdraw": "Withdraw",
       "transfer": "Transfer",
-      "fee": "Fee"
+      "fee": "Fee",
+      "swapIn": "Swap in",
+      "swapOut": "Swap out"
     },
     "status": {
       "completed": "Completed",
@@ -272,6 +276,37 @@
     },
     "brandProtectionLink": "Reserved brand names"
   },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Wallet activity summary and export",
+    "received": "Received",
+    "sent": "Sent",
+    "tips": "Tips",
+    "transfers": "Transfers",
+    "deposits": "Deposits",
+    "withdrawals": "Withdrawals",
+    "completed": "Completed",
+    "failed": "Failed",
+    "counterparties": "Counterparties",
+    "swapsIn": "Swaps in",
+    "swapsOut": "Swaps out",
+    "rowCount": "{count} transactions",
+    "refresh": "Refresh",
+    "exportFree": "Export CSV",
+    "exportPaid": "Export CSV ({price} ICP)",
+    "exporting": "Exporting…",
+    "exportFailed": "Export failed",
+    "noRows": "No transactions to show",
+    "colDate": "Date",
+    "colType": "Type",
+    "colAmount": "Amount",
+    "colFrom": "From",
+    "colTo": "To",
+    "colStatus": "Status",
+    "lockedTitle": "Premium analytics",
+    "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
+    "lockedAction": "Buy a shorter name"
+  },
   "profile": {
     "title": "Profile",
     "subtitle": "Manage your wallet profile",
@@ -312,6 +347,7 @@
     "noTokens": "No tokens yet. Deposits show up here automatically.",
     "noTokensFound": "No tokens match that search.",
     "outsideAmount": "+{amount} outside",
+    "swapCta": "Swap",
     "selfCustodyNotice": "You hold funds outside ICPay. Open the token to move them in."
   },
   "token": {
@@ -319,6 +355,7 @@
     "notFound": "This token could not be loaded.",
     "send": "Send",
     "deposit": "Deposit",
+    "swap": "Swap",
     "depositTitle": "Deposit address",
     "depositSubtitle": "Send {symbol} here to top up your wallet.",
     "warning": "Send only {symbol} to this address. Other tokens will be lost.",
@@ -658,7 +695,22 @@
     "priceInfo": "Current exchange rate between these tokens",
     "feesInfo": "Combined platform and pool fees",
     "priceImpactInfo": "How much this trade affects the token price",
-    "slippageInfo": "Maximum price movement you'll accept"
+    "slippageInfo": "Maximum price movement you'll accept",
+    "insufficientBalance": "Not enough balance for this swap (includes ledger fees).",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for swap.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "searchToken": "Search tokens",
+    "noTokens": "No tokens match your search.",
+    "needTwoTokens": "You need at least two supported tokens to swap.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "ledgerFees": "Ledger fees (est.)",
+    "fetchingQuote": "Fetching quote…",
+    "done": "Done"
   },
   "bucket": {
     "title": "ICPay Cloud",

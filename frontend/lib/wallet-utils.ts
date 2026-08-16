@@ -142,6 +142,10 @@ export function formatTime(t: bigint): string {
   })
 }
 
+export function formatTimeIso(t: bigint): string {
+  return new Date(Number(t / 1_000_000n)).toISOString()
+}
+
 // Returned as catalog keys, not display text: callers look them up under the
 // transactions.type / transactions.status namespaces.
 export function txTypeLabel(txType: TxTypeVariant): "deposit" | "withdraw" | "transfer" | "fee" {

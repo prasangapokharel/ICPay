@@ -9,6 +9,7 @@ import {
   Upload01Icon,
   ShoppingBag01Icon,
   Wallet01Icon,
+  ChartLineData01Icon,
   Clock01Icon,
   UserMultipleIcon,
   UserIcon,
@@ -122,6 +123,12 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
   {
     key: "activity",
     items: [
+      {
+        href: "/analytics",
+        key: "analytics",
+        icon: ChartLineData01Icon,
+        keywords: "analytics stats export csv premium",
+      },
       {
         href: "/transactions",
         key: "history",

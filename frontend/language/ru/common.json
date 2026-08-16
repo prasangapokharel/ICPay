@@ -26,7 +26,8 @@
     "total": "Итого",
     "done": "Готово",
     "share": "Поделиться",
-    "noToken": "Подходящих токенов нет"
+    "noToken": "Подходящих токенов нет",
+    "swap": "Swap"
   },
   "dashboard": {
     "loadFailed": "Не удалось загрузить кошелёк",
@@ -78,7 +79,8 @@
       "settings": "Настройки",
       "swap": "Обмен",
       "bucket": "Облако",
-      "blog": "Блог"
+      "blog": "Блог",
+      "analytics": "Analytics"
     },
     "preferencesDescription": "Страницы языка, валюты и юридические"
   },
@@ -224,7 +226,9 @@
       "deposit": "Пополнение",
       "withdraw": "Вывод",
       "transfer": "Перевод",
-      "fee": "Комиссия"
+      "fee": "Комиссия",
+      "swapIn": "Swap in",
+      "swapOut": "Swap out"
     },
     "status": {
       "completed": "Выполнено",
@@ -312,7 +316,8 @@
     "noTokens": "Токенов пока нет. Пополнения появятся здесь автоматически.",
     "noTokensFound": "Нет токенов, соответствующих запросу.",
     "outsideAmount": "+{amount} снаружи",
-    "selfCustodyNotice": "У вас есть средства вне ICPay. Откройте токен, чтобы перевести их."
+    "selfCustodyNotice": "У вас есть средства вне ICPay. Откройте токен, чтобы перевести их.",
+    "swapCta": "Swap"
   },
   "token": {
     "back": "Кошелёк",
@@ -329,7 +334,8 @@
     "selfCustodyMoved": "Переведено в ваш кошелёк.",
     "selfCustodyNet": "Вы получите",
     "selfCustodyDust": "Сумма меньше сетевого сбора {symbol}, перевести её нельзя.",
-    "selfCustodyEmpty": "Переводить нечего — этот токен не отправлялся на ваш principal."
+    "selfCustodyEmpty": "Переводить нечего — этот токен не отправлялся на ваш principal.",
+    "swap": "Swap"
   },
   "sendToken": {
     "title": "Отправить {symbol}",
@@ -658,7 +664,22 @@
     "priceInfo": "Current exchange rate between these tokens",
     "feesInfo": "Combined platform and pool fees",
     "priceImpactInfo": "How much this trade affects the token price",
-    "slippageInfo": "Maximum price movement you'll accept"
+    "slippageInfo": "Maximum price movement you'll accept",
+    "insufficientBalance": "Not enough balance for this swap (includes ledger fees).",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for swap.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "searchToken": "Search tokens",
+    "noTokens": "No tokens match your search.",
+    "needTwoTokens": "You need at least two supported tokens to swap.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "ledgerFees": "Ledger fees (est.)",
+    "fetchingQuote": "Fetching quote…",
+    "done": "Done"
   },
   "bucket": {
     "title": "ICPay Cloud",
@@ -815,5 +836,36 @@
     "prevPage": "Назад",
     "nextPage": "Далее",
     "pageOf": "Страница {page} из {total} · {count} файлов"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Wallet activity summary and export",
+    "received": "Received",
+    "sent": "Sent",
+    "tips": "Tips",
+    "transfers": "Transfers",
+    "deposits": "Deposits",
+    "withdrawals": "Withdrawals",
+    "completed": "Completed",
+    "failed": "Failed",
+    "counterparties": "Counterparties",
+    "swapsIn": "Swaps in",
+    "swapsOut": "Swaps out",
+    "rowCount": "{count} transactions",
+    "refresh": "Refresh",
+    "exportFree": "Export CSV",
+    "exportPaid": "Export CSV ({price} ICP)",
+    "exporting": "Exporting…",
+    "exportFailed": "Export failed",
+    "noRows": "No transactions to show",
+    "colDate": "Date",
+    "colType": "Type",
+    "colAmount": "Amount",
+    "colFrom": "From",
+    "colTo": "To",
+    "colStatus": "Status",
+    "lockedTitle": "Premium analytics",
+    "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
+    "lockedAction": "Buy a shorter name"
   }
 }

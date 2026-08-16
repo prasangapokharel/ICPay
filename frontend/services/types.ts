@@ -9,6 +9,8 @@ export type TxTypeVariant =
   | { withdraw: null }
   | { transfer: null }
   | { fee: null }
+  | { swapIn: null }
+  | { swapOut: null }
 
 export type TxStatusVariant =
   | { pending: null }
@@ -69,6 +71,31 @@ export type ICRC1Account = {
   subaccount: [] | [Uint8Array | number[]]
 }
 
+export type AnalyticsSummary = {
+  totalReceivedE8s: bigint
+  totalSentE8s: bigint
+  depositCount: bigint
+  withdrawCount: bigint
+  transferCount: bigint
+  tipCount: bigint
+  swapInCount: bigint
+  swapOutCount: bigint
+  completedCount: bigint
+  failedCount: bigint
+  uniqueCounterparties: bigint
+  freeExport: boolean
+}
+
+export type AnalyticsData = {
+  summary: AnalyticsSummary
+  rows: TransactionPublic[]
+}
+
+export type AnalyticsExportResult = {
+  feePaidE8s: bigint
+  rows: TransactionPublic[]
+}
+
 export type DashboardData = {
   user: UserPublic
   principal: Principal
@@ -82,6 +109,23 @@ export type DashboardData = {
 
 export type TransferResult = {
   blockIndex: bigint
+  txId: TxId
+}
+
+export type SwapQuoteResult = {
+  amountOut: bigint
+  amountOutRaw: bigint
+  platformFee: bigint
+  swapFee: bigint
+  priceImpact: string
+  poolId: string
+}
+
+export type SwapResult = {
+  blockIndex: bigint
+  amountIn: bigint
+  amountOut: bigint
+  platformFee: bigint
   txId: TxId
 }
 
@@ -160,3 +204,5 @@ export type ApiResult_16 = { ok: UserPublic } | { err: string }
 export type ApiResult_17 = { ok: Bookmark } | { err: string }
 export type ApiResult_18 = { ok: Bookmark[] } | { err: string }
 export type ApiResult_19 = { ok: null } | { err: string }
+export type ApiResult_20 = { ok: AnalyticsData } | { err: string }
+export type ApiResult_21 = { ok: AnalyticsExportResult } | { err: string }

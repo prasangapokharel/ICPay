@@ -48,9 +48,10 @@ export default function DashboardPage() {
         username={data.user.username?.[0]}
       />
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-2">
         <ActionButton href="/transfer" label={t("common.send")} primary />
         <ActionButton href="/deposit" label={t("common.receive")} primary />
+        <ActionButton href="/swap" label={t("common.swap")} primary />
       </div>
 
       <RecentTransactions transactions={data.recentTransactions} />
@@ -87,7 +88,8 @@ function DashboardSkeleton() {
   return (
     <div className="space-y-6 pt-2">
       <Skeleton className="h-40 w-full rounded-3xl" />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-2">
+        <Skeleton className="h-9 rounded-full" />
         <Skeleton className="h-9 rounded-full" />
         <Skeleton className="h-9 rounded-full" />
       </div>

@@ -16,6 +16,7 @@ import TransferError "../ledger/TransferError";
 import AccountHelper "../ledger/Account";
 import UserRepo "../repositories/UserRepository";
 import TxRepo "../repositories/TransactionRepository";
+import TxModel "../models/Transaction";
 import UserStorage "../storage/UserStorage";
 import TxStorage "../storage/TransactionStorage";
 import SwapStorage "../storage/SwapStorage";
@@ -69,6 +70,12 @@ module {
     canisterId: Principal;
   };
 
+  type CachedPool = {
+    poolId: Text;
+    token0: Text;
+    fee: Nat;
+  };
+
   public type SwapService = {
     users:    UserStorage.UserMap;
     txs:      TxStorage.TxList;
@@ -77,8 +84,8 @@ module {
     pending:  SwapStorage.PendingMap;
     nextId:   () -> Text;
     limits:   RateLimitStorage.RateLimitMap;
-    // Transient pool-id cache: token0#token1 -> poolCanisterId. Rebuilt each session.
-    poolCache: Map.Map<Text, Text>;
+    // Transient pool cache: sorted pair key -> pool metadata. Rebuilt each session.
+    poolCache: Map.Map<Text, CachedPool>;
   };
 
   public func create(
@@ -90,7 +97,7 @@ module {
     nextId:  () -> Text,
     limits:  RateLimitStorage.RateLimitMap,
   ): SwapService {
-    { users; txs; byUser; ledger; pending; nextId; limits; poolCache = Map.empty<Text, Text>() };
+    { users; txs; byUser; ledger; pending; nextId; limits; poolCache = Map.empty<Text, CachedPool>() };
   };
 
   // Helper to convert ICPSwapError variant to Text
@@ -129,22 +136,24 @@ module {
     let poolResult = await getPool(service, tokenIn, tokenOut);
     switch poolResult {
       case (#err(e)) { return #err(e) };
-      case (#ok({ poolId; zeroForOne })) {
+      case (#ok({ poolId; zeroForOne; fee })) {
         let pool: ICPSwapPool = actor(poolId);
         let quoteAmountIn = (swapAmountIn - tokenInFee : Nat);
+        if (quoteAmountIn == 0) return #err("amountIn too small after ledger fee");
         switch (await pool.quote({ zeroForOne; amountIn = Nat.toText(quoteAmountIn); amountOutMinimum = "0" })) {
           case (#err(e)) { return #err("Quote failed: " # icpSwapErrorToText(e)) };
           case (#ok(amountOut)) {
-            // Estimate pool fee in input terms: fee bps / 1_000_000 of the swap amount.
-            // ICPSwap uses 500/3000/10000 micro-bps (fee / 1_000_000).
-            let poolFeeBps = await getPoolFeeBps(service, tokenIn, tokenOut);
-            let swapFee = quoteAmountIn * poolFeeBps / 1_000_000;
+            if (amountOut == 0) {
+              return #err("No pool liquidity for this swap direction");
+            };
+            // ICPSwap fee tiers are 500/3000/10000 micro-bps (fee / 1_000_000).
+            let swapFee = quoteAmountIn * fee / 1_000_000;
             #ok({
               amountOut;
               amountOutRaw = amountOut;
               platformFee;
               swapFee;
-              priceImpact = "";  // cosmetic, not computed server-side
+              priceImpact = "";
               poolId;
             });
           };
@@ -173,7 +182,7 @@ module {
     if (tokenIn == tokenOut) return #err("tokenIn and tokenOut must differ");
     if (amountOutMin == 0) return #err("amountOutMin must be > 0");
 
-    let _user = switch (UserRepo.getByPrincipal(service.users, caller)) {
+    let user = switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?u) { u };
       case (null) { return #err("User not found") };
     };
@@ -207,13 +216,24 @@ module {
       return #err("Insufficient balance. Need " # Nat.toText(requiredBalance) # " (including fees), have " # Nat.toText(userBalance))
     };
 
-    // Phase A — Get pool
+    // Phase A — Resolve pool and confirm the direction has liquidity before moving funds.
     let (poolId, zeroForOne) = switch poolResult {
       case (#err(e)) { return #err(e) };
       case (#ok(r)) { (r.poolId, r.zeroForOne) };
     };
     let poolPrincipal = Principal.fromText(poolId);
     let pool: ICPSwapPool = actor(poolId);
+    let depositAmount = (swapAmountIn - tokenInFee : Nat);
+    if (depositAmount == 0) return #err("amountIn too small after ledger fee");
+    switch (await pool.quote({ zeroForOne; amountIn = Nat.toText(depositAmount); amountOutMinimum = "0" })) {
+      case (#err(e)) { return #err("Quote failed: " # icpSwapErrorToText(e)) };
+      case (#ok(out)) {
+        if (out == 0) return #err("No pool liquidity for this swap direction");
+        if (out < amountOutMin) {
+          return #err("Slippage exceeded: quoted " # Nat.toText(out) # ", minimum " # Nat.toText(amountOutMin));
+        };
+      };
+    };
 
     // Phase B — Platform fee (take it first, before pool operations)
     let feeTransfer = await LedgerService.transfer(tokenIn, {
@@ -343,7 +363,21 @@ module {
     // User actually receives transferAmount - tokenOutFee after ledger deducts fee
     let actualReceived = (transferAmount - tokenOutFee : Nat);
 
-    #ok({ blockIndex; amountIn = swapAmountIn; amountOut = actualReceived; platformFee; txId = "" });
+    let now = Time.now();
+    let txOutId = service.nextId();
+    let txOut = TxRepo.create(
+      service.txs, service.byUser, txOutId, user.id, #swapOut, tokenIn, amountIn, platformFee,
+      tokenIn, tokenOut, null, now,
+    );
+    TxModel.complete(txOut, blockIndex, now);
+    let txInId = service.nextId();
+    let txIn = TxRepo.create(
+      service.txs, service.byUser, txInId, user.id, #swapIn, tokenOut, actualReceived, tokenOutFee,
+      tokenIn, tokenOut, null, now,
+    );
+    TxModel.complete(txIn, blockIndex, now);
+
+    #ok({ blockIndex; amountIn = swapAmountIn; amountOut = actualReceived; platformFee; txId = txInId });
   };
 
   // ---------------------------------------------------------------------------
@@ -419,43 +453,54 @@ module {
   // ---------------------------------------------------------------------------
   // Pool lookup helpers
   // ---------------------------------------------------------------------------
-  type PoolRef = { poolId: Text; zeroForOne: Bool };
+  type PoolRef = { poolId: Text; zeroForOne: Bool; fee: Nat };
+
+  func pairCacheKey(a: Text, b: Text): Text {
+    if (a < b) { a # "#" # b } else { b # "#" # a };
+  };
+
+  // ICPSwap expects per-token standards: ICP, ICRC2 (chain-key), ICRC1 (SNS/other).
+  func tokenStandard(ledgerId: Text): Text {
+    if (ledgerId == Config.ICP_LEDGER_CANISTER_ID) { "ICP" }
+    else if (Array.contains<Text>(Config.CHAIN_KEY_LEDGERS, func(x, y) { x == y }, ledgerId)) {
+      "ICRC2"
+    } else { "ICRC1" };
+  };
 
   func getPool(service: SwapService, tokenIn: Text, tokenOut: Text): async { #ok: PoolRef; #err: Text } {
-    let cacheKey = if (tokenIn < tokenOut) { tokenIn # "#" # tokenOut } else { tokenOut # "#" # tokenIn };
+    let cacheKey = pairCacheKey(tokenIn, tokenOut);
     switch (service.poolCache.get(cacheKey)) {
-      case (?pid) {
-        let zeroForOne = tokenIn < tokenOut;
-        return #ok({ poolId = pid; zeroForOne });
+      case (?cached) {
+        return #ok({
+          poolId = cached.poolId;
+          zeroForOne = tokenIn == cached.token0;
+          fee = cached.fee;
+        });
       };
       case (null) {};
     };
     let factory: ICPSwapFactory = actor(Config.ICPSWAP_FACTORY);
-    let std = "ICRC1";
     let (t0, t1) = if (tokenIn < tokenOut) { (tokenIn, tokenOut) } else { (tokenOut, tokenIn) };
     // Try fee tiers lowest first: 500 (0.05%), 3000 (0.3%), 10000 (1%)
     for (fee in [500, 3000, 10000].vals()) {
       let result = await factory.getPool({
-        token0 = { address = t0; standard = std };
-        token1 = { address = t1; standard = std };
+        token0 = { address = t0; standard = tokenStandard(t0) };
+        token1 = { address = t1; standard = tokenStandard(t1) };
         fee;
       });
       switch result {
         case (#ok(pool)) {
           let pid = Principal.toText(pool.canisterId);
-          service.poolCache.add(cacheKey, pid);
-          let zeroForOne = tokenIn < tokenOut;
-          return #ok({ poolId = pid; zeroForOne });
+          service.poolCache.add(cacheKey, { poolId = pid; token0 = pool.token0.address; fee = pool.fee });
+          return #ok({
+            poolId = pid;
+            zeroForOne = tokenIn == pool.token0.address;
+            fee = pool.fee;
+          });
         };
         case (#err(_)) {};
       };
     };
     #err("No pool found for " # tokenIn # " / " # tokenOut);
-  };
-
-  func getPoolFeeBps(_service: SwapService, _tokenIn: Text, _tokenOut: Text): async Nat {
-    // Returns the micro-bps fee of the pool. Without querying metadata, we default
-    // to 3000 (0.3%) as the most common tier. A future improvement can cache this.
-    3000
   };
 };

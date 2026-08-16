@@ -26,7 +26,8 @@
     "total": "Total",
     "done": "Hecho",
     "share": "Compartir",
-    "noToken": "Ningún token coincidente"
+    "noToken": "Ningún token coincidente",
+    "swap": "Swap"
   },
   "dashboard": {
     "loadFailed": "No se pudo cargar tu monedero",
@@ -78,7 +79,8 @@
       "settings": "Ajustes",
       "swap": "Swap",
       "bucket": "Nube",
-      "blog": "Blog"
+      "blog": "Blog",
+      "analytics": "Analytics"
     },
     "preferencesDescription": "Páginas de idioma, moneda y legales"
   },
@@ -224,7 +226,9 @@
       "deposit": "Depósito",
       "withdraw": "Retiro",
       "transfer": "Transferencia",
-      "fee": "Comisión"
+      "fee": "Comisión",
+      "swapIn": "Swap in",
+      "swapOut": "Swap out"
     },
     "status": {
       "completed": "Completada",
@@ -312,7 +316,8 @@
     "noTokens": "Aún no hay tokens. Los depósitos aparecen aquí automáticamente.",
     "noTokensFound": "Ningún token coincide con esa búsqueda.",
     "outsideAmount": "+{amount} fuera",
-    "selfCustodyNotice": "Tienes fondos fuera de ICPay. Abre el token para moverlos."
+    "selfCustodyNotice": "Tienes fondos fuera de ICPay. Abre el token para moverlos.",
+    "swapCta": "Swap"
   },
   "token": {
     "back": "Cartera",
@@ -329,7 +334,8 @@
     "selfCustodyMoved": "Movido a tu cartera.",
     "selfCustodyNet": "Recibirás",
     "selfCustodyDust": "Es inferior a la comisión de red de {symbol}, así que no se puede mover.",
-    "selfCustodyEmpty": "Nada que mover: este token no se ha enviado a tu principal."
+    "selfCustodyEmpty": "Nada que mover: este token no se ha enviado a tu principal.",
+    "swap": "Swap"
   },
   "sendToken": {
     "title": "Enviar {symbol}",
@@ -658,7 +664,22 @@
     "priceInfo": "Current exchange rate between these tokens",
     "feesInfo": "Combined platform and pool fees",
     "priceImpactInfo": "How much this trade affects the token price",
-    "slippageInfo": "Maximum price movement you'll accept"
+    "slippageInfo": "Maximum price movement you'll accept",
+    "insufficientBalance": "Not enough balance for this swap (includes ledger fees).",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for swap.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "searchToken": "Search tokens",
+    "noTokens": "No tokens match your search.",
+    "needTwoTokens": "You need at least two supported tokens to swap.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "ledgerFees": "Ledger fees (est.)",
+    "fetchingQuote": "Fetching quote…",
+    "done": "Done"
   },
   "bucket": {
     "title": "ICPay Cloud",
@@ -815,5 +836,36 @@
     "prevPage": "Anterior",
     "nextPage": "Siguiente",
     "pageOf": "Página {page} de {total} · {count} archivos"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Wallet activity summary and export",
+    "received": "Received",
+    "sent": "Sent",
+    "tips": "Tips",
+    "transfers": "Transfers",
+    "deposits": "Deposits",
+    "withdrawals": "Withdrawals",
+    "completed": "Completed",
+    "failed": "Failed",
+    "counterparties": "Counterparties",
+    "swapsIn": "Swaps in",
+    "swapsOut": "Swaps out",
+    "rowCount": "{count} transactions",
+    "refresh": "Refresh",
+    "exportFree": "Export CSV",
+    "exportPaid": "Export CSV ({price} ICP)",
+    "exporting": "Exporting…",
+    "exportFailed": "Export failed",
+    "noRows": "No transactions to show",
+    "colDate": "Date",
+    "colType": "Type",
+    "colAmount": "Amount",
+    "colFrom": "From",
+    "colTo": "To",
+    "colStatus": "Status",
+    "lockedTitle": "Premium analytics",
+    "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
+    "lockedAction": "Buy a shorter name"
   }
 }
