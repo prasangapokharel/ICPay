@@ -13,7 +13,6 @@ import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { usePatchDashboardUser, useOwnProfile } from "@/hooks/use-wallet-data"
 import { updateUsername } from "@/services/profile/profile"
-import { checkUsername } from "@/services/buy/buy"
 import { avatarUriFor } from "@/lib/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet-utils"
 
@@ -37,14 +36,6 @@ export default function ProfilePage() {
     // patch it in rather than paying another getDashboard.
     patchDashboardUser(result.ok)
     return null
-  }
-
-  const handleCheckUsername = async (name: string): Promise<boolean> => {
-    try {
-      return await checkUsername(identity, name)
-    } catch {
-      return false
-    }
   }
 
   // Copies the full principal, not the truncated form on screen -- a shortened
@@ -94,11 +85,7 @@ export default function ProfilePage() {
 
       {claimed && <ShareProfileCard username={claimed} />}
       <SocialLinksEditor user={user} onUpdate={(updated) => mutate(updated, { revalidate: false })} />
-      <ProfileCard
-        user={user}
-        onUpdateUsername={handleUpdateUsername}
-        onCheckUsername={handleCheckUsername}
-      />
+      <ProfileCard user={user} onUpdateUsername={handleUpdateUsername} />
     </div>
   )
 }

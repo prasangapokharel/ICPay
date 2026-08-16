@@ -3,11 +3,13 @@ import Map "mo:core/Map";
 import Blob "mo:core/Blob";
 import Set "mo:core/Set";
 import List "mo:core/List";
+import Array "mo:core/Array";
 import Text "mo:core/Text";
 import Types "../types";
 import UserModel "../models/User";
 import UserStorage "../storage/UserStorage";
 import UsernameValidator "../validators/UsernameValidator";
+import UsernameSuggestionSort "../utils/UsernameSuggestionSort";
 import AccountHelper "../ledger/Account";
 
 module {
@@ -141,26 +143,25 @@ module {
   // per key listed the same account once per handle it has ever held, each row
   // rendering that account's current username -- so one person showed up as
   // several identical entries.
-  // Stops once the cap is filled rather than returning every match, so the
-  // response size is bounded by the cap instead of by how many accounts exist.
-  // The caller ranks and trims what it gets, so a cut here only ever removes
-  // rows that were already past the end of any rendered list.
+  // Collects every match, ranks paid handles ahead of free ones with shorter
+  // names first inside each band, then trims to the cap. Stopping the scan at
+  // the cap would follow map order and hide scarce 1-4 char handles.
   public func searchByUsername(usernames: UserStorage.UsernameMap, users: UserStorage.UserMap, search: Text, limit: Nat): [Types.UserPublic] {
     let needle = UsernameValidator.normalize(search);
     let results = List.empty<Types.UserPublic>();
     let seen = Set.empty<Principal>();
-    label scan for ((name, p) in usernames.entries()) {
+    for ((name, p) in usernames.entries()) {
       if (name.contains(#text(needle)) and not seen.contains(p)) {
         switch (users.get(p)) {
           case (?u) {
             seen.add(p);
             results.add(Types.userToPublic(u));
-            if (results.size() >= limit) { break scan };
           };
           case (null) {};
         };
       };
     };
-    List.toArray(results);
+    let ranked = Array.sort(List.toArray(results), UsernameSuggestionSort.compareUserPublic);
+    if (ranked.size() <= limit) { ranked } else { Array.tabulate(limit, func(i) { ranked[i] }) };
   };
 };

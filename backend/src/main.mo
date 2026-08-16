@@ -101,6 +101,7 @@ persistent actor self {
   let bucketCreateLimits = RateLimitStorage.createRateLimitMap();
   let bucketUploadLimits = RateLimitStorage.createRateLimitMap();
   let bucketRenewLimits = RateLimitStorage.createRateLimitMap();
+  let bucketManageLimits = RateLimitStorage.createRateLimitMap();
   let bucketApiKeyLimits = RateLimitStorage.createRateLimitMap();
 
   // New stable variable — no migration needed, starts empty on first upgrade.
@@ -167,7 +168,7 @@ persistent actor self {
   transient let bucketUploadSessions = BucketService.createUploadSessionStore();
   transient let bucketService = BucketService.create(
     users, bucketStore, bucketNameIndex, transferService, nextUid,
-    bucketCreateLimits, bucketUploadLimits, bucketRenewLimits, bucketApiKeyLimits,
+    bucketCreateLimits, bucketUploadLimits, bucketRenewLimits, bucketManageLimits, bucketApiKeyLimits,
     bucketUploadSessions,
   );
 

@@ -56,6 +56,7 @@ let svc = BucketService.create(
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
+  RateLimitStorage.createRateLimitMap(),
   BucketService.createUploadSessionStore(),
 );
 

@@ -2,8 +2,11 @@ import Debug "mo:core/Debug";
 import Principal "mo:core/Principal";
 import Blob "mo:core/Blob";
 import Time "mo:core/Time";
+import Array "mo:core/Array";
+import Text "mo:core/Text";
 import UserStorage "../../src/storage/UserStorage";
 import UserRepo "../../src/repositories/UserRepository";
+import Types "../../src/types";
 import AccountHelper "../../src/ledger/Account";
 
 let users = UserStorage.createUserMap();
@@ -85,6 +88,37 @@ Debug.print("PASS: searchByUsername returns empty for no match");
 assert(UserRepo.searchByUsername(usernames, users, "", 25).size() == 2);
 assert(UserRepo.searchByUsername(usernames, users, "", 1).size() == 1);
 Debug.print("PASS: searchByUsername stops at the cap");
+
+// Paid handles rank ahead of free ones; within a band shorter names come first.
+let p3 = Principal.fromText("2vxsx-fae");
+let p4 = Principal.fromText("mk4xk-sqaaa-aaaaa-qadjq-cai");
+let p5 = Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai");
+let p6 = Principal.fromText("qhbym-qaaaa-aaaaa-aaafq-cai");
+let _u3 = UserRepo.create(users, usernames, usersById, "user-id-3", p3, ?"1", "One", now, null);
+let _u4 = UserRepo.create(users, usernames, usersById, "user-id-4", p4, ?"ba", "Ba", now, null);
+let _u5 = UserRepo.create(users, usernames, usersById, "user-id-5", p5, ?"12345", "Long", now, null);
+let _u6 = UserRepo.create(users, usernames, usersById, "user-id-6", p6, ?"admin", "Admin", now, null);
+
+let ranked = UserRepo.searchByUsername(usernames, users, "", 10);
+let rankedNames = Array.map<Types.UserPublic, Text>(
+  ranked,
+  func(u) { switch (u.username) { case (?n) n; case (null) "" } },
+);
+assert(rankedNames.size() >= 4);
+assert(rankedNames[0] == "1");
+assert(rankedNames[1] == "ba");
+assert(rankedNames[2] == "bob");
+// Free handles follow paid ones; shorter free names before longer ones.
+let idx12345 = Array.indexOf<Text>(rankedNames, Text.equal, "12345");
+let idxAdmin = Array.indexOf<Text>(rankedNames, Text.equal, "admin");
+switch (idx12345, idxAdmin) {
+  case (?i12345, ?iAdmin) {
+    assert(i12345 > 2);
+    assert(iAdmin > i12345);
+  };
+  case (_, _) { assert(false) };
+};
+Debug.print("PASS: searchByUsername ranks paid short handles before free ones");
 
 // A bought handle is added as an alias, leaving the buyer under two keys. The
 // listing must still show them once, or one person appears as several identical

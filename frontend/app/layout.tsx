@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { ThemeProvider, ThemeColorScript } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth/auth-provider"
+import { SwrProvider } from "@/components/swr-provider"
 import { LocaleProvider } from "@/components/i18n/locale-provider"
 import { FiatProvider } from "@/components/fiat/fiat-provider"
 import { cn } from "@/lib/utils"
@@ -117,7 +118,9 @@ export default function RootLayout({
         <ThemeProvider>
           <LocaleProvider>
             <FiatProvider>
-              <AuthProvider>{children}</AuthProvider>
+              <SwrProvider>
+                <AuthProvider>{children}</AuthProvider>
+              </SwrProvider>
             </FiatProvider>
           </LocaleProvider>
         </ThemeProvider>

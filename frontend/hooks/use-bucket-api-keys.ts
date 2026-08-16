@@ -1,6 +1,9 @@
+"use client"
+
 import useSWR from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
 import { bucketApiKeysKey } from "@/lib/bucket/cache-keys"
+import { BUCKET_QUERY } from "@/hooks/use-bucket"
 import {
   createApiKey,
   listApiKeys,
@@ -20,7 +23,7 @@ export function useBucketApiKeys(bucketId: string | null, enabled = true) {
   const { data, isLoading, mutate } = useSWR<ApiKeyPublic[]>(
     key,
     () => listApiKeys(identity, bucketId!),
-    { revalidateOnFocus: false }
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 30_000 }
   )
 
   return {

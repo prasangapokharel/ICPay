@@ -32,7 +32,7 @@ import {
   listFiles,
 } from "@/services/bucket/bucket"
 
-const QUERY = {
+export const BUCKET_QUERY = {
   revalidateOnFocus: false,
   revalidateIfStale: false,
   errorRetryCount: 3,
@@ -55,7 +55,7 @@ export function useBucketList() {
   const { data, error, isLoading, mutate } = useSWR(
     bucketListKey(identity),
     () => listBuckets(identity),
-    { ...QUERY, keepPreviousData: true, dedupingInterval: 30_000 }
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 30_000 }
   )
 
   return { buckets: data ?? [], error, isLoading, refresh: mutate }
@@ -67,7 +67,7 @@ export function useBucketStats(bucketId: string | null) {
   const { data, error, isLoading, mutate } = useSWR(
     bucketId ? bucketStatsKey(identity, bucketId) : null,
     () => getBucketStats(identity!, bucketId!),
-    { ...QUERY, keepPreviousData: true, dedupingInterval: 15_000 }
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 15_000 }
   )
 
   const initialLoad = isLoading && data === undefined
@@ -81,7 +81,7 @@ export function useBucketFiles(bucketId: string | null, page: number) {
   const { data, error, isLoading, mutate } = useSWR(
     bucketId ? bucketFilesKey(identity, bucketId, page) : null,
     () => listFiles(identity!, bucketId!, page, FILES_PAGE_SIZE),
-    { ...QUERY, keepPreviousData: true, dedupingInterval: 10_000 }
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 10_000 }
   )
 
   const total = data ? Number(data.total) : 0
@@ -107,7 +107,7 @@ export function useBucketPrice(capacityGB: number | null) {
   const { data, isLoading } = useSWR(
     capacityGB !== null ? bucketPriceKey(capacityGB) : null,
     () => getBucketPrice(identity, capacityGB!),
-    { ...QUERY, dedupingInterval: 60_000 }
+    { ...BUCKET_QUERY, dedupingInterval: 60_000 }
   )
 
   const price =
@@ -143,7 +143,7 @@ export function useBucketPricingTiers() {
       )
       return rows
     },
-    { ...QUERY, dedupingInterval: 300_000, fallbackData: buildEstimatedPricingTiers() }
+    { ...BUCKET_QUERY, dedupingInterval: 300_000, fallbackData: buildEstimatedPricingTiers() }
   )
 
   return {
@@ -159,7 +159,7 @@ export function useRenewQuote(bucketId: string | null, enabled: boolean) {
   const { data, isLoading, mutate } = useSWR(
     enabled && bucketId ? bucketRenewQuoteKey(identity, bucketId) : null,
     () => getRenewQuote(identity!, bucketId!),
-    { ...QUERY, dedupingInterval: 5_000 }
+    { ...BUCKET_QUERY, dedupingInterval: 5_000 }
   )
 
   return { quote: data ?? null, isLoading: enabled && isLoading, refresh: mutate }
