@@ -8,7 +8,9 @@
   "git": {
     "deploymentEnabled": {
       "main": false,
-      "dev": false
+      "dev": false,
+      "feat/**": false,
+      "fix/**": false
     }
   },
   "redirects": [
