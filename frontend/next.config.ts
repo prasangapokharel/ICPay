@@ -1,5 +1,9 @@
 import type { NextConfig } from "next"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
 import { PHASE_PRODUCTION_BUILD } from "next/constants"
+
+const frontendRoot = path.dirname(fileURLToPath(import.meta.url))
 
 // Keyed on the build phase rather than NODE_ENV: both `next build` and
 // `next start` run with NODE_ENV=production, and `next start` refuses to run
@@ -12,6 +16,9 @@ import { PHASE_PRODUCTION_BUILD } from "next/constants"
 const staticExport = process.env.ICP_STATIC_EXPORT === "1"
 
 export default (phase: string): NextConfig => ({
+  turbopack: {
+    root: frontendRoot,
+  },
   output: staticExport && phase === PHASE_PRODUCTION_BUILD ? "export" : undefined,
   images: { unoptimized: true },
 })

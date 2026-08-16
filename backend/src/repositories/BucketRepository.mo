@@ -145,10 +145,27 @@ module {
     {
       id = file.id;
       path = file.path;
+      name = file.name;
       size = file.size;
       contentType = file.contentType;
       createdAt = file.createdAt;
+      updatedAt = file.updatedAt;
+      metadata = file.metadata;
+      tags = file.tags;
       publicUrl = publicUrl;
     }
+  };
+
+  public func updateFile(store: BucketStorage.BucketStore, file: StoredFile) {
+    BucketStorage.updateFileRecord(store, file)
+  };
+
+  public func relocateFile(store: BucketStorage.BucketStore, fileId: FileId, newPath: Text) : Bool {
+    BucketStorage.relocateFilePath(store, fileId, newPath)
+  };
+
+  public func purgeBucket(store: BucketStorage.BucketStore, names: NameIndex, id: BucketId) {
+    BucketStorage.purgeBucketData(store, id);
+    BucketStorage.deleteBucket(store, names, id);
   };
 };

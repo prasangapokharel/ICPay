@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Drawer,
   DrawerClose,
@@ -61,19 +63,25 @@ export function BucketRenewDrawer({
             </div>
           ) : (
             <>
-              <div className="flex justify-between rounded-xl border bg-muted/30 px-3 py-2">
-                <span className="text-muted-foreground">{tc("fee")}</span>
-                <span className="font-semibold tabular-nums">
-                  {formatAmount(quote.priceE8s)} ICP
-                </span>
-              </div>
+              <Card size="sm">
+                <CardContent className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{tc("fee")}</span>
+                  <span className="font-semibold tabular-nums">
+                    {formatAmount(quote.priceE8s)} ICP
+                  </span>
+                </CardContent>
+              </Card>
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>{t("newExpiry")}</span>
                 <span>{new Date(expiresAtToMs(quote.newExpiresAt)).toLocaleDateString()}</span>
               </div>
             </>
           )}
-          {error && <p className="text-xs text-destructive">{error}</p>}
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
         </div>
         <DrawerFooter>
           <Button size="sm" disabled={submitting || isLoading || !quote} onClick={handleRenew}>

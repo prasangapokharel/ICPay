@@ -48,9 +48,13 @@ export type BucketRenewResult = {
 export type FilePublic = {
   id: string
   path: string
+  name: string
   size: bigint
   contentType: string
   createdAt: bigint
+  updatedAt: [] | [bigint]
+  metadata: [] | [string]
+  tags: string[]
   publicUrl: [] | [string]
 }
 

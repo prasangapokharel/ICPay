@@ -21,7 +21,7 @@ export function useBucketUploadDesktopOnly() {
 export function BucketUploadDesktopAlert({ className }: { className?: string }) {
   const t = useTranslations("bucket")
   return (
-    <Alert className={cn("rounded-xl", className)}>
+    <Alert className={className}>
       <AlertDescription className="text-xs">{t("uploadDesktopOnly")}</AlertDescription>
     </Alert>
   )

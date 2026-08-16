@@ -22,7 +22,9 @@ import Memo "../utils/Memo";
 import BucketCrypto "../utils/BucketCrypto";
 import BucketUrls "../utils/BucketUrls";
 import BlobUtil "../utils/BlobUtil";
+import FilePath "../utils/FilePath";
 import ApiKeyService "ApiKeyService";
+import BucketFileService "BucketFileService";
 import Map "mo:core/Map";
 
 module {
@@ -238,7 +240,7 @@ module {
       var name = name;
       capacity = capacityBytes;
       var storageUsed = 0;
-      visibility = visibility;
+      var visibility = visibility;
       var status = #ACTIVE;
       var expiresAt = now + Config.BUCKET_PERIOD_NS;
       createdAt = now;
@@ -555,6 +557,7 @@ module {
     contentType: Text,
     apiKey: ?Text,
   ) : async Types.ApiResult<Types.FileId> {
+    ignore contentType;
     let auth = switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
       case (#err(e)) { return #err(e) };
       case (#ok(a)) a;
@@ -616,10 +619,14 @@ module {
       id = fileId;
       bucketId = bucket.id;
       path = path;
+      name = FilePath.fileName(path);
       size = fileSize;
       contentType = normalized;
       checksum = sealed.fingerprint;
       createdAt = Time.now();
+      updatedAt = null;
+      metadata = null;
+      tags = [];
     };
 
     BucketRepo.saveFile(service.store, file, sealed.ciphertext);
@@ -632,10 +639,16 @@ module {
     caller: Principal,
     bucketId: Types.BucketId,
     path: Text,
+    apiKey: ?Text,
   ) : Types.ApiResult<Blob> {
-    switch (loadPublicFile(service, bucketId, path, ?caller)) {
+    switch (resolveReadAuth(service, caller, bucketId, apiKey)) {
       case (#err(e)) { #err(e) };
-      case (#ok({ contentType = _; data })) { #ok(data) };
+      case (#ok({ bucket })) {
+        switch (loadFileBlob(service, bucket, path)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(data)) { #ok(data) };
+        }
+      };
     }
   };
 
@@ -715,6 +728,33 @@ module {
           }
         };
         #ok({ contentType = file.contentType; chunk; totalSize = total })
+      };
+    }
+  };
+
+  private func loadFileBlob(
+    service: BucketService,
+    bucket: Types.Bucket,
+    path: Text,
+  ) : Types.ApiResult<Blob> {
+    switch (validatePath(path)) {
+      case (?err) { return #err(err) };
+      case (null) {};
+    };
+
+    let file = switch (BucketRepo.getFileByPath(service.store, bucket.id, path)) {
+      case (null) { return #err("File not found") };
+      case (?f) f;
+    };
+
+    switch (BucketRepo.getFileData(service.store, file.id)) {
+      case (null) { #err("File data not found") };
+      case (?stored) {
+        let key = BucketCrypto.deriveKey(bucket.owner, bucket.id);
+        switch (decryptStoredFile(stored, key, file.checksum)) {
+          case (null) { #err("File corrupted — checksum mismatch") };
+          case (?data) { #ok(data) };
+        }
       };
     }
   };
@@ -864,14 +904,11 @@ module {
     bucketId: Types.BucketId,
     page: Nat,
     pageSize: Nat,
+    apiKey: ?Text,
   ) : Types.ApiResult<Types.FileListPage> {
-    let bucket = switch (requireBucket(service, bucketId)) {
+    let bucket = switch (resolveReadAuth(service, caller, bucketId, apiKey)) {
       case (#err(e)) { return #err(e) };
-      case (#ok(b)) b;
-    };
-
-    if (not canRead(bucket, caller)) {
-      return #err("Access denied");
+      case (#ok({ bucket = b })) b;
     };
 
     let files = BucketRepo.getFilesByBucket(service.store, bucket.id);
@@ -1067,12 +1104,559 @@ module {
     };
     ApiKeyService.createApiKey(
       service.store,
+      service.names,
       service.nextId,
       caller,
       bucketId,
       name,
       permissions,
     )
+  };
+
+  public func getApiKey(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    keyId: Text,
+  ) : Types.ApiResult<Types.ApiKeyPublic> {
+    ApiKeyService.getApiKey(service.store, service.names, caller, bucketId, keyId)
+  };
+
+  public func updateApiKey(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    keyId: Text,
+    name: ?Text,
+    permissions: ?Types.ApiKeyPermissions,
+  ) : Types.ApiResult<Types.ApiKeyPublic> {
+    if (not RateLimitService.allow(service.apiKeyLimits, caller, Config.RATE_BUCKET_API_KEY, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_BUCKET_API_KEY));
+    };
+    ApiKeyService.updateApiKey(
+      service.store,
+      service.names,
+      caller,
+      bucketId,
+      keyId,
+      name,
+      permissions,
+    )
+  };
+
+  public func regenerateApiKey(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    keyId: Text,
+  ) : Types.ApiResult<Types.ApiKeyCreateResult> {
+    if (not RateLimitService.allow(service.apiKeyLimits, caller, Config.RATE_BUCKET_API_KEY, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_BUCKET_API_KEY));
+    };
+    ApiKeyService.regenerateApiKey(
+      service.store,
+      service.names,
+      caller,
+      bucketId,
+      keyId,
+    )
+  };
+
+  private func allowMutate(service: BucketService, principal: Principal) : ?Text {
+    if (not RateLimitService.allow(service.uploadLimits, principal, Config.RATE_BUCKET_MUTATE, Time.now())) {
+      ?RateLimitService.message(Config.RATE_BUCKET_MUTATE)
+    } else {
+      null
+    }
+  };
+
+  private func fileCtx(service: BucketService) : BucketFileService.FileContext {
+    { store = service.store; names = service.names; nextId = service.nextId }
+  };
+
+  public func getFile(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    switch (resolveReadAuth(service, caller, bucketId, apiKey)) {
+      case (#err(e)) { #err(e) };
+      case (#ok({ bucket })) { BucketFileService.getFile(fileCtx(service), bucket, path) };
+    }
+  };
+
+  public func fileExists(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Bool> {
+    switch (resolveReadAuth(service, caller, bucketId, apiKey)) {
+      case (#err(e)) { #err(e) };
+      case (#ok({ bucket })) { #ok(BucketFileService.fileExists(fileCtx(service), bucket, path)) };
+    }
+  };
+
+  public func updateFile(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    name: ?Text,
+    contentType: ?Text,
+    metadata: ?Text,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (requireBucket(service, bucketId)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { #err("Permission denied") }
+            else if (not canWrite(bucket)) { #err("Bucket expired") }
+            else { BucketFileService.updateFile(fileCtx(service), bucket, path, name, contentType, metadata) }
+          };
+        }
+      };
+    }
+  };
+
+  public func moveFile(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    sourcePath: Text,
+    destinationPath: Text,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (requireBucket(service, bucketId)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { #err("Permission denied") }
+            else if (not canWrite(bucket)) { #err("Bucket expired") }
+            else { BucketFileService.moveFile(fileCtx(service), bucket, sourcePath, destinationPath) }
+          };
+        }
+      };
+    }
+  };
+
+  public func copyFile(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    sourcePath: Text,
+    destinationPath: Text,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (requireBucket(service, bucketId)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { #err("Permission denied") }
+            else if (not canWrite(bucket)) { #err("Bucket expired") }
+            else { BucketFileService.copyFile(fileCtx(service), bucket, sourcePath, destinationPath) }
+          };
+        }
+      };
+    }
+  };
+
+  public func listFolder(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    prefix: Text,
+    page: Nat,
+    pageSize: Nat,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FileListPage> {
+    switch (resolveReadAuth(service, caller, bucketId, apiKey)) {
+      case (#err(e)) { #err(e) };
+      case (#ok({ bucket })) { BucketFileService.listFolder(fileCtx(service), bucket, prefix, page, pageSize) };
+    }
+  };
+
+  public func searchFiles(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    searchQuery: Text,
+    page: Nat,
+    pageSize: Nat,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FileListPage> {
+    switch (resolveReadAuth(service, caller, bucketId, apiKey)) {
+      case (#err(e)) { #err(e) };
+      case (#ok({ bucket })) { BucketFileService.searchFiles(fileCtx(service), bucket, searchQuery, page, pageSize) };
+    }
+  };
+
+  public func setFileTags(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    tags: [Text],
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    mutateTags(service, caller, bucketId, path, apiKey, func(b, p) {
+      BucketFileService.setFileTags(fileCtx(service), b, p, tags)
+    })
+  };
+
+  public func addFileTags(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    tags: [Text],
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    mutateTags(service, caller, bucketId, path, apiKey, func(b, p) {
+      BucketFileService.addFileTags(fileCtx(service), b, p, tags)
+    })
+  };
+
+  public func removeFileTags(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    tags: [Text],
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    mutateTags(service, caller, bucketId, path, apiKey, func(b, p) {
+      BucketFileService.removeFileTags(fileCtx(service), b, p, tags)
+    })
+  };
+
+  public func getFileMetadata(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Text> {
+    switch (resolveReadAuth(service, caller, bucketId, apiKey)) {
+      case (#err(e)) { #err(e) };
+      case (#ok({ bucket })) { BucketFileService.getFileMetadata(fileCtx(service), bucket, path) };
+    }
+  };
+
+  public func setFileMetadata(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    metadata: Text,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Types.FilePublic> {
+    switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (requireBucket(service, bucketId)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { #err("Permission denied") }
+            else if (not canWrite(bucket)) { #err("Bucket expired") }
+            else { BucketFileService.setFileMetadata(fileCtx(service), bucket, path, metadata) }
+          };
+        }
+      };
+    }
+  };
+
+  public func bulkDeleteFiles(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    paths: [Text],
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Nat> {
+    if (paths.size() == 0) { return #err("No paths provided") };
+    if (paths.size() > Config.BUCKET_BULK_MAX) {
+      return #err("Too many paths — max " # Nat.toText(Config.BUCKET_BULK_MAX));
+    };
+    switch (resolveWriteAuth(service, caller, bucketId, apiKey, #delete)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (requireBucket(service, bucketId)) {
+          case (#err(e)) { return #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { return #err("Permission denied") };
+            if (not canWrite(bucket)) { return #err("Bucket expired") };
+            var count : Nat = 0;
+            for (path in paths.vals()) {
+              switch (await deleteFile(service, caller, bucketId, path, apiKey)) {
+                case (#err(e)) { return #err(e) };
+                case (#ok()) { count += 1 };
+              };
+            };
+            #ok(count)
+          };
+        }
+      };
+    }
+  };
+
+  public func bulkMoveFiles(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    operations: [Types.FilePathOp],
+    apiKey: ?Text,
+  ) : Types.ApiResult<Nat> {
+    switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (requireBucket(service, bucketId)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { #err("Permission denied") }
+            else if (not canWrite(bucket)) { #err("Bucket expired") }
+            else { BucketFileService.bulkMove(fileCtx(service), bucket, operations) }
+          };
+        }
+      };
+    }
+  };
+
+  public func bulkCopyFiles(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    operations: [Types.FilePathOp],
+    apiKey: ?Text,
+  ) : Types.ApiResult<Nat> {
+    switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (requireBucket(service, bucketId)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { #err("Permission denied") }
+            else if (not canWrite(bucket)) { #err("Bucket expired") }
+            else { BucketFileService.bulkCopy(fileCtx(service), bucket, operations) }
+          };
+        }
+      };
+    }
+  };
+
+  public func getUpload(
+    service: BucketService,
+    caller: Principal,
+    uploadId: Text,
+  ) : Types.ApiResult<Types.UploadStatusPublic> {
+    purgeStaleUploadSessions(service);
+    switch (Map.get(service.uploadSessions.map, Text.compare, uploadId)) {
+      case (null) { #err("Upload session not found or expired") };
+      case (?session) {
+        if (session.owner != caller) {
+          return #err("Access denied");
+        };
+        let status = if (session.filled >= session.chunkCount and session.received >= session.totalSize) {
+          "ready"
+        } else {
+          "active"
+        };
+        #ok({
+          uploadId = uploadId;
+          bucketId = session.bucketId;
+          path = session.path;
+          totalSize = session.totalSize;
+          uploadedSize = session.received;
+          chunkSize = Config.BUCKET_UPLOAD_MIN_CHUNK_BYTES;
+          status = status;
+          createdAt = session.createdAt;
+        })
+      };
+    }
+  };
+
+  public func cancelUpload(
+    service: BucketService,
+    caller: Principal,
+    uploadId: Text,
+  ) : Types.ApiResult<()> {
+    purgeStaleUploadSessions(service);
+    switch (Map.get(service.uploadSessions.map, Text.compare, uploadId)) {
+      case (null) { #err("Upload session not found or expired") };
+      case (?session) {
+        if (session.owner != caller) {
+          return #err("Access denied");
+        };
+        Map.remove(service.uploadSessions.map, Text.compare, uploadId);
+        #ok()
+      };
+    }
+  };
+
+  public func updateBucket(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    name: ?Text,
+    visibility: ?Types.BucketVisibility,
+  ) : Types.ApiResult<Types.BucketPublic> {
+    switch (name, visibility) {
+      case (null, null) { return #err("Nothing to update") };
+      case (_, _) {};
+    };
+    switch (requireBucket(service, bucketId)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(bucket)) {
+        if (bucket.owner != caller) {
+          return #err("Permission denied");
+        };
+        switch (name) {
+          case (null) {};
+          case (?n) {
+            switch (validateBucketName(n)) {
+              case (?err) { return #err(err) };
+              case (null) {};
+            };
+            if (n != bucket.name and BucketRepo.bucketNameTaken(service.names, n)) {
+              return #err("Bucket name already taken");
+            };
+            if (n != bucket.name) {
+              service.names.remove(bucket.name);
+              bucket.name := n;
+            };
+          };
+        };
+        switch (visibility) {
+          case (null) {};
+          case (?v) { bucket.visibility := v };
+        };
+        BucketRepo.save(service.store, service.names, bucket);
+        #ok(BucketRepo.toPublic(bucket))
+      };
+    }
+  };
+
+  public func deleteBucket(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+  ) : Types.ApiResult<()> {
+    switch (requireBucket(service, bucketId)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(bucket)) {
+        if (bucket.owner != caller) {
+          return #err("Permission denied");
+        };
+        let fileCount = BucketRepo.countFilesByBucket(service.store, bucket.id);
+        if (fileCount > 0) {
+          return #err("Bucket is not empty — delete all files first");
+        };
+        BucketRepo.purgeBucket(service.store, service.names, bucket.id);
+        #ok()
+      };
+    }
+  };
+
+  private func mutateTags(
+    service: BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+    apply: (Types.Bucket, Text) -> Types.ApiResult<Types.FilePublic>,
+  ) : Types.ApiResult<Types.FilePublic> {
+    switch (resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (requireBucket(service, bucketId)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { #err("Permission denied") }
+            else if (not canWrite(bucket)) { #err("Bucket expired") }
+            else { apply(bucket, path) }
+          };
+        }
+      };
+    }
+  };
+
+  private type ReadAuth = {
+    bucket: Types.Bucket;
+  };
+
+  private func resolveReadAuth(
+    service: BucketService,
+    caller: Principal,
+    bucketSegment: Types.BucketId,
+    apiKey: ?Text,
+  ) : { #err: Text; #ok: ReadAuth } {
+    let bucket = switch (requireBucket(service, bucketSegment)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(b)) b;
+    };
+    switch (apiKey) {
+      case (null) {
+        if (not canRead(bucket, caller)) {
+          return #err("Access denied");
+        };
+        #ok({ bucket })
+      };
+      case (?secret) {
+        switch (ApiKeyService.validate(service.store, secret)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(key)) {
+            if (key.bucketId != bucket.id) {
+              return #err("API key not valid for this bucket");
+            };
+            if (not key.permissions.read) {
+              return #err("API key lacks read permission");
+            };
+            #ok({ bucket })
+          };
+        }
+      };
+    }
   };
 
   private type WriteAction = { #write; #delete };

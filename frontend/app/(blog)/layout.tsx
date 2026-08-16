@@ -14,7 +14,9 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
           >
             <HugeiconsIcon icon={ArrowLeft01Icon} className="size-5" />
           </Link>
-          <span className="text-sm font-semibold tracking-tight">ICPay Blog</span>
+          <Link href="/blog" className="text-sm font-semibold tracking-tight hover:text-primary">
+          ICPay Blog
+        </Link>
         </header>
         <main className="flex-1 px-4 py-6">{children}</main>
         <footer className="border-t px-4 py-5">

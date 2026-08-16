@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "What is ICP?",
   description:
     "A plain-language guide to the Internet Computer Protocol — how it works, why it exists, and what makes it different from other blockchains.",
-  alternates: { canonical: "/what-is-icp" },
+  alternates: { canonical: "/blog/what-is-icp" },
   openGraph: {
     title: "What is ICP? — ICPay Blog",
     description:

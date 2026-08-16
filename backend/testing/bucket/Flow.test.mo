@@ -69,7 +69,7 @@ func seedBucket(id: Text, visibility: Types.BucketVisibility, expiresAt: Int) {
     var name = "my-assets";
     capacity = 10_000_000;
     var storageUsed = 0;
-    visibility = visibility;
+    var visibility = visibility;
     var status = #ACTIVE;
     var expiresAt = expiresAt;
     createdAt = now;
@@ -93,7 +93,7 @@ switch (
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: upload: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, owner, "bucket-flow-1", "/logo.webp")) {
+switch (BucketService.downloadFile(svc, owner, "bucket-flow-1", "/logo.webp", null)) {
   case (#ok(data)) {
     assert data == webp;
     Debug.print("PASS [FLOW]: owner download decrypts");
@@ -101,7 +101,7 @@ switch (BucketService.downloadFile(svc, owner, "bucket-flow-1", "/logo.webp")) {
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: download: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "bucket-flow-1", "/logo.webp")) {
+switch (BucketService.downloadFile(svc, stranger, "bucket-flow-1", "/logo.webp", null)) {
   case (#ok(_)) {
     assert true;
     Debug.print("PASS [FLOW]: public bucket readable by stranger");
@@ -109,7 +109,7 @@ switch (BucketService.downloadFile(svc, stranger, "bucket-flow-1", "/logo.webp")
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: public read: " # e) };
 };
 
-switch (BucketService.listFiles(svc, owner, "bucket-flow-1", 0, 20)) {
+switch (BucketService.listFiles(svc, owner, "bucket-flow-1", 0, 20, null)) {
   case (#ok(page)) {
     assert page.items.size() == 1;
     switch (page.items[0].publicUrl) {
@@ -152,7 +152,7 @@ switch (
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: private upload: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "bucket-private", "/secret.webp")) {
+switch (BucketService.downloadFile(svc, stranger, "bucket-private", "/secret.webp", null)) {
   case (#ok(_)) { assert false; Debug.print("FAIL [FLOW]: stranger read private") };
   case (#err(_)) { Debug.print("PASS [FLOW]: private bucket blocks stranger") };
 };
@@ -184,7 +184,7 @@ switch (
   case (#err(_)) { Debug.print("PASS [FLOW]: expired bucket blocks upload") };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "bucket-expired", "/kept.webp")) {
+switch (BucketService.downloadFile(svc, stranger, "bucket-expired", "/kept.webp", null)) {
   case (#ok(data)) {
     assert data == webp;
     Debug.print("PASS [FLOW]: expired bucket still readable");
@@ -228,7 +228,7 @@ switch (BucketService.getPrice(3)) {
   case (#err(_)) { Debug.print("PASS [FLOW]: invalid capacity rejected") };
 };
 
-switch (BucketService.listFiles(svc, owner, "my-assets", 0, 20)) {
+switch (BucketService.listFiles(svc, owner, "my-assets", 0, 20, null)) {
   case (#ok(page)) {
     assert page.items.size() >= 1;
     Debug.print("PASS [FLOW]: listFiles resolves public bucket name");

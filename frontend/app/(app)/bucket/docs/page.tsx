@@ -2,19 +2,29 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import { BucketCodeBlock } from "@/components/bucket/bucket-code-block"
 import { BucketCodeTabs } from "@/components/bucket/bucket-code-tabs"
 import { FILES_PAGE_SIZE, MAX_FILE_BYTES, formatBytes } from "@/lib/bucket/bucket"
-import {
-  apiKeyExamples,
-  cdnUrlExample,
-  curlVerifyExample,
-  downloadExamples,
-  uploadExamples,
-} from "@/lib/bucket/docs-examples"
+import { apiDocSections } from "@/lib/bucket/docs-api-sections"
+import { BUCKET_API_METHODS } from "@/lib/bucket/docs-method-list"
+import { cdnUrlExample, curlVerifyExample } from "@/lib/bucket/docs-examples"
 import { WALLET_CANISTER_ID } from "@/services/icp"
 
 export default function BucketDocsPage() {
@@ -22,84 +32,110 @@ export default function BucketDocsPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 pt-2 pb-8">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="-ml-2 h-auto px-2 py-1 text-muted-foreground"
-        nativeButton={false}
-        render={<Link href="/bucket" />}
-      >
-        <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-        {t("back")}
-      </Button>
+      <BucketBackButton href="/bucket" />
 
       <div>
         <h1 className="text-xl font-bold tracking-tight">{t("docsTitle")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{t("docsSubtitle")}</p>
       </div>
 
-      <section className="space-y-3 rounded-2xl border p-4">
-        <h2 className="text-sm font-semibold">{t("docsStorageTitle")}</h2>
-        <p className="text-xs leading-relaxed text-muted-foreground">{t("docsStorageBody")}</p>
-        <ul className="space-y-1.5 text-xs text-muted-foreground">
-          <li>· {t("docsImagesOnly")}</li>
-          <li>· {t("docsWebpNote")}</li>
-          <li>· {t("docsMaxFile", { size: formatBytes(MAX_FILE_BYTES) })}</li>
-          <li>· {t("docsEncrypted")}</li>
-          <li>· {t("docsPeriod")}</li>
-        </ul>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 text-xs"
-          nativeButton={false}
-          render={<Link href="/bucket/pricing" />}
-        >
-          {t("pricingLink")}
-        </Button>
-      </section>
+      <Card size="sm">
+        <CardHeader className="gap-1">
+          <CardTitle className="text-sm">{t("docsStorageTitle")}</CardTitle>
+          <CardDescription className="text-xs leading-relaxed">
+            {t("docsStorageBody")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <ul className="space-y-1.5 text-xs text-muted-foreground">
+            <li>· {t("docsImagesOnly")}</li>
+            <li>· {t("docsWebpNote")}</li>
+            <li>· {t("docsMaxFile", { size: formatBytes(MAX_FILE_BYTES) })}</li>
+            <li>· {t("docsEncrypted")}</li>
+            <li>· {t("docsPeriod")}</li>
+          </ul>
+          <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/bucket/pricing" />}>
+            {t("pricingLink")}
+          </Button>
+        </CardContent>
+      </Card>
 
-      <section className="space-y-3 rounded-2xl border p-4">
-        <h2 className="text-sm font-semibold">{t("docsCdnTitle")}</h2>
-        <p className="text-xs leading-relaxed text-muted-foreground">{t("docsCdnBody")}</p>
-        <BucketCodeBlock code={cdnUrlExample()} />
-        <p className="text-xs leading-relaxed text-muted-foreground">{t("docsCdnPrivate")}</p>
-        <p className="text-xs font-medium text-foreground">{t("docsCdnVerifyTitle")}</p>
-        <BucketCodeBlock code={curlVerifyExample()} />
-      </section>
+      <Card size="sm">
+        <CardHeader className="gap-1">
+          <CardTitle className="text-sm">{t("docsCdnTitle")}</CardTitle>
+          <CardDescription className="text-xs leading-relaxed">{t("docsCdnBody")}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <BucketCodeBlock code={cdnUrlExample()} />
+          <CardDescription className="text-xs leading-relaxed">{t("docsCdnOption")}</CardDescription>
+          <CardDescription className="text-xs leading-relaxed">{t("docsCdnPrivate")}</CardDescription>
+          <p className="text-xs font-medium text-foreground">{t("docsCdnVerifyTitle")}</p>
+          <BucketCodeBlock code={curlVerifyExample()} />
+        </CardContent>
+      </Card>
 
-      <section className="space-y-4 rounded-2xl border p-4">
-        <div>
-          <h2 className="text-sm font-semibold">{t("docsApiTitle")}</h2>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t("docsApiBody")}</p>
-          <p className="mt-2 font-mono text-[11px] text-muted-foreground">
+      <Card size="sm">
+        <CardHeader className="gap-1">
+          <CardTitle className="text-sm">{t("docsApiTitle")}</CardTitle>
+          <CardDescription className="text-xs leading-relaxed">{t("docsApiBody")}</CardDescription>
+          <CardDescription className="font-mono text-xs">
             {t("docsApiCanister", { id: WALLET_CANISTER_ID })}
-          </p>
-        </div>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <p className="text-xs font-medium text-foreground">{t("docsMethodListTitle")}</p>
+            <Card size="sm" className="py-0">
+              <CardContent className="px-0">
+                <Table className="min-w-[28rem] text-xs">
+                  <TableHeader>
+                    <TableRow className="bg-muted/30 hover:bg-muted/30">
+                      <TableHead>{t("docsMethodColName")}</TableHead>
+                      <TableHead>{t("docsMethodColKind")}</TableHead>
+                      <TableHead>{t("docsMethodColAuth")}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="font-mono">
+                    {BUCKET_API_METHODS.map((row) => (
+                      <TableRow key={row.name}>
+                        <TableCell className="text-foreground/90">{row.name}</TableCell>
+                        <TableCell className="text-muted-foreground">{row.kind}</TableCell>
+                        <TableCell className="font-sans text-muted-foreground">{row.auth}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
 
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-foreground">{t("docsTsUploadTitle")}</p>
-          <BucketCodeTabs examples={uploadExamples()} />
-        </div>
+          <Card size="sm" className="border-dashed">
+            <CardHeader className="gap-1">
+              <CardTitle className="text-xs">{t("docsAuthTitle")}</CardTitle>
+              <CardDescription className="text-xs leading-relaxed">{t("docsAuthBody")}</CardDescription>
+            </CardHeader>
+          </Card>
 
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-foreground">{t("docsTsGetTitle")}</p>
-          <BucketCodeTabs examples={downloadExamples()} />
-        </div>
-      </section>
+          {apiDocSections().map((section) => (
+            <div key={section.id} className="space-y-2">
+              <p className="text-xs font-medium text-foreground">{t(section.titleKey)}</p>
+              {section.bodyKey ? (
+                <p className="text-xs leading-relaxed text-muted-foreground">{t(section.bodyKey)}</p>
+              ) : null}
+              <BucketCodeTabs examples={section.examples()} />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
-      <section className="space-y-3 rounded-2xl border p-4">
-        <h2 className="text-sm font-semibold">{t("docsApiKeysTitle")}</h2>
-        <p className="text-xs leading-relaxed text-muted-foreground">{t("docsApiKeysBody")}</p>
-        <BucketCodeTabs examples={apiKeyExamples()} />
-      </section>
-
-      <section className="space-y-2 rounded-2xl border p-4">
-        <h2 className="text-sm font-semibold">{t("docsPaginationTitle")}</h2>
-        <p className="text-xs leading-relaxed text-muted-foreground">
-          {t("docsPaginationBody", { size: String(FILES_PAGE_SIZE) })}
-        </p>
-      </section>
+      <Card size="sm">
+        <CardHeader className="gap-1">
+          <CardTitle className="text-sm">{t("docsPaginationTitle")}</CardTitle>
+          <CardDescription className="text-xs leading-relaxed">
+            {t("docsPaginationBody", { size: String(FILES_PAGE_SIZE) })}
+          </CardDescription>
+        </CardHeader>
+      </Card>
     </div>
   )
 }

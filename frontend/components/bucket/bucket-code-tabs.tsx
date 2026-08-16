@@ -18,13 +18,9 @@ type BucketCodeTabsProps = {
 export function BucketCodeTabs({ examples, defaultLang = "typescript" }: BucketCodeTabsProps) {
   return (
     <Tabs defaultValue={defaultLang} className="gap-2">
-      <TabsList variant="line" className="h-8 w-full justify-start gap-0 border-b bg-transparent p-0">
+      <TabsList variant="line" className="w-full justify-start">
         {LANGS.map((lang) => (
-          <TabsTrigger
-            key={lang.value}
-            value={lang.value}
-            className="h-8 rounded-none px-3 text-xs after:bottom-0"
-          >
+          <TabsTrigger key={lang.value} value={lang.value} className="text-xs">
             {lang.label}
           </TabsTrigger>
         ))}

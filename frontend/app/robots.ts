@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next"
+import { BLOG_POSTS } from "@/services/blog/blog"
 
 // output: "export" cannot defer this to a server, so it is emitted at build time.
 export const dynamic = "force-static"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ic-pay.vercel.app"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 
 // Signed-in wallet routes. They render nothing for an anonymous crawler, so
 // indexing them would publish a set of empty pages. /u is the export shell
@@ -21,6 +22,8 @@ const PRIVATE = [
   "/u",
 ]
 
+const BLOG_PUBLIC = BLOG_POSTS.map((post) => `/blog/${post.slug}`)
+
 // Public and crawlable. Listed explicitly rather than relying on Allow: / so
 // that a new private route added above cannot silently shadow one of them.
 const PUBLIC = [
@@ -33,24 +36,14 @@ const PUBLIC = [
   "/privacy",
   "/transparency",
   "/login",
-  // Blog — public and crawlable. The (blog) group has no auth guard, so every
-  // post belongs here; add each new route to sitemap.ts as well.
-  "/what-is-icp",
-  "/best-crypto-wallet",
-  "/best-icp-wallet",
-  "/what-is-internet-identity",
-  "/how-to-send-icp",
-  "/icp-price",
-  "/icp-cloud-storage",
+  "/blog",
+  ...BLOG_PUBLIC,
 ]
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       { userAgent: "*", allow: PUBLIC, disallow: PRIVATE },
-      // AI crawlers are allowed on purpose. ICPay is open source and its whole
-      // pitch is verifiability -- being quotable by an assistant is
-      // distribution, not leakage. The private rules still apply to them.
       {
         userAgent: [
           "GPTBot",

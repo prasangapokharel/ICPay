@@ -2,8 +2,11 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Delete02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
-import { BucketIconAction } from "@/components/bucket/bucket-icon-action"
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { BucketFileDeleteDialog } from "@/components/bucket/bucket-file-delete-dialog"
 import { optionalText, mapBucketError } from "@/lib/bucket/bucket"
 import { normalizePublicFileUrl } from "@/lib/bucket/file-preview"
 import { copyText } from "@/lib/wallet-utils"
@@ -27,6 +30,7 @@ export function BucketFileRow({
   const t = useTranslations("bucket")
   const tc = useTranslations("common")
   const [copied, setCopied] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const publicRaw = optionalText(file.publicUrl)
@@ -44,47 +48,75 @@ export function BucketFileRow({
     setDeleting(true)
     setDeleteError(null)
     const err = await onDelete(file.path)
-    if (err) setDeleteError(mapBucketError(err, t))
     setDeleting(false)
+    if (err) {
+      setDeleteError(mapBucketError(err, t))
+      return
+    }
+    setConfirmOpen(false)
   }
 
   return (
-    <div className="flex items-center gap-2.5 px-3 py-2.5">
-      <BucketFileThumb
-        bucketId={bucketId}
-        file={file}
-        onClick={() => onPreview(file)}
+    <>
+      <div className="flex min-w-0 items-start gap-2 px-3 py-2.5">
+        <BucketFileThumb
+          bucketId={bucketId}
+          file={file}
+          onClick={() => onPreview(file)}
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="h-auto min-h-0 min-w-0 flex-1 basis-0 items-start justify-start overflow-hidden py-0.5 font-normal"
+          onClick={() => onPreview(file)}
+        >
+          <span className="flex min-w-0 flex-col gap-0.5 overflow-hidden text-left">
+            <span className="truncate text-sm font-medium leading-snug" title={fileName}>
+              {fileName}
+            </span>
+            <span className="truncate text-xs leading-snug text-muted-foreground" title={file.contentType}>
+              {formatFileSize(file.size)} · {file.contentType}
+            </span>
+            {deleteError && (
+              <span className="truncate text-xs text-destructive">{deleteError}</span>
+            )}
+          </span>
+        </Button>
+        <ButtonGroup className="shrink-0 self-center">
+          {publicUrl && (
+            <Button
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              aria-label={copied ? tc("copied") : tc("copy")}
+              onClick={handleCopy}
+            >
+              <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" strokeWidth={1.75} />
+            </Button>
+          )}
+          {canWrite && (
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon-sm"
+              aria-label={t("delete")}
+              disabled={deleting}
+              onClick={() => setConfirmOpen(true)}
+            >
+              <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+            </Button>
+          )}
+        </ButtonGroup>
+      </div>
+
+      <BucketFileDeleteDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        fileName={fileName}
+        deleting={deleting}
+        onConfirm={handleDelete}
       />
-      <button
-        type="button"
-        className="min-w-0 flex-1 text-left"
-        onClick={() => onPreview(file)}
-      >
-        <p className="truncate text-sm font-medium">{fileName}</p>
-        <p className="truncate text-[10px] text-muted-foreground">
-          {formatFileSize(file.size)} · {file.contentType}
-        </p>
-        {deleteError && (
-          <p className="mt-0.5 text-[10px] text-destructive">{deleteError}</p>
-        )}
-      </button>
-      {publicUrl && (
-        <BucketIconAction
-          icon={copied ? Tick02Icon : Copy01Icon}
-          label={copied ? tc("copied") : tc("copy")}
-          variant="outline"
-          onClick={handleCopy}
-        />
-      )}
-      {canWrite && (
-        <BucketIconAction
-          icon={Delete02Icon}
-          label={deleting ? tc("loading") : t("delete")}
-          destructive
-          disabled={deleting}
-          onClick={handleDelete}
-        />
-      )}
-    </div>
+    </>
   )
 }

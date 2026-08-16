@@ -28,7 +28,7 @@ In scope:
 Known and accepted, so not worth reporting:
 
 - A single principal controls the canister and can upgrade it. This is disclosed
-  on the [Transparency page](https://ic-pay.vercel.app/transparency).
+  on the [Transparency page](https://icpay.app/transparency).
 - Usernames, display names, transfer memos and the user directory are public and
   permanent. This is by design and documented in the Privacy Policy.
 - Transfers are irreversible.

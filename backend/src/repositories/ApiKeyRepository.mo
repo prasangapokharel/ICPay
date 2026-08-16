@@ -22,6 +22,19 @@ module {
     BucketStorage.revokeApiKey(store, id, at)
   };
 
+  public func update(store: BucketStorage.BucketStore, key: Types.ApiKey) {
+    BucketStorage.updateApiKeyRecord(store, key)
+  };
+
+  public func rotateSecret(
+    store: BucketStorage.BucketStore,
+    id: Text,
+    newHash: Text,
+    newHint: Text,
+  ) : Bool {
+    BucketStorage.rotateApiKeySecret(store, id, newHash, newHint)
+  };
+
   public func toPublic(key: Types.ApiKey) : Types.ApiKeyPublic {
     {
       id = key.id;

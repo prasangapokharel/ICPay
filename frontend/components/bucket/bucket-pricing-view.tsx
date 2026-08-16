@@ -2,11 +2,26 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import { useBucketPricingTiers } from "@/hooks/use-bucket"
 import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
 import { BUCKET_POPULAR_TIER_GB } from "@/lib/bucket/pricing"
@@ -34,51 +49,35 @@ export function BucketPricingView() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 pt-2 pb-8">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="-ml-2 h-auto px-2 py-1 text-muted-foreground"
-        nativeButton={false}
-        render={<Link href="/bucket" />}
-      >
-        <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-        {t("back")}
-      </Button>
+      <BucketBackButton href="/bucket" />
 
       <div>
         <h1 className="text-xl font-bold tracking-tight">{t("pricingTitle")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{t("pricingSubtitle")}</p>
       </div>
 
-      <section className="overflow-hidden rounded-2xl border">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b bg-muted/30 text-muted-foreground">
-                <th className="px-4 py-3 font-medium">{t("pricingColTier")}</th>
-                <th className="px-4 py-3 text-right font-medium">{t("pricingColPrice")}</th>
-              </tr>
-            </thead>
-            <tbody>
+      <Card size="sm" className="py-0">
+        <CardContent className="px-0">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/30 hover:bg-muted/30">
+                <TableHead>{t("pricingColTier")}</TableHead>
+                <TableHead className="text-right">{t("pricingColPrice")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {tierRows.map(({ gb, tier, popular }) => (
-                <tr
+                <TableRow
                   key={gb}
-                  className={cn(
-                    "border-b last:border-0",
-                    popular && "bg-primary/5"
-                  )}
+                  className={cn(popular && "bg-primary/5 hover:bg-primary/5")}
                 >
-                  <td className="px-4 py-3.5">
+                  <TableCell>
                     <span className="inline-flex items-center gap-2 font-medium">
                       {gb} GB
-                      {popular && (
-                        <Badge variant="secondary" className="text-[10px] font-normal">
-                          {t("pricingPopular")}
-                        </Badge>
-                      )}
+                      {popular && <Badge variant="secondary">{t("pricingPopular")}</Badge>}
                     </span>
-                  </td>
-                  <td className="px-4 py-3.5 text-right tabular-nums">
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">
                     {isLoading && !tier ? (
                       <Skeleton className="ml-auto inline-block h-5 w-24" />
                     ) : tier ? (
@@ -89,25 +88,31 @@ export function BucketPricingView() {
                     ) : (
                       "—"
                     )}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="border-t px-4 py-3 text-[11px] leading-relaxed text-muted-foreground">
-          {t("pricingBreakdownNote")}
-        </p>
-      </section>
+            </TableBody>
+          </Table>
+        </CardContent>
+        <CardFooter className="border-t">
+          <CardDescription className="text-xs leading-relaxed">
+            {t("pricingBreakdownNote")}
+          </CardDescription>
+        </CardFooter>
+      </Card>
 
-      <section className="space-y-2 rounded-2xl border p-4">
-        <h2 className="text-sm font-semibold">{t("pricingAllPlansTitle")}</h2>
-        <ul className="space-y-1.5 text-xs text-muted-foreground">
-          {FEATURE_KEYS.map((key) => (
-            <li key={key}>· {t(key)}</li>
-          ))}
-        </ul>
-      </section>
+      <Card size="sm">
+        <CardHeader className="gap-1">
+          <CardTitle className="text-sm">{t("pricingAllPlansTitle")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-1.5 text-xs text-muted-foreground">
+            {FEATURE_KEYS.map((key) => (
+              <li key={key}>· {t(key)}</li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
 
       <p className="text-xs leading-relaxed text-muted-foreground">{t("pricingFooter")}</p>
 

@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Best ICP Wallet in 2026: Store and Send Internet Computer",
   description:
     "The best ICP wallet in 2026 compared — custodial vs self-custody, Internet Identity, sending ICP to a username, chain-key tokens, and what to look for.",
-  alternates: { canonical: "/best-icp-wallet" },
+  alternates: { canonical: "/blog/best-icp-wallet" },
   openGraph: {
     title: "Best ICP Wallet in 2026 — ICPay Blog",
     description:
@@ -125,11 +125,11 @@ export default function BestIcpWalletPage() {
         </p>
         <p className="text-sm leading-relaxed text-muted-foreground">
           New to Internet Computer? Start with our{" "}
-          <Link href="/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
             what is ICP guide
           </Link>{" "}
           or read our broader comparison of the{" "}
-          <Link href="/best-crypto-wallet" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/best-crypto-wallet" className="underline underline-offset-2 hover:text-foreground">
             best crypto wallets
           </Link>.
         </p>

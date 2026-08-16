@@ -72,7 +72,7 @@ func seedBucket(id: Text, visibility: Types.BucketVisibility) {
     var name = "cdn-test";
     capacity = 10_000_000;
     var storageUsed = 0;
-    visibility = visibility;
+    var visibility = visibility;
     var status = #ACTIVE;
     var expiresAt = now + Config.BUCKET_PERIOD_NS;
     createdAt = now;

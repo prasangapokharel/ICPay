@@ -125,10 +125,8 @@ persistent actor self {
     UUID.generate() # "-" # Int.toText(uidCounter);
   };
 
-  // Phase 3 migration: rows written before `ledgerId` existed are stamped with
-  // the ICP ledger id by the explicit migration function declared above (the
-  // `(with migration = ...)` prefix). It runs once on upgrade and is ignored on
-  // fresh install, so nothing here re-walks rows at startup.
+  // Phase 3 migration (StampLedgerId) ran once on an earlier upgrade; ledgerId
+  // is stamped at migration time, not here at startup.
 
   // The index is derived state, so it is rebuilt from the log at startup rather
   // than migrated. That covers the upgrade that introduces it, where the field

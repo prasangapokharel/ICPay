@@ -118,12 +118,14 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
   public shared query ({ caller }) func downloadFile(
     bucketId: Types.BucketId,
     path: Text,
+    apiKey: ?Text,
   ) : async Types.ApiResult<Blob> {
     BucketService.downloadFile(
       buckets,
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       bucketId,
       path,
+      apiKey,
     )
   };
 
@@ -152,8 +154,16 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
     bucketId: Types.BucketId,
     page: Nat,
     pageSize: Nat,
+    apiKey: ?Text,
   ) : async Types.ApiResult<Types.FileListPage> {
-    BucketService.listFiles(buckets, MiddlewareAuth.effectiveCaller(mwConfig, caller), bucketId, page, pageSize)
+    BucketService.listFiles(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      page,
+      pageSize,
+      apiKey,
+    )
   };
 
   public shared ({ caller }) func renewBucket(bucketId: Types.BucketId) : async Types.ApiResult<Types.BucketRenewResult> {
@@ -210,8 +220,49 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
   ) : async Types.ApiResult<[Types.ApiKeyPublic]> {
     ApiKeyService.listApiKeys(
       buckets.store,
+      buckets.names,
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       bucketId,
+    )
+  };
+
+  public shared query ({ caller }) func getApiKey(
+    bucketId: Types.BucketId,
+    keyId: Text,
+  ) : async Types.ApiResult<Types.ApiKeyPublic> {
+    BucketService.getApiKey(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      keyId,
+    )
+  };
+
+  public shared ({ caller }) func updateApiKey(
+    bucketId: Types.BucketId,
+    keyId: Text,
+    name: ?Text,
+    permissions: ?Types.ApiKeyPermissions,
+  ) : async Types.ApiResult<Types.ApiKeyPublic> {
+    BucketService.updateApiKey(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      keyId,
+      name,
+      permissions,
+    )
+  };
+
+  public shared ({ caller }) func regenerateApiKey(
+    bucketId: Types.BucketId,
+    keyId: Text,
+  ) : async Types.ApiResult<Types.ApiKeyCreateResult> {
+    BucketService.regenerateApiKey(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      keyId,
     )
   };
 
@@ -221,9 +272,284 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
   ) : async Types.ApiResult<()> {
     ApiKeyService.revokeApiKey(
       buckets.store,
+      buckets.names,
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       bucketId,
       keyId,
+    )
+  };
+
+  public shared query ({ caller }) func getFile(
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FilePublic> {
+    BucketService.getFile(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      apiKey,
+    )
+  };
+
+  public shared query ({ caller }) func fileExists(
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Bool> {
+    BucketService.fileExists(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func updateFile(
+    bucketId: Types.BucketId,
+    path: Text,
+    name: ?Text,
+    contentType: ?Text,
+    metadata: ?Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FilePublic> {
+    BucketService.updateFile(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      name,
+      contentType,
+      metadata,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func moveFile(
+    bucketId: Types.BucketId,
+    sourcePath: Text,
+    destinationPath: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FilePublic> {
+    BucketService.moveFile(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      sourcePath,
+      destinationPath,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func copyFile(
+    bucketId: Types.BucketId,
+    sourcePath: Text,
+    destinationPath: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FilePublic> {
+    BucketService.copyFile(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      sourcePath,
+      destinationPath,
+      apiKey,
+    )
+  };
+
+  public shared query ({ caller }) func listFolder(
+    bucketId: Types.BucketId,
+    prefix: Text,
+    page: Nat,
+    pageSize: Nat,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FileListPage> {
+    BucketService.listFolder(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      prefix,
+      page,
+      pageSize,
+      apiKey,
+    )
+  };
+
+  public shared query ({ caller }) func searchFiles(
+    bucketId: Types.BucketId,
+    searchQuery: Text,
+    page: Nat,
+    pageSize: Nat,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FileListPage> {
+    BucketService.searchFiles(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      searchQuery,
+      page,
+      pageSize,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func setFileTags(
+    bucketId: Types.BucketId,
+    path: Text,
+    tags: [Text],
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FilePublic> {
+    BucketService.setFileTags(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      tags,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func addFileTags(
+    bucketId: Types.BucketId,
+    path: Text,
+    tags: [Text],
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FilePublic> {
+    BucketService.addFileTags(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      tags,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func removeFileTags(
+    bucketId: Types.BucketId,
+    path: Text,
+    tags: [Text],
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FilePublic> {
+    BucketService.removeFileTags(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      tags,
+      apiKey,
+    )
+  };
+
+  public shared query ({ caller }) func getFileMetadata(
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Text> {
+    BucketService.getFileMetadata(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func setFileMetadata(
+    bucketId: Types.BucketId,
+    path: Text,
+    metadata: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Types.FilePublic> {
+    BucketService.setFileMetadata(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      metadata,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func bulkDeleteFiles(
+    bucketId: Types.BucketId,
+    paths: [Text],
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Nat> {
+    await BucketService.bulkDeleteFiles(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      paths,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func bulkMoveFiles(
+    bucketId: Types.BucketId,
+    operations: [Types.FilePathOp],
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Nat> {
+    BucketService.bulkMoveFiles(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      operations,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func bulkCopyFiles(
+    bucketId: Types.BucketId,
+    operations: [Types.FilePathOp],
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Nat> {
+    BucketService.bulkCopyFiles(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      operations,
+      apiKey,
+    )
+  };
+
+  public shared query ({ caller }) func getUpload(uploadId: Text) : async Types.ApiResult<Types.UploadStatusPublic> {
+    BucketService.getUpload(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      uploadId,
+    )
+  };
+
+  public shared ({ caller }) func cancelUpload(uploadId: Text) : async Types.ApiResult<()> {
+    BucketService.cancelUpload(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      uploadId,
+    )
+  };
+
+  public shared ({ caller }) func updateBucket(
+    bucketId: Types.BucketId,
+    name: ?Text,
+    visibility: ?Types.BucketVisibility,
+  ) : async Types.ApiResult<Types.BucketPublic> {
+    BucketService.updateBucket(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      name,
+      visibility,
+    )
+  };
+
+  public shared ({ caller }) func deleteBucket(bucketId: Types.BucketId) : async Types.ApiResult<()> {
+    BucketService.deleteBucket(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
     )
   };
 

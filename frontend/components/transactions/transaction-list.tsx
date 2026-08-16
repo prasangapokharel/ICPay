@@ -149,9 +149,9 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
         )}
 
         <div className="min-w-0 flex-1 text-left">
-          <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !counterparty.startsWith("@") && "font-mono text-sm tracking-tight")}>
-            {handle ? `@${handle}` : shortenCounterparty(counterparty)}
-            {handle && <PremiumBadge name={handle} className="size-3.5" />}
+          <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !handle && "font-mono text-sm tracking-tight")}>
+            {handle ?? shortenCounterparty(counterparty)}
+            <PremiumBadge name={handle} className="size-3.5" />
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground/80">
             <span>{t(`type.${type}`)}</span> · {formatTime(tx.createdAt)}

@@ -99,14 +99,23 @@ export interface WalletActor {
     uploadId: string,
     apiKey: [] | [string]
   ) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
-  downloadFile: (bucketId: string, path: string) => Promise<{ ok: Uint8Array; err?: never } | { err: string; ok?: never }>
+  downloadFile: (
+    bucketId: string,
+    path: string,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: Uint8Array; err?: never } | { err: string; ok?: never }>
   getPublicFileUrl: (bucketId: string, path: string) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
   deleteFile: (
     bucketId: string,
     path: string,
     apiKey: [] | [string]
   ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
-  listFiles: (bucketId: string, page: bigint, pageSize: bigint) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  listFiles: (
+    bucketId: string,
+    page: bigint,
+    pageSize: bigint,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   renewBucket: (bucketId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getBucketCycleStatus: () => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   createApiKey: (
@@ -117,6 +126,20 @@ export interface WalletActor {
   listApiKeys: (
     bucketId: string
   ) => Promise<{ ok: Record<string, unknown>[]; err?: never } | { err: string; ok?: never }>
+  getApiKey: (
+    bucketId: string,
+    keyId: string
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  updateApiKey: (
+    bucketId: string,
+    keyId: string,
+    name: [] | [string],
+    permissions: [] | [{ read: boolean; write: boolean; delete: boolean }]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  regenerateApiKey: (
+    bucketId: string,
+    keyId: string
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   revokeApiKey: (
     bucketId: string,
     keyId: string
@@ -386,10 +409,30 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const FilePublic = IDL.Record({
     id: IDL.Text,
     path: IDL.Text,
+    name: IDL.Text,
     size: IDL.Nat,
     contentType: IDL.Text,
     createdAt: IDL.Int,
+    updatedAt: IDL.Opt(IDL.Int),
+    metadata: IDL.Opt(IDL.Text),
+    tags: IDL.Vec(IDL.Text),
     publicUrl: IDL.Opt(IDL.Text),
+  })
+
+  const FilePathOp = IDL.Record({
+    source: IDL.Text,
+    destination: IDL.Text,
+  })
+
+  const UploadStatusPublic = IDL.Record({
+    uploadId: IDL.Text,
+    bucketId: IDL.Text,
+    path: IDL.Text,
+    totalSize: IDL.Nat,
+    uploadedSize: IDL.Nat,
+    chunkSize: IDL.Nat,
+    status: IDL.Text,
+    createdAt: IDL.Int,
   })
 
   const ApiResultBucketId = IDL.Variant({ ok: IDL.Text, err: IDL.Text })
@@ -450,6 +493,11 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
 
   const ApiResultApiKeyCreate = IDL.Variant({ ok: ApiKeyCreateResult, err: IDL.Text })
   const ApiResultApiKeyList = IDL.Variant({ ok: IDL.Vec(ApiKeyPublic), err: IDL.Text })
+  const ApiResultApiKeyPublic = IDL.Variant({ ok: ApiKeyPublic, err: IDL.Text })
+  const ApiResultFilePublic = IDL.Variant({ ok: FilePublic, err: IDL.Text })
+  const ApiResultBool = IDL.Variant({ ok: IDL.Bool, err: IDL.Text })
+  const ApiResultText = IDL.Variant({ ok: IDL.Text, err: IDL.Text })
+  const ApiResultUploadStatus = IDL.Variant({ ok: UploadStatusPublic, err: IDL.Text })
 
   return IDL.Service({
     health: IDL.Func([], [IDL.Text], ["query"]),
@@ -521,10 +569,10 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
       [ApiResultFileId],
       []
     ),
-    downloadFile: IDL.Func([IDL.Text, IDL.Text], [ApiResultBlob], ["query"]),
+    downloadFile: IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [ApiResultBlob], ["query"]),
     getPublicFileUrl: IDL.Func([IDL.Text, IDL.Text], [ApiResultUrl], ["query"]),
     deleteFile: IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [ApiResultUnit], []),
-    listFiles: IDL.Func([IDL.Text, IDL.Nat, IDL.Nat], [ApiResultFileList], ["query"]),
+    listFiles: IDL.Func([IDL.Text, IDL.Nat, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResultFileList], ["query"]),
     renewBucket: IDL.Func([IDL.Text], [ApiResultRenew], []),
     getBucketCycleStatus: IDL.Func([], [ApiResultCycleStatus], ["query"]),
     createApiKey: IDL.Func(
@@ -533,6 +581,80 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
       []
     ),
     listApiKeys: IDL.Func([IDL.Text], [ApiResultApiKeyList], ["query"]),
+    getApiKey: IDL.Func([IDL.Text, IDL.Text], [ApiResultApiKeyPublic], ["query"]),
+    updateApiKey: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(ApiKeyPermissions)],
+      [ApiResultApiKeyPublic],
+      []
+    ),
+    regenerateApiKey: IDL.Func([IDL.Text, IDL.Text], [ApiResultApiKeyCreate], []),
     revokeApiKey: IDL.Func([IDL.Text, IDL.Text], [ApiResultUnit], []),
+    getFile: IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [ApiResultFilePublic], ["query"]),
+    fileExists: IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [ApiResultBool], ["query"]),
+    updateFile: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text), IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
+      [ApiResultFilePublic],
+      []
+    ),
+    moveFile: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [ApiResultFilePublic],
+      []
+    ),
+    copyFile: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [ApiResultFilePublic],
+      []
+    ),
+    listFolder: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Opt(IDL.Text)],
+      [ApiResultFileList],
+      ["query"]
+    ),
+    searchFiles: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Opt(IDL.Text)],
+      [ApiResultFileList],
+      ["query"]
+    ),
+    setFileTags: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Text), IDL.Opt(IDL.Text)],
+      [ApiResultFilePublic],
+      []
+    ),
+    addFileTags: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Text), IDL.Opt(IDL.Text)],
+      [ApiResultFilePublic],
+      []
+    ),
+    removeFileTags: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Text), IDL.Opt(IDL.Text)],
+      [ApiResultFilePublic],
+      []
+    ),
+    getFileMetadata: IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [ApiResultText], ["query"]),
+    setFileMetadata: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [ApiResultFilePublic],
+      []
+    ),
+    bulkDeleteFiles: IDL.Func([IDL.Text, IDL.Vec(IDL.Text), IDL.Opt(IDL.Text)], [ApiResultNat], []),
+    bulkMoveFiles: IDL.Func(
+      [IDL.Text, IDL.Vec(FilePathOp), IDL.Opt(IDL.Text)],
+      [ApiResultNat],
+      []
+    ),
+    bulkCopyFiles: IDL.Func(
+      [IDL.Text, IDL.Vec(FilePathOp), IDL.Opt(IDL.Text)],
+      [ApiResultNat],
+      []
+    ),
+    getUpload: IDL.Func([IDL.Text], [ApiResultUploadStatus], ["query"]),
+    cancelUpload: IDL.Func([IDL.Text], [ApiResultUnit], []),
+    updateBucket: IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(BucketVisibility)],
+      [ApiResultBucketPublic],
+      []
+    ),
+    deleteBucket: IDL.Func([IDL.Text], [ApiResultUnit], []),
   })
 }

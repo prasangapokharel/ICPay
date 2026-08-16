@@ -336,9 +336,9 @@ export function useUserSearch(search: string, limit = 10) {
       // Only usernamed accounts are addressable, and tipping yourself is not a
       // thing, so neither belongs in the list.
       .filter((u) => u.username.length > 0 && u.id !== ownId)
-      // Ranked before the slice, not after: searchByUsername returns every match
-      // in map order, so slicing first cuts the list arbitrarily and a paid handle
-      // past the cut can never place, however scarce it is.
+      // Ranked before the slice: the backend now returns matches in suggestion
+      // order, but the client keeps the same sort so ranking stays stable if the
+      // response ever comes from an older canister.
       .sort((a, b) => compareBySuggestion(a.username[0] ?? "", b.username[0] ?? ""))
       .slice(0, limit),
     // The list is withheld until the viewer is known, otherwise their own row

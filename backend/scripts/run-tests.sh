@@ -91,6 +91,10 @@ run_test "$ROOT/testing/services/BookmarkService.test.mo" "BookmarkService"
 run_test "$ROOT/testing/services/SocialLinkService.test.mo" "SocialLinkService"
 run_test "$ROOT/testing/services/SwapService.test.mo" "SwapService"
 
+echo "--- Bucket API Key Tests ---"
+run_test "$ROOT/testing/bucket/ApiKey.test.mo" "BucketApiKey"
+run_test "$ROOT/testing/bucket/Files.test.mo" "BucketFiles"
+
 # Bucket e2e tests (Flow, HttpServe, HttpMime CDN matrix) are slow — run manually:
 #   moc -r testing/bucket/HttpMime.test.mo --package core ~/.cache/mops/packages/core@*/src
 # Fast suite: FileValidator.test.mo checks all 72 extensions → correct MIME at upload.
@@ -102,6 +106,7 @@ run_test "$ROOT/testing/dsa/bucket-parallel/Concurrency.test.mo" "BucketParallel
 echo "--- Upgrade / Migration Tests ---"
 run_test "$ROOT/testing/upgrade/StampLedgerId.test.mo" "StampLedgerId"
 run_test "$ROOT/testing/upgrade/AddBucketApiKeys.test.mo" "AddBucketApiKeys"
+run_test "$ROOT/testing/upgrade/AddBucketFileMeta.test.mo" "AddBucketFileMeta"
 
 echo "--- Security Tests ---"
 run_test "$ROOT/testing/security/Security.test.mo" "Security"

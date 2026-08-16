@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Spinner } from "@/components/ui/spinner"
 import {
   Drawer,
   DrawerClose,
@@ -25,6 +24,7 @@ import {
   parseIcp,
   isHexAccountId,
   ICP_FEE,
+  E8S,
 } from "@/lib/wallet-utils"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { BookmarkAdd01Icon, QrCodeScanIcon } from "@hugeicons/core-free-icons"
@@ -34,6 +34,8 @@ import { BookmarkDrawer } from "@/components/bookmark/bookmark-drawer"
 import { BookmarkButton } from "@/components/bookmark/bookmark-drawer"
 import { useResolvedUsername, useRecipientProfile } from "@/hooks/use-wallet-data"
 import { useDebounced } from "@/hooks/use-debounced"
+import { useIcpPrice } from "@/hooks/use-icp-price"
+import { useFiatValue } from "@/hooks/use-fiat-value"
 import { Principal } from "@icp-sdk/core/principal"
 import { QrScanner, takeScannedAddress } from "@/components/scan/scan"
 import { primeSuccessChime } from "@/lib/success-chime"
@@ -150,6 +152,10 @@ export function TransferForm({
 
   const parsed = parseIcp(amount)
   const total = parsed === null ? null : parsed + ICP_FEE
+  const { price } = useIcpPrice()
+  const sendUsd =
+    parsed !== null && price ? (Number(parsed) / Number(E8S)) * price.usd : null
+  const sendFiat = useFiatValue(sendUsd)
   // Only username mode is resolvable; a principal or account id has no profile
   // to look up. Debounced so a lookup runs per typing pause, not per keystroke.
   const debouncedTo = useDebounced(mode === "username" ? to : "")
@@ -346,6 +352,12 @@ export function TransferForm({
                 {parsed === null ? "—" : formatAmount(parsed)}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">ICP</p>
+              {sendFiat.formatted !== null && (
+                <p className="mt-1 text-xs tabular-nums text-muted-foreground">
+                  ≈ {sendFiat.symbol}
+                  {sendFiat.formatted} {sendFiat.currency}
+                </p>
+              )}
             </div>
 
             {mode === "username" && resolved && recipientProfile && (
@@ -380,9 +392,8 @@ export function TransferForm({
             </div>
           </div>
 
-          <DrawerFooter>
+          <DrawerFooter className="mt-3">
             <Button onClick={handleConfirm} disabled={loading}>
-              {loading && <Spinner className="size-4" />}
               {loading ? t("sending") : t("confirmSend")}
             </Button>
             <DrawerClose

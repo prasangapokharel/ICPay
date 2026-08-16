@@ -2,7 +2,7 @@ import { resolvePublicFileUrl, toRawCanisterUrl } from "@/lib/bucket/cdn"
 import { downloadFileBlob } from "@/services/bucket/bucket"
 import type { Identity } from "@icp-sdk/core/agent"
 
-/** Rewrite legacy gateway links to the reliable canister raw host. */
+/** Normalize any bucket URL to the raw canister host by default. */
 export function normalizePublicFileUrl(url: string): string {
   return resolvePublicFileUrl(url, "raw")
 }

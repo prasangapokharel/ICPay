@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 
 export function BucketFilePagination({
   page,
@@ -20,15 +21,14 @@ export function BucketFilePagination({
 
   return (
     <div className="flex items-center justify-between gap-2 pt-1">
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         {t("pageOf", { page: String(page + 1), total: String(totalPages), count: String(total) })}
       </p>
-      <div className="flex gap-1">
+      <ButtonGroup>
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className="h-7 px-2 text-xs"
           disabled={page <= 0}
           onClick={() => onPageChange(page - 1)}
         >
@@ -38,13 +38,12 @@ export function BucketFilePagination({
           type="button"
           variant="outline"
           size="sm"
-          className="h-7 px-2 text-xs"
           disabled={page >= totalPages - 1}
           onClick={() => onPageChange(page + 1)}
         >
           {t("nextPage")}
         </Button>
-      </div>
+      </ButtonGroup>
     </div>
   )
 }

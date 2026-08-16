@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "ICP Price Today: Live Price, Technical Analysis & News",
   description:
     "The live Internet Computer (ICP) price, today's market movement, 7-day technical breakdown, and this week's news — subnet capacity, AI strategy, and Internet Identity.",
-  alternates: { canonical: "/icp-price" },
+  alternates: { canonical: "/blog/icp-price" },
   openGraph: {
     title: "ICP Price Today — ICPay Blog",
     description:
@@ -112,14 +112,14 @@ export default function IcpPricePage() {
         </p>
         <p className="text-sm leading-relaxed text-muted-foreground">
           New to the ecosystem? Start with{" "}
-          <Link href="/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
             what is ICP
           </Link>, then see how to{" "}
-          <Link href="/how-to-send-icp" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/how-to-send-icp" className="underline underline-offset-2 hover:text-foreground">
             send it
           </Link>{" "}
           and where to keep it — our picks for the{" "}
-          <Link href="/best-icp-wallet" className="underline underline-offset-2 hover:text-foreground">
+          <Link href="/blog/best-icp-wallet" className="underline underline-offset-2 hover:text-foreground">
             best ICP wallet
           </Link>.
         </p>

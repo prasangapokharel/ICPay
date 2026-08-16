@@ -9,6 +9,7 @@ import {
   LinkSquare02Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Dialog,
   DialogContent,
@@ -16,7 +17,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { BucketIconAction } from "@/components/bucket/bucket-icon-action"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { BucketFileDeleteDialog } from "@/components/bucket/bucket-file-delete-dialog"
 import { BucketFilePreviewImage } from "@/components/bucket/bucket-file-thumb"
 import { formatFileSize } from "@/components/bucket/bucket-card"
 import { mapBucketError, optionalText } from "@/lib/bucket/bucket"
@@ -46,6 +50,7 @@ export function BucketFilePreviewModal({
   const tc = useTranslations("common")
   const { identity } = useAuth()
   const [copied, setCopied] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [downloading, setDownloading] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
@@ -92,15 +97,19 @@ export function BucketFilePreviewModal({
       setDeleteError(mapBucketError(err, t))
       return
     }
+    setDeleteOpen(false)
     onOpenChange(false)
     onDeleted?.()
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg gap-4 sm:max-w-2xl" showCloseButton>
         <DialogHeader>
-          <DialogTitle className="truncate pr-8">{fileName}</DialogTitle>
+          <DialogTitle className="truncate pr-8" title={fileName}>
+            {fileName}
+          </DialogTitle>
           <DialogDescription>
             {formatFileSize(file.size)} · {file.contentType}
             {publicUrl ? ` · ${t("public")}` : ` · ${t("private")}`}
@@ -110,47 +119,72 @@ export function BucketFilePreviewModal({
         <BucketFilePreviewImage bucketId={bucketId} file={file} />
 
         {deleteError && (
-          <p className="text-center text-xs text-destructive">{deleteError}</p>
+          <Alert variant="destructive">
+            <AlertDescription>{deleteError}</AlertDescription>
+          </Alert>
         )}
         {downloadError && (
-          <p className="text-center text-xs text-destructive">{downloadError}</p>
+          <Alert variant="destructive">
+            <AlertDescription>{downloadError}</AlertDescription>
+          </Alert>
         )}
 
-        <div className="flex flex-wrap items-center justify-center gap-1">
-          <BucketIconAction
-            icon={Download01Icon}
-            label={t("download")}
+        <ButtonGroup className="mx-auto flex-wrap justify-center">
+          <Button
+            type="button"
             variant="outline"
+            size="icon-sm"
+            aria-label={t("download")}
             disabled={downloading}
             onClick={handleDownload}
-          />
+          >
+            <HugeiconsIcon icon={Download01Icon} className="size-4" strokeWidth={1.75} />
+          </Button>
           {publicUrl && (
             <>
-              <BucketIconAction
-                icon={copied ? Tick02Icon : Copy01Icon}
-                label={copied ? tc("copied") : tc("copy")}
+              <Button
+                type="button"
                 variant="outline"
+                size="icon-sm"
+                aria-label={copied ? tc("copied") : tc("copy")}
                 onClick={handleCopy}
-              />
-              <BucketIconAction
-                icon={LinkSquare02Icon}
-                label={t("openInNewTab")}
+              >
+                <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" strokeWidth={1.75} />
+              </Button>
+              <Button
+                type="button"
                 variant="outline"
+                size="icon-sm"
+                aria-label={t("openInNewTab")}
                 onClick={() => window.open(publicUrl, "_blank", "noopener,noreferrer")}
-              />
+              >
+                <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" strokeWidth={1.75} />
+              </Button>
             </>
           )}
           {canWrite && (
-            <BucketIconAction
-              icon={Delete02Icon}
-              label={t("delete")}
-              destructive
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon-sm"
+              aria-label={t("delete")}
               disabled={deleting}
-              onClick={handleDelete}
-            />
+              onClick={() => setDeleteOpen(true)}
+            >
+              <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+            </Button>
           )}
-        </div>
+        </ButtonGroup>
       </DialogContent>
-    </Dialog>
+      </Dialog>
+
+      <BucketFileDeleteDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        fileName={fileName}
+        deleting={deleting}
+        onConfirm={handleDelete}
+      />
+    </>
   )
 }

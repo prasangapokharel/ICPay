@@ -15,7 +15,7 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ic-pay.vercel.app"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 const title = "ICPay — Send ICP by Username"
 const description =
   "ICPay is an ICP wallet that lets you send and receive Internet Computer tokens using a username instead of a long principal address. Sign in with Internet Identity, no seed phrase required."
