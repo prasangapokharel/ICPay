@@ -113,6 +113,7 @@ persistent actor self {
   let pendingSwaps = SwapStorage.createPendingMap();
   // Failed swap escrows survive upgrades so recovery stays tied to a real attempt.
   let failedSwapEscrows = SwapStorage.createEscrowMap();
+  SwapStorage.reindexEscrowKeys(failedSwapEscrows);
 
   // ICPay Cloud — bucket metadata and file blobs persist across upgrades.
   let bucketStore = BucketStorage.empty();

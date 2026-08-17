@@ -21,10 +21,11 @@ export async function fetchSwapQuote(
 export async function recoverFailedSwapInput(
   identity: Identity | undefined,
   tokenIn: string,
+  tokenOut: string,
   amountIn: bigint
 ): Promise<bigint> {
   const outcome = await call(identity, "Recovery failed", async (actor) => {
-    const r = await actor.recoverFailedSwapInput(tokenIn, amountIn)
+    const r = await actor.recoverFailedSwapInput(tokenIn, tokenOut, amountIn)
     return r as Outcome<bigint>
   })
   return unwrap(outcome)

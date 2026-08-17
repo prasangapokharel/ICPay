@@ -87,6 +87,8 @@ module {
     limits:   RateLimitStorage.RateLimitMap;
     // Transient pool cache: sorted pair key -> pool metadata. Rebuilt each session.
     poolCache: Map.Map<Text, CachedPool>;
+    // One in-flight swap per caller — blocks parallel executeSwap before escrow opens.
+    activeSwaps: Map.Map<Principal, Bool>;
   };
 
   public func create(
@@ -99,7 +101,25 @@ module {
     nextId:  () -> Text,
     limits:  RateLimitStorage.RateLimitMap,
   ): SwapService {
-    { users; txs; byUser; ledger; pending; escrows; nextId; limits; poolCache = Map.empty<Text, CachedPool>() };
+    { users; txs; byUser; ledger; pending; escrows; nextId; limits; poolCache = Map.empty<Text, CachedPool>(); activeSwaps = Map.empty<Principal, Bool>() };
+  };
+
+  func acquireSwapLock(service: SwapService, caller: Principal): ?Text {
+    switch (service.activeSwaps.get(caller)) {
+      case (?true) { ?"A swap is already in progress — wait for it to finish" };
+      case (?false) {
+        service.activeSwaps.add(caller, true);
+        null;
+      };
+      case (null) {
+        service.activeSwaps.add(caller, true);
+        null;
+      };
+    };
+  };
+
+  func releaseSwapLock(service: SwapService, caller: Principal) {
+    service.activeSwaps.remove(caller);
   };
 
   // Helper to convert ICPSwapError variant to Text
@@ -195,13 +215,21 @@ module {
     if (tokenIn == tokenOut) return #err("tokenIn and tokenOut must differ");
     if (amountOutMin == 0) return #err("amountOutMin must be > 0");
 
-    if (SwapStorage.hasOpenEscrow(service.escrows, caller, tokenIn, amountIn)) {
+    if (SwapStorage.hasOpenEscrow(service.escrows, caller, tokenIn, tokenOut, amountIn)) {
       return #err("Recover your previous failed swap for this amount before trying again");
+    };
+
+    switch (acquireSwapLock(service, caller)) {
+      case (?msg) { return #err(msg) };
+      case (null) {};
     };
 
     let user = switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?u) { u };
-      case (null) { return #err("User not found") };
+      case (null) {
+        releaseSwapLock(service, caller);
+        return #err("User not found");
+      };
     };
 
     let icpServiceFee = Config.SWAP_ICP_SERVICE_FEE_E8S;
@@ -227,12 +255,18 @@ module {
     let icpRequired = icpServiceFee + icpFee;
 
     let (poolId, zeroForOne) = switch poolResult {
-      case (#err(e)) { return #err(e) };
+      case (#err(e)) {
+        releaseSwapLock(service, caller);
+        return #err(e);
+      };
       case (#ok(r)) { (r.poolId, r.zeroForOne) };
     };
     let pool: ICPSwapPool = actor(poolId);
     let depositAmount = (amountIn - tokenInFee : Nat);
-    if (depositAmount == 0) return #err("amountIn too small after ledger fee");
+    if (depositAmount == 0) {
+      releaseSwapLock(service, caller);
+      return #err("amountIn too small after ledger fee");
+    };
 
     let futureQuote = pool.quote({ zeroForOne; amountIn = Nat.toText(depositAmount); amountOutMinimum = "0" });
     let userBalance = await futureUserBalance;
@@ -244,22 +278,32 @@ module {
     if (tokenIn == icpLedger) {
       let required = amountIn + (3 * tokenInFee) + icpServiceFee + icpFee;
       if (userBalance < required) {
+        releaseSwapLock(service, caller);
         return #err("Insufficient ICP. Need " # Nat.toText(required) # " (swap + service fee + ledger fees), have " # Nat.toText(userBalance))
       };
     } else {
       if (userBalance < tokenRequired) {
+        releaseSwapLock(service, caller);
         return #err("Insufficient balance. Need " # Nat.toText(tokenRequired) # " (including fees), have " # Nat.toText(userBalance))
       };
       if (icpBalance < icpRequired) {
+        releaseSwapLock(service, caller);
         return #err("Insufficient ICP for service fee. Need " # Nat.toText(icpRequired) # " e8s, have " # Nat.toText(icpBalance))
       };
     };
 
     switch (await futureQuote) {
-      case (#err(e)) { return #err("Quote failed: " # icpSwapErrorToText(e)) };
+      case (#err(e)) {
+        releaseSwapLock(service, caller);
+        return #err("Quote failed: " # icpSwapErrorToText(e));
+      };
       case (#ok(out)) {
-        if (out == 0) return #err("No pool liquidity for this swap direction");
+        if (out == 0) {
+          releaseSwapLock(service, caller);
+          return #err("No pool liquidity for this swap direction");
+        };
         if (out < amountOutMin) {
+          releaseSwapLock(service, caller);
           return #err("Slippage exceeded: quoted " # Nat.toText(out) # ", minimum " # Nat.toText(amountOutMin));
         };
       };
@@ -276,7 +320,10 @@ module {
       memo = null;
       created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
     })) {
-      case (#Err(e)) { return #err("ICP service fee transfer failed: " # TransferError.describe(e)) };
+      case (#Err(e)) {
+        releaseSwapLock(service, caller);
+        return #err("ICP service fee transfer failed: " # TransferError.describe(e));
+      };
       case (#Ok(_)) {};
     };
 
@@ -291,7 +338,10 @@ module {
       memo = null;
       created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
     })) {
-      case (#Err(e)) { return #err("Transfer to main account failed: " # TransferError.describe(e)) };
+      case (#Err(e)) {
+        releaseSwapLock(service, caller);
+        return #err("Transfer to main account failed: " # TransferError.describe(e));
+      };
       case (#Ok(_)) {};
     };
 
@@ -316,11 +366,12 @@ module {
           case _ { "Approve failed" };
         };
         let refunded = await returnToUser(service, caller, tokenIn, tokenInFee, transferToMainAmount);
-        if (refunded) { closeEscrow(service, caller, tokenIn, amountIn) };
+        if (refunded) { closeEscrow(service, caller, tokenIn, tokenOut, amountIn) };
+        releaseSwapLock(service, caller);
         return swapAbort(errMsg, refunded);
       };
       case (#Ok(_)) {
-        setEscrowMain(service, caller, tokenIn, amountIn, amountIn);
+        setEscrowMain(service, caller, tokenIn, tokenOut, amountIn, amountIn);
       };
     };
 
@@ -332,10 +383,10 @@ module {
     });
     switch depositResult {
       case (#err(e)) {
-        return await failAndRefund(service, caller, tokenIn, amountIn, tokenInFee, pool, "DepositFrom to pool failed: " # icpSwapErrorToText(e));
+        return await failAndRefund(service, caller, tokenIn, tokenOut, amountIn, tokenInFee, pool, "DepositFrom to pool failed: " # icpSwapErrorToText(e));
       };
       case (#ok(_)) {
-        setEscrowPool(service, caller, tokenIn, amountIn, depositAmount);
+        setEscrowPool(service, caller, tokenIn, tokenOut, amountIn, depositAmount);
       };
     };
 
@@ -347,7 +398,7 @@ module {
     });
     let amountOut = switch swapResult {
       case (#err(e)) {
-        return await failAndRefund(service, caller, tokenIn, amountIn, tokenInFee, pool, "Swap failed: " # icpSwapErrorToText(e));
+        return await failAndRefund(service, caller, tokenIn, tokenOut, amountIn, tokenInFee, pool, "Swap failed: " # icpSwapErrorToText(e));
       };
       case (#ok(n)) { n };
     };
@@ -355,19 +406,23 @@ module {
     // Slippage protection
     if (amountOut < amountOutMin) {
       return await failAndRefund(
-        service, caller, tokenIn, amountIn, tokenInFee, pool,
+        service, caller, tokenIn, tokenOut, amountIn, tokenInFee, pool,
         "Slippage exceeded: got " # Nat.toText(amountOut) # ", minimum " # Nat.toText(amountOutMin),
       );
     };
 
     // Phase F — Withdraw from pool to canister main account
     // pool.withdraw deducts fee internally, so net amount arriving = amountOut - fee
-    if (amountOut <= tokenOutFee) return #err("amountOut too small to cover ledger fee");
+    if (amountOut <= tokenOutFee) {
+      releaseSwapLock(service, caller);
+      return #err("amountOut too small to cover ledger fee");
+    };
 
     let withdrawResult = await pool.withdraw({ token = tokenOut; fee = tokenOutFee; amount = amountOut });
     switch withdrawResult {
       case (#err(e)) {
         // Output still in pool — input was already swapped; record pending for retry.
+        releaseSwapLock(service, caller);
         return #err("Withdraw from pool failed: " # icpSwapErrorToText(e));
       };
       case (#ok(_)) {};
@@ -381,6 +436,7 @@ module {
     } else { 0 };
 
     if (payout == 0) {
+      releaseSwapLock(service, caller);
       return #err("amountOut too small to cover output ledger fees");
     };
 
@@ -395,6 +451,7 @@ module {
     let blockIndex = switch finalTransfer {
       case (#Err(e)) {
         ignore returnToUser(service, caller, tokenOut, tokenOutFee, payout);
+        releaseSwapLock(service, caller);
         return #err("Transfer to user failed: " # TransferError.describe(e));
       };
       case (#Ok(n)) { Nat64.fromNat(n) };
@@ -416,16 +473,18 @@ module {
     );
     TxModel.complete(txIn, blockIndex, now);
 
-    closeEscrow(service, caller, tokenIn, amountIn);
+    closeEscrow(service, caller, tokenIn, tokenOut, amountIn);
 
+    releaseSwapLock(service, caller);
     #ok({ blockIndex; amountIn; amountOut = actualReceived; icpServiceFee; txId = txInId });
   };
 
-  // Only succeeds when a failed swap escrow exists for this caller + token + amount.
+  // Only succeeds when a failed swap escrow exists for this caller + pair + amount.
   public func recoverFailedSwapInput(
     service: SwapService,
     caller:   Principal,
     tokenIn:  Text,
+    tokenOut: Text,
     amountIn: Nat,
   ): async Types.ApiResult<Nat> {
     if (Principal.isAnonymous(caller)) return #err("Not authenticated");
@@ -438,7 +497,7 @@ module {
       case (null) { return #err("User not found") };
     };
 
-    switch (SwapStorage.getEscrow(service.escrows, caller, tokenIn, amountIn)) {
+    switch (SwapStorage.getEscrow(service.escrows, caller, tokenIn, tokenOut, amountIn)) {
       case (null) {
         return #err("No failed swap found — only a genuine failed swap can be recovered");
       };
@@ -464,7 +523,7 @@ module {
         if (not refunded) {
           return #err("Recovery transfer failed — try again or contact support");
         };
-        closeEscrow(service, caller, tokenIn, amountIn);
+        closeEscrow(service, caller, tokenIn, tokenOut, amountIn);
         #ok(returned);
       };
     };
@@ -490,7 +549,11 @@ module {
     let fee = await LedgerService.getFee(tokenIn);
     let ok = await returnToUser(service, user, tokenIn, fee, amountIn);
     if (not ok) return #err("Nothing to release or transfer failed");
-    closeEscrow(service, user, tokenIn, amountIn);
+    for (e in SwapStorage.getAllEscrows(service.escrows).vals()) {
+      if (Principal.equal(e.caller, user) and e.tokenIn == tokenIn and e.amountIn == amountIn) {
+        closeEscrow(service, user, tokenIn, e.tokenOut, amountIn);
+      };
+    };
     #ok((amountIn - fee : Nat));
   };
 
@@ -590,7 +653,7 @@ module {
     let mainBal = await LedgerService.getBalance(tokenIn, main);
     let cap = if (maxAmount < mainBal) { maxAmount } else { mainBal };
     if (cap > tokenInFee) {
-      let payout = cap - tokenInFee;
+      let payout = Nat.sub(cap, tokenInFee);
       switch (await LedgerService.transfer(tokenIn, {
         from_subaccount = null;
         to = userSub;
@@ -653,15 +716,29 @@ module {
     });
   };
 
-  func setEscrowMain(service: SwapService, caller: Principal, tokenIn: Text, amountIn: Nat, refundDue: Nat) {
-    switch (SwapStorage.getEscrow(service.escrows, caller, tokenIn, amountIn)) {
+  func setEscrowMain(
+    service: SwapService,
+    caller: Principal,
+    tokenIn: Text,
+    tokenOut: Text,
+    amountIn: Nat,
+    refundDue: Nat,
+  ) {
+    switch (SwapStorage.getEscrow(service.escrows, caller, tokenIn, tokenOut, amountIn)) {
       case (?e) { e.refundDue := refundDue };
       case (null) {};
     };
   };
 
-  func setEscrowPool(service: SwapService, caller: Principal, tokenIn: Text, amountIn: Nat, poolDeposit: Nat) {
-    switch (SwapStorage.getEscrow(service.escrows, caller, tokenIn, amountIn)) {
+  func setEscrowPool(
+    service: SwapService,
+    caller: Principal,
+    tokenIn: Text,
+    tokenOut: Text,
+    amountIn: Nat,
+    poolDeposit: Nat,
+  ) {
+    switch (SwapStorage.getEscrow(service.escrows, caller, tokenIn, tokenOut, amountIn)) {
       case (?e) {
         e.refundDue := 0;
         e.poolDeposit := poolDeposit;
@@ -670,20 +747,27 @@ module {
     };
   };
 
-  func closeEscrow(service: SwapService, caller: Principal, tokenIn: Text, amountIn: Nat) {
-    SwapStorage.removeEscrow(service.escrows, caller, tokenIn, amountIn);
+  func closeEscrow(
+    service: SwapService,
+    caller: Principal,
+    tokenIn: Text,
+    tokenOut: Text,
+    amountIn: Nat,
+  ) {
+    SwapStorage.removeEscrow(service.escrows, caller, tokenIn, tokenOut, amountIn);
   };
 
   func failAndRefund(
     service: SwapService,
     caller: Principal,
     tokenIn: Text,
+    tokenOut: Text,
     amountIn: Nat,
     tokenInFee: Nat,
     pool: ICPSwapPool,
     msg: Text,
   ): async Types.ApiResult<Types.SwapResult> {
-    switch (SwapStorage.getEscrow(service.escrows, caller, tokenIn, amountIn)) {
+    switch (SwapStorage.getEscrow(service.escrows, caller, tokenIn, tokenOut, amountIn)) {
       case (?e) {
         var refunded = true;
         if (e.refundDue > 0) {
@@ -692,10 +776,12 @@ module {
         if (refunded and e.poolDeposit > 0) {
           refunded := await returnPoolDeposit(service, caller, pool, tokenIn, tokenInFee, e.poolDeposit);
         };
-        if (refunded) { closeEscrow(service, caller, tokenIn, amountIn) };
+        if (refunded) { closeEscrow(service, caller, tokenIn, tokenOut, amountIn) };
+        releaseSwapLock(service, caller);
         swapAbort(msg, refunded);
       };
       case (null) {
+        releaseSwapLock(service, caller);
         swapAbort(msg, false);
       };
     };

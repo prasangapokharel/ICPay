@@ -11,8 +11,8 @@ mixin (swap: SwapService.SwapService, mwConfig: MiddlewareAuth.Config) {
     await SwapService.swap(swap, MiddlewareAuth.effectiveCaller(mwConfig, caller), tokenIn, tokenOut, amountIn, amountOutMin);
   };
 
-  public shared ({ caller }) func recoverFailedSwapInput(tokenIn: Text, amountIn: Nat) : async Types.ApiResult<Nat> {
-    await SwapService.recoverFailedSwapInput(swap, MiddlewareAuth.effectiveCaller(mwConfig, caller), tokenIn, amountIn);
+  public shared ({ caller }) func recoverFailedSwapInput(tokenIn: Text, tokenOut: Text, amountIn: Nat) : async Types.ApiResult<Nat> {
+    await SwapService.recoverFailedSwapInput(swap, MiddlewareAuth.effectiveCaller(mwConfig, caller), tokenIn, tokenOut, amountIn);
   };
 
   public shared ({ caller }) func adminReleaseStuckSwapLeg(user: Principal, tokenIn: Text, amountIn: Nat) : async Types.ApiResult<Nat> {
