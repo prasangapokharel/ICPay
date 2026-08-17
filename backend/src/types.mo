@@ -532,6 +532,13 @@ module {
     joinedAt: Int;
   };
 
+  public type LivePeerPublic = {
+    tabId: Text;
+    principal: Principal;
+    username: ?Username;
+    joinedAt: Int;
+  };
+
   public type LiveSignal = {
     id: Nat;
     fromTab: Text;

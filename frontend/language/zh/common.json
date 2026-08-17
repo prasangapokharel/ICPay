@@ -917,10 +917,13 @@
     "guideStep4": "You hear others as soon as audio connects. Turn Mic on only when you want to speak.",
     "guideStep5": "Host can Stop (pause), Resume, or End. Signaling on-chain costs almost no cycles.",
     "micStarting": "Starting mic…",
+    "speaking": "Speaking",
+    "gridYou": "You",
+    "gridEmpty": "No one else is here yet.",
     "audioStatus": {
-      "idle": "Waiting for others to join. You can hear speakers once someone connects.",
+      "idle": "Waiting for others to join. Audio connects automatically when someone speaks.",
       "connecting": "Connecting audio…",
-      "listening": "Audio connected — turn Mic on when you want to speak.",
+      "listening": "You are listening. Turn Mic on when you want to speak.",
       "speaking": "You are live. Others can hear you."
     },
     "createLockedTitle": "Premium hosting",

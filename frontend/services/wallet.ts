@@ -622,6 +622,7 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const LivePeer = IDL.Record({
     tabId: IDL.Text,
     principal: IDL.Principal,
+    username: IDL.Opt(IDL.Text),
     joinedAt: IDL.Int,
   })
   const LiveSignal = IDL.Record({

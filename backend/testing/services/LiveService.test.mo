@@ -1,4 +1,5 @@
 import Debug "mo:core/Debug";
+import Array "mo:core/Array";
 import Int "mo:core/Int";
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
@@ -6,6 +7,7 @@ import UserStorage "../../src/storage/UserStorage";
 import LiveStorage "../../src/storage/LiveStorage";
 import LiveService "../../src/services/LiveService";
 import UserRepo "../../src/repositories/UserRepository";
+import Types "../../src/types";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
@@ -51,6 +53,20 @@ switch (LiveService.createRoom(svc, host, "Weekly sync", #open, null)) {
     switch (LiveService.joinRoom(svc, guest, r.roomId, "tab-guest", null)) {
       case (#ok(_)) { Debug.print("PASS: guest joins live room") };
       case (#err(e)) { assert false; Debug.print("FAIL: guest join: " # e) };
+    };
+    let peerList = LiveService.listPeers(svc, r.roomId);
+    assert peerList.size() >= 2;
+    switch (Array.find(peerList, func(p: Types.LivePeerPublic): Bool { p.tabId == "tab-guest" })) {
+      case (?guestPeer) {
+        switch (guestPeer.username) {
+          case (?u) {
+            assert u == "guest";
+            Debug.print("PASS: peer list includes username");
+          };
+          case (null) { assert false; Debug.print("FAIL: guest peer missing username") };
+        };
+      };
+      case (null) { assert false; Debug.print("FAIL: guest peer not in list") };
     };
     switch (LiveService.postSignal(svc, host, r.roomId, "tab-host", ?"tab-guest", "{\"type\":\"offer\"}")) {
       case (#ok(id)) {
