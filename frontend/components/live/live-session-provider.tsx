@@ -97,7 +97,17 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
 
   const { room: polledRoom, mutate: mutateSessionRoom } = useLiveRoom(roomId ?? "", joined && !!roomId)
   const sessionRoom = activeRoom ?? polledRoom ?? null
-  const { peers: livePeers, refresh: refreshPeers } = useLivePeers(roomId ?? "", joined, tabId ?? "")
+  const roomLive = sessionRoom != null && liveStateLabel(sessionRoom.state) === "live"
+  const { peers: livePeers, peerKey: livePeerKey, refresh: refreshPeers } = useLivePeers(
+    roomId ?? "",
+    joined && roomLive,
+    tabId ?? ""
+  )
+
+  const refreshPeersRef = useRef(refreshPeers)
+  useEffect(() => {
+    refreshPeersRef.current = refreshPeers
+  }, [refreshPeers])
 
   const persist = useCallback(
     (next: { roomId: string; tabId: string; micOn: boolean }) => {
@@ -127,7 +137,12 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
 
   const ensureSession = useCallback(() => {
     if (!identity || !roomId || !tabId) return null
-    if (sessionRef.current) return sessionRef.current
+    const current = sessionRef.current
+    if (current && current.roomId === roomId && current.tabId === tabId) {
+      return current
+    }
+    current?.teardown()
+    sessionRef.current = null
     return attachSession(new LiveAudioSession(identity, roomId, tabId))
   }, [attachSession, identity, roomId, tabId])
 
@@ -181,6 +196,14 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
           if (joined) await leaveInternal()
 
           const nextTabId = opts?.tabId ?? createTabId()
+          const saved = readLiveSession()
+          if (
+            saved?.roomId === targetRoomId &&
+            saved.tabId !== nextTabId &&
+            saved.principal === identity.getPrincipal().toText()
+          ) {
+            await leaveLiveRoom(identity, targetRoomId, saved.tabId).catch(() => {})
+          }
           const joinedRoom = await joinLiveRoom(identity, targetRoomId, nextTabId, inviteToken)
           const peerList = await listLivePeers(identity, targetRoomId)
 
@@ -196,7 +219,6 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
           setJoined(true)
           setError(null)
           persist({ roomId: targetRoomId, tabId: nextTabId, micOn: false })
-          void refreshPeers()
 
           pendingMicRestoreRef.current = !!(
             opts?.restoreMic && liveStateLabel(joinedRoom.state) === "live"
@@ -231,7 +253,6 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
       joined,
       leaveInternal,
       persist,
-      refreshPeers,
       refreshRoom,
       globalMutate,
     ]
@@ -293,16 +314,20 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    void refreshPeers()
     const session = ensureSession()
     if (!session) return
     session.enableSignaling()
     session.beginPolling()
     session.primeListening()
     if (wasPlaybackUnlocked()) session.unlockPlayback()
-    void session.syncPeers(livePeers, true)
 
-    if (!pendingMicRestoreRef.current) return
+    const retry = window.setTimeout(() => {
+      void refreshPeersRef.current()
+    }, 1200)
+
+    if (!pendingMicRestoreRef.current) {
+      return () => window.clearTimeout(retry)
+    }
     pendingMicRestoreRef.current = false
     void (async () => {
       if (!(await micPermissionGranted())) return
@@ -312,7 +337,16 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
       setMicOn(true)
       persist({ roomId, tabId, micOn: true })
     })()
-  }, [identity, joined, sessionRoom, roomId, tabId, livePeers, refreshPeers, ensureSession, persist])
+    return () => window.clearTimeout(retry)
+  }, [identity, joined, sessionRoom, roomId, tabId, ensureSession, persist])
+
+  useEffect(() => {
+    if (!joined || !sessionRoom || !roomId || !tabId) return
+    if (liveStateLabel(sessionRoom.state) !== "live") return
+    const session = sessionRef.current
+    if (!session) return
+    void session.syncPeers(livePeers, true)
+  }, [joined, sessionRoom, roomId, tabId, livePeerKey, livePeers])
 
   const toggleMic = useCallback(async () => {
     const session = ensureSession()
