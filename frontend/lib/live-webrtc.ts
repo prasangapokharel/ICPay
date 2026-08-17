@@ -34,6 +34,9 @@ export class LiveAudioSession {
   private running = false
   private lastSignalId = 0n
   private pollTimer: ReturnType<typeof setInterval> | null = null
+  private peerSyncTimer: ReturnType<typeof setInterval> | null = null
+  private lastRemotePeers: LivePeer[] = []
+  private peerLive = false
   private signalChain = Promise.resolve()
   private playbackUnlocked = false
   private signalingEnabled = false
@@ -141,17 +144,34 @@ export class LiveAudioSession {
 
   async syncPeers(remotePeers: LivePeer[], live: boolean) {
     if (!this.running && !this.signalingEnabled) return
-    if (!live) {
+    this.lastRemotePeers = remotePeers
+    this.peerLive = live
+    await this.syncPeersInternal()
+  }
+
+  private peerConnected(state: PeerState): boolean {
+    const { pc } = state
+    return (
+      this.pcUsable(pc) &&
+      pc.connectionState !== "failed" &&
+      pc.connectionState !== "closed"
+    )
+  }
+
+  private async syncPeersInternal() {
+    if (!this.peerLive) {
       this.closeAllPeers()
       this.emitStatus()
       return
     }
 
-    const others = remotePeers.filter((p) => p.tabId !== this.tabId)
+    const others = this.lastRemotePeers.filter((p) => p.tabId !== this.tabId)
     this.onPeerCount?.(others.length)
 
     for (const peer of others) {
-      if (this.peers.has(peer.tabId)) continue
+      const existing = this.peers.get(peer.tabId)
+      if (existing && this.peerConnected(existing)) continue
+      if (existing) this.closePeer(peer.tabId)
       if (this.tabId < peer.tabId) {
         await this.connectAsOfferer(peer.tabId)
       }
@@ -172,6 +192,11 @@ export class LiveAudioSession {
     // Second poll catches signals posted while the first round-trip was in flight.
     void this.pollSoon()
     this.pollTimer = setInterval(() => void this.poll(), POLL_MS)
+    if (!this.peerSyncTimer) {
+      this.peerSyncTimer = setInterval(() => {
+        if (this.peerLive) void this.syncPeersInternal()
+      }, PEER_SYNC_MS)
+    }
   }
 
   private pollSoon() {
@@ -186,9 +211,15 @@ export class LiveAudioSession {
       clearInterval(this.pollTimer)
       this.pollTimer = null
     }
+    if (this.peerSyncTimer) {
+      clearInterval(this.peerSyncTimer)
+      this.peerSyncTimer = null
+    }
   }
 
   teardown() {
+    this.peerLive = false
+    this.lastRemotePeers = []
     this.disableSignaling()
     this.stopLocalVoiceMonitor()
     this.localStream?.getTracks().forEach((t) => t.stop())
@@ -410,9 +441,10 @@ export class LiveAudioSession {
     }
 
     pc.onconnectionstatechange = () => {
-      if (pc.connectionState === "failed") {
+      if (pc.connectionState === "failed" || pc.connectionState === "closed") {
         this.closePeer(remoteTab)
         this.emitStatus()
+        if (this.peerLive) void this.syncPeersInternal()
       }
     }
 

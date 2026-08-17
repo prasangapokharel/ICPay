@@ -24,7 +24,7 @@ export function useLiveRoom(roomId: string, poll = false) {
   return {
     room: data ?? null,
     error,
-    isLoading: isLoading || (isValidating && !data),
+    isLoading: data === undefined && (isLoading || isValidating),
     mutate,
   }
 }
