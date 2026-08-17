@@ -50,8 +50,8 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-3 gap-2">
         <ActionButton href="/transfer" label={t("common.send")} primary />
-        <ActionButton href="/deposit" label={t("common.receive")} primary />
         <ActionButton href="/swap" label={t("common.swap")} primary />
+        <ActionButton href="/deposit" label={t("common.receive")} primary />
       </div>
 
       <RecentTransactions transactions={data.recentTransactions} />

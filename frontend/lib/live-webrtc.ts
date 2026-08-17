@@ -35,6 +35,7 @@ export class LiveAudioSession {
   private pollTimer: ReturnType<typeof setInterval> | null = null
   private signalChain = Promise.resolve()
   private playbackUnlocked = false
+  private signalingEnabled = false
 
   constructor(identity: Identity, roomId: string, tabId: string) {
     this.identity = identity
@@ -74,6 +75,15 @@ export class LiveAudioSession {
     for (const audio of this.remoteAudio.values()) {
       void audio.play().catch(() => {})
     }
+  }
+
+  enableSignaling() {
+    this.signalingEnabled = true
+  }
+
+  disableSignaling() {
+    this.signalingEnabled = false
+    this.stopPolling()
   }
 
   async startMic(): Promise<void> {
@@ -127,7 +137,7 @@ export class LiveAudioSession {
   }
 
   beginPolling() {
-    if (this.pollTimer) return
+    if (!this.signalingEnabled || this.pollTimer) return
     this.running = true
     void this.poll()
     this.pollTimer = setInterval(() => void this.poll(), POLL_MS)
@@ -142,7 +152,7 @@ export class LiveAudioSession {
   }
 
   teardown() {
-    this.stopPolling()
+    this.disableSignaling()
     this.localStream?.getTracks().forEach((t) => t.stop())
     this.localStream = null
     this.micEnabled = false
@@ -356,7 +366,12 @@ export class LiveAudioSession {
   }
 
   private async send(toTab: string, payload: SignalPayload) {
-    await postLiveSignal(this.identity, this.roomId, this.tabId, toTab, JSON.stringify(payload))
+    if (!this.signalingEnabled) return
+    try {
+      await postLiveSignal(this.identity, this.roomId, this.tabId, toTab, JSON.stringify(payload))
+    } catch {
+      // Room left or join not confirmed yet — ignore transient signaling errors.
+    }
   }
 
   private closePeer(tabId: string) {

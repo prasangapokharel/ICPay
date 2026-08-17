@@ -5,11 +5,18 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { LiveGuideInfo } from "@/components/live/live-guide-info"
 import { useOwnProfile } from "@/hooks/use-wallet-data"
 import { canCreateLiveRoom } from "@/lib/live-access"
 import { listPublicLiveRooms, liveStateLabel, type LiveRoomPublic } from "@/services/live/live"
+
+function liveBadgeVariant(state: ReturnType<typeof liveStateLabel>) {
+  if (state === "live") return "default" as const
+  if (state === "paused") return "secondary" as const
+  return "outline" as const
+}
 
 export default function LivePage() {
   const t = useTranslations("live")
@@ -64,23 +71,39 @@ export default function LivePage() {
         <p className="text-sm text-muted-foreground">{t("empty")}</p>
       ) : (
         <ul className="space-y-2">
-          {rooms.map((room) => (
-            <li key={room.id}>
-              <Link
-                href={`/live/${room.id}`}
-                className="block rounded-2xl border bg-card px-4 py-3 transition-colors hover:bg-accent/40"
+          {rooms.map((room) => {
+            const state = liveStateLabel(room.state)
+            return (
+              <li
+                key={room.id}
+                className="flex items-center gap-3 rounded-2xl border bg-card px-4 py-3"
               >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-medium">{room.title}</span>
-                  <span className="text-xs text-muted-foreground">{t(`state.${liveStateLabel(room.state)}`)}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate font-medium">{room.title}</span>
+                    <Badge
+                      variant={liveBadgeVariant(state)}
+                      className="h-5 shrink-0 px-2 text-[10px] font-semibold uppercase tracking-wide"
+                    >
+                      {t(`state.${state}`)}
+                    </Badge>
+                  </div>
+                  <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                    {room.hostUsername[0] ? `@${room.hostUsername[0]}` : t("host")} ·{" "}
+                    {Number(room.peerCount)} {t("participants")}
+                  </p>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {room.hostUsername[0] ? `@${room.hostUsername[0]}` : t("host")} ·{" "}
-                  {Number(room.peerCount)} {t("participants")}
-                </p>
-              </Link>
-            </li>
-          ))}
+                <Button
+                  size="sm"
+                  className="h-8 shrink-0 px-3 text-xs font-semibold"
+                  nativeButton={false}
+                  render={<Link href={`/live/${room.id}`} />}
+                >
+                  {t("join")}
+                </Button>
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>

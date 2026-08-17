@@ -54,9 +54,22 @@ switch (LiveService.createRoom(svc, host, "Weekly sync", #open, null)) {
       case (#ok(_)) { Debug.print("PASS: guest joins live room") };
       case (#err(e)) { assert false; Debug.print("FAIL: guest join: " # e) };
     };
+    switch (LiveService.joinRoom(svc, guest, r.roomId, "tab-guest-new", null)) {
+      case (#ok(_)) { Debug.print("PASS: guest rejoin replaces stale tab") };
+      case (#err(e)) { assert false; Debug.print("FAIL: guest rejoin: " # e) };
+    };
     let peerList = LiveService.listPeers(svc, r.roomId);
+    var guestTabs = 0;
+    for (p in peerList.vals()) {
+      if (p.principal == guest) { guestTabs += 1 };
+    };
+    assert guestTabs == 1;
+    switch (Array.find(peerList, func(p: Types.LivePeerPublic): Bool { p.tabId == "tab-guest-new" })) {
+      case (?_) { Debug.print("PASS: only latest guest tab kept") };
+      case (null) { assert false; Debug.print("FAIL: latest guest tab missing") };
+    };
     assert peerList.size() >= 2;
-    switch (Array.find(peerList, func(p: Types.LivePeerPublic): Bool { p.tabId == "tab-guest" })) {
+    switch (Array.find(peerList, func(p: Types.LivePeerPublic): Bool { p.tabId == "tab-guest-new" })) {
       case (?guestPeer) {
         switch (guestPeer.username) {
           case (?u) {
@@ -68,10 +81,10 @@ switch (LiveService.createRoom(svc, host, "Weekly sync", #open, null)) {
       };
       case (null) { assert false; Debug.print("FAIL: guest peer not in list") };
     };
-    switch (LiveService.postSignal(svc, host, r.roomId, "tab-host", ?"tab-guest", "{\"type\":\"offer\"}")) {
+    switch (LiveService.postSignal(svc, host, r.roomId, "tab-host", ?"tab-guest-new", "{\"type\":\"offer\"}")) {
       case (#ok(id)) {
         assert id == 1;
-        switch (LiveService.pollSignals(svc, guest, r.roomId, "tab-guest", 0)) {
+        switch (LiveService.pollSignals(svc, guest, r.roomId, "tab-guest-new", 0)) {
           case (#ok(msgs)) {
             assert msgs.size() == 1;
             Debug.print("PASS: signal post and poll");

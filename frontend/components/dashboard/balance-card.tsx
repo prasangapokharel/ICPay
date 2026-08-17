@@ -32,8 +32,8 @@ export function BalanceCard({
   const fiat = useFiatValue(usdValue)
 
   return (
-    <div className="pt-4  bg-blue-200/80 rounded-3xl shadow-accent-foreground ">
-   <div className="relative mt-2 rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg">
+    <div className="rounded-3xl bg-blue-200/80 pt-4 shadow-accent-foreground">
+      <div className="relative mt-2 rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg">
       {/* Top row: metallic EMV-style chip + glass network pill */}
       <div className="relative z-10 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
@@ -84,8 +84,7 @@ export function BalanceCard({
           Internet Computer
         </span>
       </div>
+      </div>
     </div>
-    </div>
- 
   )
 }

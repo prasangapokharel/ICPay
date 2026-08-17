@@ -2,11 +2,10 @@
 
 import type { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Mic01Icon, MicOff01Icon } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/avatar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { isPremiumHandle } from "@/lib/verifed/premium-tick"
 import { cn } from "@/lib/utils"
 import type { LivePeer } from "@/services/live/live"
 
@@ -19,17 +18,83 @@ type LiveParticipantGridProps = {
   speakingTabIds: ReadonlySet<string>
 }
 
-function peerLabel(peer: LivePeer, selfTabId: string, t: ReturnType<typeof useTranslations<"live">>) {
-  if (peer.tabId === selfTabId) return t("gridYou")
-  const name = peer.username[0]
-  if (name) return `@${name}`
-  return peer.principal.toText().slice(0, 8) + "…"
+function bareHandle(name: string) {
+  return name.startsWith("@") ? name.slice(1) : name
+}
+
+function peerHandle(peer: LivePeer, selfTabId: string, selfUsername: string | null) {
+  if (peer.tabId === selfTabId) return selfUsername
+  return peer.username[0] ?? null
 }
 
 function peerSeed(peer: LivePeer, selfTabId: string, selfUsername: string | null) {
-  if (peer.tabId === selfTabId && selfUsername) return selfUsername
-  if (peer.username[0]) return peer.username[0]
+  const handle = peerHandle(peer, selfTabId, selfUsername)
+  if (handle) return bareHandle(handle)
   return peer.principal.toText()
+}
+
+function UsernameLabel({ handle, fallback }: { handle: string | null; fallback: string }) {
+  if (!handle) {
+    return <span className="truncate">{fallback}</span>
+  }
+  return (
+    <span className="inline-flex min-w-0 max-w-full items-baseline justify-center gap-px">
+      <span className="shrink-0">@</span>
+      <span className="truncate">{bareHandle(handle)}</span>
+    </span>
+  )
+}
+
+function ParticipantTile({
+  peer,
+  selfTabId,
+  selfUsername,
+  active,
+  large,
+}: {
+  peer: LivePeer
+  selfTabId: string
+  selfUsername: string | null
+  active: boolean
+  large?: boolean
+}) {
+  const seed = peerSeed(peer, selfTabId, selfUsername)
+  const handle = peerHandle(peer, selfTabId, selfUsername)
+  const premium = isPremiumHandle(handle)
+  const fallback = `@${peer.principal.toText().slice(0, 6)}…`
+  const initials = (handle ? bareHandle(handle) : fallback.replace("@", "")).slice(0, 2).toUpperCase()
+
+  return (
+    <div className="flex min-w-0 flex-col items-center gap-1.5">
+      <div className="relative">
+        <div
+          className={cn(
+            "overflow-hidden rounded-full transition-shadow",
+            large ? "size-[72px] sm:size-20" : "size-14 sm:size-16",
+            active && "ring-2 ring-emerald-500 ring-offset-2 ring-offset-background"
+          )}
+        >
+          <Avatar className="size-full after:hidden bg-transparent">
+            <AvatarImage src={avatarUriFor(seed)} alt={handle ? `@${bareHandle(handle)}` : fallback} />
+            <AvatarFallback className="bg-transparent text-[10px]">{initials}</AvatarFallback>
+          </Avatar>
+        </div>
+        {premium && handle && (
+          <span className="absolute -bottom-0.5 -right-0.5 drop-shadow-sm">
+            <PremiumBadge name={handle} className={cn(large ? "size-4" : "size-3.5")} />
+          </span>
+        )}
+      </div>
+      <p
+        className={cn(
+          "w-full truncate text-center leading-tight text-foreground/90",
+          large ? "text-xs font-medium sm:text-sm" : "text-[11px] sm:text-xs"
+        )}
+      >
+        <UsernameLabel handle={handle} fallback={fallback} />
+      </p>
+    </div>
+  )
 }
 
 export function LiveParticipantGrid({
@@ -44,65 +109,36 @@ export function LiveParticipantGrid({
   const hostText = hostPrincipal.toText()
 
   if (peers.length === 0) {
-    return (
-      <p className="rounded-xl border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
-        {t("gridEmpty")}
-      </p>
-    )
+    return <p className="py-4 text-center text-xs text-muted-foreground">{t("gridEmpty")}</p>
   }
 
+  const hostPeer = peers.find((p) => p.principal.toText() === hostText) ?? peers[0]
+  const guests = peers.filter((p) => p.tabId !== hostPeer.tabId)
+  const isActive = (tabId: string) => speakingTabIds.has(tabId) || micOnTabIds.has(tabId)
+
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-      {peers.map((peer) => {
-        const isSelf = peer.tabId === selfTabId
-        const isHost = peer.principal.toText() === hostText
-        const speaking = speakingTabIds.has(peer.tabId)
-        const micOn = micOnTabIds.has(peer.tabId)
-        const label = peerLabel(peer, selfTabId, t)
-        const seed = peerSeed(peer, selfTabId, selfUsername)
+    <div className="flex flex-col items-center gap-4 py-1">
+      <ParticipantTile
+        peer={hostPeer}
+        selfTabId={selfTabId}
+        selfUsername={selfUsername}
+        active={isActive(hostPeer.tabId)}
+        large
+      />
 
-        return (
-          <div
-            key={peer.tabId}
-            className={cn(
-              "relative flex flex-col items-center gap-2 rounded-xl border bg-card p-4 text-center transition-shadow",
-              speaking && "ring-2 ring-emerald-500/70 ring-offset-2 ring-offset-background"
-            )}
-          >
-            <div className="relative">
-              <Avatar size="lg" className="size-16 sm:size-20">
-                <AvatarImage src={avatarUriFor(seed)} alt={label} />
-                <AvatarFallback>{label.slice(0, 2).toUpperCase()}</AvatarFallback>
-              </Avatar>
-              {(isSelf ? micOn : speaking) && (
-                <span className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full bg-background shadow-sm ring-1 ring-border">
-                  <HugeiconsIcon
-                    icon={micOn || speaking ? Mic01Icon : MicOff01Icon}
-                    className={cn("size-3.5", (micOn || speaking) && "text-emerald-600 dark:text-emerald-400")}
-                    strokeWidth={1.75}
-                  />
-                </span>
-              )}
-            </div>
-
-            <div className="min-w-0 w-full space-y-1">
-              <p className="truncate text-sm font-medium">{label}</p>
-              <div className="flex flex-wrap items-center justify-center gap-1">
-                {isHost && (
-                  <Badge variant="secondary" className="text-[10px] uppercase tracking-wide">
-                    {t("host")}
-                  </Badge>
-                )}
-                {speaking && !isSelf && (
-                  <span className="text-[10px] font-medium uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
-                    {t("speaking")}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        )
-      })}
+      {guests.length > 0 && (
+        <div className="grid w-full max-w-sm grid-cols-4 gap-x-2 gap-y-4 sm:max-w-md sm:gap-x-3">
+          {guests.map((peer) => (
+            <ParticipantTile
+              key={peer.tabId}
+              peer={peer}
+              selfTabId={selfTabId}
+              selfUsername={selfUsername}
+              active={isActive(peer.tabId)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
