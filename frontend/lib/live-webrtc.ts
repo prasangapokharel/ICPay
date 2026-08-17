@@ -1,9 +1,10 @@
 import type { Identity } from "@icp-sdk/core/agent"
+import { markPlaybackUnlocked, wasPlaybackUnlocked } from "@/lib/live-audio-perms"
 import { postLiveSignal, type LivePeer } from "@/services/live/live"
 
 const STUN = [{ urls: "stun:stun.l.google.com:19302" }]
-const POLL_MS = 450
-const PEER_SYNC_MS = 1200
+const POLL_MS = 250
+const PEER_SYNC_MS = 500
 
 type SignalPayload =
   | { type: "offer"; sdp: string }
@@ -36,6 +37,9 @@ export class LiveAudioSession {
   private signalChain = Promise.resolve()
   private playbackUnlocked = false
   private signalingEnabled = false
+  private audioCtx: AudioContext | null = null
+  private speakTimer: ReturnType<typeof setInterval> | null = null
+  private localSpeaking = false
 
   constructor(identity: Identity, roomId: string, tabId: string) {
     this.identity = identity
@@ -72,8 +76,19 @@ export class LiveAudioSession {
 
   unlockPlayback() {
     this.playbackUnlocked = true
+    markPlaybackUnlocked()
     for (const audio of this.remoteAudio.values()) {
-      void audio.play().catch(() => {})
+      this.tryPlayRemote(audio)
+    }
+  }
+
+  /** Resume listen-only audio without requesting the microphone. */
+  primeListening() {
+    if (wasPlaybackUnlocked()) {
+      this.playbackUnlocked = true
+    }
+    for (const audio of this.remoteAudio.values()) {
+      this.tryPlayRemote(audio)
     }
   }
 
@@ -100,11 +115,24 @@ export class LiveAudioSession {
     if (firstAcquire) {
       await this.attachLocalAudioToAllPeers()
     }
+    this.startLocalVoiceMonitor()
     this.emitStatus()
+  }
+
+  async tryStartMic(): Promise<boolean> {
+    try {
+      await this.startMic()
+      return true
+    } catch {
+      this.micEnabled = false
+      this.emitStatus()
+      return false
+    }
   }
 
   stopMic() {
     this.micEnabled = false
+    this.stopLocalVoiceMonitor()
     const track = this.localStream?.getAudioTracks()[0]
     if (track) track.enabled = false
     this.onSpeaking?.(this.tabId, false)
@@ -112,6 +140,7 @@ export class LiveAudioSession {
   }
 
   async syncPeers(remotePeers: LivePeer[], live: boolean) {
+    if (!this.running && !this.signalingEnabled) return
     if (!live) {
       this.closeAllPeers()
       this.emitStatus()
@@ -140,7 +169,15 @@ export class LiveAudioSession {
     if (!this.signalingEnabled || this.pollTimer) return
     this.running = true
     void this.poll()
+    // Second poll catches signals posted while the first round-trip was in flight.
+    void this.pollSoon()
     this.pollTimer = setInterval(() => void this.poll(), POLL_MS)
+  }
+
+  private pollSoon() {
+    setTimeout(() => {
+      if (this.running) void this.poll()
+    }, 80)
   }
 
   stopPolling() {
@@ -153,6 +190,7 @@ export class LiveAudioSession {
 
   teardown() {
     this.disableSignaling()
+    this.stopLocalVoiceMonitor()
     this.localStream?.getTracks().forEach((t) => t.stop())
     this.localStream = null
     this.micEnabled = false
@@ -162,6 +200,39 @@ export class LiveAudioSession {
 
   static peerSyncIntervalMs() {
     return PEER_SYNC_MS
+  }
+
+  private startLocalVoiceMonitor() {
+    if (!this.localStream) return
+    this.stopLocalVoiceMonitor()
+    this.audioCtx = new AudioContext()
+    const source = this.audioCtx.createMediaStreamSource(this.localStream)
+    const analyser = this.audioCtx.createAnalyser()
+    analyser.fftSize = 256
+    analyser.smoothingTimeConstant = 0.82
+    source.connect(analyser)
+
+    const buf = new Uint8Array(analyser.frequencyBinCount)
+    this.speakTimer = setInterval(() => {
+      analyser.getByteFrequencyData(buf)
+      let sum = 0
+      for (let i = 0; i < buf.length; i++) sum += buf[i]
+      const speaking = sum / buf.length > 8
+      if (speaking === this.localSpeaking) return
+      this.localSpeaking = speaking
+      this.onSpeaking?.(this.tabId, speaking)
+    }, 120)
+  }
+
+  private stopLocalVoiceMonitor() {
+    if (this.speakTimer) clearInterval(this.speakTimer)
+    this.speakTimer = null
+    void this.audioCtx?.close()
+    this.audioCtx = null
+    if (this.localSpeaking) {
+      this.localSpeaking = false
+      this.onSpeaking?.(this.tabId, false)
+    }
   }
 
   private enqueueSignal(task: () => Promise<void>) {
@@ -195,6 +266,7 @@ export class LiveAudioSession {
     if (data.type === "offer") {
       const state = await this.ensurePeer(fromTab)
       const { pc } = state
+      if (!this.pcUsable(pc)) return
       const offerCollision = state.makingOffer || pc.signalingState !== "stable"
       if (offerCollision && this.tabId < fromTab) {
         return
@@ -202,6 +274,7 @@ export class LiveAudioSession {
       if (offerCollision) {
         await pc.setLocalDescription({ type: "rollback" } as RTCSessionDescriptionInit)
       }
+      if (!this.pcUsable(pc)) return
       await pc.setRemoteDescription({ type: "offer", sdp: data.sdp })
       await this.flushPendingIce(state)
       const answer = await pc.createAnswer()
@@ -209,24 +282,31 @@ export class LiveAudioSession {
       await this.send(fromTab, { type: "answer", sdp: answer.sdp ?? "" })
     } else if (data.type === "answer") {
       const state = this.peers.get(fromTab)
-      if (!state) return
+      if (!state || !this.pcUsable(state.pc)) return
       await state.pc.setRemoteDescription({ type: "answer", sdp: data.sdp })
       await this.flushPendingIce(state)
     } else if (data.type === "ice") {
       const state = this.peers.get(fromTab)
-      if (!state || !data.candidate) return
+      if (!state || !data.candidate || !this.pcUsable(state.pc)) return
       await this.addIceCandidate(state, data.candidate)
     }
   }
 
+  private pcUsable(pc: RTCPeerConnection): boolean {
+    return pc.connectionState !== "closed" && pc.signalingState !== "closed"
+  }
+
   private async connectAsOfferer(toTab: string) {
     const state = await this.ensurePeer(toTab)
-    if (state.makingOffer) return
+    if (!this.pcUsable(state.pc) || state.makingOffer) return
     state.makingOffer = true
     try {
+      if (!this.pcUsable(state.pc)) return
       const offer = await state.pc.createOffer()
       await state.pc.setLocalDescription(offer)
       await this.send(toTab, { type: "offer", sdp: offer.sdp ?? "" })
+    } catch {
+      this.closePeer(toTab)
     } finally {
       state.makingOffer = false
     }
@@ -234,13 +314,16 @@ export class LiveAudioSession {
 
   private async renegotiate(remoteTab: string) {
     const state = this.peers.get(remoteTab)
-    if (!state || state.makingOffer) return
+    if (!state || state.makingOffer || !this.pcUsable(state.pc)) return
     if (state.pc.signalingState !== "stable") return
     state.makingOffer = true
     try {
+      if (!this.pcUsable(state.pc)) return
       const offer = await state.pc.createOffer()
       await state.pc.setLocalDescription(offer)
       await this.send(remoteTab, { type: "offer", sdp: offer.sdp ?? "" })
+    } catch {
+      this.closePeer(remoteTab)
     } finally {
       state.makingOffer = false
     }
@@ -293,8 +376,12 @@ export class LiveAudioSession {
     }
     const stream = new MediaStream([track])
     audio.srcObject = stream
+    this.tryPlayRemote(audio)
+  }
+
+  private tryPlayRemote(audio: HTMLAudioElement) {
     void audio.play().catch(() => {
-      if (this.playbackUnlocked) void audio!.play().catch(() => {})
+      if (this.playbackUnlocked) void audio.play().catch(() => {})
     })
   }
 
@@ -338,6 +425,10 @@ export class LiveAudioSession {
     const track = this.localStream?.getAudioTracks()[0]
     if (!track) return
     for (const [remoteTab, state] of this.peers) {
+      if (!this.pcUsable(state.pc)) {
+        this.closePeer(remoteTab)
+        continue
+      }
       this.setupAudioTransceiver(state)
       if (state.pc.signalingState === "stable") {
         await this.renegotiate(remoteTab)

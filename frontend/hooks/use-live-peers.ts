@@ -18,7 +18,8 @@ export function useLivePeers(roomId: string, enabled: boolean, selfTabId: string
     {
       refreshInterval: LiveAudioSession.peerSyncIntervalMs(),
       revalidateOnFocus: true,
-      dedupingInterval: 400,
+      revalidateOnMount: true,
+      dedupingInterval: 200,
       keepPreviousData: true,
     }
   )

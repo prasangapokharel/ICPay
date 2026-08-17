@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { useSWRConfig } from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { LiveGuideInfo } from "@/components/live/live-guide-info"
 import { useOwnProfile } from "@/hooks/use-wallet-data"
+import { liveRoomKey } from "@/hooks/use-live-room"
 import { canCreateLiveRoom } from "@/lib/live-access"
 import { listPublicLiveRooms, liveStateLabel, type LiveRoomPublic } from "@/services/live/live"
 
@@ -21,6 +23,7 @@ function liveBadgeVariant(state: ReturnType<typeof liveStateLabel>) {
 export default function LivePage() {
   const t = useTranslations("live")
   const { identity } = useAuth()
+  const { mutate } = useSWRConfig()
   const { data: profile } = useOwnProfile()
   const canCreate = canCreateLiveRoom(profile?.username[0])
   const [rooms, setRooms] = useState<LiveRoomPublic[]>([])
@@ -29,9 +32,14 @@ export default function LivePage() {
   useEffect(() => {
     if (!identity) return
     listPublicLiveRooms(identity)
-      .then(setRooms)
+      .then((list) => {
+        setRooms(list)
+        for (const room of list) {
+          void mutate(liveRoomKey(room.id), room, { revalidate: false })
+        }
+      })
       .finally(() => setLoading(false))
-  }, [identity])
+  }, [identity, mutate])
 
   return (
     <div className="space-y-6 pt-2">
