@@ -730,7 +730,7 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     getSwapQuote: IDL.Func(
       [IDL.Text, IDL.Text, IDL.Nat],
       [ApiResultSwapQuote],
-      ["query"]
+      []
     ),
     executeSwap: IDL.Func(
       [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat],

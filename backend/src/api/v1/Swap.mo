@@ -3,7 +3,7 @@ import SwapService "../../services/SwapService";
 import MiddlewareAuth "../../middleware/Auth";
 
 mixin (swap: SwapService.SwapService, mwConfig: MiddlewareAuth.Config) {
-  public shared ({ caller }) func getSwapQuote(tokenIn: Text, tokenOut: Text, amountIn: Nat) : async Types.ApiResult<Types.SwapQuoteResult> {
+  public shared func getSwapQuote(tokenIn: Text, tokenOut: Text, amountIn: Nat) : async Types.ApiResult<Types.SwapQuoteResult> {
     await SwapService.quote(swap, tokenIn, tokenOut, amountIn);
   };
 
