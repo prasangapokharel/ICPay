@@ -46,12 +46,17 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
-    --animate-nav-float: nav-float 3.2s ease-in-out infinite;
+    --animate-live-speak-ring: live-speak-ring 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-@keyframes nav-float {
-  50% {
-    transform: translateY(-3px);
+@keyframes live-speak-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
   }
 }
 

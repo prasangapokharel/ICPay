@@ -4,6 +4,7 @@
     "icpverse": "ICPverse",
     "send": "Send",
     "menu": "Menu",
+    "live": "Live",
     "buyUsername": "Buy a username"
   },
   "common": {
@@ -804,6 +805,7 @@
     "host": "Host",
     "participants": "in room",
     "roomNotFound": "Room not found.",
+    "connecting": "Connecting…",
     "start": "Start",
     "stop": "Stop",
     "resume": "Resume",
@@ -822,7 +824,9 @@
     },
     "waitingHost": "Waiting for the host to start.",
     "pausedHint": "Room is paused. Host can resume when ready.",
-    "liveHint": "Connected with {count} other speaker(s).",
+    "liveHint": "{count} connected",
+    "sessionBarReturn": "Tap to return",
+    "sessionBarLeave": "Leave",
     "guideTitle": "How Live works",
     "guideStep1": "Create a room with a title — public (listed) or private (invite link).",
     "guideStep2": "As host, open the room and tap Start when you are ready.",

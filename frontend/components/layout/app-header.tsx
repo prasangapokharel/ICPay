@@ -7,6 +7,7 @@ import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { useAuth } from "@/components/auth/auth-provider"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
+import { LiveSessionBar } from "@/components/live/live-session-bar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function AppHeader() {
@@ -21,13 +22,11 @@ export function AppHeader() {
   )
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center justify-between bg-background/80 px-4 backdrop-blur-xl">
-      {/* Straight to the profile rather than a dropdown: every entry it held --
-          profile, settings, sign out -- is already on the menu page. */}
+    <header className="sticky top-0 z-40 flex h-14 items-center gap-2 bg-background/80 px-4 backdrop-blur-xl">
       <Link
         href="/profile"
         aria-label={t("profile")}
-        className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="shrink-0 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Avatar className="size-9">
           {avatarUri && <AvatarImage src={avatarUri} alt="" />}
@@ -37,9 +36,13 @@ export function AppHeader() {
         </Avatar>
       </Link>
 
-      {/* The theme toggle lives in the settings drawer now; the header keeps a
-          one-tap language switch so it is reachable on every screen. */}
-      <LanguageSwitch />
+      <div className="flex min-w-0 flex-1 justify-center">
+        <LiveSessionBar />
+      </div>
+
+      <div className="shrink-0">
+        <LanguageSwitch />
+      </div>
     </header>
   )
 }

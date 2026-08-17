@@ -4,7 +4,8 @@
     "icpverse": "ICPvers",
     "send": "Envoyer",
     "menu": "Menu",
-    "buyUsername": "Acheter un nom d'utilisateur"
+    "buyUsername": "Acheter un nom d'utilisateur",
+    "live": "Live"
   },
   "common": {
     "send": "Envoyer",
@@ -920,6 +921,7 @@
     "host": "Host",
     "participants": "in room",
     "roomNotFound": "Room not found.",
+    "connecting": "Connecting…",
     "start": "Start",
     "stop": "Stop",
     "resume": "Resume",
@@ -928,7 +930,7 @@
     "micOff": "Mic off",
     "waitingHost": "Waiting for the host to start.",
     "pausedHint": "Room is paused. Host can resume when ready.",
-    "liveHint": "Connected with {count} other speaker(s).",
+    "liveHint": "{count} connectés",
     "state": {
       "draft": "Draft",
       "live": "Live",
@@ -954,7 +956,9 @@
     "createLockedTitle": "Premium hosting",
     "createLockedBody": "Creating live rooms is for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to host.",
     "createLockedAction": "Get a username",
-    "createLockedHint": "Hosting requires a premium or ultra-premium username."
+    "createLockedHint": "Hosting requires a premium or ultra-premium username.",
+    "sessionBarReturn": "Tap to return",
+    "sessionBarLeave": "Quitter"
   },
   "buyIcpay": {
     "title": "Buy ICPAY",
