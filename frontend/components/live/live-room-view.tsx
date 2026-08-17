@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { LiveParticipantGrid } from "@/components/live/live-participant-grid"
+import { LiveMicControl } from "@/components/live/live-mic-control"
 import {
   createTabId,
   LiveAudioSession,
@@ -19,7 +20,6 @@ import {
   getLiveRoom,
   joinLiveRoom,
   leaveLiveRoom,
-  listLivePeers,
   liveStateLabel,
   pauseLiveRoom,
   resumeLiveRoom,
@@ -29,6 +29,8 @@ import {
 } from "@/services/live/live"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useOwnProfile } from "@/hooks/use-wallet-data"
+import { useLivePeers } from "@/hooks/use-live-peers"
+import { dedupeLivePeers } from "@/lib/live-peers"
 
 export function LiveRoomView({ roomId }: { roomId: string }) {
   const t = useTranslations("live")
@@ -39,7 +41,6 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
   const sessionRef = useRef<LiveAudioSession | null>(null)
 
   const [room, setRoom] = useState<LiveRoomPublic | null>(null)
-  const [peers, setPeers] = useState<LivePeer[]>([])
   const [peerCount, setPeerCount] = useState(0)
   const [audioStatus, setAudioStatus] = useState<LiveAudioStatus>("idle")
   const [speakingTabs, setSpeakingTabs] = useState<Set<string>>(() => new Set())
@@ -55,6 +56,8 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
     (typeof window !== "undefined" ? sessionStorage.getItem(`live:invite:${roomId}`) : null)
 
   const selfUsername = profile?.username[0] ?? null
+  const liveActive = joined && room ? liveStateLabel(room.state) === "live" : false
+  const { peers: livePeers } = useLivePeers(roomId, liveActive, tabId)
 
   const isHost =
     room && identity ? room.host.toText() === identity.getPrincipal().toText() : false
@@ -92,7 +95,7 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
     if (!identity || !joined || !room) return
     const state = liveStateLabel(room.state)
     if (state !== "live") {
-      sessionRef.current?.stopPolling()
+      sessionRef.current?.disableSignaling()
       void sessionRef.current?.syncPeers([], false)
       return
     }
@@ -112,22 +115,19 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
       sessionRef.current = session
     }
 
+    sessionRef.current.enableSignaling()
     sessionRef.current.beginPolling()
     sessionRef.current.unlockPlayback()
 
-    const tick = async () => {
+    const sync = async () => {
       try {
-        const remotePeers = await listLivePeers(identity, roomId)
-        setPeers(remotePeers)
-        await sessionRef.current?.syncPeers(remotePeers, true)
+        await sessionRef.current?.syncPeers(livePeers, true)
       } catch {
         // ignore
       }
     }
-    void tick()
-    const id = setInterval(tick, LiveAudioSession.peerSyncIntervalMs())
-    return () => clearInterval(id)
-  }, [identity, joined, room, roomId, tabId])
+    void sync()
+  }, [identity, joined, room, roomId, tabId, livePeers])
 
   const runHost = async (fn: () => Promise<LiveRoomPublic | void>) => {
     if (!identity || busy) return
@@ -181,6 +181,7 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
   }, [micOn, tabId])
 
   const gridPeers = useMemo(() => {
+    const deduped = dedupeLivePeers(livePeers, tabId)
     const selfPeer: LivePeer | null =
       identity && joined
         ? {
@@ -190,12 +191,12 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
             joinedAt: 0n,
           }
         : null
-    const merged = [...peers]
+    const merged = [...deduped]
     if (selfPeer && !merged.some((p) => p.tabId === tabId)) {
       merged.unshift(selfPeer)
     }
-    return merged
-  }, [peers, identity, joined, tabId, selfUsername])
+    return dedupeLivePeers(merged, tabId)
+  }, [livePeers, identity, joined, tabId, selfUsername])
 
   if (loading) {
     return (
@@ -242,7 +243,7 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
 
       {state === "live" && (
         <>
-          {audioHint && <p className="text-sm text-muted-foreground">{audioHint}</p>}
+          {audioHint && <p className="text-xs text-muted-foreground">{audioHint}</p>}
           {identity && (
             <LiveParticipantGrid
               peers={gridPeers}
@@ -253,20 +254,17 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
               speakingTabIds={speakingTabs}
             />
           )}
+          <LiveMicControl
+            micOn={effectiveMicOn}
+            busy={micBusy}
+            disabled={!canMic}
+            onToggle={toggleMic}
+          />
         </>
       )}
 
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant={effectiveMicOn ? "default" : "outline"}
-          onClick={toggleMic}
-          disabled={!canMic}
-        >
-          {micBusy ? t("micStarting") : effectiveMicOn ? t("micOn") : t("micOff")}
-        </Button>
-
-        {isHost && (
-          <>
+      {isHost && (
+        <div className="flex flex-wrap gap-2">
             {(state === "draft" || state === "paused") && (
               <Button
                 disabled={busy}
@@ -306,16 +304,15 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
                 {t("end")}
               </Button>
             )}
-          </>
-        )}
-      </div>
+        </div>
+      )}
 
       {state === "draft" && !isHost && (
         <p className="text-sm text-muted-foreground">{t("waitingHost")}</p>
       )}
       {state === "paused" && <p className="text-sm text-muted-foreground">{t("pausedHint")}</p>}
       {state === "live" && peerCount > 0 && (
-        <p className="text-xs text-muted-foreground">{t("liveHint", { count: peerCount })}</p>
+        <p className="text-[11px] text-muted-foreground">{t("liveHint", { count: peerCount })}</p>
       )}
     </div>
   )

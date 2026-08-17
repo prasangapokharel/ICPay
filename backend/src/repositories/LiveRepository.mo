@@ -69,17 +69,21 @@ module {
       case (?l) l;
       case (null) List.empty<Types.LivePeer>();
     };
-    if (List.any(prior, func(p: Types.LivePeer): Bool { p.tabId == peer.tabId })) {
-      let next = List.map<Types.LivePeer, Types.LivePeer>(prior, func(p) {
+    // One seat per principal — refresh/re-enter mints a new tabId; drop stale tabs.
+    let withoutPrincipal = List.filter(prior, func(p: Types.LivePeer): Bool {
+      p.principal != peer.principal
+    });
+    if (List.any(withoutPrincipal, func(p: Types.LivePeer): Bool { p.tabId == peer.tabId })) {
+      let next = List.map<Types.LivePeer, Types.LivePeer>(withoutPrincipal, func(p) {
         if (p.tabId == peer.tabId) peer else p
       });
       Map.add(peers, Text.compare, roomId, next);
       return true;
     };
-    if (prior.size() >= LiveStorage.MAX_PEERS) { return false };
-    List.add(prior, peer);
-    Map.add(peers, Text.compare, roomId, prior);
-    true;
+    if (withoutPrincipal.size() >= LiveStorage.MAX_PEERS) { return false };
+    List.add(withoutPrincipal, peer);
+    Map.add(peers, Text.compare, roomId, withoutPrincipal);
+    true
   };
 
   public func removePeer(peers: LiveStorage.PeerMap, roomId: Text, tabId: Text) {
