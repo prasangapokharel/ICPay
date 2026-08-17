@@ -26,6 +26,7 @@ docs/*
 !docs/security/
 !docs/phase/
 !docs/icpay/
+!docs/presale/
 # docs/bucket/ stays local (PDF exports, not committed)
 
 # Per-machine agent prefs (skills under .claude/skills/ are tracked)

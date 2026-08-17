@@ -19,6 +19,15 @@ export function sortedBlogPosts(): BlogPost[] {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "icpay-swap-and-live",
+    title: "ICPay Swap & Live: Trade Tokens and Voice Rooms on the Internet Computer",
+    description:
+      "Swap ICP and ICRC tokens in-wallet via ICPSwap, and join on-chain voice rooms with peer-to-peer audio — how ICPay Swap and Live work.",
+    publishedAt: "2026-08-17",
+    readingMinutes: 6,
+    category: "Product",
+  },
+  {
     slug: "what-is-icp",
     title: "What is ICP?",
     description:

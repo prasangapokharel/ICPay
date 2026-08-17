@@ -1,6 +1,7 @@
 // Shared helpers for every ci command. Kept deliberately small: each command
 // file should read as the dfx invocation it wraps, not as plumbing.
 import { spawn, spawnSync } from "node:child_process"
+import { readFileSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -10,6 +11,12 @@ export const BACKEND = resolve(repo, "backend")
 export const FRONTEND = resolve(repo, "frontend")
 
 export const CANISTER = "icp_wallet_backend"
+export const WALLET_CANISTER_ID = (
+  JSON.parse(readFileSync(resolve(BACKEND, "canister_ids.json"), "utf8")) as {
+    icp_wallet_backend: { ic: string }
+  }
+).icp_wallet_backend.ic
+export const ICPAY_LEDGER_ID = "5fsnk-rqaaa-aaaan-q6m4q-cai"
 export const ICP_INDEX = "qhbym-qaaaa-aaaaa-aaafq-cai"
 
 // dfx refuses to touch mainnet with a plaintext identity unless this is set, and

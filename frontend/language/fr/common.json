@@ -27,7 +27,7 @@
     "done": "Terminé",
     "share": "Partager",
     "noToken": "Aucun jeton correspondant",
-    "swap": "Swap"
+    "swap": "Échanger"
   },
   "dashboard": {
     "loadFailed": "Impossible de charger votre portefeuille",
@@ -79,7 +79,7 @@
       "terms": "Conditions d'utilisation",
       "privacy": "Politique de confidentialité",
       "settings": "Réglages",
-      "swap": "Échange",
+      "swap": "Échanger",
       "bucket": "Cloud",
       "blog": "Blog",
       "analytics": "Analytics",
@@ -320,7 +320,7 @@
     "noTokensFound": "Aucun jeton ne correspond à cette recherche.",
     "outsideAmount": "+{amount} a l'exterieur",
     "selfCustodyNotice": "Vous détenez des fonds hors d'ICPay. Ouvrez le jeton pour les transférer.",
-    "swapCta": "Swap"
+    "swapCta": "Échanger"
   },
   "token": {
     "back": "Portefeuille",
@@ -338,7 +338,7 @@
     "selfCustodyNet": "Vous recevrez",
     "selfCustodyDust": "Ce montant est inférieur aux frais de réseau {symbol} et ne peut pas être transféré.",
     "selfCustodyEmpty": "Rien à transférer — ce jeton n'a pas été envoyé à votre principal.",
-    "swap": "Swap"
+    "swap": "Échanger"
   },
   "sendToken": {
     "title": "Envoyer des {symbol}",
@@ -373,7 +373,10 @@
     "recipient": "Destinataire",
     "username": "Nom d'utilisateur",
     "viewOnDashboard": "Voir sur ICP Dashboard",
-    "shareReceipt": "Partager le reçu"
+    "shareReceipt": "Partager le reçu",
+    "icpayBuy": "ICPAY Received",
+    "icpayBuyBody": "Your presale {symbol} is in {name}.",
+    "destination": "Destination"
   },
   "header": {
     "profile": "Votre profil",
@@ -585,7 +588,26 @@
     "canisterId": "ID du canister",
     "marketUnavailable": "Les données de marché sont indisponibles pour le moment.",
     "mintingAccount": "Compte d'émission",
-    "mintingAccountNone": "Aucun"
+    "mintingAccountNone": "Aucun",
+    "swap": "Swap {symbol}",
+    "viewPresale": "Presale",
+    "backToToken": "Back to token",
+    "presaleLive": "Presale is live",
+    "presaleLeft": "remaining",
+    "priceInfoTitle": "Price",
+    "priceInfo": "Last traded USD price from the ICPAY/ICP pool on ICPSwap (api.icpswap.com). This is the market price, not the presale rate.",
+    "fdvInfoTitle": "Fully diluted value",
+    "fdvInfo": "FDV = total supply × price\n\nTotal supply is read live from the ICPAY ledger (icrc1_total_supply). Price is the ICPSwap USD quote above.\n\nFormula: (supply ÷ 10^decimals) × priceUsd",
+    "tvlInfoTitle": "TVL",
+    "tvlInfo": "Total value locked in the ICPAY/ICP liquidity pool on ICPSwap, in USD. Source: api.icpswap.com.",
+    "supplyInfoTitle": "Total supply",
+    "supplyInfo": "Live on-chain total from the ICPAY ledger canister (icrc1_total_supply). Includes every account; fees burned reduce this over time.",
+    "change24hInfoTitle": "24h change",
+    "change24hInfo": "Percent change in the ICPSwap USD price over the last 24 hours. Source: api.icpswap.com.",
+    "volume24hInfoTitle": "Volume 24h",
+    "volume24hInfo": "USD trading volume in the ICPAY/ICP pool over the last 24 hours. Source: api.icpswap.com.",
+    "mintingInfoTitle": "Minting account",
+    "mintingInfo": "ICRC-1 minting principal read from the ledger. If it is not aaaaa-aa, new supply can still be minted. ICPAY launched before ICPay locked minting to the management canister."
   },
   "brandProtection": {
     "title": "Brand Protection",
@@ -933,5 +955,41 @@
     "createLockedBody": "Creating live rooms is for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to host.",
     "createLockedAction": "Get a username",
     "createLockedHint": "Hosting requires a premium or ultra-premium username."
+  },
+  "buyIcpay": {
+    "title": "Buy ICPAY",
+    "progress": "{percent}% sold",
+    "raised": "{icp} ICP raised",
+    "pay": "Pay (ICP)",
+    "receive": "Receive {amount} {symbol}",
+    "balance": "Balance {amount} ICP",
+    "sendExternal": "Send to another wallet instead",
+    "sendToSelf": "Send to my ICPay account",
+    "principalPlaceholder": "Recipient principal",
+    "externalWarning": "ICPAY sent to an external principal leaves ICPay custody permanently. A typo is a total loss.",
+    "confirm": "Confirm purchase",
+    "buying": "Processing…",
+    "insufficient": "Insufficient ICP",
+    "belowMin": "Minimum 0.1 ICP",
+    "aboveMax": "Maximum 50 ICP per purchase",
+    "soldOut": "Presale inactive",
+    "remaining": "{amount} {symbol} remaining",
+    "receiveLabel": "You receive",
+    "sendTo": "Send to",
+    "yourWallet": "Your ICPay wallet",
+    "confirmTitle": "Review purchase",
+    "loginToBuy": "Sign in to buy",
+    "loginRequired": "Sign in with Internet Identity to purchase ICPAY from the presale.",
+    "openBuy": "Buy presale",
+    "pageSubtitle": "Pay with ICP from your ICPay wallet · 1 ICP = 20,000 ICPAY",
+    "rateInfoTitle": "Presale rate",
+    "rateInfo": "1 ICP = 20,000 ICPAY\n\nSet in the ICPay canister. You receive exactly: ICP paid × 20,000 (both tokens use 8 decimals).\n\nExample: 1 ICP → 20,000 ICPAY",
+    "liquidityInfoTitle": "After presale",
+    "liquidityInfo": "When the presale ends, raised ICP and matching ICPAY seed a DEX liquidity pool on ICPSwap at the same rate so early buyers are not underwater on day one.",
+    "disclosureInfoTitle": "Supply notice",
+    "disclosureInfo": "ICPAY's minting account is a live key — supply is not fixed and more tokens can be issued. Always verify icrc1_total_supply and icrc1_minting_account on the ledger before you buy.",
+    "progressInfoTitle": "Progress & remaining",
+    "progressInfo": "Sold = presale cap − remaining inventory.\n\nCap is 10,000,000 ICPAY. Remaining is the live balance in the canister sale subaccount on the ICPAY ledger.\n\nICP raised = ICPAY sold ÷ 20,000.",
+    "presaleInfoTitle": "About the presale"
   }
 }

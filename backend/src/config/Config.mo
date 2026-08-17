@@ -167,6 +167,15 @@ module {
   public let RATE_SYNC_DEPOSITS = { maxPerWindow = 10; windowSeconds = 60 }; // hits the ledger index canister -- real cost
   public let RATE_UPDATE_SETTINGS = { maxPerWindow = 10; windowSeconds = 300 }; // cheap but writes state
 
+  // ICPAY presale — inventory in \02, proceeds in \01 (same as launch revenue).
+  // Both are fixed blobs; byte 0 is \02 so they cannot collide with user subaccounts.
+  public let SALE_SUBACCOUNT: Blob = "\02\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00";
+  public let ICPAY_PER_ICP: Nat = 20_000;
+  public let MIN_BUY_ICP: Nat = 10_000_000; // 0.1 ICP
+  public let MAX_BUY_ICP: Nat = 5_000_000_000; // 50 ICP per call
+  public let SALE_INVENTORY_CAP: Nat = 1_000_000_000_000_000; // 10M ICPAY e8s
+  public let RATE_BUY_ICPAY = { maxPerWindow = 3; windowSeconds = 60 };
+
   // Swap module
   public let ICPAY_LEDGER_ID: Text = "5fsnk-rqaaa-aaaan-q6m4q-cai";
   public let ICPSWAP_FACTORY: Text = "4mmnk-kiaaa-aaaag-qbllq-cai";
