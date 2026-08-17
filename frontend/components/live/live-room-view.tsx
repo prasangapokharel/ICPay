@@ -21,7 +21,6 @@ import {
 } from "@/services/live/live"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useOwnProfile } from "@/hooks/use-wallet-data"
-import { useLiveRoom } from "@/hooks/use-live-room"
 import { dedupeLivePeers } from "@/lib/live-peers"
 import { readLiveSession } from "@/lib/live-session-store"
 import { cn } from "@/lib/utils"
@@ -54,7 +53,6 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
     setRoom,
   } = useLiveSession()
 
-  const { room: cachedRoom, isLoading: cacheLoading } = useLiveRoom(roomId, joined)
   const joinRef = useRef(join)
   useEffect(() => {
     joinRef.current = join
@@ -64,18 +62,12 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
     params.get("t") ??
     (typeof window !== "undefined" ? sessionStorage.getItem(`live:invite:${roomId}`) : null)
 
-  const displayRoom = sessionRoom ?? cachedRoom
+  const ready = joined && !!sessionRoom && !!tabId
   const selfUsername = profile?.username[0] ?? null
-  const roomLive = displayRoom ? liveStateLabel(displayRoom.state) === "live" : false
 
-  const isHost =
-    displayRoom && identity
-      ? displayRoom.host.toText() === identity.getPrincipal().toText()
-      : false
-
-  const error = localError ?? (joined && displayRoom ? null : sessionError)
-  const connecting = joining && !joined
-  const waitingToJoin = !!identity && !joined && !sessionError
+  useEffect(() => {
+    setLocalError(null)
+  }, [roomId])
 
   useEffect(() => {
     if (!identity) return
@@ -128,39 +120,40 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
     return dedupeLivePeers(merged, tabId)
   }, [livePeers, identity, joined, tabId, selfUsername])
 
-  if (!displayRoom) {
-    if (!identity || waitingToJoin || joining || cacheLoading) {
+  if (!identity || !ready) {
+    if (sessionError && !joining) {
       return (
-        <div className="flex justify-center py-16">
-          <Spinner className="size-6 text-muted-foreground" />
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{sessionError}</AlertDescription>
+        </Alert>
       )
     }
     return (
-      <Alert variant="destructive">
-        <AlertDescription>{error ?? t("roomNotFound")}</AlertDescription>
-      </Alert>
+      <div className="flex justify-center py-16">
+        <Spinner className="size-6 text-muted-foreground" />
+      </div>
     )
   }
 
+  const displayRoom = sessionRoom
+  const roomLive = liveStateLabel(displayRoom.state) === "live"
+  const isHost = displayRoom.host.toText() === identity.getPrincipal().toText()
   const state = liveStateLabel(displayRoom.state)
   const hostName = displayRoom.hostUsername[0] ? `@${displayRoom.hostUsername[0]}` : t("host")
   const effectiveMicOn = roomLive && micOn
-  const canMic = roomLive && joined && !micBusy
+  const canMic = roomLive && !micBusy
   const audioHint =
-    roomLive && joined && audioStatus !== "speaking"
-      ? t(`audioStatus.${audioStatus}`)
-      : null
+    roomLive && audioStatus !== "speaking" ? t(`audioStatus.${audioStatus}`) : null
 
   return (
     <>
       <div
-        className={cn("space-y-4 pt-2", state === "live" && joined && "pb-36")}
+        className={cn("space-y-4 pt-2", state === "live" && "pb-36")}
         onClick={unlockAudio}
         onTouchStart={unlockAudio}
       >
         <div className="flex items-start justify-between gap-3">
-          {!isHost && joined && state !== "ended" ? (
+          {!isHost && state !== "ended" ? (
             <Button
               variant="outline"
               size="sm"
@@ -173,14 +166,7 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
           ) : (
             <span className="size-9 shrink-0" aria-hidden />
           )}
-          <div className="flex items-center gap-2">
-            {connecting && (
-              <Badge variant="outline" className="text-[10px]">
-                {t("connecting")}
-              </Badge>
-            )}
-            <Badge variant={state === "live" ? "default" : "secondary"}>{t(`state.${state}`)}</Badge>
-          </div>
+          <Badge variant={state === "live" ? "default" : "secondary"}>{t(`state.${state}`)}</Badge>
         </div>
 
         <div className="space-y-1">
@@ -189,7 +175,7 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
             <span>
               {hostName} · {Number(displayRoom.peerCount)} {t("participants")}
             </span>
-            {state === "live" && joined && peerCount > 0 && (
+            {state === "live" && peerCount > 0 && (
               <span className="text-[10px] font-normal text-muted-foreground/60">
                 {t("liveHint", { count: peerCount })}
               </span>
@@ -197,33 +183,29 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
           </p>
         </div>
 
-        {error && (
+        {localError && (
           <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription>{localError}</AlertDescription>
           </Alert>
         )}
 
-        {state === "live" && (joined || connecting) && (
+        {state === "live" && (
           <section className="rounded-2xl border bg-card/40 px-3 py-4">
-            {joined && audioHint && (
+            {audioHint && (
               <p className="mb-3 text-center text-xs text-muted-foreground">{audioHint}</p>
             )}
-            {joined && identity && tabId ? (
-              <LiveParticipantGrid
-                peers={gridPeers}
-                selfTabId={tabId}
-                selfUsername={selfUsername}
-                hostPrincipal={displayRoom.host}
-                micOnTabIds={micOnTabIds}
-                speakingTabIds={speakingTabs}
-              />
-            ) : (
-              <p className="py-2 text-center text-xs text-muted-foreground">{t("connecting")}</p>
-            )}
+            <LiveParticipantGrid
+              peers={gridPeers}
+              selfTabId={tabId}
+              selfUsername={selfUsername}
+              hostPrincipal={displayRoom.host}
+              micOnTabIds={micOnTabIds}
+              speakingTabIds={speakingTabs}
+            />
           </section>
         )}
 
-        {isHost && joined && (
+        {isHost && (
           <div className="flex flex-wrap gap-2">
             {(state === "draft" || state === "paused") && (
               <Button
@@ -231,8 +213,8 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
                 onClick={() =>
                   runHost(() =>
                     state === "paused"
-                      ? resumeLiveRoom(identity!, roomId)
-                      : startLiveRoom(identity!, roomId)
+                      ? resumeLiveRoom(identity, roomId)
+                      : startLiveRoom(identity, roomId)
                   )
                 }
               >
@@ -243,7 +225,7 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
               <Button
                 variant="secondary"
                 disabled={busy}
-                onClick={() => runHost(() => pauseLiveRoom(identity!, roomId))}
+                onClick={() => runHost(() => pauseLiveRoom(identity, roomId))}
               >
                 {t("stop")}
               </Button>
@@ -254,7 +236,7 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
                 disabled={busy}
                 onClick={() =>
                   runHost(async () => {
-                    await endLiveRoom(identity!, roomId)
+                    await endLiveRoom(identity, roomId)
                     await leave()
                   })
                 }
@@ -271,7 +253,7 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
         {state === "paused" && <p className="text-sm text-muted-foreground">{t("pausedHint")}</p>}
       </div>
 
-      {state === "live" && joined && (
+      {state === "live" && (
         <LiveMicControl
           variant="dock"
           micOn={effectiveMicOn}

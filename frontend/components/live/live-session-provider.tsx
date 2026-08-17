@@ -25,7 +25,7 @@ import {
   readLiveSession,
   writeLiveSession,
 } from "@/lib/live-session-store"
-import { micPermissionGranted } from "@/lib/live-audio-perms"
+import { micPermissionGranted, wasPlaybackUnlocked } from "@/lib/live-audio-perms"
 import {
   joinLiveRoom,
   leaveLiveRoom,
@@ -93,6 +93,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
   const joinLockRef = useRef<Promise<void> | null>(null)
   const joinRef = useRef<LiveSessionContextValue["join"]>(() => Promise.resolve())
   const pendingMicRestoreRef = useRef(false)
+  const targetRoomRef = useRef<string | null>(null)
 
   const { room: polledRoom, mutate: mutateSessionRoom } = useLiveRoom(roomId ?? "", joined && !!roomId)
   const sessionRoom = activeRoom ?? polledRoom ?? null
@@ -173,6 +174,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
 
       setJoining(true)
       setError(null)
+      targetRoomRef.current = targetRoomId
 
       const run = async () => {
         try {
@@ -200,10 +202,14 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
             opts?.restoreMic && liveStateLabel(joinedRoom.state) === "live"
           )
         } catch (e) {
-          setError(e instanceof Error ? e.message : String(e))
-          clearLiveSession()
+          if (targetRoomRef.current === targetRoomId) {
+            setError(e instanceof Error ? e.message : String(e))
+            clearLiveSession()
+          }
         } finally {
-          setJoining(false)
+          if (targetRoomRef.current === targetRoomId) {
+            setJoining(false)
+          }
         }
       }
 
@@ -293,6 +299,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
     session.enableSignaling()
     session.beginPolling()
     session.primeListening()
+    if (wasPlaybackUnlocked()) session.unlockPlayback()
     void session.syncPeers(livePeers, true)
 
     if (!pendingMicRestoreRef.current) return
