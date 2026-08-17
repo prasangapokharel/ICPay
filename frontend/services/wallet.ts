@@ -168,6 +168,35 @@ export interface WalletActor {
     tokenOut: string,
     amountIn: bigint
   ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  createLiveRoom: (
+    title: string,
+    visibility: { open: null } | { inviteOnly: null },
+    inviteSecret: [] | [string]
+  ) => Promise<{ ok: { roomId: string; inviteToken: [] | [string] }; err?: never } | { err: string; ok?: never }>
+  startLiveRoom: (roomId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  pauseLiveRoom: (roomId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  resumeLiveRoom: (roomId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  endLiveRoom: (roomId: string) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
+  joinLiveRoom: (
+    roomId: string,
+    tabId: string,
+    inviteToken: [] | [string]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  leaveLiveRoom: (roomId: string, tabId: string) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
+  postLiveSignal: (
+    roomId: string,
+    tabId: string,
+    toTab: [] | [string],
+    payload: string
+  ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  pollLiveSignals: (
+    roomId: string,
+    tabId: string,
+    afterId: bigint
+  ) => Promise<{ ok: Record<string, unknown>[]; err?: never } | { err: string; ok?: never }>
+  getLiveRoom: (roomId: string) => Promise<[] | [Record<string, unknown>]>
+  listPublicLiveRooms: (limit: bigint, offset: bigint) => Promise<Record<string, unknown>[]>
+  listLivePeers: (roomId: string) => Promise<Record<string, unknown>[]>
 }
 
 let cachedActor: WalletActor | null = null
@@ -573,6 +602,42 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const ApiResultText = IDL.Variant({ ok: IDL.Text, err: IDL.Text })
   const ApiResultUploadStatus = IDL.Variant({ ok: UploadStatusPublic, err: IDL.Text })
 
+  const LiveVisibility = IDL.Variant({ open: IDL.Null, inviteOnly: IDL.Null })
+  const LiveState = IDL.Variant({
+    draft: IDL.Null,
+    live: IDL.Null,
+    paused: IDL.Null,
+    ended: IDL.Null,
+  })
+  const LiveRoomPublic = IDL.Record({
+    id: IDL.Text,
+    title: IDL.Text,
+    host: IDL.Principal,
+    hostUsername: IDL.Opt(IDL.Text),
+    visibility: LiveVisibility,
+    state: LiveState,
+    peerCount: IDL.Nat,
+    createdAt: IDL.Int,
+  })
+  const LivePeer = IDL.Record({
+    tabId: IDL.Text,
+    principal: IDL.Principal,
+    joinedAt: IDL.Int,
+  })
+  const LiveSignal = IDL.Record({
+    id: IDL.Nat,
+    fromTab: IDL.Text,
+    toTab: IDL.Opt(IDL.Text),
+    payload: IDL.Text,
+  })
+  const LiveCreateResult = IDL.Record({
+    roomId: IDL.Text,
+    inviteToken: IDL.Opt(IDL.Text),
+  })
+  const ApiResultLiveCreate = IDL.Variant({ ok: LiveCreateResult, err: IDL.Text })
+  const ApiResultLiveRoom = IDL.Variant({ ok: LiveRoomPublic, err: IDL.Text })
+  const ApiResultLiveSignals = IDL.Variant({ ok: IDL.Vec(LiveSignal), err: IDL.Text })
+
   return IDL.Service({
     health: IDL.Func([], [IDL.Text], ["query"]),
     login: IDL.Func([], [AuthResult], []),
@@ -747,5 +812,33 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
       [ApiResultNat],
       []
     ),
+    createLiveRoom: IDL.Func(
+      [IDL.Text, LiveVisibility, IDL.Opt(IDL.Text)],
+      [ApiResultLiveCreate],
+      []
+    ),
+    startLiveRoom: IDL.Func([IDL.Text], [ApiResultLiveRoom], []),
+    pauseLiveRoom: IDL.Func([IDL.Text], [ApiResultLiveRoom], []),
+    resumeLiveRoom: IDL.Func([IDL.Text], [ApiResultLiveRoom], []),
+    endLiveRoom: IDL.Func([IDL.Text], [ApiResultUnit], []),
+    joinLiveRoom: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [ApiResultLiveRoom],
+      []
+    ),
+    leaveLiveRoom: IDL.Func([IDL.Text, IDL.Text], [ApiResultUnit], []),
+    postLiveSignal: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Opt(IDL.Text), IDL.Text],
+      [ApiResultNat],
+      []
+    ),
+    pollLiveSignals: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat],
+      [ApiResultLiveSignals],
+      ["query"]
+    ),
+    getLiveRoom: IDL.Func([IDL.Text], [IDL.Opt(LiveRoomPublic)], ["query"]),
+    listPublicLiveRooms: IDL.Func([IDL.Nat, IDL.Nat], [IDL.Vec(LiveRoomPublic)], ["query"]),
+    listLivePeers: IDL.Func([IDL.Text], [IDL.Vec(LivePeer)], ["query"]),
   })
 }

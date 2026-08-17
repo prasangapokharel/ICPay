@@ -16,6 +16,7 @@ import { defaultSwapPair } from "@/lib/swap-tokens"
 import {
   icpServiceDebit,
   icpServiceFee,
+  isSwapRecoverError,
   maxSwapInput,
   minAmountOut,
   requiredBalance,
@@ -28,9 +29,10 @@ import {
   toPlainTokenAmount,
 } from "@/lib/wallet-utils"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
-import { executeSwap } from "@/services/swap/swap"
+import { executeSwap, recoverFailedSwapInput } from "@/services/swap/swap"
 import type { Identity } from "@icp-sdk/core/agent"
 import { primeSuccessChime } from "@/lib/success-chime"
+import { useRefreshWallet } from "@/hooks/use-wallet-data"
 
 const PERCENTAGES = [25, 50, 75, 100] as const
 
@@ -80,8 +82,11 @@ export function SwapForm({
   const [picker, setPicker] = useState<"in" | "out" | null>(null)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [recoverOk, setRecoverOk] = useState<string | null>(null)
   const [swapping, setSwapping] = useState(false)
+  const [recovering, setRecovering] = useState(false)
   const swapLock = useRef(false)
+  const refreshWallet = useRefreshWallet()
 
   const pickIn = (token: TokenHolding) => {
     setPickedIn(token)
@@ -101,8 +106,20 @@ export function SwapForm({
   const serviceDebit = icpToken ? icpServiceDebit(icpToken.fee) : null
 
   const amountIn = tokenIn ? parseTokenAmount(amountText, tokenIn.decimals) : null
-  const maxIn = tokenIn ? maxSwapInput(tokenIn.balance, tokenIn.fee) : 0n
-  const totalDebit = amountIn !== null && tokenIn ? requiredBalance(amountIn, tokenIn.fee) : null
+  const maxIn =
+    tokenIn === null
+      ? 0n
+      : maxSwapInput(
+          tokenIn.balance,
+          tokenIn.fee,
+          tokenIn.ledgerId === ICP_LEDGER_ID && serviceDebit ? serviceDebit : undefined
+        )
+  const totalDebit =
+    amountIn !== null && tokenIn
+      ? tokenIn.ledgerId === ICP_LEDGER_ID && serviceDebit
+        ? requiredIcpSwapBalance(amountIn, tokenIn.fee, serviceDebit)
+        : requiredBalance(amountIn, tokenIn.fee)
+      : null
 
   const insufficientToken =
     amountIn !== null && tokenIn !== null && totalDebit !== null && totalDebit > tokenIn.balance
@@ -112,9 +129,8 @@ export function SwapForm({
     icpToken !== undefined &&
     tokenIn !== null &&
     amountIn !== null &&
-    (tokenIn.ledgerId === ICP_LEDGER_ID
-      ? requiredIcpSwapBalance(amountIn, tokenIn.fee, serviceDebit) > tokenIn.balance
-      : icpToken.balance < serviceDebit)
+    tokenIn.ledgerId !== ICP_LEDGER_ID &&
+    icpToken.balance < serviceDebit
 
   const insufficient = insufficientToken || insufficientIcp
 
@@ -155,6 +171,7 @@ export function SwapForm({
     setPickedOut(tokenIn)
     setAmountText("")
     setError(null)
+    setRecoverOk(null)
   }
 
   const applyPercent = (pct: number) => {
@@ -169,6 +186,7 @@ export function SwapForm({
     swapLock.current = true
     setSwapping(true)
     setError(null)
+    setRecoverOk(null)
     primeSuccessChime()
     const amountOutMin = minAmountOut(quote.amountOutRaw)
     try {
@@ -197,6 +215,30 @@ export function SwapForm({
     } finally {
       swapLock.current = false
       setSwapping(false)
+    }
+  }
+
+  const showRecover =
+    error !== null &&
+    amountIn !== null &&
+    tokenIn !== null &&
+    tokenOut !== null &&
+    isSwapRecoverError(error)
+
+  const handleRecover = async () => {
+    if (!tokenIn || !tokenOut || !amountIn || recovering) return
+    setRecovering(true)
+    setRecoverOk(null)
+    try {
+      await recoverFailedSwapInput(identity, tokenIn.ledgerId, tokenOut.ledgerId, amountIn)
+      setError(null)
+      setRecoverOk(t("recoverSuccess"))
+      setConfirmOpen(false)
+      refreshWallet()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setRecovering(false)
     }
   }
 
@@ -279,7 +321,11 @@ export function SwapForm({
         {insufficient && (
           <Alert variant="destructive">
             <AlertDescription>
-              {insufficientIcp && !insufficientToken ? t("insufficientIcp") : t("insufficientBalance")}
+              {insufficientIcp && !insufficientToken
+                ? t("insufficientIcp", {
+                    fee: `${formatTokenAmount(serviceFee, icpToken?.decimals ?? 8)} ICP`,
+                  })
+                : t("insufficientBalance")}
             </AlertDescription>
           </Alert>
         )}
@@ -290,7 +336,26 @@ export function SwapForm({
         )}
         {error && (
           <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="space-y-3">
+              <p>{error}</p>
+              {showRecover && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  className="w-full"
+                  disabled={recovering || swapping}
+                  onClick={handleRecover}
+                >
+                  {recovering ? t("recovering") : t("recoverFunds")}
+                </Button>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
+        {recoverOk && (
+          <Alert>
+            <AlertDescription>{recoverOk}</AlertDescription>
           </Alert>
         )}
 

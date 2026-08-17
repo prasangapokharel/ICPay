@@ -501,6 +501,49 @@ module {
     createdAt: Int;
   };
 
+  public type LiveVisibility = { #open; #inviteOnly };
+  public type LiveState = { #draft; #live; #paused; #ended };
+
+  public type LiveRoom = {
+    id: Text;
+    title: Text;
+    host: Principal;
+    visibility: LiveVisibility;
+    inviteHash: ?Text;
+    state: LiveState;
+    createdAt: Int;
+    endedAt: ?Int;
+  };
+
+  public type LiveRoomPublic = {
+    id: Text;
+    title: Text;
+    host: Principal;
+    hostUsername: ?Username;
+    visibility: LiveVisibility;
+    state: LiveState;
+    peerCount: Nat;
+    createdAt: Int;
+  };
+
+  public type LivePeer = {
+    tabId: Text;
+    principal: Principal;
+    joinedAt: Int;
+  };
+
+  public type LiveSignal = {
+    id: Nat;
+    fromTab: Text;
+    toTab: ?Text;
+    payload: Text;
+  };
+
+  public type LiveCreateResult = {
+    roomId: Text;
+    inviteToken: ?Text;
+  };
+
   public func tokenToPublic(self: Token): TokenPublic {
     {
       id = self.id;

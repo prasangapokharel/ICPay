@@ -8,22 +8,14 @@ import Image from "next/image"
 import { formatAmount, E8S } from "@/lib/wallet-utils"
 import { useIcpPrice } from "@/hooks/use-icp-price"
 import { useFiatValue } from "@/hooks/use-fiat-value"
-import { useTokenHoldings, useSelfCustodyPinned } from "@/hooks/use-wallet-data"
+import { useTokenHoldings } from "@/hooks/use-wallet-data"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 import { TokenList } from "@/components/wallet/token-list"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function WalletPage() {
   const t = useTranslations("wallet")
   const { holdings, isLoading: holdingsLoading } = useTokenHoldings()
-  const selfCustody = useSelfCustodyPinned()
-
-  // Only worth flagging when the amount actually exceeds the fee, since anything
-  // below it cannot be moved and the notice would be a dead end.
-  const hasOutside = holdings.some(
-    (h) => (selfCustody?.get(h.ledgerId) ?? 0n) > h.fee
-  )
   // Read out of the sweep this page already runs rather than through
   // useLiveBalance: that hook keys its own SWR entry, so ICP was fetched twice in
   // parallel on every visit. ICP is pinned, so the row is always present.
@@ -99,13 +91,8 @@ export default function WalletPage() {
         <CardHeader>
           <CardTitle className="text-sm font-medium">{t("tokens")}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {hasOutside && (
-            <Alert>
-              <AlertDescription>{t("selfCustodyNotice")}</AlertDescription>
-            </Alert>
-          )}
-          <TokenList holdings={holdings} isLoading={holdingsLoading} outside={selfCustody} />
+        <CardContent>
+          <TokenList holdings={holdings} isLoading={holdingsLoading} />
         </CardContent>
       </Card>
     </div>

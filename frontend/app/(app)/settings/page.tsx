@@ -20,6 +20,8 @@ import {
   Settings01Icon,
   BookOpen01Icon,
   BucketIcon,
+  ArrowDataTransferVerticalIcon,
+  RadioIcon,
 } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { ServiceTile } from "@/components/settings/service-tile"
@@ -72,6 +74,12 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
         keywords: "balance ckbtc holdings",
       },
       {
+        href: "/swap",
+        key: "swap",
+        icon: ArrowDataTransferVerticalIcon,
+        keywords: "exchange trade icpswap convert",
+      },
+      {
         href: "/launch",
         key: "launch",
         icon: RocketIcon,
@@ -99,6 +107,12 @@ const SECTIONS: { key: SectionKey; items: Service[] }[] = [
         key: "icpverse",
         icon: UserMultipleIcon,
         keywords: "people tip discover",
+      },
+      {
+        href: "/live",
+        key: "live",
+        icon: RadioIcon,
+        keywords: "audio voice room webrtc",
       },
       {
         href: "/deposit",

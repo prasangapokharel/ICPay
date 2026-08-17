@@ -45,10 +45,10 @@ func expectErr<T>(name: Text, r: Types.ApiResult<T>) {
 };
 
 // --- ICP service fee ---------------------------------------------------------
-// Config.SWAP_ICP_SERVICE_FEE_E8S = 100_000 => 0.001 ICP flat per swap.
+// Config.SWAP_ICP_SERVICE_FEE_E8S = 10_000_000 => 0.1 ICP flat per swap.
 let icpServiceFee = Config.SWAP_ICP_SERVICE_FEE_E8S;
-assert (icpServiceFee == 100_000);
-Debug.print("PASS: icp service fee = " # debug_show(icpServiceFee) # " e8s (0.001 ICP)");
+assert (icpServiceFee == 10_000_000);
+Debug.print("PASS: icp service fee = " # debug_show(icpServiceFee) # " e8s (0.1 ICP)");
 
 // Full amountIn goes to the pool leg; service fee is separate ICP.
 let amountIn = 100_000_000;

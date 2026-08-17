@@ -2,7 +2,7 @@
   "nav": {
     "home": "首页",
     "icpverse": "ICP 宇宙",
-    "withdraw": "提现",
+    "send": "发送",
     "menu": "菜单",
     "buyUsername": "购买用户名"
   },
@@ -80,7 +80,8 @@
       "swap": "兑换",
       "bucket": "云存储",
       "blog": "博客",
-      "analytics": "Analytics"
+      "analytics": "Analytics",
+      "live": "Live"
     },
     "preferencesDescription": "语言、货币和法律页面"
   },
@@ -687,7 +688,10 @@
     "balanceAfter": "钱包余额",
     "afterLabel": "之后",
     "icpServiceFee": "服务费 (ICP)",
-    "insufficientIcp": "ICP 不足以支付 0.001 ICP 服务费。"
+    "insufficientIcp": "ICP 不足以支付 {fee} 服务费。",
+    "recoverFunds": "恢复资金",
+    "recovering": "恢复中…",
+    "recoverSuccess": "资金已退回钱包，可以再次兑换。"
   },
   "bucket": {
     "title": "ICPay Cloud",
@@ -875,5 +879,42 @@
     "lockedTitle": "Premium analytics",
     "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
     "lockedAction": "Buy a shorter name"
+  },
+  "live": {
+    "title": "Live",
+    "subtitle": "Voice rooms on-chain — audio stays peer-to-peer",
+    "newRoom": "New room",
+    "newRoomHint": "Title and visibility only. Audio uses WebRTC after you go live.",
+    "createRoom": "Create room",
+    "creating": "Creating…",
+    "roomTitle": "Room title",
+    "roomTitlePlaceholder": "Weekly sync, AMA, hangout…",
+    "public": "Public",
+    "private": "Private",
+    "empty": "No public live rooms right now.",
+    "host": "Host",
+    "participants": "in room",
+    "roomNotFound": "Room not found.",
+    "start": "Start",
+    "stop": "Stop",
+    "resume": "Resume",
+    "end": "End",
+    "micOn": "Mic on",
+    "micOff": "Mic off",
+    "waitingHost": "Waiting for the host to start.",
+    "pausedHint": "Room is paused. Host can resume when ready.",
+    "liveHint": "Connected with {count} other speaker(s).",
+    "state": {
+      "draft": "Draft",
+      "live": "Live",
+      "paused": "Paused",
+      "ended": "Ended"
+    },
+    "guideTitle": "How Live works",
+    "guideStep1": "Create a room with a title — public (listed) or private (invite link).",
+    "guideStep2": "As host, open the room and tap Start when you are ready.",
+    "guideStep3": "Share the link. Guests join after the room is live (private needs the invite token).",
+    "guideStep4": "Turn Mic on to speak. Voice goes peer-to-peer in your browser — not through the chain.",
+    "guideStep5": "Host can Stop (pause), Resume, or End. Signaling on-chain costs almost no cycles."
   }
 }
