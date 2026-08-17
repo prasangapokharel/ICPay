@@ -19,7 +19,7 @@ type SendSuccessProps = {
   recipient: string
   blockIndex: bigint
   memo?: string
-  kind?: "send" | "tip" | "purchase"
+  kind?: "send" | "tip" | "purchase" | "icpayBuy"
   // Default to ICP: every caller but the token page sends ICP, and its ledger
   // ships no metadata to read a symbol from.
   symbol?: string
@@ -98,7 +98,11 @@ export function SendSuccess({
 
       <div className="mt-8 w-full border-t border-dashed pt-6 text-left">
         <p className="text-xs text-muted-foreground">
-          {kind === "purchase" ? t("username") : t("recipient")}
+          {kind === "purchase"
+            ? t("username")
+            : kind === "icpayBuy"
+              ? t("destination")
+              : t("recipient")}
         </p>
         <div className="mt-3 flex items-center gap-3 rounded-2xl bg-muted/50 p-3">
           <Avatar className="size-11 shrink-0">

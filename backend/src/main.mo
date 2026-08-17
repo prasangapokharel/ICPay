@@ -17,6 +17,7 @@ import DepositService "services/DepositService";
 import WithdrawService "services/WithdrawService";
 import TransferService "services/TransferService";
 import UsernameSaleService "services/UsernameSaleService";
+import SaleService "services/SaleService";
 import TokenWasmService "services/TokenWasmService";
 import TokenService "services/TokenService";
 import TransactionService "services/TransactionService";
@@ -28,6 +29,7 @@ import LiveService "services/LiveService";
 import SocialLinkService "services/SocialLinkService";
 import SwapService "services/SwapService";
 import BucketService "services/BucketService";
+import Config "config/Config";
 import RateLimitStorage "storage/RateLimitStorage";
 import HealthApi "api/v1/Health";
 import AuthApi "api/v1/Auth";
@@ -39,6 +41,7 @@ import WithdrawApi "api/v1/Withdraw";
 import LedgersApi "api/v1/Ledgers";
 import TransferApi "api/v1/Transfer";
 import UsernameSaleApi "api/v1/UsernameSale";
+import SaleApi "api/v1/Sale";
 import TokenApi "api/v1/Token";
 import TransactionsApi "api/v1/Transactions";
 import SettingsApi "api/v1/Settings";
@@ -79,6 +82,7 @@ persistent actor self {
   // landed. Chain-key ledgers are compiled in, so ICP works even when empty.
   let ledgerRegistry = LedgerStorage.createLedgerRegistry();
   transient let ledger = LedgerService.create(Principal.fromActor(self), ledgerRegistry);
+  ignore LedgerService.registerLedger(ledger, Config.ICPAY_LEDGER_ID);
 
   // New stable variables, so they need no migration: nothing of them exists in
   // stable memory yet. They start empty on the upgrade that introduces them.
@@ -101,6 +105,7 @@ persistent actor self {
   let syncDepositLimits = RateLimitStorage.createRateLimitMap();
   let settingsLimits = RateLimitStorage.createRateLimitMap();
   let purchaseUsernameLimits = RateLimitStorage.createRateLimitMap();
+  let buyIcpayLimits = RateLimitStorage.createRateLimitMap();
   let launchTokenLimits = RateLimitStorage.createRateLimitMap();
   let swapLimits = RateLimitStorage.createRateLimitMap();
   let bucketCreateLimits = RateLimitStorage.createRateLimitMap();
@@ -108,6 +113,10 @@ persistent actor self {
   let bucketRenewLimits = RateLimitStorage.createRateLimitMap();
   let bucketManageLimits = RateLimitStorage.createRateLimitMap();
   let bucketApiKeyLimits = RateLimitStorage.createRateLimitMap();
+
+  // ICPAY actually paid out by the presale. Inventory balance alone cannot
+  // distinguish "nothing sold yet" from "100% sold", so sold stats come from here.
+  var icpayPresaleSold : Nat = 0;
 
   // New stable variable — no migration needed, starts empty on first upgrade.
   let bookmarks = BookmarkStorage.createBookmarkMap();
@@ -168,6 +177,14 @@ persistent actor self {
   transient let withdrawService = WithdrawService.create(users, transactions, transactionsByUser, ledger, nextUid, withdrawLimits);
   transient let transferService = TransferService.create(users, usernames, transactions, transactionsByUser, ledger, nextUid, transferLimits, depositSubaccounts, depositAccountIds);
   transient let usernameSaleService = UsernameSaleService.create(users, usernames, reservedUsernames, transferService, purchaseUsernameLimits);
+  transient let saleService = SaleService.create(
+    users,
+    transferService,
+    Principal.fromActor(self),
+    buyIcpayLimits,
+    func () { icpayPresaleSold },
+    func (n) { icpayPresaleSold += n },
+  );
   transient let transactionService = TransactionService.create(users, transactions, transactionsByUser);
   transient let settingsService = SettingsService.create(users, settings, settingsLimits);
   transient let bookmarkService = BookmarkService.create(users, usersById, bookmarks);
@@ -222,6 +239,7 @@ persistent actor self {
   include LedgersApi(ledger, mwConfig);
   include TransferApi(transferService, mwConfig);
   include UsernameSaleApi(usernameSaleService, mwConfig);
+  include SaleApi(saleService, mwConfig);
   include TokenApi(tokenService, mwConfig);
   include TransactionsApi(transactionService, mwConfig);
   include SettingsApi(settingsService, mwConfig);

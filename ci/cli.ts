@@ -23,6 +23,7 @@ const COMMANDS: Record<string, string> = {
   "backend:wasm": "backend/wasm.ts",
   "backend:reclaim": "backend/reclaim.ts",
   "backend:sweep": "backend/sweep.ts",
+  "backend:sweep-icpay": "backend/sweep-icpay.ts",
   "backend:register": "backend/register.ts",
   "backend:logs": "backend/logs.ts",
   "frontend:build": "frontend/build.ts",

@@ -197,7 +197,32 @@ export interface WalletActor {
   getLiveRoom: (roomId: string) => Promise<[] | [Record<string, unknown>]>
   listPublicLiveRooms: (limit: bigint, offset: bigint) => Promise<Record<string, unknown>[]>
   listLivePeers: (roomId: string) => Promise<Record<string, unknown>[]>
+  getIcpayRate: () => Promise<bigint>
+  getIcpaySale: () => Promise<IcpaySaleQuote>
+  buyIcpay: (icpAmount: bigint, recipient: [] | [Principal]) => Promise<IcpayPurchaseResult>
 }
+
+export type IcpaySaleQuote = {
+  rate: bigint
+  inventoryCap: bigint
+  inventoryRemaining: bigint
+  icpaySold: bigint
+  icpRaised: bigint
+  percentSold: bigint
+  minBuyIcp: bigint
+  maxBuyIcp: bigint
+  active: boolean
+}
+
+export type IcpayPurchase = {
+  icpBlock: bigint
+  icpayBlock: bigint
+  icpAmount: bigint
+  icpayAmount: bigint
+  destination: string
+}
+
+export type IcpayPurchaseResult = { ok: IcpayPurchase } | { err: string }
 
 let cachedActor: WalletActor | null = null
 let cachedIdentity: Identity | null = null
@@ -639,6 +664,26 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const ApiResultLiveRoom = IDL.Variant({ ok: LiveRoomPublic, err: IDL.Text })
   const ApiResultLiveSignals = IDL.Variant({ ok: IDL.Vec(LiveSignal), err: IDL.Text })
 
+  const IcpaySaleQuote = IDL.Record({
+    rate: IDL.Nat,
+    inventoryCap: IDL.Nat,
+    inventoryRemaining: IDL.Nat,
+    icpaySold: IDL.Nat,
+    icpRaised: IDL.Nat,
+    percentSold: IDL.Nat,
+    minBuyIcp: IDL.Nat,
+    maxBuyIcp: IDL.Nat,
+    active: IDL.Bool,
+  })
+  const IcpayPurchase = IDL.Record({
+    icpBlock: IDL.Nat64,
+    icpayBlock: IDL.Nat64,
+    icpAmount: IDL.Nat,
+    icpayAmount: IDL.Nat,
+    destination: IDL.Text,
+  })
+  const ApiResultIcpayPurchase = IDL.Variant({ ok: IcpayPurchase, err: IDL.Text })
+
   return IDL.Service({
     health: IDL.Func([], [IDL.Text], ["query"]),
     login: IDL.Func([], [AuthResult], []),
@@ -841,5 +886,8 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     getLiveRoom: IDL.Func([IDL.Text], [IDL.Opt(LiveRoomPublic)], ["query"]),
     listPublicLiveRooms: IDL.Func([IDL.Nat, IDL.Nat], [IDL.Vec(LiveRoomPublic)], ["query"]),
     listLivePeers: IDL.Func([IDL.Text], [IDL.Vec(LivePeer)], ["query"]),
+    getIcpayRate: IDL.Func([], [IDL.Nat], ["query"]),
+    getIcpaySale: IDL.Func([], [IcpaySaleQuote], []),
+    buyIcpay: IDL.Func([IDL.Nat, IDL.Opt(IDL.Principal)], [ApiResultIcpayPurchase], []),
   })
 }

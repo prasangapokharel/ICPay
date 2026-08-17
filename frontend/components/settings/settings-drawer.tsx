@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import useSWRImmutable from "swr/immutable"
+import { useSWRConfig } from "swr"
 import { useTheme } from "next-themes"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
@@ -25,16 +26,20 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { LanguageSelect } from "@/components/i18n/language-select"
 import { FiatSelector } from "@/components/fiat/fiat-selector"
 import { ThemeSelector } from "@/components/settings/theme-selector"
 import { SoundSelector } from "@/components/settings/sound-selector"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLocale } from "@/components/i18n/locale-provider"
-import { isLocale } from "@/language/config"
 import { getSettings, updateSettings } from "@/services/settings/settings"
 import type en from "@/language/en/common.json"
 
 type ItemKey = keyof typeof en.settings.items
+
+// Remote prefs apply once per page load — not on every drawer mount, and never
+// for language: localStorage is the UI source of truth until the user saves.
+let syncedRemoteSettings = false
 
 const LEGAL: { href: string; key: ItemKey; icon: IconSvgElement }[] = [
   { href: "/about", key: "about", icon: InformationCircleIcon },
@@ -55,7 +60,8 @@ export function SettingsDrawer({
   const { logout, identity } = useAuth()
   const t = useTranslations("settings")
   const { resolvedTheme, setTheme } = useTheme()
-  const { locale, setLocale } = useLocale()
+  const { locale } = useLocale()
+  const { mutate } = useSWRConfig()
 
   const principal = identity?.getPrincipal().toText()
   // Only theme and language are on the backend DTO -- fiat and sound stay
@@ -74,15 +80,12 @@ export function SettingsDrawer({
   const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!remote || hydrated.current) return
+    if (!remote || syncedRemoteSettings) return
+    syncedRemoteSettings = true
     hydrated.current = true
     notifications.current = remote.notifications
     if (remote.theme && remote.theme !== resolvedTheme) setTheme(remote.theme)
-    if (isLocale(remote.language) && remote.language !== locale)
-      setLocale(remote.language)
-    // Runs once, when the fetch resolves -- resolvedTheme/locale/setTheme/setLocale
-    // would all be stale closures worth re-running for, which the ref guards against.
-  }, [remote]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [remote, resolvedTheme, setTheme])
 
   const handleOpenChange = async (next: boolean) => {
     // Pushed on close, not on every toggle inside the drawer: updateSettings is
@@ -109,6 +112,8 @@ export function SettingsDrawer({
       setSaveError(result.err)
       return
     }
+    const key = principal ? (["settings", principal] as const) : null
+    if (key) await mutate(key, result.ok, { revalidate: false })
     setSaveError(null)
     onOpenChange(false)
   }
@@ -132,6 +137,7 @@ export function SettingsDrawer({
               <AlertDescription>{saveError}</AlertDescription>
             </Alert>
           )}
+          <LanguageSelect />
           <FiatSelector />
           <ThemeSelector />
           <SoundSelector />
