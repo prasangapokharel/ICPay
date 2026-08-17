@@ -22,7 +22,9 @@ import TokenService "services/TokenService";
 import TransactionService "services/TransactionService";
 import SettingsService "services/SettingsService";
 import BookmarkStorage "storage/BookmarkStorage";
+import LiveStorage "storage/LiveStorage";
 import BookmarkService "services/BookmarkService";
+import LiveService "services/LiveService";
 import SocialLinkService "services/SocialLinkService";
 import SwapService "services/SwapService";
 import BucketService "services/BucketService";
@@ -47,6 +49,7 @@ import SwapApi "api/v1/Swap";
 import BucketApi "api/v1/Bucket";
 import AnalyticsService "services/AnalyticsService";
 import AnalyticsApi "api/v1/Analytics";
+import LiveApi "api/v1/Live";
 import CloudHttpApi "api/v1/CloudHttp";
 import MiddlewareAuth "middleware/Auth";
 import Principal "mo:core/Principal";
@@ -109,6 +112,10 @@ persistent actor self {
   // New stable variable — no migration needed, starts empty on first upgrade.
   let bookmarks = BookmarkStorage.createBookmarkMap();
 
+  let liveRooms = LiveStorage.createRoomMap();
+  transient let livePeers = LiveStorage.createPeerMap();
+  transient let liveSignals = LiveStorage.createSignalMap();
+
   // Pending swaps survive upgrades: a failed withdraw must not vanish on deploy.
   let pendingSwaps = SwapStorage.createPendingMap();
   // Failed swap escrows survive upgrades so recovery stays tied to a real attempt.
@@ -164,6 +171,9 @@ persistent actor self {
   transient let transactionService = TransactionService.create(users, transactions, transactionsByUser);
   transient let settingsService = SettingsService.create(users, settings, settingsLimits);
   transient let bookmarkService = BookmarkService.create(users, usersById, bookmarks);
+  transient let liveService = LiveService.create(
+    users, usersById, liveRooms, livePeers, liveSignals, nextUid,
+  );
   transient let socialLinkService = SocialLinkService.create(users);
   transient let tokenService = TokenService.create(
     tokens, tokensByLedger, tokensByUser, reservedSymbols, tokenWasm,
@@ -221,6 +231,7 @@ persistent actor self {
   include SwapApi(swapService, mwConfig);
   include BucketApi(bucketService, mwConfig);
   include AnalyticsApi(analyticsService, mwConfig);
+  include LiveApi(liveService, mwConfig);
   include CloudHttpApi(bucketService);
 
 };

@@ -70,4 +70,28 @@ switch (AnalyticsService.getUserAnalytics(svc, p2)) {
   case (#err(msg)) { assert(false); Debug.print("FAIL [ANALYTICS]: " # msg) };
 };
 
+// Swap legs store token-native amounts — must not inflate ICP Received/Sent totals.
+let token = "aaaaa-aa";
+let _swapOut = TxRepo.create(
+  txs, txsByUser, "tx-swap-out", "uid-paid", #swapOut, token, 50_000_075_824_950_000, 0,
+  icp, "ckBTC", null, now,
+);
+assert TxRepo.completeTx(txs, "tx-swap-out", Nat64.fromNat(3), now);
+let _swapIn = TxRepo.create(
+  txs, txsByUser, "tx-swap-in", "uid-paid", #swapIn, token, 303_088_018_000_000, 0,
+  icp, "ckBTC", null, now,
+);
+assert TxRepo.completeTx(txs, "tx-swap-in", Nat64.fromNat(4), now);
+
+switch (AnalyticsService.getUserAnalytics(svc, p2)) {
+  case (#ok(data)) {
+    assert data.summary.totalReceivedE8s == 100_000_000;
+    assert data.summary.totalSentE8s == 25_010_000;
+    assert data.summary.swapInCount == 1;
+    assert data.summary.swapOutCount == 1;
+    Debug.print("PASS [ANALYTICS]: swap token amounts excluded from ICP totals");
+  };
+  case (#err(msg)) { assert(false); Debug.print("FAIL [ANALYTICS]: " # msg) };
+};
+
 Debug.print("ALL ANALYTICS TESTS PASSED");

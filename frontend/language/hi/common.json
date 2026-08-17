@@ -2,7 +2,7 @@
   "nav": {
     "home": "होम",
     "icpverse": "आईसीपीवर्स",
-    "withdraw": "निकालें",
+    "send": "भेजें",
     "menu": "मेन्यू",
     "buyUsername": "यूज़रनेम खरीदें"
   },
@@ -80,7 +80,8 @@
       "swap": "स्वैप",
       "bucket": "क्लाउड",
       "blog": "ब्लॉग",
-      "analytics": "Analytics"
+      "analytics": "Analytics",
+      "live": "Live"
     },
     "preferencesDescription": "भाषा, मुद्रा और कानूनी पृष्ठ"
   },
@@ -687,7 +688,10 @@
     "balanceAfter": "वॉलेट बैलेंस",
     "afterLabel": "बाद",
     "icpServiceFee": "सेवा शुल्क (ICP)",
-    "insufficientIcp": "0.001 ICP सेवा शुल्क के लिए पर्याप्त ICP नहीं।"
+    "insufficientIcp": "सेवा शुल्क {fee} के लिए पर्याप्त ICP नहीं।",
+    "recoverFunds": "धन वापस लें",
+    "recovering": "वापस लिया जा रहा है…",
+    "recoverSuccess": "धन आपके वॉलेट में लौट आया। आप फिर से स्वैप कर सकते हैं।"
   },
   "bucket": {
     "title": "ICPay Cloud",
@@ -875,5 +879,42 @@
     "lockedTitle": "Premium analytics",
     "lockedBody": "Analytics is available for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to unlock summaries and CSV export.",
     "lockedAction": "Buy a shorter name"
+  },
+  "live": {
+    "title": "Live",
+    "subtitle": "Voice rooms on-chain — audio stays peer-to-peer",
+    "newRoom": "New room",
+    "newRoomHint": "Title and visibility only. Audio uses WebRTC after you go live.",
+    "createRoom": "Create room",
+    "creating": "Creating…",
+    "roomTitle": "Room title",
+    "roomTitlePlaceholder": "Weekly sync, AMA, hangout…",
+    "public": "Public",
+    "private": "Private",
+    "empty": "No public live rooms right now.",
+    "host": "Host",
+    "participants": "in room",
+    "roomNotFound": "Room not found.",
+    "start": "Start",
+    "stop": "Stop",
+    "resume": "Resume",
+    "end": "End",
+    "micOn": "Mic on",
+    "micOff": "Mic off",
+    "waitingHost": "Waiting for the host to start.",
+    "pausedHint": "Room is paused. Host can resume when ready.",
+    "liveHint": "Connected with {count} other speaker(s).",
+    "state": {
+      "draft": "Draft",
+      "live": "Live",
+      "paused": "Paused",
+      "ended": "Ended"
+    },
+    "guideTitle": "How Live works",
+    "guideStep1": "Create a room with a title — public (listed) or private (invite link).",
+    "guideStep2": "As host, open the room and tap Start when you are ready.",
+    "guideStep3": "Share the link. Guests join after the room is live (private needs the invite token).",
+    "guideStep4": "Turn Mic on to speak. Voice goes peer-to-peer in your browser — not through the chain.",
+    "guideStep5": "Host can Stop (pause), Resume, or End. Signaling on-chain costs almost no cycles."
   }
 }

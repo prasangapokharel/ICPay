@@ -2,7 +2,7 @@
   "nav": {
     "home": "Home",
     "icpverse": "ICPverse",
-    "withdraw": "Withdraw",
+    "send": "Send",
     "menu": "Menu",
     "buyUsername": "Buy a username"
   },
@@ -80,7 +80,8 @@
       "swap": "Swap",
       "bucket": "Bucket",
       "blog": "Blog",
-      "analytics": "Analytics"
+      "analytics": "Analytics",
+      "live": "Live"
     },
     "preferencesDescription": "Language, currency and legal pages"
   },
@@ -687,7 +688,7 @@
     "slippage": "Slippage",
     "platformFee": "Platform fee",
     "icpServiceFee": "Service fee (ICP)",
-    "insufficientIcp": "Not enough ICP for the 0.001 ICP service fee.",
+    "insufficientIcp": "Not enough ICP for the {fee} service fee.",
     "poolFee": "Pool fee",
     "rate": "Rate",
     "successTitle": "Swap complete",
@@ -718,7 +719,47 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "recoverFunds": "Recover funds",
+    "recovering": "Recovering…",
+    "recoverSuccess": "Funds returned to your wallet. You can swap again."
+  },
+  "live": {
+    "title": "Live",
+    "subtitle": "Voice rooms on-chain — audio stays peer-to-peer",
+    "newRoom": "New room",
+    "newRoomHint": "Title and visibility only. Audio uses WebRTC after you go live.",
+    "createRoom": "Create room",
+    "creating": "Creating…",
+    "roomTitle": "Room title",
+    "roomTitlePlaceholder": "Weekly sync, AMA, hangout…",
+    "public": "Public",
+    "private": "Private",
+    "empty": "No public live rooms right now.",
+    "host": "Host",
+    "participants": "in room",
+    "roomNotFound": "Room not found.",
+    "start": "Start",
+    "stop": "Stop",
+    "resume": "Resume",
+    "end": "End",
+    "micOn": "Mic on",
+    "micOff": "Mic off",
+    "waitingHost": "Waiting for the host to start.",
+    "pausedHint": "Room is paused. Host can resume when ready.",
+    "liveHint": "Connected with {count} other speaker(s).",
+    "guideTitle": "How Live works",
+    "guideStep1": "Create a room with a title — public (listed) or private (invite link).",
+    "guideStep2": "As host, open the room and tap Start when you are ready.",
+    "guideStep3": "Share the link. Guests join after the room is live (private needs the invite token).",
+    "guideStep4": "Turn Mic on to speak. Voice goes peer-to-peer in your browser — not through the chain.",
+    "guideStep5": "Host can Stop (pause), Resume, or End. Signaling on-chain costs almost no cycles.",
+    "state": {
+      "draft": "Draft",
+      "live": "Live",
+      "paused": "Paused",
+      "ended": "Ended"
+    }
   },
   "bucket": {
     "title": "ICPay Cloud",

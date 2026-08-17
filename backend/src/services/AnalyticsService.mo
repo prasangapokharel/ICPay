@@ -73,6 +73,7 @@ module {
   };
 
   func buildSummary(byUser: TxStorage.TxByUser, userId: Types.UserId, freeExport: Bool): Types.AnalyticsSummary {
+    let icpLedger = Config.ICP_LEDGER_CANISTER_ID;
     var totalReceived = 0;
     var totalSent = 0;
     var depositCount = 0;
@@ -93,26 +94,22 @@ module {
           switch (tx.txType) {
             case (#deposit) {
               depositCount += 1;
-              totalReceived += tx.amount;
+              if (tx.ledgerId == icpLedger) { totalReceived += tx.amount };
             };
             case (#withdraw) {
               withdrawCount += 1;
-              totalSent += tx.amount + tx.fee;
+              if (tx.ledgerId == icpLedger) { totalSent += tx.amount + tx.fee };
             };
             case (#transfer) {
               transferCount += 1;
-              totalSent += tx.amount + tx.fee;
+              if (tx.ledgerId == icpLedger) { totalSent += tx.amount + tx.fee };
               if (isTipMemo(tx.memo)) { tipCount += 1 };
             };
-            case (#fee) { totalSent += tx.amount };
-            case (#swapIn) {
-              swapInCount += 1;
-              totalReceived += tx.amount;
+            case (#fee) {
+              if (tx.ledgerId == icpLedger) { totalSent += tx.amount };
             };
-            case (#swapOut) {
-              swapOutCount += 1;
-              totalSent += tx.amount;
-            };
+            case (#swapIn) { swapInCount += 1 };
+            case (#swapOut) { swapOutCount += 1 };
           };
           if (tx.txType != #fee) {
             let incoming = isIncoming(tx);

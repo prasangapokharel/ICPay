@@ -5,7 +5,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import { Home01Icon, UserMultipleIcon, Upload01Icon, Menu01Icon } from "@hugeicons/core-free-icons"
+import { Home01Icon, UserMultipleIcon, ArrowUpRight01Icon, Menu01Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/utils"
 
 // Message keys, not labels: the strings resolve at render so a locale switch
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils"
 const navItems = [
   { href: "/", labelKey: "home", icon: Home01Icon },
   { href: "/icpverse", labelKey: "icpverse", icon: UserMultipleIcon },
-  { href: "/transfer", labelKey: "withdraw", icon: Upload01Icon },
+  { href: "/transfer", labelKey: "send", icon: ArrowUpRight01Icon },
   { href: "/settings", labelKey: "menu", icon: Menu01Icon },
 ] as const
 
