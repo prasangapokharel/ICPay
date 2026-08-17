@@ -8,19 +8,25 @@ export function platformFee(amountIn: bigint): bigint {
   return (amountIn * SWAP_PLATFORM_FEE_BPS) / 10_000n
 }
 
-/** Backend debits amountIn plus two ledger fees from the user subaccount. */
+/** Backend debits amountIn plus three ledger fees from the user subaccount. */
 export function requiredBalance(amountIn: bigint, ledgerFee: bigint): bigint {
-  return amountIn + 2n * ledgerFee
+  return amountIn + 3n * ledgerFee
 }
 
 export function maxSwapInput(balance: bigint, ledgerFee: bigint): bigint {
-  const room = balance - 2n * ledgerFee
+  const room = balance - 3n * ledgerFee
   return room > 0n ? room : 0n
 }
 
 export function minAmountOut(amountOut: bigint, slippageBps: bigint = DEFAULT_SLIPPAGE_BPS): bigint {
   if (amountOut === 0n) return 0n
   return (amountOut * (10_000n - slippageBps)) / 10_000n
+}
+
+/** Pool gross output minus pool withdraw fee and final ledger transfer fee. */
+export function netSwapOutput(grossOut: bigint, tokenOutFee: bigint): bigint {
+  const fees = 2n * tokenOutFee
+  return grossOut > fees ? grossOut - fees : 0n
 }
 
 export function swapRate(amountIn: bigint, amountOut: bigint): string | null {

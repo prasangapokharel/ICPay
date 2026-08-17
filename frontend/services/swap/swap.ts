@@ -1,6 +1,7 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { call, unwrap, type Outcome } from "@/services/client"
 import { isLedgerSupported } from "@/services/tokens"
+import { isSwapToken } from "@/lib/swap-tokens"
 import type { SwapQuoteResult, SwapResult } from "@/services/types"
 
 export async function fetchSwapQuote(
@@ -12,6 +13,18 @@ export async function fetchSwapQuote(
   const outcome = await call(identity, "Quote failed", async (actor) => {
     const r = await actor.getSwapQuote(tokenIn, tokenOut, amountIn)
     return r as Outcome<SwapQuoteResult>
+  })
+  return unwrap(outcome)
+}
+
+export async function recoverFailedSwapInput(
+  identity: Identity | undefined,
+  tokenIn: string,
+  amountIn: bigint
+): Promise<bigint> {
+  const outcome = await call(identity, "Recovery failed", async (actor) => {
+    const r = await actor.recoverFailedSwapInput(tokenIn, amountIn)
+    return r as Outcome<bigint>
   })
   return unwrap(outcome)
 }
@@ -36,6 +49,7 @@ export async function checkSwapPair(
   tokenOut: string
 ): Promise<"sameToken" | "unsupported" | null> {
   if (tokenIn === tokenOut) return "sameToken"
+  if (!isSwapToken(tokenIn) || !isSwapToken(tokenOut)) return "unsupported"
   const [inOk, outOk] = await Promise.all([
     isLedgerSupported(identity, tokenIn),
     isLedgerSupported(identity, tokenOut),

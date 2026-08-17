@@ -154,7 +154,7 @@ export function SwapForm({
     setSwapping(true)
     setError(null)
     primeSuccessChime()
-    const amountOutMin = minAmountOut(quote.amountOut)
+    const amountOutMin = minAmountOut(quote.amountOutRaw)
     const result = await executeSwap(
       identity,
       tokenIn.ledgerId,
@@ -238,7 +238,7 @@ export function SwapForm({
             )}
             <FeeRow
               label={t("ledgerFees")}
-              value={2n * tokenIn.fee}
+              value={3n * tokenIn.fee}
               token={tokenIn}
             />
             {totalDebit !== null && (
