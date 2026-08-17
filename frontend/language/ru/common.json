@@ -679,7 +679,15 @@
     "totalDebit": "Total from balance",
     "ledgerFees": "Ledger fees (est.)",
     "fetchingQuote": "Fetching quote…",
-    "done": "Done"
+    "done": "Done",
+    "processHint": "Ончейн-обмен обычно занимает 15–30 секунд.",
+    "stepPrepare": "Подготовка перевода",
+    "stepExecute": "Исполнение на ICPSwap",
+    "stepDeliver": "Доставка в ваш кошелёк",
+    "balanceAfter": "Баланс кошелька",
+    "afterLabel": "после",
+    "icpServiceFee": "Сервисная комиссия (ICP)",
+    "insufficientIcp": "Недостаточно ICP для сервисной комиссии 0,001 ICP."
   },
   "bucket": {
     "title": "ICPay Cloud",

@@ -8,7 +8,7 @@ import {
   isSwapBlocked,
   swapPairKey,
 } from "@/lib/swap-config"
-import { netSwapOutput, platformFee } from "@/lib/swap-utils"
+import { icpServiceFee, netSwapOutput } from "@/lib/swap-utils"
 import type { SwapQuoteResult } from "@/services/types"
 
 type PoolRef = {
@@ -122,7 +122,7 @@ async function resolvePool(
   throw new Error(`No pool found for ${tokenIn} / ${tokenOut}`)
 }
 
-/** Free ICPSwap queries — same math as backend SwapService.quote, without an update round-trip. */
+/** Free ICPSwap queries — full tokenIn to pool; ICP service fee is separate. */
 export async function fetchIcpswapQuote(
   identity: Identity | undefined,
   tokenIn: string,
@@ -135,9 +135,7 @@ export async function fetchIcpswapQuote(
   if (tokenIn === tokenOut) throw new Error("sameToken")
   if (amountIn <= 0n) throw new Error("amountIn must be > 0")
 
-  const fee = platformFee(amountIn)
-  const swapAmountIn = amountIn - fee
-  if (swapAmountIn <= 0n) throw new Error("amountIn too small after platform fee")
+  const serviceFee = icpServiceFee()
 
   const [tokenInFee, tokenOutFee, pool] = await Promise.all([
     ledgerFee(identity, tokenIn),
@@ -145,7 +143,7 @@ export async function fetchIcpswapQuote(
     resolvePool(identity, tokenIn, tokenOut),
   ])
 
-  const quoteAmountIn = swapAmountIn - tokenInFee
+  const quoteAmountIn = amountIn - tokenInFee
   if (quoteAmountIn <= 0n) throw new Error("amountIn too small after ledger fee")
 
   const agent = await createAgent(identity)
@@ -176,7 +174,7 @@ export async function fetchIcpswapQuote(
   return {
     amountOut: netOut,
     amountOutRaw: grossOut,
-    platformFee: fee,
+    icpServiceFee: serviceFee,
     swapFee,
     priceImpact: "",
     poolId: pool.poolId,

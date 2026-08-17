@@ -6,12 +6,12 @@ import { useTranslations } from "next-intl"
 import { useAuth } from "@/components/auth/auth-provider"
 import { SwapForm, type SwapSuccess } from "@/components/swap/swap-form"
 import { SwapSuccessView } from "@/components/swap/swap-success"
-import { useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useApplySwapBalances } from "@/hooks/use-wallet-data"
 
 export default function SwapPage() {
   const t = useTranslations("swap")
   const { identity } = useAuth()
-  const refreshWallet = useRefreshWallet()
+  const applySwapBalances = useApplySwapBalances()
   const params = useSearchParams()
   const [done, setDone] = useState<SwapSuccess | null>(null)
 
@@ -26,6 +26,9 @@ export default function SwapPage() {
         tokenIn={done.tokenIn}
         tokenOut={done.tokenOut}
         blockIndex={done.blockIndex}
+        beforeIn={done.beforeIn}
+        beforeOut={done.beforeOut}
+        icpFee={done.icpFee}
         onDone={() => setDone(null)}
       />
     )
@@ -42,7 +45,14 @@ export default function SwapPage() {
         initialTokenIn={from}
         initialTokenOut={to}
         onSuccess={(result) => {
-          refreshWallet()
+          applySwapBalances({
+            tokenInId: result.tokenIn.ledgerId,
+            tokenOutId: result.tokenOut.ledgerId,
+            amountIn: result.amountIn,
+            amountOut: result.amountOut,
+            tokenInFee: result.tokenIn.fee,
+            icpFee: result.icpFee,
+          })
           setDone(result)
         }}
       />

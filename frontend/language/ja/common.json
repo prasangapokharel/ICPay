@@ -679,7 +679,15 @@
     "totalDebit": "Total from balance",
     "ledgerFees": "Ledger fees (est.)",
     "fetchingQuote": "Fetching quote…",
-    "done": "Done"
+    "done": "Done",
+    "processHint": "オンチェーンのスワップは通常15〜30秒かかります。",
+    "stepPrepare": "送金を準備中",
+    "stepExecute": "ICPSwapで実行中",
+    "stepDeliver": "ウォレットへ送信中",
+    "balanceAfter": "ウォレット残高",
+    "afterLabel": "後",
+    "icpServiceFee": "サービス手数料 (ICP)",
+    "insufficientIcp": "0.001 ICP のサービス手数料に ICP が足りません。"
   },
   "bucket": {
     "title": "ICPay Cloud",

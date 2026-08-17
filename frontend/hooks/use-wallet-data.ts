@@ -6,7 +6,8 @@ import useSWRImmutable from "swr/immutable"
 import type { Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
 import { useAuth } from "@/components/auth/auth-provider"
-import { readHoldings, writeHoldings } from "@/lib/holdings-cache"
+import { readHoldings, writeHoldings, patchHoldings } from "@/lib/holdings-cache"
+import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap-utils"
 import type { DashboardData, UserPublic } from "@/services/types"
 import { getDashboard } from "@/services/dashboard/dashboard"
 import { getDepositAddress } from "@/services/deposit/deposit"
@@ -203,8 +204,78 @@ export function useRefreshWallet() {
       (key) =>
         Array.isArray(key) &&
         key[key.length - 1] === principal &&
-        FUNDS_KEYS.includes(key[0] as string)
+        FUNDS_KEYS.includes(key[0] as string),
+      undefined,
+      { revalidate: true }
     )
+  }
+}
+
+export type SwapBalanceUpdate = {
+  tokenInId: string
+  tokenOutId: string
+  amountIn: bigint
+  amountOut: bigint
+  tokenInFee: bigint
+  icpFee: bigint
+}
+
+/** Optimistic wallet patch after swap — /wallet updates instantly, then ledgers confirm. */
+export function useApplySwapBalances() {
+  const { identity } = useAuth()
+  const { mutate } = useSWRConfig()
+  const refreshWallet = useRefreshWallet()
+
+  return (update: SwapBalanceUpdate) => {
+    if (!identity) return
+    const principal = identity.getPrincipal().toText()
+    const serviceDebit = icpServiceDebit(update.icpFee)
+    const tokenDebit =
+      update.tokenInId === ICP_LEDGER_ID
+        ? requiredIcpSwapBalance(update.amountIn, update.tokenInFee, serviceDebit)
+        : requiredBalance(update.amountIn, update.tokenInFee)
+
+    const patchBalanceMap = (map: Map<string, bigint> | undefined) => {
+      if (!map) return map
+      const next = new Map(map)
+      next.set(update.tokenInId, (next.get(update.tokenInId) ?? 0n) - tokenDebit)
+      next.set(update.tokenOutId, (next.get(update.tokenOutId) ?? 0n) + update.amountOut)
+      if (update.tokenInId !== ICP_LEDGER_ID) {
+        next.set(ICP_LEDGER_ID, (next.get(ICP_LEDGER_ID) ?? 0n) - serviceDebit)
+      }
+      return next
+    }
+
+    const balancesKey = keyFor(identity, "token-balances")
+    if (balancesKey) {
+      mutate(balancesKey, patchBalanceMap, { revalidate: false })
+    }
+
+    const inKey = keyFor(identity, "token-balance", update.tokenInId)
+    const outKey = keyFor(identity, "token-balance", update.tokenOutId)
+    const icpKey = keyFor(identity, "token-balance", ICP_LEDGER_ID)
+    if (inKey) {
+      mutate(inKey, (bal: bigint | undefined) => (bal ?? 0n) - tokenDebit, { revalidate: false })
+    }
+    if (outKey) {
+      mutate(outKey, (bal: bigint | undefined) => (bal ?? 0n) + update.amountOut, {
+        revalidate: false,
+      })
+    }
+    if (icpKey && update.tokenInId !== ICP_LEDGER_ID) {
+      mutate(icpKey, (bal: bigint | undefined) => (bal ?? 0n) - serviceDebit, { revalidate: false })
+    }
+
+    const patches = [
+      { ledgerId: update.tokenInId, delta: -tokenDebit },
+      { ledgerId: update.tokenOutId, delta: update.amountOut },
+    ]
+    if (update.tokenInId !== ICP_LEDGER_ID) {
+      patches.push({ ledgerId: ICP_LEDGER_ID, delta: -serviceDebit })
+    }
+    patchHoldings(principal, patches)
+
+    refreshWallet()
   }
 }
 
@@ -398,7 +469,7 @@ export function useTokenHoldings() {
       const subaccount = custodialSubaccount(identity!.getPrincipal())
       return await fetchBalances(ledgerIds, owner, subaccount, identity)
     },
-    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 300_000 }
+    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
   // Phase 2 -- metadata for every discovered ledger, not just the held ones. A

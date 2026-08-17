@@ -409,7 +409,7 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const SwapQuoteResult = IDL.Record({
     amountOut: IDL.Nat,
     amountOutRaw: IDL.Nat,
-    platformFee: IDL.Nat,
+    icpServiceFee: IDL.Nat,
     swapFee: IDL.Nat,
     priceImpact: IDL.Text,
     poolId: IDL.Text,
@@ -419,7 +419,7 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     blockIndex: IDL.Nat64,
     amountIn: IDL.Nat,
     amountOut: IDL.Nat,
-    platformFee: IDL.Nat,
+    icpServiceFee: IDL.Nat,
     txId: IDL.Text,
   })
 

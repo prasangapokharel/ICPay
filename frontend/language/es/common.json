@@ -679,7 +679,15 @@
     "totalDebit": "Total from balance",
     "ledgerFees": "Ledger fees (est.)",
     "fetchingQuote": "Fetching quote…",
-    "done": "Done"
+    "done": "Done",
+    "processHint": "Los swaps on-chain suelen tardar 15–30 segundos.",
+    "stepPrepare": "Preparando transferencia",
+    "stepExecute": "Ejecutando en ICPSwap",
+    "stepDeliver": "Entregando a tu wallet",
+    "balanceAfter": "Saldo en wallet",
+    "afterLabel": "después",
+    "icpServiceFee": "Tarifa de servicio (ICP)",
+    "insufficientIcp": "ICP insuficiente para la tarifa de servicio de 0,001 ICP."
   },
   "bucket": {
     "title": "ICPay Cloud",

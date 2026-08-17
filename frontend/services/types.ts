@@ -115,7 +115,7 @@ export type TransferResult = {
 export type SwapQuoteResult = {
   amountOut: bigint
   amountOutRaw: bigint
-  platformFee: bigint
+  icpServiceFee: bigint
   swapFee: bigint
   priceImpact: string
   poolId: string
@@ -125,7 +125,7 @@ export type SwapResult = {
   blockIndex: bigint
   amountIn: bigint
   amountOut: bigint
-  platformFee: bigint
+  icpServiceFee: bigint
   txId: TxId
 }
 
