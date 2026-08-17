@@ -9,22 +9,17 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer"
+import { SwapConfirmDrawer } from "@/components/swap/swap-confirm-drawer"
 import { SwapTokenPicker } from "@/components/swap/swap-token-picker"
 import { useSwapQuote, useSwapTokens } from "@/hooks/use-swap"
 import { defaultSwapPair } from "@/lib/swap-tokens"
 import {
+  icpServiceDebit,
+  icpServiceFee,
   maxSwapInput,
   minAmountOut,
-  platformFee,
   requiredBalance,
+  requiredIcpSwapBalance,
   swapRate,
 } from "@/lib/swap-utils"
 import {
@@ -45,6 +40,9 @@ export type SwapSuccess = {
   tokenIn: TokenHolding
   tokenOut: TokenHolding
   blockIndex: bigint
+  beforeIn: bigint
+  beforeOut: bigint
+  icpFee: bigint
 }
 
 export function SwapForm({
@@ -97,11 +95,27 @@ export function SwapForm({
     setPickedOut(token)
   }
 
+  const icpToken = tokens.find((t) => t.ledgerId === ICP_LEDGER_ID)
+  const serviceFee = icpServiceFee()
+  const serviceDebit = icpToken ? icpServiceDebit(icpToken.fee) : null
+
   const amountIn = tokenIn ? parseTokenAmount(amountText, tokenIn.decimals) : null
   const maxIn = tokenIn ? maxSwapInput(tokenIn.balance, tokenIn.fee) : 0n
   const totalDebit = amountIn !== null && tokenIn ? requiredBalance(amountIn, tokenIn.fee) : null
-  const insufficient =
+
+  const insufficientToken =
     amountIn !== null && tokenIn !== null && totalDebit !== null && totalDebit > tokenIn.balance
+
+  const insufficientIcp =
+    serviceDebit !== null &&
+    icpToken !== undefined &&
+    tokenIn !== null &&
+    amountIn !== null &&
+    (tokenIn.ledgerId === ICP_LEDGER_ID
+      ? requiredIcpSwapBalance(amountIn, tokenIn.fee, serviceDebit) > tokenIn.balance
+      : icpToken.balance < serviceDebit)
+
+  const insufficient = insufficientToken || insufficientIcp
 
   const { quote, error: quoteError, isLoading: quoteLoading } = useSwapQuote(
     tokenIn?.ledgerId ?? null,
@@ -109,10 +123,9 @@ export function SwapForm({
     amountIn ?? 0n
   )
 
-  const feePreview = amountIn !== null ? platformFee(amountIn) : null
   const rate =
     amountIn !== null && quote && quote.amountOut > 0n
-      ? swapRate(amountIn - (feePreview ?? 0n), quote.amountOut)
+      ? swapRate(amountIn, quote.amountOut)
       : null
 
   const quoteMessage = useMemo(() => {
@@ -174,6 +187,9 @@ export function SwapForm({
       tokenIn,
       tokenOut,
       blockIndex: result.ok.blockIndex,
+      beforeIn: tokenIn.balance,
+      beforeOut: tokenOut.balance,
+      icpFee: icpToken?.fee ?? 10_000n,
     })
   }
 
@@ -230,17 +246,13 @@ export function SwapForm({
           onPickToken={() => setPicker("out")}
         />
 
-        {amountIn !== null && tokenIn && (
+        {amountIn !== null && tokenIn && icpToken && (
           <div className="rounded-2xl border border-border/60 bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
-            <FeeRow label={t("platformFee")} value={feePreview} token={tokenIn} />
+            <FeeRow label={t("icpServiceFee")} value={serviceFee} token={icpToken} />
             {quote && tokenIn && (
               <FeeRow label={t("poolFee")} value={quote.swapFee} token={tokenIn} />
             )}
-            <FeeRow
-              label={t("ledgerFees")}
-              value={3n * tokenIn.fee}
-              token={tokenIn}
-            />
+            <FeeRow label={t("ledgerFees")} value={3n * tokenIn.fee} token={tokenIn} />
             {totalDebit !== null && (
               <div className="mt-2 flex justify-between border-t border-border/50 pt-2 font-medium text-foreground">
                 <span>{t("totalDebit")}</span>
@@ -259,7 +271,9 @@ export function SwapForm({
 
         {insufficient && (
           <Alert variant="destructive">
-            <AlertDescription>{t("insufficientBalance")}</AlertDescription>
+            <AlertDescription>
+              {insufficientIcp && !insufficientToken ? t("insufficientIcp") : t("insufficientBalance")}
+            </AlertDescription>
           </Alert>
         )}
         {quoteMessage && amountIn !== null && amountIn > 0n && (
@@ -299,32 +313,17 @@ export function SwapForm({
         title={t("selectReceive")}
       />
 
-      <Drawer open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>{t("confirmTitle")}</DrawerTitle>
-            <DrawerDescription>{t("confirmBody")}</DrawerDescription>
-          </DrawerHeader>
-          {tokenIn && tokenOut && amountIn && quote && (
-            <div className="space-y-2 px-4 text-sm">
-              <ConfirmRow
-                label={t("youPay")}
-                value={`${formatTokenAmount(amountIn, tokenIn.decimals)} ${tokenIn.symbol}`}
-              />
-              <ConfirmRow
-                label={t("youReceive")}
-                value={`${formatTokenAmount(quote.amountOut, tokenOut.decimals)} ${tokenOut.symbol}`}
-              />
-              <ConfirmRow label={t("slippage")} value="1%" />
-            </div>
-          )}
-          <DrawerFooter>
-            <Button onClick={handleConfirm} disabled={swapping}>
-              {swapping ? t("swapping") : t("confirmSwap")}
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+      <SwapConfirmDrawer
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        identity={identity}
+        tokenIn={tokenIn}
+        tokenOut={tokenOut}
+        amountIn={amountIn}
+        amountOut={quote?.amountOut ?? null}
+        swapping={swapping}
+        onConfirm={handleConfirm}
+      />
     </>
   )
 }
@@ -436,15 +435,6 @@ function FeeRow({
       <span className="tabular-nums">
         {formatTokenAmount(value, token.decimals)} {token.symbol}
       </span>
-    </div>
-  )
-}
-
-function ConfirmRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between gap-4">
-      <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium tabular-nums">{value}</span>
     </div>
   )
 }

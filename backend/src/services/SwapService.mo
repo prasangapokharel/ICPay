@@ -133,22 +133,20 @@ module {
     if (tokenIn == tokenOut) return #err("tokenIn and tokenOut must differ");
     if (amountIn == 0) return #err("amountIn must be > 0");
 
-    let platformFee = amountIn * Config.SWAP_PLATFORM_FEE_BPS / 10_000;
-    let swapAmountIn = (amountIn - platformFee : Nat);
-    if (swapAmountIn == 0) return #err("amountIn too small after platform fee");
+    let icpServiceFee = Config.SWAP_ICP_SERVICE_FEE_E8S;
 
-    // The executed swap (SwapService.swap) inputs the post-fee amount
-    // (swapAmountIn - tokenInFee, matching what is actually deposited). Quote
-    // with the same amount so the fee display and slippage math stay aligned.
-    let tokenInFee = await LedgerService.getFee(tokenIn);
-    let tokenOutFee = await LedgerService.getFee(tokenOut);
+    let futureTokenInFee  = LedgerService.getFee(tokenIn);
+    let futureTokenOutFee = LedgerService.getFee(tokenOut);
+    let futurePool        = getPool(service, tokenIn, tokenOut);
 
-    let poolResult = await getPool(service, tokenIn, tokenOut);
+    let tokenInFee  = await futureTokenInFee;
+    let tokenOutFee = await futureTokenOutFee;
+    let poolResult  = await futurePool;
     switch poolResult {
       case (#err(e)) { return #err(e) };
       case (#ok({ poolId; zeroForOne; fee; token0 = _ })) {
         let pool: ICPSwapPool = actor(poolId);
-        let quoteAmountIn = (swapAmountIn - tokenInFee : Nat);
+        let quoteAmountIn = (amountIn - tokenInFee : Nat);
         if (quoteAmountIn == 0) return #err("amountIn too small after ledger fee");
         switch (await pool.quote({ zeroForOne; amountIn = Nat.toText(quoteAmountIn); amountOutMinimum = "0" })) {
           case (#err(e)) { return #err("Quote failed: " # icpSwapErrorToText(e)) };
@@ -156,7 +154,6 @@ module {
             if (amountOut == 0) {
               return #err("No pool liquidity for this swap direction");
             };
-            // ICPSwap fee tiers are 500/3000/10000 micro-bps (fee / 1_000_000).
             let swapFee = quoteAmountIn * fee / 1_000_000;
             let netOut = if (amountOut > 2 * tokenOutFee) {
               (amountOut - (2 * tokenOutFee) : Nat)
@@ -164,7 +161,7 @@ module {
             #ok({
               amountOut = netOut;
               amountOutRaw = amountOut;
-              platformFee;
+              icpServiceFee;
               swapFee;
               priceImpact = "";
               poolId;
@@ -207,46 +204,58 @@ module {
       case (null) { return #err("User not found") };
     };
 
-    // Calculate amounts
-    let platformFee = amountIn * Config.SWAP_PLATFORM_FEE_BPS / 10_000;
-    if (platformFee == 0) return #err("amountIn too small - minimum swap amount not met");
-    let swapAmountIn = (amountIn - platformFee : Nat);
-    if (swapAmountIn == 0) return #err("amountIn too small for swap");
-
+    let icpServiceFee = Config.SWAP_ICP_SERVICE_FEE_E8S;
+    let icpLedger = Config.ICP_LEDGER_CANISTER_ID;
     let treasury = Principal.fromText(Config.TREASURY);
     let sourceAccount = LedgerService.depositAccount(service.ledger, caller);
 
-    // Read phase — dispatch all four independent calls before awaiting any, so
-    // the IC runs them concurrently: 4 sequential round-trips overlap and cost
-    // roughly 1 instead of 4 (futures are first-class; evaluating a call without
-    // `await` sends the request immediately).
     let futureTokenInFee  = LedgerService.getFee(tokenIn);
     let futureTokenOutFee = LedgerService.getFee(tokenOut);
+    let futureIcpFee      = LedgerService.getFee(icpLedger);
     let futureUserBalance = LedgerService.getBalance(tokenIn, sourceAccount);
+    let futureIcpBalance  = if (tokenIn == icpLedger) { null } else {
+      ?LedgerService.getBalance(icpLedger, sourceAccount)
+    };
     let futurePool        = getPool(service, tokenIn, tokenOut);
 
     let tokenInFee  = await futureTokenInFee;
     let tokenOutFee = await futureTokenOutFee;
-    let userBalance = await futureUserBalance;
+    let icpFee      = await futureIcpFee;
     let poolResult  = await futurePool;
 
-    // Subaccount pays: platform-fee transfer, pool-leg transfer, and the approve
-    // fee on main after the pool leg lands (depositFrom pulls depositAmount + fee).
-    let requiredBalance = amountIn + (3 * tokenInFee);
-    if (userBalance < requiredBalance) {
-      return #err("Insufficient balance. Need " # Nat.toText(requiredBalance) # " (including fees), have " # Nat.toText(userBalance))
-    };
+    let tokenRequired = amountIn + (3 * tokenInFee);
+    let icpRequired = icpServiceFee + icpFee;
 
-    // Phase A — Resolve pool and confirm the direction has liquidity before moving funds.
     let (poolId, zeroForOne) = switch poolResult {
       case (#err(e)) { return #err(e) };
       case (#ok(r)) { (r.poolId, r.zeroForOne) };
     };
-    let poolPrincipal = Principal.fromText(poolId);
     let pool: ICPSwapPool = actor(poolId);
-    let depositAmount = (swapAmountIn - tokenInFee : Nat);
+    let depositAmount = (amountIn - tokenInFee : Nat);
     if (depositAmount == 0) return #err("amountIn too small after ledger fee");
-    switch (await pool.quote({ zeroForOne; amountIn = Nat.toText(depositAmount); amountOutMinimum = "0" })) {
+
+    let futureQuote = pool.quote({ zeroForOne; amountIn = Nat.toText(depositAmount); amountOutMinimum = "0" });
+    let userBalance = await futureUserBalance;
+    let icpBalance = switch (futureIcpBalance) {
+      case (null) { userBalance };
+      case (?f) { await f };
+    };
+
+    if (tokenIn == icpLedger) {
+      let required = amountIn + (3 * tokenInFee) + icpServiceFee + icpFee;
+      if (userBalance < required) {
+        return #err("Insufficient ICP. Need " # Nat.toText(required) # " (swap + service fee + ledger fees), have " # Nat.toText(userBalance))
+      };
+    } else {
+      if (userBalance < tokenRequired) {
+        return #err("Insufficient balance. Need " # Nat.toText(tokenRequired) # " (including fees), have " # Nat.toText(userBalance))
+      };
+      if (icpBalance < icpRequired) {
+        return #err("Insufficient ICP for service fee. Need " # Nat.toText(icpRequired) # " e8s, have " # Nat.toText(icpBalance))
+      };
+    };
+
+    switch (await futureQuote) {
       case (#err(e)) { return #err("Quote failed: " # icpSwapErrorToText(e)) };
       case (#ok(out)) {
         if (out == 0) return #err("No pool liquidity for this swap direction");
@@ -256,55 +265,49 @@ module {
       };
     };
 
-    // Phase B — Platform fee (take it first, before pool operations)
-    let feeTransfer = await LedgerService.transfer(tokenIn, {
+    let poolPrincipal = Principal.fromText(poolId);
+
+    // Service fee in ICP — replaces the old tokenIn platform-fee skim.
+    switch (await LedgerService.transfer(icpLedger, {
       from_subaccount = sourceAccount.subaccount;
       to = AccountHelper.defaultAccount(treasury);
-      amount = platformFee;
+      amount = icpServiceFee;
       fee = null;
       memo = null;
       created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-    });
-    switch feeTransfer {
-      case (#Err(e)) { return #err("Platform fee transfer failed: " # TransferError.describe(e)) };
+    })) {
+      case (#Err(e)) { return #err("ICP service fee transfer failed: " # TransferError.describe(e)) };
       case (#Ok(_)) {};
     };
 
-    // Phase C — Transfer to canister main account, then approve pool from there
-    // ICPSwap's depositFrom only works when approving from main account (subaccount = null)
     let mainAccount = AccountHelper.defaultAccount(service.ledger.custodian);
+    let transferToMainAmount = amountIn + tokenInFee;
 
-    // Main needs swapAmountIn after approve fee to fund depositFrom (depositAmount + fee).
-    let transferToMainAmount = swapAmountIn + tokenInFee;
-
-    let transferToMain = await LedgerService.transfer(tokenIn, {
+    switch (await LedgerService.transfer(tokenIn, {
       from_subaccount = sourceAccount.subaccount;
       to = mainAccount;
       amount = transferToMainAmount;
       fee = null;
       memo = null;
       created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-    });
-    switch transferToMain {
+    })) {
       case (#Err(e)) { return #err("Transfer to main account failed: " # TransferError.describe(e)) };
       case (#Ok(_)) {};
     };
 
     openEscrow(service, caller, tokenIn, tokenOut, amountIn, tokenInFee, poolId, transferToMainAmount);
 
-    // Phase D — ICRC-2 approve: pool depositFrom pulls depositAmount + fee = swapAmountIn.
     let ledger: ICRC2Ledger = actor(tokenIn);
-    let approveResult = await ledger.icrc2_approve({
-      from_subaccount = null;  // Approve from main account (no subaccount)
+    switch (await ledger.icrc2_approve({
+      from_subaccount = null;
       spender = { owner = poolPrincipal; subaccount = null };
-      amount = swapAmountIn;
+      amount = amountIn;
       expected_allowance = null;
       expires_at = null;
       fee = ?tokenInFee;
       memo = null;
       created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-    });
-    switch approveResult {
+    })) {
       case (#Err(e)) {
         let errMsg = switch(e) {
           case (#InsufficientFunds({ balance })) { "Insufficient funds for approve: " # Nat.toText(balance) };
@@ -317,7 +320,7 @@ module {
         return swapAbort(errMsg, refunded);
       };
       case (#Ok(_)) {
-        setEscrowMain(service, caller, tokenIn, amountIn, swapAmountIn);
+        setEscrowMain(service, caller, tokenIn, amountIn, amountIn);
       };
     };
 
@@ -402,7 +405,7 @@ module {
     let now = Time.now();
     let txOutId = service.nextId();
     let txOut = TxRepo.create(
-      service.txs, service.byUser, txOutId, user.id, #swapOut, tokenIn, amountIn, platformFee,
+      service.txs, service.byUser, txOutId, user.id, #swapOut, tokenIn, amountIn, icpServiceFee,
       tokenIn, tokenOut, null, now,
     );
     TxModel.complete(txOut, blockIndex, now);
@@ -415,7 +418,7 @@ module {
 
     closeEscrow(service, caller, tokenIn, amountIn);
 
-    #ok({ blockIndex; amountIn = swapAmountIn; amountOut = actualReceived; platformFee; txId = txInId });
+    #ok({ blockIndex; amountIn; amountOut = actualReceived; icpServiceFee; txId = txInId });
   };
 
   // Only succeeds when a failed swap escrow exists for this caller + token + amount.
@@ -484,14 +487,11 @@ module {
       case (?_) {};
       case (null) { return #err("User not found") };
     };
-    let platformFee = amountIn * Config.SWAP_PLATFORM_FEE_BPS / 10_000;
-    if (platformFee == 0) return #err("amountIn too small");
-    let swapAmountIn = (amountIn - platformFee : Nat);
     let fee = await LedgerService.getFee(tokenIn);
-    let ok = await returnToUser(service, user, tokenIn, fee, swapAmountIn);
+    let ok = await returnToUser(service, user, tokenIn, fee, amountIn);
     if (not ok) return #err("Nothing to release or transfer failed");
     closeEscrow(service, user, tokenIn, amountIn);
-    #ok((swapAmountIn - fee : Nat));
+    #ok((amountIn - fee : Nat));
   };
 
   // ---------------------------------------------------------------------------
@@ -725,13 +725,14 @@ module {
     };
     let factory: ICPSwapFactory = actor(Config.ICPSWAP_FACTORY);
     let (t0, t1) = if (tokenIn < tokenOut) { (tokenIn, tokenOut) } else { (tokenOut, tokenIn) };
-    // Try fee tiers lowest first: 500 (0.05%), 3000 (0.3%), 10000 (1%)
-    for (fee in [500, 3000, 10000].vals()) {
-      let result = await factory.getPool({
-        token0 = { address = t0; standard = tokenStandard(t0) };
-        token1 = { address = t1; standard = tokenStandard(t1) };
-        fee;
-      });
+    let token0 = { address = t0; standard = tokenStandard(t0) };
+    let token1 = { address = t1; standard = tokenStandard(t1) };
+    // All three fee tiers in flight — same pattern as the frontend quote path.
+    let future500 = factory.getPool({ token0; token1; fee = 500 });
+    let future3000 = factory.getPool({ token0; token1; fee = 3000 });
+    let future10000 = factory.getPool({ token0; token1; fee = 10000 });
+    let hits = [await future500, await future3000, await future10000];
+    for (result in hits.vals()) {
       switch result {
         case (#ok(pool)) {
           let pid = Principal.toText(pool.canisterId);

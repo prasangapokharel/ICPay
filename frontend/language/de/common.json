@@ -679,7 +679,15 @@
     "totalDebit": "Total from balance",
     "ledgerFees": "Ledger fees (est.)",
     "fetchingQuote": "Fetching quote…",
-    "done": "Done"
+    "done": "Done",
+    "processHint": "On-Chain-Tausch dauert meist 15–30 Sekunden.",
+    "stepPrepare": "Überweisung vorbereiten",
+    "stepExecute": "Ausführung auf ICPSwap",
+    "stepDeliver": "Zustellung in Ihre Wallet",
+    "balanceAfter": "Wallet-Guthaben",
+    "afterLabel": "danach",
+    "icpServiceFee": "Servicegebühr (ICP)",
+    "insufficientIcp": "Nicht genug ICP für die Servicegebühr von 0,001 ICP."
   },
   "bucket": {
     "title": "ICPay Cloud",

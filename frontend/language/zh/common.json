@@ -679,7 +679,15 @@
     "totalDebit": "Total from balance",
     "ledgerFees": "Ledger fees (est.)",
     "fetchingQuote": "Fetching quote…",
-    "done": "Done"
+    "done": "Done",
+    "processHint": "链上兑换通常需要 15–30 秒。",
+    "stepPrepare": "准备转账",
+    "stepExecute": "在 ICPSwap 执行",
+    "stepDeliver": "交付到您的钱包",
+    "balanceAfter": "钱包余额",
+    "afterLabel": "之后",
+    "icpServiceFee": "服务费 (ICP)",
+    "insufficientIcp": "ICP 不足以支付 0.001 ICP 服务费。"
   },
   "bucket": {
     "title": "ICPay Cloud",

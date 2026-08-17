@@ -679,7 +679,15 @@
     "totalDebit": "Total from balance",
     "ledgerFees": "Ledger fees (est.)",
     "fetchingQuote": "Fetching quote…",
-    "done": "Done"
+    "done": "Done",
+    "processHint": "ऑन-चेन स्वैप में आमतौर पर 15–30 सेकंड लगते हैं।",
+    "stepPrepare": "ट्रांसफर तैयार हो रहा है",
+    "stepExecute": "ICPSwap पर निष्पादन",
+    "stepDeliver": "आपके वॉलेट में भेजा जा रहा है",
+    "balanceAfter": "वॉलेट बैलेंस",
+    "afterLabel": "बाद",
+    "icpServiceFee": "सेवा शुल्क (ICP)",
+    "insufficientIcp": "0.001 ICP सेवा शुल्क के लिए पर्याप्त ICP नहीं।"
   },
   "bucket": {
     "title": "ICPay Cloud",

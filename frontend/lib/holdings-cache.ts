@@ -37,3 +37,20 @@ export function writeHoldings(principal: string, holdings: TokenHolding[]) {
     // Private-browsing quota rejections must not break the wallet.
   }
 }
+
+/** Apply ledger deltas to the last cached holdings so /wallet updates before the sweep returns. */
+export function patchHoldings(
+  principal: string,
+  updates: { ledgerId: string; delta: bigint }[]
+): TokenHolding[] | undefined {
+  const current = readHoldings(principal)
+  if (!current?.length) return undefined
+  const next = current.map((h) => {
+    const hit = updates.find((u) => u.ledgerId === h.ledgerId)
+    if (!hit) return h
+    const balance = h.balance + hit.delta
+    return { ...h, balance: balance > 0n ? balance : 0n }
+  })
+  writeHoldings(principal, next)
+  return next
+}

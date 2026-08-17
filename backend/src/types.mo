@@ -45,20 +45,20 @@ module {
   };
 
   public type SwapResult = {
-    blockIndex:  Nat64;
-    amountIn:    Nat;
-    amountOut:   Nat;
-    platformFee: Nat;
-    txId:        TxId;
+    blockIndex:     Nat64;
+    amountIn:       Nat;
+    amountOut:      Nat;
+    icpServiceFee:  Nat;
+    txId:           TxId;
   };
 
   public type SwapQuoteResult = {
-    amountOut:    Nat;
-    amountOutRaw: Nat;
-    platformFee:  Nat;
-    swapFee:      Nat;
-    priceImpact:  Text;
-    poolId:       Text;
+    amountOut:       Nat;
+    amountOutRaw:    Nat;
+    icpServiceFee:   Nat;
+    swapFee:         Nat;
+    priceImpact:     Text;
+    poolId:          Text;
   };
 
   public type TxStatus = {

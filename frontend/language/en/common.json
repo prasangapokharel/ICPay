@@ -686,6 +686,8 @@
     "priceImpact": "Price Impact",
     "slippage": "Slippage",
     "platformFee": "Platform fee",
+    "icpServiceFee": "Service fee (ICP)",
+    "insufficientIcp": "Not enough ICP for the 0.001 ICP service fee.",
     "poolFee": "Pool fee",
     "rate": "Rate",
     "successTitle": "Swap complete",
@@ -710,7 +712,13 @@
     "totalDebit": "Total from balance",
     "ledgerFees": "Ledger fees (est.)",
     "fetchingQuote": "Fetching quote…",
-    "done": "Done"
+    "done": "Done",
+    "processHint": "On-chain swaps usually take 15–30 seconds.",
+    "stepPrepare": "Preparing transfer",
+    "stepExecute": "Executing on ICPSwap",
+    "stepDeliver": "Delivering to your wallet",
+    "balanceAfter": "Wallet balance",
+    "afterLabel": "after"
   },
   "bucket": {
     "title": "ICPay Cloud",

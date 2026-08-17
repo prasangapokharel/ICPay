@@ -1,16 +1,30 @@
-/** Mirrors backend Config.SWAP_PLATFORM_FEE_BPS (1%). */
-export const SWAP_PLATFORM_FEE_BPS = 100n
+/** Mirrors backend Config.SWAP_ICP_SERVICE_FEE_E8S (0.001 ICP). */
+export const SWAP_ICP_SERVICE_FEE_E8S = 100_000n
 
 /** Default slippage tolerance passed as amountOutMin (1%). */
 export const DEFAULT_SLIPPAGE_BPS = 100n
 
-export function platformFee(amountIn: bigint): bigint {
-  return (amountIn * SWAP_PLATFORM_FEE_BPS) / 10_000n
+export function icpServiceFee(): bigint {
+  return SWAP_ICP_SERVICE_FEE_E8S
+}
+
+/** ICP subaccount needs service fee plus one ledger transfer fee. */
+export function icpServiceDebit(icpLedgerFee: bigint): bigint {
+  return SWAP_ICP_SERVICE_FEE_E8S + icpLedgerFee
 }
 
 /** Backend debits amountIn plus three ledger fees from the user subaccount. */
 export function requiredBalance(amountIn: bigint, ledgerFee: bigint): bigint {
   return amountIn + 3n * ledgerFee
+}
+
+/** When swapping ICP, the same subaccount also pays the ICP service fee. */
+export function requiredIcpSwapBalance(
+  amountIn: bigint,
+  icpFee: bigint,
+  serviceDebit: bigint
+): bigint {
+  return amountIn + 3n * icpFee + serviceDebit
 }
 
 export function maxSwapInput(balance: bigint, ledgerFee: bigint): bigint {

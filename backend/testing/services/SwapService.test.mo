@@ -44,24 +44,19 @@ func expectErr<T>(name: Text, r: Types.ApiResult<T>) {
   };
 };
 
-// --- Platform fee math --------------------------------------------------------
-// Config.SWAP_PLATFORM_FEE_BPS = 100 => 1%. A 1 ICP input (1e8 e8s) gives a 1%
-// platform fee, and the swap leg is the remainder.
+// --- ICP service fee ---------------------------------------------------------
+// Config.SWAP_ICP_SERVICE_FEE_E8S = 100_000 => 0.001 ICP flat per swap.
+let icpServiceFee = Config.SWAP_ICP_SERVICE_FEE_E8S;
+assert (icpServiceFee == 100_000);
+Debug.print("PASS: icp service fee = " # debug_show(icpServiceFee) # " e8s (0.001 ICP)");
+
+// Full amountIn goes to the pool leg; service fee is separate ICP.
 let amountIn = 100_000_000;
-let platformFee = amountIn * Config.SWAP_PLATFORM_FEE_BPS / 10_000;
-let swapAmountIn = amountIn - platformFee;
-assert (platformFee == 1_000_000);
-assert (platformFee + swapAmountIn == amountIn);
-assert (swapAmountIn == 99_000_000);
-Debug.print("PASS: platform fee = " # debug_show(platformFee) # " (1% of " # debug_show(amountIn) # ")");
-Debug.print("PASS: swapAmountIn = amountIn - platformFee = " # debug_show(swapAmountIn));
+let depositAmount = amountIn - 10_000;
+assert (depositAmount == 99_990_000);
+Debug.print("PASS: depositAmount = amountIn - tokenInFee");
 
-// Rounding: an amount whose platform fee rounds to 0 is rejected by swap().
-let tinyFee = 1 * Config.SWAP_PLATFORM_FEE_BPS / 10_000; // 0 -> platformFee == 0
-assert (tinyFee == 0);
-Debug.print("PASS: platform fee rounds to 0 for tiny inputs (swap rejects them)");
-
-// requiredBalance = amountIn + 3*fee: platform transfer, pool-leg transfer, approve fee.
+// requiredBalance = amountIn + 3*fee on the swap token subaccount.
 let fee = 10_000;
 let requiredBalance = amountIn + 3 * fee;
 assert (requiredBalance == amountIn + 30_000);
@@ -129,17 +124,6 @@ switch rMin {
   case (#ok(_)) { assert false; Debug.print("FAIL: zero amountOutMin should be rejected") };
 };
 
-// amountIn too small for a platform fee (fee rounds to 0). A non-anonymous
-// caller WITH a profile is required to reach the fee check: 1 e8s * 100 / 1e4
-// == 0, so swap() rejects it as too small. (\08 is not the anonymous \04 blob.)
-let pTiny = Principal.fromBlob("\08");
-let _ = UserRepo.create(users, usernames, usersById, "uid-tiny", pTiny, null, "Tiny", now, null);
-let rTiny = await SwapService.swap(svc, pTiny, icp, ckbtc, 1, 1);
-switch rTiny {
-  case (#err(msg)) { Debug.print("PASS: swap tiny amount rejected: " # msg) };
-  case (#ok(_)) { assert false; Debug.print("FAIL: tiny amount should be rejected") };
-};
-
 // User not found: valid ledger but caller has no profile.
 let pNoUser = Principal.fromBlob("\05");
 let rNoUser = await SwapService.swap(svc, pNoUser, icp, ckbtc, amountIn, 1);
@@ -204,7 +188,7 @@ let _ = SwapStorage.putEscrow(escrows, {
   tokenIn = icp;
   tokenOut = ckbtc;
   amountIn = amountIn;
-  var refundDue = 99_000_000;
+  var refundDue = 100_000_000;
   var poolDeposit = 0;
   tokenInFee = fee;
   poolId = "pool-test";
