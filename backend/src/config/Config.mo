@@ -168,6 +168,7 @@ module {
   public let RATE_UPDATE_SETTINGS = { maxPerWindow = 10; windowSeconds = 300 }; // cheap but writes state
 
   // Swap module
+  public let ICPAY_LEDGER_ID: Text = "5fsnk-rqaaa-aaaan-q6m4q-cai";
   public let ICPSWAP_FACTORY: Text = "4mmnk-kiaaa-aaaag-qbllq-cai";
   public let ANALYTICS_EXPORT_FEE_E8S: Nat = 10_000_000; // 0.1 ICP when export is not included with the handle tier
   public let SWAP_PLATFORM_FEE_BPS: Nat = 100;   // 100 basis points = 1%

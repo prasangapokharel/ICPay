@@ -24,11 +24,12 @@ let usersById = UserStorage.createUserIdMap();
 let txs = TxStorage.createTxList();
 let txsByUser = TxStorage.createTxByUser();
 let pending = SwapStorage.createPendingMap();
+let escrows = SwapStorage.createEscrowMap();
 let limits = RateLimitStorage.createRateLimitMap();
 let registry = LedgerStorage.createLedgerRegistry();
 let custodian = Principal.fromText("aaaaa-aa");
 let ledger = LedgerService.create(custodian, registry);
-let svc = SwapService.create(users, txs, txsByUser, ledger, pending, func() { "tx-test" }, limits);
+let svc = SwapService.create(users, txs, txsByUser, ledger, pending, escrows, func() { "tx-test" }, limits);
 
 let anon = Principal.fromText("2vxsx-fae");
 let icp = "ryjl3-tyaaa-aaaaa-aaaba-cai";
@@ -60,13 +61,22 @@ let tinyFee = 1 * Config.SWAP_PLATFORM_FEE_BPS / 10_000; // 0 -> platformFee == 
 assert (tinyFee == 0);
 Debug.print("PASS: platform fee rounds to 0 for tiny inputs (swap rejects them)");
 
-// requiredBalance = amountIn + 2*fee: both transfers (fee->treasury, ->pool)
-// each deduct a ledger fee from the user's subaccount. tokenInFee is only known
-// at runtime via icrc1_fee(), so assert the relationship with a sample fee.
+// requiredBalance = amountIn + 3*fee: platform transfer, pool-leg transfer, approve fee.
 let fee = 10_000;
-let requiredBalance = amountIn + 2 * fee;
-assert (requiredBalance == amountIn + 20_000);
-Debug.print("PASS: requiredBalance = amountIn + 2*fee = " # debug_show(requiredBalance));
+let requiredBalance = amountIn + 3 * fee;
+assert (requiredBalance == amountIn + 30_000);
+Debug.print("PASS: requiredBalance = amountIn + 3*fee = " # debug_show(requiredBalance));
+
+// Output payout: pool gross minus pool withdraw fee and final ledger fee.
+let grossOut = 1_133_006_422_103;
+let outFee = 1_000_000;
+let payout = if (grossOut > 2 * outFee) { grossOut - (2 * outFee) } else { 0 };
+assert (payout == 1_133_004_422_103);
+Debug.print("PASS: net output payout = gross - 2*fee");
+
+let icpay = Config.ICPAY_LEDGER_ID;
+let qIcpay = await SwapService.quote(svc, icp, icpay, amountIn);
+expectErr("quote ICPAY blocked", qIcpay);
 
 // --- Quote: validation short-circuits (no network) ---------------------------
 let qSame = await SwapService.quote(svc, icp, icp, amountIn);
@@ -186,5 +196,26 @@ switch (SwapStorage.get(pending, "swap-1")) {
   case (null) { Debug.print("PASS: pending swap removed") };
   case (?_) { assert false; Debug.print("FAIL: pending swap should be removed") };
 };
+
+// --- Failed swap escrow: recovery requires a recorded attempt ----------------
+let pEsc = Principal.fromBlob("\09");
+let _ = SwapStorage.putEscrow(escrows, {
+  caller = pEsc;
+  tokenIn = icp;
+  tokenOut = ckbtc;
+  amountIn = amountIn;
+  var refundDue = 99_000_000;
+  var poolDeposit = 0;
+  tokenInFee = fee;
+  poolId = "pool-test";
+  createdAt = now;
+});
+assert (SwapStorage.hasOpenEscrow(escrows, pEsc, icp, amountIn));
+let rRecoverNone = await SwapService.recoverFailedSwapInput(svc, Principal.fromBlob("\0a"), icp, amountIn);
+expectErr("recover rejects wrong caller", rRecoverNone);
+SwapStorage.removeEscrow(escrows, pEsc, icp, amountIn);
+let rRecoverMissing = await SwapService.recoverFailedSwapInput(svc, pEsc, icp, amountIn);
+expectErr("recover rejects without escrow", rRecoverMissing);
+Debug.print("PASS: recovery requires genuine failed swap escrow");
 
 Debug.print("All SwapService tests passed");

@@ -111,6 +111,8 @@ persistent actor self {
 
   // Pending swaps survive upgrades: a failed withdraw must not vanish on deploy.
   let pendingSwaps = SwapStorage.createPendingMap();
+  // Failed swap escrows survive upgrades so recovery stays tied to a real attempt.
+  let failedSwapEscrows = SwapStorage.createEscrowMap();
 
   // ICPay Cloud — bucket metadata and file blobs persist across upgrades.
   let bucketStore = BucketStorage.empty();
@@ -166,7 +168,7 @@ persistent actor self {
     tokens, tokensByLedger, tokensByUser, reservedSymbols, tokenWasm,
     transferService, ledger, users, Principal.fromActor(self), nextUid, launchTokenLimits,
   );
-  transient let swapService = SwapService.create(users, transactions, transactionsByUser, ledger, pendingSwaps, nextUid, swapLimits);
+  transient let swapService = SwapService.create(users, transactions, transactionsByUser, ledger, pendingSwaps, failedSwapEscrows, nextUid, swapLimits);
   transient let bucketUploadSessions = BucketService.createUploadSessionStore();
   transient let analyticsService = AnalyticsService.create(users, transactionsByUser, transferService);
   transient let bucketService = BucketService.create(

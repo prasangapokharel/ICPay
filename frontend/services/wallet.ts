@@ -163,6 +163,10 @@ export interface WalletActor {
     amountIn: bigint,
     amountOutMin: bigint
   ) => Promise<{ ok: SwapResult; err?: never } | { err: string; ok?: never }>
+  recoverFailedSwapInput: (
+    tokenIn: string,
+    amountIn: bigint
+  ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
 }
 
 let cachedActor: WalletActor | null = null
@@ -735,6 +739,11 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     executeSwap: IDL.Func(
       [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat],
       [ApiResultSwap],
+      []
+    ),
+    recoverFailedSwapInput: IDL.Func(
+      [IDL.Text, IDL.Nat],
+      [ApiResultNat],
       []
     ),
   })
