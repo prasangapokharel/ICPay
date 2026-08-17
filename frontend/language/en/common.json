@@ -745,6 +745,13 @@
     "end": "End",
     "micOn": "Mic on",
     "micOff": "Mic off",
+    "micStarting": "Starting mic…",
+    "audioStatus": {
+      "idle": "Waiting for others to join. You can hear speakers once someone connects.",
+      "connecting": "Connecting audio…",
+      "listening": "Audio connected — turn Mic on when you want to speak.",
+      "speaking": "You are live. Others can hear you."
+    },
     "waitingHost": "Waiting for the host to start.",
     "pausedHint": "Room is paused. Host can resume when ready.",
     "liveHint": "Connected with {count} other speaker(s).",
@@ -752,7 +759,7 @@
     "guideStep1": "Create a room with a title — public (listed) or private (invite link).",
     "guideStep2": "As host, open the room and tap Start when you are ready.",
     "guideStep3": "Share the link. Guests join after the room is live (private needs the invite token).",
-    "guideStep4": "Turn Mic on to speak. Voice goes peer-to-peer in your browser — not through the chain.",
+    "guideStep4": "You hear others as soon as audio connects. Turn Mic on only when you want to speak.",
     "guideStep5": "Host can Stop (pause), Resume, or End. Signaling on-chain costs almost no cycles.",
     "state": {
       "draft": "Draft",
