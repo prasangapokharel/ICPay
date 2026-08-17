@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -81,6 +81,7 @@ export function SwapForm({
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [swapping, setSwapping] = useState(false)
+  const swapLock = useRef(false)
 
   const pickIn = (token: TokenHolding) => {
     setPickedIn(token)
@@ -164,33 +165,39 @@ export function SwapForm({
 
   const handleConfirm = async () => {
     if (!tokenIn || !tokenOut || !amountIn || !quote) return
+    if (swapLock.current) return
+    swapLock.current = true
     setSwapping(true)
     setError(null)
     primeSuccessChime()
     const amountOutMin = minAmountOut(quote.amountOutRaw)
-    const result = await executeSwap(
-      identity,
-      tokenIn.ledgerId,
-      tokenOut.ledgerId,
-      amountIn,
-      amountOutMin
-    )
-    setSwapping(false)
-    if ("err" in result) {
-      setError(result.err)
-      return
+    try {
+      const result = await executeSwap(
+        identity,
+        tokenIn.ledgerId,
+        tokenOut.ledgerId,
+        amountIn,
+        amountOutMin
+      )
+      if ("err" in result) {
+        setError(result.err)
+        return
+      }
+      setConfirmOpen(false)
+      onSuccess({
+        amountIn,
+        amountOut: result.ok.amountOut,
+        tokenIn,
+        tokenOut,
+        blockIndex: result.ok.blockIndex,
+        beforeIn: tokenIn.balance,
+        beforeOut: tokenOut.balance,
+        icpFee: icpToken?.fee ?? 10_000n,
+      })
+    } finally {
+      swapLock.current = false
+      setSwapping(false)
     }
-    setConfirmOpen(false)
-    onSuccess({
-      amountIn,
-      amountOut: result.ok.amountOut,
-      tokenIn,
-      tokenOut,
-      blockIndex: result.ok.blockIndex,
-      beforeIn: tokenIn.balance,
-      beforeOut: tokenOut.balance,
-      icpFee: icpToken?.fee ?? 10_000n,
-    })
   }
 
   if (tokensLoading && tokens.length === 0) {

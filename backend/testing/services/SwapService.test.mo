@@ -194,11 +194,13 @@ let _ = SwapStorage.putEscrow(escrows, {
   poolId = "pool-test";
   createdAt = now;
 });
-assert (SwapStorage.hasOpenEscrow(escrows, pEsc, icp, amountIn));
-let rRecoverNone = await SwapService.recoverFailedSwapInput(svc, Principal.fromBlob("\0a"), icp, amountIn);
+assert (SwapStorage.hasOpenEscrow(escrows, pEsc, icp, ckbtc, amountIn));
+assert (not SwapStorage.hasOpenEscrow(escrows, pEsc, icp, "mxzaz-hqaaa-aaaar-qaadb-cai", amountIn));
+Debug.print("PASS: escrow scoped to tokenOut, not amount alone");
+let rRecoverNone = await SwapService.recoverFailedSwapInput(svc, Principal.fromBlob("\0a"), icp, ckbtc, amountIn);
 expectErr("recover rejects wrong caller", rRecoverNone);
-SwapStorage.removeEscrow(escrows, pEsc, icp, amountIn);
-let rRecoverMissing = await SwapService.recoverFailedSwapInput(svc, pEsc, icp, amountIn);
+SwapStorage.removeEscrow(escrows, pEsc, icp, ckbtc, amountIn);
+let rRecoverMissing = await SwapService.recoverFailedSwapInput(svc, pEsc, icp, ckbtc, amountIn);
 expectErr("recover rejects without escrow", rRecoverMissing);
 Debug.print("PASS: recovery requires genuine failed swap escrow");
 

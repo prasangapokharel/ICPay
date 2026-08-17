@@ -22,8 +22,8 @@ module {
 
   public type EscrowMap = Map.Map<Text, FailedEscrow>;
 
-  public func escrowKey(caller: Principal, tokenIn: Text, amountIn: Nat): Text {
-    Principal.toText(caller) # "/" # tokenIn # "/" # Nat.toText(amountIn);
+  public func escrowKey(caller: Principal, tokenIn: Text, tokenOut: Text, amountIn: Nat): Text {
+    Principal.toText(caller) # "/" # tokenIn # "/" # tokenOut # "/" # Nat.toText(amountIn);
   };
 
   public func createEscrowMap(): EscrowMap {
@@ -31,24 +31,51 @@ module {
   };
 
   public func putEscrow(escrows: EscrowMap, escrow: FailedEscrow): Text {
-    let key = escrowKey(escrow.caller, escrow.tokenIn, escrow.amountIn);
+    let key = escrowKey(escrow.caller, escrow.tokenIn, escrow.tokenOut, escrow.amountIn);
     escrows.add(key, escrow);
     key;
   };
 
-  public func getEscrow(escrows: EscrowMap, caller: Principal, tokenIn: Text, amountIn: Nat): ?FailedEscrow {
-    escrows.get(escrowKey(caller, tokenIn, amountIn));
+  public func getEscrow(
+    escrows: EscrowMap,
+    caller: Principal,
+    tokenIn: Text,
+    tokenOut: Text,
+    amountIn: Nat,
+  ): ?FailedEscrow {
+    escrows.get(escrowKey(caller, tokenIn, tokenOut, amountIn));
   };
 
-  public func removeEscrow(escrows: EscrowMap, caller: Principal, tokenIn: Text, amountIn: Nat) {
-    escrows.remove(escrowKey(caller, tokenIn, amountIn));
+  public func removeEscrow(
+    escrows: EscrowMap,
+    caller: Principal,
+    tokenIn: Text,
+    tokenOut: Text,
+    amountIn: Nat,
+  ) {
+    escrows.remove(escrowKey(caller, tokenIn, tokenOut, amountIn));
   };
 
-  public func hasOpenEscrow(escrows: EscrowMap, caller: Principal, tokenIn: Text, amountIn: Nat): Bool {
-    switch (escrows.get(escrowKey(caller, tokenIn, amountIn))) {
+  public func hasOpenEscrow(
+    escrows: EscrowMap,
+    caller: Principal,
+    tokenIn: Text,
+    tokenOut: Text,
+    amountIn: Nat,
+  ): Bool {
+    switch (escrows.get(escrowKey(caller, tokenIn, tokenOut, amountIn))) {
       case (?e) { e.refundDue > 0 or e.poolDeposit > 0 };
       case (null) { false };
     };
+  };
+
+  // One-time-safe on every startup: old keys omitted tokenOut; re-key from stored rows.
+  public func reindexEscrowKeys(escrows: EscrowMap) {
+    let entries = getAllEscrows(escrows);
+    let oldKeys = List.empty<Text>();
+    for ((k, _) in escrows.entries()) { oldKeys.add(k) };
+    for (k in List.toArray(oldKeys).vals()) { escrows.remove(k) };
+    for (e in entries.vals()) { ignore putEscrow(escrows, e) };
   };
   public type PendingStage = {
     #awaitingPoolWithdraw;
