@@ -41,7 +41,6 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
     micOn,
     micBusy,
     audioStatus,
-    peerCount,
     speakingTabs,
     livePeers,
     error: sessionError,
@@ -66,10 +65,6 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
   const selfUsername = profile?.username[0] ?? null
 
   useEffect(() => {
-    setLocalError(null)
-  }, [roomId])
-
-  useEffect(() => {
     if (!identity) return
     const saved = readLiveSession()
     const principal = identity.getPrincipal().toText()
@@ -79,6 +74,11 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
         : undefined
     void joinRef.current(roomId, inviteToken ?? undefined, restore)
   }, [identity, roomId, inviteToken])
+
+  useEffect(() => {
+    if (!ready) return
+    unlockAudio()
+  }, [ready, unlockAudio])
 
   const runHost = async (fn: () => Promise<LiveRoomPublic | void>) => {
     if (!identity || busy) return
@@ -175,11 +175,6 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
             <span>
               {hostName} · {Number(displayRoom.peerCount)} {t("participants")}
             </span>
-            {state === "live" && peerCount > 0 && (
-              <span className="text-[10px] font-normal text-muted-foreground/60">
-                {t("liveHint", { count: peerCount })}
-              </span>
-            )}
           </p>
         </div>
 
@@ -192,7 +187,16 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
         {state === "live" && (
           <section className="rounded-2xl border bg-card/40 px-3 py-4">
             {audioHint && (
-              <p className="mb-3 text-center text-xs text-muted-foreground">{audioHint}</p>
+              <p
+                className={cn(
+                  "mb-3 text-center text-xs",
+                  audioStatus === "needsTap"
+                    ? "font-medium text-primary"
+                    : "text-muted-foreground"
+                )}
+              >
+                {audioHint}
+              </p>
             )}
             <LiveParticipantGrid
               peers={gridPeers}

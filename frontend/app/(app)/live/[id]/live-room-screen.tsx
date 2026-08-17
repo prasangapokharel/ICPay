@@ -8,5 +8,5 @@ export function LiveRoomScreen() {
   if (!roomId || roomId === "id") {
     return null
   }
-  return <LiveRoomView roomId={roomId} />
+  return <LiveRoomView key={roomId} roomId={roomId} />
 }

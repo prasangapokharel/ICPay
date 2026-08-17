@@ -2,16 +2,30 @@ import type { Identity } from "@icp-sdk/core/agent"
 import { markPlaybackUnlocked, wasPlaybackUnlocked } from "@/lib/live-audio-perms"
 import { postLiveSignal, type LivePeer } from "@/services/live/live"
 
-const STUN = [{ urls: "stun:stun.l.google.com:19302" }]
-const POLL_MS = 250
-const PEER_SYNC_MS = 500
+const STUN = [
+  { urls: "stun:stun.l.google.com:19302" },
+  { urls: "stun:stun1.l.google.com:19302" },
+]
+
+/** IC queries — free; keep modest to reduce replica load. */
+export const LIVE_SIGNAL_POLL_MS = 500
+export const LIVE_SIGNAL_POLL_MAX_MS = 2_000
+export const LIVE_PEER_SYNC_MS = 2_500
+export const LIVE_ROOM_POLL_MS = 12_000
+
+/** Local WebRTC retry — no canister calls. */
+/** Batch ICE into one update call — postLiveSignal burns cycles. */
+const ICE_FLUSH_MS = 80
+/** Local WebRTC retry when a peer is unhealthy — no canister calls. */
+const PEER_RETRY_MS = 3_000
 
 type SignalPayload =
   | { type: "offer"; sdp: string }
   | { type: "answer"; sdp: string }
   | { type: "ice"; candidate: RTCIceCandidateInit }
+  | { type: "iceBatch"; candidates: RTCIceCandidateInit[] }
 
-export type LiveAudioStatus = "idle" | "connecting" | "listening" | "speaking"
+export type LiveAudioStatus = "idle" | "connecting" | "listening" | "speaking" | "needsTap"
 
 type PeerState = {
   pc: RTCPeerConnection
@@ -21,9 +35,9 @@ type PeerState = {
 }
 
 export class LiveAudioSession {
+  readonly roomId: string
+  readonly tabId: string
   private identity: Identity
-  private roomId: string
-  private tabId: string
   private peers = new Map<string, PeerState>()
   private localStream: MediaStream | null = null
   private micEnabled = false
@@ -33,8 +47,13 @@ export class LiveAudioSession {
   private onSpeaking?: (tabId: string, speaking: boolean) => void
   private running = false
   private lastSignalId = 0n
-  private pollTimer: ReturnType<typeof setInterval> | null = null
-  private peerSyncTimer: ReturnType<typeof setInterval> | null = null
+  private pollTimer: ReturnType<typeof setTimeout> | null = null
+  private pollDelayMs = LIVE_SIGNAL_POLL_MS
+  private emptyPolls = 0
+  private visibilityPaused = false
+  private boundVisibility: (() => void) | null = null
+  private iceQueues = new Map<string, RTCIceCandidateInit[]>()
+  private iceFlushTimers = new Map<string, ReturnType<typeof setTimeout>>()
   private lastRemotePeers: LivePeer[] = []
   private peerLive = false
   private signalChain = Promise.resolve()
@@ -43,6 +62,9 @@ export class LiveAudioSession {
   private audioCtx: AudioContext | null = null
   private speakTimer: ReturnType<typeof setInterval> | null = null
   private localSpeaking = false
+  private lastPeerCount = -1
+  private lastStatus: LiveAudioStatus | null = null
+  private peerRetryTimer: ReturnType<typeof setInterval> | null = null
 
   constructor(identity: Identity, roomId: string, tabId: string) {
     this.identity = identity
@@ -68,13 +90,25 @@ export class LiveAudioSession {
 
   getStatus(): LiveAudioStatus {
     if (this.micEnabled) return "speaking"
-    if (this.peers.size === 0) return "idle"
+    const others = this.lastRemotePeers.filter((p) => p.tabId !== this.tabId)
+    if (others.length === 0) return "idle"
     const anyReady = [...this.peers.values()].some((p) => p.remoteReady)
-    return anyReady ? "listening" : "connecting"
+    if (anyReady) return "listening"
+    if (!this.playbackUnlocked && !wasPlaybackUnlocked()) return "needsTap"
+    return "connecting"
   }
 
   private emitStatus() {
-    this.onStatus?.(this.getStatus())
+    const status = this.getStatus()
+    if (status === this.lastStatus) return
+    this.lastStatus = status
+    this.onStatus?.(status)
+  }
+
+  private emitPeerCount(n: number) {
+    if (n === this.lastPeerCount) return
+    this.lastPeerCount = n
+    this.onPeerCount?.(n)
   }
 
   unlockPlayback() {
@@ -149,12 +183,12 @@ export class LiveAudioSession {
     await this.syncPeersInternal()
   }
 
-  private peerConnected(state: PeerState): boolean {
+  private peerHealthy(state: PeerState): boolean {
     const { pc } = state
+    if (!this.pcUsable(pc)) return false
     return (
-      this.pcUsable(pc) &&
-      pc.connectionState !== "failed" &&
-      pc.connectionState !== "closed"
+      state.remoteReady ||
+      (pc.connectionState === "connected" && pc.getReceivers().some((r) => r.track?.kind === "audio"))
     )
   }
 
@@ -166,15 +200,13 @@ export class LiveAudioSession {
     }
 
     const others = this.lastRemotePeers.filter((p) => p.tabId !== this.tabId)
-    this.onPeerCount?.(others.length)
+    this.emitPeerCount(others.length)
 
     for (const peer of others) {
       const existing = this.peers.get(peer.tabId)
-      if (existing && this.peerConnected(existing)) continue
+      if (existing && this.peerHealthy(existing)) continue
       if (existing) this.closePeer(peer.tabId)
-      if (this.tabId < peer.tabId) {
-        await this.connectAsOfferer(peer.tabId)
-      }
+      await this.connectAsOfferer(peer.tabId)
     }
 
     for (const tabId of [...this.peers.keys()]) {
@@ -186,40 +218,93 @@ export class LiveAudioSession {
   }
 
   beginPolling() {
-    if (!this.signalingEnabled || this.pollTimer) return
+    if (!this.signalingEnabled) return
     this.running = true
-    void this.poll()
-    // Second poll catches signals posted while the first round-trip was in flight.
-    void this.pollSoon()
-    this.pollTimer = setInterval(() => void this.poll(), POLL_MS)
-    if (!this.peerSyncTimer) {
-      this.peerSyncTimer = setInterval(() => {
-        if (this.peerLive) void this.syncPeersInternal()
-      }, PEER_SYNC_MS)
+    this.visibilityPaused = false
+    if (!this.pollTimer) {
+      this.pollDelayMs = LIVE_SIGNAL_POLL_MS
+      this.schedulePoll(80)
+      this.bindVisibility()
+    }
+    if (!this.peerRetryTimer) {
+      this.peerRetryTimer = setInterval(() => {
+        if (!this.peerLive) return
+        const others = this.lastRemotePeers.filter((p) => p.tabId !== this.tabId)
+        if (others.length === 0) return
+        const needsRetry = others.some((peer) => {
+          const state = this.peers.get(peer.tabId)
+          return !state || !this.peerHealthy(state)
+        })
+        if (needsRetry) void this.syncPeersInternal()
+      }, PEER_RETRY_MS)
     }
   }
 
-  private pollSoon() {
-    setTimeout(() => {
-      if (this.running) void this.poll()
-    }, 80)
+  private bindVisibility() {
+    if (this.boundVisibility || typeof document === "undefined") return
+    this.boundVisibility = () => {
+      if (document.hidden) {
+        this.visibilityPaused = true
+        if (this.pollTimer) {
+          clearTimeout(this.pollTimer)
+          this.pollTimer = null
+        }
+        return
+      }
+      this.visibilityPaused = false
+      if (this.running && this.signalingEnabled && !this.pollTimer) {
+        this.schedulePoll(0)
+      }
+    }
+    document.addEventListener("visibilitychange", this.boundVisibility)
+  }
+
+  private unbindVisibility() {
+    if (this.boundVisibility && typeof document !== "undefined") {
+      document.removeEventListener("visibilitychange", this.boundVisibility)
+    }
+    this.boundVisibility = null
+    this.visibilityPaused = false
+  }
+
+  private schedulePoll(delayMs?: number) {
+    if (this.pollTimer) clearTimeout(this.pollTimer)
+    if (!this.running || this.visibilityPaused) {
+      this.pollTimer = null
+      return
+    }
+    this.pollTimer = setTimeout(() => {
+      this.pollTimer = null
+      void this.poll().finally(() => {
+        if (this.running && !this.visibilityPaused) {
+          this.schedulePoll(this.pollDelayMs)
+        }
+      })
+    }, delayMs ?? this.pollDelayMs)
   }
 
   stopPolling() {
     this.running = false
     if (this.pollTimer) {
-      clearInterval(this.pollTimer)
+      clearTimeout(this.pollTimer)
       this.pollTimer = null
     }
-    if (this.peerSyncTimer) {
-      clearInterval(this.peerSyncTimer)
-      this.peerSyncTimer = null
+    if (this.peerRetryTimer) {
+      clearInterval(this.peerRetryTimer)
+      this.peerRetryTimer = null
     }
+    this.unbindVisibility()
   }
 
   teardown() {
     this.peerLive = false
     this.lastRemotePeers = []
+    this.lastPeerCount = -1
+    this.lastStatus = null
+    this.emptyPolls = 0
+    this.pollDelayMs = LIVE_SIGNAL_POLL_MS
+    this.flushAllIce()
+    this.clearIceState()
     this.disableSignaling()
     this.stopLocalVoiceMonitor()
     this.localStream?.getTracks().forEach((t) => t.stop())
@@ -230,7 +315,20 @@ export class LiveAudioSession {
   }
 
   static peerSyncIntervalMs() {
-    return PEER_SYNC_MS
+    return LIVE_PEER_SYNC_MS
+  }
+
+  private notePollResult(count: number) {
+    if (count === 0) {
+      this.emptyPolls += 1
+      this.pollDelayMs = Math.min(
+        LIVE_SIGNAL_POLL_MAX_MS,
+        LIVE_SIGNAL_POLL_MS + this.emptyPolls * 150
+      )
+      return
+    }
+    this.emptyPolls = 0
+    this.pollDelayMs = LIVE_SIGNAL_POLL_MS
   }
 
   private startLocalVoiceMonitor() {
@@ -276,6 +374,7 @@ export class LiveAudioSession {
     try {
       const { pollLiveSignals } = await import("@/services/live/live")
       const msgs = await pollLiveSignals(this.identity, this.roomId, this.tabId, this.lastSignalId)
+      this.notePollResult(msgs.length)
       for (const msg of msgs) {
         if (msg.id > this.lastSignalId) this.lastSignalId = msg.id
         if (msg.fromTab === this.tabId) continue
@@ -320,6 +419,13 @@ export class LiveAudioSession {
       const state = this.peers.get(fromTab)
       if (!state || !data.candidate || !this.pcUsable(state.pc)) return
       await this.addIceCandidate(state, data.candidate)
+    } else if (data.type === "iceBatch") {
+      const state = this.peers.get(fromTab)
+      if (!state || !this.pcUsable(state.pc)) return
+      for (const candidate of data.candidates) {
+        if (!candidate) continue
+        await this.addIceCandidate(state, candidate)
+      }
     }
   }
 
@@ -395,7 +501,10 @@ export class LiveAudioSession {
   private bindRemoteTrack(remoteTab: string, track: MediaStreamTrack) {
     if (track.kind !== "audio") return
 
-    track.onunmute = () => this.onSpeaking?.(remoteTab, true)
+    track.onunmute = () => {
+      this.onSpeaking?.(remoteTab, true)
+      this.emitStatus()
+    }
     track.onmute = () => this.onSpeaking?.(remoteTab, false)
 
     let audio = this.remoteAudio.get(remoteTab)
@@ -430,14 +539,17 @@ export class LiveAudioSession {
     this.peers.set(remoteTab, state)
 
     pc.onicecandidate = (ev) => {
-      if (!ev.candidate) return
-      void this.send(remoteTab, { type: "ice", candidate: ev.candidate.toJSON() })
+      if (!ev.candidate) {
+        void this.flushIce(remoteTab)
+        return
+      }
+      this.queueIce(remoteTab, ev.candidate.toJSON())
     }
 
     pc.ontrack = (ev) => {
       state.remoteReady = true
-      this.emitStatus()
       this.bindRemoteTrack(remoteTab, ev.track)
+      this.emitStatus()
     }
 
     pc.onconnectionstatechange = () => {
@@ -488,6 +600,48 @@ export class LiveAudioSession {
     }
   }
 
+  private queueIce(toTab: string, candidate: RTCIceCandidateInit) {
+    const queue = this.iceQueues.get(toTab) ?? []
+    queue.push(candidate)
+    this.iceQueues.set(toTab, queue)
+    if (this.iceFlushTimers.has(toTab)) return
+    this.iceFlushTimers.set(
+      toTab,
+      setTimeout(() => {
+        this.iceFlushTimers.delete(toTab)
+        void this.flushIce(toTab)
+      }, ICE_FLUSH_MS)
+    )
+  }
+
+  private async flushIce(toTab: string) {
+    const pending = this.iceFlushTimers.get(toTab)
+    if (pending) {
+      clearTimeout(pending)
+      this.iceFlushTimers.delete(toTab)
+    }
+    const queue = this.iceQueues.get(toTab)
+    if (!queue?.length) return
+    this.iceQueues.set(toTab, [])
+    if (queue.length === 1) {
+      await this.send(toTab, { type: "ice", candidate: queue[0] })
+      return
+    }
+    await this.send(toTab, { type: "iceBatch", candidates: queue })
+  }
+
+  private flushAllIce() {
+    for (const toTab of this.iceQueues.keys()) {
+      void this.flushIce(toTab)
+    }
+  }
+
+  private clearIceState() {
+    for (const timer of this.iceFlushTimers.values()) clearTimeout(timer)
+    this.iceFlushTimers.clear()
+    this.iceQueues.clear()
+  }
+
   private async send(toTab: string, payload: SignalPayload) {
     if (!this.signalingEnabled) return
     try {
@@ -498,6 +652,8 @@ export class LiveAudioSession {
   }
 
   private closePeer(tabId: string) {
+    void this.flushIce(tabId)
+    this.iceQueues.delete(tabId)
     const state = this.peers.get(tabId)
     state?.pc.close()
     this.peers.delete(tabId)

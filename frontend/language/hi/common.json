@@ -950,6 +950,7 @@
     "audioStatus": {
       "idle": "Waiting for others to join. Audio connects automatically when someone speaks.",
       "connecting": "Connecting audio…",
+      "needsTap": "Tap anywhere on this page to hear speakers.",
       "listening": "You are listening. Turn Mic on when you want to speak.",
       "speaking": "You are live. Others can hear you."
     },

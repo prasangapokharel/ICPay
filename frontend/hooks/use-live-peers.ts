@@ -1,10 +1,12 @@
 "use client"
 
+import { useMemo } from "react"
 import useSWR from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
-import { LiveAudioSession } from "@/lib/live-webrtc"
+import { usePageVisible } from "@/hooks/use-page-visible"
+import { LIVE_PEER_SYNC_MS } from "@/lib/live-webrtc"
 import { dedupeLivePeers } from "@/lib/live-peers"
-import { listLivePeers, type LivePeer } from "@/services/live/live"
+import { listLivePeers } from "@/services/live/live"
 
 export const livePeersKey = (principal: string, roomId: string) =>
   ["live-peers", roomId, principal] as const
@@ -14,20 +16,30 @@ const keyFor = (identity: { getPrincipal(): { toText(): string } } | undefined, 
 
 export function useLivePeers(roomId: string, enabled: boolean, selfTabId: string) {
   const { identity } = useAuth()
+  const pageVisible = usePageVisible()
+  const active = enabled && pageVisible
 
   const { data, error, mutate } = useSWR(
-    enabled && identity ? keyFor(identity, roomId) : null,
+    active && identity ? keyFor(identity, roomId) : null,
     () => listLivePeers(identity, roomId),
     {
-      refreshInterval: LiveAudioSession.peerSyncIntervalMs(),
-      revalidateOnFocus: true,
+      refreshInterval: active ? LIVE_PEER_SYNC_MS : 0,
+      revalidateOnFocus: active,
       revalidateOnMount: true,
-      dedupingInterval: 200,
+      dedupingInterval: 1_000,
       keepPreviousData: true,
     }
   )
 
-  const peers: LivePeer[] = data ? dedupeLivePeers(data, selfTabId) : []
+  const peers = useMemo(
+    () => (data ? dedupeLivePeers(data, selfTabId) : []),
+    [data, selfTabId]
+  )
 
-  return { peers, error, refresh: mutate }
+  const peerKey = useMemo(
+    () => peers.map((p) => p.tabId).sort().join("\0"),
+    [peers]
+  )
+
+  return { peers, peerKey, error, refresh: mutate }
 }
