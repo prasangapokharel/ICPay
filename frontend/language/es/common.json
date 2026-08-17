@@ -922,6 +922,10 @@
       "connecting": "Connecting audio…",
       "listening": "Audio connected — turn Mic on when you want to speak.",
       "speaking": "You are live. Others can hear you."
-    }
+    },
+    "createLockedTitle": "Premium hosting",
+    "createLockedBody": "Creating live rooms is for premium and ultra-premium usernames (1–4 characters). Upgrade your handle to host.",
+    "createLockedAction": "Get a username",
+    "createLockedHint": "Hosting requires a premium or ultra-premium username."
   }
 }
