@@ -6,8 +6,11 @@ import { LiveAudioSession } from "@/lib/live-webrtc"
 import { dedupeLivePeers } from "@/lib/live-peers"
 import { listLivePeers, type LivePeer } from "@/services/live/live"
 
+export const livePeersKey = (principal: string, roomId: string) =>
+  ["live-peers", roomId, principal] as const
+
 const keyFor = (identity: { getPrincipal(): { toText(): string } } | undefined, roomId: string) =>
-  identity ? (["live-peers", roomId, identity.getPrincipal().toText()] as const) : null
+  identity ? livePeersKey(identity.getPrincipal().toText(), roomId) : null
 
 export function useLivePeers(roomId: string, enabled: boolean, selfTabId: string) {
   const { identity } = useAuth()

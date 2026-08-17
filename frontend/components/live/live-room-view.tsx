@@ -75,8 +75,7 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
 
   const error = localError ?? (joined && displayRoom ? null : sessionError)
   const connecting = joining && !joined
-  const booting =
-    !identity || (!displayRoom && !error && (cacheLoading || connecting))
+  const waitingToJoin = !!identity && !joined && !sessionError
 
   useEffect(() => {
     if (!identity) return
@@ -129,15 +128,14 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
     return dedupeLivePeers(merged, tabId)
   }, [livePeers, identity, joined, tabId, selfUsername])
 
-  if (booting) {
-    return (
-      <div className="flex justify-center py-16">
-        <Spinner className="size-6 text-muted-foreground" />
-      </div>
-    )
-  }
-
   if (!displayRoom) {
+    if (!identity || waitingToJoin || joining || cacheLoading) {
+      return (
+        <div className="flex justify-center py-16">
+          <Spinner className="size-6 text-muted-foreground" />
+        </div>
+      )
+    }
     return (
       <Alert variant="destructive">
         <AlertDescription>{error ?? t("roomNotFound")}</AlertDescription>
@@ -205,10 +203,12 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
           </Alert>
         )}
 
-        {state === "live" && joined && (
+        {state === "live" && (joined || connecting) && (
           <section className="rounded-2xl border bg-card/40 px-3 py-4">
-            {audioHint && <p className="mb-3 text-center text-xs text-muted-foreground">{audioHint}</p>}
-            {identity && tabId && (
+            {joined && audioHint && (
+              <p className="mb-3 text-center text-xs text-muted-foreground">{audioHint}</p>
+            )}
+            {joined && identity && tabId ? (
               <LiveParticipantGrid
                 peers={gridPeers}
                 selfTabId={tabId}
@@ -217,12 +217,10 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
                 micOnTabIds={micOnTabIds}
                 speakingTabIds={speakingTabs}
               />
+            ) : (
+              <p className="py-2 text-center text-xs text-muted-foreground">{t("connecting")}</p>
             )}
           </section>
-        )}
-
-        {state === "live" && !joined && connecting && (
-          <p className="text-center text-sm text-muted-foreground">{t("connecting")}</p>
         )}
 
         {isHost && joined && (

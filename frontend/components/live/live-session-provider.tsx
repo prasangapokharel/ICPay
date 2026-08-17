@@ -13,7 +13,7 @@ import {
 import { usePathname } from "next/navigation"
 import { useSWRConfig } from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useLivePeers } from "@/hooks/use-live-peers"
+import { useLivePeers, livePeersKey } from "@/hooks/use-live-peers"
 import { liveRoomKey, useLiveRoom } from "@/hooks/use-live-room"
 import {
   createTabId,
@@ -29,6 +29,7 @@ import { micPermissionGranted } from "@/lib/live-audio-perms"
 import {
   joinLiveRoom,
   leaveLiveRoom,
+  listLivePeers,
   liveStateLabel,
   type LivePeer,
   type LiveRoomPublic,
@@ -76,6 +77,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
 
   const [roomId, setRoomId] = useState<string | null>(null)
   const [tabId, setTabId] = useState<string | null>(null)
+  const [activeRoom, setActiveRoom] = useState<LiveRoomPublic | null>(null)
   const [joined, setJoined] = useState(false)
   const [joining, setJoining] = useState(false)
   const [micOn, setMicOn] = useState(false)
@@ -92,7 +94,8 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
   const joinRef = useRef<LiveSessionContextValue["join"]>(() => Promise.resolve())
   const pendingMicRestoreRef = useRef(false)
 
-  const { room, mutate: mutateSessionRoom } = useLiveRoom(roomId ?? "", joined && !!roomId)
+  const { room: polledRoom, mutate: mutateSessionRoom } = useLiveRoom(roomId ?? "", joined && !!roomId)
+  const sessionRoom = activeRoom ?? polledRoom ?? null
   const { peers: livePeers, refresh: refreshPeers } = useLivePeers(roomId ?? "", joined, tabId ?? "")
 
   const persist = useCallback(
@@ -144,6 +147,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
     setJoined(false)
     setRoomId(null)
     setTabId(null)
+    setActiveRoom(null)
     clearLiveSession()
     if (identity && rid && tid) {
       await leaveLiveRoom(identity, rid, tid).catch(() => {})
@@ -176,8 +180,15 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
 
           const nextTabId = opts?.tabId ?? createTabId()
           const joinedRoom = await joinLiveRoom(identity, targetRoomId, nextTabId, inviteToken)
+          const peerList = await listLivePeers(identity, targetRoomId)
 
           void globalMutate(liveRoomKey(targetRoomId), joinedRoom, { revalidate: false })
+          void globalMutate(
+            livePeersKey(identity.getPrincipal().toText(), targetRoomId),
+            peerList,
+            { revalidate: false }
+          )
+          setActiveRoom(joinedRoom)
           setRoomId(targetRoomId)
           setTabId(nextTabId)
           setJoined(true)
@@ -231,6 +242,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
 
   const setRoom = useCallback(
     (next: LiveRoomPublic) => {
+      setActiveRoom(next)
       void globalMutate(liveRoomKey(next.id), next, { revalidate: false })
     },
     [globalMutate]
@@ -267,8 +279,8 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
   }, [identity, pathname])
 
   useEffect(() => {
-    if (!identity || !joined || !room || !roomId || !tabId) return
-    const live = liveStateLabel(room.state) === "live"
+    if (!identity || !joined || !sessionRoom || !roomId || !tabId) return
+    const live = liveStateLabel(sessionRoom.state) === "live"
     if (!live) {
       sessionRef.current?.disableSignaling()
       void sessionRef.current?.syncPeers([], false)
@@ -293,7 +305,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
       setMicOn(true)
       persist({ roomId, tabId, micOn: true })
     })()
-  }, [identity, joined, room, roomId, tabId, livePeers, refreshPeers, ensureSession, persist])
+  }, [identity, joined, sessionRoom, roomId, tabId, livePeers, refreshPeers, ensureSession, persist])
 
   const toggleMic = useCallback(async () => {
     const session = ensureSession()
@@ -335,7 +347,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
     (): LiveSessionContextValue => ({
       roomId,
       tabId,
-      room,
+      room: sessionRoom,
       joined,
       joining,
       micOn,
@@ -356,7 +368,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
     [
       roomId,
       tabId,
-      room,
+      sessionRoom,
       joined,
       joining,
       micOn,
