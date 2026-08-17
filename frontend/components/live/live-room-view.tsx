@@ -8,7 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
-import { createTabId, LiveAudioSession } from "@/lib/live-webrtc"
+import {
+  createTabId,
+  LiveAudioSession,
+  type LiveAudioStatus,
+} from "@/lib/live-webrtc"
 import {
   endLiveRoom,
   getLiveRoom,
@@ -32,8 +36,10 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
 
   const [room, setRoom] = useState<LiveRoomPublic | null>(null)
   const [peerCount, setPeerCount] = useState(0)
+  const [audioStatus, setAudioStatus] = useState<LiveAudioStatus>("idle")
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
+  const [micBusy, setMicBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [joined, setJoined] = useState(false)
   const [micOn, setMicOn] = useState(false)
@@ -80,13 +86,16 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
     const state = liveStateLabel(room.state)
     if (state !== "live") {
       sessionRef.current?.stopPolling()
-      sessionRef.current?.syncPeers([], false)
+      sessionRef.current?.stopMic()
+      void sessionRef.current?.syncPeers([], false)
       return
     }
 
     if (!sessionRef.current) {
-      sessionRef.current = new LiveAudioSession(identity, roomId, tabId)
-      sessionRef.current.setOnPeerCount(setPeerCount)
+      const session = new LiveAudioSession(identity, roomId, tabId)
+      session.setOnPeerCount(setPeerCount)
+      session.setOnStatus(setAudioStatus)
+      sessionRef.current = session
     }
     sessionRef.current.beginPolling()
 
@@ -94,15 +103,14 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
       try {
         const peers = await listLivePeers(identity, roomId)
         await sessionRef.current?.syncPeers(peers, true)
-        await refreshRoom()
       } catch {
-        // ignore poll errors
+        // ignore
       }
     }
     void tick()
-    const id = setInterval(tick, 3000)
+    const id = setInterval(tick, LiveAudioSession.peerSyncIntervalMs())
     return () => clearInterval(id)
-  }, [identity, joined, room, roomId, tabId, refreshRoom])
+  }, [identity, joined, room, roomId, tabId])
 
   const runHost = async (fn: () => Promise<LiveRoomPublic | void>) => {
     if (!identity || busy) return
@@ -121,19 +129,23 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
 
   const toggleMic = async () => {
     const session = sessionRef.current
-    if (!session) return
-    if (micOn) {
-      session.stopMic()
-      setMicOn(false)
-    } else {
-      try {
+    if (!session || micBusy) return
+    setMicBusy(true)
+    setError(null)
+    try {
+      if (micOn) {
+        session.stopMic()
+        setMicOn(false)
+      } else {
         await session.startMic()
         setMicOn(true)
         const peers = identity ? await listLivePeers(identity, roomId) : []
-        await session.syncPeers(peers, liveStateLabel(room?.state ?? { draft: null }) === "live")
-      } catch (e) {
-        setError(e instanceof Error ? e.message : String(e))
+        await session.syncPeers(peers, true)
       }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setMicBusy(false)
     }
   }
 
@@ -155,6 +167,12 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
 
   const state = liveStateLabel(room.state)
   const hostName = room.hostUsername[0] ? `@${room.hostUsername[0]}` : t("host")
+  const effectiveMicOn = state === "live" && micOn
+  const canMic = state === "live" && joined && !micBusy
+  const audioHint =
+    state === "live"
+      ? t(`audioStatus.${audioStatus}`)
+      : null
 
   return (
     <div className="space-y-6 pt-2">
@@ -177,9 +195,17 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
         </Alert>
       )}
 
+      {state === "live" && audioHint && (
+        <p className="text-sm text-muted-foreground">{audioHint}</p>
+      )}
+
       <div className="flex flex-wrap gap-2">
-        <Button variant={micOn ? "default" : "outline"} onClick={toggleMic} disabled={state !== "live"}>
-          {micOn ? t("micOn") : t("micOff")}
+        <Button
+          variant={effectiveMicOn ? "default" : "outline"}
+          onClick={toggleMic}
+          disabled={!canMic}
+        >
+          {micBusy ? t("micStarting") : effectiveMicOn ? t("micOn") : t("micOff")}
         </Button>
 
         {isHost && (
@@ -211,10 +237,13 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
               <Button
                 variant="destructive"
                 disabled={busy}
-                onClick={() => runHost(async () => {
-                  await endLiveRoom(identity!, roomId)
-                  sessionRef.current?.teardown()
-                })}
+                onClick={() =>
+                  runHost(async () => {
+                    await endLiveRoom(identity!, roomId)
+                    sessionRef.current?.teardown()
+                    setMicOn(false)
+                  })
+                }
               >
                 {t("end")}
               </Button>
@@ -229,10 +258,8 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
       {state === "paused" && (
         <p className="text-sm text-muted-foreground">{t("pausedHint")}</p>
       )}
-      {state === "live" && (
-        <p className="text-sm text-muted-foreground">
-          {t("liveHint", { count: peerCount })}
-        </p>
+      {state === "live" && peerCount > 0 && (
+        <p className="text-xs text-muted-foreground">{t("liveHint", { count: peerCount })}</p>
       )}
     </div>
   )
