@@ -7,11 +7,15 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { LiveGuideInfo } from "@/components/live/live-guide-info"
+import { useOwnProfile } from "@/hooks/use-wallet-data"
+import { canCreateLiveRoom } from "@/lib/live-access"
 import { listPublicLiveRooms, liveStateLabel, type LiveRoomPublic } from "@/services/live/live"
 
 export default function LivePage() {
   const t = useTranslations("live")
   const { identity } = useAuth()
+  const { data: profile } = useOwnProfile()
+  const canCreate = canCreateLiveRoom(profile?.username[0])
   const [rooms, setRooms] = useState<LiveRoomPublic[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -32,10 +36,25 @@ export default function LivePage() {
           </div>
           <LiveGuideInfo />
         </div>
-        <Button nativeButton={false} render={<Link href="/live/new" />} className="shrink-0">
-          {t("newRoom")}
-        </Button>
+        {canCreate ? (
+          <Button nativeButton={false} render={<Link href="/live/new" />} className="shrink-0">
+            {t("newRoom")}
+          </Button>
+        ) : (
+          <Button disabled className="shrink-0">
+            {t("newRoom")}
+          </Button>
+        )}
       </div>
+
+      {!canCreate && (
+        <p className="text-sm text-muted-foreground">
+          {t("createLockedHint")}{" "}
+          <Link href="/username" className="font-medium text-primary underline-offset-4 hover:underline">
+            {t("createLockedAction")}
+          </Link>
+        </p>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-12">
