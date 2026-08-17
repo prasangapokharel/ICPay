@@ -25,13 +25,16 @@ export class LiveAudioSession {
   private tabId: string
   private peers = new Map<string, PeerState>()
   private localStream: MediaStream | null = null
+  private micEnabled = false
   private remoteAudio = new Map<string, HTMLAudioElement>()
   private onPeerCount?: (n: number) => void
   private onStatus?: (status: LiveAudioStatus) => void
+  private onSpeaking?: (tabId: string, speaking: boolean) => void
   private running = false
   private lastSignalId = 0n
   private pollTimer: ReturnType<typeof setInterval> | null = null
   private signalChain = Promise.resolve()
+  private playbackUnlocked = false
 
   constructor(identity: Identity, roomId: string, tabId: string) {
     this.identity = identity
@@ -47,8 +50,16 @@ export class LiveAudioSession {
     this.onStatus = fn
   }
 
+  setOnSpeaking(fn: (tabId: string, speaking: boolean) => void) {
+    this.onSpeaking = fn
+  }
+
+  isMicOn(): boolean {
+    return this.micEnabled
+  }
+
   getStatus(): LiveAudioStatus {
-    if (this.localStream) return "speaking"
+    if (this.micEnabled) return "speaking"
     if (this.peers.size === 0) return "idle"
     const anyReady = [...this.peers.values()].some((p) => p.remoteReady)
     return anyReady ? "listening" : "connecting"
@@ -58,22 +69,35 @@ export class LiveAudioSession {
     this.onStatus?.(this.getStatus())
   }
 
+  unlockPlayback() {
+    this.playbackUnlocked = true
+    for (const audio of this.remoteAudio.values()) {
+      void audio.play().catch(() => {})
+    }
+  }
+
   async startMic(): Promise<void> {
-    if (this.localStream) return
-    this.localStream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: true, noiseSuppression: true },
-      video: false,
-    })
-    await this.applyLocalAudioToAllPeers()
+    const firstAcquire = !this.localStream
+    if (!this.localStream) {
+      this.localStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true },
+        video: false,
+      })
+    }
+    const track = this.localStream.getAudioTracks()[0]
+    if (track) track.enabled = true
+    this.micEnabled = true
+    if (firstAcquire) {
+      await this.attachLocalAudioToAllPeers()
+    }
     this.emitStatus()
   }
 
   stopMic() {
-    this.localStream?.getTracks().forEach((t) => t.stop())
-    this.localStream = null
-    for (const [remoteTab, state] of this.peers) {
-      void this.removeLocalAudioFromPeer(remoteTab, state)
-    }
+    this.micEnabled = false
+    const track = this.localStream?.getAudioTracks()[0]
+    if (track) track.enabled = false
+    this.onSpeaking?.(this.tabId, false)
     this.emitStatus()
   }
 
@@ -119,7 +143,9 @@ export class LiveAudioSession {
 
   teardown() {
     this.stopPolling()
-    this.stopMic()
+    this.localStream?.getTracks().forEach((t) => t.stop())
+    this.localStream = null
+    this.micEnabled = false
     this.closeAllPeers()
     this.emitStatus()
   }
@@ -210,6 +236,58 @@ export class LiveAudioSession {
     }
   }
 
+  private audioTransceiver(pc: RTCPeerConnection) {
+    return pc.getTransceivers().find(
+      (t) =>
+        t.receiver.track?.kind === "audio" ||
+        t.sender.track?.kind === "audio" ||
+        t.mid !== null
+    )
+  }
+
+  private setupAudioTransceiver(state: PeerState) {
+    const { pc } = state
+    const track = this.localStream?.getAudioTracks()[0]
+    const sending = !!(track && this.micEnabled && track.enabled)
+    const tx = this.audioTransceiver(pc)
+
+    if (!tx) {
+      if (sending && track && this.localStream) {
+        pc.addTrack(track, this.localStream)
+      } else {
+        pc.addTransceiver("audio", { direction: "recvonly" })
+      }
+      return
+    }
+
+    if (sending && track) {
+      void tx.sender.replaceTrack(track)
+      tx.direction = "sendrecv"
+    } else if (!tx.sender.track) {
+      tx.direction = "recvonly"
+    }
+  }
+
+  private bindRemoteTrack(remoteTab: string, track: MediaStreamTrack) {
+    if (track.kind !== "audio") return
+
+    track.onunmute = () => this.onSpeaking?.(remoteTab, true)
+    track.onmute = () => this.onSpeaking?.(remoteTab, false)
+
+    let audio = this.remoteAudio.get(remoteTab)
+    if (!audio) {
+      audio = new Audio()
+      audio.autoplay = true
+      ;(audio as HTMLAudioElement & { playsInline?: boolean }).playsInline = true
+      this.remoteAudio.set(remoteTab, audio)
+    }
+    const stream = new MediaStream([track])
+    audio.srcObject = stream
+    void audio.play().catch(() => {
+      if (this.playbackUnlocked) void audio!.play().catch(() => {})
+    })
+  }
+
   private async ensurePeer(remoteTab: string): Promise<PeerState> {
     const existing = this.peers.get(remoteTab)
     if (existing) return existing
@@ -231,16 +309,7 @@ export class LiveAudioSession {
     pc.ontrack = (ev) => {
       state.remoteReady = true
       this.emitStatus()
-      let audio = this.remoteAudio.get(remoteTab)
-      if (!audio) {
-        audio = new Audio()
-        audio.autoplay = true
-        ;(audio as HTMLAudioElement & { playsInline?: boolean }).playsInline = true
-        this.remoteAudio.set(remoteTab, audio)
-      }
-      const stream = ev.streams[0] ?? new MediaStream([ev.track])
-      audio.srcObject = stream
-      void audio.play().catch(() => {})
+      this.bindRemoteTrack(remoteTab, ev.track)
     }
 
     pc.onconnectionstatechange = () => {
@@ -255,45 +324,14 @@ export class LiveAudioSession {
     return state
   }
 
-  private setupAudioTransceiver(state: PeerState) {
-    const { pc } = state
-    const track = this.localStream?.getAudioTracks()[0]
-    const existing = pc.getTransceivers().find((t) => t.receiver.track?.kind === "audio" || t.mid)
-    if (track && this.localStream) {
-      if (existing?.sender) {
-        void existing.sender.replaceTrack(track)
-        existing.direction = "sendrecv"
-      } else {
-        pc.addTrack(track, this.localStream)
-      }
-    } else if (!existing) {
-      pc.addTransceiver("audio", { direction: "recvonly" })
-    }
-  }
-
-  private async applyLocalAudioToAllPeers() {
+  private async attachLocalAudioToAllPeers() {
     const track = this.localStream?.getAudioTracks()[0]
     if (!track) return
     for (const [remoteTab, state] of this.peers) {
-      const senders = state.pc.getSenders().filter((s) => s.track?.kind === "audio" || !s.track)
-      const sender = senders[0]
-      if (sender) {
-        await sender.replaceTrack(track)
-      } else if (this.localStream) {
-        state.pc.addTrack(track, this.localStream)
+      this.setupAudioTransceiver(state)
+      if (state.pc.signalingState === "stable") {
+        await this.renegotiate(remoteTab)
       }
-      await this.renegotiate(remoteTab)
-    }
-  }
-
-  private async removeLocalAudioFromPeer(remoteTab: string, state: PeerState) {
-    for (const sender of state.pc.getSenders()) {
-      if (sender.track?.kind === "audio") {
-        await sender.replaceTrack(null)
-      }
-    }
-    if (state.pc.signalingState === "stable") {
-      await this.renegotiate(remoteTab)
     }
   }
 
@@ -325,6 +363,7 @@ export class LiveAudioSession {
     const state = this.peers.get(tabId)
     state?.pc.close()
     this.peers.delete(tabId)
+    this.onSpeaking?.(tabId, false)
     const audio = this.remoteAudio.get(tabId)
     if (audio) {
       audio.srcObject = null

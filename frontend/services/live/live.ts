@@ -19,6 +19,7 @@ export type LiveRoomPublic = {
 export type LivePeer = {
   tabId: string
   principal: Principal
+  username: [] | [string]
   joinedAt: bigint
 }
 

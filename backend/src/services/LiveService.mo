@@ -258,8 +258,24 @@ module {
     )
   };
 
-  public func listPeers(service: LiveService, roomId: Text): [Types.LivePeer] {
-    LiveRepo.listPeers(service.peers, roomId);
+  public func listPeers(service: LiveService, roomId: Text): [Types.LivePeerPublic] {
+    Array.map<Types.LivePeer, Types.LivePeerPublic>(
+      LiveRepo.listPeers(service.peers, roomId),
+      func(p) { peerToPublic(service, p) },
+    )
+  };
+
+  private func peerToPublic(service: LiveService, peer: Types.LivePeer): Types.LivePeerPublic {
+    let username = switch (UserRepo.getByPrincipal(service.users, peer.principal)) {
+      case (?u) u.username;
+      case (null) null;
+    };
+    {
+      tabId = peer.tabId;
+      principal = peer.principal;
+      username;
+      joinedAt = peer.joinedAt;
+    }
   };
 
   private func toPublic(service: LiveService, room: Types.LiveRoom): Types.LiveRoomPublic {

@@ -64,7 +64,7 @@ mixin (live: LiveService.LiveService, mwConfig: MiddlewareAuth.Config) {
     LiveService.listPublicRooms(live, limit, offset);
   };
 
-  public shared query func listLivePeers(roomId: Text): async [Types.LivePeer] {
+  public shared query func listLivePeers(roomId: Text): async [Types.LivePeerPublic] {
     LiveService.listPeers(live, roomId);
   };
 };
