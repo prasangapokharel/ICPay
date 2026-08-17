@@ -1,18 +1,19 @@
 import type { Identity } from "@icp-sdk/core/agent"
-import { call, query, unwrap, type Outcome } from "@/services/client"
+import { call, unwrap, type Outcome } from "@/services/client"
 import { isLedgerSupported } from "@/services/tokens"
 import type { SwapQuoteResult, SwapResult } from "@/services/types"
 
-export function fetchSwapQuote(
+export async function fetchSwapQuote(
   identity: Identity | undefined,
   tokenIn: string,
   tokenOut: string,
   amountIn: bigint
 ): Promise<SwapQuoteResult> {
-  return query(identity, async (actor) => {
+  const outcome = await call(identity, "Quote failed", async (actor) => {
     const r = await actor.getSwapQuote(tokenIn, tokenOut, amountIn)
-    return unwrap(r as { ok: SwapQuoteResult } | { err: string })
+    return r as Outcome<SwapQuoteResult>
   })
+  return unwrap(outcome)
 }
 
 export function executeSwap(

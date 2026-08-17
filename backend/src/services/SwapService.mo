@@ -133,7 +133,7 @@ module {
     // with the same amount so the fee display and slippage math stay aligned.
     let tokenInFee = await LedgerService.getFee(tokenIn);
 
-    let poolResult = await resolvePool(service, tokenIn, tokenOut, false);
+    let poolResult = await getPool(service, tokenIn, tokenOut);
     switch poolResult {
       case (#err(e)) { return #err(e) };
       case (#ok({ poolId; zeroForOne; fee })) {
@@ -203,7 +203,7 @@ module {
     let futureTokenInFee  = LedgerService.getFee(tokenIn);
     let futureTokenOutFee = LedgerService.getFee(tokenOut);
     let futureUserBalance = LedgerService.getBalance(tokenIn, sourceAccount);
-    let futurePool        = resolvePool(service, tokenIn, tokenOut, true);
+    let futurePool        = getPool(service, tokenIn, tokenOut);
 
     let tokenInFee  = await futureTokenInFee;
     let tokenOutFee = await futureTokenOutFee;
@@ -467,13 +467,7 @@ module {
     } else { "ICRC1" };
   };
 
-  // cacheWrite=false for the quote query path — queries must not mutate state.
-  func resolvePool(
-    service: SwapService,
-    tokenIn: Text,
-    tokenOut: Text,
-    cacheWrite: Bool,
-  ): async { #ok: PoolRef; #err: Text } {
+  func getPool(service: SwapService, tokenIn: Text, tokenOut: Text): async { #ok: PoolRef; #err: Text } {
     let cacheKey = pairCacheKey(tokenIn, tokenOut);
     switch (service.poolCache.get(cacheKey)) {
       case (?cached) {
@@ -497,9 +491,7 @@ module {
       switch result {
         case (#ok(pool)) {
           let pid = Principal.toText(pool.canisterId);
-          if (cacheWrite) {
-            service.poolCache.add(cacheKey, { poolId = pid; token0 = pool.token0.address; fee = pool.fee });
-          };
+          service.poolCache.add(cacheKey, { poolId = pid; token0 = pool.token0.address; fee = pool.fee });
           return #ok({
             poolId = pid;
             zeroForOne = tokenIn == pool.token0.address;
