@@ -589,18 +589,21 @@ module {
     let userSub = LedgerService.depositAccount(service.ledger, caller);
     let mainBal = await LedgerService.getBalance(tokenIn, main);
     let cap = if (maxAmount < mainBal) { maxAmount } else { mainBal };
-    if (cap <= tokenInFee) { return cap == 0 };
-    let payout = cap - tokenInFee;
-    switch (await LedgerService.transfer(tokenIn, {
-      from_subaccount = null;
-      to = userSub;
-      amount = payout;
-      fee = null;
-      memo = null;
-      created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-    })) {
-      case (#Ok(_)) { true };
-      case (#Err(_)) { false };
+    if (cap > tokenInFee) {
+      let payout = cap - tokenInFee;
+      switch (await LedgerService.transfer(tokenIn, {
+        from_subaccount = null;
+        to = userSub;
+        amount = payout;
+        fee = null;
+        memo = null;
+        created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
+      })) {
+        case (#Ok(_)) { true };
+        case (#Err(_)) { false };
+      }
+    } else {
+      cap == 0
     };
   };
 
