@@ -87,3 +87,4 @@ node_modules/
 /pkg
 !backend/pkg/
 !backend/testing/pkg/
+app
