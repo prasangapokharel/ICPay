@@ -258,13 +258,15 @@ export function LiveRoomView({ roomId }: { roomId: string }) {
       </div>
 
       {state === "live" && (
-        <LiveMicControl
-          variant="dock"
-          micOn={effectiveMicOn}
-          busy={micBusy}
-          disabled={!canMic}
-          onToggle={() => void toggleMic()}
-        />
+        <div className="sticky bottom-24 z-[60] flex justify-center pt-4">
+          <LiveMicControl
+            variant="inline"
+            micOn={effectiveMicOn}
+            busy={micBusy}
+            disabled={!canMic}
+            onToggle={() => void toggleMic()}
+          />
+        </div>
       )}
     </>
   )

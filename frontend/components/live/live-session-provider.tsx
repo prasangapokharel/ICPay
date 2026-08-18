@@ -96,7 +96,7 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
   const targetRoomRef = useRef<string | null>(null)
 
   const { room: polledRoom, mutate: mutateSessionRoom } = useLiveRoom(roomId ?? "", joined && !!roomId)
-  const sessionRoom = activeRoom ?? polledRoom ?? null
+  const sessionRoom = polledRoom ?? activeRoom ?? null
   const roomLive = sessionRoom != null && liveStateLabel(sessionRoom.state) === "live"
   const { peers: livePeers, peerKey: livePeerKey, refresh: refreshPeers } = useLivePeers(
     roomId ?? "",
