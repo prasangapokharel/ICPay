@@ -10,23 +10,24 @@ can manage this list — no ordinary user and no stored role.
 
 ## Current reserved list
 
-**161 names reserved on mainnet** (checked 2026-08-08 via
-`listReservedUsernames`):
+**171 names reserved on mainnet** (updated 2026-08-19 to include ICPay feature pages):
 
 ```
-adele adidas adobe adyen algorand amazon amex amm apple aptos arbitrum audi
-bank base bentley beyonce bezos binance bmw btc bugatti burger caiman cartier
-casio chanel cisco coca coin coinbase cycles dell dex dext dior discord disney
-dodge dominic domino drake eminem eth ferrari fifa ford gates gillette google
-gucci haaland hamilton hermes honda hulu hyundai ibm ic icppay icpverse icrc
-ikea intel jeep jobs josh kanye kfc kia kraken lambo ledger lenovo maradona
-mazda mbappe mercedes messi metamask mlb musk nba netflix neurons neymar nfl
-nft nhl nike nissan nns nokia nvidia obama omega opensea oracle pay paypal
-peacock pele pepsi phantom pierre plaid polygon porsche prada puma putin
-reddit reebok revolut rihanna rivian rolex ronaldo samsung seiko shakira snap
-sns sol sony spotify square stock stripe subaru subway sui swap taylor telegram
-tiktok tinder token toyota trezor twitch ufc uni uniswap usdc usdt usdtf venmo
-vimeo visa volvo wallet wasm web3 wechat whatsapp wise youtube zap zara zidane
+adele adidas adobe admin adyen algorand amazon amex amm analytics apple aptos
+arbitrum audi bank base bentley beyonce bezos binance bmw btc bugatti burger
+caiman cartier casio chanel cisco coca coin coinbase cycles dell deposit dex
+dext dior discord disney dodge dominic domino drake eminem eth ferrari fifa
+ford gates gillette google gucci haaland hamilton hermes honda hulu hyundai ibm
+ic icbucket icfalcon icppay icpverse icrc ikea intel jeep jobs josh kanye kfc
+kia kraken lambo launch ledger lenovo live maradona mazda mbappe mercedes messi
+metamask mlb musk nba netflix neurons neymar nfl nft nhl nike nissan nns nokia
+nvidia obama omega opensea oracle pay paypal peacock pele pepsi phantom pierre
+plaid polygon porsche prada profile puma putin reddit reebok revolut rihanna
+rivian rolex ronaldo samsung seiko settings shakira snap sns sol sony spotify
+square stock stripe subaru subway sui swap taylor telegram tiktok tinder token
+toyota transactions transfer trezor twitch ufc uni uniswap usdc usdt usdtf
+venmo vimeo visa volvo wallet wasm web3 wechat whatsapp wise withdraw youtube
+zap zara zidane
 ```
 
 The page presents a searchable copy; the backend list is always the source of
@@ -62,7 +63,13 @@ wins it. There is no grace period or re-list backstop.
 
 ### Tier 1 — own platform brands
 ```
-icpverse   icppay   ic
+icpverse   icppay   icfalcon   icbucket   ic   admin
+```
+
+### Tier 1b — feature pages (route collision protection)
+```
+live   transfer   transactions   settings   launch   analytics   wallet   deposit
+withdraw   profile   username   swap
 ```
 
 ### Tier 2 — ICP ecosystem / DFINITY-related
