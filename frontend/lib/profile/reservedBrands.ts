@@ -60,6 +60,8 @@ export const RESERVED_BRANDS: readonly string[] = [
   "hyundai",
   "ibm",
   "ic",
+  "icbucket",
+  "icfalcon",
   "icppay",
   "icpverse",
   "icrc",
