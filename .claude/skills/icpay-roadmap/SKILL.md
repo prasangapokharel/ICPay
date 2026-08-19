@@ -11,7 +11,7 @@ before planning real work, and treat it as authoritative if the two disagree.
 ## Shipped
 
 **Phase 0 — Custody foundation.** Per-user subaccounts derived from the caller
-principal. Strict API→Service→Repository→Storage layering. 24-test suite.
+principal. Strict API→Service→Repository→Storage layering. 33-test suite.
 
 **Phase 1 — Username as the address.** Free claim for 5–8 characters; paid
 purchase for 1–4 (10 / 5 / 2 / 1 ICP by length). Usernames are permanent, with
@@ -48,28 +48,36 @@ ICRC-1 a transfer *from* the minting account is what mints. **ICPAY itself
 launched before that fix**, so its supply is still mintable and its ledger
 cannot be upgraded to change it — never claim ICPAY has a fixed supply.
 
+**Phase 5 — Token swaps.** ICPSwap integration for any ICRC-1 token pair.
+`getSwapQuote` returns price impact and minimum received. `executeSwap` with
+`amountOutMin` for on-chain slippage protection. Failed swap recovery paths for
+stuck inputs and pending swaps. Frontend `/swap` page with live quotes. **No LP
+positions yet** — only swaps.
+
+**Phase 6 — Cloud storage (ICPay Bucket).** On-chain file storage with capacity
+tiers (1–100GB), API keys with permissions, chunked uploads, public/private
+buckets, file operations (upload/download/delete/move/copy/bulk), metadata, tags,
+search. Cycle management and renewal system. Frontend `/bucket` pages and HTTP
+gateway for direct access.
+
+**Phase 6b — Live streaming rooms.** Create public/private/invite-only rooms with
+host controls. Frontend `/live` pages. Room state tracking (active/ended). Basic
+lifecycle; video/audio streaming is client-side.
+
 ## Next
 
-**Phase 5 — Liquidity and trading.** ICRC-2 approve + `transfer_from`, swap
-quotes with slippage, LP positions. The roadmap's recommendation is to
-**integrate an existing DEX** (ICPSwap, Sonic, KongSwap) rather than build an
-AMM. Do not propose building one. **This is the next thing to build** — prefer
-it over starting a later phase.
+**Phase 7 — Decentralizing custody.** Move the controller to an SNS/NNS canister,
+reproducible Docker builds, third-party security audit, private disclosure
+channel, incident policy. **This is the next thing to build** — prioritize it
+over starting Phase 8.
 
-**Phase 6 — Decentralizing custody.** Move the controller to an SNS- or
-NNS-controlled canister. Reproducible Docker builds, third-party audit,
-`SECURITY.md` with a private disclosure channel, published incident policy.
-Partially mitigated already: both canisters now have redundant recovery
-controllers, so key *loss* no longer means losing the canister. Key *theft* is
-still unmitigated — that is what this phase is for. See `docs/security/guide.md`.
+**Phase 8 — Merchants and payments.** Merchant accounts with verification badges;
+signed, expiring, single-use payment requests; checkout page; webhook API;
+refunds; settlement reports. Depends on Phase 3 for stablecoins and Phase 7 for
+security.
 
-**Phase 7 — Merchants and payments.** Merchant accounts with a verification
-badge; signed, expiring, single-use payment requests; checkout page; webhook
-API; refunds as a first-class operation; settlement reports. Depends on Phase 3
-for stablecoins and Phase 6 for security.
-
-**Phase 8 — Shopping.** Merchant directory, product listings, order history,
-optional escrow with a dispute window. The most speculative item on the list.
+**Phase 9 — Shopping.** Merchant directory, product listings, order history,
+optional escrow with dispute window. The most speculative item on the list.
 
 ## Deliberately refused
 
