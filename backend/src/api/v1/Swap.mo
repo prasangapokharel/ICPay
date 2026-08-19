@@ -19,9 +19,13 @@ mixin (swap: SwapService.SwapService, mwConfig: MiddlewareAuth.Config) {
     await SwapService.adminReleaseStuckSwapLeg(swap, caller, user, tokenIn, amountIn);
   };
 
-  // Returns pending swaps for admin visibility. PendingSwap has var fields
-  // so it cannot be a shared return type; we project to a plain record instead.
+  // Returns pending swaps count for admin visibility. Free query.
   public shared query func getPendingSwapCount() : async Nat {
-    SwapService.getPending(swap).size();
+    SwapService.getPendingCount(swap);
+  };
+
+  // Manual recovery: retry a single pending swap. Update call (costs cycles).
+  public shared ({ caller }) func recoverPendingSwap(txId: Text) : async Types.ApiResult<Text> {
+    await SwapService.retryOne(swap, txId);
   };
 };

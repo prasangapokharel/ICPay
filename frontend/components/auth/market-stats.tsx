@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { useIcpPrice } from "@/hooks/use-icp-price"
+import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 
 function useEasedPrice(target: number, duration = 500) {
   const [value, setValue] = useState(target)

@@ -18,13 +18,13 @@ import {
   InputGroupInput,
   InputGroupText,
 } from "@/components/ui/input-group"
-import { copyText } from "@/lib/wallet-utils"
+import { copyText } from "@/lib/wallet/utils"
 import {
   getBucketCdnBase,
   resolvePublicFileUrl,
   type BucketUrlMode,
 } from "@/lib/bucket/cdn"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 export function BucketPublicCdn({ publicBaseUrl }: { publicBaseUrl: string }) {
   const t = useTranslations("bucket")

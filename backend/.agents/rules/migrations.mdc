@@ -1,0 +1,16 @@
+---
+description: ICPay stable-memory migrations — one-shot wire, APPLIED, never re-wire
+alwaysApply: true
+globs: backend/src/migrations/**/*.mo, backend/src/main.mo, backend/src/storage/**/*.mo, backend/src/types.mo
+---
+
+# Migrations
+
+Read [`skills/migration/SKILL.md`](../skills/migration/SKILL.md) before changing persisted types.
+
+- New field on existing stored record → `migrations/<Name>.mo` + test in `testing/upgrade/`
+- Old types **inline** in migration module — do not import live shape as input
+- Wire `(with migration = …)` **once**, deploy, remove wire, mark **APPLIED**
+- Never re-wire `StampLedgerId`, `AddBucketFileMeta`, `AddBucketApiKeys`, etc.
+- Derived indexes: migrate canonical store; return index empty + `reindex()` at startup
+- No `preupgrade` / `postupgrade` / manual `stable var`

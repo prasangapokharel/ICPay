@@ -12,12 +12,12 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { UserIcon, Tick02Icon, Cancel01Icon, ShoppingBag01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import type { UserPublic } from "@/services/types"
 import Link from "next/link"
-import { useUsernameAvailability } from "@/hooks/use-wallet-data"
+import { useUsernameAvailability } from "@/hooks/wallet/useWalletData"
 import {
   validateFreeUsername,
   USERNAME_MAX_LENGTH,
   USERNAME_FREE_MIN_LENGTH,
-} from "@/lib/username"
+} from "@/lib/profile/username"
 
 type ProfileCardProps = {
   user: UserPublic

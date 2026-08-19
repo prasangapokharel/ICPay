@@ -10,6 +10,8 @@ description: >-
 
 Migrate actor state across canister upgrades using a migration expression attached to the actor. Each upgrade has at most one migration function.
 
+**ICPay project workflow** (one-shot wire, `migrations/` modules, APPLIED): load [`../../migration/SKILL.md`](../../migration/SKILL.md).
+
 **For multi-migration with a `migrations/` directory**, load `migrating-motoko-enhanced` instead.
 
 ## When to Use

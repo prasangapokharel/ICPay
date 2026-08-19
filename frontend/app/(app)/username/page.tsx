@@ -31,12 +31,12 @@ import {
   BADGE_RANGES,
   tierBadgeSpans,
   type BadgeSpan,
-} from "@/lib/verifed/premium-tick"
+} from "@/lib/verified/premiumTick"
 import { purchaseUsername, getUsernameTreasury } from "@/services/buy/buy"
 import type { Purchase } from "@/services/types"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useRefreshWallet } from "@/hooks/use-wallet-data"
-import { formatAmount, ICP_FEE, shortPrincipal } from "@/lib/wallet-utils"
+import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { formatAmount, ICP_FEE, shortPrincipal } from "@/lib/wallet/utils"
 import {
   priceFor,
   tierFor,
@@ -44,14 +44,14 @@ import {
   TIERS,
   USERNAME_MAX_LENGTH,
   USERNAME_FREE_MIN_LENGTH,
-} from "@/lib/username"
+} from "@/lib/profile/username"
 import {
   useUsernameAvailability,
   useLiveBalance,
-} from "@/hooks/use-wallet-data"
+} from "@/hooks/wallet/useWalletData"
 import { SendSuccess } from "@/components/wallet/send-success"
-import { primeSuccessChime } from "@/lib/success-chime"
-import { cn } from "@/lib/utils"
+import { primeSuccessChime } from "@/lib/ui/successChime"
+import { cn } from "@/lib/ui/utils"
 
 export default function UsernamePage() {
   const t = useTranslations("buyUsername")

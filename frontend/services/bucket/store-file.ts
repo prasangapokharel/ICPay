@@ -13,7 +13,7 @@ import {
   readFileChunk,
   uploadChunkCount,
   uploadLimits,
-} from "@/lib/bucket/upload-chunk"
+} from "@/lib/bucket/uploadChunk"
 
 export type StoreFileOptions = {
   bucketId: string

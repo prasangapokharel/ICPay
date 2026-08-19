@@ -11,10 +11,10 @@ import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
-import { usePatchDashboardUser, useOwnProfile } from "@/hooks/use-wallet-data"
+import { usePatchDashboardUser, useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { updateUsername } from "@/services/profile/profile"
-import { avatarUriFor } from "@/lib/avatar"
-import { copyText, shortPrincipal } from "@/lib/wallet-utils"
+import { avatarUriFor } from "@/lib/profile/avatar"
+import { copyText, shortPrincipal } from "@/lib/wallet/utils"
 
 export default function ProfilePage() {
   const t = useTranslations("profile")

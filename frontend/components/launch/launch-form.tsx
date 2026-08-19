@@ -31,10 +31,10 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip"
 import { LogoPicker } from "@/components/launch/logo-picker"
-import { useDebounced } from "@/hooks/use-debounced"
-import { useSymbolAvailability, useLaunchFee, useLaunchReady } from "@/hooks/use-launch-data"
-import { useLiveBalance } from "@/hooks/use-wallet-data"
-import { formatAmount, ICP_FEE } from "@/lib/wallet-utils"
+import { useDebounced } from "@/hooks/ui/useDebounced"
+import { useSymbolAvailability, useLaunchFee, useLaunchReady } from "@/hooks/token/useLaunchData"
+import { useLiveBalance } from "@/hooks/wallet/useWalletData"
+import { formatAmount, ICP_FEE } from "@/lib/wallet/utils"
 import type { LaunchInput } from "@/services/launch/launch"
 import {
   NAME_MAX_LENGTH,
@@ -48,8 +48,8 @@ import {
   validateSupply,
   parseSupply,
   formatSupply,
-} from "@/lib/launch"
-import { cn } from "@/lib/utils"
+} from "@/lib/token/launch"
+import { cn } from "@/lib/ui/utils"
 
 type Socials = { website: string; telegram: string; twitter: string }
 

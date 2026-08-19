@@ -22,11 +22,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
-import { useBucketPricingTiers } from "@/hooks/use-bucket"
+import { useBucketPricingTiers } from "@/hooks/bucket/useBucket"
 import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
 import { BUCKET_POPULAR_TIER_GB } from "@/lib/bucket/pricing"
-import { formatAmount } from "@/lib/wallet-utils"
-import { cn } from "@/lib/utils"
+import { formatAmount } from "@/lib/wallet/utils"
+import { cn } from "@/lib/ui/utils"
 
 const FEATURE_KEYS = [
   "pricingFeaturePublic",

@@ -8,11 +8,11 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet-utils"
+import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet/utils"
 import { ReceiptPreview } from "@/components/wallet/receipt-preview"
-import { useIcpPrice } from "@/hooks/use-icp-price"
-import { playSuccessChime } from "@/lib/success-chime"
-import { cn } from "@/lib/utils"
+import { useIcpPrice } from "@/hooks/market/useIcpPrice"
+import { playSuccessChime } from "@/lib/ui/successChime"
+import { cn } from "@/lib/ui/utils"
 
 type SendSuccessProps = {
   amount: bigint

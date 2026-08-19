@@ -1,0 +1,14 @@
+---
+description: ICPay hooks/ — folder-per-module, camelCase files, SWR data hooks
+alwaysApply: true
+globs: frontend/hooks/**/*.ts
+---
+
+# hooks/ standard
+
+Read [`skills/hooks-standard/SKILL.md`](../skills/hooks-standard/SKILL.md) before adding files under `hooks/`.
+
+- One domain folder per module: `hooks/wallet/`, `hooks/live/`, `hooks/bucket/`
+- camelCase filenames with `use` prefix: `useWalletData.ts` — no kebab-case at hooks root
+- SWR + React only — pure helpers go in `lib/`, canister calls in `services/`
+- Import: `@/hooks/<module>/use<Name>` — never `@/hooks/use-wallet-data` style flat paths

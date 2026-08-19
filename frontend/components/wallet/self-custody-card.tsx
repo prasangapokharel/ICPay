@@ -7,10 +7,10 @@ import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
-import { formatTokenAmount } from "@/lib/wallet-utils"
+import { formatTokenAmount } from "@/lib/wallet/utils"
 import { sweepToCustody } from "@/services/sweep/sweep"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useDepositAddress, useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useDepositAddress, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import type { TokenHolding } from "@/services/tokens"
 
 export function SelfCustodyCard({

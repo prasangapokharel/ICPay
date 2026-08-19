@@ -48,6 +48,10 @@ module {
   // size lets one caller's request grow with total canister activity. 50 rows
   // is more history than the UI shows and keeps the per-call cost predictable.
   public let MAX_PAGE_SIZE: Nat = 50;
+  
+  // Transaction history limit per user (not yet enforced, future optimization target).
+  public let TX_HISTORY_LIMIT: Nat = 20;
+  
   // searchUsers has no caller gate, so an unbounded result would let a public
   // query's cost grow with total registered users. Comfortably above what the
   // frontend suggestion list renders (10), never returning the whole registry.

@@ -13,7 +13,7 @@ import {
   ArrowUpRight01Icon,
   Copy01Icon,
 } from "@hugeicons/core-free-icons"
-import { RESERVED_BRANDS } from "@/lib/reserved-brands"
+import { RESERVED_BRANDS } from "@/lib/profile/reservedBrands"
 
 const CONTACT_HANDLE = "@IcpayOfficial"
 const CONTACT_LINK = "https://x.com/icpayofficial"

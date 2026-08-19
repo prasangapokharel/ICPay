@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { Spinner } from "@/components/ui/spinner"
-import { useIcpaySale } from "@/hooks/use-icpay-sale"
+import { useIcpaySale } from "@/hooks/icpay/useIcpaySale"
 import { IcpayPresaleCard } from "@/components/icpay/icpay-presale-card"
 import { PresaleInfoTip } from "@/components/icpay/presale-info-tip"
 

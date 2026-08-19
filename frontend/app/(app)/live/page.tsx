@@ -9,9 +9,9 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { LiveGuideInfo } from "@/components/live/live-guide-info"
-import { useOwnProfile } from "@/hooks/use-wallet-data"
-import { liveRoomKey } from "@/hooks/use-live-room"
-import { canCreateLiveRoom } from "@/lib/live-access"
+import { useOwnProfile } from "@/hooks/wallet/useWalletData"
+import { liveRoomKey } from "@/hooks/live/useLiveRoom"
+import { canCreateLiveRoom } from "@/lib/live/access"
 import { listPublicLiveRooms, liveStateLabel, type LiveRoomPublic } from "@/services/live/live"
 
 function liveBadgeVariant(state: ReturnType<typeof liveStateLabel>) {

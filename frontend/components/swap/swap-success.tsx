@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
-import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap-utils"
+import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import { ICP_LEDGER_ID } from "@/services/tokens"
-import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet-utils"
-import { playSuccessChime } from "@/lib/success-chime"
+import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet/utils"
+import { playSuccessChime } from "@/lib/ui/successChime"
 import type { TokenHolding } from "@/services/tokens"
 
 export function SwapSuccessView({

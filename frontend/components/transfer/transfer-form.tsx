@@ -25,25 +25,25 @@ import {
   isHexAccountId,
   ICP_FEE,
   E8S,
-} from "@/lib/wallet-utils"
+} from "@/lib/wallet/utils"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { BookmarkAdd01Icon, QrCodeScanIcon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
 import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-card"
 import { BookmarkDrawer } from "@/components/bookmark/bookmark-drawer"
 import { BookmarkButton } from "@/components/bookmark/bookmark-drawer"
-import { useResolvedUsername, useRecipientProfile } from "@/hooks/use-wallet-data"
-import { useDebounced } from "@/hooks/use-debounced"
-import { useIcpPrice } from "@/hooks/use-icp-price"
-import { useFiatValue } from "@/hooks/use-fiat-value"
+import { useResolvedUsername, useRecipientProfile } from "@/hooks/wallet/useWalletData"
+import { useDebounced } from "@/hooks/ui/useDebounced"
+import { useIcpPrice } from "@/hooks/market/useIcpPrice"
+import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { Principal } from "@icp-sdk/core/principal"
 import { QrScanner, takeScannedAddress } from "@/components/scan/scan"
-import { primeSuccessChime } from "@/lib/success-chime"
-import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/icp-address"
+import { primeSuccessChime } from "@/lib/ui/successChime"
+import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/wallet/icpAddress"
 import { parsePaymentLink, amountFieldValue } from "@/services/pay/pay"
 import type { TransferMode } from "@/services/transfer/transfer"
-import { USERNAME_MIN_LENGTH } from "@/lib/username"
-import { cn } from "@/lib/utils"
+import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
+import { cn } from "@/lib/ui/utils"
 
 const labelKeys = {
   username: { label: "labelUsername", placeholder: "placeholderUsername" },

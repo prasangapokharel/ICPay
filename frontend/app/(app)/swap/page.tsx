@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl"
 import { useAuth } from "@/components/auth/auth-provider"
 import { SwapForm, type SwapSuccess } from "@/components/swap/swap-form"
 import { SwapSuccessView } from "@/components/swap/swap-success"
-import { useApplySwapBalances } from "@/hooks/use-wallet-data"
+import { useApplySwapBalances } from "@/hooks/wallet/useWalletData"
 
 export default function SwapPage() {
   const t = useTranslations("swap")

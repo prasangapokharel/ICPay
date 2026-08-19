@@ -13,8 +13,8 @@ import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import { BucketCard } from "@/components/bucket/bucket-card"
 import { BucketCreateForm } from "@/components/bucket/bucket-create-form"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useBucketList, useInvalidateBucketCache } from "@/hooks/use-bucket"
-import { useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useBucketList, useInvalidateBucketCache } from "@/hooks/bucket/useBucket"
+import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { createBucket } from "@/services/bucket/bucket"
 
 export default function BucketPage() {

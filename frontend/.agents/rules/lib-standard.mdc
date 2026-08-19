@@ -1,0 +1,15 @@
+---
+description: ICPay lib/ — folder-per-module, camelCase files, pure helpers only
+alwaysApply: true
+globs: frontend/lib/**/*.ts
+---
+
+# lib/ standard
+
+Read [`skills/lib-standard/SKILL.md`](../skills/lib-standard/SKILL.md) before adding files under `lib/`.
+
+- One domain folder per module: `lib/wallet/`, `lib/live/`, `lib/bucket/`
+- camelCase filenames: `sessionStore.ts`, `icpAddress.ts` — no kebab-case at lib root
+- Pure helpers only — no React, no canister calls (those go in `services/`)
+- Import: `@/lib/<module>/<file>` — never `@/lib/wallet-utils` style flat paths
+- `cn()` lives at `@/lib/ui/utils`

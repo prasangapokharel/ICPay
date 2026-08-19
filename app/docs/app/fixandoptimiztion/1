@@ -1,0 +1,337 @@
+Yes. For a **small but professional React Native app**, don't over-engineer. Focus on optimizations that actually improve startup, scrolling, memory, battery, and network usage.
+
+### High-value optimizations
+
+| Area            | Do this                                   | Priority |
+| --------------- | ----------------------------------------- | -------: |
+| 📦 Bundle       | Remove unused dependencies                |       🔴 |
+| 🚀 Startup      | Lazy-load heavy screens/features          |       🔴 |
+| 🖼️ Images      | WebP/AVIF, proper dimensions, caching     |       🔴 |
+| 📜 Lists        | `FlatList`/`FlashList` for long lists     |       🔴 |
+| 🌐 API          | Cache + request deduplication             |       🔴 |
+| 🔐 Security     | SecureStore for tokens/secrets            |       🔴 |
+| 💾 Storage      | Don't put large data in AsyncStorage      |       🟠 |
+| 🧠 State        | Keep state local; avoid global everything |       🟠 |
+| 🎨 UI           | Reuse components/design tokens            |       🟠 |
+| 📱 Navigation   | Lazy-load rarely used screens             |       🟠 |
+| 🔄 Network      | Retry only safe/idempotent requests       |       🟠 |
+| 🪵 Logs         | Remove production debug logs              |       🟠 |
+| ♿ Accessibility | Labels, touch targets, dynamic text       |       🟠 |
+| 🧪 Testing      | Test critical flows                       |       🟠 |
+
+### 1. Keep the app bundle small
+
+Don't install a library for something you can implement in 20 lines.
+
+Before adding:
+
+```bash
+npm install some-package
+```
+
+ask:
+
+```text
+Can React Native / Expo already do this?
+Can an existing dependency do this?
+Can I create a tiny reusable utility?
+```
+
+Also periodically inspect dependencies.
+
+```bash
+npx expo-doctor
+```
+
+Expo recommends `expo-doctor` for checking project configuration and dependency compatibility.
+
+---
+
+### 2. Images are usually the biggest easy win
+
+Don't ship:
+
+```text
+hero.png      4 MB
+avatar.png    2 MB
+background.jpg 5 MB
+```
+
+Prefer:
+
+```text
+hero.webp
+avatar.webp
+background.webp
+```
+
+And don't load a 2000×2000 image when the UI displays it at 80×80.
+
+For your app:
+
+```text
+assets/
+├── icons/
+├── images/
+└── illustrations/
+```
+
+Keep icons as vector/SVG where practical rather than hundreds of large PNGs.
+
+---
+
+### 3. Avoid unnecessary global state
+
+Don't do:
+
+```text
+Global Store
+├── modal
+├── searchInput
+├── selectedTab
+├── isLoading
+├── formInput
+├── dropdown
+└── ...
+```
+
+Keep temporary UI state inside the component:
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+```
+
+Global state should be for genuinely shared state:
+
+```text
+auth
+user
+wallet
+app settings
+```
+
+---
+
+### 4. API caching
+
+For a serious app, use a server-state library such as **TanStack Query** rather than manually managing:
+
+```text
+loading
+error
+data
+refetch
+cache
+```
+
+for every API.
+
+Example:
+
+```ts
+const { data, isPending, error } = useQuery({
+  queryKey: ['wallet', walletId],
+  queryFn: () => walletApi.get(walletId),
+});
+```
+
+This gives you caching, deduplication, background refetching and stale-data management without reinventing it.
+
+---
+
+### 5. Optimize lists
+
+For:
+
+```text
+transactions
+notifications
+messages
+users
+payments
+```
+
+use virtualization.
+
+```tsx
+<FlatList
+  data={transactions}
+  keyExtractor={(item) => item.id}
+  renderItem={({ item }) => (
+    <TransactionCard transaction={item} />
+  )}
+/>
+```
+
+Don't render hundreds of items inside:
+
+```tsx
+<ScrollView>
+  {items.map(...)}
+</ScrollView>
+```
+
+---
+
+### 6. Don't overuse `useMemo`
+
+Avoid this everywhere:
+
+```tsx
+const value = useMemo(() => name.toUpperCase(), [name]);
+```
+
+For cheap operations, it's unnecessary overhead and complexity.
+
+Use memoization when it prevents expensive calculations or measurable re-renders.
+
+---
+
+### 7. App startup
+
+Your first screen should load extremely quickly.
+
+Avoid doing this during startup:
+
+```text
+App launch
+ ↓
+Initialize everything
+ ↓
+Load every API
+ ↓
+Load every feature
+ ↓
+Initialize analytics
+ ↓
+Initialize notifications
+ ↓
+Initialize wallet
+ ↓
+Finally show UI
+```
+
+Instead:
+
+```text
+App launch
+ ↓
+Render shell
+ ↓
+Restore critical session
+ ↓
+Show UI
+ ↓
+Initialize non-critical services
+```
+
+Startup-critical code should be minimal.
+
+---
+
+### 8. Wallet/security optimization
+
+For a wallet-style application, this is especially important:
+
+```text
+SecureStore
+    ↓
+encrypted credential/token
+    ↓
+Biometric authentication
+    ↓
+Sensitive operation
+```
+
+Don't keep sensitive secrets in:
+
+```text
+AsyncStorage
+Redux persistence
+plain JSON files
+logs
+React state longer than necessary
+```
+
+---
+
+### 9. Don't duplicate API/business logic
+
+Your earlier architecture is good:
+
+```text
+features/
+├── wallet/
+│   ├── api/
+│   ├── components/
+│   ├── hooks/
+│   └── types.ts
+│
+├── payments/
+│   ├── api/
+│   ├── components/
+│   ├── hooks/
+│   └── types.ts
+│
+└── auth/
+    ├── api/
+    ├── hooks/
+    └── types.ts
+```
+
+One API client:
+
+```text
+services/api/client.ts
+```
+
+One storage abstraction:
+
+```text
+services/storage/
+```
+
+One biometric abstraction:
+
+```text
+features/security/biometric/
+```
+
+This keeps the app small even when functionality grows.
+
+---
+
+### 10. Production build
+
+Don't judge performance using only development mode.
+
+Test actual release builds because development tooling adds significant overhead.
+
+For Expo/EAS, use a production-oriented build profile and test on **real iOS and Android devices**.
+
+---
+
+## My "small app" optimization rule
+
+Don't add 30 optimization techniques.
+
+Start with these **10**:
+
+```text
+✅ TypeScript strict
+✅ Expo Router
+✅ Feature-based architecture
+✅ TanStack Query for server state
+✅ SecureStore for sensitive data
+✅ Biometric authentication
+✅ FlatList for large lists
+✅ Optimized WebP/SVG assets
+✅ Lazy-load heavy features
+✅ Production build testing
+```
+
+Then measure.
+
+**Don't optimize code because it "looks faster." Optimize the things that profiling actually shows are slow.**
+
+For your type of app, I'd prioritize **startup time + bundle size + API caching + list rendering + image size + secure storage** before things like `useMemo`, `useCallback`, or aggressive component memoization.

@@ -18,16 +18,16 @@ import {
 } from "@/components/ui/drawer"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
-import { useIcpaySale } from "@/hooks/use-icpay-sale"
+import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useIcpaySale } from "@/hooks/icpay/useIcpaySale"
 import { buyIcpay, icpayReceiveAmount, type IcpayPurchase } from "@/services/icpay/sale"
 import {
   formatAmount,
   formatTokenAmount,
   parseTokenAmount,
   shortPrincipal,
-} from "@/lib/wallet-utils"
-import { primeSuccessChime } from "@/lib/success-chime"
+} from "@/lib/wallet/utils"
+import { primeSuccessChime } from "@/lib/ui/successChime"
 
 const ICP_DECIMALS = 8
 const QUICK_AMOUNTS = ["0.1", "1", "5"] as const

@@ -1,0 +1,15 @@
+---
+description: ICPay ApiResult errors — no traps for expected failures
+alwaysApply: true
+globs: backend/src/api/**/*.mo, backend/src/services/**/*.mo, backend/src/validators/**/*.mo
+---
+
+# Error handling
+
+Read [`skills/error-handling/SKILL.md`](../skills/error-handling/SKILL.md) before writing services or APIs.
+
+- Public failures → `Types.ApiResult<T>` with `#err : Text`
+- Validators → pure `?Text` (null = valid)
+- Early `return #err(...)` — fail before ledger calls
+- Map ledger errors with `TransferError.describe` — no raw traps for user input
+- API mixins delegate only; services own all `#err` paths

@@ -13,19 +13,19 @@ import {
 import { usePathname } from "next/navigation"
 import { useSWRConfig } from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useLivePeers, livePeersKey } from "@/hooks/use-live-peers"
-import { liveRoomKey, useLiveRoom } from "@/hooks/use-live-room"
+import { useLivePeers, livePeersKey } from "@/hooks/live/useLivePeers"
+import { liveRoomKey, useLiveRoom } from "@/hooks/live/useLiveRoom"
 import {
   createTabId,
   LiveAudioSession,
   type LiveAudioStatus,
-} from "@/lib/live-webrtc"
+} from "@/lib/live/webrtc"
 import {
   clearLiveSession,
   readLiveSession,
   writeLiveSession,
-} from "@/lib/live-session-store"
-import { micPermissionGranted, wasPlaybackUnlocked } from "@/lib/live-audio-perms"
+} from "@/lib/live/sessionStore"
+import { micPermissionGranted, wasPlaybackUnlocked } from "@/lib/live/audioPerms"
 import {
   joinLiveRoom,
   leaveLiveRoom,

@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl"
 import { useAuth } from "@/components/auth/auth-provider"
 import { LiveCreateForm } from "@/components/live/live-create-form"
 import { LiveCreateLocked } from "@/components/live/live-create-locked"
-import { useOwnProfile } from "@/hooks/use-wallet-data"
-import { canCreateLiveRoom } from "@/lib/live-access"
+import { useOwnProfile } from "@/hooks/wallet/useWalletData"
+import { canCreateLiveRoom } from "@/lib/live/access"
 
 export default function LiveNewPage() {
   const t = useTranslations("live")

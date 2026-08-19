@@ -18,9 +18,9 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon, ArrowRight01Icon, LinkSquare02Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
 import type { TransactionPublic } from "@/services/types"
-import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, explorerTxUrl, shortenCounterparty } from "@/lib/wallet-utils"
-import { useLedgerSymbol } from "@/hooks/use-wallet-data"
-import { cn } from "@/lib/utils"
+import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, explorerTxUrl, shortenCounterparty } from "@/lib/wallet/utils"
+import { useLedgerSymbol } from "@/hooks/wallet/useWalletData"
+import { cn } from "@/lib/ui/utils"
 
 type TransactionListProps = {
   transactions: TransactionPublic[]

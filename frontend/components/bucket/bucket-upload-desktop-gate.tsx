@@ -9,8 +9,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useIsMobile } from "@/hooks/use-mobile"
-import { cn } from "@/lib/utils"
+import { useIsMobile } from "@/hooks/ui/useMobile"
+import { cn } from "@/lib/ui/utils"
 
 /** Bucket uploads are desktop-only — WebP conversion and multi-MB files need a full browser. */
 export function useBucketUploadDesktopOnly() {

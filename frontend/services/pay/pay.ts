@@ -1,7 +1,7 @@
-import { parseIcp, memoByteLength, MEMO_MAX_BYTES } from "@/lib/wallet-utils"
-import { profileUrlFor } from "@/lib/profile-url"
-import { validateUsername } from "@/lib/username"
-import { isReservedHandle } from "@/lib/reserved-handles"
+import { parseIcp, memoByteLength, MEMO_MAX_BYTES } from "@/lib/wallet/utils"
+import { profileUrlFor } from "@/lib/profile/url"
+import { validateUsername } from "@/lib/profile/username"
+import { isReservedHandle } from "@/lib/profile/reservedHandles"
 
 // A payment request is a URL, not on-chain state: it carries who to pay and what
 // for, and authorizes nothing by itself. The payer still reviews and signs, which

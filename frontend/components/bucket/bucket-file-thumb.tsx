@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { fileTypeChip } from "@/lib/bucket/bucket"
-import { useBucketFilePreview } from "@/hooks/use-bucket-file-preview"
-import { cn } from "@/lib/utils"
+import { useBucketFilePreview } from "@/hooks/bucket/useBucketFilePreview"
+import { cn } from "@/lib/ui/utils"
 import type { FilePublic } from "@/services/bucket/types"
 
 function isPreviewableImage(contentType: string): boolean {

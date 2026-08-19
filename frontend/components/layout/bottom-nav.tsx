@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import { Home01Icon, UserMultipleIcon, ArrowUpRight01Icon, Menu01Icon } from "@hugeicons/core-free-icons"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 const LIVE_CENTER_ICON = "/images/navballcenter/2.png"
 

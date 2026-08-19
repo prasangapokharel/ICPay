@@ -7,8 +7,8 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ImageAdd02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
-import { LOGO_MAX_BYTES } from "@/lib/launch"
-import { cn } from "@/lib/utils"
+import { LOGO_MAX_BYTES } from "@/lib/token/launch"
+import { cn } from "@/lib/ui/utils"
 
 const SIZE = 128
 

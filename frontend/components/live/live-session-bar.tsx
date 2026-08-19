@@ -7,7 +7,7 @@ import { Mic01Icon, MicOff01Icon } from "@hugeicons/core-free-icons"
 import { Spinner } from "@/components/ui/spinner"
 import { useLiveSession } from "@/components/live/live-session-provider"
 import { liveStateLabel } from "@/services/live/live"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 export function LiveSessionBar() {
   const t = useTranslations("live")

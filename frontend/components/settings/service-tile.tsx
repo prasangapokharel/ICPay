@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 export function ServiceTile({
   href,

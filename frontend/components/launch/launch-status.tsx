@@ -16,8 +16,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { statusOf, failureReason } from "@/services/launch/launch"
 import type { TokenPublic } from "@/services/types"
-import { copyText, formatTokenAmount, formatTime } from "@/lib/wallet-utils"
-import { cn } from "@/lib/utils"
+import { copyText, formatTokenAmount, formatTime } from "@/lib/wallet/utils"
+import { cn } from "@/lib/ui/utils"
 
 const SOCIALS = ["website", "telegram", "twitter"] as const
 

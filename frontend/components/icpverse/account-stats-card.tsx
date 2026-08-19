@@ -5,11 +5,11 @@ import { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
-import { formatAmount, copyText, E8S } from "@/lib/wallet-utils"
-import { useIcpPrice } from "@/hooks/use-icp-price"
-import { useFiatValue } from "@/hooks/use-fiat-value"
-import { useAccountStats } from "@/hooks/use-wallet-data"
-import { cn } from "@/lib/utils"
+import { formatAmount, copyText, E8S } from "@/lib/wallet/utils"
+import { useIcpPrice } from "@/hooks/market/useIcpPrice"
+import { useFiatValue } from "@/hooks/fiat/useFiatValue"
+import { useAccountStats } from "@/hooks/wallet/useWalletData"
+import { cn } from "@/lib/ui/utils"
 
 export function AccountStatsCard({ principal }: { principal: string }) {
   const t = useTranslations("accountStats")

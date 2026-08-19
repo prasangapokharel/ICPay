@@ -18,7 +18,7 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { buildPaymentLink } from "@/services/pay/pay"
-import { copyText, memoByteLength, MEMO_MAX_BYTES, parseIcp } from "@/lib/wallet-utils"
+import { copyText, memoByteLength, MEMO_MAX_BYTES, parseIcp } from "@/lib/wallet/utils"
 
 // A request for money, not an address to send it to: the amount and the reason
 // travel inside the link, so the payer shares once and the payer reviews rather

@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 import { PHASES, STATUS_META, phaseProgress, type Phase } from "./roadmap-data"
 
 function MilestoneRow({ label, done, note }: { label: string; done: boolean; note?: string }) {

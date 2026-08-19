@@ -1,0 +1,15 @@
+---
+description: ICPay backend test standards — run-tests.sh, coverage, migration tests
+alwaysApply: true
+globs: backend/testing/**/*.mo, backend/scripts/run-tests.sh
+---
+
+# Testing standard
+
+Read [`skills/testing-standard/SKILL.md`](../skills/testing-standard/SKILL.md) before adding tests.
+
+- Run: `cd backend && bash scripts/run-tests.sh` — not `mops test` or `npm test`
+- Mirror `src/` layout under `testing/`; suffix `.test.mo`
+- Register every new suite in `scripts/run-tests.sh`
+- Assert values + `#err` paths; use two principals for multi-user features
+- New migration → `testing/upgrade/<Name>.test.mo`

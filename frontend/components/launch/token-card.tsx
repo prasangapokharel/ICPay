@@ -8,8 +8,8 @@ import { Coins01Icon } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { statusOf } from "@/services/launch/launch"
 import type { TokenPublic } from "@/services/types"
-import { formatTokenAmount } from "@/lib/wallet-utils"
-import { cn } from "@/lib/utils"
+import { formatTokenAmount } from "@/lib/wallet/utils"
+import { cn } from "@/lib/ui/utils"
 
 const STATUS_VARIANT = {
   active: "secondary",

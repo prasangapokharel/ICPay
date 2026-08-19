@@ -838,4 +838,82 @@ module {
     };
     #err("No pool found for " # tokenIn # " / " # tokenOut);
   };
+
+  public func getPendingCount(service: SwapService): Nat {
+    SwapStorage.count(service.pending);
+  };
+
+  public func retryOne(service: SwapService, txId: Types.TxId): async Types.ApiResult<Text> {
+    switch (SwapStorage.get(service.pending, txId)) {
+      case (?p) {
+        if (p.retries >= Config.MAX_SWAP_RETRIES) {
+          return #err("Retry limit reached");
+        };
+        
+        switch (p.stage) {
+          case (#awaitingPoolWithdraw) {
+            let pool: ICPSwapPool = actor(p.poolId);
+            let bal = await pool.getUserUnusedBalance(p.caller);
+            let alreadyGone = switch bal {
+              case (#ok({ balance0; balance1 })) { balance0 == 0 and balance1 == 0 };
+              case (#err(_)) { false };
+            };
+            if (alreadyGone) {
+              p.stage := #awaitingUserTransfer;
+              p.lastAttempt := Time.now();
+              return #ok("Advanced to user transfer stage");
+            } else {
+              let r = await pool.withdraw({ token = p.tokenOut; fee = p.tokenOutFee; amount = p.amountOut });
+              switch r {
+                case (#ok(_)) {
+                  p.stage := #awaitingUserTransfer;
+                  p.retries := 0;
+                  p.lastAttempt := Time.now();
+                  return #ok("Pool withdraw successful, advanced to user transfer");
+                };
+                case (#err(e)) {
+                  p.retries += 1;
+                  p.lastAttempt := Time.now();
+                  return #err("Pool withdraw failed");
+                };
+              };
+            };
+          };
+          case (#awaitingUserTransfer) {
+            let userSub = LedgerService.depositAccount(service.ledger, p.caller);
+            let now64 = Nat64.fromNat(Int.abs(Time.now()));
+            let payout = if (p.amountOut > 2 * p.tokenOutFee) {
+              (p.amountOut - (2 * p.tokenOutFee) : Nat)
+            } else { 0 };
+            if (payout == 0) {
+              p.retries += 1;
+              p.lastAttempt := Time.now();
+              return #err("Payout amount too small");
+            };
+            let r = await LedgerService.transfer(p.tokenOut, {
+              from_subaccount = null;
+              to = userSub;
+              amount = payout;
+              fee = null;
+              memo = null;
+              created_at_time = ?now64;
+            });
+            switch r {
+              case (#Ok(n)) {
+                ignore TxRepo.completeTx(service.txs, p.id, Nat64.fromNat(n), Time.now());
+                SwapStorage.remove(service.pending, p.id);
+                return #ok("User transfer successful, swap completed");
+              };
+              case (#Err(_)) {
+                p.retries += 1;
+                p.lastAttempt := Time.now();
+                return #err("User transfer failed");
+              };
+            };
+          };
+        };
+      };
+      case (null) { #err("Pending swap not found") };
+    };
+  };
 };

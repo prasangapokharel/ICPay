@@ -11,8 +11,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { SwapConfirmDrawer } from "@/components/swap/swap-confirm-drawer"
 import { SwapTokenPicker } from "@/components/swap/swap-token-picker"
-import { useSwapQuote, useSwapTokens } from "@/hooks/use-swap"
-import { defaultSwapPair } from "@/lib/swap-tokens"
+import { useSwapQuote, useSwapTokens } from "@/hooks/swap/useSwap"
+import { defaultSwapPair } from "@/lib/swap/tokens"
 import {
   icpServiceDebit,
   icpServiceFee,
@@ -22,17 +22,17 @@ import {
   requiredBalance,
   requiredIcpSwapBalance,
   swapRate,
-} from "@/lib/swap-utils"
+} from "@/lib/swap/utils"
 import {
   formatTokenAmount,
   parseTokenAmount,
   toPlainTokenAmount,
-} from "@/lib/wallet-utils"
+} from "@/lib/wallet/utils"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 import { executeSwap, recoverFailedSwapInput } from "@/services/swap/swap"
 import type { Identity } from "@icp-sdk/core/agent"
-import { primeSuccessChime } from "@/lib/success-chime"
-import { useRefreshWallet } from "@/hooks/use-wallet-data"
+import { primeSuccessChime } from "@/lib/ui/successChime"
+import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
 
 const PERCENTAGES = [25, 50, 75, 100] as const
 

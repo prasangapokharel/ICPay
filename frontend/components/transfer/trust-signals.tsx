@@ -1,8 +1,8 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { computeRiskScore, type RiskLevel } from "@/lib/risk-score"
-import { cn } from "@/lib/utils"
+import { computeRiskScore, type RiskLevel } from "@/lib/market/riskScore"
+import { cn } from "@/lib/ui/utils"
 
 const SIZE = 40
 const R = 16

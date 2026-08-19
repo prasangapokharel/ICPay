@@ -7,8 +7,8 @@ import {
   icpSwapTokenStandard,
   isSwapBlocked,
   swapPairKey,
-} from "@/lib/swap-config"
-import { icpServiceFee, netSwapOutput } from "@/lib/swap-utils"
+} from "@/lib/swap/config"
+import { icpServiceFee, netSwapOutput } from "@/lib/swap/utils"
 import type { SwapQuoteResult } from "@/services/types"
 
 type PoolRef = {

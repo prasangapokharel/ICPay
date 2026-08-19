@@ -8,7 +8,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Search01Icon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
-import { formatTokenAmount } from "@/lib/wallet-utils"
+import { formatTokenAmount } from "@/lib/wallet/utils"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 
 export function TokenList({

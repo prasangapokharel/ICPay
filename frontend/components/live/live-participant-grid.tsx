@@ -2,12 +2,12 @@
 
 import type { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
-import { avatarUriFor } from "@/lib/avatar"
+import { avatarUriFor } from "@/lib/profile/avatar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
-import { isPremiumHandle } from "@/lib/verifed/premium-tick"
-import { cn } from "@/lib/utils"
+import { isPremiumHandle } from "@/lib/verified/premiumTick"
+import { cn } from "@/lib/ui/utils"
 import type { LivePeer } from "@/services/live/live"
 
 type LiveParticipantGridProps = {

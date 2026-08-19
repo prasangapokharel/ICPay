@@ -9,7 +9,7 @@ import {
   openBackendSession,
   discardRejectedSession,
 } from "@/services/auth/auth"
-import { playLoginChime } from "@/lib/success-chime"
+import { playLoginChime } from "@/lib/ui/successChime"
 
 type AuthContextType = {
   identity: Identity | undefined

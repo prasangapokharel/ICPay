@@ -5,11 +5,11 @@ import { ScoreCircle } from "@/components/transfer/trust-signals"
 import { useTranslations } from "next-intl"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Spinner } from "@/components/ui/spinner"
-import { avatarUriFor } from "@/lib/avatar"
-import { shortPrincipal } from "@/lib/wallet-utils"
-import { USERNAME_MIN_LENGTH } from "@/lib/username"
-import { useRecipientProfile, useRecipientTxCount } from "@/hooks/use-wallet-data"
-import { cn } from "@/lib/utils"
+import { avatarUriFor } from "@/lib/profile/avatar"
+import { shortPrincipal } from "@/lib/wallet/utils"
+import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
+import { useRecipientProfile, useRecipientTxCount } from "@/hooks/wallet/useWalletData"
+import { cn } from "@/lib/ui/utils"
 
 export function RecipientCard({
   username,

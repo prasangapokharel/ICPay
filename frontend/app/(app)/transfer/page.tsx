@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { TransferForm } from "@/components/transfer/transfer-form"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useRefreshWallet, useLiveBalance } from "@/hooks/use-wallet-data"
+import { useRefreshWallet, useLiveBalance } from "@/hooks/wallet/useWalletData"
 import { transfer, type TransferMode } from "@/services/transfer/transfer"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 

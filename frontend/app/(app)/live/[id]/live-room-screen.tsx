@@ -1,7 +1,7 @@
 "use client"
 
 import { LiveRoomView } from "@/components/live/live-room-view"
-import { useRewrittenLastSegment } from "@/lib/rewritten-route"
+import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 
 export function LiveRoomScreen() {
   const roomId = useRewrittenLastSegment()

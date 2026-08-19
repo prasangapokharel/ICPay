@@ -15,10 +15,10 @@ import {
   FieldTitle,
 } from "@/components/ui/field"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useBucketCycleStatus, useBucketPrice } from "@/hooks/use-bucket"
-import { useLiveBalance } from "@/hooks/use-wallet-data"
+import { useBucketCycleStatus, useBucketPrice } from "@/hooks/bucket/useBucket"
+import { useLiveBalance } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
-import { formatAmount, ICP_FEE } from "@/lib/wallet-utils"
+import { formatAmount, ICP_FEE } from "@/lib/wallet/utils"
 import type { BucketVisibilityVariant } from "@/services/bucket/types"
 
 export function BucketCreateForm({

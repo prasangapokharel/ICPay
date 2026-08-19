@@ -7,7 +7,7 @@ import { AuthProvider } from "@/components/auth/auth-provider"
 import { SwrProvider } from "@/components/swr-provider"
 import { LocaleProvider } from "@/components/i18n/locale-provider"
 import { FiatProvider } from "@/components/fiat/fiat-provider"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 

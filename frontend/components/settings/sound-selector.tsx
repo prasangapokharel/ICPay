@@ -10,7 +10,7 @@ import {
   setSoundEnabled,
   subscribeSound,
   playSuccessChime,
-} from "@/lib/success-chime"
+} from "@/lib/ui/successChime"
 
 export function SoundSelector() {
   const t = useTranslations("sound")

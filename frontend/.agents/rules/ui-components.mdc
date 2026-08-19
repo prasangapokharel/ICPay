@@ -14,7 +14,7 @@ Stack: **Next.js App Router + React Server Components**, **shadcn/ui** (style `b
   that shadcn provides (button, input, card, dialog, tabs, sheet, table, …).
 - Use **default shadcn variants/slots** (`variant`, `size`, built-in sub-components). Do not
   invent custom Tailwind styling or one-off CSS for primitives.
-- Merge extra classes only via `cn()` from `@/lib/utils` — never replace default component styles.
+- Merge extra classes only via `cn()` from `@/lib/ui/utils` — never replace default component styles.
 - If a component is missing, add it with the CLI — do not hand-roll a substitute:
   `npx shadcn@latest add <name>` (run inside `frontend/`).
 - **Icons:** use `@hugeicons/react` with `@hugeicons/core-free-icons` (matches `components.json`
@@ -34,7 +34,7 @@ Stack: **Next.js App Router + React Server Components**, **shadcn/ui** (style `b
 
 // ✅ GOOD — default shadcn components + cn() for extras
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 <Button className={cn("w-full")}>Save</Button>
 ```
 

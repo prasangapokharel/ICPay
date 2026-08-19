@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { USERNAME_FREE_MIN_LENGTH } from "@/lib/username"
+import { USERNAME_FREE_MIN_LENGTH } from "@/lib/profile/username"
 
 // A username is required rather than suggested: without one, nobody can send
 // this account ICP by name. So there is no dismiss path -- no close button, no

@@ -1,0 +1,14 @@
+---
+description: ICPay feature integration flow — types through main.mo, migration cleanup, pkg/, frontend
+alwaysApply: false
+---
+
+# Integration standard
+
+Read [`skills/integration-standard/SKILL.md`](../skills/integration-standard/SKILL.md) when adding a **new feature** (not a one-line fix).
+
+Follow phases in order: types → storage → migration? → repo → validator → service → api → main.mo → tests → frontend → deploy.
+
+After migration deploy: remove `(with migration = …)`, mark APPLIED, add `reindex()` if needed.
+
+Use `pkg/` before writing new helpers — see catalog in the skill.
