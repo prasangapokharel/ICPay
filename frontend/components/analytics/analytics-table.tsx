@@ -7,8 +7,8 @@ import {
   formatTokenAmount,
   shortenCounterparty,
   txStatusLabel,
-} from "@/lib/wallet-utils"
-import { cn } from "@/lib/utils"
+} from "@/lib/wallet/utils"
+import { cn } from "@/lib/ui/utils"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 
 type AnalyticsTableProps = {

@@ -12,7 +12,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
-import { formatTokenAmount } from "@/lib/wallet-utils"
+import { formatTokenAmount } from "@/lib/wallet/utils"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 
 export function SwapTokenPicker({

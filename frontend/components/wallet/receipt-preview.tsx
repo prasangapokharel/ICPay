@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { receiptPng, shareReceipt, type Receipt } from "@/lib/receipt"
+import { receiptPng, shareReceipt, type Receipt } from "@/lib/receipt/receipt"
 
 // The card is 1080x1480, so it is shown at its own ratio rather than a fixed
 // height -- the whole point is that what you see is what gets shared.

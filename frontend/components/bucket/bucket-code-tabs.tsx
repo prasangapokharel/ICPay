@@ -2,7 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BucketCodeBlock } from "@/components/bucket/bucket-code-block"
-import type { DocsExampleLang } from "@/lib/bucket/docs-examples"
+import type { DocsExampleLang } from "@/lib/bucket/docsExamples"
 
 const LANGS: { value: DocsExampleLang; label: string }[] = [
   { value: "typescript", label: "TypeScript" },

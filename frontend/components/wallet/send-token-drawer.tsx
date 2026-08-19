@@ -22,15 +22,15 @@ import {
   toPlainTokenAmount,
   memoByteLength,
   MEMO_MAX_BYTES,
-} from "@/lib/wallet-utils"
-import { primeSuccessChime } from "@/lib/success-chime"
-import { validateUsername } from "@/lib/username"
+} from "@/lib/wallet/utils"
+import { primeSuccessChime } from "@/lib/ui/successChime"
+import { validateUsername } from "@/lib/profile/username"
 import { RecipientLookup } from "@/components/transfer/recipient-card"
 import { QrScanner } from "@/components/scan/scan"
-import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/icp-address"
-import { useResolvedUsername } from "@/hooks/use-wallet-data"
-import { useDebounced } from "@/hooks/use-debounced"
-import { cn } from "@/lib/utils"
+import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/wallet/icpAddress"
+import { useResolvedUsername } from "@/hooks/wallet/useWalletData"
+import { useDebounced } from "@/hooks/ui/useDebounced"
+import { cn } from "@/lib/ui/utils"
 import type { TokenHolding } from "@/services/tokens"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 import type { TransferMode } from "@/services/transfer/transfer"

@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl"
-import { premiumTier, type BadgeTier } from "@/lib/verifed/premium-tick"
-import { cn } from "@/lib/utils"
+import { premiumTier, type BadgeTier } from "@/lib/verified/premiumTick"
+import { cn } from "@/lib/ui/utils"
 
 // Amber, not yellow: yellow-400 on the light theme's near-white surfaces is
 // close to unreadable, and this mark has to hold up on a profile header and on

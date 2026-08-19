@@ -15,7 +15,7 @@ import {
   bucketRenewQuoteKey,
   bucketStatsKey,
   isBucketCacheKey,
-} from "@/lib/bucket/cache-keys"
+} from "@/lib/bucket/cacheKeys"
 import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
 import {
   buildEstimatedPricingTiers,

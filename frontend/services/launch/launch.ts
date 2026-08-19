@@ -1,7 +1,7 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { call, query, optional, type Outcome } from "@/services/client"
 import type { TokenPublic, LaunchFee } from "@/services/types"
-import { TOKEN_DECIMALS, normalizeSymbol } from "@/lib/launch"
+import { TOKEN_DECIMALS, normalizeSymbol } from "@/lib/token/launch"
 
 export type LaunchInput = {
   name: string

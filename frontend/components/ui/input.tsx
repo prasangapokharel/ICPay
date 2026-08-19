@@ -2,7 +2,7 @@ import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 // Same shape as buttonVariants, for the same reason: the field styles were
 // pasted per call site and had drifted into four different heights.

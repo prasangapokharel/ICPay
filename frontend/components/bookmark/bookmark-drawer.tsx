@@ -20,18 +20,18 @@ import {
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
-import { avatarUriFor } from "@/lib/avatar"
+import { avatarUriFor } from "@/lib/profile/avatar"
 import { optionalText } from "@/lib/bucket/bucket"
 import {
   cacheBookmarkUsername,
   getCachedBookmarkUsername,
   removeCachedBookmarkUsername,
-} from "@/lib/bookmark-labels"
+} from "@/lib/profile/bookmarkLabels"
 import { useAuth } from "@/components/auth/auth-provider"
 import { addBookmark, removeBookmark } from "@/services/bookmark/bookmark"
-import { useBookmarks } from "@/hooks/use-wallet-data"
+import { useBookmarks } from "@/hooks/wallet/useWalletData"
 import type { Bookmark } from "@/services/types"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 export function BookmarkDrawer({
   open,

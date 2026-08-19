@@ -26,8 +26,8 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
-import { avatarUriFor } from "@/lib/avatar"
-import { primeSuccessChime, playSuccessChime } from "@/lib/success-chime"
+import { avatarUriFor } from "@/lib/profile/avatar"
+import { primeSuccessChime, playSuccessChime } from "@/lib/ui/successChime"
 import {
   E8S,
   ICP_FEE,
@@ -35,8 +35,8 @@ import {
   explorerTxUrl,
   formatE8s,
   parseIcp,
-} from "@/lib/wallet-utils"
-import { cn } from "@/lib/utils"
+} from "@/lib/wallet/utils"
+import { cn } from "@/lib/ui/utils"
 
 const PRESETS = [1n, 5n, 10n] as const
 

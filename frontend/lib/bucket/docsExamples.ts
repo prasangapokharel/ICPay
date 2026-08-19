@@ -1,4 +1,4 @@
-import { rawCloudExample } from "@/lib/bucket/raw-cloud-url"
+import { rawCloudExample } from "@/lib/bucket/rawCloudUrl"
 
 export type DocsExampleLang = "typescript" | "python" | "curl"
 

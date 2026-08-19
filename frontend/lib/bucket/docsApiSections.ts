@@ -1,6 +1,6 @@
 import { WALLET_CANISTER_ID } from "@/services/icp"
-import { rawCloudExample } from "@/lib/bucket/raw-cloud-url"
-import type { DocsExampleLang } from "@/lib/bucket/docs-examples"
+import { rawCloudExample } from "@/lib/bucket/rawCloudUrl"
+import type { DocsExampleLang } from "@/lib/bucket/docsExamples"
 
 const CANISTER = WALLET_CANISTER_ID
 const BUCKET = "icp"
@@ -63,7 +63,7 @@ ${DFX} deleteBucket '("${BUCKET}")'`,
 
 export function uploadSessionExamples(): Record<DocsExampleLang, string> {
   return {
-    typescript: `import { prepareUploadFile } from "@/lib/bucket/prepare-upload"
+    typescript: `import { prepareUploadFile } from "@/lib/bucket/prepareUpload"
 import { storeFile } from "@/services/bucket/store-file"
 import { getWalletActor } from "@/services/wallet"
 

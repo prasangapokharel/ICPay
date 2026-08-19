@@ -1,16 +1,16 @@
 import {
   guessFileMime,
   normalizeUploadFile,
-} from "@/lib/bucket/allowed-files"
+} from "@/lib/bucket/allowedFiles"
 import {
   compressRasterToWebp,
-} from "@/lib/bucket/compress-image"
-import { buildUploadPath } from "@/lib/bucket/upload-path"
-import { shouldConvertRasterToWebp } from "@/lib/bucket/raster-formats"
-import { uploadValidationError } from "@/lib/bucket/upload-validate"
+} from "@/lib/bucket/compressImage"
+import { buildUploadPath } from "@/lib/bucket/uploadPath"
+import { shouldConvertRasterToWebp } from "@/lib/bucket/rasterFormats"
+import { uploadValidationError } from "@/lib/bucket/uploadValidate"
 
-export { uploadValidationError } from "@/lib/bucket/upload-validate"
-export { formatCompressionSummary } from "@/lib/bucket/compress-image"
+export { uploadValidationError } from "@/lib/bucket/uploadValidate"
+export { formatCompressionSummary } from "@/lib/bucket/compressImage"
 
 export type PreparedUpload = {
   file: File

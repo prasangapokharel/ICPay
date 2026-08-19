@@ -2,8 +2,8 @@
 
 import useSWR from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
-import { bucketApiKeysKey } from "@/lib/bucket/cache-keys"
-import { BUCKET_QUERY } from "@/hooks/use-bucket"
+import { bucketApiKeysKey } from "@/lib/bucket/cacheKeys"
+import { BUCKET_QUERY } from "@/hooks/bucket/useBucket"
 import {
   createApiKey,
   listApiKeys,

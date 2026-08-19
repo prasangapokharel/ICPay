@@ -1,10 +1,10 @@
-import { BUCKET_MAX_FILE_BYTES } from "./upload-chunk"
+import { BUCKET_MAX_FILE_BYTES } from "./uploadChunk"
 import {
   EXECUTABLE_BLOCKED_EXTENSIONS,
   normalizeUploadFile,
   pathExtension,
   VIDEO_BLOCKED_EXTENSIONS,
-} from "./allowed-files"
+} from "./allowedFiles"
 
 export type UploadValidationError = "size" | "video" | "blocked"
 

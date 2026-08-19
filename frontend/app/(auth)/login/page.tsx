@@ -15,7 +15,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { Typewriter } from "@/components/shared/typewriter"
 import { MarketStats } from "@/components/auth/market-stats"
 import { NFID_PROVIDER } from "@/services/icp"
-import { primeLoginChime } from "@/lib/success-chime"
+import { primeLoginChime } from "@/lib/ui/successChime"
 
 const features = [
   { icon: ShieldKeyIcon, key: "custodial" },

@@ -2,8 +2,8 @@
 
 import useSWR from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
-import { usePageVisible } from "@/hooks/use-page-visible"
-import { LIVE_ROOM_POLL_MS } from "@/lib/live-webrtc"
+import { usePageVisible } from "@/hooks/live/usePageVisible"
+import { LIVE_ROOM_POLL_MS } from "@/lib/live/webrtc"
 import { getLiveRoom } from "@/services/live/live"
 
 export const liveRoomKey = (roomId: string) => ["live-room", roomId] as const

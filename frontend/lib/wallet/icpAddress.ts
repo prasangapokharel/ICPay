@@ -1,8 +1,8 @@
 import { Principal } from "@icp-sdk/core/principal"
-import { crc32, base32NoPad } from "@/lib/account-id"
-import { isHexAccountId } from "@/lib/wallet-utils"
-import { validateUsername } from "@/lib/username"
-import { isReservedHandle } from "@/lib/reserved-handles"
+import { crc32, base32NoPad } from "@/lib/wallet/accountId"
+import { isHexAccountId } from "@/lib/wallet/utils"
+import { validateUsername } from "@/lib/profile/username"
+import { isReservedHandle } from "@/lib/profile/reservedHandles"
 
 export type ScannedAddress =
   | { kind: "account"; accountId: string }

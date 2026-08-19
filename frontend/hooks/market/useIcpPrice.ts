@@ -1,7 +1,7 @@
 "use client"
 
 import useSWR from "swr"
-import type { IcpPrice } from "@/lib/icp-price"
+import type { IcpPrice } from "@/lib/market/icpPrice"
 
 const PRICE_URL =
   "https://api.coingecko.com/api/v3/simple/price?ids=internet-computer&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true"

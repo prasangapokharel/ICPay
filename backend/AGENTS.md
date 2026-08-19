@@ -1,18 +1,26 @@
-# ICP Wallet Backend (Motoko) — Agent Instructions
+# ICPay Backend (Motoko) — Agent Instructions
 
-**This is the original build spec**, written before the code existed. It's useful
-for understanding *intent*, but names modules that were never built
-(`ProfileRepository`, a `Profile` model, per-feature `api/v1/auth/`
-subdirectories).
+**Read [`/.agents/SKILLS.md`](.agents/SKILLS.md) first** — full skill index, rules, and task router.
 
-**Where it disagrees with the code, the code wins.**
+| Task | Skill |
+|---|---|
+| **New feature (read first)** | [`.agents/skills/integration-standard/SKILL.md`](.agents/skills/integration-standard/SKILL.md) |
+| Where to put code | [`.agents/skills/layering/SKILL.md`](.agents/skills/layering/SKILL.md) |
+| Naming & style | [`.agents/skills/coding-standard/SKILL.md`](.agents/skills/coding-standard/SKILL.md) |
+| Errors & `ApiResult` | [`.agents/skills/error-handling/SKILL.md`](.agents/skills/error-handling/SKILL.md) |
+| Tests & CI | [`.agents/skills/testing-standard/SKILL.md`](.agents/skills/testing-standard/SKILL.md) |
+| Upgrade / migration | [`.agents/skills/migration/SKILL.md`](.agents/skills/migration/SKILL.md) |
+| New endpoint | [`.agents/skills/endpoints/SKILL.md`](.agents/skills/endpoints/SKILL.md) |
+| Deploy & splits | [`.claude/skills/icpay-backend/SKILL.md`](../.claude/skills/icpay-backend/SKILL.md) |
 
-Read [`.agents/SKILLS.md`](.agents/SKILLS.md) for the complete skill index and
-reference documentation.
+Auto-applied rules: [`.agents/rules/`](.agents/rules/) — layering, coding-standard, error-handling, migrations, testing-standard. Manual: integration-standard for new features.
 
 ---
 
-# Original Build Specification
+**Below is the original build spec**, written before the code existed. Useful for *intent*;
+names like `ProfileRepository` were never built. **Where it disagrees with the code, the code wins.**
+
+---
 
 You are building the backend for an **ICP Wallet** using **Motoko**.
 

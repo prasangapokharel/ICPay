@@ -24,8 +24,8 @@ import { BucketFileDeleteDialog } from "@/components/bucket/bucket-file-delete-d
 import { BucketFilePreviewImage } from "@/components/bucket/bucket-file-thumb"
 import { formatFileSize } from "@/components/bucket/bucket-card"
 import { mapBucketError, optionalText } from "@/lib/bucket/bucket"
-import { downloadBlob, fetchBucketFileBlob, normalizePublicFileUrl } from "@/lib/bucket/file-preview"
-import { copyText } from "@/lib/wallet-utils"
+import { downloadBlob, fetchBucketFileBlob, normalizePublicFileUrl } from "@/lib/bucket/filePreview"
+import { copyText } from "@/lib/wallet/utils"
 import { useAuth } from "@/components/auth/auth-provider"
 import type { FilePublic } from "@/services/bucket/types"
 

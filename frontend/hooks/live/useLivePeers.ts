@@ -3,9 +3,9 @@
 import { useMemo } from "react"
 import useSWR from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
-import { usePageVisible } from "@/hooks/use-page-visible"
-import { LIVE_PEER_SYNC_MS } from "@/lib/live-webrtc"
-import { dedupeLivePeers } from "@/lib/live-peers"
+import { usePageVisible } from "@/hooks/live/usePageVisible"
+import { LIVE_PEER_SYNC_MS } from "@/lib/live/webrtc"
+import { dedupeLivePeers } from "@/lib/live/peers"
 import { listLivePeers } from "@/services/live/live"
 
 export const livePeersKey = (principal: string, roomId: string) =>

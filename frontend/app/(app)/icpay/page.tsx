@@ -4,10 +4,10 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
-import { useIcpayStats } from "@/hooks/use-icpay-stats"
-import { useIcpaySale } from "@/hooks/use-icpay-sale"
+import { useIcpayStats } from "@/hooks/icpay/useIcpayStats"
+import { useIcpaySale } from "@/hooks/icpay/useIcpaySale"
 import { IcpayTokenCard } from "@/components/icpay/icpay-token-card"
-import { formatTokenAmount } from "@/lib/wallet-utils"
+import { formatTokenAmount } from "@/lib/wallet/utils"
 
 export default function IcpayTokenPage() {
   const t = useTranslations("icpayToken")

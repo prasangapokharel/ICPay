@@ -20,10 +20,10 @@ import {
   type LiveRoomPublic,
 } from "@/services/live/live"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useOwnProfile } from "@/hooks/use-wallet-data"
-import { dedupeLivePeers } from "@/lib/live-peers"
-import { readLiveSession } from "@/lib/live-session-store"
-import { cn } from "@/lib/utils"
+import { useOwnProfile } from "@/hooks/wallet/useWalletData"
+import { dedupeLivePeers } from "@/lib/live/peers"
+import { readLiveSession } from "@/lib/live/sessionStore"
+import { cn } from "@/lib/ui/utils"
 
 export function LiveRoomView({ roomId }: { roomId: string }) {
   const t = useTranslations("live")

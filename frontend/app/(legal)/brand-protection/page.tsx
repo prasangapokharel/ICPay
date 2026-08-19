@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { BrandDirectory } from "@/components/legal/brand-directory"
-import { RESERVED_BRANDS } from "@/lib/reserved-brands"
+import { RESERVED_BRANDS } from "@/lib/profile/reservedBrands"
 
 export const metadata: Metadata = {
   title: "Brand Protection",

@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
-import { copyText } from "@/lib/wallet-utils"
-import { profileUrlFor } from "@/lib/profile-url"
+import { copyText } from "@/lib/wallet/utils"
+import { profileUrlFor } from "@/lib/profile/url"
 
 // The link is the product here: it is what the user hands to someone else to
 // get paid, so it is shown in full rather than truncated.

@@ -1,5 +1,5 @@
 import type { Identity } from "@icp-sdk/core/agent"
-import { markPlaybackUnlocked, wasPlaybackUnlocked } from "@/lib/live-audio-perms"
+import { markPlaybackUnlocked, wasPlaybackUnlocked } from "@/lib/live/audioPerms"
 import { postLiveSignal, type LivePeer } from "@/services/live/live"
 
 const STUN = [

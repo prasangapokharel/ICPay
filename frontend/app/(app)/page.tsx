@@ -9,9 +9,9 @@ import { UsernamePrompt } from "@/components/dashboard/username-prompt"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { formatE8s } from "@/lib/wallet-utils"
-import { useIcpPrice } from "@/hooks/use-icp-price"
-import { useDashboard, useLiveBalance } from "@/hooks/use-wallet-data"
+import { formatE8s } from "@/lib/wallet/utils"
+import { useIcpPrice } from "@/hooks/market/useIcpPrice"
+import { useDashboard, useLiveBalance } from "@/hooks/wallet/useWalletData"
 
 export default function DashboardPage() {
   const { price } = useIcpPrice()

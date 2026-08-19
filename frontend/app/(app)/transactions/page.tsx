@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { TransactionList } from "@/components/transactions/transaction-list"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useTransactions } from "@/hooks/use-wallet-data"
+import { useTransactions } from "@/hooks/wallet/useWalletData"
 
 const PAGE_SIZE = 20
 

@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 import type { AnalyticsSummary } from "@/services/types"
-import { formatAmount } from "@/lib/wallet-utils"
+import { formatAmount } from "@/lib/wallet/utils"
 
 type AnalyticsSummaryGridProps = {
   summary: AnalyticsSummary

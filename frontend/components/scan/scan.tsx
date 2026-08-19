@@ -12,7 +12,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { addressText, parseAddress, type ScannedAddress } from "@/lib/icp-address"
+import { addressText, parseAddress, type ScannedAddress } from "@/lib/wallet/icpAddress"
 import type { IDetectedBarcode, IScannerError, ScannerErrorKind } from "@yudiel/react-qr-scanner"
 
 // The scanner ships a WASM barcode polyfill and asks for the camera on mount, so

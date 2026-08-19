@@ -12,9 +12,9 @@ import {
   Search01Icon,
   ArrowRight01Icon,
 } from "@hugeicons/core-free-icons"
-import { avatarUriFor } from "@/lib/avatar"
-import { useUserSearch } from "@/hooks/use-wallet-data"
-import { useDebounced } from "@/hooks/use-debounced"
+import { avatarUriFor } from "@/lib/profile/avatar"
+import { useUserSearch } from "@/hooks/wallet/useWalletData"
+import { useDebounced } from "@/hooks/ui/useDebounced"
 
 export default function IcpversePage() {
   const t = useTranslations("icpverse")

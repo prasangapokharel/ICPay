@@ -5,21 +5,21 @@ export const FILES_PAGE_SIZE = 20
 export {
   BUCKET_MAX_FILE_BYTES,
   BUCKET_MAX_FILE_BYTES as MAX_FILE_BYTES,
-} from "@/lib/bucket/upload-chunk"
+} from "@/lib/bucket/uploadChunk"
 
 export {
   FILE_ACCEPT,
   guessFileMime,
   fileTypeChip,
   normalizeUploadFile,
-} from "@/lib/bucket/allowed-files"
+} from "@/lib/bucket/allowedFiles"
 
 import {
   guessFileMime,
   isAllowedUpload as isAllowedByExtension,
   fileTypeChip,
-} from "@/lib/bucket/allowed-files"
-import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/upload-chunk"
+} from "@/lib/bucket/allowedFiles"
+import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/uploadChunk"
 
 /** @deprecated use guessFileMime */
 export const guessImageMime = guessFileMime
@@ -121,7 +121,7 @@ export {
   uploadPathForFile,
   replacePathExtension,
   buildUploadPath,
-} from "@/lib/bucket/upload-path"
+} from "@/lib/bucket/uploadPath"
 
 export function isImageUploadFile(file: File): boolean {
   return guessFileMime(file).startsWith("image/")

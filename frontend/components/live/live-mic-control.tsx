@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Mic01Icon, MicOff01Icon } from "@hugeicons/core-free-icons"
 import { Spinner } from "@/components/ui/spinner"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 type LiveMicControlProps = {
   micOn: boolean

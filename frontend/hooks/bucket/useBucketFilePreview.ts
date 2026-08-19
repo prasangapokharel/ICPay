@@ -8,9 +8,9 @@ import {
   bytesToObjectUrl,
   normalizePublicFileUrl,
   revokeObjectUrl,
-} from "@/lib/bucket/file-preview"
-import { bucketFilePreviewKey } from "@/lib/bucket/cache-keys"
-import { BUCKET_QUERY } from "@/hooks/use-bucket"
+} from "@/lib/bucket/filePreview"
+import { bucketFilePreviewKey } from "@/lib/bucket/cacheKeys"
+import { BUCKET_QUERY } from "@/hooks/bucket/useBucket"
 import { downloadFileBlob } from "@/services/bucket/bucket"
 import type { FilePublic } from "@/services/bucket/types"
 

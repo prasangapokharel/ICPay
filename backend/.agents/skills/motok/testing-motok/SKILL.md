@@ -8,6 +8,9 @@ description: >-
 
 # Testing Motoko
 
+**ICPay project standards** (layout, run-tests.sh, CI, migration tests):
+[`../../testing-standard/SKILL.md`](../../testing-standard/SKILL.md)
+
 ## Location and runner
 
 ```

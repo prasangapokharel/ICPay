@@ -4,10 +4,10 @@ import { useTranslations } from "next-intl"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { formatAmount, parseIcp, E8S } from "@/lib/wallet-utils"
-import { useIcpPrice } from "@/hooks/use-icp-price"
-import { useFiatValue } from "@/hooks/use-fiat-value"
+import { cn } from "@/lib/ui/utils"
+import { formatAmount, parseIcp, E8S } from "@/lib/wallet/utils"
+import { useIcpPrice } from "@/hooks/market/useIcpPrice"
+import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 
 const PERCENTAGES = [25, 50, 75, 100]
 

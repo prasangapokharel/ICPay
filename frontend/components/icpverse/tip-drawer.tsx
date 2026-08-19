@@ -23,11 +23,11 @@ import {
   parseIcp,
   E8S,
   ICP_FEE,
-} from "@/lib/wallet-utils"
+} from "@/lib/wallet/utils"
 import { AmountInput } from "@/components/shared/amount-input"
-import { avatarUriFor } from "@/lib/avatar"
-import { primeSuccessChime } from "@/lib/success-chime"
-import { cn } from "@/lib/utils"
+import { avatarUriFor } from "@/lib/profile/avatar"
+import { primeSuccessChime } from "@/lib/ui/successChime"
+import { cn } from "@/lib/ui/utils"
 
 const PRESETS = [1n, 5n, 10n] as const
 

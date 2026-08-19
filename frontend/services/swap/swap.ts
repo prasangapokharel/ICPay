@@ -1,7 +1,7 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { call, unwrap, type Outcome } from "@/services/client"
 import { isLedgerSupported } from "@/services/tokens"
-import { isSwapToken } from "@/lib/swap-tokens"
+import { isSwapToken } from "@/lib/swap/tokens"
 import { fetchIcpswapQuote } from "@/services/swap/icpswap-quote"
 import type { SwapQuoteResult, SwapResult } from "@/services/types"
 

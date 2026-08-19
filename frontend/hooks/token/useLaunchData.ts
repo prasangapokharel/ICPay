@@ -12,7 +12,7 @@ import {
   getMyTokens,
   getTokenById,
 } from "@/services/launch/launch"
-import { normalizeSymbol, validateSymbol } from "@/lib/launch"
+import { normalizeSymbol, validateSymbol } from "@/lib/token/launch"
 
 // Same convention as use-wallet-data: the principal is the last key part, so a
 // switched identity cannot be served another account's launches.

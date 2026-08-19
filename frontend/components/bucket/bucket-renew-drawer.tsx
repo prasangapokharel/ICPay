@@ -15,8 +15,8 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { Spinner } from "@/components/ui/spinner"
-import { useRenewQuote } from "@/hooks/use-bucket"
-import { formatAmount } from "@/lib/wallet-utils"
+import { useRenewQuote } from "@/hooks/bucket/useBucket"
+import { formatAmount } from "@/lib/wallet/utils"
 import { expiresAtToMs } from "@/lib/bucket/bucket"
 
 export function BucketRenewDrawer({

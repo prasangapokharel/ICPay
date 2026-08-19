@@ -1,6 +1,6 @@
 "use client"
 
-import { formatAmount, formatTokenAmount } from "@/lib/wallet-utils"
+import { formatAmount, formatTokenAmount } from "@/lib/wallet/utils"
 import { Spinner } from "@/components/ui/spinner"
 import type { IcpaySaleQuote } from "@/services/icpay/sale"
 

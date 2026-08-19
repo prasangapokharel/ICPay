@@ -1,5 +1,5 @@
 import type { TransactionPublic } from "@/services/types"
-import { formatTokenAmount, formatTimeIso, txStatusLabel } from "@/lib/wallet-utils"
+import { formatTokenAmount, formatTimeIso, txStatusLabel } from "@/lib/wallet/utils"
 
 function csvCell(value: string): string {
   if (value.includes('"') || value.includes(",") || value.includes("\n")) {

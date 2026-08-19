@@ -29,9 +29,9 @@ import { BucketPublicCdn } from "@/components/bucket/bucket-public-cdn"
 import {
   useBucketStats,
   useInvalidateBucketCache,
-} from "@/hooks/use-bucket"
+} from "@/hooks/bucket/useBucket"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import {
   deleteFile,
   renewBucket,
@@ -42,7 +42,7 @@ import {
   isPublicVisibility,
   optionalText,
 } from "@/lib/bucket/bucket"
-import { useRewrittenLastSegment } from "@/lib/rewritten-route"
+import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 
 export function BucketDetail() {
   const t = useTranslations("bucket")

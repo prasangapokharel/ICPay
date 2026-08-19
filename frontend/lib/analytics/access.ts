@@ -1,4 +1,4 @@
-import { USERNAME_MIN_LENGTH } from "@/lib/username"
+import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
 
 export const ANALYTICS_MAX_USERNAME_LENGTH = 4
 

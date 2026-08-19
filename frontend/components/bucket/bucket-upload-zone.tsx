@@ -12,13 +12,13 @@ import {
   mapBucketError,
   MAX_FILE_BYTES,
 } from "@/lib/bucket/bucket"
-import { prepareUploadFile, uploadValidationError } from "@/lib/bucket/prepare-upload"
-import { formatCompressionSummary } from "@/lib/bucket/compress-image"
+import { prepareUploadFile, uploadValidationError } from "@/lib/bucket/prepareUpload"
+import { formatCompressionSummary } from "@/lib/bucket/compressImage"
 import {
   BucketUploadDesktopAlert,
   useBucketUploadDesktopOnly,
 } from "@/components/bucket/bucket-upload-desktop-gate"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 type UploadPhase = "idle" | "busy"
 

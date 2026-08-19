@@ -1,4 +1,4 @@
-import { pathExtension } from "./allowed-files"
+import { pathExtension } from "./allowedFiles"
 
 /** Raster formats converted to WebP before upload. GIF/ICO stay as-is. */
 export const RASTER_TO_WEBP = new Set([

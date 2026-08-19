@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { BucketFileRow } from "@/components/bucket/bucket-file-row"
 import { BucketFilePagination } from "@/components/bucket/bucket-file-pagination"
 import { BucketFilePreviewModal } from "@/components/bucket/bucket-file-preview-modal"
-import { useBucketFiles, useBucketStats } from "@/hooks/use-bucket"
+import { useBucketFiles, useBucketStats } from "@/hooks/bucket/useBucket"
 import type { FileListPage, FilePublic } from "@/services/bucket/types"
 
 export function BucketFilesPanel({

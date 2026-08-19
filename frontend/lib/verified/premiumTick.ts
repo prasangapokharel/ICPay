@@ -1,4 +1,4 @@
-import { USERNAME_FREE_MIN_LENGTH, type Tier } from "@/lib/username"
+import { USERNAME_FREE_MIN_LENGTH, type Tier } from "@/lib/profile/username"
 
 // Gold is the top 2 lengths rather than the whole ultra-premium tier: 1- and
 // 2-character handles are the scarcest inventory the sale will ever hold -- 36

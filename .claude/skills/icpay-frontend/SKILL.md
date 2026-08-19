@@ -34,7 +34,7 @@ All data comes from the canister, in the browser, after hydration.
 | `components/` | Shared UI. `auth/`, `i18n/`, `fiat/`, `theme-provider`, plus shadcn primitives. |
 | `services/` | Canister client layer — this is the only place that talks to the IC. |
 | `hooks/` | React hooks holding view logic. |
-| `lib/` | Pure helpers: account-id encoding, address parsing, formatting, username rules. |
+| `lib/` | Pure helpers by module — see [`lib-standard/SKILL.md`](../../.agents/skills/lib-standard/SKILL.md) |
 | `language/` | The 10 message catalogs plus `config.ts`. |
 
 ## Talking to the canister

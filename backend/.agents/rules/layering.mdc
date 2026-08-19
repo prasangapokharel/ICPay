@@ -1,0 +1,15 @@
+---
+description: ICPay backend layering — API → Service → Repository → Storage only
+alwaysApply: true
+globs: backend/src/**/*.mo
+---
+
+# Layering
+
+Read [`skills/layering/SKILL.md`](../skills/layering/SKILL.md) before editing Motoko.
+
+- Calls flow **downward only**: `api/v1/` → `services/` → `repositories/` → `storage/`
+- No business logic in API or repositories
+- No storage access from API
+- Fund paths use `caller`, never a user-supplied sender principal
+- New endpoint → service + test in the same change

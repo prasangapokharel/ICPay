@@ -4,7 +4,7 @@ import { Principal } from "@icp-sdk/core/principal"
 import { createAgent } from "@/services/icp"
 import { query } from "@/services/client"
 import { listTokens } from "@/services/launch/launch"
-import { fetchTokenRegistry } from "@/lib/token-registry"
+import { fetchTokenRegistry } from "@/lib/token/registry"
 
 // Mirrors backend Config.ICP_LEDGER_CANISTER_ID.
 export const ICP_LEDGER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"

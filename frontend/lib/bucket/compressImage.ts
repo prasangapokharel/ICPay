@@ -1,9 +1,9 @@
 import imageCompression from "browser-image-compression"
-import { pathExtension } from "@/lib/bucket/allowed-files"
-import { blobHasWebpHeader, validateWebpHeader } from "@/lib/bucket/image-bytes"
-import { sanitizeUploadFilename } from "@/lib/bucket/upload-path"
-import { shouldConvertRasterToWebp } from "@/lib/bucket/raster-formats"
-import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/upload-chunk"
+import { pathExtension } from "@/lib/bucket/allowedFiles"
+import { blobHasWebpHeader, validateWebpHeader } from "@/lib/bucket/imageBytes"
+import { sanitizeUploadFilename } from "@/lib/bucket/uploadPath"
+import { shouldConvertRasterToWebp } from "@/lib/bucket/rasterFormats"
+import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/uploadChunk"
 
 /** Target output size — keeps most photos under the legacy 700 KB single-upload cap. */
 export const COMPRESSION_MAX_SIZE_MB = 0.65

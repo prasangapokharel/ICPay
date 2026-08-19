@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "ICPay",
+    "slug": "icpay",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/logo/icpay/token.png",
+    "scheme": "icpay",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.icpay.mobile",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/images/logo/icpay/token.png"
+      },
+      "package": "app.icpay.mobile",
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/logo/icpay/token.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-web-browser",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/logo/icpay/token.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-image",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow ICPay to use Face ID to unlock your wallet on this device."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d44cde4d-7588-4547-aab1-d460cfeb3da8"
+      }
+    }
+  }
+}

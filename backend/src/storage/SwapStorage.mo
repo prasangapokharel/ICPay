@@ -124,4 +124,8 @@ module {
     for ((_, swap) in pending.entries()) { out.add(swap) };
     List.toArray(out)
   };
+
+  public func count(pending: PendingMap): Nat {
+    pending.size()
+  };
 };

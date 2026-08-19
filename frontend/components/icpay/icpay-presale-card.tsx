@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useIcpaySale } from "@/hooks/use-icpay-sale"
+import { useIcpaySale } from "@/hooks/icpay/useIcpaySale"
 import { BuyIcpayDrawer } from "@/components/icpay/buy-icpay-drawer"
 import { PresaleStatsPanel } from "@/components/icpay/presale-stats-panel"
 

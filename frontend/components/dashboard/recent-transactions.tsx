@@ -12,9 +12,9 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { ArrowRight01Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
-import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, shortenCounterparty } from "@/lib/wallet-utils"
-import { useLedgerSymbol } from "@/hooks/use-wallet-data"
-import { cn } from "@/lib/utils"
+import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, shortenCounterparty } from "@/lib/wallet/utils"
+import { useLedgerSymbol } from "@/hooks/wallet/useWalletData"
+import { cn } from "@/lib/ui/utils"
 
 type RecentTransactionsProps = {
   transactions: TransactionPublic[]

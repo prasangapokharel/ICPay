@@ -1,4 +1,23 @@
+# migrations/
 
-This is the example see mine one alrey one 
-https://raw.githubusercontent.com/caffeinelabs/motoko/refs/heads/master/.agents/skills/migrating-motoko-enhanced/SKILL.md
+One module per mainnet upgrade that changes **persisted** record shapes.
 
+**Full guide:** [`../.agents/skills/migration/SKILL.md`](../.agents/skills/migration/SKILL.md)
+
+## Rules
+
+1. Old types inline in the module — never import live types as migration input.
+2. Wire `(with migration = X.migration)` on `main.mo` **once**, then remove after deploy.
+3. Mark module `APPLIED — do NOT re-wire` in the header.
+4. Add test: `testing/upgrade/<Name>.test.mo`
+5. Run `bash scripts/run-tests.sh` before deploy.
+
+## Applied (do not re-wire)
+
+- `StampLedgerId.mo`
+- `AddBucketApiKeys.mo`
+- `AddBucketFileMeta.mo`
+
+## Enhanced Motoko multi-migration
+
+See: [`../.agents/skills/motok/migrating-motoko-enhanced/SKILL.md`](../.agents/skills/motok/migrating-motoko-enhanced/SKILL.md)

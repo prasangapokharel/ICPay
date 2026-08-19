@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { LaunchStatus } from "@/components/launch/launch-status"
-import { useToken } from "@/hooks/use-launch-data"
-import { useRewrittenLastSegment } from "@/lib/rewritten-route"
+import { useToken } from "@/hooks/token/useLaunchData"
+import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 
 export function LaunchDetail() {
   const t = useTranslations("launch")

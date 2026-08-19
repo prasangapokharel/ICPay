@@ -1,4 +1,4 @@
-import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet-utils"
+import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet/utils"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 

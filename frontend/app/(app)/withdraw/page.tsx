@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { WithdrawForm } from "@/components/withdraw/withdraw-form"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useLiveBalance, useRefreshWallet } from "@/hooks/use-wallet-data"
+import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { Skeleton } from "@/components/ui/skeleton"
 import { withdraw } from "@/services/withdraw/withdraw"
 

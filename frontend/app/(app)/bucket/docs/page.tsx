@@ -22,9 +22,9 @@ import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import { BucketCodeBlock } from "@/components/bucket/bucket-code-block"
 import { BucketCodeTabs } from "@/components/bucket/bucket-code-tabs"
 import { FILES_PAGE_SIZE, MAX_FILE_BYTES, formatBytes } from "@/lib/bucket/bucket"
-import { apiDocSections } from "@/lib/bucket/docs-api-sections"
-import { BUCKET_API_METHODS } from "@/lib/bucket/docs-method-list"
-import { cdnUrlExample, curlVerifyExample } from "@/lib/bucket/docs-examples"
+import { apiDocSections } from "@/lib/bucket/docsApiSections"
+import { BUCKET_API_METHODS } from "@/lib/bucket/docsMethodList"
+import { cdnUrlExample, curlVerifyExample } from "@/lib/bucket/docsExamples"
 import { WALLET_CANISTER_ID } from "@/services/icp"
 
 export default function BucketDocsPage() {

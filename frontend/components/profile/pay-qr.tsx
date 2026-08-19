@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Skeleton } from "@/components/ui/skeleton"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 // Rendered from a dynamic import so the qrcode library stays out of the initial
 // bundle for a page whose first paint is an avatar and a name.

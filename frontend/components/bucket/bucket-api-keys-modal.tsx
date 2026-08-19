@@ -21,8 +21,8 @@ import {
 } from "@/components/ui/dialog"
 import { Spinner } from "@/components/ui/spinner"
 import { mapBucketError } from "@/lib/bucket/bucket"
-import { copyText } from "@/lib/wallet-utils"
-import { useBucketApiKeys } from "@/hooks/use-bucket-api-keys"
+import { copyText } from "@/lib/wallet/utils"
+import { useBucketApiKeys } from "@/hooks/bucket/useBucketApiKeys"
 import type { ApiKeyCreateResult, ApiKeyPublic } from "@/services/bucket/types"
 
 function permLabel(

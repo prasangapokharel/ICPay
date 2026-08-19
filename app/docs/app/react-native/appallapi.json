@@ -1,0 +1,661 @@
+{
+  "meta": {
+    "name": "ICPay Mobile App — Screen & API Reference",
+    "version": "1.0.0",
+    "updated": "2026-08-17",
+    "purpose": "Single source of truth for React Native app: every screen, which APIs it calls, query vs update, and auth requirements.",
+    "webReference": "https://icpay.app",
+    "backendCanisterId": "6vbhm-nqaaa-aaaan-q6muq-cai",
+    "frontendAssetCanisterId": "63dke-waaaa-aaaan-q6mvq-cai",
+    "icHost": "https://icp0.io",
+    "internetIdentityUrl": "https://id.ai",
+    "derivationOrigin": "https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io"
+  },
+
+  "queryVsUpdate": {
+    "rule": "IC queries cost the canister ~$0. Prefer query paths for reads. Updates cost cycles and move state or touch ledgers.",
+    "preferQuery": [
+      "getDashboard",
+      "getTransactions",
+      "getDepositAddress",
+      "getUser",
+      "checkUsername",
+      "searchUsers",
+      "resolveUsername",
+      "isLedgerSupported",
+      "getToken / getTokenById / listTokens",
+      "getBucket* (most bucket reads)",
+      "getUserAnalytics",
+      "getVerifiedTier",
+      "icrc1_balance_of (direct ledger)",
+      "icrc1_metadata (direct ledger)",
+      "ICPSwap factory.getPool + pool.quote (browser/RN agent)"
+    ],
+    "mustUpdate": [
+      "login",
+      "register",
+      "transfer*",
+      "withdraw",
+      "syncDeposits",
+      "executeSwap",
+      "recoverFailedSwapInput",
+      "purchaseUsername",
+      "launchToken",
+      "createBucket / uploadFile / renewBucket",
+      "exportUserAnalytics",
+      "updateSettings (getSettings is also update — see quirks)"
+    ],
+    "quirks": [
+      "getSettings is implemented as update, not query — cache aggressively on mobile.",
+      "Backend getSwapQuote is update — web app uses ICPSwap direct queries instead (see externalApis.swapQuote).",
+      "Never change derivationOrigin on mobile without matching ii-alternative-origins."
+    ]
+  },
+
+  "constants": {
+    "icpLedgerId": "ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "chainKeyLedgers": [
+      { "id": "ryjl3-tyaaa-aaaaa-aaaba-cai", "symbol": "ICP", "decimals": 8 },
+      { "id": "mxzaz-hqaaa-aaaar-qaada-cai", "symbol": "ckBTC", "decimals": 8 },
+      { "id": "ss2fx-dyaaa-aaaar-qacoq-cai", "symbol": "ckETH", "decimals": 8 },
+      { "id": "xevnm-gaaaa-aaaar-qafnq-cai", "symbol": "ckUSDC", "decimals": 6 },
+      { "id": "cngnf-vqaaa-aaaar-qag4q-cai", "symbol": "ckUSDT", "decimals": 6 }
+    ],
+    "icpswapFactory": "4mmnk-kiaaa-aaaag-qbllq-cai",
+    "icpayLedgerId": "5fsnk-rqaaa-aaaan-q6m4q-cai",
+    "feesE8s": {
+      "swapIcpServiceFee": 10000000,
+      "swapIcpServiceFeeDisplay": "0.1 ICP",
+      "analyticsExport": 10000000,
+      "tokenLaunch": 500000000,
+      "icpTransferFeeTypical": 10000
+    },
+    "usernamePricingE8s": {
+      "ultra_1to3chars": 1000000000,
+      "premium_4chars": 500000000,
+      "standard_5chars": 200000000,
+      "basic_6to8chars": 100000000,
+      "freeClaimMinLength": 5
+    },
+    "pagination": {
+      "defaultPageSize": 20,
+      "maxPageSize": 50
+    }
+  },
+
+  "auth": {
+    "provider": "Internet Identity (AuthClient + delegation)",
+    "optionalProviders": ["NFID — different principal, separate wallet"],
+    "flow": [
+      "1. AuthClient.login({ identityProvider, derivationOrigin })",
+      "2. actor.login() — backend creates/loads user row",
+      "3. actor.register(username) — if isNew and user picks free name (5+ chars)",
+      "4. Store identity in secure storage; reuse HttpAgent per session"
+    ],
+    "sessionEndpoints": {
+      "login": { "kind": "update", "returns": "AuthResult { user, isNew }" },
+      "register": { "kind": "update", "args": ["username"], "returns": "AuthResult" },
+      "getUser": { "kind": "query", "returns": "opt UserPublic" }
+    },
+    "guards": {
+      "appShell": "All (app)/* routes require II session",
+      "public": ["/login", "/[username] public profile", "/about", "/faq", "/terms", "/privacy"]
+    }
+  },
+
+  "navigation": {
+    "bottomNav": [
+      { "id": "home", "route": "/", "labelKey": "nav.home" },
+      { "id": "icpverse", "route": "/icpverse", "labelKey": "nav.icpverse" },
+      { "id": "buyUsername", "route": "/username", "labelKey": "nav.buyUsername", "centerAction": true },
+      { "id": "transfer", "route": "/transfer", "labelKey": "nav.withdraw" },
+      { "id": "menu", "route": "/settings", "labelKey": "nav.menu" }
+    ],
+    "menuSections": [
+      {
+        "id": "money",
+        "items": [
+          { "route": "/transfer", "key": "send" },
+          { "route": "/deposit", "key": "deposit" },
+          { "route": "/withdraw", "key": "withdraw" },
+          { "route": "/wallet", "key": "tokens" },
+          { "route": "/launch", "key": "launch" },
+          { "route": "/swap", "key": "swap", "note": "Not in menu JSON yet — add for RN" }
+        ]
+      },
+      {
+        "id": "identity",
+        "items": [
+          { "route": "/username", "key": "buyName" },
+          { "route": "/profile", "key": "profile" },
+          { "route": "/icpverse", "key": "icpverse" },
+          { "route": "/deposit", "key": "myQr" }
+        ]
+      },
+      {
+        "id": "storage",
+        "items": [{ "route": "/bucket", "key": "bucket", "hot": true }]
+      },
+      {
+        "id": "activity",
+        "items": [
+          { "route": "/analytics", "key": "analytics" },
+          { "route": "/transactions", "key": "history" },
+          { "route": "/", "key": "balance" }
+        ]
+      }
+    ]
+  },
+
+  "screens": [
+    {
+      "id": "login",
+      "route": "/login",
+      "auth": false,
+      "title": "Connect Wallet",
+      "description": "Internet Identity sign-in. NFID optional with warning (different principal).",
+      "apis": [
+        { "name": "AuthClient.login", "source": "external", "kind": "external" },
+        { "name": "login", "source": "backend", "kind": "update", "after": "II success" }
+      ],
+      "frontendServices": ["services/auth/auth.ts"],
+      "notes": ["Call openBackendSession after login", "Redirect to / when authenticated"]
+    },
+    {
+      "id": "dashboard",
+      "route": "/",
+      "auth": true,
+      "title": "Home / Dashboard",
+      "description": "ICP balance card, Send/Receive shortcuts, recent transactions, username prompt.",
+      "apis": [
+        { "name": "getDashboard", "source": "backend", "kind": "query", "args": ["ledgerId=ICP"], "cache": "5min SWR" },
+        { "name": "icrc1_balance_of", "source": "icp-ledger", "kind": "query", "note": "Live ICP balance via useLiveBalance" },
+        { "name": "getUser", "source": "backend", "kind": "query", "optional": true }
+      ],
+      "hooks": ["useDashboard", "useLiveBalance", "useIcpPrice"],
+      "frontendServices": ["services/dashboard/dashboard.ts", "services/tokens.ts"],
+      "actions": [
+        { "label": "Send", "route": "/transfer" },
+        { "label": "Receive", "route": "/deposit" }
+      ],
+      "components": ["BalanceCard", "RecentTransactions", "UsernamePrompt"]
+    },
+    {
+      "id": "transfer",
+      "route": "/transfer",
+      "auth": true,
+      "title": "Send",
+      "description": "Send ICP or any supported token by @username, principal, account, or ICP account-id.",
+      "apis": [
+        { "name": "resolveUsername", "source": "backend", "kind": "query", "when": "recipient is @name" },
+        { "name": "getRecipientProfile", "source": "backend", "kind": "query", "via": "resolveUsername + getUser pattern" },
+        { "name": "isLedgerSupported", "source": "backend", "kind": "query" },
+        { "name": "icrc1_balance_of", "source": "ledger", "kind": "query", "when": "token balance display" },
+        { "name": "icrc1_fee", "source": "ledger", "kind": "query", "when": "fee estimate" },
+        { "name": "transferByUsername", "source": "backend", "kind": "update", "args": ["ledgerId", "username", "amount", "memo?"] },
+        { "name": "transferByPrincipal", "source": "backend", "kind": "update", "args": ["ledgerId", "principal", "amount", "memo?"] },
+        { "name": "transferByAccount", "source": "backend", "kind": "update", "args": ["ledgerId", "account", "amount", "memo?"] },
+        { "name": "transferByAccountId", "source": "backend", "kind": "update", "args": ["accountId", "amount", "memo?"], "note": "ICP only" }
+      ],
+      "hooks": ["useWalletHoldings", "useRecipientLookup"],
+      "frontendServices": ["services/transfer/transfer.ts", "services/profile/profile.ts"],
+      "successFlow": "Success screen with block index + receipt"
+    },
+    {
+      "id": "deposit",
+      "route": "/deposit",
+      "auth": true,
+      "title": "Receive / Deposit",
+      "description": "Show QR + ICRC-1 deposit address and account identifier. Sync incoming deposits.",
+      "apis": [
+        { "name": "getDepositAddress", "source": "backend", "kind": "query", "returns": "ICRC1Account" },
+        { "name": "getDepositAccountIdentifier", "source": "backend", "kind": "query", "returns": "hex account id" },
+        { "name": "syncDeposits", "source": "backend", "kind": "update", "args": ["ledgerId"], "when": "user taps refresh or auto-sync" }
+      ],
+      "hooks": ["useDepositAddress"],
+      "frontendServices": ["services/deposit/deposit.ts"],
+      "notes": ["Per-token deposit address is same subaccount, different ledger", "Show QR via RN QR library"]
+    },
+    {
+      "id": "withdraw",
+      "route": "/withdraw",
+      "auth": true,
+      "title": "Withdraw",
+      "description": "Send custodial balance to external ICRC-1 account (self-custody exit).",
+      "apis": [
+        { "name": "icrc1_balance_of", "source": "ledger", "kind": "query" },
+        { "name": "withdraw", "source": "backend", "kind": "update", "args": ["ledgerId", "amount", "toAccount"] }
+      ],
+      "frontendServices": ["services/withdraw/withdraw.ts"]
+    },
+    {
+      "id": "wallet",
+      "route": "/wallet",
+      "auth": true,
+      "title": "Tokens / Wallet",
+      "description": "All token holdings: ICP, chain-key, SNS, launched tokens. Tap token for detail/send.",
+      "apis": [
+        { "name": "listLedgerIds", "source": "frontend-composite", "kind": "query", "note": "Pinned + SNS registry + launched" },
+        { "name": "fetchBalances", "source": "ledger", "kind": "query", "parallel": true },
+        { "name": "fetchTokenMetadata", "source": "ledger", "kind": "query" },
+        { "name": "listTokens / getMyTokens", "source": "backend", "kind": "query", "when": "launched token list" },
+        { "name": "sweepToCustody", "source": "frontend+ledger", "kind": "update", "when": "move principal-held ICP into wallet", "via": "services/sweep/sweep.ts" }
+      ],
+      "hooks": ["useWalletHoldings", "useRefreshWallet"],
+      "frontendServices": ["services/tokens.ts", "services/sweep/sweep.ts"],
+      "notes": ["Optimistic patch after swap via holdings-cache", "Link to /token/[ledgerId]"]
+    },
+    {
+      "id": "token-detail",
+      "route": "/token/[ledgerId]",
+      "auth": true,
+      "title": "Token Detail",
+      "description": "Single token balance, send shortcut, metadata.",
+      "apis": [
+        { "name": "icrc1_balance_of", "source": "ledger", "kind": "query" },
+        { "name": "fetchTokenMetadata", "source": "ledger", "kind": "query" },
+        { "name": "getToken", "source": "backend", "kind": "query", "optional": true }
+      ],
+      "actions": [{ "route": "/transfer", "params": "ledgerId preselect" }]
+    },
+    {
+      "id": "swap",
+      "route": "/swap",
+      "auth": true,
+      "title": "Swap",
+      "description": "Exchange tokens via ICPSwap. Quotes are free (direct pool queries). Execute charges 0.1 ICP service fee.",
+      "apis": [
+        { "name": "fetchIcpswapQuote", "source": "external-icpswap", "kind": "query", "preferred": true, "note": "Do NOT use backend getSwapQuote on mobile" },
+        { "name": "isLedgerSupported", "source": "backend", "kind": "query", "parallel": 2 },
+        { "name": "icrc1_balance_of", "source": "ledger", "kind": "query", "when": "balance checks" },
+        { "name": "executeSwap", "source": "backend", "kind": "update", "args": ["tokenIn", "tokenOut", "amountIn", "amountOutMin"] },
+        { "name": "recoverFailedSwapInput", "source": "backend", "kind": "update", "args": ["tokenIn", "tokenOut", "amountIn"], "when": "failed escrow recovery" }
+      ],
+      "hooks": ["useSwapQuote", "useSwapTokens"],
+      "frontendServices": ["services/swap/swap.ts", "services/swap/icpswap-quote.ts", "lib/swap-utils.ts"],
+      "fees": {
+        "serviceFeeE8s": 10000000,
+        "slippageDefaultBps": 100,
+        "maxInput": "balance - 3*ledgerFee - serviceDebit (if ICP in)"
+      },
+      "flow": ["Enter amount", "Review drawer", "Confirm → executeSwap", "Success + balance patch"]
+    },
+    {
+      "id": "transactions",
+      "route": "/transactions",
+      "auth": true,
+      "title": "Transaction History",
+      "description": "Paginated full history with filters.",
+      "apis": [
+        { "name": "getTransactions", "source": "backend", "kind": "query", "args": ["page", "pageSize"] },
+        { "name": "getTransactionDetail", "source": "backend", "kind": "query", "args": ["txId"], "when": "detail tap" }
+      ],
+      "hooks": ["useTransactions"],
+      "frontendServices": ["services/transactions/transactions.ts"]
+    },
+    {
+      "id": "analytics",
+      "route": "/analytics",
+      "auth": true,
+      "title": "Analytics",
+      "description": "Premium handles (1–4 chars): summary stats + table. CSV export free for premium or 0.1 ICP.",
+      "gate": "Username length 1–4 (hasAnalyticsAccess)",
+      "apis": [
+        { "name": "getUserAnalytics", "source": "backend", "kind": "query", "returns": "AnalyticsData" },
+        { "name": "exportUserAnalytics", "source": "backend", "kind": "update", "when": "CSV export", "feeE8s": 10000000 }
+      ],
+      "hooks": ["useAnalytics"],
+      "frontendServices": ["services/analytics/analytics.ts", "lib/analytics-csv.ts"],
+      "summaryFields": [
+        "totalReceivedE8s",
+        "totalSentE8s",
+        "depositCount",
+        "withdrawCount",
+        "transferCount",
+        "tipCount",
+        "swapInCount",
+        "swapOutCount",
+        "completedCount",
+        "failedCount",
+        "uniqueCounterparties"
+      ],
+      "notes": ["ICP totals only count ledgerId=ICP rows", "Swap amounts are counts not ICP sums"]
+    },
+    {
+      "id": "username",
+      "route": "/username",
+      "auth": true,
+      "title": "Buy Username",
+      "description": "Search, price tiers, purchase premium short names or claim free 5+ char.",
+      "apis": [
+        { "name": "checkUsername", "source": "backend", "kind": "query", "args": ["name"] },
+        { "name": "getUsernamePrice", "source": "backend", "kind": "query", "args": ["name"] },
+        { "name": "getUsernameTreasury", "source": "backend", "kind": "query" },
+        { "name": "purchaseUsername", "source": "backend", "kind": "update", "args": ["name"] },
+        { "name": "register", "source": "backend", "kind": "update", "when": "free claim path" },
+        { "name": "updateUsername", "source": "backend", "kind": "update", "when": "rename if allowed" }
+      ],
+      "frontendServices": ["services/buy/buy.ts", "lib/username.ts"]
+    },
+    {
+      "id": "profile",
+      "route": "/profile",
+      "auth": true,
+      "title": "My Profile",
+      "description": "Display name, username, principal, social links, bookmarks entry.",
+      "apis": [
+        { "name": "getUser", "source": "backend", "kind": "query" },
+        { "name": "setSocialLink", "source": "backend", "kind": "update", "args": ["platform", "url"] },
+        { "name": "removeSocialLink", "source": "backend", "kind": "update", "args": ["platform"] },
+        { "name": "listBookmarks", "source": "backend", "kind": "query" },
+        { "name": "getVerifiedTier", "source": "backend", "kind": "query", "args": ["userId"] }
+      ],
+      "frontendServices": ["services/profile/profile.ts", "services/sociallink/sociallink.ts", "services/bookmark/bookmark.ts"]
+    },
+    {
+      "id": "icpverse",
+      "route": "/icpverse",
+      "auth": true,
+      "title": "ICPverse",
+      "description": "Discover users, search, suggested accounts, tip/send entry.",
+      "apis": [
+        { "name": "searchUsers", "source": "backend", "kind": "query", "args": ["searchText"], "auth": false },
+        { "name": "listBookmarks", "source": "backend", "kind": "query" },
+        { "name": "addBookmark", "source": "backend", "kind": "update" },
+        { "name": "removeBookmark", "source": "backend", "kind": "update" }
+      ],
+      "hooks": ["useIcpverseSearch", "useBookmarks"],
+      "subRoutes": [{ "route": "/icpverse/[username]", "title": "User mini-profile + tip" }]
+    },
+    {
+      "id": "public-profile",
+      "route": "/[username]",
+      "auth": false,
+      "title": "Public Profile",
+      "description": "Public page for any @username. Send/tip deep link.",
+      "apis": [
+        { "name": "resolveUsername", "source": "backend", "kind": "query", "auth": false },
+        { "name": "getVerifiedTier", "source": "backend", "kind": "query", "auth": false }
+      ],
+      "notes": ["No auth required to view", "Send requires login"]
+    },
+    {
+      "id": "launch",
+      "route": "/launch",
+      "auth": true,
+      "title": "Launch Token",
+      "description": "Create fixed-supply ICRC-1 token. 5 ICP fee.",
+      "apis": [
+        { "name": "getLaunchFee", "source": "backend", "kind": "query" },
+        { "name": "isTokenLaunchReady", "source": "backend", "kind": "query" },
+        { "name": "isSymbolAvailable", "source": "backend", "kind": "query", "args": ["symbol"] },
+        { "name": "launchToken", "source": "backend", "kind": "update", "args": ["LaunchParams"] }
+      ],
+      "subRoutes": [{ "route": "/launch/[id]", "title": "Launch detail / status" }],
+      "frontendServices": ["services/launch/launch.ts"]
+    },
+    {
+      "id": "bucket-list",
+      "route": "/bucket",
+      "auth": true,
+      "title": "ICPay Cloud / Buckets",
+      "description": "List storage buckets, create new, cycle health.",
+      "apis": [
+        { "name": "listBuckets", "source": "backend", "kind": "query" },
+        { "name": "getBucketPrice", "source": "backend", "kind": "query", "args": ["capacityGB"] },
+        { "name": "getBucketCycleStatus", "source": "backend", "kind": "query" },
+        { "name": "createBucket", "source": "backend", "kind": "update", "args": ["name", "capacityGB", "visibility"] }
+      ],
+      "subRoutes": [
+        { "route": "/bucket/[id]", "title": "Bucket detail, files, upload, API keys" },
+        { "route": "/bucket/pricing", "title": "Pricing tiers" }
+      ],
+      "frontendServices": ["services/bucket/bucket.ts"],
+      "capacityTiersGB": [1, 5, 10, 25, 50, 100, 250, 500]
+    },
+    {
+      "id": "bucket-detail",
+      "route": "/bucket/[id]",
+      "auth": true,
+      "title": "Bucket Detail",
+      "description": "Files, upload, download, renew, API keys.",
+      "apis": [
+        { "name": "getBucket", "source": "backend", "kind": "query" },
+        { "name": "getBucketStats", "source": "backend", "kind": "query" },
+        { "name": "getRenewQuote", "source": "backend", "kind": "query" },
+        { "name": "renewBucket", "source": "backend", "kind": "update" },
+        { "name": "listFiles", "source": "backend", "kind": "query" },
+        { "name": "uploadFile", "source": "backend", "kind": "update" },
+        { "name": "beginFileUpload", "source": "backend", "kind": "update", "when": "large files" },
+        { "name": "uploadFileChunkIndexed", "source": "backend", "kind": "update" },
+        { "name": "completeFileUpload", "source": "backend", "kind": "update" },
+        { "name": "deleteFile", "source": "backend", "kind": "update" },
+        { "name": "downloadFile", "source": "backend", "kind": "query" },
+        { "name": "getPublicFileUrl", "source": "backend", "kind": "query" },
+        { "name": "createApiKey", "source": "backend", "kind": "update" },
+        { "name": "listApiKeys", "source": "backend", "kind": "query" },
+        { "name": "revokeApiKey", "source": "backend", "kind": "update" }
+      ],
+      "referenceDoc": "backend/docs/api/add/bucket/frontend/api/api.json"
+    },
+    {
+      "id": "settings-menu",
+      "route": "/settings",
+      "auth": true,
+      "title": "Menu",
+      "description": "Service grid + settings drawer (language, currency, theme, sound, legal links).",
+      "apis": [
+        { "name": "getSettings", "source": "backend", "kind": "update", "note": "cache on device" },
+        { "name": "updateSettings", "source": "backend", "kind": "update", "args": ["theme", "language", "notifications"] }
+      ],
+      "localOnly": ["fiat currency", "theme", "sound preference — may sync via updateSettings"],
+      "frontendServices": ["services/settings/settings.ts"]
+    },
+    {
+      "id": "icpay-token",
+      "route": "/icpay",
+      "auth": true,
+      "title": "ICPAY Token",
+      "description": "ICPAY stats, FDV, treasury info.",
+      "apis": [
+        { "name": "fetchIcpayStats", "source": "frontend-composite", "kind": "query", "via": "ICPAY ledger reads" }
+      ],
+      "frontendServices": ["services/icpay/icpay.ts"]
+    },
+    {
+      "id": "legal-about",
+      "route": "/about",
+      "auth": false,
+      "title": "About / FAQ / Terms / Privacy",
+      "description": "Static legal pages — WebView or bundled markdown in RN.",
+      "apis": [],
+      "routes": ["/about", "/faq", "/terms", "/privacy", "/transparency", "/roadmap"]
+    }
+  ],
+
+  "backendApi": {
+    "canisterId": "6vbhm-nqaaa-aaaan-q6muq-cai",
+    "actorFactory": "frontend/services/wallet.ts — walletIdl + Actor.createActor",
+    "resultWrapper": "{ ok: T } | { err: text }",
+    "modules": {
+      "Health": {
+        "health": { "kind": "query", "auth": false, "returns": "text" }
+      },
+      "Auth": {
+        "login": { "kind": "update", "auth": "II", "returns": "AuthResult" },
+        "register": { "kind": "update", "auth": "II", "args": ["username"], "returns": "AuthResult" }
+      },
+      "Users": {
+        "getUser": { "kind": "query", "auth": "II", "returns": "opt UserPublic" },
+        "updateUsername": { "kind": "update", "auth": "II", "args": ["newUsername"] },
+        "checkUsername": { "kind": "query", "auth": false, "args": ["name"], "returns": "bool" },
+        "searchUsers": { "kind": "query", "auth": false, "args": ["searchText"], "returns": "[UserPublic]" },
+        "resolveUsername": { "kind": "query", "auth": false, "args": ["name"], "returns": "opt Principal" },
+        "getUsernameCount": { "kind": "query", "auth": false, "returns": "Nat" }
+      },
+      "Dashboard": {
+        "getDashboard": { "kind": "query", "auth": "II", "args": ["ledgerId"], "returns": "ApiResult DashboardData" }
+      },
+      "Deposit": {
+        "getDepositAddress": { "kind": "query", "auth": "II", "returns": "ICRC1Account" },
+        "getDepositAccountIdentifier": { "kind": "query", "auth": "II", "returns": "Text" },
+        "syncDeposits": { "kind": "update", "auth": "II", "args": ["ledgerId"] }
+      },
+      "Withdraw": {
+        "withdraw": { "kind": "update", "auth": "II", "args": ["ledgerId", "amount", "to"] }
+      },
+      "Transfer": {
+        "transferByUsername": { "kind": "update", "auth": "II", "args": ["ledgerId", "username", "amount", "memo?"] },
+        "transferByPrincipal": { "kind": "update", "auth": "II", "args": ["ledgerId", "principal", "amount", "memo?"] },
+        "transferByAccount": { "kind": "update", "auth": "II", "args": ["ledgerId", "account", "amount", "memo?"] },
+        "transferByAccountId": { "kind": "update", "auth": "II", "args": ["accountId", "amount", "memo?"] }
+      },
+      "Transactions": {
+        "getTransactions": { "kind": "query", "auth": "II", "args": ["page", "pageSize"], "returns": "PaginatedResult" },
+        "getTransactionDetail": { "kind": "query", "auth": "II", "args": ["txId"] }
+      },
+      "Settings": {
+        "getSettings": { "kind": "update", "auth": "II", "note": "read but billed as update" },
+        "updateSettings": { "kind": "update", "auth": "II", "args": ["theme", "language", "notifications"] }
+      },
+      "UsernameSale": {
+        "getUsernamePrice": { "kind": "query", "auth": false, "args": ["name"] },
+        "getUsernameTreasury": { "kind": "query", "auth": false },
+        "purchaseUsername": { "kind": "update", "auth": "II", "args": ["name"] }
+      },
+      "Token": {
+        "launchToken": { "kind": "update", "auth": "II", "args": ["LaunchParams"] },
+        "getToken": { "kind": "query", "auth": false, "args": ["canisterId"] },
+        "getTokenById": { "kind": "query", "auth": false, "args": ["id"] },
+        "getMyTokens": { "kind": "query", "auth": "II", "args": ["limit", "offset"] },
+        "listTokens": { "kind": "query", "auth": false, "args": ["limit", "offset"] },
+        "isSymbolAvailable": { "kind": "query", "auth": false, "args": ["symbol"] },
+        "getLaunchFee": { "kind": "query", "auth": false },
+        "isTokenLaunchReady": { "kind": "query", "auth": false }
+      },
+      "Swap": {
+        "getSwapQuote": { "kind": "update", "auth": false, "deprecatedOnMobile": "Use externalApis.icpswapQuote" },
+        "executeSwap": { "kind": "update", "auth": "II", "args": ["tokenIn", "tokenOut", "amountIn", "amountOutMin"] },
+        "recoverFailedSwapInput": { "kind": "update", "auth": "II", "args": ["tokenIn", "tokenOut", "amountIn"] },
+        "getPendingSwapCount": { "kind": "query", "auth": false }
+      },
+      "Analytics": {
+        "getUserAnalytics": { "kind": "query", "auth": "II", "gate": "username length 1-4" },
+        "exportUserAnalytics": { "kind": "update", "auth": "II", "feeE8s": 10000000 }
+      },
+      "Bookmark": {
+        "listBookmarks": { "kind": "query", "auth": "II" },
+        "addBookmark": { "kind": "update", "auth": "II", "args": ["targetUserId"] },
+        "removeBookmark": { "kind": "update", "auth": "II", "args": ["targetUserId"] }
+      },
+      "SocialLink": {
+        "setSocialLink": { "kind": "update", "auth": "II", "args": ["platform", "url"] },
+        "removeSocialLink": { "kind": "update", "auth": "II", "args": ["platform"] }
+      },
+      "Verified": {
+        "getVerifiedTier": { "kind": "query", "auth": false, "args": ["userId"] }
+      },
+      "Ledgers": {
+        "isLedgerSupported": { "kind": "query", "auth": false, "args": ["ledgerId"] }
+      },
+      "Bucket": {
+        "reference": "See backend/docs/api/add/bucket/frontend/api/api.json for full 40+ methods",
+        "summary": "createBucket, listBuckets, uploadFile, listFiles, renewBucket, API keys — mix of query/update"
+      }
+    }
+  },
+
+  "externalApis": {
+    "icpswapQuote": {
+      "description": "Preferred swap quote path — free queries, no backend round-trip",
+      "factoryCanister": "4mmnk-kiaaa-aaaag-qbllq-cai",
+      "methods": [
+        { "canister": "factory", "method": "getPool", "kind": "query", "args": ["token0", "token1", "fee"] },
+        { "canister": "pool", "method": "quote", "kind": "query", "args": ["zeroForOne", "amountIn", "amountOutMinimum"] },
+        { "canister": "pool", "method": "getSwapFee", "kind": "query" }
+      ],
+      "frontendImplementation": "frontend/services/swap/icpswap-quote.ts",
+      "serviceFeeDisplay": "Use lib/swap-utils icpServiceFee() — currently 0.1 ICP (10_000_000 e8s)"
+    },
+    "ledgerIcrc1": {
+      "description": "Direct ledger reads — always query, parallelize on wallet load",
+      "methods": [
+        { "method": "icrc1_balance_of", "kind": "query", "args": ["account"] },
+        { "method": "icrc1_fee", "kind": "query" },
+        { "method": "icrc1_metadata", "kind": "query" },
+        { "method": "icrc1_decimals", "kind": "query" },
+        { "method": "icrc1_symbol", "kind": "query" }
+      ],
+      "frontendImplementation": "frontend/services/tokens.ts"
+    },
+    "snsWasm": {
+      "canisterId": "qaa6y-5yaaa-aaaaa-aaafa-cai",
+      "purpose": "Discover SNS token ledgers for wallet list",
+      "frontendImplementation": "frontend/lib/token-registry.ts"
+    },
+    "icpPrice": {
+      "description": "Fiat conversion for balance display",
+      "frontendImplementation": "frontend/hooks/use-icp-price.ts",
+      "kind": "https",
+      "note": "Third-party price API — not on-chain"
+    },
+    "internetIdentity": {
+      "url": "https://id.ai",
+      "derivationOrigin": "https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io",
+      "packages": ["@icp-sdk/core/agent", "@dfinity/auth-client"]
+    }
+  },
+
+  "sharedTypes": {
+    "source": "frontend/services/types.ts",
+    "core": {
+      "UserPublic": ["id", "username?", "displayName", "socialLinks?", "createdAt"],
+      "DashboardData": ["user", "principal", "depositAddress", "depositAccountIdentifier", "recentTransactions", "totalDeposits", "totalWithdrawals", "totalTransfers"],
+      "TransactionPublic": ["id", "userId", "txType", "ledgerId", "amount", "fee", "from", "to", "status", "blockIndex?", "memo?", "createdAt", "completedAt?"],
+      "TxType": ["deposit", "withdraw", "transfer", "fee", "swapIn", "swapOut"],
+      "SwapQuoteResult": ["amountOut", "amountOutRaw", "icpServiceFee", "swapFee", "priceImpact", "poolId"],
+      "SwapResult": ["blockIndex", "amountIn", "amountOut", "icpServiceFee", "txId"],
+      "AnalyticsSummary": ["totalReceivedE8s", "totalSentE8s", "depositCount", "withdrawCount", "transferCount", "tipCount", "swapInCount", "swapOutCount", "completedCount", "failedCount", "uniqueCounterparties", "freeExport"],
+      "SettingsPublic": ["theme", "language", "notifications"],
+      "TokenPublic": ["id", "symbol", "name", "status", "ledgerId?", "supply", "decimals", "..."],
+      "ICRC1Account": ["owner: Principal", "subaccount?: Blob"]
+    }
+  },
+
+  "reactNativeImplementation": {
+    "recommendedStack": {
+      "navigation": "React Navigation (bottom tabs + stack)",
+      "icp": "@icp-sdk/core/agent + @dfinity/identity",
+      "auth": "@dfinity/auth-client or native II WebView with derivationOrigin",
+      "cache": "React Query or SWR equivalent — mirror use-wallet-data keys",
+      "secureStorage": "expo-secure-store for identity delegation"
+    },
+    "screenPriority": {
+      "mvp1": ["/login", "/", "/transfer", "/deposit", "/wallet", "/transactions", "/settings"],
+      "mvp2": ["/swap", "/withdraw", "/username", "/profile", "/icpverse"],
+      "mvp3": ["/analytics", "/launch", "/bucket", "/icpay"]
+    },
+    "mobilePatterns": {
+      "balanceRefresh": "Query icrc1_balance_of directly; avoid getDashboard on every focus",
+      "swapQuotes": "Always ICPSwap direct queries — never backend getSwapQuote",
+      "offline": "Show cached holdings from AsyncStorage (mirror holdings-cache.ts)",
+      "deepLinks": ["icpay.app/[username]", "icpay.app/pay?... payment links from services/pay/pay.ts"]
+    },
+    "frontendFilesToPort": [
+      "services/icp.ts",
+      "services/wallet.ts",
+      "services/client.ts",
+      "services/tokens.ts",
+      "services/dashboard/dashboard.ts",
+      "services/transfer/transfer.ts",
+      "services/deposit/deposit.ts",
+      "services/withdraw/withdraw.ts",
+      "services/swap/swap.ts",
+      "services/swap/icpswap-quote.ts",
+      "lib/swap-utils.ts",
+      "lib/wallet-utils.ts",
+      "lib/username.ts",
+      "hooks/use-wallet-data.ts"
+    ]
+  }
+}

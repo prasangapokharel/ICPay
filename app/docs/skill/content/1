@@ -1,0 +1,1107 @@
+For a scalable React Native + TypeScript project, I’d keep the agent rules **small, composable, and enforceable** rather than making one huge skill file.
+
+Recommended:
+
+```text
+app/
+├── .agents/
+│   └── skills/
+│       ├── coding-standards/
+│       │   └── SKILL.md
+│       ├── architecture/
+│       │   └── SKILL.md
+│       ├── react-native/
+│       │   └── SKILL.md
+│       ├── typescript/
+│       │   └── SKILL.md
+│       ├── components/
+│       │   └── SKILL.md
+│       ├── state-management/
+│       │   └── SKILL.md
+│       ├── api/
+│       │   └── SKILL.md
+│       ├── forms-validation/
+│       │   └── SKILL.md
+│       ├── navigation/
+│       │   └── SKILL.md
+│       ├── performance/
+│       │   └── SKILL.md
+│       ├── security/
+│       │   └── SKILL.md
+│       ├── testing/
+│       │   └── SKILL.md
+│       └── accessibility/
+│           └── SKILL.md
+│
+├── src/
+├── assets/
+├── package.json
+└── tsconfig.json
+```
+
+### 1. `coding-standards/SKILL.md`
+
+````md
+# Coding Standards
+
+## General
+
+Write clean, predictable, maintainable TypeScript.
+
+Prefer simple code over clever code.
+
+Do not duplicate logic.
+
+Reuse existing utilities, services, hooks, components, and types before creating new ones.
+
+Do not create abstractions without a real reuse case.
+
+Keep functions small and focused.
+
+Use descriptive names.
+
+Avoid unnecessary comments. Code should explain itself.
+
+Do not leave dead code, unused imports, unused variables, or commented-out implementations.
+
+---
+
+## Naming
+
+Use camelCase for variables, functions, parameters, hooks, and object properties.
+
+```ts
+const userName = 'alice';
+
+function getUserProfile() {}
+
+const isAuthenticated = true;
+````
+
+Use PascalCase for:
+
+* React components
+* Classes
+* Types
+* Interfaces
+* Enums when used
+
+```tsx
+function UserProfile() {}
+
+type UserProfileProps = {}
+
+interface ApiResponse {}
+
+class ApiClient {}
+```
+
+Use UPPER_SNAKE_CASE only for true compile-time constants.
+
+```ts
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+```
+
+Do not use:
+
+```ts
+const User_Name = 'alice';
+const USER_NAME = 'alice';
+function GetUser() {}
+```
+
+---
+
+## Files
+
+Use kebab-case for filenames.
+
+```text
+user-profile.tsx
+payment-card.tsx
+use-auth.ts
+api-client.ts
+```
+
+React component names remain PascalCase inside the file.
+
+```tsx
+export function PaymentCard() {}
+```
+
+---
+
+## Booleans
+
+Use meaningful prefixes:
+
+```ts
+isLoading
+isAuthenticated
+isVisible
+hasPermission
+canSubmit
+shouldRetry
+```
+
+Avoid:
+
+```ts
+loading
+auth
+visible
+permission
+```
+
+---
+
+## Functions
+
+Use verbs.
+
+```ts
+getUser()
+createPayment()
+updateProfile()
+deleteAccount()
+validateEmail()
+formatCurrency()
+```
+
+Avoid vague names:
+
+```ts
+data()
+handle()
+process()
+doSomething()
+```
+
+unless the context makes the meaning obvious.
+
+---
+
+## Imports
+
+Keep imports organized.
+
+1. React / React Native
+2. External packages
+3. Internal aliases
+4. Relative imports
+
+Prefer aliases:
+
+```ts
+import { Button } from '@/components/ui/button';
+import { paymentsApi } from '@/features/payments/api/payments-api';
+```
+
+Avoid deep relative imports:
+
+```ts
+import { Button } from '../../../components/ui/button';
+```
+
+---
+
+## TypeScript
+
+Use strict TypeScript.
+
+Do not use `any` unless there is a documented unavoidable reason.
+
+Prefer:
+
+```ts
+unknown
+```
+
+over:
+
+```ts
+any
+```
+
+Define API boundaries explicitly.
+
+```ts
+type Payment = {
+  id: string;
+  amount: number;
+  status: PaymentStatus;
+};
+```
+
+Avoid unnecessary type assertions:
+
+```ts
+user as User
+```
+
+Prefer runtime validation when external data is involved.
+
+---
+
+## Functions
+
+Prefer explicit return types for:
+
+* exported functions
+* API functions
+* hooks
+* reusable utilities
+
+```ts
+export function formatCurrency(amount: number): string {
+  return `$${amount.toFixed(2)}`;
+}
+```
+
+---
+
+## Error handling
+
+Never silently swallow errors.
+
+Bad:
+
+```ts
+try {
+  await savePayment();
+} catch {}
+```
+
+Good:
+
+```ts
+try {
+  await savePayment();
+} catch (error) {
+  logger.error(error);
+  throw error;
+}
+```
+
+---
+
+## Duplication
+
+Never copy the same business logic into multiple files.
+
+Bad:
+
+```text
+payments/
+├── create-payment.ts
+├── payment-screen.tsx
+└── payment-modal.tsx
+```
+
+where each independently validates payment rules.
+
+Create one reusable implementation:
+
+```text
+payments/
+├── api/
+├── schemas/
+├── services/
+└── components/
+```
+
+---
+
+## Exports
+
+Prefer named exports.
+
+```ts
+export function PaymentCard() {}
+```
+
+Avoid default exports except where required by framework conventions.
+
+Expo Router route files may use default exports when required.
+
+````
+
+### 2. `react-native/SKILL.md`
+
+```md
+# React Native Standards
+
+Use modern React Native and TypeScript patterns.
+
+Prefer React Native primitives over platform-specific hacks.
+
+Use:
+
+- View
+- Text
+- Pressable
+- ScrollView
+- FlatList
+- SectionList
+- Image
+- TextInput
+
+Avoid unnecessary third-party dependencies.
+
+---
+
+## Components
+
+Components should have one responsibility.
+
+```tsx
+type UserAvatarProps = {
+  uri?: string;
+  size?: number;
+};
+
+export function UserAvatar({
+  uri,
+  size = 40,
+}: UserAvatarProps) {
+  return (
+    <Image
+      source={uri ? { uri } : undefined}
+      style={{ width: size, height: size }}
+    />
+  );
+}
+````
+
+Avoid giant components.
+
+If a screen becomes difficult to understand, extract feature components.
+
+---
+
+## Lists
+
+Use FlatList or SectionList for dynamic lists.
+
+Do not render large collections with map + ScrollView.
+
+Bad:
+
+```tsx
+<ScrollView>
+  {users.map((user) => (
+    <UserCard key={user.id} user={user} />
+  ))}
+</ScrollView>
+```
+
+Prefer:
+
+```tsx
+<FlatList
+  data={users}
+  keyExtractor={(user) => user.id}
+  renderItem={({ item }) => <UserCard user={item} />}
+/>
+```
+
+---
+
+## Keys
+
+Always use stable keys.
+
+```tsx
+keyExtractor={(item) => item.id}
+```
+
+Never use array indexes when stable IDs exist.
+
+---
+
+## Platform differences
+
+Use Platform APIs only when behavior genuinely differs.
+
+```ts
+import { Platform } from 'react-native';
+
+const paddingTop = Platform.select({
+  ios: 12,
+  android: 8,
+  default: 8,
+});
+```
+
+Do not duplicate entire components for iOS and Android unnecessarily.
+
+---
+
+## Styling
+
+Use the project's established styling system consistently.
+
+Do not mix multiple styling systems without a reason.
+
+Avoid inline styles for reusable design rules.
+
+Create reusable UI components for repeated patterns.
+
+---
+
+## Accessibility
+
+Interactive elements must have accessible labels.
+
+```tsx
+<Pressable
+  accessibilityRole="button"
+  accessibilityLabel="Send payment"
+>
+  <Text>Send</Text>
+</Pressable>
+```
+
+Do not rely only on icons to communicate actions.
+
+---
+
+## Images
+
+Use appropriate image dimensions and caching strategies.
+
+Do not load unnecessarily large assets.
+
+Prefer optimized assets and remote image caching where appropriate.
+
+````
+
+### 3. `typescript/SKILL.md`
+
+```md
+# TypeScript Standards
+
+Use strict TypeScript.
+
+## Never use any
+
+Bad:
+
+```ts
+function parse(data: any) {}
+````
+
+Prefer:
+
+```ts
+function parse(data: unknown) {}
+```
+
+Then narrow the type.
+
+---
+
+## Types
+
+Prefer type aliases for data structures.
+
+```ts
+type User = {
+  id: string;
+  username: string;
+};
+```
+
+Use interfaces when extension/implementation semantics are actually useful.
+
+---
+
+## Unions
+
+Prefer discriminated unions for state.
+
+```ts
+type RequestState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: User }
+  | { status: 'error'; error: Error };
+```
+
+Avoid boolean combinations that create impossible states.
+
+Bad:
+
+```ts
+{
+  isLoading: boolean;
+  isError: boolean;
+  isSuccess: boolean;
+}
+```
+
+---
+
+## Nullability
+
+Handle null and undefined explicitly.
+
+Do not blindly use:
+
+```ts
+user!.name
+```
+
+Prefer:
+
+```ts
+user?.name
+```
+
+or explicit validation.
+
+---
+
+## Constants
+
+Extract repeated values.
+
+```ts
+const PAYMENT_TIMEOUT_MS = 10_000;
+```
+
+Do not scatter magic numbers throughout the application.
+
+---
+
+## API types
+
+Keep external API types separate from UI-specific types when necessary.
+
+```text
+features/payments/
+├── api/
+│   ├── payments-api.ts
+│   └── payments.types.ts
+├── types.ts
+└── components/
+```
+
+````
+
+### 4. `architecture/SKILL.md`
+
+```md
+# Architecture
+
+Use feature-based architecture.
+
+Business logic belongs to features.
+
+```text
+features/
+├── auth/
+├── wallet/
+├── payments/
+└── profile/
+````
+
+Do not create global business folders such as:
+
+```text
+services/
+├── payment.ts
+├── wallet.ts
+├── user.ts
+└── ...
+```
+
+Infrastructure belongs in `services`.
+
+```text
+services/
+├── api/
+├── storage/
+├── analytics/
+└── notifications/
+```
+
+Shared UI belongs in:
+
+```text
+components/
+├── ui/
+├── layout/
+└── feedback/
+```
+
+---
+
+## Dependency direction
+
+Preferred:
+
+```text
+app
+ ↓
+features
+ ↓
+services / lib
+ ↓
+external libraries
+```
+
+Features must not import route files.
+
+Services must not import features.
+
+Avoid circular dependencies.
+
+---
+
+## Feature boundaries
+
+A feature owns its:
+
+* API
+* components
+* hooks
+* schemas
+* state
+* types
+
+Example:
+
+```text
+features/payments/
+├── api/
+├── components/
+├── hooks/
+├── schemas/
+├── store/
+├── types.ts
+└── index.ts
+```
+
+Only expose public APIs through `index.ts` when useful.
+
+Avoid importing internal implementation details from another feature.
+
+````
+
+### 5. `components/SKILL.md`
+
+```md
+# Component Standards
+
+Use React Native Reusables for generic UI primitives when available.
+
+Generic components belong in:
+
+```text
+components/ui/
+````
+
+Examples:
+
+```text
+button.tsx
+card.tsx
+dialog.tsx
+input.tsx
+sheet.tsx
+text.tsx
+```
+
+Business components belong inside their feature.
+
+```text
+features/payments/components/payment-card.tsx
+```
+
+Do not put business-specific components inside `components/ui`.
+
+---
+
+## Props
+
+Keep props minimal.
+
+Good:
+
+```ts
+type PaymentCardProps = {
+  payment: Payment;
+  onPress?: () => void;
+};
+```
+
+Avoid passing large unrelated objects.
+
+---
+
+## Composition
+
+Prefer composition over deeply configurable components.
+
+Good:
+
+```tsx
+<Card>
+  <CardHeader />
+  <CardContent />
+</Card>
+```
+
+Avoid components with dozens of boolean props.
+
+````
+
+### 6. `api/SKILL.md`
+
+```md
+# API Standards
+
+All application APIs use versioned endpoints.
+
+```text
+/api/v1/...
+````
+
+Keep HTTP implementation centralized.
+
+```text
+services/api/
+├── client.ts
+├── errors.ts
+└── types.ts
+```
+
+Feature-specific API methods stay inside the feature.
+
+```text
+features/payments/api/payments-api.ts
+```
+
+Never create a separate HTTP client for every feature.
+
+---
+
+## API naming
+
+Use resource-oriented endpoints.
+
+```text
+GET    /api/v1/users
+GET    /api/v1/users/:id
+POST   /api/v1/users
+PATCH  /api/v1/users/:id
+DELETE /api/v1/users/:id
+```
+
+Avoid action-heavy endpoints when a resource operation is sufficient.
+
+---
+
+## Responses
+
+Use consistent response structures.
+
+Do not create different error formats for every feature.
+
+Centralize API error parsing.
+
+---
+
+## Authentication
+
+Authentication/token handling belongs in the API infrastructure layer.
+
+Features should call the API abstraction rather than manually attaching tokens.
+
+````
+
+### 7. `performance/SKILL.md`
+
+```md
+# Performance
+
+Performance is a requirement, not an afterthought.
+
+Prefer:
+
+- FlatList for large lists
+- memoization only when profiling justifies it
+- stable callbacks when needed
+- optimized images
+- pagination
+- incremental loading
+- server-side filtering
+- cached API data
+
+Avoid premature optimization.
+
+Do not add `useMemo`, `useCallback`, or `memo` everywhere.
+
+Optimize measured bottlenecks.
+
+Avoid unnecessary re-renders by keeping state close to where it is used.
+
+Never store derived values in state when they can be calculated.
+
+Bad:
+
+```ts
+const [total, setTotal] = useState(0);
+````
+
+when:
+
+```ts
+const total = items.reduce(
+  (sum, item) => sum + item.amount,
+  0,
+);
+```
+
+is sufficient.
+
+````
+
+### 8. `testing/SKILL.md`
+
+```md
+# Testing
+
+Test business behavior, not implementation details.
+
+Prioritize:
+
+1. Critical business logic
+2. API behavior
+3. Authentication
+4. Payments
+5. Important user flows
+6. Complex UI behavior
+
+Keep tests close to the feature when practical.
+
+```text
+features/payments/
+├── components/
+├── api/
+├── payments.test.ts
+└── ...
+````
+
+Use descriptive test names.
+
+```ts
+it('creates a payment when the request is valid', async () => {});
+```
+
+Do not test framework behavior.
+
+````
+
+### 9. `security/SKILL.md`
+
+```md
+# Security
+
+Never store secrets in source code.
+
+Never commit:
+
+```text
+.env
+.env.local
+private keys
+mnemonics
+API secrets
+access tokens
+````
+
+Use secure platform storage for sensitive credentials.
+
+Never log:
+
+* passwords
+* private keys
+* recovery phrases
+* authentication tokens
+* sensitive personal data
+
+Validate all external data.
+
+Treat API responses, deep links, QR codes, and user input as untrusted input.
+
+Do not trust client-side authorization.
+
+Authorization must be enforced by the backend.
+
+````
+
+### 10. `navigation/SKILL.md`
+
+```md
+# Navigation
+
+Use Expo Router for application navigation.
+
+Keep route files thin.
+
+Route:
+
+```tsx
+export default function PaymentRoute() {
+  return <PaymentScreen />;
+}
+````
+
+Business logic belongs in:
+
+```text
+features/payments/
+```
+
+Use route groups for navigation boundaries:
+
+```text
+(auth)
+(tabs)
+(modal)
+```
+
+Do not duplicate navigation logic across screens.
+
+Centralize reusable navigation helpers when required.
+
+````
+
+### 11. `forms-validation/SKILL.md`
+
+```md
+# Forms and Validation
+
+Use schema-based validation.
+
+Validate user input at the boundary.
+
+Keep schemas inside the feature:
+
+```text
+features/auth/schemas/
+features/payments/schemas/
+````
+
+Do not duplicate validation rules between components.
+
+Bad:
+
+```tsx
+if (email.length === 0) {}
+```
+
+in five different components.
+
+Create one schema and reuse it.
+
+Form UI should handle:
+
+* input
+* errors
+* loading
+* submission
+
+Business rules belong outside the visual component.
+
+````
+
+### 12. `accessibility/SKILL.md`
+
+```md
+# Accessibility
+
+Every interactive element must be accessible.
+
+Use:
+
+```tsx
+accessibilityRole
+accessibilityLabel
+accessibilityHint
+accessibilityState
+````
+
+when appropriate.
+
+Do not make icon-only buttons without an accessible label.
+
+Support dynamic text sizes where possible.
+
+Maintain sufficient touch target sizes.
+
+Do not communicate important information using color alone.
+
+Test important flows with platform accessibility tools.
+
+````
+
+### I would also add one global agent rule
+
+```text id="m0n4cl"
+.agents/
+└── AGENTS.md
+````
+
+````md
+# Project Agent Rules
+
+Before creating code:
+
+1. Inspect existing architecture.
+2. Reuse existing utilities/components/services.
+3. Check whether the functionality already exists.
+4. Follow the feature-based architecture.
+5. Do not duplicate business logic.
+6. Use TypeScript strict mode.
+7. Use camelCase for variables/functions.
+8. Use PascalCase for components/types.
+9. Use kebab-case for filenames.
+10. Keep Expo Router files thin.
+11. Keep API infrastructure centralized.
+12. Use `/api/v1` for API endpoints.
+13. Keep business logic inside features.
+14. Use React Native Reusables for shared UI primitives.
+15. Prefer named exports.
+16. Avoid `any`.
+17. Avoid unnecessary dependencies.
+18. Avoid premature abstractions.
+19. Do not modify unrelated files.
+20. Run typecheck, lint, and relevant tests after changes.
+
+When implementing a feature:
+
+```text
+Route
+  ↓
+Feature Screen
+  ↓
+Feature Components
+  ↓
+Feature Hooks
+  ↓
+Feature API
+  ↓
+Shared API Client
+````
+
+Do not bypass architectural boundaries without a clear reason.
+
+Before finishing, remove unused imports, dead code, temporary logs, and duplicated logic.
+
+```
+
+This gives your agents a clear contract: **feature-first, strict TypeScript, reusable primitives, centralized infrastructure, `/api/v1`, no duplication, and thin routes**.
+```

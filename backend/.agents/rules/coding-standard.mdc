@@ -1,0 +1,15 @@
+---
+description: ICPay Motoko coding standard — mo:core, naming, ~300 lines, layering
+alwaysApply: true
+globs: backend/src/**/*.mo
+---
+
+# Coding standard
+
+Read [`skills/coding-standard/SKILL.md`](../skills/coding-standard/SKILL.md) before editing Motoko.
+
+- `mo:core` + contextual dot notation; no `mo:base`
+- API → Service → Repository → Storage; ~300 lines max per file
+- Service record + `create()` factory; validators pure `?Text`
+- Stable storage not `transient`; fund paths use `caller`
+- Avoid reserved field names: `label`, `type`, `query`, etc.

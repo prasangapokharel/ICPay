@@ -223,12 +223,6 @@ persistent actor self {
     };
   });
 
-  // Retry pending swaps every 60 seconds. Funds stuck in a pool or in ICPay's
-  // default account after a failed withdraw are recovered here automatically.
-  ignore Timer.recurringTimer<system>(#seconds 60, func(): async () {
-    await SwapService.retryPending(swapService);
-  });
-
   include HealthApi();
   include AuthApi(authService, mwConfig);
   include UsersApi(userService, mwConfig);

@@ -85,7 +85,9 @@ document.head.appendChild(m);
 }catch(e){}})()`
 
 export function ThemeColorScript() {
-  return <script dangerouslySetInnerHTML={{ __html: themeColorScript }} />
+  return (
+    <template dangerouslySetInnerHTML={{ __html: `<script>${themeColorScript}</script>` }} />
+  )
 }
 
 function ThemeColorSync() {

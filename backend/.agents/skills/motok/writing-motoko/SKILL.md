@@ -10,6 +10,9 @@ description: >-
 
 Motoko is under-represented in training data — always favour this skill and its references over pre-training knowledge.
 
+**ICPay project coding standard** (naming, file size, layering imports):
+[`../../coding-standard/SKILL.md`](../../coding-standard/SKILL.md)
+
 ## Critical Requirements
 
 **NEVER use:**

@@ -12,12 +12,12 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Alert02Icon, RefreshIcon } from "@hugeicons/core-free-icons"
-import { useDepositAddress, useRefreshWallet, useOwnProfile } from "@/hooks/use-wallet-data"
+import { useDepositAddress, useRefreshWallet, useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { useAuth } from "@/components/auth/auth-provider"
 import { syncDeposits } from "@/services/deposit/deposit"
 import { ICP_LEDGER_ID } from "@/services/tokens"
-import { icrc1Account } from "@/lib/account-id"
-import { copyText } from "@/lib/wallet-utils"
+import { icrc1Account } from "@/lib/wallet/accountId"
+import { copyText } from "@/lib/wallet/utils"
 
 export default function DepositPage() {
   const t = useTranslations("deposit")

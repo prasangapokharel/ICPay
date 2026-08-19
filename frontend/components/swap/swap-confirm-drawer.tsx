@@ -12,12 +12,12 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { createAgent } from "@/services/icp"
-import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap-utils"
+import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import { ICP_LEDGER_ID } from "@/services/tokens"
-import { formatTokenAmount } from "@/lib/wallet-utils"
+import { formatTokenAmount } from "@/lib/wallet/utils"
 import type { TokenHolding } from "@/services/tokens"
 import type { Identity } from "@icp-sdk/core/agent"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/ui/utils"
 
 const STEP_MS = [0, 5_000, 14_000] as const
 

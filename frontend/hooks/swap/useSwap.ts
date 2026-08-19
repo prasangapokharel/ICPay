@@ -2,9 +2,9 @@
 
 import useSWR from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useDebounced } from "@/hooks/use-debounced"
-import { useTokenHoldings } from "@/hooks/use-wallet-data"
-import { filterSwapTokens, sortSwapTokens } from "@/lib/swap-tokens"
+import { useDebounced } from "@/hooks/ui/useDebounced"
+import { useTokenHoldings } from "@/hooks/wallet/useWalletData"
+import { filterSwapTokens, sortSwapTokens } from "@/lib/swap/tokens"
 import { fetchSwapQuote } from "@/services/swap/swap"
 
 const keyFor = (identity: { getPrincipal(): { toText(): string } } | undefined, ...parts: string[]) =>
