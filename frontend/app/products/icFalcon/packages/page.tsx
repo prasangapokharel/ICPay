@@ -15,8 +15,8 @@ export default function PackagesPage() {
         const response = await fetch(
           "https://raw.githubusercontent.com/prasangapokharel/icp-hub/refs/heads/master/index.json"
         )
-        const data = await response.json()
-        const pkgs = Object.entries(data.packages).map(([slug, pkg]: [string, any]) => ({
+        const data: { packages: Record<string, { version: string; description: string; path: string; import: string }> } = await response.json()
+        const pkgs = Object.entries(data.packages).map(([slug, pkg]) => ({
           slug,
           ...pkg,
         }))

@@ -66,7 +66,7 @@ export function ArticleSection() {
               The frontend is Next.js with shadcn/ui components and Internet
               Identity authentication. It exports to static files (
               <code className="rounded bg-muted px-1 py-0.5 text-xs">
-                output: "export"
+                output: &quot;export&quot;
               </code>
               ) so it can be hosted on an asset canister or a conventional host
               like Vercel.
