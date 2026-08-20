@@ -81,6 +81,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
       {handle ? (
         <Link
           href={`/icpverse/${handle}`}
+          prefetch
           aria-label={tp("viewProfile", { name: handle })}
           className="shrink-0 rounded-full outline-none transition-transform focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
         >

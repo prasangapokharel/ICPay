@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  Suspense,
   useCallback,
   useContext,
   useEffect,
@@ -64,6 +65,28 @@ type LiveSessionContextValue = {
 
 const LiveSessionContext = createContext<LiveSessionContextValue | null>(null)
 
+const idleLiveSession: LiveSessionContextValue = {
+  roomId: null,
+  tabId: null,
+  room: null,
+  joined: false,
+  joining: false,
+  micOn: false,
+  micBusy: false,
+  audioStatus: "idle",
+  peerCount: 0,
+  speakingTabs: new Set(),
+  livePeers: [],
+  error: null,
+  visible: false,
+  join: async () => {},
+  leave: async () => {},
+  toggleMic: async () => {},
+  refreshRoom: async () => {},
+  unlockAudio: () => {},
+  setRoom: () => {},
+}
+
 export function useLiveSession(): LiveSessionContextValue {
   const ctx = useContext(LiveSessionContext)
   if (!ctx) throw new Error("useLiveSession must be used within LiveSessionProvider")
@@ -71,6 +94,20 @@ export function useLiveSession(): LiveSessionContextValue {
 }
 
 export function LiveSessionProvider({ children }: { children: ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <LiveSessionContext.Provider value={idleLiveSession}>
+          {children}
+        </LiveSessionContext.Provider>
+      }
+    >
+      <LiveSessionProviderInner>{children}</LiveSessionProviderInner>
+    </Suspense>
+  )
+}
+
+function LiveSessionProviderInner({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const { identity } = useAuth()
   const { mutate: globalMutate } = useSWRConfig()
