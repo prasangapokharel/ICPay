@@ -105,7 +105,7 @@ export default function LivePage() {
                   size="sm"
                   className="h-8 shrink-0 px-3 text-xs font-semibold"
                   nativeButton={false}
-                  render={<Link href={`/live/${room.id}`} />}
+                  render={<Link href={`/live/${room.id}`} prefetch />}
                 >
                   {t("join")}
                 </Button>

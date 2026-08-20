@@ -7,6 +7,8 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import { Home01Icon, UserMultipleIcon, ArrowUpRight01Icon, Menu01Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/ui/utils"
+import { useAuth } from "@/components/auth/auth-provider"
+import { prefetchAppRoute } from "@/lib/navigation/prefetchRoute"
 
 const LIVE_CENTER_ICON = "/images/navballcenter/2.png"
 
@@ -28,8 +30,11 @@ const navItems: NavItem[] = [
 export function BottomNav() {
   const pathname = usePathname()
   const t = useTranslations("nav")
+  const { identity } = useAuth()
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href)
+
+  const warmRoute = (href: string) => prefetchAppRoute(href, identity)
 
   return (
     <nav className="sticky bottom-0 z-50 mt-auto px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2">
@@ -41,6 +46,7 @@ export function BottomNav() {
               href={item.href}
               label={t(item.labelKey)}
               active={isActive(item.href)}
+              onWarm={() => warmRoute(item.href)}
             />
           ) : (
             <NavTab
@@ -49,6 +55,7 @@ export function BottomNav() {
               label={t(item.labelKey)}
               active={isActive(item.href)}
               icon={item.icon!}
+              onWarm={() => warmRoute(item.href)}
             />
           )
         )}
@@ -61,14 +68,19 @@ function LiveCenterNavTab({
   href,
   label,
   active,
+  onWarm,
 }: {
   href: string
   label: string
   active: boolean
+  onWarm: () => void
 }) {
   return (
     <Link
       href={href}
+      prefetch
+      onMouseEnter={onWarm}
+      onFocus={onWarm}
       aria-label={label}
       aria-current={active ? "page" : undefined}
       className={cn(
@@ -106,15 +118,20 @@ function NavTab({
   label,
   icon,
   active,
+  onWarm,
 }: {
   href: string
   label: string
   icon: IconSvgElement
   active: boolean
+  onWarm: () => void
 }) {
   return (
     <Link
       href={href}
+      prefetch
+      onMouseEnter={onWarm}
+      onFocus={onWarm}
       aria-current={active ? "page" : undefined}
       className={cn(
         "relative flex h-full flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors active:scale-95",

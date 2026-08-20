@@ -27,6 +27,7 @@ export function TokenCard({ token }: { token: TokenPublic }) {
     // creation has no canister id, and those are exactly the rows worth opening.
     <Link
       href={`/launch/${token.id}`}
+      prefetch
       className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/40"
     >
       <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">

@@ -21,6 +21,7 @@ export function LiveSessionBar() {
     <div className="flex min-w-0 items-center justify-center gap-1.5">
       <Link
         href={`/live/${roomId}`}
+        prefetch
         className="flex min-w-0 max-w-[11rem] items-center gap-1.5 rounded-full border border-border/60 bg-muted/50 px-2.5 py-1 transition-colors hover:bg-muted"
       >
         <span

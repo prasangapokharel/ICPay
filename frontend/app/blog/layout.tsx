@@ -1,6 +1,4 @@
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 
 export default function BlogLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,17 +10,15 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
             aria-label="Back to ICPay"
             className="flex size-9 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-accent"
           >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="size-5" />
+            <span aria-hidden className="text-lg leading-none">←</span>
           </Link>
           <Link href="/blog" className="text-sm font-semibold tracking-tight hover:text-primary">
-          ICPay Blog
-        </Link>
+            ICPay Blog
+          </Link>
         </header>
         <main className="flex-1 px-4 py-6">{children}</main>
         <footer className="border-t px-4 py-5">
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} ICPay. All rights reserved.
-          </p>
+          <p className="text-xs text-muted-foreground">© 2026 ICPay. All rights reserved.</p>
         </footer>
       </div>
     </div>

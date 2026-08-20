@@ -1,5 +1,7 @@
 import { TokenView } from "./token-view"
 
+export const instant = false
+
 // output: "export" cannot prerender a route whose parameter values only exist at
 // runtime -- the ledger list is discovered from SNS-W in the browser -- so a
 // single shell is emitted here and the real id is read from the URL on the

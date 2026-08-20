@@ -27,8 +27,6 @@ import type {
   ApiResult_19,
   ApiResult_20,
   ApiResult_21,
-  AnalyticsData,
-  AnalyticsExportResult,
   SwapQuoteResult,
   SwapResult,
 } from "@/services/types"
