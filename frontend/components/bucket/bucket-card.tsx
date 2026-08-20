@@ -24,7 +24,7 @@ export function BucketCard({ bucket }: { bucket: BucketPublic }) {
     <Button
       variant="ghost"
       nativeButton={false}
-      render={<Link href={`/bucket/${encodeURIComponent(bucket.id)}`} />}
+      render={<Link href={`/bucket/${encodeURIComponent(bucket.id)}`} prefetch />}
       className="h-auto w-full justify-start gap-3 rounded-none px-4 py-3"
     >
       <BucketAvatarChip name={bucket.name} />

@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
+import { useAuth } from "@/components/auth/auth-provider"
+import { prefetchAppRoute } from "@/lib/navigation/prefetchRoute"
 
 export function TokenList({
   holdings,
@@ -101,10 +103,15 @@ export function TokenList({
 
 function TokenRow({ token, outside }: { token: TokenHolding; outside?: bigint }) {
   const t = useTranslations("wallet")
+  const { identity } = useAuth()
+  const href = `/token/${token.ledgerId}`
   return (
     <li>
       <Link
-        href={`/token/${token.ledgerId}`}
+        href={href}
+        prefetch
+        onMouseEnter={() => prefetchAppRoute(href, identity)}
+        onFocus={() => prefetchAppRoute(href, identity)}
         className="flex items-center gap-3 rounded-2xl px-1 py-2.5 transition-colors hover:bg-muted/60 active:scale-[0.99]"
       >
         <TokenLogo token={token} />

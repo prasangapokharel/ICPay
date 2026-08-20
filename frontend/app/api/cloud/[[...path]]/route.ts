@@ -1,7 +1,5 @@
 import { WALLET_CANISTER_ID } from "@/services/icp"
 
-export const runtime = "edge"
-
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
