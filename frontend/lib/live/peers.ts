@@ -22,3 +22,17 @@ export function dedupeLivePeers(peers: LivePeer[], selfTabId: string): LivePeer[
 
   return [...byPrincipal.values()]
 }
+
+/** Room grid: deduped peers with the local tab inserted when missing from the list. */
+export function gridLivePeers(
+  livePeers: LivePeer[],
+  selfTabId: string,
+  selfPeer: LivePeer | null
+): LivePeer[] {
+  const deduped = dedupeLivePeers(livePeers, selfTabId)
+  const merged = [...deduped]
+  if (selfPeer && !merged.some((p) => p.tabId === selfTabId)) {
+    merged.unshift(selfPeer)
+  }
+  return dedupeLivePeers(merged, selfTabId)
+}

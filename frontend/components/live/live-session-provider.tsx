@@ -50,7 +50,6 @@ type LiveSessionContextValue = {
   micOn: boolean
   micBusy: boolean
   audioStatus: LiveAudioStatus
-  peerCount: number
   speakingTabs: ReadonlySet<string>
   livePeers: LivePeer[]
   error: string | null
@@ -74,7 +73,6 @@ const idleLiveSession: LiveSessionContextValue = {
   micOn: false,
   micBusy: false,
   audioStatus: "idle",
-  peerCount: 0,
   speakingTabs: new Set(),
   livePeers: [],
   error: null,
@@ -120,7 +118,6 @@ function LiveSessionProviderInner({ children }: { children: ReactNode }) {
   const [micOn, setMicOn] = useState(false)
   const [micBusy, setMicBusy] = useState(false)
   const [audioStatus, setAudioStatus] = useState<LiveAudioStatus>("idle")
-  const [peerCount, setPeerCount] = useState(0)
   const [speakingTabs, setSpeakingTabs] = useState<Set<string>>(() => new Set())
   const [error, setError] = useState<string | null>(null)
 
@@ -158,7 +155,6 @@ function LiveSessionProviderInner({ children }: { children: ReactNode }) {
   )
 
   const attachSession = useCallback((session: LiveAudioSession) => {
-    session.setOnPeerCount(setPeerCount)
     session.setOnStatus(setAudioStatus)
     session.setOnSpeaking((id, speaking) => {
       setSpeakingTabs((prev) => {
@@ -188,7 +184,6 @@ function LiveSessionProviderInner({ children }: { children: ReactNode }) {
     sessionRef.current = null
     setMicOn(false)
     micOnRef.current = false
-    setPeerCount(0)
     setSpeakingTabs(new Set())
     setAudioStatus("idle")
   }, [])
@@ -431,7 +426,6 @@ function LiveSessionProviderInner({ children }: { children: ReactNode }) {
       micOn,
       micBusy,
       audioStatus,
-      peerCount,
       speakingTabs,
       livePeers,
       error,
@@ -452,7 +446,6 @@ function LiveSessionProviderInner({ children }: { children: ReactNode }) {
       micOn,
       micBusy,
       audioStatus,
-      peerCount,
       speakingTabs,
       livePeers,
       error,

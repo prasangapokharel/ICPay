@@ -1,23 +1,16 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { markPlaybackUnlocked, wasPlaybackUnlocked } from "@/lib/live/audioPerms"
+import {
+  LIVE_ICE_FLUSH_MS,
+  LIVE_PEER_RETRY_MS,
+  LIVE_PEER_SYNC_MS,
+  LIVE_SIGNAL_POLL_MAX_MS,
+  LIVE_SIGNAL_POLL_MS,
+  LIVE_STUN_SERVERS,
+} from "@/lib/live/timing"
 import { postLiveSignal, type LivePeer } from "@/services/live/live"
 
-const STUN = [
-  { urls: "stun:stun.l.google.com:19302" },
-  { urls: "stun:stun1.l.google.com:19302" },
-]
-
-/** IC queries — free; keep modest to reduce replica load. */
-export const LIVE_SIGNAL_POLL_MS = 500
-export const LIVE_SIGNAL_POLL_MAX_MS = 2_000
-export const LIVE_PEER_SYNC_MS = 2_500
-export const LIVE_ROOM_POLL_MS = 12_000
-
 /** Local WebRTC retry — no canister calls. */
-/** Batch ICE into one update call — postLiveSignal burns cycles. */
-const ICE_FLUSH_MS = 80
-/** Local WebRTC retry when a peer is unhealthy — no canister calls. */
-const PEER_RETRY_MS = 3_000
 
 type SignalPayload =
   | { type: "offer"; sdp: string }
@@ -42,7 +35,6 @@ export class LiveAudioSession {
   private localStream: MediaStream | null = null
   private micEnabled = false
   private remoteAudio = new Map<string, HTMLAudioElement>()
-  private onPeerCount?: (n: number) => void
   private onStatus?: (status: LiveAudioStatus) => void
   private onSpeaking?: (tabId: string, speaking: boolean) => void
   private running = false
@@ -62,7 +54,6 @@ export class LiveAudioSession {
   private audioCtx: AudioContext | null = null
   private speakTimer: ReturnType<typeof setInterval> | null = null
   private localSpeaking = false
-  private lastPeerCount = -1
   private lastStatus: LiveAudioStatus | null = null
   private peerRetryTimer: ReturnType<typeof setInterval> | null = null
 
@@ -70,10 +61,6 @@ export class LiveAudioSession {
     this.identity = identity
     this.roomId = roomId
     this.tabId = tabId
-  }
-
-  setOnPeerCount(fn: (n: number) => void) {
-    this.onPeerCount = fn
   }
 
   setOnStatus(fn: (status: LiveAudioStatus) => void) {
@@ -103,12 +90,6 @@ export class LiveAudioSession {
     if (status === this.lastStatus) return
     this.lastStatus = status
     this.onStatus?.(status)
-  }
-
-  private emitPeerCount(n: number) {
-    if (n === this.lastPeerCount) return
-    this.lastPeerCount = n
-    this.onPeerCount?.(n)
   }
 
   unlockPlayback() {
@@ -200,7 +181,6 @@ export class LiveAudioSession {
     }
 
     const others = this.lastRemotePeers.filter((p) => p.tabId !== this.tabId)
-    this.emitPeerCount(others.length)
 
     for (const peer of others) {
       const existing = this.peers.get(peer.tabId)
@@ -236,7 +216,7 @@ export class LiveAudioSession {
           return !state || !this.peerHealthy(state)
         })
         if (needsRetry) void this.syncPeersInternal()
-      }, PEER_RETRY_MS)
+      }, LIVE_PEER_RETRY_MS)
     }
   }
 
@@ -299,7 +279,6 @@ export class LiveAudioSession {
   teardown() {
     this.peerLive = false
     this.lastRemotePeers = []
-    this.lastPeerCount = -1
     this.lastStatus = null
     this.emptyPolls = 0
     this.pollDelayMs = LIVE_SIGNAL_POLL_MS
@@ -529,7 +508,7 @@ export class LiveAudioSession {
     const existing = this.peers.get(remoteTab)
     if (existing) return existing
 
-    const pc = new RTCPeerConnection({ iceServers: STUN })
+    const pc = new RTCPeerConnection({ iceServers: LIVE_STUN_SERVERS })
     const state: PeerState = {
       pc,
       pendingIce: [],
@@ -610,7 +589,7 @@ export class LiveAudioSession {
       setTimeout(() => {
         this.iceFlushTimers.delete(toTab)
         void this.flushIce(toTab)
-      }, ICE_FLUSH_MS)
+      }, LIVE_ICE_FLUSH_MS)
     )
   }
 
