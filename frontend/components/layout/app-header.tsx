@@ -7,7 +7,6 @@ import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { useAuth } from "@/components/auth/auth-provider"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
-import { LiveSessionBar } from "@/components/live/live-session-bar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function AppHeader() {
@@ -36,9 +35,7 @@ export function AppHeader() {
         </Avatar>
       </Link>
 
-      <div className="flex min-w-0 flex-1 justify-center">
-        <LiveSessionBar />
-      </div>
+      <div className="flex-1" />
 
       <div className="shrink-0">
         <LanguageSwitch />
