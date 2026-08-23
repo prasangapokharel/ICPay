@@ -73,19 +73,16 @@ export function CommunityChannelCard({
       </Link>
 
       {isOwner ? null : isJoined ? (
-        <span className="shrink-0 px-2 text-xs font-medium text-muted-foreground">
-          {t("joined")}
-        </span>
+        <span className="shrink-0 text-xs font-medium text-muted-foreground">{t("joined")}</span>
       ) : showJoin ? (
         <Button
           type="button"
           size="sm"
-          variant="outline"
           disabled={joining}
-          className="h-8 shrink-0 rounded-full border-primary/20 bg-primary/10 px-4 text-primary hover:bg-primary/15 hover:text-primary"
+          className="h-8 shrink-0 rounded-full px-4"
           onClick={() => onJoin?.()}
         >
-          {joining ? t("gettingIn") : t("getIn")}
+          {joining ? t("joining") : t("join")}
         </Button>
       ) : null}
     </div>

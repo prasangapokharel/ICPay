@@ -19,7 +19,7 @@ import {
 } from "@/hooks/community/useCommunity"
 import { communityMemberKey } from "@/lib/community/cacheKeys"
 import { getCachedLatest, hasUnread } from "@/lib/community/readState"
-import { sortCommunityChannels, type CommunitySort } from "@/lib/community/sort"
+import { sortCommunityChannels } from "@/lib/community/sort"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 import { joinCommunityChannel } from "@/services/community/community"
 
@@ -33,7 +33,6 @@ export function CommunityExplorer() {
   const publicQ = usePublicCommunityChannels()
   const mineQ = useMyCommunityChannels()
   const [joiningSlug, setJoiningSlug] = useState<string | null>(null)
-  const [sort, setSort] = useState<CommunitySort>("newest")
 
   const principal = identity?.getPrincipal().toText() ?? ""
   const joinedSlugs = useMemo(
@@ -46,12 +45,12 @@ export function CommunityExplorer() {
       : ""
 
   const sortedPublic = useMemo(
-    () => sortCommunityChannels(publicQ.channels, sort),
-    [publicQ.channels, sort]
+    () => sortCommunityChannels(publicQ.channels, "newest"),
+    [publicQ.channels]
   )
   const sortedMine = useMemo(
-    () => sortCommunityChannels(mineQ.channels, sort),
-    [mineQ.channels, sort]
+    () => sortCommunityChannels(mineQ.channels, "newest"),
+    [mineQ.channels]
   )
 
   const handleJoin = async (slug: string) => {
@@ -91,18 +90,6 @@ export function CommunityExplorer() {
           <TabsTrigger value="explore">{t("explore")}</TabsTrigger>
           <TabsTrigger value="mine">{t("mine")}</TabsTrigger>
         </TabsList>
-        <label className="mt-2 flex items-center gap-2">
-          <span className="shrink-0 text-[11px] text-muted-foreground">{t("sort")}</span>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as CommunitySort)}
-            className="min-w-0 flex-1 rounded-lg border border-border/60 bg-muted/30 px-2 py-1.5 text-xs text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
-          >
-            <option value="newest">{t("sortNewest")}</option>
-            <option value="members">{t("sortMembers")}</option>
-            <option value="freeFirst">{t("sortFree")}</option>
-          </select>
-        </label>
       </div>
 
       <ScrollArea className="h-full w-full min-h-0 flex-1">
