@@ -33,7 +33,12 @@ export function BottomNav() {
   const warmRoute = (href: string) => prefetchAppRoute(href, identity)
 
   return (
-    <nav className="sticky bottom-0 z-50 mt-auto px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
+    <nav
+      className={cn(
+        "fixed bottom-0 left-1/2 z-50 w-full max-w-md -translate-x-1/2",
+        "px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2"
+      )}
+    >
       <div
         className={cn(
           "grid h-[4.25rem] grid-cols-5 items-stretch rounded-3xl px-1",

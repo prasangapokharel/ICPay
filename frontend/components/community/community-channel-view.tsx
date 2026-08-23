@@ -222,7 +222,7 @@ export function CommunityChannelView({
                 if (err) setJoinErr(err)
               }}
             >
-              {joinBusy ? t("gettingIn") : t("getIn")}
+              {joinBusy ? t("joining") : t("join")}
             </Button>
             {joinErr && <p className="mt-2 text-center text-xs text-destructive">{joinErr}</p>}
           </div>
@@ -230,16 +230,8 @@ export function CommunityChannelView({
       </div>
 
       {canRead && isMember && !isOwner && (
-        <div className="relative z-10 m-2 shrink-0 rounded-4xl border border-border/30 bg-background/35 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
-          <Button
-            type="button"
-            variant="ghost"
-            disabled
-            className="h-11 w-full rounded-full bg-transparent text-sm font-semibold text-primary hover:bg-transparent"
-            aria-label={t("joined")}
-          >
-            {t("joined")}
-          </Button>
+        <div className="relative z-10 m-2 shrink-0 rounded-full border border-border/40 bg-muted/50 px-4 py-2.5 text-center backdrop-blur-sm">
+          <span className="text-sm font-medium text-muted-foreground">{t("joined")}</span>
         </div>
       )}
 
