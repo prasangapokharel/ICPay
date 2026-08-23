@@ -94,6 +94,9 @@ public type LiveRoom = {
 Rules:
 
 - Variants for state machines: `#draft`, `#live`, `#paused`, `#ended`.
+- **Never use Motoko keywords as variant tags** (`#public`, `#private` → syntax error).
+  Use `#open` / `#inviteOnly` for visibility; map to “public/private” in UI/docs.
+  See [`error-handling/SKILL.md`](../error-handling/SKILL.md) § Motoko compiler pitfalls.
 - `ApiResult<T>` for all fallible API returns — already defined in `types.mo`.
 - Map internal → public in service (`toPublic` helper).
 
@@ -496,6 +499,9 @@ Compile smoke: `testing/pkg/Smoke.test.mo` (manual — exercises every pkg modul
 | User-supplied principal for sends | `caller` only |
 | Skip `run-tests.sh` entry | Register every new test file |
 | Duplicate pkg helpers in `utils/` | Import from `pkg/` |
+| `#public` / `#private` variant tags | `#open` / `#inviteOnly` — see error-handling skill |
+| `Array.mapFilter` / wrong `Map.toArray` filter | `Map.entries` + `List` — see error-handling skill |
+| `Nat - Nat` on counts | `NatBounds.saturatingSub` from `pkg/nat/bounds.mo` |
 
 ---
 
