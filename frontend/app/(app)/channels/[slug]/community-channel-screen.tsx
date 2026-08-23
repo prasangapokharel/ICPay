@@ -6,8 +6,10 @@ import { CommunityMessageList } from "@/components/community/community-message-l
 import { Spinner } from "@/components/ui/spinner"
 import {
   useCommunityChannel,
+  useCommunityDeleteMessage,
   useCommunityMembership,
   useCommunityMessages,
+  useCommunityReaction,
   useInvalidateCommunity,
   useInvalidateCommunityLists,
   useMyCommunityChannels,
@@ -16,7 +18,6 @@ import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 import { cacheLatestMessage, getCachedLatest, markChannelRead } from "@/lib/community/readState"
 import { createPendingMessage, type PendingMessage } from "@/lib/community/pendingMessage"
 import {
-  deleteCommunityMessage,
   isCommunityOpen,
   isCommunityPaid,
   joinCommunityChannel,
@@ -53,6 +54,14 @@ export function CommunityChannelScreen() {
     return mineQ.channels.some((ch) => ch.slug === slug)
   }, [isOwner, isMember, slug, mineQ.channels])
 
+  const forwardTargets = useMemo(() => {
+    if (!identity) return []
+    const me = identity.getPrincipal().toText()
+    return mineQ.channels.filter((ch) => ch.owner.toText() === me && ch.slug !== slug)
+  }, [identity, mineQ.channels, slug])
+
+  const canForward = forwardTargets.length > 0
+
   const canReadMessages =
     !!channel &&
     (isOwner ||
@@ -60,6 +69,8 @@ export function CommunityChannelScreen() {
       (isCommunityOpen(channel.visibility) && !isCommunityPaid(channel.access)))
 
   const { messages, refresh: refreshMessages } = useCommunityMessages(slug, canReadMessages)
+  const reactToMessage = useCommunityReaction(slug)
+  const deleteMessage = useCommunityDeleteMessage(slug)
 
   const [pendingMessages, setPendingMessages] = useState<PendingMessage[]>([])
   const [deliveredIds, setDeliveredIds] = useState<Set<string>>(() => new Set())
@@ -194,6 +205,16 @@ export function CommunityChannelScreen() {
           deliveredIds={deliveredIds}
           pinnedId={pinnedId}
           isOwner={isOwner}
+          canReact={!!identity && canReadMessages}
+          canForward={canForward}
+          forwardTargets={forwardTargets}
+          onForward={async (targetSlug, text) => {
+            await postCommunityMessage(identity, targetSlug, text)
+            void invalidateLists()
+          }}
+          onReact={async (messageId, code) => {
+            await reactToMessage(messageId, code)
+          }}
           onPin={async (messageId) => {
             try {
               await pinCommunityMessage(identity, slug, messageId)
@@ -202,11 +223,8 @@ export function CommunityChannelScreen() {
             }
           }}
           onDelete={async (messageId) => {
-            try {
-              await deleteCommunityMessage(identity, slug, messageId)
-            } finally {
-              await Promise.all([invalidate(), refreshMessages()])
-            }
+            await deleteMessage(messageId)
+            await invalidate()
           }}
         />
       }

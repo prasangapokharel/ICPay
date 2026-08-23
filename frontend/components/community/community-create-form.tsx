@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { AppIcon } from "@/components/ui/app-icon"
+import { CommunityIcon } from "@/components/community/community-icon"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -97,7 +97,7 @@ export function CommunityCreateForm({
           aria-label={t("backAria")}
           className="shrink-0 md:hidden"
         >
-          <AppIcon name="chatBack" size={18} mono />
+          <CommunityIcon name="back" size={18} />
         </Button>
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold leading-tight">{t("createTitle")}</p>

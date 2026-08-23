@@ -98,7 +98,7 @@ export function CommunityMessageBody({ text }: { text: string }) {
   const blocks = parseTelegramMessage(text)
 
   return (
-    <span className="whitespace-pre-wrap break-words">
+    <span className="whitespace-pre-wrap break-words text-[15px] leading-[1.5]">
       {blocks.map((block, index) => (
         <span key={index}>
           {renderBlock(block, index)}

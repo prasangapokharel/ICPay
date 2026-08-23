@@ -221,6 +221,11 @@ export interface WalletActor {
     channelId: string,
     messageId: bigint
   ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
+  setCommunityMessageReaction: (
+    channelId: string,
+    messageId: bigint,
+    code: number
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getCommunityChannel: (channelId: string) => Promise<[] | [Record<string, unknown>]>
   listPublicCommunityChannels: (limit: bigint, offset: bigint) => Promise<Record<string, unknown>[]>
   listMyCommunityChannels: () => Promise<{ ok: Record<string, unknown>[]; err?: never } | { err: string; ok?: never }>
@@ -713,12 +718,23 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     memberCount: IDL.Nat,
     createdAt: IDL.Int,
   })
+  const CommunityReactionCount = IDL.Record({
+    code: IDL.Nat8,
+    count: IDL.Nat,
+  })
   const CommunityMessagePublic = IDL.Record({
     id: IDL.Nat,
     author: IDL.Principal,
     authorUsername: IDL.Opt(IDL.Text),
     text: IDL.Text,
     createdAt: IDL.Int,
+    reactions: IDL.Vec(CommunityReactionCount),
+    myReaction: IDL.Opt(IDL.Nat8),
+  })
+  const CommunityReactionUpdate = IDL.Record({
+    messageId: IDL.Nat,
+    myReaction: IDL.Opt(IDL.Nat8),
+    reactions: IDL.Vec(CommunityReactionCount),
   })
   const CommunityCreateResult = IDL.Record({
     channelId: IDL.Text,
@@ -728,6 +744,10 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const ApiResultCommunityChannel = IDL.Variant({ ok: CommunityChannelPublic, err: IDL.Text })
   const ApiResultCommunityChannels = IDL.Variant({ ok: IDL.Vec(CommunityChannelPublic), err: IDL.Text })
   const ApiResultCommunityMessages = IDL.Variant({ ok: IDL.Vec(CommunityMessagePublic), err: IDL.Text })
+  const ApiResultCommunityReactionUpdate = IDL.Variant({
+    ok: CommunityReactionUpdate,
+    err: IDL.Text,
+  })
 
   const IcpaySaleQuote = IDL.Record({
     rate: IDL.Nat,
@@ -965,6 +985,11 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     postCommunityMessage: IDL.Func([IDL.Text, IDL.Text], [IDL.Variant({ ok: CommunityMessagePublic, err: IDL.Text })], []),
     pinCommunityMessage: IDL.Func([IDL.Text, IDL.Nat], [ApiResultCommunityChannel], []),
     deleteCommunityMessage: IDL.Func([IDL.Text, IDL.Nat], [ApiResultUnit], []),
+    setCommunityMessageReaction: IDL.Func(
+      [IDL.Text, IDL.Nat, IDL.Nat8],
+      [ApiResultCommunityReactionUpdate],
+      []
+    ),
     getCommunityChannel: IDL.Func([IDL.Text], [IDL.Opt(CommunityChannelPublic)], ["query"]),
     listPublicCommunityChannels: IDL.Func([IDL.Nat, IDL.Nat], [IDL.Vec(CommunityChannelPublic)], ["query"]),
     listMyCommunityChannels: IDL.Func([], [ApiResultCommunityChannels], ["query"]),

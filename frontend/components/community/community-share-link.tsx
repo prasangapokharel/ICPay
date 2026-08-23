@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { AppIcon } from "@/components/ui/app-icon"
+import { CommunityIcon } from "@/components/community/community-icon"
 import { Button } from "@/components/ui/button"
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/ui/utils"
@@ -32,7 +32,7 @@ export function CommunityCopyLinkButton({
       className={cn("h-11 w-full justify-center gap-2 rounded-xl bg-muted/40", className)}
       onClick={() => void handle()}
     >
-      <AppIcon name={copied ? "check" : "chatCopy"} size={18} mono />
+      <CommunityIcon name={copied ? "check" : "copy"} size={18} />
       {copied ? tc("copied") : label}
     </Button>
   )
@@ -61,7 +61,7 @@ export function CommunityShareLinkButton({
       className={cn("h-11 w-full justify-center gap-2 rounded-xl bg-muted/40", className)}
       onClick={() => void handle()}
     >
-      <AppIcon name={copied ? "check" : "chatShare"} size={18} mono />
+      <CommunityIcon name={copied ? "check" : "share"} size={18} />
       {copied ? tc("copied") : tc("share")}
     </Button>
   )
@@ -85,7 +85,7 @@ export function CommunityCopyMenuItem({
 
   return (
     <DropdownMenuItem onClick={() => void handle()}>
-      <AppIcon name={copied ? "check" : "chatCopy"} size={16} mono />
+      <CommunityIcon name={copied ? "check" : "copy"} size={16} />
       {copied ? tc("copied") : label}
     </DropdownMenuItem>
   )
@@ -107,7 +107,7 @@ export function CommunityShareMenuItem({
 
   return (
     <DropdownMenuItem onClick={() => void handle()}>
-      <AppIcon name={copied ? "check" : "chatShare"} size={16} mono />
+      <CommunityIcon name={copied ? "check" : "share"} size={16} />
       {copied ? tc("copied") : tc("share")}
     </DropdownMenuItem>
   )

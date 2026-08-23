@@ -1,6 +1,6 @@
-export const DEFAULT_WALLPAPER_ID = 1
+export const DEFAULT_WALLPAPER_ID = 14
 
-export const WALLPAPER_THEMES = [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12] as const
+export const WALLPAPER_THEMES = [1, 13, 14, 15] as const
 
 export type WallpaperThemeId = (typeof WALLPAPER_THEMES)[number]
 export type WallpaperId = 0 | WallpaperThemeId
@@ -18,7 +18,7 @@ export function isWallpaperId(value: number): value is WallpaperId {
 
 export function wallpaperUrl(id: WallpaperId): string {
   const fileId = id === 0 ? DEFAULT_WALLPAPER_ID : id
-  return `/images/community/bg-option/${fileId}.png`
+  return `/images/community/bg-option/${fileId}.webp`
 }
 
 export function getWallpaperId(slug: string): WallpaperId {
