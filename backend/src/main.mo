@@ -24,8 +24,10 @@ import TransactionService "services/TransactionService";
 import SettingsService "services/SettingsService";
 import BookmarkStorage "storage/BookmarkStorage";
 import LiveStorage "storage/LiveStorage";
+import IcCommunityStorage "storage/IcCommunityStorage";
 import BookmarkService "services/BookmarkService";
 import LiveService "services/LiveService";
+import IcCommunityService "services/IcCommunityService";
 import SocialLinkService "services/SocialLinkService";
 import SwapService "services/SwapService";
 import BucketService "services/BucketService";
@@ -53,6 +55,7 @@ import BucketApi "api/v1/Bucket";
 import AnalyticsService "services/AnalyticsService";
 import AnalyticsApi "api/v1/Analytics";
 import LiveApi "api/v1/Live";
+import IcCommunityApi "api/v1/IcCommunity";
 import CloudHttpApi "api/v1/CloudHttp";
 import MiddlewareAuth "middleware/Auth";
 import Principal "mo:core/Principal";
@@ -113,6 +116,9 @@ persistent actor self {
   let bucketRenewLimits = RateLimitStorage.createRateLimitMap();
   let bucketManageLimits = RateLimitStorage.createRateLimitMap();
   let bucketApiKeyLimits = RateLimitStorage.createRateLimitMap();
+  let communityCreateLimits = RateLimitStorage.createRateLimitMap();
+  let communityJoinLimits = RateLimitStorage.createRateLimitMap();
+  let communityPostLimits = RateLimitStorage.createRateLimitMap();
 
   // ICPAY actually paid out by the presale. Inventory balance alone cannot
   // distinguish "nothing sold yet" from "100% sold", so sold stats come from here.
@@ -124,6 +130,11 @@ persistent actor self {
   let liveRooms = LiveStorage.createRoomMap();
   transient let livePeers = LiveStorage.createPeerMap();
   transient let liveSignals = LiveStorage.createSignalMap();
+
+  let communityChannels = IcCommunityStorage.createChannelMap();
+  let communityMembers = IcCommunityStorage.createMemberMap();
+  let communityMemberIndex = IcCommunityStorage.createMemberIndexMap();
+  let communityMessages = IcCommunityStorage.createMessageMap();
 
   // Pending swaps survive upgrades: a failed withdraw must not vanish on deploy.
   let pendingSwaps = SwapStorage.createPendingMap();
@@ -191,6 +202,18 @@ persistent actor self {
   transient let liveService = LiveService.create(
     users, usersById, liveRooms, livePeers, liveSignals, nextUid,
   );
+  transient let communityService = IcCommunityService.create(
+    users,
+    usersById,
+    communityChannels,
+    communityMembers,
+    communityMemberIndex,
+    communityMessages,
+    transferService,
+    communityCreateLimits,
+    communityJoinLimits,
+    communityPostLimits,
+  );
   transient let socialLinkService = SocialLinkService.create(users);
   transient let tokenService = TokenService.create(
     tokens, tokensByLedger, tokensByUser, reservedSymbols, tokenWasm,
@@ -244,6 +267,7 @@ persistent actor self {
   include BucketApi(bucketService, mwConfig);
   include AnalyticsApi(analyticsService, mwConfig);
   include LiveApi(liveService, mwConfig);
+  include IcCommunityApi(communityService, mwConfig);
   include CloudHttpApi(bucketService);
 
 };

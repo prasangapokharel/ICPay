@@ -13,3 +13,5 @@ Read [`skills/error-handling/SKILL.md`](../skills/error-handling/SKILL.md) befor
 - Early `return #err(...)` — fail before ledger calls
 - Map ledger errors with `TransferError.describe` — no raw traps for user input
 - API mixins delegate only; services own all `#err` paths
+- New `types.mo` variants: never `#public` / `#private` — use `#open` / `#inviteOnly` (see skill § Motoko compiler pitfalls)
+- `Nat` math: use `pkg/nat/bounds.saturatingSub`, not `a - b` (M0155)

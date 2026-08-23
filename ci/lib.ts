@@ -1,7 +1,7 @@
 // Shared helpers for every ci command. Kept deliberately small: each command
 // file should read as the dfx invocation it wraps, not as plumbing.
 import { spawn, spawnSync } from "node:child_process"
-import { readFileSync } from "node:fs"
+import { accessSync, constants, readFileSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -19,9 +19,39 @@ export const WALLET_CANISTER_ID = (
 export const ICPAY_LEDGER_ID = "5fsnk-rqaaa-aaaan-q6m4q-cai"
 export const ICP_INDEX = "qhbym-qaaaa-aaaaa-aaafq-cai"
 
+// dfx invokes whatever DFX_MOC_PATH names. A shell profile that sets
+// DFX_MOC_PATH=moc-wrapper (the old default name) breaks builds when
+// moc-wrapper is not on PATH — use the mops toolchain moc binary instead.
+function resolveDfxMocPath(): string {
+  const cur = process.env.DFX_MOC_PATH
+  if (cur && cur !== "moc-wrapper") {
+    try {
+      accessSync(cur, constants.X_OK)
+      return cur
+    } catch {
+      // ignore — fall through to mops
+    }
+  }
+  const res = spawnSync("mops", ["toolchain", "bin", "moc"], {
+    cwd: BACKEND,
+    encoding: "utf8",
+  })
+  const path = res.stdout?.trim()
+  if (res.status === 0 && path) return path
+  console.error(
+    "dfx needs a Motoko compiler. Run:\n  cd backend && mops toolchain use moc 1.13.0\n" +
+      "If your shell sets DFX_MOC_PATH=moc-wrapper, run: unset DFX_MOC_PATH",
+  )
+  process.exit(1)
+}
+
 // dfx refuses to touch mainnet with a plaintext identity unless this is set, and
 // the controller key on this machine is plaintext.
-const env = { ...process.env, DFX_WARNING: "-mainnet_plaintext_identity" }
+const env = {
+  ...process.env,
+  DFX_WARNING: "-mainnet_plaintext_identity",
+  DFX_MOC_PATH: resolveDfxMocPath(),
+}
 
 // Every command defaults to mainnet, because that is the only network this
 // project actually runs on. --local is here for a replica session.

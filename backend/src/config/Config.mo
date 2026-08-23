@@ -198,4 +198,12 @@ module {
 
   /** Max paths per bulk delete/move/copy call — IC instruction budget. */
   public let BUCKET_BULK_MAX: Nat = 20;
+
+  // icCommunity — paid channel entry (one-time join)
+  public let COMMUNITY_MIN_PRICE_E8S: Nat = 10_000_000; // 0.1 ICP
+  public let COMMUNITY_MAX_PRICE_E8S: Nat = 1_000_000_000; // 10 ICP
+  public let MAX_COMMUNITY_CHANNELS_PER_OWNER: Nat = 5;
+  public let RATE_COMMUNITY_CREATE = { maxPerWindow = 3; windowSeconds = 60 };
+  public let RATE_COMMUNITY_JOIN = { maxPerWindow = 10; windowSeconds = 60 };
+  public let RATE_COMMUNITY_POST = { maxPerWindow = 20; windowSeconds = 60 };
 };

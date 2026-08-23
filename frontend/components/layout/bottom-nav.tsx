@@ -10,7 +10,7 @@ import { AppIcon, type AppIconName } from "@/components/ui/app-icon"
 
 type NavItem = {
   href: string
-  labelKey: "home" | "icpverse" | "send" | "menu" | "buyUsername"
+  labelKey: "home" | "icpverse" | "bucket" | "menu" | "buyUsername"
   icon: AppIconName
   center?: boolean
 }
@@ -19,7 +19,7 @@ const navItems: NavItem[] = [
   { href: "/", labelKey: "home", icon: "home" },
   { href: "/icpverse", labelKey: "icpverse", icon: "icpverse" },
   { href: "/username", labelKey: "buyUsername", icon: "shop", center: true },
-  { href: "/transfer", labelKey: "send", icon: "send" },
+  { href: "/bucket", labelKey: "bucket", icon: "bucket" },
   { href: "/settings", labelKey: "menu", icon: "menu" },
 ]
 
