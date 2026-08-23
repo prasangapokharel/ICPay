@@ -229,12 +229,6 @@ export function CommunityChannelView({
         )}
       </div>
 
-      {canRead && isMember && !isOwner && (
-        <div className="relative z-10 m-2 shrink-0 rounded-full border border-border/40 bg-muted/50 px-4 py-2.5 text-center backdrop-blur-sm">
-          <span className="text-sm font-medium text-muted-foreground">{t("joined")}</span>
-        </div>
-      )}
-
       {isOwner && canRead && (
         <div className="relative z-10 shrink-0">
           <CommunityComposer onPost={onPost} />
