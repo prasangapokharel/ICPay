@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { AppIcon } from "@/components/ui/app-icon"
+import { CommunityIcon } from "@/components/community/community-icon"
 import { CommunityAvatar } from "@/components/community/community-avatar"
 import { CommunityChannelInfo } from "@/components/community/community-channel-info"
 import { CommunityComposer } from "@/components/community/community-composer"
@@ -12,6 +12,14 @@ import {
   CommunityShareMenuItem,
 } from "@/components/community/community-share-link"
 import { Button } from "@/components/ui/button"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,6 +67,7 @@ export function CommunityChannelView({
   const [joinBusy, setJoinBusy] = useState(false)
   const [joinErr, setJoinErr] = useState<string | null>(null)
   const [infoOpen, setInfoOpen] = useState(false)
+  const [showJoinConfirm, setShowJoinConfirm] = useState(false)
   const members = channel.memberCount.toString()
   const canRead =
     isOwner ||
@@ -78,6 +87,27 @@ export function CommunityChannelView({
     await copyText(`${window.location.origin}/channels/${encodeURIComponent(slug)}`)
   }
 
+  const handleJoinClick = () => {
+    setJoinErr(null)
+    if (isCommunityPaid(channel.access)) {
+      setShowJoinConfirm(true)
+    } else {
+      void handleJoin()
+    }
+  }
+
+  const handleJoin = async () => {
+    setJoinBusy(true)
+    setJoinErr(null)
+    const err = await onJoin()
+    setJoinBusy(false)
+    if (err) {
+      setJoinErr(err)
+    } else {
+      setShowJoinConfirm(false)
+    }
+  }
+
   return (
     <div
       className={cn(
@@ -94,8 +124,8 @@ export function CommunityChannelView({
 
       <header
         className={cn(
-          "relative z-10 shrink-0 rounded-4xl m-2 border-b backdrop-blur-xl",
-          onWallpaper ? "border-white/15 bg-black/30" : "border-border/30 bg-background/40"
+          "relative z-10 mx-2 mt-2 shrink-0 overflow-hidden rounded-2xl border border-border/50 bg-background shadow-sm",
+          onWallpaper && "bg-background/95 backdrop-blur-md"
         )}
       >
         <div className="flex items-center gap-2 px-3 py-2.5 md:px-4">
@@ -107,7 +137,7 @@ export function CommunityChannelView({
             aria-label={t("backAria")}
             className="shrink-0 md:hidden"
           >
-            <AppIcon name="chatBack" size={20} mono />
+            <CommunityIcon name="back" size={20} />
           </Button>
           <button
             type="button"
@@ -115,26 +145,16 @@ export function CommunityChannelView({
             onClick={() => setInfoOpen(true)}
           >
             <CommunityAvatar
-              seed={slug}
+              seed={channel.slug}
               name={channel.name}
               size="default"
               className="size-10 shrink-0"
             />
             <div className="min-w-0">
-              <p
-                className={cn(
-                  "truncate text-sm font-semibold leading-tight",
-                  onWallpaper && "text-white drop-shadow-sm"
-                )}
-              >
+              <p className="truncate text-[15px] font-semibold leading-tight text-foreground">
                 {channel.name}
               </p>
-              <p
-                className={cn(
-                  "truncate text-xs",
-                  onWallpaper ? "text-white/75" : "text-muted-foreground"
-                )}
-              >
+              <p className="truncate text-xs text-muted-foreground">
                 {isOwner
                   ? t("ownerChannel")
                   : isMember
@@ -154,7 +174,7 @@ export function CommunityChannelView({
                 />
               }
             >
-              <AppIcon name="chatMore" size={18} mono />
+              <CommunityIcon name="more" size={18} />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setInfoOpen(true)}>
@@ -176,20 +196,10 @@ export function CommunityChannelView({
           </DropdownMenu>
         </div>
         {pinnedPreview && canRead && (
-          <div
-            className={cn(
-              "flex items-center gap-2 border-t px-4 py-1.5",
-              onWallpaper ? "border-white/15" : "border-border/30"
-            )}
-          >
-            <AppIcon name="chatPin" size={14} mono className="shrink-0 opacity-80" />
-            <p
-              className={cn(
-                "min-w-0 truncate text-xs",
-                onWallpaper ? "text-white/80" : "text-muted-foreground"
-              )}
-            >
-              {pinnedPreview.text}
+          <div className="flex items-center gap-2 border-t border-border/40 px-4 py-1.5">
+            <CommunityIcon name="pin" size={14} className="shrink-0 text-primary" />
+            <p className="min-w-0 truncate text-xs text-muted-foreground">
+              {pinnedPreview.text.replace(/\*\*/g, '').replace(/\*/g, '').replace(/__|_/g, '').replace(/~~/g, '').replace(/`/g, '')}
             </p>
           </div>
         )}
@@ -202,29 +212,21 @@ export function CommunityChannelView({
           <div className="min-h-0 flex-1" />
         )}
         {needsJoin && (
-          <div
-            className="shrink-0 border-t border-border/60 bg-background/90 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-md"
-          >
-            <p className="text-center text-sm text-muted-foreground">{t("joinToRead")}</p>
-            {isCommunityPaid(channel.access) && (
-              <p className="mt-1 text-center text-xs text-muted-foreground">
-                {t("joinPrice", { price: formatCommunityPriceE8s(channel.priceE8s) })}
-              </p>
-            )}
+          <div className="relative z-10 shrink-0 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
             <Button
-              className="mt-3 w-full rounded-full"
+              className="h-12 w-full rounded-full text-base font-semibold shadow-lg"
               disabled={joinBusy}
-              onClick={async () => {
-                setJoinBusy(true)
-                setJoinErr(null)
-                const err = await onJoin()
-                setJoinBusy(false)
-                if (err) setJoinErr(err)
-              }}
+              onClick={handleJoinClick}
             >
-              {joinBusy ? t("joining") : t("join")}
+              {joinBusy
+                ? t("joining")
+                : isCommunityPaid(channel.access)
+                  ? t("payToJoin", { price: formatCommunityPriceE8s(channel.priceE8s) })
+                  : t("join")}
             </Button>
-            {joinErr && <p className="mt-2 text-center text-xs text-destructive">{joinErr}</p>}
+            {joinErr && !isCommunityPaid(channel.access) && (
+              <p className="mt-2 text-center text-xs text-destructive">{joinErr}</p>
+            )}
           </div>
         )}
       </div>
@@ -234,6 +236,48 @@ export function CommunityChannelView({
           <CommunityComposer onPost={onPost} />
         </div>
       )}
+
+      <Drawer open={showJoinConfirm} onOpenChange={setShowJoinConfirm} showSwipeHandle>
+        <DrawerContent>
+          <DrawerHeader>
+            <div className="mb-1 flex justify-center">
+              <CommunityAvatar
+                seed={channel.slug}
+                name={channel.name}
+                className="size-14"
+                pixelSize={128}
+              />
+            </div>
+            <DrawerTitle className="text-center">{channel.name}</DrawerTitle>
+            <DrawerDescription className="text-center">
+              {t("confirmJoinPrice", {
+                name: channel.name,
+                price: formatCommunityPriceE8s(channel.priceE8s),
+              })}
+            </DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter className="gap-2">
+            <Button
+              className="h-12 w-full rounded-full text-base font-semibold"
+              disabled={joinBusy}
+              onClick={() => void handleJoin()}
+            >
+              {joinBusy
+                ? t("joining")
+                : t("payToJoin", { price: formatCommunityPriceE8s(channel.priceE8s) })}
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full rounded-full"
+              onClick={() => setShowJoinConfirm(false)}
+              disabled={joinBusy}
+            >
+              {t("cancel")}
+            </Button>
+            {joinErr && <p className="text-center text-xs text-destructive">{joinErr}</p>}
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
 
       <CommunityChannelInfo
         channel={channel}

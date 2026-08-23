@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { useAuth } from "@/components/auth/auth-provider"
-import { AppIcon } from "@/components/ui/app-icon"
+import { CommunityIcon } from "@/components/community/community-icon"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
@@ -58,7 +58,7 @@ export function CommunityNavRail() {
       </DropdownMenu>
 
       <RailButton href="/" label={tNav("home")} active={pathname === "/"}>
-        <AppIcon name="home" size={20} mono />
+        <CommunityIcon name="home" size={20} />
       </RailButton>
       <RailButton
         href="/channels"
@@ -68,16 +68,16 @@ export function CommunityNavRail() {
           (pathname.startsWith("/channels/") && pathname !== "/channels/new")
         }
       >
-        <AppIcon name="community" size={20} mono />
+        <CommunityIcon name="community" size={20} />
       </RailButton>
       <RailButton href="/channels/new" label={t("newChannel")} active={pathname === "/channels/new"}>
-        <AppIcon name="upload" size={20} mono />
+        <CommunityIcon name="upload" size={20} />
       </RailButton>
 
       <div className="flex-1" />
 
       <RailButton href="/settings" label={tNav("menu")} active={pathname.startsWith("/settings")}>
-        <AppIcon name="settings" size={20} mono />
+        <CommunityIcon name="settings" size={20} />
       </RailButton>
     </div>
   )

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { AppIcon } from "@/components/ui/app-icon"
+import { CommunityIcon } from "@/components/community/community-icon"
 import { Button } from "@/components/ui/button"
 import {
   ContextMenu,
@@ -278,7 +278,7 @@ export function CommunityComposer({
           aria-label={t("sendAria")}
           onClick={submit}
         >
-          <AppIcon name="chatSend" size={26} mono className={canSend ? "opacity-100" : "opacity-70"} />
+          <CommunityIcon name="send" size={26} className={canSend ? "opacity-100" : "opacity-70"} />
         </Button>
       </div>
       {error && <p className="mt-1.5 px-1 text-xs text-destructive">{error}</p>}

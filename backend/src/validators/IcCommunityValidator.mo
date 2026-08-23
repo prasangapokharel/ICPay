@@ -1,5 +1,6 @@
 import Char "mo:core/Char";
 import Nat "mo:core/Nat";
+import Nat8 "mo:core/Nat8";
 import Text "mo:core/Text";
 import Config "../config/Config";
 import IcCommunityStorage "../storage/IcCommunityStorage";
@@ -34,6 +35,14 @@ module {
 
   public func validateBio(bio: Text): ?Text {
     if (bio.size() > IcCommunityStorage.MAX_BIO) { return ?"Bio is too long" };
+    null;
+  };
+
+  public func validateReactionCode(code: Nat8): ?Text {
+    let n = Nat8.toNat(code);
+    if (n < 1 or n > Nat8.toNat(IcCommunityStorage.MAX_REACTION_CODE)) {
+      return ?"Invalid reaction";
+    };
     null;
   };
 

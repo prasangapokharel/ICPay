@@ -26,6 +26,19 @@ export type CommunityMessagePublic = {
   authorUsername: [] | [string]
   text: string
   createdAt: bigint
+  reactions: CommunityReactionCount[]
+  myReaction: [] | [bigint]
+}
+
+export type CommunityReactionCount = {
+  code: bigint
+  count: bigint
+}
+
+export type CommunityReactionUpdate = {
+  messageId: bigint
+  myReaction: [] | [bigint]
+  reactions: CommunityReactionCount[]
 }
 
 export type CommunityCreateResult = {
@@ -85,8 +98,31 @@ export async function listCommunityMessages(
     const result = (await actor.listCommunityMessages(channelId, afterId, BigInt(limit))) as Outcome<
       CommunityMessagePublic[]
     >
-    return unwrap(result)
+    const rows = unwrap(result)
+    return rows.map(normalizeCommunityMessage)
   })
+}
+
+function normalizeCommunityMessage(message: CommunityMessagePublic): CommunityMessagePublic {
+  return {
+    ...message,
+    reactions: message.reactions ?? [],
+    myReaction: message.myReaction ?? [],
+  }
+}
+
+export async function setCommunityMessageReaction(
+  identity: Identity | undefined,
+  channelId: string,
+  messageId: bigint,
+  code: number
+): Promise<CommunityReactionUpdate> {
+  const outcome = await call(identity, "Could not react", async (actor) =>
+    actor.setCommunityMessageReaction(channelId, messageId, code) as Promise<
+      Outcome<CommunityReactionUpdate>
+    >
+  )
+  return unwrap(outcome)
 }
 
 export async function isCommunityMember(
@@ -145,7 +181,7 @@ export async function postCommunityMessage(
   const outcome = await call(identity, "Could not post message", async (actor) =>
     actor.postCommunityMessage(channelId, text) as Promise<Outcome<CommunityMessagePublic>>
   )
-  return unwrap(outcome)
+  return normalizeCommunityMessage(unwrap(outcome))
 }
 
 export async function pinCommunityMessage(

@@ -119,6 +119,7 @@ persistent actor self {
   let communityCreateLimits = RateLimitStorage.createRateLimitMap();
   let communityJoinLimits = RateLimitStorage.createRateLimitMap();
   let communityPostLimits = RateLimitStorage.createRateLimitMap();
+  let communityReactLimits = RateLimitStorage.createRateLimitMap();
 
   // ICPAY actually paid out by the presale. Inventory balance alone cannot
   // distinguish "nothing sold yet" from "100% sold", so sold stats come from here.
@@ -135,6 +136,9 @@ persistent actor self {
   let communityMembers = IcCommunityStorage.createMemberMap();
   let communityMemberIndex = IcCommunityStorage.createMemberIndexMap();
   let communityMessages = IcCommunityStorage.createMessageMap();
+  // New stable maps — no migration; empty on first upgrade after deploy.
+  let communityReactionVotes = IcCommunityStorage.createReactionVoteMap();
+  let communityReactionCounts = IcCommunityStorage.createReactionCountMap();
 
   // Pending swaps survive upgrades: a failed withdraw must not vanish on deploy.
   let pendingSwaps = SwapStorage.createPendingMap();
@@ -209,10 +213,13 @@ persistent actor self {
     communityMembers,
     communityMemberIndex,
     communityMessages,
+    communityReactionVotes,
+    communityReactionCounts,
     transferService,
     communityCreateLimits,
     communityJoinLimits,
     communityPostLimits,
+    communityReactLimits,
   );
   transient let socialLinkService = SocialLinkService.create(users);
   transient let tokenService = TokenService.create(
