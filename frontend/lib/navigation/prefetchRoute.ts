@@ -4,6 +4,8 @@ import { preload } from "swr"
 import { getDashboard } from "@/services/dashboard/dashboard"
 import { getDepositAddress } from "@/services/deposit/deposit"
 import { searchUsers } from "@/services/profile/profile"
+import { bucketListKey } from "@/lib/bucket/cacheKeys"
+import { listBuckets } from "@/services/bucket/bucket"
 import {
   custodialSubaccount,
   fetchBalances,
@@ -36,6 +38,17 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
       break
     case "/icpverse":
       preload(swrKey(identity, "search-users", ""), () => searchUsers(identity, ""))
+      break
+    case "/bucket":
+      preload(bucketListKey(identity), () => listBuckets(identity))
+      break
+    case "/channels":
+      preload(swrKey(identity, "community-public"), () =>
+        import("@/services/community/community").then((m) => m.listPublicCommunityChannels(identity))
+      )
+      preload(swrKey(identity, "community-mine"), () =>
+        import("@/services/community/community").then((m) => m.listMyCommunityChannels(identity))
+      )
       break
     case "/transfer":
       preload(swrKey(identity, "token-balance", ICP_LEDGER_ID), async () => {

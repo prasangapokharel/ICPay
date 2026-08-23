@@ -67,6 +67,13 @@ export default function MenuPage() {
           icon: "icpverse",
           keywords: "people tip discover",
         },
+        {
+          href: "/channels",
+          key: "community",
+          icon: "community",
+          keywords: "channels community telegram broadcast",
+          badge: "communityBadge",
+        },
       ],
     },
     {

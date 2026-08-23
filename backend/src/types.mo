@@ -551,6 +551,64 @@ module {
     inviteToken: ?Text;
   };
 
+  public type CommunityVisibility = { #open; #inviteOnly };
+  public type CommunityAccess = { #free; #paid };
+
+  public type CommunityChannel = {
+    id: Text;
+    name: Text;
+    slug: Text;
+    owner: Principal;
+    bio: Text;
+    visibility: CommunityVisibility;
+    access: CommunityAccess;
+    priceE8s: Nat;
+    inviteHash: ?Text;
+    pinnedMessageId: ?Nat;
+    memberCount: Nat;
+    createdAt: Int;
+  };
+
+  public type CommunityChannelPublic = {
+    id: Text;
+    name: Text;
+    slug: Text;
+    owner: Principal;
+    ownerUsername: ?Username;
+    bio: Text;
+    visibility: CommunityVisibility;
+    access: CommunityAccess;
+    priceE8s: Nat;
+    pinnedMessageId: ?Nat;
+    memberCount: Nat;
+    createdAt: Int;
+  };
+
+  public type CommunityMember = {
+    joinedAt: Int;
+  };
+
+  public type CommunityMessage = {
+    id: Nat;
+    author: Principal;
+    text: Text;
+    createdAt: Int;
+    deleted: Bool;
+  };
+
+  public type CommunityMessagePublic = {
+    id: Nat;
+    author: Principal;
+    authorUsername: ?Username;
+    text: Text;
+    createdAt: Int;
+  };
+
+  public type CommunityCreateResult = {
+    channelId: Text;
+    inviteCode: ?Text;
+  };
+
   public func tokenToPublic(self: Token): TokenPublic {
     {
       id = self.id;

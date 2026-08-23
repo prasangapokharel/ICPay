@@ -2,6 +2,12 @@ import * as React from "react"
 
 const MOBILE_BREAKPOINT = 768
 
+function subscribeViewport(onStoreChange: () => void) {
+  const mql = window.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`)
+  mql.addEventListener("change", onStoreChange)
+  return () => mql.removeEventListener("change", onStoreChange)
+}
+
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
@@ -16,4 +22,17 @@ export function useIsMobile() {
   }, [])
 
   return !!isMobile
+}
+
+export function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = React.useState(false)
+
+  React.useEffect(() => {
+    const sync = () => setIsDesktop(window.matchMedia(`(min-width: ${MOBILE_BREAKPOINT}px)`).matches)
+    const unsubscribe = subscribeViewport(sync)
+    sync()
+    return unsubscribe
+  }, [])
+
+  return isDesktop
 }
