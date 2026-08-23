@@ -2,8 +2,7 @@
 
 import { useCallback, useId, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Upload01Icon } from "@hugeicons/core-free-icons"
+import { AppIcon } from "@/components/ui/app-icon"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
@@ -200,11 +199,9 @@ export function BucketUploadZone({
           )}
         >
           <CardContent className="flex flex-col items-center gap-2 py-8 text-center">
-            <HugeiconsIcon
-              icon={Upload01Icon}
-              className="size-6 text-muted-foreground"
-              strokeWidth={1.75}
-            />
+            <span className="flex size-12 items-center justify-center rounded-full bg-gray-800">
+              <AppIcon name="upload" size={24} />
+            </span>
             <p className="text-sm font-medium">
               {busy ? t("uploading") : t("uploadDropHint")}
             </p>

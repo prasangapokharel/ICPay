@@ -1,0 +1,169 @@
+# icCommunity API
+
+Telegram-style **channels** on ICPay. Creators post text; members read (queries).
+Public channels appear in `/channels`; private channels join via invite code only.
+
+---
+
+## Types
+
+| Type | Values |
+|------|--------|
+| `CommunityVisibility` | `#open` (listed) · `#inviteOnly` (private invite link) |
+| `CommunityAccess` | `#free` · `#paid` (0.1–10 ICP one-time join) |
+
+Paid join transfers ICP from member → creator custodial balance (memo `icCommunity:<slug>`).
+
+---
+
+## Endpoints
+
+| Method | Kind | Description |
+|--------|------|-------------|
+| `createCommunityChannel` | update | Name, slug, bio, visibility, access, priceE8s, optional inviteSecret |
+| `joinCommunityChannel` | update | Free or paid join; private needs `inviteCode` |
+| `leaveCommunityChannel` | update | Member leaves (owner cannot) |
+| `postCommunityMessage` | update | Creator only |
+| `pinCommunityMessage` | update | Creator pins one message |
+| `deleteCommunityMessage` | update | Creator soft-deletes |
+| `getCommunityChannel` | query | Public metadata |
+| `listPublicCommunityChannels` | query | Paginated public directory |
+| `listMyCommunityChannels` | query | Channels caller joined or owns |
+| `listCommunityMessages` | query | After `afterId`, capped `limit` |
+| `isCommunityMember` | query | Membership check |
+
+---
+
+## Read access (messages)
+
+- Owner or member: always
+- Public + free: anyone (discovery without join)
+- Private or paid: members only
+
+---
+
+## Limits (`Config.mo` + `IcCommunityStorage.mo`)
+
+| Limit | Value |
+|-------|-------|
+| Channels per owner | 5 |
+| Paid price | 0.1 – 10 ICP |
+| Name | 80 chars |
+| Bio | 280 chars |
+| Slug | 3–32, `a-z0-9_` |
+| Message | 2000 chars |
+| Messages per channel | 2000 (oldest dropped) |
+| List page | 50 max |
+
+Rate limits: create 3/min, join 10/min, post 20/min per caller.
+
+---
+
+## Files
+
+| Path | Role |
+|------|------|
+| `types.mo` | `Community*` types |
+| `storage/IcCommunityStorage.mo` | Maps + constants |
+| `repositories/IcCommunityRepository.mo` | CRUD |
+| `validators/IcCommunityValidator.mo` | Input checks |
+| `services/IcCommunityService.mo` | Business logic |
+| `api/v1/IcCommunity.mo` | Candid mixin |
+| `main.mo` | Stable maps + wire |
+| `testing/services/IcCommunityService.test.mo` | Unit tests |
+
+---
+
+## NOT in v1
+
+- Channel delete, edit bio, regenerate invite
+- Replies, reactions, media in messages
+- Monthly subscription renewals
+- Platform fee split on paid join (100% to creator)
+
+---
+
+## Cycle burn (estimates)
+
+Source: ICPay `cycles-and-cost` skill (measured on this canister) + icCommunity
+storage shape. **Measure on mainnet** before quoting runway to users:
+
+```bash
+B0=$(dfx canister status icp_wallet_backend --network ic | grep Balance | tr -dc '0-9')
+for i in $(seq 10); do dfx canister call icp_wallet_backend postCommunityMessage '(...)' --network ic; done
+B1=...
+echo $(( (B0-B1)/10 ))
+```
+
+### What costs cycles
+
+| Action | Call type | Typical burn | Notes |
+|--------|-----------|--------------|-------|
+| `listCommunityMessages` | **query** | **~0** | Free on IC — use SWR on open, no polling |
+| `getCommunityChannel` | query | ~0 | |
+| `listPublicCommunityChannels` | query | ~0 | Paginated; not full-registry scan |
+| `listMyCommunityChannels` | query | ~0 | Index by principal |
+| `createCommunityChannel` | update | **~10–25M** | Few map writes |
+| `joinCommunityChannel` (free) | update | **~10–20M** | Member row + count |
+| `joinCommunityChannel` (paid) | update + **ledger** | **~50–90M** | Ledger call dominates (~40M+) |
+| `postCommunityMessage` | update | **~8M → ~25M** | Grows with message count (array copy) |
+| `pin` / `delete` / `leave` | update | **~8–15M** | Single channel touch |
+
+ICPay idle floor today ≈ **1.43B cycles/day** (whole wallet, not icCommunity alone).
+
+### Storage (idle floor)
+
+Rough bytes per channel (stable memory):
+
+| Data | @100 msgs, 100 members | @1000 msgs, 1000 members |
+|------|------------------------|--------------------------|
+| Channel metadata | ~1 KB | ~1 KB |
+| Members (map + index) | ~30–80 KB | ~300–800 KB |
+| Messages (text ~200 chars avg) | ~50 KB | ~500 KB |
+| **Total per channel** | **~100 KB** | **~1 MB** |
+
+Extra idle from icCommunity storage is small vs wallet baseline until thousands
+of channels. Rule: **~4M cycles/GiB/day** → 100 KB ≈ **400 cycles/day**.
+
+### Scenario totals (one-time setup burn)
+
+Assumes mid-range estimates; paid joins include one ICP ledger call.
+
+| Scenario | Updates | Est. cycles | ≈ idle-days* |
+|----------|---------|-------------|--------------|
+| **1 channel, 0 members, 100 posts** | 1 create + 100 post | **~1.0–1.5B** | ~0.7–1 |
+| **1 channel, 100 free joins, 100 posts** | +100 join | **~2.0–3.0B** | ~1.4–2 |
+| **1 channel, 100 paid joins, 100 posts** | +100 paid join | **~6–9B** | ~4–6 |
+| **10 channels** (same each) | ×10 | **~10×** above | |
+| **100 channels, 100 msgs each** | heavy seed | **~100–300B** | weeks of idle |
+
+\* Compared to 1.43B/day wallet idle — not calendar days of runway.
+
+### Daily usage (healthy pattern)
+
+| Pattern | Updates/day | Queries/day | Est. burn/day |
+|---------|-------------|-------------|---------------|
+| Creator posts 3×/day, 50 members read once (SWR) | 3 post | 50×2 query | **~30–60M** |
+| Same + 10 new free joins | +10 join | same | **~130–200M** |
+| Same + 10 paid joins | +10 paid | same | **~600M–1B** |
+
+**Reads are free** — the cheap model is: burn on **join** (especially paid) and
+**post**, not on feed views.
+
+### Design choices that keep burn low
+
+1. All feed/history/list paths are `shared query`.
+2. No polling — fetch when user opens `/channels/@slug`.
+3. Cap 2000 msgs/channel (oldest dropped).
+4. Page size max 50 (`MAX_LIST`).
+5. Paid join = one ledger call (unavoidable); creator revenue should exceed
+   canister cost (0.1 ICP join >> ~0.00001 ICP worth of cycles).
+
+### Break-even (paid channel)
+
+At ~70M cycles per paid join and ~1.5T cycles/ICP:
+
+- Cycle cost per paid join ≈ **0.00005 ICP** (order of magnitude)
+- Min price 0.1 ICP → canister cost **&lt;0.05%** of revenue per join
+
+Measure after deploy; do not treat this table as billing truth.

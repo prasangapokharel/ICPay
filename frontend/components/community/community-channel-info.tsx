@@ -50,6 +50,7 @@ export function CommunityChannelInfo({
       ? `${window.location.origin}/channels/${encodeURIComponent(slug)}`
       : `icpay.app/channels/${slug}`
   const bio = channel.bio.trim()
+  const members = channel.memberCount.toString()
 
   return (
     <Drawer
@@ -59,31 +60,36 @@ export function CommunityChannelInfo({
       swipeDirection={isMobile ? "down" : "right"}
     >
       <DrawerContent className="max-h-[min(100dvh,720px)] sm:max-h-none">
-        <DrawerHeader className="items-center gap-3 pb-2 text-center sm:items-start sm:text-left">
+        <DrawerHeader className="items-center gap-3 border-b border-border/40 pb-4 text-center">
           <CommunityAvatar
-            seed={slug}
+            seed={channel.slug}
             name={channel.name}
-            className="size-16 shadow-sm ring-4 ring-background"
+            className="size-20 shadow-sm ring-4 ring-background"
+            pixelSize={160}
           />
-          <div className="min-w-0 space-y-0.5">
-            <DrawerTitle className="text-lg font-semibold">{channel.name}</DrawerTitle>
-            <DrawerDescription className="text-sm">@{slug}</DrawerDescription>
+          <div className="min-w-0 space-y-1">
+            <DrawerTitle className="text-xl font-bold text-foreground">{channel.name}</DrawerTitle>
+            <DrawerDescription className="text-sm text-muted-foreground">
+              {t("membersCount", { count: members })}
+            </DrawerDescription>
+            <p className="text-xs text-muted-foreground">@{slug}</p>
           </div>
         </DrawerHeader>
 
-        <div className="flex-1 overflow-y-auto px-4 pb-2">
+        <div className="flex-1 overflow-y-auto px-4 py-4">
           {bio ? (
-            <div className="mb-4 rounded-xl bg-muted/40 px-4 py-3">
-              <p className="text-sm text-muted-foreground">{t("bio")}</p>
-              <p className="mt-1 text-sm leading-relaxed text-foreground">{bio}</p>
+            <div className="mb-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {t("bio")}
+              </p>
+              <p className="mt-1.5 text-sm leading-relaxed text-foreground">{bio}</p>
             </div>
           ) : null}
 
           <CommunityWallpaperPicker slug={slug} />
 
-          <div className="space-y-2">
+          <div className="mt-4 divide-y divide-border/50 rounded-xl border border-border/50">
             <MetaRow label={t("createdBy")} value={ownerHandle(channel)} />
-            <MetaRow label={t("membersLabel")} value={channel.memberCount.toString()} />
             <MetaRow
               label={t("visibility")}
               value={isCommunityOpen(channel.visibility) ? t("public") : t("private")}
@@ -101,11 +107,11 @@ export function CommunityChannelInfo({
             )}
           </div>
 
-          <div className="mt-4 rounded-xl border border-border/50 bg-muted/30 px-4 py-3">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+          <div className="mt-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               {t("channelLink")}
             </p>
-            <p className="mt-1 truncate text-sm font-medium text-foreground">{channelUrl}</p>
+            <p className="mt-1.5 truncate text-sm font-medium text-primary">{channelUrl}</p>
           </div>
         </div>
 
@@ -122,9 +128,9 @@ export function CommunityChannelInfo({
 
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-xl bg-muted/40 px-4 py-3">
+    <div className="flex items-center justify-between gap-3 px-4 py-3">
       <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="truncate text-right text-sm font-medium">{value}</span>
+      <span className="truncate text-right text-sm font-medium text-foreground">{value}</span>
     </div>
   )
 }

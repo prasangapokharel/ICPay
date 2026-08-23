@@ -1,6 +1,7 @@
 import Types "../../types";
 import IcCommunityService "../../services/IcCommunityService";
 import MiddlewareAuth "../../middleware/Auth";
+import Nat8 "mo:core/Nat8";
 
 mixin (community: IcCommunityService.IcCommunityService, mwConfig: MiddlewareAuth.Config) {
   public shared ({ caller }) func createCommunityChannel(
@@ -78,6 +79,20 @@ mixin (community: IcCommunityService.IcCommunityService, mwConfig: MiddlewareAut
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       channelId,
       messageId,
+    );
+  };
+
+  public shared ({ caller }) func setCommunityMessageReaction(
+    channelId: Text,
+    messageId: Nat,
+    code: Nat8,
+  ): async Types.ApiResult<Types.CommunityReactionUpdate> {
+    IcCommunityService.setReaction(
+      community,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      channelId,
+      messageId,
+      code,
     );
   };
 

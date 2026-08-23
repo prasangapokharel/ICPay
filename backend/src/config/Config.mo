@@ -206,4 +206,5 @@ module {
   public let RATE_COMMUNITY_CREATE = { maxPerWindow = 3; windowSeconds = 60 };
   public let RATE_COMMUNITY_JOIN = { maxPerWindow = 10; windowSeconds = 60 };
   public let RATE_COMMUNITY_POST = { maxPerWindow = 20; windowSeconds = 60 };
+  public let RATE_COMMUNITY_REACT = { maxPerWindow = 30; windowSeconds = 60 };
 };

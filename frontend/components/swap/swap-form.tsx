@@ -3,8 +3,7 @@
 import { useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDataTransferVerticalIcon } from "@hugeicons/core-free-icons"
+import { AppIcon } from "@/components/ui/app-icon"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -275,8 +274,14 @@ export function SwapForm({
         />
 
         <div className="flex justify-center">
-          <Button type="button" variant="outline" size="icon" className="rounded-full" onClick={flip}>
-            <HugeiconsIcon icon={ArrowDataTransferVerticalIcon} className="size-4" />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="size-10 rounded-full border-border/60 bg-gray-800 hover:bg-gray-700"
+            onClick={flip}
+          >
+            <AppIcon name="swap" size={20} />
             <span className="sr-only">{t("flip")}</span>
           </Button>
         </div>

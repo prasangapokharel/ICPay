@@ -2,6 +2,7 @@ import Array "mo:core/Array";
 import List "mo:core/List";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
+import Nat8 "mo:core/Nat8";
 import Principal "mo:core/Principal";
 import Text "mo:core/Text";
 import Time "mo:core/Time";
@@ -26,10 +27,13 @@ module {
     members: IcCommunityStorage.MemberMap;
     memberIndex: IcCommunityStorage.MemberIndexMap;
     messages: IcCommunityStorage.MessageMap;
+    reactionVotes: IcCommunityStorage.ReactionVoteMap;
+    reactionCounts: IcCommunityStorage.ReactionCountMap;
     transfers: TransferService.TransferService;
     createLimits: RateLimitStorage.RateLimitMap;
     joinLimits: RateLimitStorage.RateLimitMap;
     postLimits: RateLimitStorage.RateLimitMap;
+    reactLimits: RateLimitStorage.RateLimitMap;
   };
 
   public func create(
@@ -39,12 +43,29 @@ module {
     members: IcCommunityStorage.MemberMap,
     memberIndex: IcCommunityStorage.MemberIndexMap,
     messages: IcCommunityStorage.MessageMap,
+    reactionVotes: IcCommunityStorage.ReactionVoteMap,
+    reactionCounts: IcCommunityStorage.ReactionCountMap,
     transfers: TransferService.TransferService,
     createLimits: RateLimitStorage.RateLimitMap,
     joinLimits: RateLimitStorage.RateLimitMap,
     postLimits: RateLimitStorage.RateLimitMap,
+    reactLimits: RateLimitStorage.RateLimitMap,
   ): IcCommunityService {
-    { users; usersById; channels; members; memberIndex; messages; transfers; createLimits; joinLimits; postLimits };
+    {
+      users;
+      usersById;
+      channels;
+      members;
+      memberIndex;
+      messages;
+      reactionVotes;
+      reactionCounts;
+      transfers;
+      createLimits;
+      joinLimits;
+      postLimits;
+      reactLimits;
+    };
   };
 
   public func createChannel(
@@ -243,7 +264,75 @@ module {
         } else {
           next
         };
-        #ok(messageToPublic(service, msg))
+        #ok(messageToPublic(service, msg, channelId, caller))
+      };
+    };
+  };
+
+  public func setReaction(
+    service: IcCommunityService,
+    caller: Principal,
+    channelId: Text,
+    messageId: Nat,
+    code: Nat8,
+  ): Types.ApiResult<Types.CommunityReactionUpdate> {
+    if (not RateLimitService.allow(service.reactLimits, caller, Config.RATE_COMMUNITY_REACT, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_COMMUNITY_REACT));
+    };
+    switch (IcCommunityValidator.validateReactionCode(code)) {
+      case (?e) return #err(e);
+      case (null) {};
+    };
+    switch (requireUser(service, caller)) {
+      case (#err(e)) return #err(e);
+      case (#ok(_)) {};
+    };
+    switch (IcCommunityRepo.get(service.channels, channelId)) {
+      case (null) return #err("Channel not found");
+      case (?channel) {
+        if (not canRead(service, caller, channel)) {
+          return #err("Join the channel to react");
+        };
+        switch (findMessage(service.messages, channelId, messageId)) {
+          case (null) return #err("Message not found");
+          case (?msg) {
+            if (msg.deleted) { return #err("Cannot react to a deleted message") };
+            let slot = reactionSlot(code);
+            let oldVote = IcCommunityRepo.getReactionVote(
+              service.reactionVotes,
+              channelId,
+              messageId,
+              caller,
+            );
+            var myReaction : ?Nat8 = null;
+            switch (oldVote) {
+              case (null) {
+                IcCommunityRepo.putReactionVote(service.reactionVotes, channelId, messageId, caller, code);
+                ignore IcCommunityRepo.adjustReactionSlot(service.reactionCounts, channelId, messageId, slot, false);
+                myReaction := ?code;
+              };
+              case (?prev) {
+                if (prev == code) {
+                  IcCommunityRepo.removeReactionVote(service.reactionVotes, channelId, messageId, caller);
+                  ignore IcCommunityRepo.adjustReactionSlot(service.reactionCounts, channelId, messageId, slot, true);
+                  myReaction := null;
+                } else {
+                  let oldSlot = reactionSlot(prev);
+                  IcCommunityRepo.putReactionVote(service.reactionVotes, channelId, messageId, caller, code);
+                  ignore IcCommunityRepo.adjustReactionSlot(service.reactionCounts, channelId, messageId, oldSlot, true);
+                  ignore IcCommunityRepo.adjustReactionSlot(service.reactionCounts, channelId, messageId, slot, false);
+                  myReaction := ?code;
+                };
+              };
+            };
+            let counts = IcCommunityRepo.getReactionCounts(service.reactionCounts, channelId, messageId);
+            #ok({
+              messageId;
+              myReaction;
+              reactions = reactionsFromCounts(counts);
+            })
+          };
+        };
       };
     };
   };
@@ -363,7 +452,7 @@ module {
             let start = if (size > cap) { NatBounds.saturatingSub(size, cap) } else { 0 };
             let count = NatBounds.saturatingSub(size, start);
             #ok(Array.tabulate<Types.CommunityMessagePublic>(count, func(i) {
-              messageToPublic(service, visible[start + i])
+              messageToPublic(service, visible[start + i], channelId, caller)
             }))
           };
         };
@@ -447,18 +536,48 @@ module {
   private func messageToPublic(
     service: IcCommunityService,
     msg: Types.CommunityMessage,
+    channelId: Text,
+    caller: Principal,
   ): Types.CommunityMessagePublic {
     let authorUsername = switch (UserRepo.getByPrincipal(service.users, msg.author)) {
       case (?u) u.username;
       case (null) null;
     };
+    let counts = IcCommunityRepo.getReactionCounts(service.reactionCounts, channelId, msg.id);
+    let myReaction = IcCommunityRepo.getReactionVote(
+      service.reactionVotes,
+      channelId,
+      msg.id,
+      caller,
+    );
     {
       id = msg.id;
       author = msg.author;
       authorUsername;
       text = msg.text;
       createdAt = msg.createdAt;
+      reactions = reactionsFromCounts(counts);
+      myReaction;
     }
+  };
+
+  private func reactionsFromCounts(counts: [Nat]): [Types.CommunityReactionCount] {
+    let buf = List.empty<Types.CommunityReactionCount>();
+    var i = 0;
+    while (i < IcCommunityStorage.REACTION_SLOT_COUNT) {
+      if (counts[i] > 0) {
+        List.add(buf, {
+          code = Nat8.fromNat(i + 1);
+          count = counts[i];
+        });
+      };
+      i += 1;
+    };
+    List.toArray(buf);
+  };
+
+  private func reactionSlot(code: Nat8): Nat {
+    NatBounds.saturatingSub(Nat8.toNat(code), 1);
   };
 
   private func trim(text: Text): Text {

@@ -33,12 +33,12 @@ export function CommunityMessageContent({ text }: { text: string }) {
   }
 
   return (
-    <span className="whitespace-pre-wrap break-words">
-      {preview}
-      {" … "}
+    <div>
+      <CommunityMessageBody text={preview} />
+      <span className="text-muted-foreground">{" … "}</span>
       <button type="button" onClick={() => setExpanded(true)} className={seeMoreLink}>
         {t("seeMore")}
       </button>
-    </span>
+    </div>
   )
 }

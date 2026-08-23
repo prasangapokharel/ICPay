@@ -12,12 +12,16 @@ import {
   communityPublicListKey,
 } from "@/lib/community/cacheKeys"
 import {
+  deleteCommunityMessage,
   getCommunityChannel,
   isCommunityMember,
   listCommunityMessages,
   listMyCommunityChannels,
   listPublicCommunityChannels,
+  setCommunityMessageReaction,
 } from "@/services/community/community"
+import { applyReactionTap, mergeReactionUpdate, type ReactionCode } from "@/lib/community/reactions"
+import type { CommunityMessagePublic } from "@/services/community/community"
 
 const QUERY_OPTS = {
   revalidateOnFocus: false,
@@ -98,4 +102,78 @@ export function useCommunityMembership(slug: string) {
     QUERY_OPTS
   )
   return { isMember: data ?? false, refresh: mutate, mutate }
+}
+
+export function useCommunityDeleteMessage(slug: string) {
+  const { identity } = useAuth()
+  const { mutate } = useSWRConfig()
+
+  return useCallback(
+    async (messageId: bigint) => {
+      if (!identity) throw new Error("Not signed in")
+
+      const key = communityMessagesKey(identity, slug)
+      let snapshot: CommunityMessagePublic[] | undefined
+
+      await mutate(
+        key,
+        (current: CommunityMessagePublic[] | undefined = []) => {
+          snapshot = current
+          return current.filter((message) => message.id !== messageId)
+        },
+        { revalidate: false }
+      )
+
+      try {
+        await deleteCommunityMessage(identity, slug, messageId)
+      } catch (error) {
+        await mutate(key, snapshot, { revalidate: false })
+        throw error
+      }
+    },
+    [identity, slug, mutate]
+  )
+}
+
+export function useCommunityReaction(slug: string) {
+  const { identity } = useAuth()
+  const { mutate } = useSWRConfig()
+
+  return useCallback(
+    async (messageId: bigint, code: ReactionCode) => {
+      if (!identity) throw new Error("Not signed in")
+
+      const key = communityMessagesKey(identity, slug)
+      let snapshot: CommunityMessagePublic[] | undefined
+
+      await mutate(
+        key,
+        (current: CommunityMessagePublic[] | undefined = []) => {
+          snapshot = current
+          return current.map((message: CommunityMessagePublic) =>
+            message.id === messageId
+              ? { ...message, ...applyReactionTap(message, code) }
+              : message
+          )
+        },
+        { revalidate: false }
+      )
+
+      try {
+        const result = await setCommunityMessageReaction(identity, slug, messageId, code)
+        await mutate(
+          key,
+          (current: CommunityMessagePublic[] | undefined = []) =>
+            current.map((message: CommunityMessagePublic) =>
+              message.id === messageId ? mergeReactionUpdate(message, result) : message
+            ),
+          { revalidate: false }
+        )
+      } catch (error) {
+        await mutate(key, snapshot, { revalidate: false })
+        throw error
+      }
+    },
+    [identity, slug, mutate]
+  )
 }

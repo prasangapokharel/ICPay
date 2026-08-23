@@ -3,6 +3,7 @@ import Time "mo:core/Time";
 import Map "mo:core/Map";
 import Blob "mo:core/Blob";
 import Nat "mo:core/Nat";
+import Nat8 "mo:core/Nat8";
 
 module {
   public type UserId = Text;
@@ -596,12 +597,27 @@ module {
     deleted: Bool;
   };
 
+  public type CommunityReactionCode = Nat8;
+
+  public type CommunityReactionCount = {
+    code: CommunityReactionCode;
+    count: Nat;
+  };
+
   public type CommunityMessagePublic = {
     id: Nat;
     author: Principal;
     authorUsername: ?Username;
     text: Text;
     createdAt: Int;
+    reactions: [CommunityReactionCount];
+    myReaction: ?CommunityReactionCode;
+  };
+
+  public type CommunityReactionUpdate = {
+    messageId: Nat;
+    myReaction: ?CommunityReactionCode;
+    reactions: [CommunityReactionCount];
   };
 
   public type CommunityCreateResult = {

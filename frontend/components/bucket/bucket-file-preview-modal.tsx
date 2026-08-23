@@ -2,14 +2,9 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import {
-  Copy01Icon,
-  Delete02Icon,
-  Download01Icon,
-  LinkSquare02Icon,
-  Tick02Icon,
-} from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
+import { LinkSquare02Icon } from "@hugeicons/core-free-icons"
+import { AppIcon } from "@/components/ui/app-icon"
 import {
   Dialog,
   DialogContent,
@@ -138,7 +133,7 @@ export function BucketFilePreviewModal({
             disabled={downloading}
             onClick={handleDownload}
           >
-            <HugeiconsIcon icon={Download01Icon} className="size-4" strokeWidth={1.75} />
+            <AppIcon name="download" size={16} />
           </Button>
           {publicUrl && (
             <>
@@ -149,7 +144,7 @@ export function BucketFilePreviewModal({
                 aria-label={copied ? tc("copied") : tc("copy")}
                 onClick={handleCopy}
               >
-                <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" strokeWidth={1.75} />
+                <AppIcon name={copied ? "check" : "copy"} size={16} />
               </Button>
               <Button
                 type="button"
@@ -158,7 +153,7 @@ export function BucketFilePreviewModal({
                 aria-label={t("openInNewTab")}
                 onClick={() => window.open(publicUrl, "_blank", "noopener,noreferrer")}
               >
-                <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" strokeWidth={1.75} />
+              <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" strokeWidth={1.75} />
               </Button>
             </>
           )}
@@ -171,7 +166,7 @@ export function BucketFilePreviewModal({
               disabled={deleting}
               onClick={() => setDeleteOpen(true)}
             >
-              <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+              <AppIcon name="delete" size={16} />
             </Button>
           )}
         </ButtonGroup>
