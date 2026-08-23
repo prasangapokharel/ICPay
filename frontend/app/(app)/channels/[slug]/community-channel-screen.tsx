@@ -9,6 +9,8 @@ import {
   useCommunityDeleteMessage,
   useCommunityMembership,
   useCommunityMessages,
+  useCommunityPinMessage,
+  useCommunityPostMessage,
   useCommunityReaction,
   useInvalidateCommunity,
   useInvalidateCommunityLists,
@@ -22,7 +24,6 @@ import {
   isCommunityPaid,
   joinCommunityChannel,
   leaveCommunityChannel,
-  pinCommunityMessage,
   postCommunityMessage,
 } from "@/services/community/community"
 import { useTranslations } from "next-intl"
@@ -39,7 +40,7 @@ export function CommunityChannelScreen() {
   const invalidate = useInvalidateCommunity()
   const invalidateLists = useInvalidateCommunityLists(slug)
   const { channel, isLoading } = useCommunityChannel(slug)
-  const { isMember, refresh: refreshMember, mutate: mutateMember } = useCommunityMembership(slug)
+  const { isMember, mutate: mutateMember } = useCommunityMembership(slug)
   const mineQ = useMyCommunityChannels()
 
   const isOwner = useMemo(() => {
@@ -68,7 +69,9 @@ export function CommunityChannelScreen() {
       isJoined ||
       (isCommunityOpen(channel.visibility) && !isCommunityPaid(channel.access)))
 
-  const { messages, refresh: refreshMessages } = useCommunityMessages(slug, canReadMessages)
+  const { messages } = useCommunityMessages(slug, canReadMessages)
+  const postMessage = useCommunityPostMessage(slug)
+  const pinMessage = useCommunityPinMessage(slug)
   const reactToMessage = useCommunityReaction(slug)
   const deleteMessage = useCommunityDeleteMessage(slug)
 
@@ -149,7 +152,7 @@ export function CommunityChannelScreen() {
         await mutateMember(true, { revalidate: false })
         try {
           await joinCommunityChannel(identity, slug, urlInvite)
-          await Promise.all([invalidate(), refreshMember(), refreshMessages()])
+          await invalidate()
           return null
         } catch (e) {
           await mutateMember(false, { revalidate: false })
@@ -170,16 +173,7 @@ export function CommunityChannelScreen() {
         setPendingMessages((prev) => [...prev, pending])
 
         try {
-          const posted = await postCommunityMessage(identity, slug, text)
-
-          await refreshMessages(
-            (current) => {
-              const list = current ?? []
-              if (list.some((m) => m.id === posted.id)) return list
-              return [...list, posted]
-            },
-            { revalidate: false }
-          )
+          const posted = await postMessage(text)
 
           removePending(pending.clientId)
           setDeliveredIds((prev) => new Set(prev).add(posted.id.toString()))
@@ -212,19 +206,13 @@ export function CommunityChannelScreen() {
             await postCommunityMessage(identity, targetSlug, text)
             void invalidateLists()
           }}
-          onReact={async (messageId, code) => {
-            await reactToMessage(messageId, code)
-          }}
+          onReact={(messageId, code) => reactToMessage(messageId, code)}
           onPin={async (messageId) => {
-            try {
-              await pinCommunityMessage(identity, slug, messageId)
-            } finally {
-              await Promise.all([invalidate(), refreshMessages()])
-            }
+            await pinMessage(messageId)
           }}
           onDelete={async (messageId) => {
             await deleteMessage(messageId)
-            await invalidate()
+            void invalidate()
           }}
         />
       }
