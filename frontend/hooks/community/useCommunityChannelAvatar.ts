@@ -3,7 +3,7 @@
 import { useCallback, useSyncExternalStore } from "react"
 import {
   CHANNEL_AVATAR_CACHE_EVENT,
-  getCachedChannelAvatar,
+  getChannelAvatarSnapshot,
 } from "@/lib/community/channelAvatarCache"
 
 export function useCommunityChannelAvatar(slug: string) {
@@ -21,7 +21,7 @@ export function useCommunityChannelAvatar(slug: string) {
 
   return useSyncExternalStore(
     subscribe,
-    () => (slug ? getCachedChannelAvatar(slug) : undefined),
+    () => (slug ? getChannelAvatarSnapshot(slug) : undefined),
     () => undefined
   )
 }
