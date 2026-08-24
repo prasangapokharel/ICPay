@@ -27,21 +27,29 @@ function base64ToBytes(encoded: string): Uint8Array | undefined {
   }
 }
 
-export function getCachedChannelAvatar(slug: string): Uint8Array | undefined {
+export function getChannelAvatarSnapshot(slug: string): string | undefined {
   if (typeof window === "undefined" || !slug) return undefined
-  const raw = localStorage.getItem(channelAvatarCacheKey(slug))
-  if (!raw) return undefined
-  return base64ToBytes(raw)
+  return localStorage.getItem(channelAvatarCacheKey(slug)) ?? undefined
+}
+
+export function getCachedChannelAvatar(slug: string): Uint8Array | undefined {
+  const encoded = getChannelAvatarSnapshot(slug)
+  return encoded ? base64ToBytes(encoded) : undefined
 }
 
 export function syncChannelAvatarCache(slug: string, bytes: Uint8Array | null | undefined) {
   if (typeof window === "undefined" || !slug) return
 
   const key = channelAvatarCacheKey(slug)
-  if (!bytes?.length) {
+  const next = bytes?.length ? bytesToBase64(bytes) : null
+  const prev = localStorage.getItem(key)
+
+  if (next === prev) return
+
+  if (!next) {
     localStorage.removeItem(key)
   } else {
-    localStorage.setItem(key, bytesToBase64(bytes))
+    localStorage.setItem(key, next)
   }
 
   window.dispatchEvent(

@@ -4,6 +4,7 @@ import { useMemo } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useCommunityChannelAvatar } from "@/hooks/community/useCommunityChannelAvatar"
 import { channelAvatarDataUrl } from "@/lib/community/channelAvatar"
+import { getCachedChannelAvatar } from "@/lib/community/channelAvatarCache"
 import { communityAvatarUri } from "@/lib/community/avatar"
 import { channelInitial } from "@/lib/community/format"
 import { cn } from "@/lib/ui/utils"
@@ -33,7 +34,11 @@ export function CommunityAvatar({
 }) {
   const pixels = pixelSize ?? PIXEL_SIZE[size]
   const generated = useMemo(() => communityAvatarUri(seed, pixels), [seed, pixels])
-  const cached = useCommunityChannelAvatar(slug ?? "")
+  const cachedEncoded = useCommunityChannelAvatar(slug ?? "")
+  const cached = useMemo(
+    () => (cachedEncoded && slug ? getCachedChannelAvatar(slug) : undefined),
+    [cachedEncoded, slug]
+  )
   const bytes = previewBytes ?? cached
   const custom = useMemo(
     () => (bytes?.length ? channelAvatarDataUrl(bytes) : undefined),
