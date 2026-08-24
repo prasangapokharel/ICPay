@@ -39,7 +39,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             className={cn(
               "flex min-h-0 flex-1 flex-col",
               channels
-                ? cn("px-0 pt-0", channelChat ? "pb-0" : "pb-28 md:pb-0")
+                ? cn(
+                    "h-full overflow-hidden px-0 pt-0",
+                    channelChat ? "pb-0" : "pb-28 md:pb-0"
+                  )
                 : "px-4 pb-28 pt-2"
             )}
           >

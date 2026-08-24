@@ -56,6 +56,7 @@ export function CommunityChannelCard({
           <CommunityAvatar
             seed={channel.slug}
             name={channel.name}
+            slug={channel.slug}
             size="default"
             className="size-11"
           />

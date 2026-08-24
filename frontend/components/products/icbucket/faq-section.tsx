@@ -1,6 +1,3 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import {
   Accordion,
   AccordionContent,
@@ -8,7 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { MessageQuestionIcon, Github01Icon } from "@hugeicons/core-free-icons"
+import { MessageQuestionIcon } from "@hugeicons/core-free-icons"
 
 export function FaqSection() {
   const faqs = [
@@ -108,33 +105,6 @@ export function FaqSection() {
               ))}
             </Accordion>
           </div>
-
-          <Card className="mt-12 border-primary/20 bg-primary/5">
-            <CardContent className="flex flex-col items-center gap-4 pt-6 text-center">
-              <h3 className="text-xl font-semibold">More questions?</h3>
-              <p className="text-sm text-muted-foreground">
-                Check out the full documentation or reach out to our team.
-              </p>
-              <div className="flex flex-wrap justify-center gap-3">
-                <Link href="https://icpay.app/bucket/docs">
-                  <Button variant="outline">Documentation</Button>
-                </Link>
-                <Link
-                  href="https://github.com/prasangapokharel/ICPay"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button variant="outline">
-                    <HugeiconsIcon icon={Github01Icon} className="mr-2 size-4" />
-                    GitHub
-                  </Button>
-                </Link>
-                <Link href="https://discord.gg/icpay" target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline">Discord</Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </section>

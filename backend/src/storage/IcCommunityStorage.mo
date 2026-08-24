@@ -24,6 +24,7 @@ module {
   public let MAX_MESSAGE = 2_000;
   public let MAX_MESSAGES = 2_000;
   public let MAX_LIST = 50;
+  public let MAX_CHANNEL_AVATAR_BYTES = 10_000;
   public let MAX_REACTION_CODE: Nat8 = 4;
   public let REACTION_SLOT_COUNT: Nat = 4;
 

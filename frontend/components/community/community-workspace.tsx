@@ -19,8 +19,9 @@ export function CommunityWorkspace({ children }: { children: ReactNode }) {
 
   return (
     <TooltipProvider delay={200}>
+      <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
       {isDesktop ? (
-        <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0 w-full">
+        <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0 w-full flex-1">
           <ResizablePanel
             id="community-rail"
             defaultSize={72}
@@ -52,8 +53,9 @@ export function CommunityWorkspace({ children }: { children: ReactNode }) {
           <CommunityExplorer />
         </div>
       ) : (
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
+        <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
       )}
+      </div>
     </TooltipProvider>
   )
 }

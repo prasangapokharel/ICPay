@@ -12,7 +12,7 @@ export default function CommunityChannelPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex justify-center py-20">
+        <div className="flex h-full min-h-0 flex-1 items-center justify-center">
           <Spinner className="size-6 text-muted-foreground" />
         </div>
       }

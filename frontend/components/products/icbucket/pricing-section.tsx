@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon, Rocket01Icon } from "@hugeicons/core-free-icons"
+import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
 
 export function PricingSection() {
   const plans = [
@@ -19,7 +19,7 @@ export function PricingSection() {
         "Chunked uploads",
         "File metadata & tags",
         "HTTPS access",
-        "Pay once, store forever*",
+        "Pay once, store forever",
       ],
       popular: false,
     },
@@ -137,21 +137,6 @@ export function PricingSection() {
                 </CardContent>
               </Card>
             ))}
-          </div>
-
-          <div className="mt-12 rounded-lg border border-primary/20 bg-primary/5 p-6">
-            <div className="flex items-start gap-4">
-              <HugeiconsIcon icon={Rocket01Icon} className="mt-1 size-6 text-primary" />
-              <div className="space-y-2">
-                <h3 className="font-semibold">* Storage Duration</h3>
-                <p className="text-sm text-muted-foreground">
-                  &quot;Store forever&quot; means files remain on-chain as long as the canister
-                  has sufficient cycles. ICBucket canisters are topped up automatically from bucket
-                  revenue. You can renew your bucket anytime to extend duration. Typical bucket
-                  lasts 1-2 years before renewal needed.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

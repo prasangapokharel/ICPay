@@ -568,6 +568,7 @@ module {
     pinnedMessageId: ?Nat;
     memberCount: Nat;
     createdAt: Int;
+    channelAvatar: ?Blob;
   };
 
   public type CommunityChannelPublic = {
@@ -583,6 +584,7 @@ module {
     pinnedMessageId: ?Nat;
     memberCount: Nat;
     createdAt: Int;
+    channelAvatar: ?Blob;
   };
 
   public type CommunityMember = {

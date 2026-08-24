@@ -140,11 +140,12 @@ export function BucketFilePreviewModal({
               <Button
                 type="button"
                 variant="outline"
-                size="icon-sm"
+                size="icon-lg"
+                className="size-11"
                 aria-label={copied ? tc("copied") : tc("copy")}
                 onClick={handleCopy}
               >
-                <AppIcon name={copied ? "check" : "copy"} size={16} />
+                <AppIcon name={copied ? "check" : "copy"} size={24} />
               </Button>
               <Button
                 type="button"
@@ -161,12 +162,13 @@ export function BucketFilePreviewModal({
             <Button
               type="button"
               variant="destructive"
-              size="icon-sm"
+              size="icon-lg"
+              className="size-11"
               aria-label={t("delete")}
               disabled={deleting}
               onClick={() => setDeleteOpen(true)}
             >
-              <AppIcon name="delete" size={16} />
+              <AppIcon name="delete" size={24} />
             </Button>
           )}
         </ButtonGroup>

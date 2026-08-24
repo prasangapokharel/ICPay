@@ -226,6 +226,10 @@ export interface WalletActor {
     messageId: bigint,
     code: number
   ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  setCommunityChannelAvatar: (
+    channelId: string,
+    avatar: [] | [Uint8Array]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getCommunityChannel: (channelId: string) => Promise<[] | [Record<string, unknown>]>
   listPublicCommunityChannels: (limit: bigint, offset: bigint) => Promise<Record<string, unknown>[]>
   listMyCommunityChannels: () => Promise<{ ok: Record<string, unknown>[]; err?: never } | { err: string; ok?: never }>
@@ -717,6 +721,7 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     pinnedMessageId: IDL.Opt(IDL.Nat),
     memberCount: IDL.Nat,
     createdAt: IDL.Int,
+    channelAvatar: IDL.Opt(IDL.Vec(IDL.Nat8)),
   })
   const CommunityReactionCount = IDL.Record({
     code: IDL.Nat8,
@@ -988,6 +993,11 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     setCommunityMessageReaction: IDL.Func(
       [IDL.Text, IDL.Nat, IDL.Nat8],
       [ApiResultCommunityReactionUpdate],
+      []
+    ),
+    setCommunityChannelAvatar: IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Vec(IDL.Nat8))],
+      [ApiResultCommunityChannel],
       []
     ),
     getCommunityChannel: IDL.Func([IDL.Text], [IDL.Opt(CommunityChannelPublic)], ["query"]),
