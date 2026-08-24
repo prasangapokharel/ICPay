@@ -4,6 +4,7 @@ import { useCallback } from "react"
 import useSWR from "swr"
 import { useSWRConfig } from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
+import { syncChannelAvatarCache } from "@/lib/community/channelAvatarCache"
 import {
   communityChannelKey,
   communityMemberKey,
@@ -20,6 +21,7 @@ import {
   listPublicCommunityChannels,
   pinCommunityMessage,
   postCommunityMessage,
+  setCommunityChannelAvatar,
   setCommunityMessageReaction,
   type CommunityChannelPublic,
 } from "@/services/community/community"
@@ -45,9 +47,7 @@ export function useInvalidateCommunity() {
         Array.isArray(key) &&
         typeof key[0] === "string" &&
         key[0].startsWith("community-") &&
-        key.includes(p),
-      undefined,
-      { revalidate: true }
+        key.includes(p)
     )
   }, [identity, mutate])
 }
@@ -59,11 +59,9 @@ export function useInvalidateCommunityLists(slug?: string) {
   return useCallback(async () => {
     if (!identity) return
     await Promise.all([
-      mutate(communityPublicListKey(identity), undefined, { revalidate: true }),
-      mutate(communityMineKey(identity), undefined, { revalidate: true }),
-      slug
-        ? mutate(communityChannelKey(identity, slug), undefined, { revalidate: true })
-        : Promise.resolve(),
+      mutate(communityPublicListKey(identity)),
+      mutate(communityMineKey(identity)),
+      slug ? mutate(communityChannelKey(identity, slug)) : Promise.resolve(),
     ])
   }, [identity, mutate, slug])
 }
@@ -157,7 +155,7 @@ export function useCommunityPinMessage(slug: string) {
 
       await mutate(
         channelKey,
-        async (current: CommunityChannelPublic | null | undefined) => {
+        async () => {
           const updated = await pinCommunityMessage(identity, slug, messageId)
           return updated
         },
@@ -232,6 +230,30 @@ export function useCommunityReaction(slug: string) {
           revalidate: false,
         }
       )
+    },
+    [identity, slug, mutate]
+  )
+}
+
+export function useCommunitySetChannelAvatar(slug: string) {
+  const { identity } = useAuth()
+  const { mutate } = useSWRConfig()
+
+  return useCallback(
+    async (avatar: Uint8Array | null) => {
+      if (!identity) throw new Error("Not signed in")
+
+      const channelKey = communityChannelKey(identity, slug)
+      if (!channelKey) throw new Error("Not signed in")
+
+      const updated = await setCommunityChannelAvatar(identity, slug, avatar)
+      syncChannelAvatarCache(slug, avatar)
+
+      await mutate(channelKey, updated, { revalidate: false })
+      await mutate(communityPublicListKey(identity))
+      await mutate(communityMineKey(identity))
+
+      return null
     },
     [identity, slug, mutate]
   )

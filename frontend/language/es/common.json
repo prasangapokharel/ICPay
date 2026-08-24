@@ -1068,7 +1068,6 @@
     "confirmJoin": "Join channel?",
     "confirmJoinPrice": "Join {name} for {price} ICP one-time payment?",
     "confirmAndPay": "Confirm and pay",
-    "cancel": "Cancel",
     "official": "Official",
     "selectTitle": "Select a channel",
     "selectHint": "Pick a channel from the list to start reading.",
@@ -1107,6 +1106,16 @@
     "selectAll": "Select all",
     "seeMore": "see more",
     "showLess": "Show less",
-    "delivered": "Delivered"
+    "delivered": "Delivered",
+    "searchMessages": "Search messages",
+    "searchPlaceholder": "Search in this channel…",
+    "searchEmpty": "No messages found",
+    "tipCreator": "Tip creator",
+    "channelAvatar": "Channel photo",
+    "changeChannelAvatar": "Change photo",
+    "removeChannelAvatar": "Remove photo",
+    "channelAvatarHint": "WebP, max 10 KB. Compressed on your device before upload.",
+    "channelAvatarFailed": "Could not update channel photo",
+    "channelPremium": "Premium"
   }
 }

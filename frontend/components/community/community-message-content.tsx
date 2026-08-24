@@ -7,7 +7,7 @@ import { truncateMessagePreview } from "@/lib/community/messagePreview"
 import { cn } from "@/lib/ui/utils"
 
 const seeMoreLink =
-  "inline border-0 bg-transparent p-0 font-medium text-primary align-baseline shadow-none outline-none hover:bg-transparent hover:underline focus-visible:ring-0"
+  "inline border-0 bg-transparent p-0 font-medium text-primary align-baseline shadow-none outline-none hover:bg-transparent hover:underline "
 
 export function CommunityMessageContent({ text }: { text: string }) {
   const t = useTranslations("community")

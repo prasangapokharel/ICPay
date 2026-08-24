@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl"
 import { CommunityAvatar } from "@/components/community/community-avatar"
+import { CommunityChannelAvatarPicker } from "@/components/community/community-channel-avatar-picker"
 import { CommunityWallpaperPicker } from "@/components/community/community-wallpaper-picker"
 import {
   CommunityCopyLinkButton,
@@ -33,6 +34,8 @@ export function CommunityChannelInfo({
   lastActiveNs,
   onCopyLink,
   onCopyInvite,
+  onAvatarSave,
+  onAvatarRemove,
 }: {
   channel: CommunityChannelPublic
   slug: string
@@ -42,6 +45,8 @@ export function CommunityChannelInfo({
   lastActiveNs?: bigint
   onCopyLink: () => Promise<void>
   onCopyInvite?: () => Promise<void>
+  onAvatarSave?: (bytes: Uint8Array) => Promise<string | null>
+  onAvatarRemove?: () => Promise<string | null>
 }) {
   const t = useTranslations("community")
   const isMobile = useIsMobile()
@@ -64,6 +69,7 @@ export function CommunityChannelInfo({
           <CommunityAvatar
             seed={channel.slug}
             name={channel.name}
+            slug={channel.slug}
             className="size-20 shadow-sm ring-4 ring-background"
             pixelSize={160}
           />
@@ -85,6 +91,15 @@ export function CommunityChannelInfo({
               <p className="mt-1.5 text-sm leading-relaxed text-foreground">{bio}</p>
             </div>
           ) : null}
+
+          {onAvatarSave && onAvatarRemove && (
+            <CommunityChannelAvatarPicker
+              channel={channel}
+              isOwner={isOwner}
+              onSave={onAvatarSave}
+              onRemove={onAvatarRemove}
+            />
+          )}
 
           <CommunityWallpaperPicker slug={slug} />
 

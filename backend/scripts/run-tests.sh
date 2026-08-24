@@ -111,6 +111,7 @@ echo "--- Upgrade / Migration Tests ---"
 run_test "$ROOT/testing/upgrade/StampLedgerId.test.mo" "StampLedgerId"
 run_test "$ROOT/testing/upgrade/AddBucketApiKeys.test.mo" "AddBucketApiKeys"
 run_test "$ROOT/testing/upgrade/AddBucketFileMeta.test.mo" "AddBucketFileMeta"
+run_test "$ROOT/testing/upgrade/AddCommunityChannelAvatar.test.mo" "AddCommunityChannelAvatar"
 
 echo "--- Security Tests ---"
 run_test "$ROOT/testing/security/Security.test.mo" "Security"

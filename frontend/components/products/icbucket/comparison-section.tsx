@@ -81,28 +81,6 @@ export function ComparisonSection() {
               </TableBody>
             </Table>
           </div>
-
-          <div className="mt-8 rounded-lg border border-primary/20 bg-primary/5 p-6">
-            <h3 className="mb-3 text-lg font-semibold">5-Year Cost Comparison (10GB)</h3>
-            <div className="grid gap-4 md:grid-cols-4">
-              <div className="space-y-1">
-                <div className="text-2xl font-bold text-primary">$3-5</div>
-                <div className="text-sm text-muted-foreground">ICBucket (one-time)</div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">$240</div>
-                <div className="text-sm text-muted-foreground">AWS S3 ($4/month)</div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">$300</div>
-                <div className="text-sm text-muted-foreground">Google Cloud ($5/month)</div>
-              </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">$360</div>
-                <div className="text-sm text-muted-foreground">Azure Blob ($6/month)</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>

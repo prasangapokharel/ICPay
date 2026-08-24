@@ -2,9 +2,28 @@ import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Github01Icon, Globe02Icon } from "@hugeicons/core-free-icons"
+import { Github01Icon, Globe02Icon, Package01Icon } from "@hugeicons/core-free-icons"
 
-export function ProductFooter() {
+export type ProductPackageLink = {
+  label: string
+  href: string
+}
+
+export const ICBUCKET_PACKAGE_LINKS: ProductPackageLink[] = [
+  { label: "npm", href: "https://www.npmjs.com/package/icpay-bucket" },
+  { label: "PyPI", href: "https://pypi.org/project/icpay-bucket/" },
+  { label: "Go", href: "https://github.com/prasangapokharel/icpay-bucket-go" },
+]
+
+type ProductFooterProps = {
+  packageLinks?: ProductPackageLink[]
+  openSourceDescription?: string
+}
+
+export function ProductFooter({
+  packageLinks,
+  openSourceDescription = "All ICPay products are open source and available on GitHub",
+}: ProductFooterProps) {
   return (
     <footer className="border-t bg-muted/30 py-12">
       <div className="container mx-auto px-4">
@@ -125,20 +144,38 @@ export function ProductFooter() {
                   </div>
                   <div>
                     <h4 className="font-semibold">Open Source</h4>
-                    <p className="text-sm text-muted-foreground">
-                      All ICPay products are open source and available on GitHub
-                    </p>
+                    <p className="text-sm text-muted-foreground">{openSourceDescription}</p>
                   </div>
                 </div>
-                <Link
-                  href="https://github.com/prasangapokharel/ICPay"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                >
-                  <HugeiconsIcon icon={Github01Icon} className="size-4" />
-                  View on GitHub
-                </Link>
+                {packageLinks ? (
+                  <div className="flex flex-wrap items-center justify-center gap-2 md:justify-end">
+                    {packageLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                      >
+                        <HugeiconsIcon
+                          icon={link.label === "Go" ? Github01Icon : Package01Icon}
+                          className="size-4"
+                        />
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <Link
+                    href="https://github.com/prasangapokharel/ICPay"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    <HugeiconsIcon icon={Github01Icon} className="size-4" />
+                    View on GitHub
+                  </Link>
+                )}
               </CardContent>
             </Card>
           </div>

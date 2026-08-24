@@ -1,6 +1,7 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import type { Principal } from "@icp-sdk/core/principal"
 import { call, query, unwrap, type Outcome } from "@/services/client"
+import { syncChannelAvatarCache } from "@/lib/community/channelAvatarCache"
 
 export type CommunityVisibility = { open: null } | { inviteOnly: null }
 export type CommunityAccess = { free: null } | { paid: null }
@@ -18,6 +19,7 @@ export type CommunityChannelPublic = {
   pinnedMessageId: [] | [bigint]
   memberCount: bigint
   createdAt: bigint
+  channelAvatar: [] | [Uint8Array]
 }
 
 export type CommunityMessagePublic = {
@@ -64,9 +66,13 @@ export async function listPublicCommunityChannels(
   limit = 30,
   offset = 0
 ): Promise<CommunityChannelPublic[]> {
-  return query(identity, async (actor) =>
-    actor.listPublicCommunityChannels(BigInt(limit), BigInt(offset)) as Promise<CommunityChannelPublic[]>
-  )
+  return query(identity, async (actor) => {
+    const rows = (await actor.listPublicCommunityChannels(
+      BigInt(limit),
+      BigInt(offset)
+    )) as CommunityChannelPublic[]
+    return rows.map(normalizeCommunityChannel)
+  })
 }
 
 export async function listMyCommunityChannels(
@@ -74,7 +80,7 @@ export async function listMyCommunityChannels(
 ): Promise<CommunityChannelPublic[]> {
   return query(identity, async (actor) => {
     const result = (await actor.listMyCommunityChannels()) as Outcome<CommunityChannelPublic[]>
-    return unwrap(result)
+    return unwrap(result).map(normalizeCommunityChannel)
   })
 }
 
@@ -84,7 +90,7 @@ export async function getCommunityChannel(
 ): Promise<CommunityChannelPublic | null> {
   return query(identity, async (actor) => {
     const r = (await actor.getCommunityChannel(channelId)) as [] | [CommunityChannelPublic]
-    return r.length ? r[0] : null
+    return r.length ? normalizeCommunityChannel(r[0]) : null
   })
 }
 
@@ -108,6 +114,17 @@ function normalizeCommunityMessage(message: CommunityMessagePublic): CommunityMe
     ...message,
     reactions: message.reactions ?? [],
     myReaction: message.myReaction ?? [],
+  }
+}
+
+function normalizeCommunityChannel(channel: CommunityChannelPublic): CommunityChannelPublic {
+  const raw = channel.channelAvatar?.[0]
+  const bytes =
+    raw && raw.length > 0 ? (raw instanceof Uint8Array ? raw : new Uint8Array(raw)) : null
+  syncChannelAvatarCache(channel.slug, bytes)
+  return {
+    ...channel,
+    channelAvatar: [],
   }
 }
 
@@ -204,4 +221,17 @@ export async function deleteCommunityMessage(
     actor.deleteCommunityMessage(channelId, messageId) as Promise<Outcome<null>>
   )
   unwrap(outcome)
+}
+
+export async function setCommunityChannelAvatar(
+  identity: Identity | undefined,
+  channelId: string,
+  avatar: Uint8Array | null
+): Promise<CommunityChannelPublic> {
+  const outcome = await call(identity, "Could not update channel photo", async (actor) =>
+    actor.setCommunityChannelAvatar(channelId, avatar ? [avatar] : []) as Promise<
+      Outcome<CommunityChannelPublic>
+    >
+  )
+  return normalizeCommunityChannel(unwrap(outcome))
 }

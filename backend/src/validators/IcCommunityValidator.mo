@@ -1,8 +1,10 @@
 import Char "mo:core/Char";
 import Nat "mo:core/Nat";
 import Nat8 "mo:core/Nat8";
+import Blob "mo:core/Blob";
 import Text "mo:core/Text";
 import Config "../config/Config";
+import FileValidator "../utils/FileValidator";
 import IcCommunityStorage "../storage/IcCommunityStorage";
 
 module {
@@ -51,6 +53,22 @@ module {
     if (trimmed.size() == 0) { return ?"Message is required" };
     if (trimmed.size() > IcCommunityStorage.MAX_MESSAGE) { return ?"Message is too long" };
     null;
+  };
+
+  public func validateChannelAvatar(avatar: ?Blob): ?Text {
+    switch (avatar) {
+      case (null) null;
+      case (?data) {
+        if (data.size() == 0) { return ?"Channel photo is empty" };
+        if (data.size() > IcCommunityStorage.MAX_CHANNEL_AVATAR_BYTES) {
+          return ?"Channel photo must be at most 10 KB";
+        };
+        if (not FileValidator.validateWebpHeader(data)) {
+          return ?"Channel photo must be WebP";
+        };
+        null;
+      };
+    };
   };
 
   public func validatePrice(access: { #free; #paid }, priceE8s: Nat): ?Text {

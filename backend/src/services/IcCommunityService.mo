@@ -1,4 +1,5 @@
 import Array "mo:core/Array";
+import Blob "mo:core/Blob";
 import List "mo:core/List";
 import Map "mo:core/Map";
 import Nat "mo:core/Nat";
@@ -135,6 +136,7 @@ module {
       pinnedMessageId = null;
       memberCount = 1;
       createdAt = now;
+      channelAvatar = null;
     };
     IcCommunityRepo.put(service.channels, channel);
     IcCommunityRepo.addMember(service.members, service.memberIndex, channelSlug, caller, now);
@@ -337,6 +339,26 @@ module {
     };
   };
 
+  public func setChannelAvatar(
+    service: IcCommunityService,
+    caller: Principal,
+    channelId: Text,
+    avatar: ?Blob,
+  ): Types.ApiResult<Types.CommunityChannelPublic> {
+    switch (IcCommunityValidator.validateChannelAvatar(avatar)) {
+      case (?e) return #err(e);
+      case (null) {};
+    };
+    switch (requireOwner(service, caller, channelId)) {
+      case (#err(e)) return #err(e);
+      case (#ok(channel)) {
+        let updated = { channel with channelAvatar = avatar };
+        IcCommunityRepo.put(service.channels, updated);
+        #ok(toPublic(service, updated))
+      };
+    };
+  };
+
   public func pinMessage(
     service: IcCommunityService,
     caller: Principal,
@@ -530,6 +552,7 @@ module {
       pinnedMessageId = channel.pinnedMessageId;
       memberCount = channel.memberCount;
       createdAt = channel.createdAt;
+      channelAvatar = channel.channelAvatar;
     }
   };
 

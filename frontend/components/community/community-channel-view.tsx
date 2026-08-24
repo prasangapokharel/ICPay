@@ -5,8 +5,10 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { CommunityIcon } from "@/components/community/community-icon"
 import { CommunityAvatar } from "@/components/community/community-avatar"
+import { CommunityChannelPremiumLabel } from "@/components/community/community-channel-premium-label"
 import { CommunityChannelInfo } from "@/components/community/community-channel-info"
 import { CommunityComposer } from "@/components/community/community-composer"
+import { CommunityMemberBar } from "@/components/community/community-member-bar"
 import {
   CommunityCopyMenuItem,
   CommunityShareMenuItem,
@@ -50,6 +52,15 @@ export function CommunityChannelView({
   onLeave,
   onPost,
   messagesSlot,
+  messages = [],
+  showMemberBar = false,
+  ownerUsername,
+  senderUsername,
+  tipBalance,
+  onTip,
+  onSelectMessage,
+  onSetChannelAvatar,
+  onClearChannelAvatar,
 }: {
   channel: CommunityChannelPublic
   slug: string
@@ -62,8 +73,18 @@ export function CommunityChannelView({
   onLeave: () => Promise<string | null>
   onPost: (text: string) => Promise<string | null>
   messagesSlot: ReactNode
+  messages?: CommunityMessagePublic[]
+  showMemberBar?: boolean
+  ownerUsername?: string
+  senderUsername?: string
+  tipBalance?: bigint
+  onTip?: (amount: bigint, memo?: string) => Promise<string | null>
+  onSelectMessage?: (messageId: bigint) => void
+  onSetChannelAvatar?: (bytes: Uint8Array) => Promise<string | null>
+  onClearChannelAvatar?: () => Promise<string | null>
 }) {
   const t = useTranslations("community")
+  const tc = useTranslations("common")
   const [joinBusy, setJoinBusy] = useState(false)
   const [joinErr, setJoinErr] = useState<string | null>(null)
   const [infoOpen, setInfoOpen] = useState(false)
@@ -74,6 +95,7 @@ export function CommunityChannelView({
     isMember ||
     (isCommunityOpen(channel.visibility) && !isCommunityPaid(channel.access))
   const needsJoin = !canRead
+  const paid = isCommunityPaid(channel.access)
   const { wallpaperUrl } = useCommunityWallpaper(slug)
   const onWallpaper = Boolean(wallpaperUrl)
 
@@ -147,13 +169,17 @@ export function CommunityChannelView({
             <CommunityAvatar
               seed={channel.slug}
               name={channel.name}
+              slug={channel.slug}
               size="default"
               className="size-10 shrink-0"
             />
             <div className="min-w-0">
-              <p className="truncate text-[15px] font-semibold leading-tight text-foreground">
-                {channel.name}
-              </p>
+              <div className="flex min-w-0 items-center gap-2">
+                <p className="truncate text-[15px] font-semibold leading-tight text-foreground">
+                  {channel.name}
+                </p>
+                {paid && <CommunityChannelPremiumLabel label={t("channelPremium")} />}
+              </div>
               <p className="truncate text-xs text-muted-foreground">
                 {isOwner
                   ? t("ownerChannel")
@@ -207,7 +233,7 @@ export function CommunityChannelView({
 
       <div className="relative z-10 flex min-h-0 flex-1 flex-col overflow-hidden">
         {canRead ? (
-          <div className="min-h-0 flex-1 overflow-hidden">{messagesSlot}</div>
+          <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">{messagesSlot}</div>
         ) : (
           <div className="min-h-0 flex-1" />
         )}
@@ -237,6 +263,18 @@ export function CommunityChannelView({
         </div>
       )}
 
+      {showMemberBar && canRead && onSelectMessage && (
+        <CommunityMemberBar
+          messages={messages}
+          ownerUsername={ownerUsername}
+          senderUsername={senderUsername}
+          balance={tipBalance}
+          onTip={onTip}
+          onSelectMessage={onSelectMessage}
+          onWallpaper={onWallpaper}
+        />
+      )}
+
       <Drawer open={showJoinConfirm} onOpenChange={setShowJoinConfirm} showSwipeHandle>
         <DrawerContent>
           <DrawerHeader>
@@ -244,6 +282,7 @@ export function CommunityChannelView({
               <CommunityAvatar
                 seed={channel.slug}
                 name={channel.name}
+                slug={channel.slug}
                 className="size-14"
                 pixelSize={128}
               />
@@ -272,7 +311,7 @@ export function CommunityChannelView({
               onClick={() => setShowJoinConfirm(false)}
               disabled={joinBusy}
             >
-              {t("cancel")}
+              {tc("cancel")}
             </Button>
             {joinErr && <p className="text-center text-xs text-destructive">{joinErr}</p>}
           </DrawerFooter>
@@ -288,6 +327,8 @@ export function CommunityChannelView({
         lastActiveNs={lastActiveNs}
         onCopyLink={copyChannelLink}
         onCopyInvite={inviteCode ? copyInvite : undefined}
+        onAvatarSave={onSetChannelAvatar}
+        onAvatarRemove={onClearChannelAvatar}
       />
     </div>
   )
