@@ -12,6 +12,7 @@ import IcCommunityStorage "../../src/storage/IcCommunityStorage";
 import IcCommunityService "../../src/services/IcCommunityService";
 import UserRepo "../../src/repositories/UserRepository";
 import Config "../../src/config/Config";
+import Fixtures "../bucket/Fixtures";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
@@ -188,6 +189,30 @@ switch (IcCommunityService.createChannel(svc, owner, "Alpha Calls", "alpha_calls
         };
       };
       case (#err(e)) { assert false; Debug.print("FAIL: delete: " # e) };
+    };
+    let webp = Fixtures.webp();
+    switch (IcCommunityService.setChannelAvatar(svc, owner, r.channelId, ?webp)) {
+      case (#ok(ch)) {
+        switch (ch.channelAvatar) {
+          case (null) { assert false; Debug.print("FAIL: avatar not returned") };
+          case (?bytes) {
+            assert bytes.size() == webp.size();
+            Debug.print("PASS: owner sets channel avatar");
+          };
+        };
+      };
+      case (#err(e)) { assert false; Debug.print("FAIL: set avatar: " # e) };
+    };
+    switch (IcCommunityService.setChannelAvatar(svc, guest, r.channelId, ?webp)) {
+      case (#ok(_)) { assert false; Debug.print("FAIL: guest should not set avatar") };
+      case (#err(_)) { Debug.print("PASS: non-owner cannot set avatar") };
+    };
+    switch (IcCommunityService.setChannelAvatar(svc, owner, r.channelId, null)) {
+      case (#ok(ch)) {
+        assert ch.channelAvatar == null;
+        Debug.print("PASS: owner clears channel avatar");
+      };
+      case (#err(e)) { assert false; Debug.print("FAIL: clear avatar: " # e) };
     };
     let publicList = IcCommunityService.listPublicChannels(svc, 10, 0);
     assert publicList.size() == 1;

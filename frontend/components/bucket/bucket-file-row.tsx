@@ -82,28 +82,30 @@ export function BucketFileRow({
             )}
           </span>
         </Button>
-        <ButtonGroup className="shrink-0 self-center">
+        <ButtonGroup className="shrink-0 self-center gap-1.5">
           {publicUrl && (
             <Button
               type="button"
               variant="outline"
-              size="icon-sm"
+              size="icon-lg"
+              className="size-11"
               aria-label={copied ? tc("copied") : tc("copy")}
               onClick={handleCopy}
             >
-              <AppIcon name={copied ? "check" : "copy"} size={16} />
+              <AppIcon name={copied ? "check" : "copy"} size={24} />
             </Button>
           )}
           {canWrite && (
             <Button
               type="button"
               variant="destructive"
-              size="icon-sm"
+              size="icon-lg"
+              className="size-11"
               aria-label={t("delete")}
               disabled={deleting}
               onClick={() => setConfirmOpen(true)}
             >
-              <AppIcon name="delete" size={16} />
+              <AppIcon name="delete" size={24} />
             </Button>
           )}
         </ButtonGroup>

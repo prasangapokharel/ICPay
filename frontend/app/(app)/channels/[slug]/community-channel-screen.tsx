@@ -4,6 +4,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { CommunityChannelView } from "@/components/community/community-channel-view"
 import { CommunityMessageList } from "@/components/community/community-message-list"
 import { Spinner } from "@/components/ui/spinner"
+import { useLiveBalance, useOwnProfile, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import {
   useCommunityChannel,
   useCommunityDeleteMessage,
@@ -12,6 +13,7 @@ import {
   useCommunityPinMessage,
   useCommunityPostMessage,
   useCommunityReaction,
+  useCommunitySetChannelAvatar,
   useInvalidateCommunity,
   useInvalidateCommunityLists,
   useMyCommunityChannels,
@@ -26,10 +28,11 @@ import {
   leaveCommunityChannel,
   postCommunityMessage,
 } from "@/services/community/community"
+import { tip } from "@/services/transfer/transfer"
 import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
 
-import { useMemo, useEffect, useState } from "react"
+import { useMemo, useEffect, useState, useCallback } from "react"
 
 export function CommunityChannelScreen() {
   const slug = useRewrittenLastSegment()
@@ -37,6 +40,10 @@ export function CommunityChannelScreen() {
   const urlInvite = searchParams.get("code") ?? undefined
   const t = useTranslations("community")
   const { identity } = useAuth()
+  const balance = useLiveBalance()
+  const refreshWallet = useRefreshWallet()
+  const { data: ownProfile } = useOwnProfile()
+  const senderUsername = ownProfile?.username?.[0]
   const invalidate = useInvalidateCommunity()
   const invalidateLists = useInvalidateCommunityLists(slug)
   const { channel, isLoading } = useCommunityChannel(slug)
@@ -74,9 +81,17 @@ export function CommunityChannelScreen() {
   const pinMessage = useCommunityPinMessage(slug)
   const reactToMessage = useCommunityReaction(slug)
   const deleteMessage = useCommunityDeleteMessage(slug)
+  const setChannelAvatar = useCommunitySetChannelAvatar(slug)
 
   const [pendingMessages, setPendingMessages] = useState<PendingMessage[]>([])
   const [deliveredIds, setDeliveredIds] = useState<Set<string>>(() => new Set())
+  const [scrollToMessageId, setScrollToMessageId] = useState<bigint | null>(null)
+  const clearScrollTarget = useCallback(() => setScrollToMessageId(null), [])
+
+  useEffect(() => {
+    setPendingMessages([])
+    setDeliveredIds(new Set())
+  }, [slug])
 
   const removePending = (clientId: string) => {
     setPendingMessages((prev) => prev.filter((m) => m.clientId !== clientId))
@@ -126,17 +141,23 @@ export function CommunityChannelScreen() {
     return null
   }
 
-  if (isLoading || !channel) {
+  if (!channel && isLoading) {
     return (
-      <div className="flex justify-center py-20">
+      <div className="flex h-full min-h-0 flex-1 items-center justify-center">
         <Spinner className="size-6 text-muted-foreground" />
       </div>
     )
   }
 
+  if (!channel) {
+    return null
+  }
+
   const pinnedId = channel.pinnedMessageId[0]
   const pinnedPreview =
     pinnedId != null ? messages.find((m) => m.id === pinnedId) : undefined
+  const ownerUsername = channel.ownerUsername[0]
+  const showMemberBar = isJoined && !isOwner && canReadMessages
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
@@ -148,6 +169,38 @@ export function CommunityChannelScreen() {
       inviteCode={inviteCode}
       pinnedPreview={pinnedPreview}
       lastActiveNs={lastActiveNs}
+      messages={messages}
+      showMemberBar={showMemberBar}
+      ownerUsername={ownerUsername}
+      senderUsername={senderUsername}
+      tipBalance={balance}
+      onSelectMessage={(id) => setScrollToMessageId(id)}
+      onSetChannelAvatar={async (bytes) => {
+        try {
+          await setChannelAvatar(bytes)
+          return null
+        } catch (e) {
+          return e instanceof Error ? e.message : t("channelAvatarFailed")
+        }
+      }}
+      onClearChannelAvatar={async () => {
+        try {
+          await setChannelAvatar(null)
+          return null
+        } catch (e) {
+          return e instanceof Error ? e.message : t("channelAvatarFailed")
+        }
+      }}
+      onTip={
+        ownerUsername
+          ? async (amount, memo) => {
+              const result = await tip(identity, ownerUsername, amount, memo)
+              if ("err" in result) return result.err
+              refreshWallet()
+              return null
+            }
+          : undefined
+      }
       onJoin={async () => {
         await mutateMember(true, { revalidate: false })
         try {
@@ -184,7 +237,6 @@ export function CommunityChannelScreen() {
             markChannelRead(principal, slug, posted.id)
           }
 
-          void invalidateLists()
           return null
         } catch (e) {
           patchPending(pending.clientId, "failed")
@@ -193,6 +245,7 @@ export function CommunityChannelScreen() {
       }}
       messagesSlot={
         <CommunityMessageList
+          key={slug}
           channel={channel}
           messages={messages}
           pendingMessages={visiblePending}
@@ -214,6 +267,8 @@ export function CommunityChannelScreen() {
             await deleteMessage(messageId)
             void invalidate()
           }}
+          scrollToMessageId={scrollToMessageId}
+          onScrollToMessageDone={clearScrollTarget}
         />
       }
     />

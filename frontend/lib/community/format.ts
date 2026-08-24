@@ -52,6 +52,19 @@ export function formatMessageExact(ns: bigint): string {
   })
 }
 
+export function messageSearchPreview(text: string, max = 72): string {
+  const plain = text
+    .replace(/\*\*/g, "")
+    .replace(/\*/g, "")
+    .replace(/__|_/g, "")
+    .replace(/~~/g, "")
+    .replace(/`/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+  if (plain.length <= max) return plain
+  return `${plain.slice(0, max - 1)}…`
+}
+
 export function formatLastActive(ns: bigint): string {
   const d = messageDate(ns)
   const diffMs = Date.now() - d.getTime()

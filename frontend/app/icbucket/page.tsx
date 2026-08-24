@@ -3,14 +3,12 @@ import { HeroSection } from "@/components/products/icbucket/hero-section"
 import { ProblemSolution } from "@/components/products/icbucket/problem-solution"
 import { TwitterSection } from "@/components/products/icbucket/twitter-section"
 import { FeaturesSection } from "@/components/products/icbucket/features-section"
-import { GallerySection } from "@/components/products/icbucket/gallery-section"
+import { ArchitectureSection } from "@/components/products/icbucket/architecture-section"
 import { ComparisonSection } from "@/components/products/icbucket/comparison-section"
 import { PricingSection } from "@/components/products/icbucket/pricing-section"
-import { GettingStartedSection } from "@/components/products/icbucket/getting-started-section"
 import { ApiGuideSection } from "@/components/products/icbucket/api-guide-section"
 import { FaqSection } from "@/components/products/icbucket/faq-section"
-import { CreditSection } from "@/components/products/icbucket/credit-section"
-import { ProductFooter } from "@/components/products/shared/product-footer"
+import { ICBUCKET_PACKAGE_LINKS, ProductFooter } from "@/components/products/shared/product-footer"
 
 export const metadata: Metadata = {
   title: "ICBucket - On-Chain Cloud Storage for Web3 | ICPay",
@@ -75,14 +73,15 @@ export default function ICBucketPage() {
       <ProblemSolution />
       <TwitterSection />
       <FeaturesSection />
-      <GallerySection />
+      <ArchitectureSection />
       <ComparisonSection />
       <PricingSection />
-      <GettingStartedSection />
       <ApiGuideSection />
       <FaqSection />
-      <CreditSection />
-      <ProductFooter />
+      <ProductFooter
+        packageLinks={ICBUCKET_PACKAGE_LINKS}
+        openSourceDescription="ICBucket SDKs are open source on npm, PyPI, and GitHub."
+      />
     </div>
   )
 }

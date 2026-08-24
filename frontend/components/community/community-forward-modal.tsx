@@ -29,6 +29,7 @@ export function CommunityForwardModal({
   onForward: (targetSlug: string) => Promise<void>
 }) {
   const t = useTranslations("community")
+  const tc = useTranslations("common")
   const [query, setQuery] = useState("")
   const [busySlug, setBusySlug] = useState<string | null>(null)
   const [successSlug, setSuccessSlug] = useState<string | null>(null)
@@ -105,7 +106,7 @@ export function CommunityForwardModal({
                     busy && "bg-muted/40"
                   )}
                 >
-                  <CommunityAvatar seed={ch.slug} name={ch.name} size="default" className="size-10 shrink-0" />
+                  <CommunityAvatar seed={ch.slug} name={ch.name} slug={ch.slug} size="default" className="size-10 shrink-0" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-foreground">{ch.name}</p>
                     <p className="truncate text-xs text-muted-foreground">@{ch.slug}</p>
@@ -126,7 +127,7 @@ export function CommunityForwardModal({
 
         <DialogFooter className="border-t border-border/50 px-4 py-3">
           <Button variant="ghost" className="w-full rounded-full" onClick={() => handleOpenChange(false)}>
-            {t("cancel")}
+            {tc("cancel")}
           </Button>
         </DialogFooter>
       </DialogContent>

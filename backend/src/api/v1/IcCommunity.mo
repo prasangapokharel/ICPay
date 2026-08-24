@@ -1,6 +1,7 @@
 import Types "../../types";
 import IcCommunityService "../../services/IcCommunityService";
 import MiddlewareAuth "../../middleware/Auth";
+import Blob "mo:core/Blob";
 import Nat8 "mo:core/Nat8";
 
 mixin (community: IcCommunityService.IcCommunityService, mwConfig: MiddlewareAuth.Config) {
@@ -93,6 +94,18 @@ mixin (community: IcCommunityService.IcCommunityService, mwConfig: MiddlewareAut
       channelId,
       messageId,
       code,
+    );
+  };
+
+  public shared ({ caller }) func setCommunityChannelAvatar(
+    channelId: Text,
+    avatar: ?Blob,
+  ): async Types.ApiResult<Types.CommunityChannelPublic> {
+    IcCommunityService.setChannelAvatar(
+      community,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      channelId,
+      avatar,
     );
   };
 
