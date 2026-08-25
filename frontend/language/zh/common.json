@@ -119,7 +119,12 @@
     "connecting": "连接中…",
     "redirectNote": "您将被跳转至 Internet Identity 授权访问。",
     "orContinue": "或使用以下方式继续",
-    "nfidNote": "NFID 会创建一个独立于 Internet Identity 的钱包。",
+    "openIdNote": "通过 Internet Identity 使用您已关联的 Google、Apple 或 Microsoft 账户。",
+    "openId": {
+      "google": "使用 Google 继续",
+      "apple": "使用 Apple 继续",
+      "microsoft": "使用 Microsoft 继续"
+    },
     "genericError": "无法连接，请重试。",
     "features": {
       "custodialTitle": "自主保管",

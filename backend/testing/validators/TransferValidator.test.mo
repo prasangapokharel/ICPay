@@ -37,6 +37,7 @@ let fakeUser = {
   var username = ?"testuser";
   var displayName = "Test";
   var socialLinks: [Types.SocialLink] = [];
+  var verifiedEmail = null : ?Text;
   createdAt = 0 : Int;
   var updatedAt = 0 : Int;
 };

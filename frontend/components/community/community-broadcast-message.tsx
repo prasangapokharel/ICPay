@@ -19,7 +19,7 @@ import { Marker, MarkerContent } from "@/components/ui/marker"
 import { Message, MessageContent, MessageFooter } from "@/components/ui/message"
 import { Spinner } from "@/components/ui/spinner"
 import { formatMessageTime } from "@/lib/community/format"
-import type { ReactionCode } from "@/lib/community/reactions"
+import { myReactionCode, type ReactionCode } from "@/lib/community/reactions"
 import type { PendingMessage } from "@/lib/community/pendingMessage"
 import { cn } from "@/lib/ui/utils"
 import type { CommunityMessagePublic } from "@/services/community/community"
@@ -93,7 +93,7 @@ export function BroadcastMessage({
   }
 
   const react = (code: ReactionCode) => {
-    if (!onReact) return
+    if (!onReact || myReactionCode(message) === code) return
     void onReact(message.id, code)
   }
 
@@ -156,7 +156,7 @@ export function BroadcastMessage({
             <ContextMenuContent className="w-48">
               {canReact && onReact && (
                 <>
-                  <CommunityReactionPicker onPick={react} />
+                  <CommunityReactionPicker onPick={react} activeCode={myReactionCode(message)} />
                   <ContextMenuSeparator />
                 </>
               )}

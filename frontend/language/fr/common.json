@@ -119,7 +119,12 @@
     "connecting": "Connexion…",
     "redirectNote": "Vous serez redirigé vers Internet Identity pour autoriser l'accès.",
     "orContinue": "Ou continuer avec",
-    "nfidNote": "NFID crée un portefeuille distinct d'Internet Identity.",
+    "openIdNote": "Utilise votre compte Google, Apple ou Microsoft lié via Internet Identity.",
+    "openId": {
+      "google": "Continuer avec Google",
+      "apple": "Continuer avec Apple",
+      "microsoft": "Continuer avec Microsoft"
+    },
     "genericError": "Connexion impossible. Veuillez réessayer.",
     "features": {
       "custodialTitle": "Autoconservation",

@@ -119,7 +119,12 @@
     "connecting": "Conectando…",
     "redirectNote": "Você será redirecionado para a Internet Identity para aprovar o acesso.",
     "orContinue": "Ou continue com",
-    "nfidNote": "O NFID cria uma carteira separada da Internet Identity.",
+    "openIdNote": "Usa sua conta Google, Apple ou Microsoft vinculada via Internet Identity.",
+    "openId": {
+      "google": "Continuar com Google",
+      "apple": "Continuar com Apple",
+      "microsoft": "Continuar com Microsoft"
+    },
     "genericError": "Não foi possível conectar. Tente novamente.",
     "features": {
       "custodialTitle": "Autocustódia",
