@@ -1,10 +1,9 @@
 import { REDIRECT_PENDING_KEY } from "@/lib/auth/config"
 
-const MOBILE_MAX_WIDTH = 767
-
 export function prefersRedirectTransport(): boolean {
-  if (typeof window === "undefined") return false
-  return window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH}px)`).matches
+  // ICRC-167 redirect breaks on iOS Safari ("Unable to connect" on id.ai).
+  // Popup transport works on mobile when signIn starts inside the click handler.
+  return false
 }
 
 export function markRedirectPending(): void {

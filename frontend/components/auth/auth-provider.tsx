@@ -80,10 +80,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIdentity(id)
   }, [])
 
-  const login = useCallback(async (options?: LoginOptions) => {
-    const id = await iiLogin(options)
-    if (!id) return
-    await acceptIdentity(id)
+  const login = useCallback((options?: LoginOptions) => {
+    return iiLogin(options).then((id) => {
+      if (!id) return
+      return acceptIdentity(id)
+    })
   }, [acceptIdentity])
 
   const logout = useCallback(async () => {
