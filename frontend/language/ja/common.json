@@ -119,7 +119,12 @@
     "connecting": "接続中…",
     "redirectNote": "アクセスを承認するため Internet Identity に移動します。",
     "orContinue": "または次で続行",
-    "nfidNote": "NFID は Internet Identity とは別のウォレットを作成します。",
+    "openIdNote": "Internet Identity 経由でリンク済みの Google、Apple、Microsoft アカウントを使用します。",
+    "openId": {
+      "google": "Google で続行",
+      "apple": "Apple で続行",
+      "microsoft": "Microsoft で続行"
+    },
     "genericError": "接続できませんでした。もう一度お試しください。",
     "features": {
       "custodialTitle": "セルフカストディ",

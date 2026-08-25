@@ -54,18 +54,15 @@ export const WALLET_CANISTER_ID = getIsLocal()
   : process.env.NEXT_PUBLIC_WALLET_CANISTER_ID ?? MAINNET_CANISTER_ID
 
 export function getIdentityProvider(): string {
-  if (getIsLocal()) return `http://${LOCAL_II_CANISTER_ID}.localhost:4943`
-  return process.env.NEXT_PUBLIC_II_URL ?? "https://id.ai"
+  if (getIsLocal()) return withAuthorizePath(`http://${LOCAL_II_CANISTER_ID}.localhost:4943`)
+  return withAuthorizePath(process.env.NEXT_PUBLIC_II_URL ?? "https://id.ai")
 }
 
-// NFID authorizes through the same delegation flow auth-client speaks, so it is
-// a drop-in identityProvider. Signers like Oisy and Plug are not: they approve
-// one call at a time and never issue a delegation, so they cannot sign anyone in.
-//
-// It is a separate identity system, not another door to II: the same person gets
-// a different principal through it, which here means a different wallet holding
-// a different balance. The login page has to say so or funds look lost.
-export const NFID_PROVIDER = "https://nfid.one/authenticate/?applicationName=ICPay#authorize"
+function withAuthorizePath(url: string): string {
+  if (url.includes("#")) return url
+  const base = url.replace(/\/$/, "")
+  return base.endsWith("/authorize") ? base : `${base}/authorize`
+}
 
 // Must stay identical to public/.well-known/ii-alternative-origins, which the
 // canister serves and II actually checks against. An origin missing here just

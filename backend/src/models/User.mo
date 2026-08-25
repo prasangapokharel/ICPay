@@ -2,11 +2,16 @@ import Types "../types";
 
 module {
   public func new(id: Types.UserId, principal: Principal, username: ?Types.Username, displayName: Text, now: Int): Types.User {
-    { id; principal; var username; var displayName; var socialLinks = []; createdAt = now; var updatedAt = now };
+    { id; principal; var username; var displayName; var socialLinks = []; var verifiedEmail = null; createdAt = now; var updatedAt = now };
   };
 
   public func updateDisplayName(self: Types.User, name: Text, now: Int) {
     self.displayName := name;
+    self.updatedAt := now;
+  };
+
+  public func setVerifiedEmail(self: Types.User, email: Text, now: Int) {
+    self.verifiedEmail := ?email;
     self.updatedAt := now;
   };
 

@@ -34,6 +34,8 @@ import type {
 export interface WalletActor {
   health: () => Promise<string>
   login: () => Promise<AuthResult>
+  _internet_identity_sign_in_start: () => Promise<Uint8Array>
+  _internet_identity_sign_in_finish: () => Promise<{ ok: null } | { err: string }>
   register: (username: string) => Promise<AuthResult>
   getUser: () => Promise<[] | [UserPublic]>
   updateUsername: (newUsername: string) => Promise<ApiResult_2>
@@ -291,7 +293,7 @@ export function clearActorCache(): void {
   clearAgentCache()
 }
 
-const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
+export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const TxId = IDL.Text
 
   const TxType = IDL.Variant({
@@ -777,6 +779,12 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   return IDL.Service({
     health: IDL.Func([], [IDL.Text], ["query"]),
     login: IDL.Func([], [AuthResult], []),
+    _internet_identity_sign_in_start: IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
+    _internet_identity_sign_in_finish: IDL.Func(
+      [],
+      [IDL.Variant({ ok: IDL.Null, err: IDL.Text })],
+      [],
+    ),
     register: IDL.Func([IDL.Text], [AuthResult], []),
     getUser: IDL.Func([], [IDL.Opt(UserPublic)], ["query"]),
     updateUsername: IDL.Func([IDL.Text], [ApiResult_2], []),

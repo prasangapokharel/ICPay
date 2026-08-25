@@ -17,7 +17,7 @@
     "@dicebear/core": "^9.4.3",
     "@hugeicons/core-free-icons": "^4.2.3",
     "@hugeicons/react": "^1.1.9",
-    "@icp-sdk/auth": "^5.0.0",
+    "@icp-sdk/auth": "^8.0.3",
     "@icp-sdk/core": "^5.4.0",
     "@shadcn/react": "^0.2.1",
     "@vercel/analytics": "^2.0.1",

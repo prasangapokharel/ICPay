@@ -119,7 +119,12 @@
     "connecting": "Connecting…",
     "redirectNote": "You'll be redirected to Internet Identity to approve access.",
     "orContinue": "Or continue with",
-    "nfidNote": "NFID creates a separate wallet from Internet Identity.",
+    "openIdNote": "Uses your linked Google, Apple, or Microsoft account through Internet Identity.",
+    "openId": {
+      "google": "Continue with Google",
+      "apple": "Continue with Apple",
+      "microsoft": "Continue with Microsoft"
+    },
     "genericError": "Could not connect. Please try again.",
     "features": {
       "custodialTitle": "Self-custodial",
