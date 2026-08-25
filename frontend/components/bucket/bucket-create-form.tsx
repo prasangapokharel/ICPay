@@ -15,10 +15,12 @@ import {
   FieldTitle,
 } from "@/components/ui/field"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { BucketPriceLabel } from "@/components/bucket/bucket-price-label"
 import { useBucketCycleStatus, useBucketPrice } from "@/hooks/bucket/useBucket"
 import { useLiveBalance } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
-import { formatAmount, ICP_FEE } from "@/lib/wallet/utils"
+import { calculateListPriceE8s } from "@/lib/bucket/pricing"
+import { ICP_FEE } from "@/lib/wallet/utils"
 import type { BucketVisibilityVariant } from "@/services/bucket/types"
 
 export function BucketCreateForm({
@@ -41,6 +43,7 @@ export function BucketCreateForm({
   const [error, setError] = useState<string | null>(null)
 
   const { price, isLoading: priceLoading } = useBucketPrice(capacityGB)
+  const listPrice = calculateListPriceE8s(capacityGB)
 
   const nameError = useMemo(() => validateBucketName(name), [name])
   const canCreate = cycleStatus?.canAcceptNewBuckets !== false
@@ -132,10 +135,15 @@ export function BucketCreateForm({
         <CardContent>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">{t("price")}</span>
-            <span className="font-semibold tabular-nums">
-              {priceLoading ? "…" : price !== null ? `${formatAmount(price)} ICP` : "—"}
-              <span className="text-xs font-normal text-muted-foreground"> {t("perMonth")}</span>
-            </span>
+            {priceLoading || price === null ? (
+              <span className="font-semibold tabular-nums">…</span>
+            ) : (
+              <BucketPriceLabel
+                priceE8s={price}
+                listPriceE8s={listPrice}
+                perMonth={t("perMonth")}
+              />
+            )}
           </div>
         </CardContent>
       </Card>

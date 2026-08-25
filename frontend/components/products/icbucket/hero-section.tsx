@@ -46,7 +46,7 @@ export function HeroSection() {
                 ICBucket
               </h1>
               <p className="text-lg leading-relaxed tracking-wide text-foreground/85 md:text-xl">
-                Store files on-chain. No servers, no AWS bills. Pay once, store forever.
+                Store files on-chain. No servers, no AWS bills. Simple 30-day plans in ICP.
               </p>
             </div>
 

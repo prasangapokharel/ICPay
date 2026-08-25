@@ -6,6 +6,7 @@ import {
   type BlockNode,
   type InlineNode,
 } from "@/lib/community/telegramMarkdown"
+import { findMessageSourceUrl, sourceFaviconUrl } from "@/lib/community/messageSource"
 import { cn } from "@/lib/ui/utils"
 
 function Spoiler({ children }: { children: ReactNode }) {
@@ -67,7 +68,12 @@ function renderInline(nodes: InlineNode[], keyPrefix: string): ReactNode[] {
   })
 }
 
-function renderBlock(block: BlockNode, index: number): ReactNode {
+function renderBlock(
+  block: BlockNode,
+  index: number,
+  sourceUrl: string | null,
+  firstQuoteIndex: number
+): ReactNode {
   if (block.kind === "pre") {
     return (
       <pre
@@ -81,12 +87,27 @@ function renderBlock(block: BlockNode, index: number): ReactNode {
 
   const content = renderInline(block.children, `line-${index}`)
   if (block.quote) {
+    const showSourceIcon = Boolean(sourceUrl && index === firstQuoteIndex)
     return (
       <blockquote
         key={`quote-${index}`}
-        className="border-l-2 border-primary/35 pl-3 text-muted-foreground"
+        className={cn(
+          "border-l-2 border-primary/35 pl-3 text-muted-foreground",
+          showSourceIcon && "flex items-start gap-2"
+        )}
       >
-        {content}
+        {showSourceIcon ? (
+          <img
+            src={sourceFaviconUrl(sourceUrl!)}
+            alt=""
+            width={16}
+            height={16}
+            className="mt-0.5 size-4 shrink-0 rounded-sm"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : null}
+        <span>{content}</span>
       </blockquote>
     )
   }
@@ -96,12 +117,16 @@ function renderBlock(block: BlockNode, index: number): ReactNode {
 
 export function CommunityMessageBody({ text }: { text: string }) {
   const blocks = parseTelegramMessage(text)
+  const sourceUrl = findMessageSourceUrl(text)
+  const firstQuoteIndex = blocks.findIndex(
+    (block) => block.kind === "line" && block.quote
+  )
 
   return (
     <span className="whitespace-pre-wrap break-words text-[15px] leading-[1.5]">
       {blocks.map((block, index) => (
         <span key={index}>
-          {renderBlock(block, index)}
+          {renderBlock(block, index, sourceUrl, firstQuoteIndex)}
           {index < blocks.length - 1 ? "\n" : null}
         </span>
       ))}

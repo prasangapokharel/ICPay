@@ -13,7 +13,7 @@ import { ICBUCKET_PACKAGE_LINKS, ProductFooter } from "@/components/products/sha
 export const metadata: Metadata = {
   title: "ICBucket - On-Chain Cloud Storage for Web3 | ICPay",
   description:
-    "ICBucket is a decentralized cloud storage platform built on Internet Computer. Store files on-chain with S3-compatible API, no servers, no AWS bills. Pay once, store forever. Perfect for dApps, NFT metadata, backups, and static hosting. 1GB-100GB capacity tiers with API keys and programmatic access.",
+    "ICBucket is decentralized cloud storage on the Internet Computer. Store files on-chain with API keys and SDKs — 30-day ICP plans from 0.5 ICP, no credit card. Perfect for dApps, NFT metadata, backups, and static hosting.",
   keywords: [
     "ICBucket",
     "on-chain storage",
@@ -30,8 +30,7 @@ export const metadata: Metadata = {
     "file hosting",
     "static hosting",
     "serverless storage",
-    "pay once storage",
-    "no monthly fees",
+    "30-day ICP storage plans",
     "censorship resistant",
     "immutable storage",
     "distributed storage",
@@ -39,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ICBucket - On-Chain Cloud Storage for Web3",
     description:
-      "Store files on-chain with S3-compatible API. No servers, no AWS bills. Pay once, store forever on Internet Computer.",
+      "Store files on-chain with API keys and SDKs. 30-day ICP plans — no servers, no AWS bills.",
     url: "https://icpay.app/products/icBucket",
     siteName: "ICPay",
     images: [
@@ -57,7 +56,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ICBucket - On-Chain Cloud Storage for Web3",
     description:
-      "Store files on-chain with S3-compatible API. No servers, no AWS bills. Pay once, store forever.",
+      "Store files on-chain with API keys and SDKs. 30-day ICP plans — no servers, no AWS bills.",
     images: ["https://icpay.app/images/product/icbuckets/banners/twitter-card.png"],
     creator: "@IcpayOfficial",
   },
