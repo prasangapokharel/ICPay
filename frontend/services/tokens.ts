@@ -4,7 +4,7 @@ import { Principal } from "@icp-sdk/core/principal"
 import { createAgent } from "@/services/icp"
 import { query } from "@/services/client"
 import { listTokens } from "@/services/launch/launch"
-import { fetchTokenRegistry } from "@/lib/token/registry"
+import { fetchTokenRegistry, type TokenMarket } from "@/lib/token/registry"
 
 // Mirrors backend Config.ICP_LEDGER_CANISTER_ID.
 export const ICP_LEDGER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"
@@ -82,6 +82,23 @@ export type TokenHolding = {
   decimals: number
   fee: bigint
   logo?: string
+}
+
+export type TokenMetadata = Omit<TokenHolding, "balance">
+
+export function metadataLedgerIds(balances: Map<string, bigint>): string[] {
+  const held = [...balances.entries()].filter(([, balance]) => balance > 0n).map(([id]) => id)
+  return [...new Set([...PINNED_LEDGER_IDS, ...held])].sort()
+}
+
+export function metadataFromRegistry(
+  ledgerId: string,
+  registry: Map<string, TokenMarket>
+): TokenMetadata | null {
+  const row = registry.get(ledgerId)
+  if (!row) return null
+  const { symbol, name, decimals, fee, logo } = row
+  return { ledgerId, symbol, name, decimals, fee, logo }
 }
 
 // Length-prefixed, right-aligned principal in 32 bytes. Must stay byte-identical
@@ -196,14 +213,13 @@ export async function fetchBalances(
 // is the source of truth and is reachable whenever the wallet works at all.
 export async function fetchTokenMetadata(
   ledgerId: string,
-  identity?: Identity
-): Promise<Omit<TokenHolding, "balance"> | null> {
+  identity?: Identity,
+  registry?: Map<string, TokenMarket>
+): Promise<TokenMetadata | null> {
   try {
-    const row = (await fetchTokenRegistry()).get(ledgerId)
-    if (row) {
-      const { symbol, name, decimals, fee, logo } = row
-      return { ledgerId, symbol, name, decimals, fee, logo }
-    }
+    const reg = registry ?? (await fetchTokenRegistry())
+    const fromRegistry = metadataFromRegistry(ledgerId, reg)
+    if (fromRegistry) return fromRegistry
   } catch {
     // Falls through to the ledger below.
   }

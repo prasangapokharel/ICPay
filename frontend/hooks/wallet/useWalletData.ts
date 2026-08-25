@@ -1,38 +1,40 @@
 "use client"
 
 import { useEffect } from "react"
-import useSWR, { useSWRConfig } from "swr"
+import useSWR, { unstable_serialize, useSWRConfig } from "swr"
 import useSWRImmutable from "swr/immutable"
-import type { Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
 import { useAuth } from "@/components/auth/auth-provider"
 import { readHoldings, writeHoldings, patchHoldings } from "@/lib/wallet/holdingsCache"
+import {
+  loadDashboard,
+  resolveDeposit,
+  resolveProfile,
+  walletKey,
+} from "@/lib/wallet/walletCache"
+import { getCachedLedgerIds } from "@/lib/wallet/ledgerIdsCache"
+import { useTokenRegistry } from "@/lib/token/registry"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import type { DashboardData, UserPublic } from "@/services/types"
-import { getDashboard } from "@/services/dashboard/dashboard"
-import { getDepositAddress } from "@/services/deposit/deposit"
 import { getTransactions } from "@/services/transactions/transactions"
-import { getProfile, resolveUsername, searchUsers, getRecipientProfile } from "@/services/profile/profile"
+import { resolveUsername, searchUsers, getRecipientProfile } from "@/services/profile/profile"
 import { listBookmarks } from "@/services/bookmark/bookmark"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
 import { checkUsername } from "@/services/buy/buy"
 import { compareBySuggestion } from "@/lib/verified/premiumTick"
 import { fetchAccountStats, type AccountStats } from "@/services/account/account"
 import {
-  listLedgerIds,
-  listLaunchedLedgerIds,
   fetchBalances,
   fetchTokenMetadata,
   custodialSubaccount,
   ICP_LEDGER_ID,
   PINNED_LEDGER_IDS,
+  metadataFromRegistry,
+  metadataLedgerIds,
   type TokenHolding,
 } from "@/services/tokens"
 
-// Keys are arrays so every page asking for the same data hits one cache entry.
-// The principal is included so switching identity cannot serve a stale balance.
-const keyFor = (identity: Identity | undefined, ...parts: string[]) =>
-  identity ? ([...parts, identity.getPrincipal().toText()] as const) : null
+const keyFor = walletKey
 
 // getDashboard is a query, but a heavy one — it walks the ledger, so it is
 // fetched once and refreshed on explicit action rather than on focus or
@@ -52,7 +54,7 @@ export function useDashboard() {
 
   const { data, error, isLoading, mutate } = useSWR(
     keyFor(identity, "dashboard"),
-    () => getDashboard(identity),
+    () => loadDashboard(identity!),
     FETCH_ONCE
   )
 
@@ -80,10 +82,19 @@ function useCustodian(): Principal | undefined {
 function useLedgerBalance(ledgerId: string | null) {
   const { identity } = useAuth()
   const custodian = useCustodian()
+  const { cache } = useSWRConfig()
 
   const { data, isLoading } = useSWR(
     ledgerId && custodian && identity ? keyFor(identity, "token-balance", ledgerId) : null,
     async () => {
+      const balancesKey = keyFor(identity!, "token-balances")
+      if (balancesKey) {
+        const cached = cache.get(unstable_serialize(balancesKey))?.data as
+          | Map<string, bigint>
+          | undefined
+        if (cached?.has(ledgerId!)) return cached.get(ledgerId!)!
+      }
+
       const balances = await fetchBalances(
         [ledgerId!],
         custodian!,
@@ -127,35 +138,12 @@ export function useSelfCustodyBalance(ledgerId: string | null) {
   return data
 }
 
-// Pinned tokens plus the ones ICPay launched, not all ~58 ledgers. Two ways to
-// end up here: an exchange withdrawal typed against a bare principal, which only
-// happens for ICP and the ck tokens; or launching a token, whose whole supply is
-// paid to the creator's own principal. Both are sweepable, and flagging funds we
-// would then refuse to move is worse than staying quiet.
-export function useSelfCustodyPinned() {
-  const { identity } = useAuth()
-
-  const { data } = useSWR(
-    keyFor(identity, "self-custody-pinned"),
-    async () => {
-      const launched = await listLaunchedLedgerIds(identity)
-      const ids = [...PINNED_LEDGER_IDS, ...launched.filter((id) => !PINNED_LEDGER_IDS.includes(id))]
-      return await fetchBalances(ids, identity!.getPrincipal(), undefined, identity)
-    },
-    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
-  )
-
-  return data
-}
-
 export function useDepositAddress() {
   const { identity } = useAuth()
 
-  // A principal's deposit address is derived and never changes, so it is read
-  // once per session and never revalidated.
   const { data, error, isLoading } = useSWRImmutable(
     keyFor(identity, "deposit-address"),
-    () => getDepositAddress(identity)
+    () => resolveDeposit(identity!)
   )
 
   return { data, error, isLoading }
@@ -190,7 +178,6 @@ const FUNDS_KEYS = [
   "transactions",
   "token-balances",
   "self-custody",
-  "self-custody-pinned",
 ]
 
 export function useRefreshWallet() {
@@ -424,7 +411,7 @@ export function useUserSearch(search: string, limit = 10) {
 // claim there mutates this too rather than leaving a second copy behind.
 export function useOwnProfile() {
   const { identity } = useAuth()
-  return useSWRImmutable(keyFor(identity, "profile"), () => getProfile(identity))
+  return useSWRImmutable(keyFor(identity, "profile"), () => resolveProfile(identity!))
 }
 
 export function useBookmarks() {
@@ -458,13 +445,12 @@ function dedupeById(users: UserPublic[]): UserPublic[] {
 export function useTokenHoldings() {
   const { identity } = useAuth()
   const custodian = useCustodian()
+  const registry = useTokenRegistry()
 
-  // Phase 1 -- balances only, across every known ledger. Discovery is folded in
-  // so the whole sweep is one cache entry.
   const { data: balances, isLoading: loadingBalances } = useSWR(
     custodian && identity ? keyFor(identity, "token-balances") : null,
     async () => {
-      const ledgerIds = await listLedgerIds(identity)
+      const ledgerIds = await getCachedLedgerIds(identity)
       const owner = custodian!
       const subaccount = custodialSubaccount(identity!.getPrincipal())
       return await fetchBalances(ledgerIds, owner, subaccount, identity)
@@ -472,25 +458,24 @@ export function useTokenHoldings() {
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
-  // Phase 2 -- metadata for every discovered ledger, not just the held ones. A
-  // token nobody holds still needs a name and a logo to be worth depositing to,
-  // and naming all of them is now one request to the NNS token index rather than
-  // one ledger call each. Keyed by the id list so it refetches when a new token
-  // appears rather than on every balance change, and immutable because a symbol
-  // and decimals never change.
-  const shownIds = balances ? [...balances.keys()].sort() : []
+  const metadataIds = balances ? metadataLedgerIds(balances) : []
   const { data: metadata, isLoading: loadingMetadata } = useSWRImmutable(
-    shownIds.length ? (["token-metadata", shownIds.join(",")] as const) : null,
+    registry && metadataIds.length ? (["token-metadata", metadataIds.join(",")] as const) : null,
     async () => {
-      const entries = await Promise.all(shownIds.map((id) => fetchTokenMetadata(id, identity)))
-      return new Map(entries.flatMap((m) => (m ? [[m.ledgerId, m] as const] : [])))
+      const entries = await Promise.all(
+        metadataIds.map(async (id) => {
+          const fromRegistry = metadataFromRegistry(id, registry!)
+          if (fromRegistry) return [id, fromRegistry] as const
+          const meta = await fetchTokenMetadata(id, identity, registry!)
+          return meta ? ([id, meta] as const) : null
+        })
+      )
+      return new Map(entries.flatMap((entry) => (entry ? [entry] : [])))
     }
   )
 
-  const holdings: TokenHolding[] = shownIds.flatMap((ledgerId) => {
+  const holdings: TokenHolding[] = metadataIds.flatMap((ledgerId) => {
     const meta = metadata?.get(ledgerId)
-    // A row whose metadata has not landed is withheld rather than shown as
-    // "UNKNOWN", so the list never flashes placeholder symbols.
     if (!meta) return []
     return [{ ...meta, balance: balances!.get(ledgerId)! }]
   })
@@ -524,7 +509,7 @@ export function useTokenHoldings() {
     }),
     isLoading:
       shown.length === 0 &&
-      (loadingBalances || (shownIds.length > 0 && loadingMetadata && !metadata)),
+      (loadingBalances || (metadataIds.length > 0 && loadingMetadata && !metadata)),
   }
 }
 
@@ -535,8 +520,12 @@ export function useTokenHoldings() {
 // trip. ICP is the fallback because its ledger publishes no metadata.
 export function useLedgerSymbol(ledgerId: string): { symbol: string; decimals: number } {
   const { identity } = useAuth()
-  const { data } = useSWRImmutable(["token-metadata-one", ledgerId] as const, () =>
-    fetchTokenMetadata(ledgerId, identity)
+  const registry = useTokenRegistry()
+  const fromRegistry = registry ? metadataFromRegistry(ledgerId, registry) : null
+
+  const { data } = useSWRImmutable(
+    !fromRegistry ? (["token-metadata-one", ledgerId] as const) : null,
+    () => fetchTokenMetadata(ledgerId, identity, registry)
   )
 
   const principal = identity?.getPrincipal().toText()
@@ -545,7 +534,7 @@ export function useLedgerSymbol(ledgerId: string): { symbol: string; decimals: n
     : principal
       ? readHoldings(principal)?.find((h) => h.ledgerId === ledgerId)
       : undefined
-  const meta = data ?? cached
+  const meta = fromRegistry ?? data ?? cached
 
   return { symbol: meta?.symbol ?? "ICP", decimals: meta?.decimals ?? 8 }
 }
@@ -556,11 +545,13 @@ export function useLedgerSymbol(ledgerId: string): { symbol: string; decimals: n
 // useLedgerBalance's key, so arriving from /wallet reuses the cached balance.
 export function useTokenHolding(ledgerId: string | null) {
   const { identity } = useAuth()
+  const registry = useTokenRegistry()
   const { balance, isLoading: loadingBalance } = useLedgerBalance(ledgerId)
+  const fromRegistry = ledgerId && registry ? metadataFromRegistry(ledgerId, registry) : null
 
   const { data: meta, isLoading: loadingMeta } = useSWRImmutable(
-    ledgerId ? (["token-metadata-one", ledgerId] as const) : null,
-    () => fetchTokenMetadata(ledgerId!, identity)
+    ledgerId && !fromRegistry ? (["token-metadata-one", ledgerId] as const) : null,
+    () => fetchTokenMetadata(ledgerId!, identity, registry)
   )
 
   // Same reason as useTokenHoldings: on a reload neither the metadata nor the
@@ -573,9 +564,11 @@ export function useTokenHolding(ledgerId: string | null) {
 
   // The balance is not awaited before rendering: the symbol and logo are what
   // identify the page, and 0n reads correctly for a token held in no amount.
-  const token: TokenHolding | undefined = meta
-    ? { ...meta, balance: balance ?? cached?.balance ?? 0n }
-    : cached
+  const token: TokenHolding | undefined = fromRegistry
+    ? { ...fromRegistry, balance: balance ?? cached?.balance ?? 0n }
+    : meta
+      ? { ...meta, balance: balance ?? cached?.balance ?? 0n }
+      : cached
 
   return {
     token,
