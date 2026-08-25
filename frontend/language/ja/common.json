@@ -348,7 +348,9 @@
     "selfCustodyNet": "受取額",
     "selfCustodyDust": "{symbol} のネットワーク手数料を下回るため移動できません。",
     "selfCustodyEmpty": "移すものはありません — このトークンはご自身のプリンシパルに送られていません。",
-    "swap": "スワップ"
+    "swap": "スワップ",
+    "nativeDepositTitle": "Deposit from {asset}",
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer."
   },
   "sendToken": {
     "title": "{symbol} を送金",

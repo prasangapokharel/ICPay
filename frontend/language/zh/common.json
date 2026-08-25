@@ -348,7 +348,9 @@
     "selfCustodyNet": "您将收到",
     "selfCustodyDust": "低于 {symbol} 网络手续费，无法转入。",
     "selfCustodyEmpty": "没有需要转入的资金 — 该代币未被发送到您的 principal。",
-    "swap": "兑换"
+    "swap": "兑换",
+    "nativeDepositTitle": "Deposit from {asset}",
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer."
   },
   "sendToken": {
     "title": "发送 {symbol}",

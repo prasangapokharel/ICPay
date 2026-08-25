@@ -348,7 +348,9 @@
     "selfCustodyNet": "Вы получите",
     "selfCustodyDust": "Сумма меньше сетевого сбора {symbol}, перевести её нельзя.",
     "selfCustodyEmpty": "Переводить нечего — этот токен не отправлялся на ваш principal.",
-    "swap": "Обмен"
+    "swap": "Обмен",
+    "nativeDepositTitle": "Deposit from {asset}",
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer."
   },
   "sendToken": {
     "title": "Отправить {symbol}",

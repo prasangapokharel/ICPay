@@ -348,7 +348,9 @@
     "selfCustodyNet": "Você recebe",
     "selfCustodyDust": "É inferior à taxa de rede {symbol}, por isso não pode ser movido.",
     "selfCustodyEmpty": "Nada para mover — este token não foi enviado para o seu principal.",
-    "swap": "Trocar"
+    "swap": "Trocar",
+    "nativeDepositTitle": "Deposit from {asset}",
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer."
   },
   "sendToken": {
     "title": "Enviar {symbol}",

@@ -348,7 +348,9 @@
     "selfCustodyNet": "Vous recevrez",
     "selfCustodyDust": "Ce montant est inférieur aux frais de réseau {symbol} et ne peut pas être transféré.",
     "selfCustodyEmpty": "Rien à transférer — ce jeton n'a pas été envoyé à votre principal.",
-    "swap": "Échanger"
+    "swap": "Échanger",
+    "nativeDepositTitle": "Deposit from {asset}",
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer."
   },
   "sendToken": {
     "title": "Envoyer des {symbol}",

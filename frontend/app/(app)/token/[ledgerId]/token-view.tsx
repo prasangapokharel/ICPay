@@ -14,6 +14,7 @@ import { Alert02Icon } from "@hugeicons/core-free-icons"
 import { copyText, formatTokenAmount } from "@/lib/wallet/utils"
 import { icrc1Account } from "@/lib/wallet/accountId"
 import { useTokenHolding, useDepositAddress, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useChainKeyDeposit } from "@/hooks/wallet/useChainKeyDeposit"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 import { SelfCustodyCard } from "@/components/wallet/self-custody-card"
 import { SendTokenDrawer } from "@/components/wallet/send-token-drawer"
@@ -46,6 +47,7 @@ export function TokenView() {
   const { token, isLoading } = useTokenHolding(ledgerId || null)
   const { data: deposit } = useDepositAddress()
   const selfCustody = useSelfCustodyBalance(ledgerId || null)
+  const { deposit: chainKeyDeposit } = useChainKeyDeposit(ledgerId || null)
 
   // An empty id means the mid-transition frame described above, so the loader is
   // held rather than asserting the token does not exist.
@@ -191,6 +193,27 @@ export function TokenView() {
           ) : (
             <div className="flex justify-center py-10">
               <Spinner className="size-5 text-muted-foreground" />
+            </div>
+          )}
+
+          {chainKeyDeposit && (
+            <div className="space-y-3 border-t pt-4">
+              <div>
+                <h3 className="text-sm font-semibold">
+                  {t("nativeDepositTitle", { asset: chainKeyDeposit.asset })}
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {t("nativeDepositHint", {
+                    asset: chainKeyDeposit.asset,
+                    symbol: token.symbol,
+                  })}
+                </p>
+              </div>
+              <DepositAddressCard
+                icrcAddress={chainKeyDeposit.address}
+                onCopy={copyText}
+                logo={token.logo}
+              />
             </div>
           )}
 

@@ -348,7 +348,9 @@
     "selfCustodyNet": "आपको मिलेगा",
     "selfCustodyDust": "यह {symbol} नेटवर्क शुल्क से कम है, इसलिए इसे भेजा नहीं जा सकता।",
     "selfCustodyEmpty": "लाने के लिए कुछ नहीं है — यह टोकन आपके प्रिंसिपल पर नहीं भेजा गया है।",
-    "swap": "स्वैप"
+    "swap": "स्वैप",
+    "nativeDepositTitle": "Deposit from {asset}",
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer."
   },
   "sendToken": {
     "title": "{symbol} भेजें",

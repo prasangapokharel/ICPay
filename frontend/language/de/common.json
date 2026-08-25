@@ -348,7 +348,9 @@
     "selfCustodyNet": "Sie erhalten",
     "selfCustodyDust": "Der Betrag liegt unter der {symbol}-Netzwerkgebühr und kann nicht verschoben werden.",
     "selfCustodyEmpty": "Nichts zu verschieben — dieser Token wurde nicht an Ihr Principal gesendet.",
-    "swap": "Tauschen"
+    "swap": "Tauschen",
+    "nativeDepositTitle": "Deposit from {asset}",
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer."
   },
   "sendToken": {
     "title": "{symbol} senden",
