@@ -34,26 +34,24 @@ async function fetchCoinGeckoIcp(): Promise<IcpPrice> {
   }
 }
 
+async function fetchCmcIcp(identity?: Identity): Promise<IcpPrice> {
+  const agent = await createAgent(identity)
+  const cmc = CmcCanister.create({
+    agent,
+    canisterId: Principal.fromText(CMC_CANISTER_ID),
+  })
+  const [xdrPermyriadPerIcp, xdrUsd] = await Promise.all([
+    cmc.getIcpToCyclesConversionRate({ certified: false }),
+    fetchXdrUsd().catch(() => 1.35),
+  ])
+  const usd = icpUsdFromCyclesRate(xdrPermyriadPerIcp, xdrUsd)
+  return { usd, change24h: 0, marketCap: 0, volume24h: 0 }
+}
+
 export async function fetchIcpPrice(identity?: Identity): Promise<IcpPrice> {
   try {
-    const agent = await createAgent(identity)
-    const cmc = CmcCanister.create({
-      agent,
-      canisterId: Principal.fromText(CMC_CANISTER_ID),
-    })
-    const [cyclesPerIcp, xdrUsd, market] = await Promise.all([
-      cmc.getIcpToCyclesConversionRate({ certified: false }),
-      fetchXdrUsd().catch(() => 1.35),
-      fetchCoinGeckoIcp().catch(() => null),
-    ])
-    const usd = icpUsdFromCyclesRate(cyclesPerIcp, xdrUsd)
-    return {
-      usd,
-      change24h: market?.change24h ?? 0,
-      marketCap: market?.marketCap ?? 0,
-      volume24h: market?.volume24h ?? 0,
-    }
+    return await fetchCoinGeckoIcp()
   } catch {
-    return fetchCoinGeckoIcp()
+    return fetchCmcIcp(identity)
   }
 }
