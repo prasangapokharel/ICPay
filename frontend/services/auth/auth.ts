@@ -11,6 +11,8 @@ import {
   markRedirectPending,
   clearRedirectPending,
   hasRedirectPending,
+  isInternetIdentityReturn,
+  clearInternetIdentityReturnHash,
 } from "@/lib/auth/transport"
 import { finishAttributeVerification, startAttributeRequest } from "@/services/auth/attributes"
 
@@ -74,6 +76,13 @@ async function signInWithAttributes(
   authClient: AuthClient,
   options?: LoginOptions,
 ): Promise<Identity | null> {
+  const redirect = wantsRedirectTransport(options)
+
+  if (redirect) {
+    const identity = await authClient.signIn(signInOptions())
+    return identity
+  }
+
   const attributesPromise = startAttributeRequest(authClient, options?.openIdProvider).catch(
     () => null,
   )
@@ -90,12 +99,15 @@ async function signInWithAttributes(
 }
 
 export async function resumeRedirectSignIn(): Promise<Identity | null> {
-  if (!hasRedirectPending()) return null
+  if (!hasRedirectPending() && !isInternetIdentityReturn()) return null
   try {
+    const options: LoginOptions = { transport: "redirect" }
     const identity = await signInWithAttributes(
-      new AuthClient(clientOptions({ transport: "redirect" })),
+      new AuthClient(clientOptions(options)),
+      options,
     )
     clearRedirectPending()
+    clearInternetIdentityReturnHash()
     return identity
   } catch (e) {
     clearRedirectPending()
@@ -110,7 +122,10 @@ export async function login(options?: LoginOptions): Promise<Identity | null> {
 
   try {
     const identity = await signInWithAttributes(authClient, options)
-    if (wantsRedirectTransport(options)) clearRedirectPending()
+    if (wantsRedirectTransport(options)) {
+      clearRedirectPending()
+      clearInternetIdentityReturnHash()
+    }
     return identity
   } catch (e) {
     if (wantsRedirectTransport(options)) clearRedirectPending()
