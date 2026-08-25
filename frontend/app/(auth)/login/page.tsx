@@ -82,7 +82,7 @@ export default function LoginPage() {
     primeLoginChime()
     setError(null)
     setConnecting(true)
-    void login(options)
+    login(options)
       .catch((e) => setError(e instanceof Error ? e.message : t("genericError")))
       .finally(() => setConnecting(false))
   }

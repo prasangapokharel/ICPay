@@ -76,25 +76,17 @@ async function signInWithAttributes(
   authClient: AuthClient,
   options?: LoginOptions,
 ): Promise<Identity | null> {
-  const redirect = wantsRedirectTransport(options)
-
-  if (redirect) {
-    const identity = await authClient.signIn(signInOptions())
-    return identity
-  }
-
-  const attributesPromise = startAttributeRequest(authClient, options?.openIdProvider).catch(
-    () => null,
-  )
   const identity = await authClient.signIn(signInOptions())
-  const attributes = await attributesPromise
-  if (attributes) {
-    try {
-      await finishAttributeVerification(identity, attributes)
-    } catch (e) {
-      console.warn("II attribute verification skipped:", e)
-    }
+
+  if (wantsRedirectTransport(options)) return identity
+
+  try {
+    const attributes = await startAttributeRequest(authClient, options?.openIdProvider)
+    await finishAttributeVerification(identity, attributes)
+  } catch (e) {
+    console.warn("II attribute verification skipped:", e)
   }
+
   return identity
 }
 
@@ -120,21 +112,22 @@ export async function login(options?: LoginOptions): Promise<Identity | null> {
   if (wantsRedirectTransport(options)) markRedirectPending()
   const authClient = createClient(options)
 
-  try {
-    const identity = await signInWithAttributes(authClient, options)
-    if (wantsRedirectTransport(options)) {
-      clearRedirectPending()
-      clearInternetIdentityReturnHash()
-    }
-    return identity
-  } catch (e) {
-    if (wantsRedirectTransport(options)) clearRedirectPending()
-    console.error("II login error:", e)
-    if (e instanceof Error && /popup|blocked/i.test(e.message)) {
-      throw new PopupBlockedError()
-    }
-    return null
-  }
+  return signInWithAttributes(authClient, options)
+    .then((identity) => {
+      if (wantsRedirectTransport(options)) {
+        clearRedirectPending()
+        clearInternetIdentityReturnHash()
+      }
+      return identity
+    })
+    .catch((e) => {
+      if (wantsRedirectTransport(options)) clearRedirectPending()
+      console.error("II login error:", e)
+      if (e instanceof Error && /popup|blocked/i.test(e.message)) {
+        throw new PopupBlockedError()
+      }
+      return null
+    })
 }
 
 export async function logout(): Promise<void> {
