@@ -350,7 +350,10 @@
     "selfCustodyEmpty": "没有需要转入的资金 — 该代币未被发送到您的 principal。",
     "swap": "兑换",
     "nativeDepositTitle": "Deposit from {asset}",
-    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer."
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer.",
+    "depositIcpayTab": "ICPay",
+    "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
+    "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet."
   },
   "sendToken": {
     "title": "发送 {symbol}",

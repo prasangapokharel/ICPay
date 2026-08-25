@@ -12,16 +12,10 @@ import { QrCode } from "@/components/shared/qr-code"
 type DepositAddressCardProps = {
   icrcAddress: string
   onCopy: (text: string) => void
-  // Account identifiers are an ICP-ledger concept, so the legacy tab only exists
-  // when one is supplied. Other ICRC-1 ledgers render the ICRC address alone.
   accountId?: string
-  // The user's own principal. Exchanges reject the "-{checksum}.{subaccount}"
-  // suffix of the ICRC address, so this is the only form they accept -- funds
-  // sent here land in self-custody and need one "Move into ICPay" afterwards.
   principal?: string
-  // Centred on the QR. Defaults to the ICP mark, which is a local asset; token
-  // pages pass the ledger's own icrc1:logo.
   logo?: string
+  hideHint?: boolean
 }
 
 export function DepositAddressCard({
@@ -30,6 +24,7 @@ export function DepositAddressCard({
   principal,
   onCopy,
   logo,
+  hideHint = false,
 }: DepositAddressCardProps) {
   const t = useTranslations("deposit")
 
@@ -51,36 +46,48 @@ export function DepositAddressCard({
   ]
 
   if (tabs.length === 1) {
-    return <AddressBlock value={icrcAddress} hint={t("hintIcrc")} onCopy={onCopy} logo={logo} />
+    return (
+      <DepositQrBlock
+        value={icrcAddress}
+        hint={hideHint ? undefined : t("hintIcrc")}
+        onCopy={onCopy}
+        logo={logo}
+      />
+    )
   }
 
   return (
-    <Tabs defaultValue="icrc" className="w-full">
-      <TabsList className="grid w-full" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
+    <Tabs defaultValue="icrc" className="w-full gap-0">
+      <TabsList variant="line" className="w-full justify-center border-b border-border">
         {tabs.map((tab) => (
-          <TabsTrigger key={tab.value} value={tab.value}>
+          <TabsTrigger key={tab.value} value={tab.value} className="flex-1 text-xs sm:text-sm">
             {tab.label}
           </TabsTrigger>
         ))}
       </TabsList>
 
       {tabs.map((tab) => (
-        <TabsContent key={tab.value} value={tab.value} className="mt-5">
-          <AddressBlock value={tab.address} hint={tab.hint} onCopy={onCopy} logo={logo} />
+        <TabsContent key={tab.value} value={tab.value} className="mt-6">
+          <DepositQrBlock
+            value={tab.address}
+            hint={hideHint ? undefined : tab.hint}
+            onCopy={onCopy}
+            logo={logo}
+          />
         </TabsContent>
       ))}
     </Tabs>
   )
 }
 
-function AddressBlock({
+export function DepositQrBlock({
   value,
   hint,
   onCopy,
   logo,
 }: {
   value: string
-  hint: string
+  hint?: string
   onCopy: (text: string) => void
   logo?: string
 }) {
@@ -97,14 +104,10 @@ function AddressBlock({
   const isLong = value.length > 48
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex w-full flex-col items-center gap-4">
       <QrCode value={value} logo={logo} />
 
-      {/* The wrapper owns the fill and the rounding; the input and the copy
-          button are both transparent and square inside it. The Input primitive
-          is rounded-4xl with its own bg, which peeked out of these squarer
-          corners as pale slivers and read as a seam against the button. */}
-      <div className="flex w-full items-stretch overflow-hidden rounded-xl border border-input bg-input/30 shadow-sm">
+      <div className="flex w-full max-w-[min(100%,20rem)] items-stretch overflow-hidden rounded-xl border border-input bg-input/30 shadow-sm sm:max-w-[min(100%,22rem)]">
         <Input
           readOnly
           variant="ghost"
@@ -134,7 +137,7 @@ function AddressBlock({
         </Button>
       )}
 
-      <p className="text-center text-[11px] text-muted-foreground">{hint}</p>
+      {hint && <p className="text-center text-[11px] text-muted-foreground">{hint}</p>}
     </div>
   )
 }

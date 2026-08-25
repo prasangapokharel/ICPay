@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo, useRef, useState } from "react"
-import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { AppIcon } from "@/components/ui/app-icon"
 import { Button } from "@/components/ui/button"
@@ -10,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { SwapConfirmDrawer } from "@/components/swap/swap-confirm-drawer"
 import { SwapTokenPicker } from "@/components/swap/swap-token-picker"
+import { TokenLogo } from "@/components/token/token-logo"
 import { useSwapQuote, useSwapTokens } from "@/hooks/swap/useSwap"
 import { defaultSwapPair } from "@/lib/swap/tokens"
 import {
@@ -440,7 +440,7 @@ function SwapAmountCard({
           onClick={onPickToken}
           className="flex shrink-0 items-center gap-2 rounded-full bg-muted/60 py-1.5 pl-1.5 pr-3 text-sm font-semibold"
         >
-          {token ? <MiniLogo token={token} /> : null}
+          {token ? <TokenLogo token={token} className="size-7" /> : null}
           {token?.symbol ?? t("selectToken")}
         </button>
         {readOnly ? (
@@ -479,20 +479,6 @@ function SwapAmountCard({
         </div>
       )}
     </div>
-  )
-}
-
-function MiniLogo({ token }: { token: TokenHolding }) {
-  const src = token.ledgerId === ICP_LEDGER_ID ? "/images/logo/logo.png" : token.logo
-  if (!src) {
-    return (
-      <span className="flex size-7 items-center justify-center rounded-full bg-muted text-[10px] font-bold uppercase">
-        {token.symbol.slice(0, 2)}
-      </span>
-    )
-  }
-  return (
-    <Image src={src} alt="" width={28} height={28} unoptimized className="size-7 rounded-full object-contain" />
   )
 }
 

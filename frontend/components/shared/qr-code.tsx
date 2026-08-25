@@ -3,30 +3,31 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
+import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "@/lib/ui/utils"
 
-// The qrcode encoder is only needed once a QR is actually on screen, so it stays
-// a dynamic import. Shared by the deposit address card and the payment link card.
-export function QrCode({
-  value,
-  logo,
-  className = "size-44",
-}: {
+type QrCodeProps = {
   value: string
   logo?: string
   className?: string
-}) {
+}
+
+export function QrCode({ value, logo, className }: QrCodeProps) {
   const t = useTranslations("deposit")
-  // The encoded value is stored alongside the image rather than in a second
-  // state: clearing it on change would be a setState in the effect body, and
-  // leaving it would render the previous address's QR under a new one -- money
-  // sent to the wrong account.
   const [done, setDone] = useState<{ value: string; src: string } | null>(null)
 
   useEffect(() => {
     let active = true
     import("qrcode")
-      .then((mod) => mod.toDataURL(value, { errorCorrectionLevel: "M", margin: 1, width: 512 }))
+      .then((mod) =>
+        mod.toDataURL(value, {
+          errorCorrectionLevel: logo ? "H" : "M",
+          margin: 2,
+          width: 640,
+          color: { dark: "#000000", light: "#ffffff" },
+        })
+      )
       .then((src) => {
         if (active) setDone({ value, src })
       })
@@ -34,30 +35,45 @@ export function QrCode({
     return () => {
       active = false
     }
-  }, [value])
+  }, [value, logo])
 
-  if (done?.value !== value) return <Skeleton className="size-52 rounded-2xl" />
+  const loading = done?.value !== value
 
   return (
-    <div className="relative rounded-2xl border p-3">
-      <Image
-        src={done.src}
-        alt={t("qrAlt")}
-        width={512}
-        height={512}
-        unoptimized
-        className={className}
-      />
-      <span className="absolute left-1/2 top-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-background shadow-sm ring-1 ring-black/10">
-        <Image
-          src={logo ?? "/images/logo/logo.png"}
-          alt=""
-          width={40}
-          height={40}
-          unoptimized
-          className="size-6 object-contain"
-        />
-      </span>
-    </div>
+    <Card
+      className={cn(
+        "mx-auto w-full max-w-[min(100%,18rem)] gap-0 py-0 shadow-sm sm:max-w-[min(100%,20rem)]",
+        className
+      )}
+    >
+      <div className="p-4 sm:p-5">
+        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-white p-3 ring-1 ring-black/5 sm:p-4">
+          {loading ? (
+            <Skeleton className="size-full rounded-lg" />
+          ) : (
+            <>
+              <Image
+                src={done.src}
+                alt={t("qrAlt")}
+                width={640}
+                height={640}
+                unoptimized
+                className="size-full object-contain"
+              />
+              <span className="absolute left-1/2 top-1/2 flex size-[clamp(2rem,22%,3rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-background shadow-sm ring-1 ring-black/10">
+                <Image
+                  src={logo ?? "/images/logo/logo.png"}
+                  alt=""
+                  width={48}
+                  height={48}
+                  unoptimized
+                  className="size-[68%] object-contain"
+                />
+              </span>
+            </>
+          )}
+        </div>
+      </div>
+    </Card>
   )
 }

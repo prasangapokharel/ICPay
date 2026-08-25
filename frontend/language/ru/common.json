@@ -350,7 +350,10 @@
     "selfCustodyEmpty": "Переводить нечего — этот токен не отправлялся на ваш principal.",
     "swap": "Обмен",
     "nativeDepositTitle": "Deposit from {asset}",
-    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer."
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer.",
+    "depositIcpayTab": "ICPay",
+    "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
+    "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet."
   },
   "sendToken": {
     "title": "Отправить {symbol}",
