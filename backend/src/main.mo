@@ -65,6 +65,9 @@ import Debug "mo:core/Debug";
 import Timer "mo:core/Timer";
 import UUID "utils/UUID";
 import Map "mo:core/Map";
+import Time "mo:core/Time";
+import IdentityAttributes "mo:identity-attributes";
+import UserModel "models/User";
 
 persistent actor self {
   transient let mwConfig = MiddlewareAuth.prodConfig();
@@ -276,5 +279,28 @@ persistent actor self {
   include LiveApi(liveService, mwConfig);
   include IcCommunityApi(communityService, mwConfig);
   include CloudHttpApi(bucketService);
+
+  include IdentityAttributes({
+    onVerified = func(caller, attrs) {
+      switch (UserRepo.getByPrincipal(users, caller)) {
+        case (?user) {
+          let now = Time.now();
+          switch (attrs.name) {
+            case (?name) {
+              if (user.displayName == "") {
+                UserModel.updateDisplayName(user, name, now);
+              };
+            };
+            case (null) {};
+          };
+          switch (attrs.email) {
+            case (?email) { UserModel.setVerifiedEmail(user, email, now) };
+            case (null) {};
+          };
+        };
+        case (null) {};
+      };
+    };
+  });
 
 };

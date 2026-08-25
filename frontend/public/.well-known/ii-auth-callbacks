@@ -1,0 +1,8 @@
+{
+  "callbacks": [
+    "http://localhost:3000/login",
+    "https://icpay.app/login",
+    "https://www.icpay.app/login",
+    "https://ic-pay.vercel.app/login"
+  ]
+}

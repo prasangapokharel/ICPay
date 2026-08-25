@@ -119,7 +119,12 @@
     "connecting": "Verbinden…",
     "redirectNote": "Du wirst zur Internet Identity weitergeleitet, um den Zugriff zu bestätigen.",
     "orContinue": "Oder fortfahren mit",
-    "nfidNote": "NFID erstellt eine von der Internet Identity getrennte Wallet.",
+    "openIdNote": "Nutzt Ihr verknüpftes Google-, Apple- oder Microsoft-Konto über Internet Identity.",
+    "openId": {
+      "google": "Mit Google fortfahren",
+      "apple": "Mit Apple fortfahren",
+      "microsoft": "Mit Microsoft fortfahren"
+    },
     "genericError": "Verbindung fehlgeschlagen. Bitte versuche es erneut.",
     "features": {
       "custodialTitle": "Selbstverwahrung",

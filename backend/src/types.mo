@@ -24,6 +24,7 @@ module {
     var username: ?Username;
     var displayName: Text;
     var socialLinks: [SocialLink];
+    var verifiedEmail: ?Text;
     createdAt: Int;
     var updatedAt: Int;
   };

@@ -119,7 +119,12 @@
     "connecting": "Подключение…",
     "redirectNote": "Вы будете перенаправлены в Internet Identity для подтверждения доступа.",
     "orContinue": "Или продолжить через",
-    "nfidNote": "NFID создаёт кошелёк, отдельный от Internet Identity.",
+    "openIdNote": "Использует привязанный аккаунт Google, Apple или Microsoft через Internet Identity.",
+    "openId": {
+      "google": "Продолжить с Google",
+      "apple": "Продолжить с Apple",
+      "microsoft": "Продолжить с Microsoft"
+    },
     "genericError": "Не удалось подключиться. Попробуйте ещё раз.",
     "features": {
       "custodialTitle": "Самостоятельное хранение",

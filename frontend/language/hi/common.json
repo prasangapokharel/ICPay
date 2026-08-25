@@ -119,7 +119,12 @@
     "connecting": "कनेक्ट हो रहा है…",
     "redirectNote": "पहुँच स्वीकृत करने के लिए आपको Internet Identity पर भेजा जाएगा।",
     "orContinue": "या इससे जारी रखें",
-    "nfidNote": "NFID, Internet Identity से अलग वॉलेट बनाता है।",
+    "openIdNote": "Internet Identity के माध्यम से आपके लिंक किए Google, Apple या Microsoft खाते का उपयोग करता है।",
+    "openId": {
+      "google": "Google से जारी रखें",
+      "apple": "Apple से जारी रखें",
+      "microsoft": "Microsoft से जारी रखें"
+    },
     "genericError": "कनेक्ट नहीं हो सका। कृपया फिर कोशिश करें।",
     "features": {
       "custodialTitle": "स्व-अभिरक्षा",

@@ -119,7 +119,12 @@
     "connecting": "Conectando…",
     "redirectNote": "Se te redirigirá a Internet Identity para autorizar el acceso.",
     "orContinue": "O continúa con",
-    "nfidNote": "NFID crea un monedero independiente de Internet Identity.",
+    "openIdNote": "Utiliza tu cuenta de Google, Apple o Microsoft vinculada a través de Internet Identity.",
+    "openId": {
+      "google": "Continuar con Google",
+      "apple": "Continuar con Apple",
+      "microsoft": "Continuar con Microsoft"
+    },
     "genericError": "No se pudo conectar. Inténtalo de nuevo.",
     "features": {
       "custodialTitle": "Autocustodia",
