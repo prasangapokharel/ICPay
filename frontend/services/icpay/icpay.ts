@@ -1,8 +1,7 @@
-import { Actor, type Identity } from "@icp-sdk/core/agent"
-import type { IDL } from "@icp-sdk/core/candid"
-import type { Principal } from "@icp-sdk/core/principal"
-import { createAgent } from "@/services/icp"
+import type { Identity } from "@icp-sdk/core/agent"
+import { fromNullable } from "@dfinity/utils"
 import { fetchTokenMetadata, ICP_LEDGER_ID } from "@/services/tokens"
+import { icrcLedger } from "@/services/ledger/icrc"
 
 // ICPay's own token. Distinct from the wallet canister, which holds custody.
 export const ICPAY_LEDGER_ID = "5fsnk-rqaaa-aaaan-q6m4q-cai"
@@ -15,17 +14,6 @@ const STATS_URL = `https://api.icpswap.com/token/${ICPAY_LEDGER_ID}`
 
 export const ICPAY_SWAP_URL = `https://app.icpswap.com/swap?input=${ICP_LEDGER_ID}&output=${ICPAY_LEDGER_ID}`
 export const ICPAY_INFO_URL = `https://app.icpswap.com/info-tokens/details/${ICPAY_LEDGER_ID}`
-
-const supplyIdl: IDL.InterfaceFactory = ({ IDL }) => {
-  const Account = IDL.Record({
-    owner: IDL.Principal,
-    subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)),
-  })
-  return IDL.Service({
-    icrc1_total_supply: IDL.Func([], [IDL.Nat], ["query"]),
-    icrc1_minting_account: IDL.Func([], [IDL.Opt(Account)], ["query"]),
-  })
-}
 
 // The management canister. It has no caller, so nothing can ever transfer out
 // of it -- and in ICRC-1 a transfer *from* the minting account is what mints.
@@ -93,19 +81,18 @@ async function fetchMarket(): Promise<IcpayMarket | null> {
 async function fetchLedgerFacts(
   identity?: Identity
 ): Promise<{ totalSupply: bigint; mintingAccount: string | null }> {
-  const agent = await createAgent(identity)
-  const ledger = Actor.createActor<{
-    icrc1_total_supply: () => Promise<bigint>
-    icrc1_minting_account: () => Promise<[] | [{ owner: Principal }]>
-  }>(supplyIdl, { agent, canisterId: ICPAY_LEDGER_ID })
+  const ledger = await icrcLedger(identity, ICPAY_LEDGER_ID)
 
   const [totalSupply, minting] = await Promise.all([
-    ledger.icrc1_total_supply(),
-    // Optional in ICRC-1, so a ledger that omits it is unknown, not fixed.
-    ledger.icrc1_minting_account().catch(() => [] as []),
+    ledger.totalTokensSupply({ certified: false }),
+    ledger.getMintingAccount({ certified: false }).catch((): [] => []),
   ])
-  const [account] = minting
-  return { totalSupply, mintingAccount: account ? account.owner.toText() : null }
+  const account = fromNullable(minting)
+
+  return {
+    totalSupply,
+    mintingAccount: account?.owner.toText() ?? null,
+  }
 }
 
 export async function fetchIcpayStats(identity?: Identity): Promise<IcpayStats> {

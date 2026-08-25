@@ -348,7 +348,12 @@
     "selfCustodyNet": "받는 금액",
     "selfCustodyDust": "{symbol} 네트워크 수수료보다 적어 옮길 수 없습니다.",
     "selfCustodyEmpty": "옮길 항목이 없습니다 — 이 토큰은 사용자 principal로 전송되지 않았습니다.",
-    "swap": "스왑"
+    "swap": "스왑",
+    "nativeDepositTitle": "Deposit from {asset}",
+    "nativeDepositHint": "Send {asset} to this address to receive {symbol} on the Internet Computer.",
+    "depositIcpayTab": "ICPay",
+    "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
+    "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet."
   },
   "sendToken": {
     "title": "{symbol} 보내기",

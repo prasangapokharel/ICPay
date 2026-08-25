@@ -1,6 +1,10 @@
-import { Actor, type Identity } from "@icp-sdk/core/agent"
-import type { IDL } from "@icp-sdk/core/candid"
+import type { Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
+import {
+  AccountIdentifier,
+  IcpIndexCanister,
+  SubAccount,
+} from "@icp-sdk/canisters/ledger/icp"
 import { createAgent } from "@/services/icp"
 
 // The NNS ICP index canister. It mirrors the ledger and answers by query, so
@@ -16,73 +20,16 @@ export type AccountStats = {
   lastActivity?: bigint
 }
 
-// Only the two methods this reads, and only the fields it uses: the full index
-// interface drags in the whole Operation variant to count rows.
-const indexIdl: IDL.InterfaceFactory = ({ IDL }) => {
-  const Account = IDL.Record({
-    owner: IDL.Principal,
-    subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)),
-  })
-  const TimeStamp = IDL.Record({ timestamp_nanos: IDL.Nat64 })
-  const Tokens = IDL.Record({ e8s: IDL.Nat64 })
-  const Operation = IDL.Variant({
-    Approve: IDL.Record({
-      fee: Tokens,
-      from: IDL.Text,
-      allowance: Tokens,
-      expires_at: IDL.Opt(TimeStamp),
-      spender: IDL.Text,
-      expected_allowance: IDL.Opt(Tokens),
-    }),
-    Burn: IDL.Record({ from: IDL.Text, amount: Tokens, spender: IDL.Opt(IDL.Text) }),
-    Mint: IDL.Record({ to: IDL.Text, amount: Tokens }),
-    Transfer: IDL.Record({
-      to: IDL.Text,
-      fee: Tokens,
-      from: IDL.Text,
-      amount: Tokens,
-      spender: IDL.Opt(IDL.Text),
-    }),
-  })
-  const Transaction = IDL.Record({
-    memo: IDL.Nat64,
-    icrc1_memo: IDL.Opt(IDL.Vec(IDL.Nat8)),
-    operation: Operation,
-    created_at_time: IDL.Opt(TimeStamp),
-    timestamp: IDL.Opt(TimeStamp),
-  })
-  const TransactionWithId = IDL.Record({ id: IDL.Nat64, transaction: Transaction })
-  const Response = IDL.Record({
-    balance: IDL.Nat64,
-    transactions: IDL.Vec(TransactionWithId),
-    oldest_tx_id: IDL.Opt(IDL.Nat64),
-  })
-
-  return IDL.Service({
-    icrc1_balance_of: IDL.Func([Account], [IDL.Nat64], ["query"]),
-    get_account_transactions: IDL.Func(
-      [IDL.Record({ account: Account, start: IDL.Opt(IDL.Nat), max_results: IDL.Nat })],
-      [IDL.Variant({ Ok: Response, Err: IDL.Record({ message: IDL.Text }) })],
-      ["query"]
-    ),
-  })
-}
-
-type IndexActor = {
-  icrc1_balance_of: (a: { owner: Principal; subaccount: [] | [Uint8Array] }) => Promise<bigint>
-  get_account_transactions: (a: {
-    account: { owner: Principal; subaccount: [] | [Uint8Array] }
-    start: [] | [bigint]
-    max_results: bigint
-  }) => Promise<
-    | { Ok: { balance: bigint; transactions: { id: bigint }[]; oldest_tx_id: [] | [bigint] } }
-    | { Err: { message: string } }
-  >
-}
-
 // One page is enough to date the account and count its recent activity, and a
 // full history walk would be dozens of calls for a number nobody reads exactly.
 const PAGE = 100n
+
+function resolveAccountId(owner: string, subaccount?: Uint8Array) {
+  return AccountIdentifier.fromPrincipal({
+    principal: Principal.fromText(owner),
+    ...(subaccount ? { subAccount: SubAccount.fromBytes(subaccount) } : {}),
+  })
+}
 
 export async function fetchAccountStats(
   owner: string,
@@ -90,27 +37,35 @@ export async function fetchAccountStats(
   identity?: Identity
 ): Promise<AccountStats> {
   const agent = await createAgent(identity)
-  const index = Actor.createActor<IndexActor>(indexIdl, { agent, canisterId: ICP_INDEX_ID })
-  const account = {
-    owner: Principal.fromText(owner),
-    subaccount: (subaccount ? [subaccount] : []) as [] | [Uint8Array],
-  }
+  const index = IcpIndexCanister.create({
+    agent,
+    canisterId: Principal.fromText(ICP_INDEX_ID),
+  })
+  const accountIdentifier = resolveAccountId(owner, subaccount)
 
-  const page = await index.get_account_transactions({ account, start: [], max_results: PAGE })
-  if ("Err" in page) {
+  try {
+    const page = await index.getTransactions({
+      accountIdentifier,
+      maxResults: PAGE,
+      certified: false,
+    })
+
+    const oldest = page.oldest_tx_id[0]
+    const newest = page.transactions[0]?.id
+
+    return {
+      balance: page.balance,
+      txCount: page.transactions.length,
+      firstBlock: oldest,
+      lastBlock: newest,
+    }
+  } catch {
     // The index lags the ledger and rejects accounts it has not indexed yet, so
     // the balance is still worth reporting on its own.
-    return { balance: await index.icrc1_balance_of(account), txCount: 0 }
-  }
-
-  const { balance, transactions, oldest_tx_id } = page.Ok
-  const oldest = oldest_tx_id[0]
-  const newest = transactions[0]?.id
-
-  return {
-    balance,
-    txCount: transactions.length,
-    firstBlock: oldest,
-    lastBlock: newest,
+    const balance = await index.accountBalance({
+      accountIdentifier,
+      certified: false,
+    })
+    return { balance, txCount: 0 }
   }
 }

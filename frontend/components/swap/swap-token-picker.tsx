@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -13,7 +12,8 @@ import {
 } from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
 import { formatTokenAmount } from "@/lib/wallet/utils"
-import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
+import { type TokenHolding } from "@/services/tokens"
+import { TokenLogo } from "@/components/token/token-logo"
 
 export function SwapTokenPicker({
   open,
@@ -94,26 +94,5 @@ export function SwapTokenPicker({
         </div>
       </DrawerContent>
     </Drawer>
-  )
-}
-
-function TokenLogo({ token }: { token: TokenHolding }) {
-  const src = token.ledgerId === ICP_LEDGER_ID ? "/images/logo/logo.png" : token.logo
-  if (!src) {
-    return (
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold uppercase text-muted-foreground">
-        {token.symbol.slice(0, 2)}
-      </span>
-    )
-  }
-  return (
-    <Image
-      src={src}
-      alt=""
-      width={36}
-      height={36}
-      unoptimized
-      className="size-9 shrink-0 rounded-full object-contain"
-    />
   )
 }

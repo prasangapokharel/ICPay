@@ -1,6 +1,7 @@
 import { Actor, type Identity } from "@icp-sdk/core/agent"
 import type { IDL } from "@icp-sdk/core/candid"
 import { createAgent } from "@/services/icp"
+import { icrcLedger } from "@/services/ledger/icrc"
 import {
   ICPSWAP_FACTORY_ID,
   ICPSWAP_FEE_TIERS,
@@ -58,11 +59,6 @@ const poolIdl: IDL.InterfaceFactory = ({ IDL }) => {
   })
 }
 
-const feeIdl: IDL.InterfaceFactory = ({ IDL }) =>
-  IDL.Service({
-    icrc1_fee: IDL.Func([], [IDL.Nat], ["query"]),
-  })
-
 function icpswapErrorMessage(err: IcpswapError): string {
   if ("InternalError" in err) return `Internal error: ${err.InternalError}`
   if ("UnsupportedToken" in err) return `Unsupported token: ${err.UnsupportedToken}`
@@ -71,12 +67,8 @@ function icpswapErrorMessage(err: IcpswapError): string {
 }
 
 async function ledgerFee(identity: Identity | undefined, ledgerId: string): Promise<bigint> {
-  const agent = await createAgent(identity)
-  const ledger = Actor.createActor<{ icrc1_fee: () => Promise<bigint> }>(feeIdl, {
-    agent,
-    canisterId: ledgerId,
-  })
-  return ledger.icrc1_fee()
+  const ledger = await icrcLedger(identity, ledgerId)
+  return ledger.transactionFee({ certified: false })
 }
 
 async function resolvePool(

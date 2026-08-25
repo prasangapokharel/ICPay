@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -9,7 +8,8 @@ import { Search01Icon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatTokenAmount } from "@/lib/wallet/utils"
-import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
+import { type TokenHolding } from "@/services/tokens"
+import { TokenLogo } from "@/components/token/token-logo"
 import { useAuth } from "@/components/auth/auth-provider"
 import { prefetchAppRoute } from "@/lib/navigation/prefetchRoute"
 
@@ -138,31 +138,5 @@ function TokenRow({ token, outside }: { token: TokenHolding; outside?: bigint })
         </div>
       </Link>
     </li>
-  )
-}
-
-function TokenLogo({ token }: { token: TokenHolding }) {
-  // ICP ships no icrc1:logo, and its mark is already a local asset.
-  const src = token.ledgerId === ICP_LEDGER_ID ? "/images/logo/logo.png" : token.logo
-
-  if (!src) {
-    return (
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold uppercase text-muted-foreground">
-        {token.symbol.slice(0, 2)}
-      </span>
-    )
-  }
-
-  return (
-    <Image
-      // The ledger logos are inline SVG data URIs, which next/image cannot
-      // process; unoptimized is already the project-wide default anyway.
-      src={src}
-      alt=""
-      width={36}
-      height={36}
-      unoptimized
-      className="size-9 shrink-0 rounded-full object-contain"
-    />
   )
 }
