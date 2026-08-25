@@ -5,7 +5,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { useDebounced } from "@/hooks/ui/useDebounced"
 import { useTokenHoldings } from "@/hooks/wallet/useWalletData"
 import { filterSwapTokens, sortSwapTokens } from "@/lib/swap/tokens"
-import { fetchSwapQuote } from "@/services/swap/swap"
+import { fetchSwapQuote, type SwapQuoteOpts } from "@/services/swap/swap"
 
 const keyFor = (identity: { getPrincipal(): { toText(): string } } | undefined, ...parts: string[]) =>
   identity ? ([...parts, identity.getPrincipal().toText()] as const) : null
@@ -16,7 +16,12 @@ export function useSwapTokens() {
   return { tokens, isLoading }
 }
 
-export function useSwapQuote(tokenIn: string | null, tokenOut: string | null, amountIn: bigint) {
+export function useSwapQuote(
+  tokenIn: string | null,
+  tokenOut: string | null,
+  amountIn: bigint,
+  opts: SwapQuoteOpts = {}
+) {
   const { identity } = useAuth()
   const debouncedAmount = useDebounced(amountIn, 300)
 
@@ -28,7 +33,11 @@ export function useSwapQuote(tokenIn: string | null, tokenOut: string | null, am
 
   const { data, error, isLoading, isValidating, mutate } = useSWR(
     enabled ? keyFor(identity, "swap-quote", tokenIn, tokenOut, debouncedAmount.toString()) : null,
-    () => fetchSwapQuote(identity, tokenIn!, tokenOut!, debouncedAmount),
+    () =>
+      fetchSwapQuote(identity, tokenIn!, tokenOut!, debouncedAmount, {
+        skipAllowlistCheck: true,
+        ...opts,
+      }),
     {
       revalidateOnFocus: false,
       keepPreviousData: true,

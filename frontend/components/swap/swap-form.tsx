@@ -10,6 +10,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { SwapConfirmDrawer } from "@/components/swap/swap-confirm-drawer"
 import { SwapTokenPicker } from "@/components/swap/swap-token-picker"
 import { TokenLogo } from "@/components/token/token-logo"
+import { TokenFiatHint } from "@/components/token/token-fiat-hint"
 import { useSwapQuote, useSwapTokens } from "@/hooks/swap/useSwap"
 import { defaultSwapPair } from "@/lib/swap/tokens"
 import {
@@ -136,7 +137,11 @@ export function SwapForm({
   const { quote, error: quoteError, isLoading: quoteLoading } = useSwapQuote(
     tokenIn?.ledgerId ?? null,
     tokenOut?.ledgerId ?? null,
-    amountIn ?? 0n
+    amountIn ?? 0n,
+    {
+      tokenInFee: tokenIn?.fee,
+      tokenOutFee: tokenOut?.fee,
+    }
   )
 
   const rate =
@@ -264,6 +269,7 @@ export function SwapForm({
           label={t("youPay")}
           token={tokenIn}
           amountText={amountText}
+          fiatAmount={amountIn}
           onAmountChange={setAmountText}
           onPickToken={() => setPicker("in")}
           balance={tokenIn?.balance}
@@ -290,6 +296,7 @@ export function SwapForm({
           label={t("youReceive")}
           token={tokenOut}
           readOnly
+          fiatAmount={quote && quote.amountOut > 0n ? quote.amountOut : null}
           amountText={
             quote && tokenOut
               ? formatTokenAmount(quote.amountOut, tokenOut.decimals)
@@ -409,6 +416,7 @@ function SwapAmountCard({
   label,
   token,
   amountText,
+  fiatAmount,
   onAmountChange,
   onPickToken,
   readOnly,
@@ -421,6 +429,7 @@ function SwapAmountCard({
   label: string
   token: TokenHolding | null
   amountText: string
+  fiatAmount?: bigint | null
   onPickToken: () => void
   onAmountChange?: (v: string) => void
   readOnly?: boolean
@@ -457,6 +466,11 @@ function SwapAmountCard({
           />
         )}
       </div>
+      {token && fiatAmount !== null && fiatAmount !== undefined && fiatAmount > 0n && (
+        <div className="mt-1 flex justify-end">
+          <TokenFiatHint ledgerId={token.ledgerId} amount={fiatAmount} decimals={token.decimals} />
+        </div>
+      )}
       {!readOnly && token && balance !== undefined && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
           <span>
