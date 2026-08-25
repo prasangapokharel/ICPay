@@ -25,7 +25,7 @@ import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import { useBucketPricingTiers } from "@/hooks/bucket/useBucket"
 import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
 import { BUCKET_POPULAR_TIER_GB } from "@/lib/bucket/pricing"
-import { formatAmount } from "@/lib/wallet/utils"
+import { BucketPriceLabel } from "@/components/bucket/bucket-price-label"
 import { cn } from "@/lib/ui/utils"
 
 const FEATURE_KEYS = [
@@ -81,10 +81,10 @@ export function BucketPricingView() {
                     {isLoading && !tier ? (
                       <Skeleton className="ml-auto inline-block h-5 w-24" />
                     ) : tier ? (
-                      <span className="font-semibold">
-                        {formatAmount(tier.priceE8s)}{" "}
-                        <span className="font-normal text-muted-foreground">ICP</span>
-                      </span>
+                      <BucketPriceLabel
+                        priceE8s={tier.priceE8s}
+                        listPriceE8s={tier.listPriceE8s}
+                      />
                     ) : (
                       "—"
                     )}

@@ -11,8 +11,8 @@ import { CheckmarkCircle02Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
 
 export function ComparisonSection() {
   const features = [
-    { name: "Monthly Fees", icbucket: false, s3: true, gcs: true, azure: true },
-    { name: "One-Time Payment", icbucket: true, s3: false, gcs: false, azure: false },
+    { name: "30-Day ICP Plans", icbucket: true, s3: false, gcs: false, azure: false },
+    { name: "Pay with ICP (no credit card)", icbucket: true, s3: false, gcs: false, azure: false },
     { name: "Decentralized", icbucket: true, s3: false, gcs: false, azure: false },
     { name: "Censorship-Resistant", icbucket: true, s3: false, gcs: false, azure: false },
     { name: "On-Chain Verifiable", icbucket: true, s3: false, gcs: false, azure: false },

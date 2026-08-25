@@ -12,12 +12,12 @@ export function FaqSection() {
     {
       question: "How is ICBucket different from AWS S3?",
       answer:
-        "ICBucket is decentralized, built on Internet Computer. You pay once (1-10 ICP) instead of monthly fees. Files are stored on-chain across IC replicas, not on AWS servers. No account suspension risk, no vendor lock-in. S3-compatible API means easy migration.",
+        "ICBucket is decentralized storage on the Internet Computer. You pay in ICP every 30 days from your ICPay balance (e.g. 2.5 ICP for 5 GB) instead of a credit-card AWS bill. Files live on-chain across IC replicas. API keys and SDKs make migration straightforward.",
     },
     {
-      question: "What does 'pay once, store forever' mean?",
+      question: "How does billing work?",
       answer:
-        "You pay a one-time fee based on capacity (e.g., 3 ICP for 5GB). Files remain on-chain as long as the canister has cycles. ICBucket canisters are topped up automatically from bucket revenue. Typical bucket lasts 1-2 years before renewal needed. You can renew anytime to extend duration.",
+        "Each bucket is a 30-day plan paid upfront in ICP from your ICPay balance. When it expires the bucket becomes read-only until you renew. Renewing adds another 30 days — unused time stacks. Prices are quoted live from the canister (cycle cost + margin).",
     },
     {
       question: "Can I use ICBucket for production apps?",

@@ -1,0 +1,2 @@
+ICPay Bucket SDK test file.
+Minimal content for upload, download, and copy checks.

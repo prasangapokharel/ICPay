@@ -4,6 +4,8 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { CommunityIcon } from "@/components/community/community-icon"
 import { CommunityMessageContent } from "@/components/community/community-message-content"
+import { IcpPriceTicket } from "@/components/community/icpPrice/ticket"
+import { messageMentionsIcp } from "@/lib/community/icpPriceTrigger"
 import { CommunityReactionPicker } from "@/components/community/community-reaction-picker"
 import { CommunityReactionRow } from "@/components/community/community-reaction-row"
 import { Bubble, BubbleContent, BubbleReactions } from "@/components/ui/bubble"
@@ -29,6 +31,7 @@ export function PendingBroadcastMessage({ pending }: { pending: PendingMessage }
   const time = formatMessageTime(pending.createdAt)
   const sending = pending.status === "sending"
   const failed = pending.status === "failed"
+  const showIcpTicket = messageMentionsIcp(pending.text)
 
   return (
     <Message className="px-3 py-1 animate-in fade-in slide-in-from-bottom-1 duration-200">
@@ -41,6 +44,11 @@ export function PendingBroadcastMessage({ pending }: { pending: PendingMessage }
             <CommunityMessageContent text={pending.text} />
           </BubbleContent>
         </Bubble>
+        {showIcpTicket ? (
+          <div className="mt-1.5 w-fit max-w-full">
+            <IcpPriceTicket />
+          </div>
+        ) : null}
         <MessageFooter className="gap-1.5">
           {sending && <Spinner className="size-3" />}
           {failed && <span className="text-destructive">{t("postFailed")}</span>}
@@ -81,6 +89,7 @@ export function BroadcastMessage({
   const canManage = isOwner && (onPin || onDelete)
   const canInteract = canReact || canManage
   const hasReactions = (message.reactions?.length ?? 0) > 0
+  const showIcpTicket = messageMentionsIcp(message.text)
 
   const run = async (fn?: () => Promise<void>) => {
     if (!fn || busy) return
@@ -152,7 +161,16 @@ export function BroadcastMessage({
       <MessageContent>
         {canInteract ? (
           <ContextMenu>
-            <ContextMenuTrigger render={<div className="w-fit max-w-full" />}>{bubble}</ContextMenuTrigger>
+            <ContextMenuTrigger render={<div className="w-fit max-w-full" />}>
+              <div className="w-fit max-w-full">
+                {bubble}
+                {showIcpTicket ? (
+                  <div className="mt-1.5 w-fit max-w-full">
+                    <IcpPriceTicket />
+                  </div>
+                ) : null}
+              </div>
+            </ContextMenuTrigger>
             <ContextMenuContent className="w-48">
               {canReact && onReact && (
                 <>
@@ -203,7 +221,14 @@ export function BroadcastMessage({
             </ContextMenuContent>
           </ContextMenu>
         ) : (
-          bubble
+          <div className="w-fit max-w-full">
+            {bubble}
+            {showIcpTicket ? (
+              <div className="mt-1.5 w-fit max-w-full">
+                <IcpPriceTicket />
+              </div>
+            ) : null}
+          </div>
         )}
         {footerParts.length > 0 && (
           <MessageFooter>{footerParts.join(" · ")}</MessageFooter>

@@ -40,9 +40,9 @@ export function ProblemSolution() {
   const solutions = [
     {
       icon: MoneyBag02Icon,
-      title: "Pay Once, Store Forever",
+      title: "Simple 30-Day Plans",
       description:
-        "No monthly fees. Pay 1-10 ICP once based on capacity (1GB-100GB). Your files stay on-chain as long as the canister has cycles.",
+        "Pay from your ICPay balance in ICP — from 0.5 ICP for 1 GB per 30 days. No credit card. Renew anytime and stack unused time.",
     },
     {
       icon: ShieldIcon,
@@ -100,7 +100,7 @@ export function ProblemSolution() {
               <div className="space-y-3">
                 <h2 className="text-3xl font-bold tracking-tight">The Solution</h2>
                 <p className="text-lg text-muted-foreground">
-                  ICBucket: On-chain storage with one-time payment and S3-compatible API.
+                  ICBucket: On-chain storage with 30-day ICP plans and an S3-style API.
                 </p>
               </div>
               <div className="space-y-4">
