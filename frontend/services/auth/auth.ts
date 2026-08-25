@@ -1,21 +1,68 @@
-import { AuthClient } from "@icp-sdk/auth/client"
+import type { Identity } from "@icp-sdk/core/agent"
+import { AuthClient, type OpenIdProvider } from "@icp-sdk/auth/client"
 import { getIdentityProvider, getDerivationOrigin } from "@/services/icp"
 import { getWalletActor, clearActorCache } from "@/services/wallet"
-import type { Identity } from "@icp-sdk/core/agent"
+import {
+  DELEGATION_TTL,
+  POPUP_FEATURES,
+} from "@/lib/auth/config"
+import {
+  prefersRedirectTransport,
+  markRedirectPending,
+  clearRedirectPending,
+  hasRedirectPending,
+  isInternetIdentityReturn,
+  clearInternetIdentityReturnHash,
+} from "@/lib/auth/transport"
+import { finishAttributeVerification, startAttributeRequest } from "@/services/auth/attributes"
+
+export type LoginOptions = {
+  openIdProvider?: OpenIdProvider
+  transport?: "window" | "redirect"
+}
 
 let clientPromise: Promise<AuthClient> | null = null
 let readyClient: AuthClient | null = null
 
-export async function createAuthClient(): Promise<AuthClient> {
-  // Cached because AuthClient.create() reads IndexedDB, and kept in readyClient
-  // so login() can reach window.open() with no await in front of it.
-  clientPromise ??= AuthClient.create({
+function wantsRedirectTransport(options?: LoginOptions): boolean {
+  if (options?.transport === "window") return false
+  if (options?.transport === "redirect") return true
+  return prefersRedirectTransport()
+}
+
+function clientOptions(options?: LoginOptions) {
+  const redirect = wantsRedirectTransport(options)
+  return {
+    identityProvider: getIdentityProvider(),
+    derivationOrigin: getDerivationOrigin(),
     idleOptions: { disableIdle: true, disableDefaultIdleCallback: true },
-  }).then((c) => {
-    readyClient = c
-    return c
-  })
-  return clientPromise
+    windowOpenerFeatures: POPUP_FEATURES,
+    transport: redirect ? ("redirect" as const) : ("window" as const),
+    ...(options?.openIdProvider ? { openIdProvider: options.openIdProvider } : {}),
+  }
+}
+
+function signInOptions() {
+  return {
+    maxTimeToLive: DELEGATION_TTL,
+  }
+}
+
+function ensureDefaultClient(): AuthClient {
+  readyClient ??= new AuthClient(clientOptions())
+  clientPromise ??= Promise.resolve(readyClient)
+  return readyClient
+}
+
+function createClient(options?: LoginOptions): AuthClient {
+  if (!options?.openIdProvider && !wantsRedirectTransport(options)) {
+    return ensureDefaultClient()
+  }
+  return new AuthClient(clientOptions(options))
+}
+
+export async function createAuthClient(): Promise<AuthClient> {
+  return ensureDefaultClient()
 }
 
 export class PopupBlockedError extends Error {
@@ -25,61 +72,68 @@ export class PopupBlockedError extends Error {
   }
 }
 
-export function login(provider?: string): Promise<Identity | null> {
-  // Deliberately NOT async: auth-client calls window.open() synchronously, and
-  // any await defers to a microtask that can spend the click's popup activation.
-  const authClient = readyClient
-  if (!authClient) {
-    void createAuthClient()
-    return Promise.reject(
-      new Error("Still preparing sign-in. Please try again in a moment.")
-    )
+async function signInWithAttributes(
+  authClient: AuthClient,
+  options?: LoginOptions,
+): Promise<Identity | null> {
+  const identity = await authClient.signIn(signInOptions())
+
+  if (wantsRedirectTransport(options)) return identity
+
+  try {
+    const attributes = await startAttributeRequest(authClient, options?.openIdProvider)
+    await finishAttributeVerification(identity, attributes)
+  } catch (e) {
+    console.warn("II attribute verification skipped:", e)
   }
 
-  return new Promise((resolve, reject) => {
-    let settled = false
-    const finish = (identity: Identity | null) => {
-      if (settled) return
-      settled = true
-      resolve(identity)
-    }
+  return identity
+}
 
-    // auth-client polls for a user-dismissed popup and reports it through
-    // onError, so no extra watchdog is needed for that case.
-    authClient
-      .login({
-        identityProvider: provider ?? getIdentityProvider(),
-        derivationOrigin: getDerivationOrigin(),
-        onSuccess: () => finish(authClient.getIdentity()),
-        onError: (error) => {
-          console.error("II login error:", error)
-          finish(null)
-        },
-      })
-      .then(() => {
-        // A blocked window leaves _idpWindow undefined, and auth-client guards
-        // its interrupt check on that handle, so neither callback ever fires.
-        const popup = (authClient as unknown as { _idpWindow?: Window })._idpWindow
-        if (!popup && !settled) {
-          settled = true
-          reject(new PopupBlockedError())
-        }
-      })
-      .catch((e) => {
-        if (settled) return
-        settled = true
-        reject(e)
-      })
-  })
+export async function resumeRedirectSignIn(): Promise<Identity | null> {
+  if (!hasRedirectPending() && !isInternetIdentityReturn()) return null
+  try {
+    const options: LoginOptions = { transport: "redirect" }
+    const identity = await signInWithAttributes(
+      new AuthClient(clientOptions(options)),
+      options,
+    )
+    clearRedirectPending()
+    clearInternetIdentityReturnHash()
+    return identity
+  } catch (e) {
+    clearRedirectPending()
+    console.error("II redirect resume error:", e)
+    return null
+  }
+}
+
+export async function login(options?: LoginOptions): Promise<Identity | null> {
+  if (wantsRedirectTransport(options)) markRedirectPending()
+  const authClient = createClient(options)
+
+  return signInWithAttributes(authClient, options)
+    .then((identity) => {
+      if (wantsRedirectTransport(options)) {
+        clearRedirectPending()
+        clearInternetIdentityReturnHash()
+      }
+      return identity
+    })
+    .catch((e) => {
+      if (wantsRedirectTransport(options)) clearRedirectPending()
+      console.error("II login error:", e)
+      if (e instanceof Error && /popup|blocked/i.test(e.message)) {
+        throw new PopupBlockedError()
+      }
+      return null
+    })
 }
 
 export async function logout(): Promise<void> {
   const authClient = await createAuthClient()
-  await authClient.logout()
+  await authClient.signOut({ returnTo: "/login" })
 
-  // logout() drops the stored base key but leaves it on the instance, so reusing
-  // this client would leave IndexedDB holding a chain with no matching key and
-  // the next reload would silently fall back to anonymous.
   clientPromise = null
   readyClient = null
   void createAuthClient()
@@ -89,20 +143,16 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
     promise,
     new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error(`timed out after ${ms}ms`)), ms)
+      setTimeout(() => reject(new Error(`timed out after ${ms}ms`)), ms),
     ),
   ])
 }
 
-// Creates the user record on first sign-in. Bounded because a hung boundary-node
-// request would otherwise strand the app on its loading screen.
 export async function openBackendSession(identity: Identity): Promise<void> {
   const actor = await getWalletActor(identity)
   await withTimeout(actor.login(), 20_000)
 }
 
-// Clears the delegation that the canister just rejected, so the next reload
-// starts anonymous instead of retrying the same dead chain.
 export async function discardRejectedSession(): Promise<void> {
   await logout()
   clearActorCache()

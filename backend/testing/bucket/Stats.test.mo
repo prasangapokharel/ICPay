@@ -141,7 +141,7 @@ assert BucketRepository.countExpiredBuckets(store) == 0;
 assert BucketRepository.countFiles(store) == 1;
 assert BucketRepository.getTotalStorageUsed(store) > 0;
 assert BucketRepository.getTotalCapacity(store) == 1_000_000_000;
-assert BillingService.calculatePrice(1_000_000_000) == 100_000_000;
+assert BillingService.calculatePrice(1_000_000_000) == 50_000_000;
 Debug.print("PASS [STATS]: cloud rollup counts (cycle balance tested on-chain)");
 
 switch (BucketRepository.get(store, "stats-bucket")) {

@@ -39,8 +39,17 @@ export function BucketPricingScreen() {
               </View>
               {isLoading && !tier ? (
                 <Skeleton className="h-5 w-20" />
+              ) : tier ? (
+                <View className="flex-row items-baseline gap-2">
+                  {tier.listPriceE8s > tier.priceE8s ? (
+                    <Text className="text-sm text-muted-foreground line-through">
+                      {formatAmount(tier.listPriceE8s)} ICP
+                    </Text>
+                  ) : null}
+                  <Text className="font-semibold">{formatAmount(tier.priceE8s)} ICP</Text>
+                </View>
               ) : (
-                <Text className="font-semibold">{tier ? `${formatAmount(tier.priceE8s)} ICP` : '—'}</Text>
+                <Text>—</Text>
               )}
             </View>
           </Card>

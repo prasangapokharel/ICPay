@@ -3,6 +3,7 @@ import Time "mo:core/Time";
 import Map "mo:core/Map";
 import Blob "mo:core/Blob";
 import Nat "mo:core/Nat";
+import Nat8 "mo:core/Nat8";
 
 module {
   public type UserId = Text;
@@ -23,6 +24,7 @@ module {
     var username: ?Username;
     var displayName: Text;
     var socialLinks: [SocialLink];
+    var verifiedEmail: ?Text;
     createdAt: Int;
     var updatedAt: Int;
   };
@@ -549,6 +551,81 @@ module {
   public type LiveCreateResult = {
     roomId: Text;
     inviteToken: ?Text;
+  };
+
+  public type CommunityVisibility = { #open; #inviteOnly };
+  public type CommunityAccess = { #free; #paid };
+
+  public type CommunityChannel = {
+    id: Text;
+    name: Text;
+    slug: Text;
+    owner: Principal;
+    bio: Text;
+    visibility: CommunityVisibility;
+    access: CommunityAccess;
+    priceE8s: Nat;
+    inviteHash: ?Text;
+    pinnedMessageId: ?Nat;
+    memberCount: Nat;
+    createdAt: Int;
+    channelAvatar: ?Blob;
+  };
+
+  public type CommunityChannelPublic = {
+    id: Text;
+    name: Text;
+    slug: Text;
+    owner: Principal;
+    ownerUsername: ?Username;
+    bio: Text;
+    visibility: CommunityVisibility;
+    access: CommunityAccess;
+    priceE8s: Nat;
+    pinnedMessageId: ?Nat;
+    memberCount: Nat;
+    createdAt: Int;
+    channelAvatar: ?Blob;
+  };
+
+  public type CommunityMember = {
+    joinedAt: Int;
+  };
+
+  public type CommunityMessage = {
+    id: Nat;
+    author: Principal;
+    text: Text;
+    createdAt: Int;
+    deleted: Bool;
+  };
+
+  public type CommunityReactionCode = Nat8;
+
+  public type CommunityReactionCount = {
+    code: CommunityReactionCode;
+    count: Nat;
+  };
+
+  public type CommunityMessagePublic = {
+    id: Nat;
+    author: Principal;
+    authorUsername: ?Username;
+    text: Text;
+    createdAt: Int;
+    reactions: [CommunityReactionCount];
+    myReaction: ?CommunityReactionCode;
+  };
+
+  public type CommunityReactionUpdate = {
+    messageId: Nat;
+    myReaction: ?CommunityReactionCode;
+    reactions: [CommunityReactionCount];
+  };
+
+  public type CommunityCreateResult = {
+    channelId: Text;
+    inviteCode: ?Text;
   };
 
   public func tokenToPublic(self: Token): TokenPublic {

@@ -4,6 +4,7 @@ import { ProblemSolution } from "@/components/products/icfalcon/problem-solution
 import { ArticleSection } from "@/components/products/icfalcon/article-section"
 import { FaqSection } from "@/components/products/icfalcon/faq-section"
 import { CreditSection } from "@/components/products/icfalcon/credit-section"
+import { ProductFooter } from "@/components/products/shared/product-footer"
 
 export const metadata: Metadata = {
   title: "ICFalcon - Production-Ready Motoko Framework for Internet Computer",
@@ -50,6 +51,7 @@ export default function ICFalconPage() {
       <ArticleSection />
       <FaqSection />
       <CreditSection />
+      <ProductFooter />
     </div>
   )
 }

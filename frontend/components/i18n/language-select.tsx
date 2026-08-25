@@ -18,18 +18,18 @@ export function LanguageSelect() {
   const active = LOCALES.find((l) => l.code === locale) ?? LOCALES[0]
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl border px-4 py-3.5">
+    <div className="flex min-w-0 items-center gap-3 rounded-2xl border px-4 py-3.5">
       <Flag country={active.country} />
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
         <p className="text-sm">{t("label")}</p>
-        <p className="text-xs text-muted-foreground">{t("description")}</p>
+        <p className="truncate text-xs text-muted-foreground">{t("description")}</p>
       </div>
       <Select
         value={locale}
         onValueChange={(value) => setLocale(value as Locale)}
         items={LOCALES.map((l) => ({ value: l.code, label: l.label }))}
       >
-        <SelectTrigger size="sm" aria-label={t("select")} className="shrink-0">
+        <SelectTrigger size="sm" aria-label={t("select")} className="max-w-[6.5rem] shrink-0">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

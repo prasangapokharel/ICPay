@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useLayoutEffect } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
@@ -30,8 +31,12 @@ import { WALLET_CANISTER_ID } from "@/services/icp"
 export default function BucketDocsPage() {
   const t = useTranslations("bucket")
 
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+  }, [])
+
   return (
-    <div className="mx-auto max-w-3xl space-y-6 pt-2 pb-8">
+    <div className="w-full min-w-0 space-y-6 pt-2 pb-8">
       <BucketBackButton href="/bucket" />
 
       <div>
@@ -86,7 +91,7 @@ export default function BucketDocsPage() {
           <div className="space-y-2">
             <p className="text-xs font-medium text-foreground">{t("docsMethodListTitle")}</p>
             <Card size="sm" className="py-0">
-              <CardContent className="px-0">
+              <CardContent className="overflow-x-auto px-0">
                 <Table className="min-w-[28rem] text-xs">
                   <TableHeader>
                     <TableRow className="bg-muted/30 hover:bg-muted/30">

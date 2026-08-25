@@ -1,10 +1,10 @@
 "use client"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { EyeIcon, EyeOffIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { AppIcon } from "@/components/ui/app-icon"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { cn } from "@/lib/ui/utils"
 import type { IcpPrice } from "@/lib/market/icpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 
@@ -71,7 +71,11 @@ export function BalanceCard({
           onClick={onToggleHidden}
           className="text-primary-foreground/60 hover:bg-primary-foreground/15 hover:text-primary-foreground"
         >
-          <HugeiconsIcon icon={hidden ? EyeOffIcon : EyeIcon} className="size-4" />
+          <AppIcon
+            name="hide"
+            size={22}
+            className={cn(hidden && "opacity-70")}
+          />
         </Button>
       </div>
 

@@ -4,7 +4,7 @@
 
 set -e
 
-DFX_WARNING=-mainnet_plaintext_identity
+export DFX_WARNING=-mainnet_plaintext_identity
 
 NETWORK="${1:-ic}"
 

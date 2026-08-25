@@ -1,16 +1,16 @@
 "use client"
 
 import { useMemo, useRef, useState } from "react"
-import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDataTransferVerticalIcon } from "@hugeicons/core-free-icons"
+import { AppIcon } from "@/components/ui/app-icon"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { SwapConfirmDrawer } from "@/components/swap/swap-confirm-drawer"
 import { SwapTokenPicker } from "@/components/swap/swap-token-picker"
+import { TokenLogo } from "@/components/token/token-logo"
+import { TokenFiatHint } from "@/components/token/token-fiat-hint"
 import { useSwapQuote, useSwapTokens } from "@/hooks/swap/useSwap"
 import { defaultSwapPair } from "@/lib/swap/tokens"
 import {
@@ -137,7 +137,11 @@ export function SwapForm({
   const { quote, error: quoteError, isLoading: quoteLoading } = useSwapQuote(
     tokenIn?.ledgerId ?? null,
     tokenOut?.ledgerId ?? null,
-    amountIn ?? 0n
+    amountIn ?? 0n,
+    {
+      tokenInFee: tokenIn?.fee,
+      tokenOutFee: tokenOut?.fee,
+    }
   )
 
   const rate =
@@ -265,6 +269,7 @@ export function SwapForm({
           label={t("youPay")}
           token={tokenIn}
           amountText={amountText}
+          fiatAmount={amountIn}
           onAmountChange={setAmountText}
           onPickToken={() => setPicker("in")}
           balance={tokenIn?.balance}
@@ -275,8 +280,14 @@ export function SwapForm({
         />
 
         <div className="flex justify-center">
-          <Button type="button" variant="outline" size="icon" className="rounded-full" onClick={flip}>
-            <HugeiconsIcon icon={ArrowDataTransferVerticalIcon} className="size-4" />
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="size-10 rounded-full border-border/60 bg-gray-800 hover:bg-gray-700"
+            onClick={flip}
+          >
+            <AppIcon name="swap" size={20} />
             <span className="sr-only">{t("flip")}</span>
           </Button>
         </div>
@@ -285,6 +296,7 @@ export function SwapForm({
           label={t("youReceive")}
           token={tokenOut}
           readOnly
+          fiatAmount={quote && quote.amountOut > 0n ? quote.amountOut : null}
           amountText={
             quote && tokenOut
               ? formatTokenAmount(quote.amountOut, tokenOut.decimals)
@@ -404,6 +416,7 @@ function SwapAmountCard({
   label,
   token,
   amountText,
+  fiatAmount,
   onAmountChange,
   onPickToken,
   readOnly,
@@ -416,6 +429,7 @@ function SwapAmountCard({
   label: string
   token: TokenHolding | null
   amountText: string
+  fiatAmount?: bigint | null
   onPickToken: () => void
   onAmountChange?: (v: string) => void
   readOnly?: boolean
@@ -435,7 +449,7 @@ function SwapAmountCard({
           onClick={onPickToken}
           className="flex shrink-0 items-center gap-2 rounded-full bg-muted/60 py-1.5 pl-1.5 pr-3 text-sm font-semibold"
         >
-          {token ? <MiniLogo token={token} /> : null}
+          {token ? <TokenLogo token={token} className="size-7" /> : null}
           {token?.symbol ?? t("selectToken")}
         </button>
         {readOnly ? (
@@ -452,6 +466,11 @@ function SwapAmountCard({
           />
         )}
       </div>
+      {token && fiatAmount !== null && fiatAmount !== undefined && fiatAmount > 0n && (
+        <div className="mt-1 flex justify-end">
+          <TokenFiatHint ledgerId={token.ledgerId} amount={fiatAmount} decimals={token.decimals} />
+        </div>
+      )}
       {!readOnly && token && balance !== undefined && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
           <span>
@@ -474,20 +493,6 @@ function SwapAmountCard({
         </div>
       )}
     </div>
-  )
-}
-
-function MiniLogo({ token }: { token: TokenHolding }) {
-  const src = token.ledgerId === ICP_LEDGER_ID ? "/images/logo/logo.png" : token.logo
-  if (!src) {
-    return (
-      <span className="flex size-7 items-center justify-center rounded-full bg-muted text-[10px] font-bold uppercase">
-        {token.symbol.slice(0, 2)}
-      </span>
-    )
-  }
-  return (
-    <Image src={src} alt="" width={28} height={28} unoptimized className="size-7 rounded-full object-contain" />
   )
 }
 

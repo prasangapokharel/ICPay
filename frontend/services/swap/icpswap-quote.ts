@@ -1,6 +1,7 @@
-import { Actor, type Identity } from "@icp-sdk/core/agent"
+import { Actor, type HttpAgent, type Identity } from "@icp-sdk/core/agent"
 import type { IDL } from "@icp-sdk/core/candid"
 import { createAgent } from "@/services/icp"
+import { icrcTransferFee } from "@/services/ledger/icrc"
 import {
   ICPSWAP_FACTORY_ID,
   ICPSWAP_FEE_TIERS,
@@ -10,6 +11,11 @@ import {
 } from "@/lib/swap/config"
 import { icpServiceFee, netSwapOutput } from "@/lib/swap/utils"
 import type { SwapQuoteResult } from "@/services/types"
+
+export type SwapQuoteFees = {
+  tokenInFee?: bigint
+  tokenOutFee?: bigint
+}
 
 type PoolRef = {
   poolId: string
@@ -58,11 +64,6 @@ const poolIdl: IDL.InterfaceFactory = ({ IDL }) => {
   })
 }
 
-const feeIdl: IDL.InterfaceFactory = ({ IDL }) =>
-  IDL.Service({
-    icrc1_fee: IDL.Func([], [IDL.Nat], ["query"]),
-  })
-
 function icpswapErrorMessage(err: IcpswapError): string {
   if ("InternalError" in err) return `Internal error: ${err.InternalError}`
   if ("UnsupportedToken" in err) return `Unsupported token: ${err.UnsupportedToken}`
@@ -70,17 +71,22 @@ function icpswapErrorMessage(err: IcpswapError): string {
   return "Common error"
 }
 
-async function ledgerFee(identity: Identity | undefined, ledgerId: string): Promise<bigint> {
-  const agent = await createAgent(identity)
-  const ledger = Actor.createActor<{ icrc1_fee: () => Promise<bigint> }>(feeIdl, {
-    agent,
-    canisterId: ledgerId,
-  })
-  return ledger.icrc1_fee()
+type FactoryActor = {
+  getPool: (args: {
+    token0: { address: string; standard: string }
+    token1: { address: string; standard: string }
+    fee: bigint
+  }) => Promise<{ ok?: { canisterId: { toText(): string }; fee: bigint; token0: { address: string } }; err?: IcpswapError }>
 }
 
+function factoryActor(agent: HttpAgent): FactoryActor {
+  return Actor.createActor(factoryIdl, { agent, canisterId: ICPSWAP_FACTORY_ID })
+}
+
+// Pool ids come from on-chain factory queries — ICPSwap has no public pool-lookup
+// REST endpoint (only per-token market stats at /token/{ledgerId}).
 async function resolvePool(
-  identity: Identity | undefined,
+  agent: HttpAgent,
   tokenIn: string,
   tokenOut: string
 ): Promise<PoolRef & { zeroForOne: boolean }> {
@@ -90,24 +96,13 @@ async function resolvePool(
     return { ...cached, zeroForOne: tokenIn === cached.token0 }
   }
 
-  const agent = await createAgent(identity)
-  const factory = Actor.createActor<{
-    getPool: (args: {
-      token0: { address: string; standard: string }
-      token1: { address: string; standard: string }
-      fee: bigint
-    }) => Promise<{ ok?: { canisterId: { toText(): string }; fee: bigint; token0: { address: string } }; err?: IcpswapError }>
-  }>(factoryIdl, { agent, canisterId: ICPSWAP_FACTORY_ID })
-
+  const factory = factoryActor(agent)
   const [t0, t1] = tokenIn < tokenOut ? [tokenIn, tokenOut] : [tokenOut, tokenIn]
   const token0 = { address: t0, standard: icpSwapTokenStandard(t0) }
   const token1 = { address: t1, standard: icpSwapTokenStandard(t1) }
 
-  const hits = await Promise.all(
-    ICPSWAP_FEE_TIERS.map((fee) => factory.getPool({ token0, token1, fee: BigInt(fee) }))
-  )
-
-  for (const result of hits) {
+  for (const fee of ICPSWAP_FEE_TIERS) {
+    const result = await factory.getPool({ token0, token1, fee: BigInt(fee) })
     if (result.ok) {
       const pool: PoolRef = {
         poolId: result.ok.canisterId.toText(),
@@ -127,7 +122,8 @@ export async function fetchIcpswapQuote(
   identity: Identity | undefined,
   tokenIn: string,
   tokenOut: string,
-  amountIn: bigint
+  amountIn: bigint,
+  fees: SwapQuoteFees = {}
 ): Promise<SwapQuoteResult> {
   if (isSwapBlocked(tokenIn) || isSwapBlocked(tokenOut)) {
     throw new Error("ICPAY cannot be swapped on ICPay")
@@ -136,17 +132,17 @@ export async function fetchIcpswapQuote(
   if (amountIn <= 0n) throw new Error("amountIn must be > 0")
 
   const serviceFee = icpServiceFee()
+  const agent = await createAgent(identity)
 
   const [tokenInFee, tokenOutFee, pool] = await Promise.all([
-    ledgerFee(identity, tokenIn),
-    ledgerFee(identity, tokenOut),
-    resolvePool(identity, tokenIn, tokenOut),
+    icrcTransferFee(identity, tokenIn, fees.tokenInFee),
+    icrcTransferFee(identity, tokenOut, fees.tokenOutFee),
+    resolvePool(agent, tokenIn, tokenOut),
   ])
 
   const quoteAmountIn = amountIn - tokenInFee
   if (quoteAmountIn <= 0n) throw new Error("amountIn too small after ledger fee")
 
-  const agent = await createAgent(identity)
   const poolActor = Actor.createActor<{
     quote: (args: {
       zeroForOne: boolean

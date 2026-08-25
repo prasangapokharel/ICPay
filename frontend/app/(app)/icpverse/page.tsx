@@ -13,11 +13,14 @@ import {
   ArrowRight01Icon,
 } from "@hugeicons/core-free-icons"
 import { avatarUriFor } from "@/lib/profile/avatar"
+import { useAuth } from "@/components/auth/auth-provider"
+import { prefetchUsernameProfile } from "@/lib/navigation/prefetchRoute"
 import { useUserSearch } from "@/hooks/wallet/useWalletData"
 import { useDebounced } from "@/hooks/ui/useDebounced"
 
 export default function IcpversePage() {
   const t = useTranslations("icpverse")
+  const { identity } = useAuth()
   const [search, setSearch] = useState("")
   const debounced = useDebounced(search)
   // An empty search matches every username server-side, which is what keeps the
@@ -64,6 +67,9 @@ export default function IcpversePage() {
               <Link
                 key={u.id}
                 href={`/icpverse/${encodeURIComponent(name)}`}
+                prefetch
+                onMouseEnter={() => prefetchUsernameProfile(name, identity)}
+                onFocus={() => prefetchUsernameProfile(name, identity)}
                 className="flex items-center gap-3 rounded-2xl p-2.5 transition-colors hover:bg-accent active:scale-[0.99]"
               >
                 <Avatar className="size-11">

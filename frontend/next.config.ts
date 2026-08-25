@@ -14,6 +14,10 @@ const frontendRoot = path.dirname(fileURLToPath(import.meta.url))
 // build-frontend.sh). Vercel keeps a normal Next build so /api/cloud can proxy
 // cloud.icpay.app → *.raw.icp0.io/cloud/* with the correct upstream Host.
 const staticExport = process.env.ICP_STATIC_EXPORT === "1"
+// Cache Components and Partial Prefetching need a server at build/runtime. The
+// on-chain asset canister build is a static export only — keep it on the legacy
+// model so deep-link shells still work through onchain-shell.js.
+const cacheNav = !staticExport
 
 export default (phase: string): NextConfig => ({
   turbopack: {
@@ -21,4 +25,6 @@ export default (phase: string): NextConfig => ({
   },
   output: staticExport && phase === PHASE_PRODUCTION_BUILD ? "export" : undefined,
   images: { unoptimized: true },
+  cacheComponents: cacheNav,
+  partialPrefetching: cacheNav,
 })

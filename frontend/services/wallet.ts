@@ -27,8 +27,6 @@ import type {
   ApiResult_19,
   ApiResult_20,
   ApiResult_21,
-  AnalyticsData,
-  AnalyticsExportResult,
   SwapQuoteResult,
   SwapResult,
 } from "@/services/types"
@@ -36,6 +34,8 @@ import type {
 export interface WalletActor {
   health: () => Promise<string>
   login: () => Promise<AuthResult>
+  _internet_identity_sign_in_start: () => Promise<Uint8Array>
+  _internet_identity_sign_in_finish: () => Promise<{ ok: null } | { err: string }>
   register: (username: string) => Promise<AuthResult>
   getUser: () => Promise<[] | [UserPublic]>
   updateUsername: (newUsername: string) => Promise<ApiResult_2>
@@ -197,6 +197,50 @@ export interface WalletActor {
   getLiveRoom: (roomId: string) => Promise<[] | [Record<string, unknown>]>
   listPublicLiveRooms: (limit: bigint, offset: bigint) => Promise<Record<string, unknown>[]>
   listLivePeers: (roomId: string) => Promise<Record<string, unknown>[]>
+  createCommunityChannel: (
+    name: string,
+    slug: string,
+    bio: string,
+    visibility: { open: null } | { inviteOnly: null },
+    access: { free: null } | { paid: null },
+    priceE8s: bigint,
+    inviteSecret: [] | [string]
+  ) => Promise<{ ok: { channelId: string; inviteCode: [] | [string] }; err?: never } | { err: string; ok?: never }>
+  joinCommunityChannel: (
+    channelId: string,
+    inviteCode: [] | [string]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  leaveCommunityChannel: (channelId: string) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
+  postCommunityMessage: (
+    channelId: string,
+    text: string
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  pinCommunityMessage: (
+    channelId: string,
+    messageId: bigint
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  deleteCommunityMessage: (
+    channelId: string,
+    messageId: bigint
+  ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
+  setCommunityMessageReaction: (
+    channelId: string,
+    messageId: bigint,
+    code: number
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  setCommunityChannelAvatar: (
+    channelId: string,
+    avatar: [] | [Uint8Array]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  getCommunityChannel: (channelId: string) => Promise<[] | [Record<string, unknown>]>
+  listPublicCommunityChannels: (limit: bigint, offset: bigint) => Promise<Record<string, unknown>[]>
+  listMyCommunityChannels: () => Promise<{ ok: Record<string, unknown>[]; err?: never } | { err: string; ok?: never }>
+  listCommunityMessages: (
+    channelId: string,
+    afterId: bigint,
+    limit: bigint
+  ) => Promise<{ ok: Record<string, unknown>[]; err?: never } | { err: string; ok?: never }>
+  isCommunityMember: (channelId: string) => Promise<boolean>
   getIcpayRate: () => Promise<bigint>
   getIcpaySale: () => Promise<IcpaySaleQuote>
   buyIcpay: (icpAmount: bigint, recipient: [] | [Principal]) => Promise<IcpayPurchaseResult>
@@ -249,7 +293,7 @@ export function clearActorCache(): void {
   clearAgentCache()
 }
 
-const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
+export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const TxId = IDL.Text
 
   const TxType = IDL.Variant({
@@ -664,6 +708,54 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const ApiResultLiveRoom = IDL.Variant({ ok: LiveRoomPublic, err: IDL.Text })
   const ApiResultLiveSignals = IDL.Variant({ ok: IDL.Vec(LiveSignal), err: IDL.Text })
 
+  const CommunityVisibility = IDL.Variant({ open: IDL.Null, inviteOnly: IDL.Null })
+  const CommunityAccess = IDL.Variant({ free: IDL.Null, paid: IDL.Null })
+  const CommunityChannelPublic = IDL.Record({
+    id: IDL.Text,
+    name: IDL.Text,
+    slug: IDL.Text,
+    owner: IDL.Principal,
+    ownerUsername: IDL.Opt(IDL.Text),
+    bio: IDL.Text,
+    visibility: CommunityVisibility,
+    access: CommunityAccess,
+    priceE8s: IDL.Nat,
+    pinnedMessageId: IDL.Opt(IDL.Nat),
+    memberCount: IDL.Nat,
+    createdAt: IDL.Int,
+    channelAvatar: IDL.Opt(IDL.Vec(IDL.Nat8)),
+  })
+  const CommunityReactionCount = IDL.Record({
+    code: IDL.Nat8,
+    count: IDL.Nat,
+  })
+  const CommunityMessagePublic = IDL.Record({
+    id: IDL.Nat,
+    author: IDL.Principal,
+    authorUsername: IDL.Opt(IDL.Text),
+    text: IDL.Text,
+    createdAt: IDL.Int,
+    reactions: IDL.Vec(CommunityReactionCount),
+    myReaction: IDL.Opt(IDL.Nat8),
+  })
+  const CommunityReactionUpdate = IDL.Record({
+    messageId: IDL.Nat,
+    myReaction: IDL.Opt(IDL.Nat8),
+    reactions: IDL.Vec(CommunityReactionCount),
+  })
+  const CommunityCreateResult = IDL.Record({
+    channelId: IDL.Text,
+    inviteCode: IDL.Opt(IDL.Text),
+  })
+  const ApiResultCommunityCreate = IDL.Variant({ ok: CommunityCreateResult, err: IDL.Text })
+  const ApiResultCommunityChannel = IDL.Variant({ ok: CommunityChannelPublic, err: IDL.Text })
+  const ApiResultCommunityChannels = IDL.Variant({ ok: IDL.Vec(CommunityChannelPublic), err: IDL.Text })
+  const ApiResultCommunityMessages = IDL.Variant({ ok: IDL.Vec(CommunityMessagePublic), err: IDL.Text })
+  const ApiResultCommunityReactionUpdate = IDL.Variant({
+    ok: CommunityReactionUpdate,
+    err: IDL.Text,
+  })
+
   const IcpaySaleQuote = IDL.Record({
     rate: IDL.Nat,
     inventoryCap: IDL.Nat,
@@ -687,6 +779,12 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   return IDL.Service({
     health: IDL.Func([], [IDL.Text], ["query"]),
     login: IDL.Func([], [AuthResult], []),
+    _internet_identity_sign_in_start: IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
+    _internet_identity_sign_in_finish: IDL.Func(
+      [],
+      [IDL.Variant({ ok: IDL.Null, err: IDL.Text })],
+      [],
+    ),
     register: IDL.Func([IDL.Text], [AuthResult], []),
     getUser: IDL.Func([], [IDL.Opt(UserPublic)], ["query"]),
     updateUsername: IDL.Func([IDL.Text], [ApiResult_2], []),
@@ -886,6 +984,39 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     getLiveRoom: IDL.Func([IDL.Text], [IDL.Opt(LiveRoomPublic)], ["query"]),
     listPublicLiveRooms: IDL.Func([IDL.Nat, IDL.Nat], [IDL.Vec(LiveRoomPublic)], ["query"]),
     listLivePeers: IDL.Func([IDL.Text], [IDL.Vec(LivePeer)], ["query"]),
+    createCommunityChannel: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, CommunityVisibility, CommunityAccess, IDL.Nat, IDL.Opt(IDL.Text)],
+      [ApiResultCommunityCreate],
+      []
+    ),
+    joinCommunityChannel: IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text)],
+      [ApiResultCommunityChannel],
+      []
+    ),
+    leaveCommunityChannel: IDL.Func([IDL.Text], [ApiResultUnit], []),
+    postCommunityMessage: IDL.Func([IDL.Text, IDL.Text], [IDL.Variant({ ok: CommunityMessagePublic, err: IDL.Text })], []),
+    pinCommunityMessage: IDL.Func([IDL.Text, IDL.Nat], [ApiResultCommunityChannel], []),
+    deleteCommunityMessage: IDL.Func([IDL.Text, IDL.Nat], [ApiResultUnit], []),
+    setCommunityMessageReaction: IDL.Func(
+      [IDL.Text, IDL.Nat, IDL.Nat8],
+      [ApiResultCommunityReactionUpdate],
+      []
+    ),
+    setCommunityChannelAvatar: IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Vec(IDL.Nat8))],
+      [ApiResultCommunityChannel],
+      []
+    ),
+    getCommunityChannel: IDL.Func([IDL.Text], [IDL.Opt(CommunityChannelPublic)], ["query"]),
+    listPublicCommunityChannels: IDL.Func([IDL.Nat, IDL.Nat], [IDL.Vec(CommunityChannelPublic)], ["query"]),
+    listMyCommunityChannels: IDL.Func([], [ApiResultCommunityChannels], ["query"]),
+    listCommunityMessages: IDL.Func(
+      [IDL.Text, IDL.Nat, IDL.Nat],
+      [ApiResultCommunityMessages],
+      ["query"]
+    ),
+    isCommunityMember: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     getIcpayRate: IDL.Func([], [IDL.Nat], ["query"]),
     getIcpaySale: IDL.Func([], [IcpaySaleQuote], []),
     buyIcpay: IDL.Func([IDL.Nat, IDL.Opt(IDL.Principal)], [ApiResultIcpayPurchase], []),

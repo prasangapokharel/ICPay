@@ -8,12 +8,16 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Alert02Icon } from "@hugeicons/core-free-icons"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { DepositQrBlock } from "@/components/deposit/deposit-address-card"
+import { TokenLogo } from "@/components/token/token-logo"
 import { copyText, formatTokenAmount } from "@/lib/wallet/utils"
 import { icrc1Account } from "@/lib/wallet/accountId"
+import { resolveTokenIcon } from "@/lib/token/icon"
+import { TokenFiatHint } from "@/components/token/token-fiat-hint"
+import { useTokenRegistry } from "@/lib/token/registry"
 import { useTokenHolding, useDepositAddress, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useChainKeyDeposit } from "@/hooks/wallet/useChainKeyDeposit"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 import { SelfCustodyCard } from "@/components/wallet/self-custody-card"
 import { SendTokenDrawer } from "@/components/wallet/send-token-drawer"
@@ -22,9 +26,15 @@ import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import { useAuth } from "@/components/auth/auth-provider"
 import { transfer, type TransferMode } from "@/services/transfer/transfer"
 import { isSwapToken } from "@/lib/swap/tokens"
-import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
-import { useTokenRegistry } from "@/lib/token/registry"
-import { useFiatValue } from "@/hooks/fiat/useFiatValue"
+import { type TokenHolding } from "@/services/tokens"
+
+import { cn } from "@/lib/ui/utils"
+
+const ACTION_ICONS = {
+  send: "/images/dashboard/icons8-circled-up-right-48.png",
+  deposit: "/images/dashboard/icons8-circled-down-left-48.png",
+  swap: "/images/dashboard/icons8-dividends-48.png",
+} as const
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
@@ -32,23 +42,19 @@ export function TokenView() {
   const t = useTranslations("token")
   const router = useRouter()
   const { identity } = useAuth()
+  const registry = useTokenRegistry()
   const refreshWallet = useRefreshWallet()
   const [sendOpen, setSendOpen] = useState(false)
   const [sent, setSent] = useState<Sent | null>(null)
-  // The deposit details stay hidden until the user asks for them: they see the
-  // QR and address only after tapping Deposit, so the default view stays focused
-  // on the balance, the action buttons, and the custody card below.
   const [showDeposit, setShowDeposit] = useState(false)
 
-  // Vercel rewrites /token/<ledgerId> onto the /token/token shell.
   const ledgerId = useRewrittenLastSegment()
 
   const { token, isLoading } = useTokenHolding(ledgerId || null)
   const { data: deposit } = useDepositAddress()
   const selfCustody = useSelfCustodyBalance(ledgerId || null)
+  const { deposit: chainKeyDeposit } = useChainKeyDeposit(ledgerId || null)
 
-  // An empty id means the mid-transition frame described above, so the loader is
-  // held rather than asserting the token does not exist.
   if (isLoading || !ledgerId) return <TokenLoading />
 
   if (!token) {
@@ -62,12 +68,10 @@ export function TokenView() {
     )
   }
 
-  const isIcp = token.ledgerId === ICP_LEDGER_ID
-  // The deposit account is derived from the principal alone, so the same
-  // subaccount receives every ICRC-1 token -- only the ledger differs.
   const icrcAddress = deposit
     ? icrc1Account(deposit.address.owner, deposit.address.subaccount[0])
     : ""
+  const tokenIcon = resolveTokenIcon(token.ledgerId, token.logo, registry)
 
   const handleSend = async (
     mode: TransferMode,
@@ -88,8 +92,6 @@ export function TokenView() {
     return null
   }
 
-  // The success screen replaces the page, as it does after an ICP transfer. A
-  // send that only closed the drawer left no block index and no receipt.
   if (sent) {
     return (
       <SendSuccess
@@ -111,15 +113,9 @@ export function TokenView() {
       <div>
         <div className="flex flex-col items-center gap-3 text-center">
           <TokenLogo token={token} className="size-14" />
-          {/* Full precision here, unlike the wallet list: ckETH's 18 decimals put
-              a real balance below the list's 6-digit cutoff, where it rendered as
-              "<0.000001" and read as empty. */}
           <p className="text-3xl font-bold tracking-tight tabular-nums">
             {formatTokenAmount(token.balance, token.decimals, token.decimals)}
           </p>
-          {/* The symbol renders once, cleanly. Some ledgers (ckETH) carry the
-              same value in name and symbol, so the separate name line is only
-              shown when it is actually distinct. */}
           <p className="text-sm font-medium text-muted-foreground">{token.symbol}</p>
           {token.name !== token.symbol && (
             <p className="text-xs text-muted-foreground">{token.name}</p>
@@ -127,25 +123,61 @@ export function TokenView() {
           <TokenValue token={token} />
         </div>
 
-        {/* Send opens the swipe-up drawer; Deposit toggles the collapsible below.
-            The collapsible only ever opens through this button (or keyboard
-            activation), so the QR + address never appear before the user asks. */}
-        <div className={`mt-5 grid gap-2 ${isSwapToken(token.ledgerId) ? "grid-cols-3" : "grid-cols-2"}`}>
-          <Button variant="outline" className="w-full" onClick={() => setSendOpen(true)}>
-            {t("send")}
-          </Button>
-          <Button className="w-full" onClick={() => setShowDeposit((v) => !v)}>
-            {t("deposit")}
-          </Button>
-          {isSwapToken(token.ledgerId) && (
-            <Button
-              variant="secondary"
-              className="w-full"
-              nativeButton={false}
-              render={<Link href={`/swap?from=${token.ledgerId}`} />}
+        <div className="mt-5 flex justify-center gap-10">
+          <button
+            type="button"
+            aria-label={t("send")}
+            onClick={() => setSendOpen(true)}
+            className="transition-transform active:scale-95"
+          >
+            <span className="flex size-11 items-center justify-center rounded-full bg-gray-800">
+              <Image
+                src={ACTION_ICONS.send}
+                alt=""
+                width={20}
+                height={20}
+                className="size-5 object-contain"
+              />
+            </span>
+          </button>
+          <button
+            type="button"
+            aria-label={t("deposit")}
+            onClick={() => setShowDeposit((v) => !v)}
+            className="transition-transform active:scale-95"
+          >
+            <span
+              className={cn(
+                "flex size-11 items-center justify-center rounded-full",
+                showDeposit ? "bg-primary" : "bg-gray-800"
+              )}
             >
-              {t("swap")}
-            </Button>
+              <Image
+                src={ACTION_ICONS.deposit}
+                alt=""
+                width={20}
+                height={20}
+                className="size-5 object-contain"
+              />
+            </span>
+          </button>
+          {isSwapToken(token.ledgerId) && (
+            <Link
+              href={`/swap?from=${token.ledgerId}`}
+              prefetch
+              aria-label={t("swap")}
+              className="transition-transform active:scale-95"
+            >
+              <span className="flex size-11 items-center justify-center rounded-full bg-gray-800">
+                <Image
+                  src={ACTION_ICONS.swap}
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="size-5 object-contain"
+                />
+              </span>
+            </Link>
           )}
         </div>
       </div>
@@ -157,48 +189,58 @@ export function TokenView() {
         onSend={handleSend}
       />
 
-      {/* Rendered even at zero: a card that only appears when funds are stranded
-          is indistinguishable from a broken one the rest of the time. Sits above
-          the deposit details so custody is always visible on first load. */}
-      {selfCustody !== undefined && <SelfCustodyCard token={token} balance={selfCustody} />}
+      {selfCustody !== undefined && selfCustody > 0n && (
+        <SelfCustodyCard token={token} balance={selfCustody} />
+      )}
 
       <Collapsible open={showDeposit} onOpenChange={setShowDeposit} className="w-full">
-        {/* keepMounted keeps the panel in the DOM while closed, so toggling
-            Deposit animates between the closed and open keyframes instead of
-            mounting fresh (base-ui suppresses animation on a first mount). */}
         <CollapsibleContent
           keepMounted
           className="overflow-hidden data-open:animate-accordion-down data-closed:animate-accordion-up"
         >
-          <div className="space-y-4">
-          <div>
-            <h2 className="text-sm font-semibold">{t("depositTitle")}</h2>
-            <p className="text-xs text-muted-foreground">
-              {t("depositSubtitle", { symbol: token.symbol })}
-            </p>
-          </div>
-
-          {icrcAddress ? (
-            <DepositAddressCard
-              icrcAddress={icrcAddress}
-              // Account identifiers only exist on the ICP ledger, so the legacy
-              // tab is offered there and nowhere else.
-              accountId={isIcp ? deposit?.accountId : undefined}
-              principal={identity?.getPrincipal().toText()}
-              logo={token.logo}
-              onCopy={copyText}
-            />
-          ) : (
+          {!icrcAddress ? (
             <div className="flex justify-center py-10">
               <Spinner className="size-5 text-muted-foreground" />
             </div>
+          ) : chainKeyDeposit ? (
+            <Tabs defaultValue="icpay" className="w-full gap-0">
+              <TabsList variant="line" className="w-full justify-center border-b border-border">
+                <TabsTrigger value="icpay" className="flex-1 text-xs sm:text-sm">
+                  {t("depositIcpayTab")}
+                </TabsTrigger>
+                <TabsTrigger value="native" className="flex-1 text-xs sm:text-sm">
+                  {chainKeyDeposit.asset}
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="icpay" className="mt-5 space-y-4">
+                <p className="text-center text-xs leading-relaxed text-muted-foreground">
+                  {t("depositIcpayNote", { symbol: token.symbol })}
+                </p>
+                <DepositQrBlock value={icrcAddress} logo={tokenIcon} onCopy={copyText} />
+              </TabsContent>
+              <TabsContent value="native" className="mt-5 space-y-4">
+                <p className="text-center text-xs leading-relaxed text-muted-foreground">
+                  {t("depositNativeNote", {
+                    asset: chainKeyDeposit.asset,
+                    network: chainKeyDeposit.asset === "BTC" ? "Bitcoin" : "Ethereum",
+                    symbol: token.symbol,
+                  })}
+                </p>
+                <DepositQrBlock
+                  value={chainKeyDeposit.address}
+                  logo={tokenIcon}
+                  onCopy={copyText}
+                />
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-center text-xs leading-relaxed text-muted-foreground">
+                {t("depositIcpayNote", { symbol: token.symbol })}
+              </p>
+              <DepositQrBlock value={icrcAddress} logo={tokenIcon} onCopy={copyText} />
+            </div>
           )}
-
-          <p className="flex items-start gap-2 text-xs text-muted-foreground">
-            <HugeiconsIcon icon={Alert02Icon} className="mt-px size-3.5 shrink-0" />
-            {t("warning", { symbol: token.symbol })}
-          </p>
-          </div>
         </CollapsibleContent>
       </Collapsible>
     </div>
@@ -213,49 +255,13 @@ function BackButton({ onClick, label }: { onClick: () => void; label: string }) 
   )
 }
 
-// Every token gets a fiat line, not just ICP: the price comes from the NNS token
-// index, which quotes SNS and chain-key tokens the ICP-only feed cannot. A token
-// it does not quote renders nothing rather than a zero, which would read as
-// worthless rather than unpriced.
 function TokenValue({ token }: { token: TokenHolding }) {
-  const registry = useTokenRegistry()
-  const price = registry?.get(token.ledgerId)?.priceUsd
-  const amount = Number(token.balance) / 10 ** token.decimals
-  const fiat = useFiatValue(price === undefined ? null : amount * price)
-
-  if (fiat.formatted === null) return null
   return (
-    <p className="text-sm font-medium text-muted-foreground tabular-nums">
-      ≈ {fiat.symbol}
-      {fiat.formatted} {fiat.currency}
-    </p>
-  )
-}
-
-// ICP ships no icrc1:logo, and its mark is already a local asset.
-export function TokenLogo({ token, className }: { token: TokenHolding; className: string }) {
-  const src = token.ledgerId === ICP_LEDGER_ID ? "/images/logo/logo.png" : token.logo
-
-  if (!src) {
-    return (
-      <span
-        className={`flex shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold uppercase text-muted-foreground ${className}`}
-      >
-        {token.symbol.slice(0, 2)}
-      </span>
-    )
-  }
-
-  return (
-    <Image
-      // The ledger logos are inline SVG data URIs, which next/image cannot
-      // process; unoptimized is already the project-wide default anyway.
-      src={src}
-      alt=""
-      width={56}
-      height={56}
-      unoptimized
-      className={`shrink-0 rounded-full object-contain ${className}`}
+    <TokenFiatHint
+      ledgerId={token.ledgerId}
+      amount={token.balance}
+      decimals={token.decimals}
+      className="text-sm font-medium text-muted-foreground tabular-nums"
     />
   )
 }

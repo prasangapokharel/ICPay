@@ -1,0 +1,8 @@
+{
+  "name": "icpay-bucket-sdk-test",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "icpay-bucket": "1.1.1"
+  }
+}

@@ -29,6 +29,7 @@ module {
         var username = u.username;
         var displayName = u.displayName;
         var socialLinks : [Types.SocialLink] = [];
+        var verifiedEmail = null : ?Text;
         createdAt = u.createdAt;
         var updatedAt = u.updatedAt;
       });

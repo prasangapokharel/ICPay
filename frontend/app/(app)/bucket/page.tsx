@@ -4,11 +4,10 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { BucketIcon } from "@hugeicons/core-free-icons"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { AppIcon } from "@/components/ui/app-icon"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import { BucketCard } from "@/components/bucket/bucket-card"
 import { BucketCreateForm } from "@/components/bucket/bucket-create-form"
@@ -74,7 +73,9 @@ export default function BucketPage() {
         className="h-auto w-full justify-start gap-3 border-dashed p-4"
         onClick={() => setShowForm(true)}
       >
-        <HugeiconsIcon icon={BucketIcon} className="size-5" strokeWidth={1.75} />
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-800">
+          <AppIcon name="bucket" size={20} />
+        </span>
         <span className="min-w-0 text-left">
           <span className="block text-sm font-bold">{t("createCta")}</span>
           <span className="block text-xs font-medium text-muted-foreground">{t("createCtaBody")}</span>
@@ -92,7 +93,10 @@ export default function BucketPage() {
           </Card>
         ) : buckets.length === 0 ? (
           <Card className="border-dashed">
-            <CardContent className="py-8 text-center text-xs text-muted-foreground">
+            <CardContent className="flex flex-col items-center gap-2 py-8 text-center text-xs text-muted-foreground">
+              <span className="flex size-12 items-center justify-center rounded-2xl bg-gray-800">
+                <AppIcon name="empty" size={24} />
+              </span>
               {t("empty")}
               <span className="mt-1 block">{t("emptyHint")}</span>
             </CardContent>

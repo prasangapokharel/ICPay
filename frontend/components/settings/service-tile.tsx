@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
 import { Button } from "@/components/ui/button"
+import { AppIcon, type AppIconName } from "@/components/ui/app-icon"
 import { cn } from "@/lib/ui/utils"
 
 export function ServiceTile({
@@ -14,7 +14,7 @@ export function ServiceTile({
 }: {
   href?: string
   label: string
-  icon: IconSvgElement
+  icon: AppIconName
   onClick?: () => void
   badge?: string
 }) {
@@ -23,11 +23,11 @@ export function ServiceTile({
       <span className="relative">
         <span
           className={cn(
-            "flex size-12 items-center justify-center rounded-xl bg-muted/60",
-            "transition-colors hover:bg-accent"
+            "flex size-14 items-center justify-center rounded-2xl bg-gray-800 shadow-sm",
+            "transition-colors hover:bg-gray-700"
           )}
         >
-          <HugeiconsIcon icon={icon} className="size-5 text-primary" strokeWidth={1.75} />
+          <AppIcon name={icon} size={24} />
         </span>
         {badge && (
           <span
@@ -40,12 +40,12 @@ export function ServiceTile({
           </span>
         )}
       </span>
-      <span className="text-[10px] font-medium leading-tight">{label}</span>
+      <span className="text-[11px] font-medium leading-tight">{label}</span>
     </>
   )
 
   const className =
-    "h-auto flex-col gap-1.5 rounded-none bg-transparent p-0 text-center font-normal hover:bg-transparent"
+    "h-auto flex-col gap-2 rounded-none bg-transparent p-0 text-center font-normal hover:bg-transparent"
 
   if (onClick) {
     return (
@@ -60,7 +60,7 @@ export function ServiceTile({
       variant="ghost"
       size="sm"
       nativeButton={false}
-      render={<Link href={href ?? "#"} />}
+      render={<Link href={href ?? "#"} prefetch />}
       className={className}
     >
       {tile}

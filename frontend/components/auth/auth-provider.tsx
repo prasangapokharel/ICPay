@@ -8,6 +8,7 @@ import {
   createAuthClient,
   openBackendSession,
   discardRejectedSession,
+  type LoginOptions,
 } from "@/services/auth/auth"
 import { playLoginChime } from "@/lib/ui/successChime"
 
@@ -15,7 +16,8 @@ type AuthContextType = {
   identity: Identity | undefined
   isAuthenticated: boolean
   isLoading: boolean
-  login: (provider?: string) => Promise<void>
+  login: (options?: LoginOptions) => Promise<void>
+  acceptIdentity: (identity: Identity) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -37,6 +39,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   isLoading: true,
   login: async () => {},
+  acceptIdentity: async () => {},
   logout: async () => {},
 })
 
@@ -48,8 +51,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async function init() {
       try {
         const authClient = await createAuthClient()
-        const id = authClient.getIdentity()
-        if (id.getPrincipal().isAnonymous()) return
+        if (!authClient.isAuthenticated()) return
+        const id = await authClient.getIdentity()
 
         try {
           await openBackendSession(id)
@@ -67,13 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     init()
   }, [])
 
-  const login = useCallback(async (provider?: string) => {
-    const id = await iiLogin(provider)
-    if (!id) return
-    // Publishing the identity is what unlocks every data hook, so it has to wait
-    // for login() to create the user record: getDashboard answers "User not
-    // found" for a principal the canister has never seen, and the first screen
-    // after sign-in would render that error until a manual refresh.
+  const acceptIdentity = useCallback(async (id: Identity) => {
     try {
       await openBackendSession(id)
     } catch (e) {
@@ -82,6 +79,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     playLoginChimeOnce(id.getPrincipal().toText())
     setIdentity(id)
   }, [])
+
+  const login = useCallback((options?: LoginOptions) => {
+    return iiLogin(options).then((id) => {
+      if (!id) return
+      return acceptIdentity(id)
+    })
+  }, [acceptIdentity])
 
   const logout = useCallback(async () => {
     await iiLogout()
@@ -98,6 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!identity,
         isLoading,
         login,
+        acceptIdentity,
         logout,
       }}
     >

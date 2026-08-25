@@ -11,6 +11,7 @@ import { useBucketCycleStatus, useBucketPrice, useInvalidateBucketCache } from '
 import { useLiveBalance, useRefreshWallet } from '@/hooks/use-wallet-data'
 import { createBucket } from '@/services/bucket/bucket'
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from '@/lib/bucket/bucket'
+import { calculateListPriceE8s } from '@/lib/bucket/pricing'
 import { formatAmount, ICP_FEE } from '@/lib/wallet-utils'
 import type { BucketVisibilityVariant } from '@/services/bucket/types'
 
@@ -29,6 +30,7 @@ export function BucketCreateScreen() {
   const [error, setError] = useState<string | null>(null)
   const nameError = useMemo(() => validateBucketName(name), [name])
   const { price } = useBucketPrice(capacityGB)
+  const listPrice = calculateListPriceE8s(capacityGB)
   const canCreate = cycleStatus?.canAcceptNewBuckets !== false
   const totalCost = price !== null ? price + ICP_FEE : null
 
@@ -83,9 +85,17 @@ export function BucketCreateScreen() {
           {t('private')}
         </Button>
       </View>
-      <Text className="text-sm">
-        {t('price')}: {price !== null ? `${formatAmount(price)} ICP` : '—'} {t('perMonth')}
-      </Text>
+      <View className="flex-row flex-wrap items-baseline gap-2">
+        <Text className="text-sm">{t('price')}:</Text>
+        {listPrice > (price ?? 0n) ? (
+          <Text className="text-sm text-muted-foreground line-through">
+            {formatAmount(listPrice)} ICP
+          </Text>
+        ) : null}
+        <Text className="text-sm font-semibold">
+          {price !== null ? `${formatAmount(price)} ICP` : '—'} {t('perMonth')}
+        </Text>
+      </View>
       {totalCost !== null && balance != null && balance < totalCost ? (
         <Text className="text-xs text-destructive">{t('insufficientBalance')}</Text>
       ) : null}

@@ -2,24 +2,12 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react"
-import {
-  ShoppingBag01Icon,
-  UserMultipleIcon,
-  Coins01Icon,
-  RocketIcon,
-  Search01Icon,
-  Settings01Icon,
-  BookOpen01Icon,
-  BucketIcon,
-  ArrowDataTransferVerticalIcon,
-  RadioIcon,
-  ChartLineData01Icon,
-  Clock01Icon,
-} from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Search01Icon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { ServiceTile } from "@/components/settings/service-tile"
 import { SettingsDrawer } from "@/components/settings/settings-drawer"
+import type { AppIconName } from "@/components/ui/app-icon"
 import type en from "@/language/en/common.json"
 
 type ItemKey = keyof typeof en.settings.items
@@ -28,7 +16,7 @@ type SectionKey = keyof typeof en.settings.sections
 type Service = {
   href?: string
   key: ItemKey
-  icon: IconSvgElement
+  icon: AppIconName
   keywords?: string
   onOpen?: () => void
   badge?: ItemKey
@@ -46,19 +34,19 @@ export default function MenuPage() {
         {
           href: "/wallet",
           key: "tokens",
-          icon: Coins01Icon,
+          icon: "wallet",
           keywords: "balance ckbtc holdings",
         },
         {
           href: "/swap",
           key: "swap",
-          icon: ArrowDataTransferVerticalIcon,
+          icon: "swap",
           keywords: "exchange trade icpswap convert",
         },
         {
           href: "/launch",
           key: "launch",
-          icon: RocketIcon,
+          icon: "launch",
           keywords: "create token icrc mint deploy",
         },
       ],
@@ -69,21 +57,22 @@ export default function MenuPage() {
         {
           href: "/username",
           key: "buyName",
-          icon: ShoppingBag01Icon,
+          icon: "username",
           keywords: "username premium handle",
           badge: "buyNameBadge",
         },
         {
           href: "/icpverse",
           key: "icpverse",
-          icon: UserMultipleIcon,
+          icon: "icpverse",
           keywords: "people tip discover",
         },
         {
-          href: "/live",
-          key: "live",
-          icon: RadioIcon,
-          keywords: "audio voice room webrtc",
+          href: "/channels",
+          key: "community",
+          icon: "community",
+          keywords: "channels community telegram broadcast",
+          badge: "communityBadge",
         },
       ],
     },
@@ -93,13 +82,13 @@ export default function MenuPage() {
         {
           href: "/analytics",
           key: "analytics",
-          icon: ChartLineData01Icon,
+          icon: "analytics",
           keywords: "analytics stats export csv premium",
         },
         {
           href: "/transactions",
           key: "history",
-          icon: Clock01Icon,
+          icon: "history",
           keywords: "activity transactions",
         },
       ],
@@ -110,7 +99,7 @@ export default function MenuPage() {
         {
           href: "/bucket",
           key: "bucket",
-          icon: BucketIcon,
+          icon: "bucket",
           keywords: "storage cloud images bucket cdn upload",
         },
       ],
@@ -121,12 +110,12 @@ export default function MenuPage() {
         {
           href: "/blog",
           key: "blog",
-          icon: BookOpen01Icon,
+          icon: "blog",
           keywords: "blog articles guides packages sdk",
         },
         {
           key: "settings",
-          icon: Settings01Icon,
+          icon: "settings",
           keywords: "preferences language legal about",
           onOpen: () => setDrawerOpen(true),
         },
@@ -174,7 +163,7 @@ export default function MenuPage() {
           <h2 className="text-sm font-semibold">
             {t(`sections.${section.key}`)}
           </h2>
-          <div className="grid grid-cols-4 gap-y-5">
+          <div className="grid grid-cols-3 gap-y-6">
             {section.items.map((item) => (
               <ServiceTile
                 key={`${section.key}-${item.key}`}

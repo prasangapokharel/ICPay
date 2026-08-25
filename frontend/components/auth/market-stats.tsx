@@ -53,21 +53,26 @@ function useRandomTicker(seed: number) {
 }
 
 export function MarketStats() {
-  const { price } = useIcpPrice({ refreshInterval: 5_000 })
-  const count = useEasedPrice(price?.usd ?? 0)
-  const ticker = useRandomTicker(price?.usd ?? 0)
+  const { price, loading } = useIcpPrice({ refreshInterval: 5_000 })
+  const liveUsd = price && price.usd > 0 ? price.usd : 0
+  const count = useEasedPrice(liveUsd)
+  const ticker = useRandomTicker(liveUsd)
 
   return (
     <div className="flex justify-center">
       <span className="font-mono text-5xl font-light tracking-[0.15em] tabular-nums text-primary/40 drop-shadow-sm">
         <span className="mr-1 text-3xl align-middle text-primary/50">$</span>
-        {count.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}
-        <span className="text-primary/60">
-          {ticker}
-        </span>
+        {liveUsd > 0 ? (
+          <>
+            {count.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+            <span className="text-primary/60">{ticker}</span>
+          </>
+        ) : (
+          <span className="text-primary/30">{loading ? "···" : "—"}</span>
+        )}
       </span>
     </div>
   )

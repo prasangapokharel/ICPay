@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  Suspense,
   useCallback,
   useContext,
   useEffect,
@@ -49,7 +50,6 @@ type LiveSessionContextValue = {
   micOn: boolean
   micBusy: boolean
   audioStatus: LiveAudioStatus
-  peerCount: number
   speakingTabs: ReadonlySet<string>
   livePeers: LivePeer[]
   error: string | null
@@ -64,6 +64,27 @@ type LiveSessionContextValue = {
 
 const LiveSessionContext = createContext<LiveSessionContextValue | null>(null)
 
+const idleLiveSession: LiveSessionContextValue = {
+  roomId: null,
+  tabId: null,
+  room: null,
+  joined: false,
+  joining: false,
+  micOn: false,
+  micBusy: false,
+  audioStatus: "idle",
+  speakingTabs: new Set(),
+  livePeers: [],
+  error: null,
+  visible: false,
+  join: async () => {},
+  leave: async () => {},
+  toggleMic: async () => {},
+  refreshRoom: async () => {},
+  unlockAudio: () => {},
+  setRoom: () => {},
+}
+
 export function useLiveSession(): LiveSessionContextValue {
   const ctx = useContext(LiveSessionContext)
   if (!ctx) throw new Error("useLiveSession must be used within LiveSessionProvider")
@@ -71,6 +92,20 @@ export function useLiveSession(): LiveSessionContextValue {
 }
 
 export function LiveSessionProvider({ children }: { children: ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <LiveSessionContext.Provider value={idleLiveSession}>
+          {children}
+        </LiveSessionContext.Provider>
+      }
+    >
+      <LiveSessionProviderInner>{children}</LiveSessionProviderInner>
+    </Suspense>
+  )
+}
+
+function LiveSessionProviderInner({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const { identity } = useAuth()
   const { mutate: globalMutate } = useSWRConfig()
@@ -83,7 +118,6 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
   const [micOn, setMicOn] = useState(false)
   const [micBusy, setMicBusy] = useState(false)
   const [audioStatus, setAudioStatus] = useState<LiveAudioStatus>("idle")
-  const [peerCount, setPeerCount] = useState(0)
   const [speakingTabs, setSpeakingTabs] = useState<Set<string>>(() => new Set())
   const [error, setError] = useState<string | null>(null)
 
@@ -121,7 +155,6 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
   )
 
   const attachSession = useCallback((session: LiveAudioSession) => {
-    session.setOnPeerCount(setPeerCount)
     session.setOnStatus(setAudioStatus)
     session.setOnSpeaking((id, speaking) => {
       setSpeakingTabs((prev) => {
@@ -151,7 +184,6 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
     sessionRef.current = null
     setMicOn(false)
     micOnRef.current = false
-    setPeerCount(0)
     setSpeakingTabs(new Set())
     setAudioStatus("idle")
   }, [])
@@ -394,7 +426,6 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
       micOn,
       micBusy,
       audioStatus,
-      peerCount,
       speakingTabs,
       livePeers,
       error,
@@ -415,7 +446,6 @@ export function LiveSessionProvider({ children }: { children: ReactNode }) {
       micOn,
       micBusy,
       audioStatus,
-      peerCount,
       speakingTabs,
       livePeers,
       error,

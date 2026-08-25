@@ -2,20 +2,32 @@ import type { Identity } from "@icp-sdk/core/agent"
 import { call, unwrap, type Outcome } from "@/services/client"
 import { isLedgerSupported } from "@/services/tokens"
 import { isSwapToken } from "@/lib/swap/tokens"
-import { fetchIcpswapQuote } from "@/services/swap/icpswap-quote"
+import { fetchIcpswapQuote, type SwapQuoteFees } from "@/services/swap/icpswap-quote"
 import type { SwapQuoteResult, SwapResult } from "@/services/types"
+
+export type SwapQuoteOpts = SwapQuoteFees & {
+  /** Wallet holdings are already allowlisted — skip two backend queries per quote. */
+  skipAllowlistCheck?: boolean
+}
 
 /** ICPSwap pool queries in the browser — no backend update round-trip. */
 export async function fetchSwapQuote(
   identity: Identity | undefined,
   tokenIn: string,
   tokenOut: string,
-  amountIn: bigint
+  amountIn: bigint,
+  opts: SwapQuoteOpts = {}
 ): Promise<SwapQuoteResult> {
-  const blocked = await checkSwapPair(identity, tokenIn, tokenOut)
-  if (blocked === "sameToken") throw new Error("sameToken")
-  if (blocked === "unsupported") throw new Error("unsupported")
-  return fetchIcpswapQuote(identity, tokenIn, tokenOut, amountIn)
+  if (tokenIn === tokenOut) throw new Error("sameToken")
+  if (!isSwapToken(tokenIn) || !isSwapToken(tokenOut)) throw new Error("unsupported")
+
+  if (!opts.skipAllowlistCheck) {
+    const blocked = await checkSwapPair(identity, tokenIn, tokenOut)
+    if (blocked === "sameToken") throw new Error("sameToken")
+    if (blocked === "unsupported") throw new Error("unsupported")
+  }
+
+  return fetchIcpswapQuote(identity, tokenIn, tokenOut, amountIn, opts)
 }
 
 export async function recoverFailedSwapInput(

@@ -101,6 +101,21 @@ Debug.print("ALL LIVE SERVICE TESTS PASSED");
 | Two principals minimum | When testing transfers, rooms, ownership |
 | Import from `../../src/` | Relative paths in test tree |
 
+### Async service methods
+
+Ledger paths (`joinCommunityChannel` with paid access, `swap`, etc.) return
+`async Types.ApiResult<T>`. In `moc -r` test scripts, use top-level `await`:
+
+```motoko
+switch (await IcCommunityService.joinChannel(svc, guest, channelId, null)) {
+  case (#ok(_)) { Debug.print("PASS: join") };
+  case (#err(e)) { assert false; Debug.print("FAIL: " # e) };
+};
+```
+
+Sync-only tests are fine when the code path never calls `await` (free join, CRUD
+without ledger). See [`error-handling/SKILL.md`](../error-handling/SKILL.md) §8.
+
 ---
 
 ## Required coverage per feature

@@ -10,11 +10,20 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Wallet01Icon, ShieldKeyIcon, FlashIcon, Key01Icon } from "@hugeicons/core-free-icons"
+import {
+  Wallet01Icon,
+  ShieldKeyIcon,
+  FlashIcon,
+  Key01Icon,
+  GoogleIcon,
+  AppleIcon,
+  MicrosoftIcon,
+} from "@hugeicons/core-free-icons"
+import type { OpenIdProvider } from "@icp-sdk/auth/client"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Typewriter } from "@/components/shared/typewriter"
 import { MarketStats } from "@/components/auth/market-stats"
-import { NFID_PROVIDER } from "@/services/icp"
+import { createAuthClient, resumeRedirectSignIn } from "@/services/auth/auth"
 import { primeLoginChime } from "@/lib/ui/successChime"
 
 const features = [
@@ -23,13 +32,39 @@ const features = [
   { icon: FlashIcon, key: "instant" },
 ] as const
 
+const openIdProviders = [
+  { id: "google" as const, icon: GoogleIcon },
+  { id: "apple" as const, icon: AppleIcon },
+  { id: "microsoft" as const, icon: MicrosoftIcon },
+] satisfies { id: OpenIdProvider; icon: typeof GoogleIcon }[]
+
 export default function LoginPage() {
-  const { login, isAuthenticated, isLoading } = useAuth()
+  const { login, acceptIdentity, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const t = useTranslations("login")
   const tSettings = useTranslations("settings")
+
+  useEffect(() => {
+    void createAuthClient()
+  }, [])
+
+  useEffect(() => {
+    void (async () => {
+      const id = await resumeRedirectSignIn()
+      if (!id) return
+      primeLoginChime()
+      setConnecting(true)
+      try {
+        await acceptIdentity(id)
+      } catch (e) {
+        setError(e instanceof Error ? e.message : t("genericError"))
+      } finally {
+        setConnecting(false)
+      }
+    })()
+  }, [acceptIdentity, t])
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) router.replace("/")
@@ -43,20 +78,13 @@ export default function LoginPage() {
     )
   }
 
-  const handleLogin = async (provider?: string) => {
-    // Primed here rather than where it plays: the chime fires after the
-    // Internet Identity round trip, by which time mobile no longer counts this
-    // tap as a gesture and refuses playback outright.
+  const startLogin = (options?: { openIdProvider?: OpenIdProvider }) => {
     primeLoginChime()
     setError(null)
     setConnecting(true)
-    try {
-      await login(provider)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : t("genericError"))
-    } finally {
-      setConnecting(false)
-    }
+    login(options)
+      .catch((e) => setError(e instanceof Error ? e.message : t("genericError")))
+      .finally(() => setConnecting(false))
   }
 
   return (
@@ -70,9 +98,6 @@ export default function LoginPage() {
           sizes="(max-width: 640px) 100vw, 28rem"
           className="-z-10 object-cover object-center dark:opacity-35"
         />
-        {/* The artwork is a light pastel, so in dark mode it is dimmed and sat
-            under a heavier scrim -- at the light-mode 50% it washes the card
-            grey and the body text drops below readable contrast. */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-background/50 dark:bg-background/75" />
         <div className="flex flex-1 flex-col items-center justify-center text-center">
           <MarketStats />
@@ -110,7 +135,7 @@ export default function LoginPage() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          <Button size="lg" className="w-full" onClick={() => handleLogin()} disabled={connecting}>
+          <Button size="lg" className="w-full" onClick={() => startLogin()} disabled={connecting}>
             {connecting ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Wallet01Icon} className="size-5" />}
             {connecting ? t("connecting") : t("connect")}
           </Button>
@@ -118,28 +143,25 @@ export default function LoginPage() {
             {t("redirectNote")}
           </p>
 
-          {/* NFID authorizes through the same delegation flow auth-client
-              speaks, so it is a drop-in provider. Signers like Oisy and Plug
-              approve one call at a time and never issue a delegation, so they
-              can fund the wallet but cannot open a session. */}
           <div className="flex flex-col items-center gap-2 pt-1">
             <p className="text-xs text-muted-foreground">{t("orContinue")}</p>
             <ButtonGroup>
-              <Button
-                variant="outline"
-                size="sm"
-                className="px-5"
-                onClick={() => handleLogin(NFID_PROVIDER)}
-                disabled={connecting}
-              >
-                NFID
-              </Button>
+              {openIdProviders.map(({ id, icon }) => (
+                <Button
+                  key={id}
+                  variant="outline"
+                  size="icon"
+                  className="size-10"
+                  onClick={() => startLogin({ openIdProvider: id })}
+                  disabled={connecting}
+                  aria-label={t(`openId.${id}`)}
+                >
+                  <HugeiconsIcon icon={icon} className="size-4" />
+                </Button>
+              ))}
             </ButtonGroup>
-            {/* NFID is a separate identity system, so it derives a different
-                principal -- a different wallet. Without this line an existing
-                user signing in through it sees an empty balance. */}
             <p className="text-center text-xs text-muted-foreground">
-              {t("nfidNote")}
+              {t("openIdNote")}
             </p>
           </div>
 
@@ -155,9 +177,6 @@ export default function LoginPage() {
             .
           </p>
 
-          {/* The only crawlable entry point, so it is where /about and /faq get
-              their inbound links -- every other route redirects a signed-out
-              visitor before a crawler sees anything. */}
           <nav className="flex justify-center gap-4 text-xs text-muted-foreground">
             <Link href="/about" className="underline underline-offset-2">
               {tSettings("items.about")}
@@ -177,4 +196,3 @@ export default function LoginPage() {
     </div>
   )
 }
-

@@ -1,9 +1,6 @@
 import type { MetadataRoute } from "next"
 import { BLOG_POSTS } from "@/services/blog/blog"
 
-// output: "export" cannot defer this to a server, so it is emitted at build time.
-export const dynamic = "force-static"
-
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 
 // Signed-in wallet routes. They render nothing for an anonymous crawler, so

@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Delete02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { AppIcon } from "@/components/ui/app-icon"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { BucketFileDeleteDialog } from "@/components/bucket/bucket-file-delete-dialog"
@@ -83,28 +82,30 @@ export function BucketFileRow({
             )}
           </span>
         </Button>
-        <ButtonGroup className="shrink-0 self-center">
+        <ButtonGroup className="shrink-0 self-center gap-1.5">
           {publicUrl && (
             <Button
               type="button"
               variant="outline"
-              size="icon-sm"
+              size="icon-lg"
+              className="size-11"
               aria-label={copied ? tc("copied") : tc("copy")}
               onClick={handleCopy}
             >
-              <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" strokeWidth={1.75} />
+              <AppIcon name={copied ? "check" : "copy"} size={24} />
             </Button>
           )}
           {canWrite && (
             <Button
               type="button"
               variant="destructive"
-              size="icon-sm"
+              size="icon-lg"
+              className="size-11"
               aria-label={t("delete")}
               disabled={deleting}
               onClick={() => setConfirmOpen(true)}
             >
-              <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+              <AppIcon name="delete" size={24} />
             </Button>
           )}
         </ButtonGroup>

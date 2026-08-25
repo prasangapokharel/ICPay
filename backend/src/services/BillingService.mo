@@ -7,7 +7,7 @@ import Debug "mo:core/Debug";
 module {
   private let CYCLES_PER_GB_MONTH : Nat = 333_860_000_000;
   private let CYCLES_PER_ICP : Nat = 1_000_000_000_000;
-  private let MARGIN_PERCENT : Nat = 50;
+  private let MARGIN_PERCENT : Nat = 20;
 
   private let CRITICAL_THRESHOLD : Nat = 1_000_000_000_000;
   private let LOW_THRESHOLD : Nat = 10_000_000_000_000;
