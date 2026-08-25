@@ -14,6 +14,7 @@ import { TokenLogo } from "@/components/token/token-logo"
 import { copyText, formatTokenAmount } from "@/lib/wallet/utils"
 import { icrc1Account } from "@/lib/wallet/accountId"
 import { resolveTokenIcon } from "@/lib/token/icon"
+import { TokenFiatHint } from "@/components/token/token-fiat-hint"
 import { useTokenRegistry } from "@/lib/token/registry"
 import { useTokenHolding, useDepositAddress, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { useChainKeyDeposit } from "@/hooks/wallet/useChainKeyDeposit"
@@ -26,7 +27,6 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { transfer, type TransferMode } from "@/services/transfer/transfer"
 import { isSwapToken } from "@/lib/swap/tokens"
 import { type TokenHolding } from "@/services/tokens"
-import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 
 import { cn } from "@/lib/ui/utils"
 
@@ -256,17 +256,13 @@ function BackButton({ onClick, label }: { onClick: () => void; label: string }) 
 }
 
 function TokenValue({ token }: { token: TokenHolding }) {
-  const registry = useTokenRegistry()
-  const price = registry?.get(token.ledgerId)?.priceUsd
-  const amount = Number(token.balance) / 10 ** token.decimals
-  const fiat = useFiatValue(price === undefined ? null : amount * price)
-
-  if (fiat.formatted === null) return null
   return (
-    <p className="text-sm font-medium text-muted-foreground tabular-nums">
-      ≈ {fiat.symbol}
-      {fiat.formatted} {fiat.currency}
-    </p>
+    <TokenFiatHint
+      ledgerId={token.ledgerId}
+      amount={token.balance}
+      decimals={token.decimals}
+      className="text-sm font-medium text-muted-foreground tabular-nums"
+    />
   )
 }
 
