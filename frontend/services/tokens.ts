@@ -42,8 +42,7 @@ export type TokenHolding = {
 export type TokenMetadata = Omit<TokenHolding, "balance">
 
 export function metadataLedgerIds(balances: Map<string, bigint>): string[] {
-  const held = [...balances.entries()].filter(([, balance]) => balance > 0n).map(([id]) => id)
-  return [...new Set([...PINNED_LEDGER_IDS, ...held])].sort()
+  return [...balances.keys()].sort()
 }
 
 export function metadataFromRegistry(
