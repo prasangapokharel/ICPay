@@ -1,8 +1,6 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
 import { preload } from "swr"
-import { getDashboard } from "@/services/dashboard/dashboard"
-import { getDepositAddress } from "@/services/deposit/deposit"
 import { searchUsers } from "@/services/profile/profile"
 import { bucketListKey } from "@/lib/bucket/cacheKeys"
 import { listBuckets } from "@/services/bucket/bucket"
@@ -10,11 +8,18 @@ import {
   custodialSubaccount,
   fetchBalances,
   ICP_LEDGER_ID,
-  listLedgerIds,
 } from "@/services/tokens"
+import {
+  loadDashboard,
+  resolveDeposit,
+  resolveProfile,
+  walletKey,
+} from "@/lib/wallet/walletCache"
+import { getCachedLedgerIds } from "@/lib/wallet/ledgerIdsCache"
 
-function swrKey(identity: Identity, ...parts: string[]) {
-  return [...parts, identity.getPrincipal().toText()] as const
+async function custodianForPrefetch(identity: Identity) {
+  const deposit = await resolveDeposit(identity)
+  return deposit.address.owner
 }
 
 export function prefetchAppRoute(href: string, identity: Identity | undefined) {
@@ -24,12 +29,12 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
 
   switch (path) {
     case "/":
-      preload(swrKey(identity, "dashboard"), () => getDashboard(identity))
-      preload(swrKey(identity, "token-balance", ICP_LEDGER_ID), async () => {
-        const deposit = await getDepositAddress(identity)
+      preload(walletKey(identity, "dashboard")!, () => loadDashboard(identity))
+      preload(walletKey(identity, "token-balance", ICP_LEDGER_ID)!, async () => {
+        const owner = await custodianForPrefetch(identity)
         const balances = await fetchBalances(
           [ICP_LEDGER_ID],
-          deposit.address.owner,
+          owner,
           custodialSubaccount(identity.getPrincipal()),
           identity
         )
@@ -37,25 +42,25 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
       })
       break
     case "/icpverse":
-      preload(swrKey(identity, "search-users", ""), () => searchUsers(identity, ""))
+      preload(walletKey(identity, "search-users", "")!, () => searchUsers(identity, ""))
       break
     case "/bucket":
       preload(bucketListKey(identity), () => listBuckets(identity))
       break
     case "/channels":
-      preload(swrKey(identity, "community-public"), () =>
+      preload(walletKey(identity, "community-public")!, () =>
         import("@/services/community/community").then((m) => m.listPublicCommunityChannels(identity))
       )
-      preload(swrKey(identity, "community-mine"), () =>
+      preload(walletKey(identity, "community-mine")!, () =>
         import("@/services/community/community").then((m) => m.listMyCommunityChannels(identity))
       )
       break
     case "/transfer":
-      preload(swrKey(identity, "token-balance", ICP_LEDGER_ID), async () => {
-        const deposit = await getDepositAddress(identity)
+      preload(walletKey(identity, "token-balance", ICP_LEDGER_ID)!, async () => {
+        const owner = await custodianForPrefetch(identity)
         const balances = await fetchBalances(
           [ICP_LEDGER_ID],
-          deposit.address.owner,
+          owner,
           custodialSubaccount(identity.getPrincipal()),
           identity
         )
@@ -63,23 +68,20 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
       })
       break
     case "/wallet":
-      preload(swrKey(identity, "deposit-address"), () => getDepositAddress(identity))
-      preload(swrKey(identity, "token-balances"), async () => {
-        const deposit = await getDepositAddress(identity)
-        const ledgerIds = await listLedgerIds(identity)
+      preload(walletKey(identity, "deposit-address")!, () => resolveDeposit(identity))
+      preload(walletKey(identity, "token-balances")!, async () => {
+        const owner = await custodianForPrefetch(identity)
+        const ledgerIds = await getCachedLedgerIds(identity)
         return fetchBalances(
           ledgerIds,
-          deposit.address.owner,
+          owner,
           custodialSubaccount(identity.getPrincipal()),
           identity
         )
       })
       break
     case "/settings":
-      preload(swrKey(identity, "profile"), async () => {
-        const { getProfile } = await import("@/services/profile/profile")
-        return getProfile(identity)
-      })
+      preload(walletKey(identity, "profile")!, () => resolveProfile(identity))
       break
     default:
       if (path.startsWith("/icpverse/")) {
@@ -93,11 +95,11 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
       } else if (path.startsWith("/token/")) {
         const ledgerId = path.slice("/token/".length)
         if (ledgerId) {
-          preload(swrKey(identity, "token-balance", ledgerId), async () => {
-            const deposit = await getDepositAddress(identity)
+          preload(walletKey(identity, "token-balance", ledgerId)!, async () => {
+            const owner = await custodianForPrefetch(identity)
             const balances = await fetchBalances(
               [ledgerId],
-              deposit.address.owner,
+              owner,
               custodialSubaccount(identity.getPrincipal()),
               identity
             )
