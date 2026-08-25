@@ -1,6 +1,7 @@
-import { Actor, type Identity } from "@icp-sdk/core/agent"
-import type { IDL } from "@icp-sdk/core/candid"
+import type { Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
+import { IcrcLedgerCanister, mapTokenMetadata } from "@icp-sdk/canisters/ledger/icrc"
+import { SnsWasmCanister } from "@icp-sdk/canisters/nns"
 import { createAgent } from "@/services/icp"
 import { query } from "@/services/client"
 import { listTokens } from "@/services/launch/launch"
@@ -27,52 +28,6 @@ export const PINNED_LEDGER_IDS = [
 // past that the wallet would need to page. Every id returned costs a balance
 // call per wallet load, so this is a cost ceiling rather than a display limit.
 const LAUNCHED_TOKEN_LIMIT = 50
-
-// Trimmed to the methods this app calls: the full ledger interface would pull in
-// transfer and archive types that are never used here.
-const balanceIdl: IDL.InterfaceFactory = ({ IDL }) =>
-  IDL.Service({
-    icrc1_balance_of: IDL.Func(
-      [IDL.Record({ owner: IDL.Principal, subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)) })],
-      [IDL.Nat],
-      ["query"]
-    ),
-  })
-
-const metadataIdl: IDL.InterfaceFactory = ({ IDL }) => {
-  const Value = IDL.Rec()
-  Value.fill(
-    IDL.Variant({
-      Int: IDL.Int,
-      Nat: IDL.Nat,
-      Blob: IDL.Vec(IDL.Nat8),
-      Text: IDL.Text,
-      Array: IDL.Vec(Value),
-      Map: IDL.Vec(IDL.Tuple(IDL.Text, Value)),
-    })
-  )
-  return IDL.Service({
-    icrc1_metadata: IDL.Func([], [IDL.Vec(IDL.Tuple(IDL.Text, Value))], ["query"]),
-  })
-}
-
-const snsWasmIdl: IDL.InterfaceFactory = ({ IDL }) => {
-  const P = IDL.Principal
-  const Sns = IDL.Record({
-    root_canister_id: IDL.Opt(P),
-    governance_canister_id: IDL.Opt(P),
-    ledger_canister_id: IDL.Opt(P),
-    swap_canister_id: IDL.Opt(P),
-    index_canister_id: IDL.Opt(P),
-  })
-  return IDL.Service({
-    list_deployed_snses: IDL.Func(
-      [IDL.Record({})],
-      [IDL.Record({ instances: IDL.Vec(Sns) })],
-      ["query"]
-    ),
-  })
-}
 
 export type TokenHolding = {
   ledgerId: string
@@ -136,6 +91,17 @@ export function listLaunchedLedgerIds(identity?: Identity): Promise<string[]> {
   )
 }
 
+async function listSnsLedgerIds(identity?: Identity): Promise<string[]> {
+  const agent = await createAgent(identity)
+  const snsw = SnsWasmCanister.create({ agent, canisterId: Principal.fromText(SNS_WASM_ID) })
+  return snsw
+    .listSnses({ certified: false })
+    .then((instances) =>
+      instances.flatMap((i) => (i.ledger_canister_id[0] ? [i.ledger_canister_id[0].toText()] : []))
+    )
+    .catch((): string[] => [])
+}
+
 // Discovery is one query call to SNS-W rather than the SNS aggregator's REST
 // API, which inlines base64 logos and costs 5.4MB across six requests to return
 // the same canister ids.
@@ -143,22 +109,8 @@ export function listLaunchedLedgerIds(identity?: Identity): Promise<string[]> {
 // Tokens ICPay launched are not SNS-deployed, so SNS-W never lists them and the
 // wallet would hide a token the user created here.
 export async function listLedgerIds(identity?: Identity): Promise<string[]> {
-  const agent = await createAgent(identity)
-  const snsw = Actor.createActor<{
-    list_deployed_snses: (a: Record<string, never>) => Promise<{
-      instances: { ledger_canister_id: [] | [Principal] }[]
-    }>
-  }>(snsWasmIdl, { agent, canisterId: SNS_WASM_ID })
-
   const [sns, launched] = await Promise.all([
-    snsw
-      .list_deployed_snses({})
-      .then(({ instances }) =>
-        instances.flatMap((i) => (i.ledger_canister_id[0] ? [i.ledger_canister_id[0].toText()] : []))
-      )
-      // Discovery is an enhancement, not a requirement: if SNS-W is unreachable
-      // the ck tokens below still resolve and the wallet stays usable.
-      .catch((): string[] => []),
+    listSnsLedgerIds(identity),
     listLaunchedLedgerIds(identity),
   ])
 
@@ -183,18 +135,20 @@ export async function fetchBalances(
   identity?: Identity
 ): Promise<Map<string, bigint>> {
   const agent = await createAgent(identity)
-  const account = {
-    owner,
-    subaccount: (subaccount ? [Array.from(subaccount)] : []) as [] | [number[]],
-  }
 
   const entries = await Promise.all(
     ledgerIds.map(async (ledgerId): Promise<[string, bigint]> => {
       try {
-        const ledger = Actor.createActor<{
-          icrc1_balance_of: (a: unknown) => Promise<bigint>
-        }>(balanceIdl, { agent, canisterId: ledgerId })
-        return [ledgerId, await ledger.icrc1_balance_of(account)]
+        const ledger = IcrcLedgerCanister.create({
+          agent,
+          canisterId: Principal.fromText(ledgerId),
+        })
+        const balance = await ledger.balance({
+          owner,
+          subaccount,
+          certified: false,
+        })
+        return [ledgerId, balance]
       } catch {
         return [ledgerId, 0n]
       }
@@ -224,29 +178,22 @@ export async function fetchTokenMetadata(
     // Falls through to the ledger below.
   }
 
-  const agent = await createAgent(identity)
   try {
-    const ledger = Actor.createActor<{
-      icrc1_metadata: () => Promise<[string, Record<string, unknown>][]>
-    }>(metadataIdl, { agent, canisterId: ledgerId })
-
-    const raw = await ledger.icrc1_metadata()
-    const md = new Map(raw.map(([key, value]) => [key, Object.values(value)[0]]))
-    const symbol = md.get("icrc1:symbol")
-    if (typeof symbol !== "string") return null
-
-    const decimals = md.get("icrc1:decimals")
-    const fee = md.get("icrc1:fee")
-    const logo = md.get("icrc1:logo")
-    const name = md.get("icrc1:name")
+    const agent = await createAgent(identity)
+    const ledger = IcrcLedgerCanister.create({
+      agent,
+      canisterId: Principal.fromText(ledgerId),
+    })
+    const meta = mapTokenMetadata(await ledger.metadata({ certified: false }))
+    if (!meta) return null
 
     return {
       ledgerId,
-      symbol,
-      name: typeof name === "string" ? name : symbol,
-      decimals: typeof decimals === "bigint" ? Number(decimals) : 8,
-      fee: typeof fee === "bigint" ? fee : 0n,
-      logo: typeof logo === "string" && logo.startsWith("data:") ? logo : undefined,
+      symbol: meta.symbol,
+      name: meta.name,
+      decimals: meta.decimals,
+      fee: meta.fee,
+      logo: meta.icon?.startsWith("data:") ? meta.icon : undefined,
     }
   } catch {
     return null
