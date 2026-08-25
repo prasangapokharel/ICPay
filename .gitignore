@@ -21,6 +21,7 @@ docs/*
 !docs/demo/
 !docs/command/
 !docs/pkg/
+!docs/sdk/
 !docs/language/
 !docs/workflow.md
 !docs/security/
