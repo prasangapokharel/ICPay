@@ -86,6 +86,12 @@ export default function MenuPage() {
           keywords: "analytics stats export csv premium",
         },
         {
+          href: "/governance",
+          key: "governance",
+          icon: "governance",
+          keywords: "nns sns vote proposals neuron",
+        },
+        {
           href: "/transactions",
           key: "history",
           icon: "history",

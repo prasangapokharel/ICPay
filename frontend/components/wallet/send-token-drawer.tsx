@@ -28,6 +28,7 @@ import { validateUsername } from "@/lib/profile/username"
 import { RecipientLookup } from "@/components/transfer/recipient-card"
 import { QrScanner } from "@/components/scan/scan"
 import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/wallet/icpAddress"
+import { parseIcrcPaymentUri } from "@/lib/wallet/paymentUri"
 import { useResolvedUsername } from "@/hooks/wallet/useWalletData"
 import { useDebounced } from "@/hooks/ui/useDebounced"
 import { cn } from "@/lib/ui/utils"
@@ -90,7 +91,7 @@ export function SendTokenDrawer({
   const recipient = mode === "username" ? handle : username.trim()
   const isIcp = token.ledgerId === ICP_LEDGER_ID
 
-  const applyAddress = (hit: ScannedAddress) => {
+  const applyAddress = (hit: ScannedAddress, raw?: string) => {
     // Account identifiers are an ICP-ledger concept: transferByAccountId takes no
     // ledgerId, and services/transfer routes on hex shape before it looks at the
     // mode. Accepting one here while sending ckBTC would send ICP instead and
@@ -103,6 +104,11 @@ export function SendTokenDrawer({
     setUsername(addressText(hit))
     setSubaccount(hit.kind === "icrc1" ? hit.subaccount : null)
     setError(null)
+
+    if (raw) {
+      const icrcPay = parseIcrcPaymentUri(raw)
+      if (icrcPay?.amount) setValue(icrcPay.amount)
+    }
   }
 
   // The same detector the transfer page uses, so a pasted principal or account
@@ -217,7 +223,11 @@ export function SendTokenDrawer({
             )}
           </div>
 
-          <QrScanner open={scanOpen} onOpenChange={setScanOpen} onScan={applyAddress} />
+          <QrScanner
+            open={scanOpen}
+            onOpenChange={setScanOpen}
+            onScan={(hit, raw) => applyAddress(hit, raw)}
+          />
 
           <div className="space-y-2">
             <div className="flex items-baseline justify-between gap-3">
