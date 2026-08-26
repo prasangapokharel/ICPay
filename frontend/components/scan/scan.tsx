@@ -13,6 +13,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { addressText, parseAddress, type ScannedAddress } from "@/lib/wallet/icpAddress"
+import { parseIcrcPaymentUri } from "@/lib/wallet/paymentUri"
 import type { IDetectedBarcode, IScannerError, ScannerErrorKind } from "@yudiel/react-qr-scanner"
 
 // The scanner ships a WASM barcode polyfill and asks for the camera on mount, so
@@ -57,9 +58,8 @@ export function QrScanner({
     const raw = codes[0]?.rawValue
     if (!raw) return
 
-    const hit = parseAddress(raw)
-    // A wrong code is far more likely than a broken camera, so the stream stays
-    // live and the user can just point at the right one.
+    const payment = parseIcrcPaymentUri(raw)
+    const hit = payment?.hit ?? parseAddress(raw)
     if (!hit) {
       setError(t("notAddress"))
       return

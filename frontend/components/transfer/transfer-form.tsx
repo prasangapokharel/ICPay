@@ -40,6 +40,7 @@ import { Principal } from "@icp-sdk/core/principal"
 import { QrScanner, takeScannedAddress } from "@/components/scan/scan"
 import { primeSuccessChime } from "@/lib/ui/successChime"
 import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/wallet/icpAddress"
+import { parseIcrcPaymentUri } from "@/lib/wallet/paymentUri"
 import { parsePaymentLink, amountFieldValue } from "@/services/pay/pay"
 import type { TransferMode } from "@/services/transfer/transfer"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
@@ -119,9 +120,14 @@ export function TransferForm({
     // both is the whole point of scanning one -- but they stay editable, since
     // someone tipping above the asking price should be able to.
     const req = parsePaymentLink(raw)
-    if (!req) return
-    if (req.amount !== undefined) setAmount(amountFieldValue(req.amount))
-    if (req.memo !== undefined) setMemo(req.memo)
+    if (req) {
+      if (req.amount !== undefined) setAmount(amountFieldValue(req.amount))
+      if (req.memo !== undefined) setMemo(req.memo)
+      return
+    }
+
+    const icrcPay = parseIcrcPaymentUri(raw)
+    if (icrcPay?.amount) setAmount(icrcPay.amount)
   }
 
   // Pasting a principal into the username tab used to sit there failing lookup

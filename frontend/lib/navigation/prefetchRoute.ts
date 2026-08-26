@@ -93,8 +93,10 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
           })
         }
       } else if (path.startsWith("/token/")) {
-        const ledgerId = path.slice("/token/".length)
-        if (ledgerId) {
+        const rest = path.slice("/token/".length)
+        const ledgerId = rest.endsWith("/deposit") ? rest.slice(0, -"/deposit".length) : rest
+        if (ledgerId && ledgerId !== "token") {
+          preload(walletKey(identity, "deposit-address")!, () => resolveDeposit(identity))
           preload(walletKey(identity, "token-balance", ledgerId)!, async () => {
             const owner = await custodianForPrefetch(identity)
             const balances = await fetchBalances(

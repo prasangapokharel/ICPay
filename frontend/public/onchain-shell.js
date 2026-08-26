@@ -15,6 +15,9 @@
   } else if (/^\/launch\/[^/]+$/.test(path)) {
     shell = "/launch/id.html"
     shellId = "launch-id"
+  } else if (/^\/token\/[^/]+\/deposit$/.test(path)) {
+    shell = "/token/token/deposit.html"
+    shellId = "token-deposit"
   } else if (/^\/token\/[^/]+$/.test(path)) {
     shell = "/token/token.html"
     shellId = "token-ledger"

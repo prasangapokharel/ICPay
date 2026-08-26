@@ -83,6 +83,7 @@
       "privacy": "Privacy Policy",
       "settings": "Settings",
       "swap": "Swap",
+      "governance": "Governance",
       "bucket": "Bucket",
       "blog": "Blog",
       "analytics": "Analytics",
@@ -384,7 +385,39 @@
     "selfCustodyMoved": "Moved into your wallet.",
     "selfCustodyNet": "You receive",
     "selfCustodyDust": "This is below the {symbol} network fee, so it cannot be moved.",
-    "selfCustodyEmpty": "Nothing to move in — this token has not been sent to your principal."
+    "selfCustodyEmpty": "Nothing to move in — this token has not been sent to your principal.",
+    "historyTitle": "On-chain history",
+    "snsLink": "View SNS"
+  },
+  "tokenHistory": {
+    "empty": "No indexed transactions yet.",
+    "kind": {
+      "send": "Sent",
+      "receive": "Received"
+    }
+  },
+  "chainKey": {
+    "pendingBtc": "{amount} BTC waiting on your address",
+    "btcWithdrawFee": "Est. withdraw fee: {minter} ckBTC minter + {network} BTC network",
+    "ethGasFee": "Est. ETH withdraw gas: {gas} ckETH",
+    "checkDeposit": "Check for BTC deposit",
+    "checkDone": "Balance updated. Refresh your wallet if ckBTC arrived."
+  },
+  "governance": {
+    "title": "Governance",
+    "subtitle": "Open NNS and SNS proposals",
+    "refresh": "Refresh",
+    "readOnlyNote": "Read-only preview. Voting from custodial balances requires a future update.",
+    "tabNns": "NNS",
+    "tabSns": "Your SNS tokens",
+    "empty": "No proposals to show right now.",
+    "proposalId": "Proposal #{id}",
+    "summary": "Summary",
+    "noSummary": "No summary provided for this proposal.",
+    "viewOnDashboard": "View on IC dashboard",
+    "prevPage": "Previous",
+    "nextPage": "Next",
+    "pageOf": "Page {page} of {total} · {count} proposals"
   },
   "sendToken": {
     "title": "Send {symbol}",
