@@ -8,27 +8,22 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { DepositQrBlock } from "@/components/deposit/deposit-address-card"
 import { TokenLogo } from "@/components/token/token-logo"
-import { copyText, formatTokenAmount } from "@/lib/wallet/utils"
-import { icrc1Account } from "@/lib/wallet/accountId"
+import { formatTokenAmount } from "@/lib/wallet/utils"
 import { resolveTokenIcon } from "@/lib/token/icon"
 import { TokenFiatHint } from "@/components/token/token-fiat-hint"
 import { useTokenRegistry } from "@/lib/token/registry"
-import { useTokenHolding, useDepositAddress, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
-import { useChainKeyDeposit } from "@/hooks/wallet/useChainKeyDeposit"
-import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
+import { useTokenHolding, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useTokenLedgerId } from "@/lib/routing/rewrittenRoute"
 import { SelfCustodyCard } from "@/components/wallet/self-custody-card"
 import { SendTokenDrawer } from "@/components/wallet/send-token-drawer"
 import { SendSuccess } from "@/components/wallet/send-success"
-import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
 import { useAuth } from "@/components/auth/auth-provider"
 import { transfer, type TransferMode } from "@/services/transfer/transfer"
 import { isSwapToken } from "@/lib/swap/tokens"
 import { type TokenHolding } from "@/services/tokens"
-
-import { cn } from "@/lib/ui/utils"
+import { TokenHistoryList } from "@/components/token/token-history-list"
+import { TokenSnsMeta } from "@/components/token/token-sns-meta"
 
 const ACTION_ICONS = {
   send: "/images/dashboard/icons8-circled-up-right-48.png",
@@ -46,14 +41,11 @@ export function TokenView() {
   const refreshWallet = useRefreshWallet()
   const [sendOpen, setSendOpen] = useState(false)
   const [sent, setSent] = useState<Sent | null>(null)
-  const [showDeposit, setShowDeposit] = useState(false)
 
-  const ledgerId = useRewrittenLastSegment()
+  const ledgerId = useTokenLedgerId()
 
   const { token, isLoading } = useTokenHolding(ledgerId || null)
-  const { data: deposit } = useDepositAddress()
   const selfCustody = useSelfCustodyBalance(ledgerId || null)
-  const { deposit: chainKeyDeposit } = useChainKeyDeposit(ledgerId || null)
 
   if (isLoading || !ledgerId) return <TokenLoading />
 
@@ -67,11 +59,6 @@ export function TokenView() {
       </div>
     )
   }
-
-  const icrcAddress = deposit
-    ? icrc1Account(deposit.address.owner, deposit.address.subaccount[0])
-    : ""
-  const tokenIcon = resolveTokenIcon(token.ledgerId, token.logo, registry)
 
   const handleSend = async (
     mode: TransferMode,
@@ -140,18 +127,13 @@ export function TokenView() {
               />
             </span>
           </button>
-          <button
-            type="button"
+          <Link
+            href={`/token/${token.ledgerId}/deposit`}
+            prefetch
             aria-label={t("deposit")}
-            onClick={() => setShowDeposit((v) => !v)}
             className="transition-transform active:scale-95"
           >
-            <span
-              className={cn(
-                "flex size-11 items-center justify-center rounded-full",
-                showDeposit ? "bg-primary" : "bg-gray-800"
-              )}
-            >
+            <span className="flex size-11 items-center justify-center rounded-full bg-gray-800">
               <Image
                 src={ACTION_ICONS.deposit}
                 alt=""
@@ -160,7 +142,7 @@ export function TokenView() {
                 className="size-5 object-contain"
               />
             </span>
-          </button>
+          </Link>
           {isSwapToken(token.ledgerId) && (
             <Link
               href={`/swap?from=${token.ledgerId}`}
@@ -193,56 +175,12 @@ export function TokenView() {
         <SelfCustodyCard token={token} balance={selfCustody} />
       )}
 
-      <Collapsible open={showDeposit} onOpenChange={setShowDeposit} className="w-full">
-        <CollapsibleContent
-          keepMounted
-          className="overflow-hidden data-open:animate-accordion-down data-closed:animate-accordion-up"
-        >
-          {!icrcAddress ? (
-            <div className="flex justify-center py-10">
-              <Spinner className="size-5 text-muted-foreground" />
-            </div>
-          ) : chainKeyDeposit ? (
-            <Tabs defaultValue="icpay" className="w-full gap-0">
-              <TabsList variant="line" className="w-full justify-center border-b border-border">
-                <TabsTrigger value="icpay" className="flex-1 text-xs sm:text-sm">
-                  {t("depositIcpayTab")}
-                </TabsTrigger>
-                <TabsTrigger value="native" className="flex-1 text-xs sm:text-sm">
-                  {chainKeyDeposit.asset}
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="icpay" className="mt-5 space-y-4">
-                <p className="text-center text-xs leading-relaxed text-muted-foreground">
-                  {t("depositIcpayNote", { symbol: token.symbol })}
-                </p>
-                <DepositQrBlock value={icrcAddress} logo={tokenIcon} onCopy={copyText} />
-              </TabsContent>
-              <TabsContent value="native" className="mt-5 space-y-4">
-                <p className="text-center text-xs leading-relaxed text-muted-foreground">
-                  {t("depositNativeNote", {
-                    asset: chainKeyDeposit.asset,
-                    network: chainKeyDeposit.asset === "BTC" ? "Bitcoin" : "Ethereum",
-                    symbol: token.symbol,
-                  })}
-                </p>
-                <DepositQrBlock
-                  value={chainKeyDeposit.address}
-                  logo={tokenIcon}
-                  onCopy={copyText}
-                />
-              </TabsContent>
-            </Tabs>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-center text-xs leading-relaxed text-muted-foreground">
-                {t("depositIcpayNote", { symbol: token.symbol })}
-              </p>
-              <DepositQrBlock value={icrcAddress} logo={tokenIcon} onCopy={copyText} />
-            </div>
-          )}
-        </CollapsibleContent>
-      </Collapsible>
+      <TokenSnsMeta ledgerId={token.ledgerId} />
+
+      <div className="space-y-2">
+        <h2 className="text-sm font-semibold">{t("historyTitle")}</h2>
+        <TokenHistoryList token={token} />
+      </div>
     </div>
   )
 }

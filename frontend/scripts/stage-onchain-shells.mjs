@@ -22,6 +22,7 @@ const shells = [
   { file: "bucket/id.html", id: "bucket-id" },
   { file: "launch/id.html", id: "launch-id" },
   { file: "token/token.html", id: "token-ledger" },
+  { file: "token/token/deposit.html", id: "token-deposit" },
   { file: "icpverse/profile.html", id: "icpverse-profile" },
   { file: "u.html", id: "profile-u" },
 ]

@@ -9,13 +9,20 @@ function lastSegment(path: string): string {
   return decodeURIComponent(segments[segments.length - 1])
 }
 
-function subscribe(onStoreChange: () => void) {
-  window.addEventListener("popstate", onStoreChange)
-  return () => window.removeEventListener("popstate", onStoreChange)
+function tokenLedgerIdFromPath(path: string): string {
+  const segments = path.split("/").filter(Boolean)
+  const tokenIdx = segments.indexOf("token")
+  if (tokenIdx < 0 || tokenIdx + 1 >= segments.length) return ""
+  const ledgerId = decodeURIComponent(segments[tokenIdx + 1])
+  return ledgerId === "token" ? "" : ledgerId
 }
 
 function getBrowserLastSegment(): string {
   return lastSegment(window.location.pathname)
+}
+
+function getBrowserTokenLedgerId(): string {
+  return tokenLedgerIdFromPath(window.location.pathname)
 }
 
 // Static export serves one shell per dynamic route; Vercel rewrites keep the
@@ -30,4 +37,20 @@ export function useRewrittenLastSegment(): string {
     getBrowserLastSegment,
     () => "",
   )
+}
+
+export function useTokenLedgerId(): string {
+  const pathname = usePathname()
+  void pathname
+
+  return useSyncExternalStore(
+    subscribe,
+    getBrowserTokenLedgerId,
+    () => "",
+  )
+}
+
+function subscribe(onStoreChange: () => void) {
+  window.addEventListener("popstate", onStoreChange)
+  return () => window.removeEventListener("popstate", onStoreChange)
 }

@@ -44,6 +44,10 @@
       "destination": "/icpverse/profile"
     },
     {
+      "source": "/token/:ledgerId/deposit",
+      "destination": "/token/token/deposit"
+    },
+    {
       "source": "/token/:ledgerId",
       "destination": "/token/token"
     },
