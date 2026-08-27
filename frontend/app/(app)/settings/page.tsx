@@ -52,6 +52,13 @@ export default function MenuPage() {
           icon: "launch",
           keywords: "create token icrc mint deploy",
         },
+        {
+          href: "/icpay/presale",
+          key: "icpayToken",
+          icon: "icpay",
+          keywords: "presale token icpay buy sale",
+          badge: "presaleBadge",
+        },
       ],
     },
     {
@@ -103,26 +110,8 @@ export default function MenuPage() {
       ],
     },
     {
-      key: "storage",
-      items: [
-        {
-          href: "/bucket",
-          key: "bucket",
-          icon: "bucket",
-          keywords: "storage cloud images bucket cdn upload",
-        },
-      ],
-    },
-    {
       key: "more",
       items: [
-        {
-          href: "/icpay/presale",
-          key: "icpayToken",
-          icon: "icpay",
-          keywords: "presale token icpay buy sale",
-          badge: "presaleBadge",
-        },
         {
           href: "/blog",
           key: "blog",

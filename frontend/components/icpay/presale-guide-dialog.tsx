@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowDataTransferHorizontalIcon,
+  Cancel01Icon,
   Coins01Icon,
   ShoppingBag01Icon,
   UserIcon,
@@ -38,7 +39,7 @@ export function PresaleGuideDialog({
   const t = useTranslations("buyIcpay")
   const [step, setStep] = useState(0)
 
-  const close = () => {
+  const dismiss = () => {
     markPresaleGuideSeen()
     setStep(0)
     onOpenChange(false)
@@ -52,16 +53,26 @@ export function PresaleGuideDialog({
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        if (!next) close()
+        if (!next) dismiss()
         else {
           setStep(0)
           onOpenChange(true)
         }
       }}
     >
-      <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-md">
-        <div className="bg-gradient-to-br from-primary via-primary to-primary/80 px-6 pb-8 pt-6 text-primary-foreground">
-          <div className="flex items-center gap-3">
+      <DialogContent showCloseButton={false} className="gap-0 overflow-hidden p-0 sm:max-w-md">
+        <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 px-6 pb-8 pt-6 text-primary-foreground">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="absolute top-3 right-3 text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+            onClick={dismiss}
+            aria-label={t("guideClose")}
+          >
+            <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={1.75} />
+          </Button>
+          <div className="flex items-center gap-3 pr-8">
             <Image
               src="/images/logo/icpay/token.png"
               alt=""
@@ -101,22 +112,34 @@ export function PresaleGuideDialog({
           </div>
         </div>
 
-        <DialogFooter className="flex-row gap-2 border-t border-border/60 px-6 py-4">
-          <Button
-            variant="ghost"
-            className="flex-1"
-            disabled={first}
-            onClick={() => setStep((s) => Math.max(0, s - 1))}
-          >
-            {t("guidePrevious")}
-          </Button>
-          {last ? (
-            <Button className="flex-1" onClick={close}>
-              {t("guideStart")}
+        <DialogFooter className="flex-col gap-3 border-t border-border/60 px-6 py-4 sm:flex-col">
+          <div className="flex w-full gap-2">
+            <Button
+              variant="ghost"
+              className="flex-1"
+              disabled={first}
+              onClick={() => setStep((s) => Math.max(0, s - 1))}
+            >
+              {t("guidePrevious")}
             </Button>
-          ) : (
-            <Button className="flex-1" onClick={() => setStep((s) => s + 1)}>
-              {t("guideNext")}
+            {last ? (
+              <Button className="flex-1" onClick={dismiss}>
+                {t("guideStart")}
+              </Button>
+            ) : (
+              <Button className="flex-1" onClick={() => setStep((s) => s + 1)}>
+                {t("guideNext")}
+              </Button>
+            )}
+          </div>
+          {!last && (
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full text-muted-foreground"
+              onClick={dismiss}
+            >
+              {t("guideSkip")}
             </Button>
           )}
         </DialogFooter>

@@ -999,6 +999,8 @@
     "viewGuide": "How the presale works",
     "guideNext": "Next",
     "guidePrevious": "Previous",
+    "guideSkip": "Skip",
+    "guideClose": "Close guide",
     "guideStart": "Start buying",
     "guideStep1Title": "Welcome to the presale",
     "guideStep1Body": "Buy ICPAY at a fixed rate with ICP from your ICPay wallet. Tokens land in your account as soon as the purchase confirms.",

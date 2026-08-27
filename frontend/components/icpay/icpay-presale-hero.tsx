@@ -14,7 +14,7 @@ import { PresaleStatsPanel } from "@/components/icpay/presale-stats-panel"
 import { PresaleGuideDialog } from "@/components/icpay/presale-guide-dialog"
 import { GradientBadge } from "@/components/ui/gradient-badge"
 import { AMBER_EMBED_BTN, BgImageCard } from "@/components/ui/bg-image-card"
-import { hasSeenPresaleGuide, markPresaleGuideSeen } from "@/lib/icpay/presaleGuide"
+import { hasSeenPresaleGuide } from "@/lib/icpay/presaleGuide"
 import { cn } from "@/lib/ui/utils"
 
 export function IcpayPresaleHero({ symbol }: { symbol: string }) {
@@ -104,14 +104,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
 
       <PresaleGuideDialog
         open={guideOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            markPresaleGuideSeen()
-            setManualGuideOpen(false)
-          } else {
-            setManualGuideOpen(true)
-          }
-        }}
+        onOpenChange={(open) => setManualGuideOpen(open)}
       />
       {buyOpen ? (
         <BuyIcpayDrawer open={buyOpen} onOpenChange={setBuyOpen} symbol={symbol} />
