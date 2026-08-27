@@ -7,6 +7,7 @@ import { useSWRConfig } from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { GradientBadge } from "@/components/ui/gradient-badge"
 import { Spinner } from "@/components/ui/spinner"
 import { LiveGuideInfo } from "@/components/live/live-guide-info"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
@@ -89,12 +90,16 @@ export default function LivePage() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="truncate font-medium">{room.title}</span>
-                    <Badge
-                      variant={liveBadgeVariant(state)}
-                      className="h-5 shrink-0 px-2 text-[10px] font-semibold uppercase tracking-wide"
-                    >
-                      {t(`state.${state}`)}
-                    </Badge>
+                    {state === "live" ? (
+                      <GradientBadge>{t(`state.${state}`)}</GradientBadge>
+                    ) : (
+                      <Badge
+                        variant={liveBadgeVariant(state)}
+                        className="h-5 shrink-0 px-2 text-[10px] font-semibold uppercase tracking-wide"
+                      >
+                        {t(`state.${state}`)}
+                      </Badge>
+                    )}
                   </div>
                   <p className="mt-0.5 truncate text-xs text-muted-foreground">
                     {room.hostUsername[0] ? `@${room.hostUsername[0]}` : t("host")} ·{" "}

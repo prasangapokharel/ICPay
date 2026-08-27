@@ -10,7 +10,6 @@ export function PresaleStatsPanel({
   sale,
   symbol,
   isLoading,
-  progressLabel,
   remainingLabel,
   raisedLabel,
   inactiveLabel,
@@ -18,7 +17,6 @@ export function PresaleStatsPanel({
   sale: IcpaySaleQuote | undefined
   symbol: string
   isLoading: boolean
-  progressLabel: (percent: string) => string
   remainingLabel: (amount: string, symbol: string) => string
   raisedLabel: (icp: string) => string
   inactiveLabel: string
@@ -33,30 +31,34 @@ export function PresaleStatsPanel({
 
   if (!sale) return null
 
-  const percent = Number(sale.percentSold)
+  const percent = Math.min(100, Number(sale.percentSold))
+  const percentLabel = percent.toFixed(2)
 
   return (
-    <div className="space-y-3 rounded-2xl border border-foreground/10 bg-card p-4">
-      <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-        <span>{progressLabel(String(percent))}</span>
-        <span className="shrink-0 tabular-nums">
-          {formatTokenAmount(sale.icpaySold, ICP_DECIMALS, 0)} /{" "}
-          {formatTokenAmount(sale.inventoryCap, ICP_DECIMALS, 0)} {symbol}
-        </span>
+    <div className="space-y-3">
+      <div className="shrink-0 tabular-nums text-xs text-muted-foreground">
+        {formatTokenAmount(sale.icpaySold, ICP_DECIMALS, 0)} /{" "}
+        {formatTokenAmount(sale.inventoryCap, ICP_DECIMALS, 0)} {symbol}
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full bg-primary transition-all"
-          style={{ width: `${Math.min(100, percent)}%` }}
-        />
+
+      <div className="space-y-1">
+        <p className="text-right text-xs font-medium tabular-nums text-foreground">{percentLabel}%</p>
+        <div className="h-1.5 overflow-hidden rounded-full bg-muted/70">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 transition-all duration-500"
+            style={{ width: `${percent}%` }}
+          />
+        </div>
       </div>
+
       <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs tabular-nums text-muted-foreground">
         <span>{remainingLabel(formatTokenAmount(sale.inventoryRemaining, ICP_DECIMALS, 0), symbol)}</span>
         <span aria-hidden>·</span>
         <span>{raisedLabel(formatAmount(sale.icpRaised))}</span>
       </div>
+
       {!sale.active && (
-        <p className="text-center text-xs font-medium text-amber-600 dark:text-amber-500">{inactiveLabel}</p>
+        <p className="text-center text-xs font-medium text-amber-500">{inactiveLabel}</p>
       )}
     </div>
   )
