@@ -40,7 +40,7 @@ export default function BucketPage() {
 
   if (showForm) {
     return (
-      <div className="space-y-6 pt-2">
+      <div className="space-y-4 pt-2">
         <BucketBackButton onClick={() => setShowForm(false)} />
         <div>
           <h1 className="text-xl font-bold tracking-tight">{t("formTitle")}</h1>
