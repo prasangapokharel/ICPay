@@ -13,9 +13,8 @@ import { BuyIcpayDrawer } from "@/components/icpay/buy-icpay-drawer"
 import { PresaleStatsPanel } from "@/components/icpay/presale-stats-panel"
 import { PresaleGuideDialog } from "@/components/icpay/presale-guide-dialog"
 import { GradientBadge } from "@/components/ui/gradient-badge"
-import { AMBER_EMBED_BTN, BgImageCard } from "@/components/ui/bg-image-card"
+import { BgImageCard } from "@/components/ui/bg-image-card"
 import { hasSeenPresaleGuide } from "@/lib/icpay/presaleGuide"
-import { cn } from "@/lib/ui/utils"
 
 export function IcpayPresaleHero({ symbol }: { symbol: string }) {
   const t = useTranslations("buyIcpay")
@@ -83,8 +82,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
 
           {identity ? (
             <Button
-              size="lg"
-              className={cn("h-12 w-full rounded-2xl text-base font-semibold", AMBER_EMBED_BTN)}
+              className="w-full"
               disabled={!sale?.active}
               onClick={() => setBuyOpen(true)}
             >
@@ -92,8 +90,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
             </Button>
           ) : (
             <Button
-              size="lg"
-              className={cn("h-12 w-full rounded-2xl text-base font-semibold", AMBER_EMBED_BTN)}
+              className="w-full"
               nativeButton={false}
               render={<Link href="/login" />}
             >

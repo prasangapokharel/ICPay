@@ -117,8 +117,8 @@
   "login": {
     "heading": "ICP Wallet",
     "tagline": "Send, receive and hold ICP with a wallet secured by your Internet Identity.",
-    "connect": "Connect Wallet",
-    "connecting": "Connecting…",
+    "connect": "Sign in",
+    "connecting": "Signing in…",
     "redirectNote": "You'll be redirected to Internet Identity to approve access.",
     "orContinue": "Or continue with",
     "openIdNote": "Uses your linked Google, Apple, or Microsoft account through Internet Identity.",

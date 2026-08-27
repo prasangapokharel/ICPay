@@ -21,23 +21,16 @@ export function ServiceTile({
   badge?: string
   onPrefetch?: () => void
 }) {
-  const roundIcon = icon === "icpay"
-
   const tile = (
     <>
       <span className="relative">
         <span
           className={cn(
-            "flex size-10 items-center justify-center overflow-hidden bg-gray-800 shadow-sm",
-            roundIcon ? "rounded-full" : "rounded-2xl",
+            "flex size-10 items-center justify-center overflow-hidden rounded-2xl bg-gray-800 shadow-sm",
             "transition-colors hover:bg-gray-700"
           )}
         >
-          <AppIcon
-            name={icon}
-            size={roundIcon ? 40 : 24}
-            className={roundIcon ? "size-full object-cover" : undefined}
-          />
+          <AppIcon name={icon} size={24} />
         </span>
         {badge ? (
           <GradientBadge className="absolute -right-2 -top-2" size="sm">
