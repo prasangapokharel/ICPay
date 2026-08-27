@@ -11,7 +11,7 @@ import Serve "Serve";
 
 module {
   func fileCtx(service: Context.BucketService) : BucketFileService.FileContext {
-    { store = service.store; names = service.names; nextId = service.nextId }
+    { store = service.store; names = service.names; blobs = service.blobs; nextId = service.nextId }
   };
 
   func mutateTags(
@@ -130,7 +130,7 @@ module {
     sourcePath: Text,
     destinationPath: Text,
     apiKey: ?Text,
-  ) : Types.ApiResult<Types.FilePublic> {
+  ) : async Types.ApiResult<Types.FilePublic> {
     switch (Auth.resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
       case (#err(e)) { return #err(e) };
       case (#ok(auth)) {
@@ -143,7 +143,7 @@ module {
           case (#ok(bucket)) {
             if (bucket.owner != auth.owner) { #err("Permission denied") }
             else if (not Auth.canWrite(bucket)) { #err("Bucket expired") }
-            else { BucketFileService.copyFile(fileCtx(service), bucket, sourcePath, destinationPath) }
+            else { await BucketFileService.copyFile(fileCtx(service), bucket, sourcePath, destinationPath) }
           };
         }
       };
@@ -328,7 +328,7 @@ module {
     bucketId: Types.BucketId,
     operations: [Types.FilePathOp],
     apiKey: ?Text,
-  ) : Types.ApiResult<Nat> {
+  ) : async Types.ApiResult<Nat> {
     switch (Auth.resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
       case (#err(e)) { return #err(e) };
       case (#ok(auth)) {
@@ -341,7 +341,7 @@ module {
           case (#ok(bucket)) {
             if (bucket.owner != auth.owner) { #err("Permission denied") }
             else if (not Auth.canWrite(bucket)) { #err("Bucket expired") }
-            else { BucketFileService.bulkCopy(fileCtx(service), bucket, operations) }
+            else { await BucketFileService.bulkCopy(fileCtx(service), bucket, operations) }
           };
         }
       };

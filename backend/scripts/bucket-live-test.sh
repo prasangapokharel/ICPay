@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
-# Live bucket API smoke test against mainnet.
-# Usage: BUCKET_API_KEY=icp_cloud_… bash scripts/bucket-live-test.sh
+# Live bucket API smoke test against mainnet — MANUAL ONLY.
+# Writes and deletes real files on the blob canister. Never run in CI.
+# Usage: BUCKET_LIVE_TEST=1 BUCKET_API_KEY=icp_cloud_… bash scripts/bucket-live-test.sh
 set -euo pipefail
+
+if [[ "${BUCKET_LIVE_TEST:-}" != "1" ]]; then
+  echo "Refusing to run: set BUCKET_LIVE_TEST=1 to hit mainnet (writes real blob bytes)."
+  exit 1
+fi
 
 KEY="${BUCKET_API_KEY:?Set BUCKET_API_KEY}"
 BUCKET="${BUCKET_NAME:-icp}"
@@ -45,7 +51,7 @@ assert_http "CDN hello.txt" "${CDN}/hello.txt" "200"
 assert_ok "listFiles" "$("${Q[@]}" listFiles "(\"${BUCKET}\", 0: nat, 20: nat, opt \"${KEY}\")" --query)"
 assert_ok "getFile" "$("${Q[@]}" getFile "(\"${BUCKET}\", \"/hello.txt\", opt \"${KEY}\")" --query)"
 assert_ok "fileExists (true)" "$("${Q[@]}" fileExists "(\"${BUCKET}\", \"/hello.txt\", opt \"${KEY}\")" --query)"
-assert_ok "downloadFile" "$("${Q[@]}" downloadFile "(\"${BUCKET}\", \"/hello.txt\", opt \"${KEY}\")" --query)"
+assert_ok "downloadFile" "$("${U[@]}" downloadFile "(\"${BUCKET}\", \"/hello.txt\", opt \"${KEY}\")")"
 assert_ok "searchFiles" "$("${Q[@]}" searchFiles "(\"${BUCKET}\", \"hello\", 0: nat, 20: nat, opt \"${KEY}\")" --query)"
 assert_ok "listFolder" "$("${Q[@]}" listFolder "(\"${BUCKET}\", \"/\", 0: nat, 20: nat, opt \"${KEY}\")" --query)"
 assert_ok "getFileMetadata" "$("${Q[@]}" getFileMetadata "(\"${BUCKET}\", \"/hello.txt\", opt \"${KEY}\")" --query)"

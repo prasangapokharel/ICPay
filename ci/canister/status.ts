@@ -1,4 +1,6 @@
-import { CANISTER, arg, dfx } from "../lib.ts"
+import { CANISTER, arg, dfx, resolveOwnedCanister } from "../lib.ts"
 
-// Cycles, memory, controllers, module hash. Defaults to the backend canister.
-dfx(["canister", "status", arg(0) ?? CANISTER])
+// npm run ci canister:status [backend|frontend|blob]
+const targetArg = arg(0)
+const target = targetArg ? (resolveOwnedCanister(targetArg) ?? targetArg) : CANISTER
+dfx(["canister", "status", target])

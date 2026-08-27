@@ -756,7 +756,7 @@ const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
       [ApiResultFileId],
       []
     ),
-    downloadFile: IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [ApiResultBlob], ["query"]),
+    downloadFile: IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [ApiResultBlob], []),
     getPublicFileUrl: IDL.Func([IDL.Text, IDL.Text], [ApiResultUrl], ["query"]),
     deleteFile: IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [ApiResultUnit], []),
     listFiles: IDL.Func([IDL.Text, IDL.Nat, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResultFileList], ["query"]),

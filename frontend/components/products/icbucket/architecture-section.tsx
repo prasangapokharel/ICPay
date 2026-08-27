@@ -43,7 +43,7 @@ const UPLOAD_STEPS = [
 ]
 
 const READ_STEPS = [
-  "Private files: signed downloadFile query from your app.",
+  "Private files: signed downloadFile update from your app.",
   "Public files: plain HTTPS GET on the canister gateway URL.",
   "No AWS bucket, no separate storage server — one on-chain canister.",
 ]

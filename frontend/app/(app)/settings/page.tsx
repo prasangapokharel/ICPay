@@ -7,6 +7,8 @@ import { Search01Icon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { ServiceTile } from "@/components/settings/service-tile"
 import { SettingsDrawer } from "@/components/settings/settings-drawer"
+import { useAuth } from "@/components/auth/auth-provider"
+import { prefetchAppRoute, prefetchGovernance } from "@/lib/navigation/prefetchRoute"
 import type { AppIconName } from "@/components/ui/app-icon"
 import type en from "@/language/en/common.json"
 
@@ -26,6 +28,7 @@ export default function MenuPage() {
   const [query, setQuery] = useState("")
   const [drawerOpen, setDrawerOpen] = useState(false)
   const t = useTranslations("settings")
+  const { identity } = useAuth()
 
   const sections: { key: SectionKey; items: Service[] }[] = [
     {
@@ -178,6 +181,13 @@ export default function MenuPage() {
                 label={t(`items.${item.key}`)}
                 onClick={item.onOpen}
                 badge={item.badge ? t(`items.${item.badge}`) : undefined}
+                onPrefetch={
+                  item.href
+                    ? item.href === "/governance"
+                      ? () => prefetchGovernance(identity)
+                      : () => prefetchAppRoute(item.href!, identity)
+                    : undefined
+                }
               />
             ))}
           </div>

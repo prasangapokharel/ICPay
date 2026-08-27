@@ -16,6 +16,7 @@ import LedgerService "../../src/services/LedgerService";
 import Config "../../src/config/Config";
 import Types "../../src/types";
 import Fixtures "./Fixtures";
+import BlobHarness "./BlobHarness";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
@@ -43,8 +44,9 @@ let transfers = TransferService.create(
   users, usernames, txs, txsByUser, ledger, nextUid, RateLimitStorage.createRateLimitMap(),
   depositSubaccounts, depositAccountIds,
 );
+let blobs = BlobHarness.local();
 let svc = BucketService.create(
-  users, store, names, transfers, nextUid,
+  users, store, names, blobs, null, transfers, nextUid,
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
@@ -131,7 +133,7 @@ switch (BucketService.listFolder(svc, owner, "cdn-assets", "/img/", 0, 20, null)
   case (#err(e)) { assert false; Debug.print("FAIL [FILES]: listFolder: " # e) };
 };
 
-switch (BucketService.copyFile(svc, owner, "cdn-assets", "/img/logo.webp", "/img/logo-copy.webp", null)) {
+switch (await BucketService.copyFile(svc, owner, "cdn-assets", "/img/logo.webp", "/img/logo-copy.webp", null)) {
   case (#ok(_)) { Debug.print("PASS [FILES]: copyFile") };
   case (#err(e)) { assert false; Debug.print("FAIL [FILES]: copy: " # e) };
 };
@@ -171,7 +173,7 @@ switch (BucketService.updateBucket(svc, owner, "cdn-assets", ?"site-cdn", null))
   case (#err(e)) { assert false; Debug.print("FAIL [FILES]: updateBucket: " # e) };
 };
 
-switch (BucketService.deleteBucket(svc, owner, "empty-bucket")) {
+switch (await BucketService.deleteBucket(svc, owner, "empty-bucket")) {
   case (#err(_)) { Debug.print("PASS [FILES]: deleteBucket rejects missing") };
   case (#ok()) { assert false; Debug.print("FAIL [FILES]: delete missing bucket") };
 };

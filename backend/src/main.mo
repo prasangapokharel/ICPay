@@ -31,6 +31,8 @@ import IcCommunityService "services/IcCommunityService";
 import SocialLinkService "services/SocialLinkService";
 import SwapService "services/SwapService";
 import BucketService "services/BucketService";
+import BlobStore "blob/BlobStore";
+import RemoteBlobStore "blob/RemoteBlobStore";
 import Config "config/Config";
 import RateLimitStorage "storage/RateLimitStorage";
 import HealthApi "api/v1/Health";
@@ -149,10 +151,21 @@ persistent actor self {
   let failedSwapEscrows = SwapStorage.createEscrowMap();
   SwapStorage.reindexEscrowKeys(failedSwapEscrows);
 
-  // ICPay Cloud — bucket metadata and file blobs persist across upgrades.
+  // ICPay Cloud — metadata on backend; file bytes on the blob store canister.
   let bucketStore = BucketStorage.empty();
   let bucketNameIndex = Map.empty<Text, Text>();
   BucketStorage.reindexNames(bucketStore, bucketNameIndex);
+  transient let remoteBlobBacking = BlobStore.emptyStore();
+  transient let remoteBlobActor = if (Config.BLOB_STORE_CANISTER_ID.size() > 0) {
+    ?RemoteBlobStore.connect(Principal.fromText(Config.BLOB_STORE_CANISTER_ID))
+  } else {
+    null
+  };
+  transient let blobs = if (Config.BLOB_STORE_CANISTER_ID.size() > 0) {
+    RemoteBlobStore.service(Principal.fromText(Config.BLOB_STORE_CANISTER_ID))
+  } else {
+    BlobStore.localService(remoteBlobBacking)
+  };
 
   // Library modules cannot hold mutable state (moc rejects a top-level `var`
   // outside an actor), so the monotonic id counter that keeps rows unique lives
@@ -233,7 +246,7 @@ persistent actor self {
   transient let bucketUploadSessions = BucketService.createUploadSessionStore();
   transient let analyticsService = AnalyticsService.create(users, transactionsByUser, transferService);
   transient let bucketService = BucketService.create(
-    users, bucketStore, bucketNameIndex, transferService, nextUid,
+    users, bucketStore, bucketNameIndex, blobs, remoteBlobActor, transferService, nextUid,
     bucketCreateLimits, bucketUploadLimits, bucketRenewLimits, bucketManageLimits, bucketApiKeyLimits,
     bucketUploadSessions,
   );

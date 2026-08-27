@@ -22,6 +22,7 @@ import BucketCrypto "../../src/utils/BucketCrypto";
 import Config "../../src/config/Config";
 import Types "../../src/types";
 import Fixtures "./Fixtures";
+import BlobHarness "./BlobHarness";
 
 // CDN serve: every allowed extension → 200 + correct Content-Type (slice decrypt).
 
@@ -47,8 +48,9 @@ let transfers = TransferService.create(
   users, usernames, txs, txsByUser, ledger, nextUid, RateLimitStorage.createRateLimitMap(),
   depositSubaccounts, depositAccountIds,
 );
+let blobs = BlobHarness.local();
 let svc = BucketService.create(
-  users, store, names, transfers, nextUid,
+  users, store, names, blobs, null, transfers, nextUid,
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
@@ -95,19 +97,23 @@ func headerContentType(headers: [(Text, Text)]) : ?Text {
 let key = BucketCrypto.deriveKey(owner, bucketId);
 var fileCounter : Nat = 0;
 
-func seedFile(path: Text, data: Blob, contentType: Text) {
+func seedFile(path: Text, data: Blob, contentType: Text) : async () {
   fileCounter += 1;
   let sealed = BucketCrypto.seal(data, key);
   let file : Types.StoredFile = {
     id = "mime-f-" # Nat.toText(fileCounter);
     bucketId;
     path;
+    name = path;
     size = data.size();
     contentType;
     checksum = sealed.fingerprint;
     createdAt = now;
+    updatedAt = null;
+    metadata = null;
+    tags = [];
   };
-  BucketRepository.saveFile(store, file, sealed.ciphertext);
+  await BucketRepository.saveFile(store, blobs, file, sealed.ciphertext);
 };
 
 var served : Nat = 0;
@@ -117,9 +123,9 @@ for (ext in FileValidator.allowedExtensions().vals()) {
     case (null) { assert false; "" };
   };
   let path = "/cdn-" # ext # "." # ext;
-  seedFile(path, sampleBlob(ext), expected);
+  await seedFile(path, sampleBlob(ext), expected);
 
-  switch (CloudHttpService.prepareServe(svc, "mime-test", path)) {
+  switch (await CloudHttpService.prepareServe(svc, "mime-test", path)) {
     case (#err(resp)) {
       Debug.print(
         "FAIL [MIME-CDN]: serve ." # ext # " status=" # Nat16.toText(resp.status_code),
@@ -145,8 +151,8 @@ for (ext in FileValidator.allowedExtensions().vals()) {
 };
 
 let big = Fixtures.largePng();
-seedFile("/large.png", big, "image/png");
-switch (CloudHttpService.prepareServe(svc, "mime-test", "/large.png")) {
+await seedFile("/large.png", big, "image/png");
+switch (await CloudHttpService.prepareServe(svc, "mime-test", "/large.png")) {
   case (#ok(#Direct({ contentType; data }))) {
     assert contentType == "image/png";
     assert data.size() == big.size();

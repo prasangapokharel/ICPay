@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
 import {
   formatBytes,
+  FILE_ACCEPT,
   mapBucketError,
   MAX_FILE_BYTES,
 } from "@/lib/bucket/bucket"
@@ -176,7 +177,7 @@ export function BucketUploadZone({
         ref={inputRef}
         id={inputId}
         type="file"
-        accept="*/*"
+        accept={FILE_ACCEPT}
         multiple
         className="sr-only"
         disabled={blocked || busy}

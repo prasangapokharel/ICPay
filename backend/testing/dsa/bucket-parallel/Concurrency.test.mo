@@ -18,6 +18,7 @@ import RateLimitService "../../../src/services/RateLimitService";
 import Config "../../../src/config/Config";
 import Types "../../../src/types";
 import Fixtures "../../bucket/Fixtures";
+import BlobHarness "../../bucket/BlobHarness";
 import DsaFixtures "../lib/Fixtures";
 
 /// Mock concurrency — 100 principals each open an upload session at once.
@@ -46,8 +47,9 @@ let transfers = TransferService.create(
   depositSubaccounts, depositAccountIds,
 );
 let uploadLimits = RateLimitStorage.createRateLimitMap();
+let blobs = BlobHarness.local();
 let svc = BucketService.create(
-  users, store, names, transfers, nextId,
+  users, store, names, blobs, null, transfers, nextId,
   RateLimitStorage.createRateLimitMap(),
   uploadLimits,
   RateLimitStorage.createRateLimitMap(),

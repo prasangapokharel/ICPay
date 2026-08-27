@@ -21,12 +21,13 @@ export function useGovernanceFeed() {
 
   const nns = useSWR("governance-nns", () => fetchOpenNnsProposals(identity), {
     revalidateOnFocus: false,
+    dedupingInterval: 300_000,
   })
 
   const sns = useSWR(
     heldLedgers.length ? ["governance-sns", ...heldLedgers] : null,
     () => fetchSnsProposalsForHoldings(identity, heldLedgers),
-    { revalidateOnFocus: false }
+    { revalidateOnFocus: false, dedupingInterval: 300_000 }
   )
 
   return {

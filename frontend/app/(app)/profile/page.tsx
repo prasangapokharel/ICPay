@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { ProfileCard } from "@/components/profile/profile-card"
+import { IcpSubaccountsCard } from "@/components/profile/icp-subaccounts-card"
 import { ShareProfileCard } from "@/components/profile/share-profile-card"
 import { SocialLinksEditor } from "@/components/profile/social-links-editor"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -85,6 +86,7 @@ export default function ProfilePage() {
 
       {claimed && <ShareProfileCard username={claimed} />}
       <SocialLinksEditor user={user} onUpdate={(updated) => mutate(updated, { revalidate: false })} />
+      <IcpSubaccountsCard />
       <ProfileCard user={user} onUpdateUsername={handleUpdateUsername} />
     </div>
   )

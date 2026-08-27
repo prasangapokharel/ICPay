@@ -130,7 +130,7 @@ r.raise_for_status()`,
 curl -sS "${url}"
 
 # Canister queries (owner or read API key)
-${DFX} downloadFile '("${BUCKET}", "/hello.txt", opt "${KEY}")' --query
+${DFX} downloadFile '("${BUCKET}", "/hello.txt", opt "${KEY}")'
 ${DFX} listFiles '("${BUCKET}", 0: nat, 20: nat, opt "${KEY}")' --query
 ${DFX} getFile '("${BUCKET}", "/hello.txt", opt "${KEY}")' --query
 ${DFX} fileExists '("${BUCKET}", "/hello.txt", opt "${KEY}")' --query

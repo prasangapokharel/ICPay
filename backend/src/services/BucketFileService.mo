@@ -12,6 +12,7 @@ import BucketUrls "../utils/BucketUrls";
 import FilePath "../utils/FilePath";
 import FileTags "../utils/FileTags";
 import FileValidator "../utils/FileValidator";
+import BlobStore "../blob/BlobStore";
 import BucketStorage "../storage/BucketStorage";
 import Pagination "../../pkg/pagination/pg";
 import Validate "../../pkg/validate/text";
@@ -20,6 +21,7 @@ module {
   public type FileContext = {
     store: BucketStorage.BucketStore;
     names: BucketStorage.NameIndex;
+    blobs: BlobStore.Service;
     nextId: () -> Text;
   };
   func publicUrlFor(bucket: Types.Bucket, path: Text) : ?Text {
@@ -197,7 +199,7 @@ module {
     bucket: Types.Bucket,
     sourcePath: Text,
     destinationPath: Text,
-  ) : Types.ApiResult<Types.FilePublic> {
+  ) : async Types.ApiResult<Types.FilePublic> {
     if (sourcePath == destinationPath) {
       return #err("Source and destination are the same");
     };
@@ -211,7 +213,7 @@ module {
       return #err("Destination path already exists");
     };
 
-    let stored = switch (BucketRepo.getFileData(ctx.store, file.id)) {
+    let stored = switch (await BucketRepo.getFileData(ctx.blobs, file.id)) {
       case (null) { return #err("File data not found") };
       case (?data) data;
     };
@@ -236,7 +238,7 @@ module {
       return #err("Storage limit reached");
     };
 
-    BucketRepo.saveFile(ctx.store, copy, stored);
+    await BucketRepo.saveFile(ctx.store, ctx.blobs, copy, stored);
     BucketRepo.updateUsage(ctx.store, ctx.names, bucket.id, newUsed);
     #ok(toPublic(bucket, copy))
   };
@@ -378,14 +380,14 @@ module {
     ctx: FileContext,
     bucket: Types.Bucket,
     ops: [Types.FilePathOp],
-  ) : Types.ApiResult<Nat> {
+  ) : async Types.ApiResult<Nat> {
     if (ops.size() == 0) { return #err("No operations provided") };
     if (ops.size() > Config.BUCKET_BULK_MAX) {
       return #err("Too many operations — max " # Nat.toText(Config.BUCKET_BULK_MAX));
     };
     var count : Nat = 0;
     for (op in ops.vals()) {
-      switch (copyFile(ctx, bucket, op.source, op.destination)) {
+      switch (await copyFile(ctx, bucket, op.source, op.destination)) {
         case (#err(e)) { return #err(e) };
         case (#ok(_)) { count += 1 };
       };

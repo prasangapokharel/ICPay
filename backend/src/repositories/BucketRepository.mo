@@ -2,6 +2,8 @@ import Principal "mo:core/Principal";
 import Blob "mo:core/Blob";
 import Iter "mo:core/Iter";
 import Map "mo:core/Map";
+import Text "mo:core/Text";
+import BlobStore "../blob/BlobStore";
 import BucketStorage "../storage/BucketStorage";
 import Types "../types";
 
@@ -72,8 +74,14 @@ module {
     };
   };
 
-  public func saveFile(store: BucketStorage.BucketStore, file: StoredFile, data: Blob) {
-    BucketStorage.putFile(store, file, data);
+  public func saveFile(
+    store: BucketStorage.BucketStore,
+    blobs: BlobStore.Service,
+    file: StoredFile,
+    data: Blob,
+  ) : async () {
+    await blobs.put(file.id, data);
+    BucketStorage.putFile(store, file);
   };
 
   public func getFile(store: BucketStorage.BucketStore, id: FileId) : ?StoredFile {
@@ -84,8 +92,8 @@ module {
     BucketStorage.getFileByPath(store, bucketId, path)
   };
 
-  public func getFileData(store: BucketStorage.BucketStore, id: FileId) : ?Blob {
-    BucketStorage.getFileData(store, id)
+  public func getFileData(blobs: BlobStore.Service, id: FileId) : async ?Blob {
+    await blobs.get(id)
   };
 
   public func getFilesByBucket(store: BucketStorage.BucketStore, bucketId: BucketId) : [StoredFile] {
@@ -96,7 +104,12 @@ module {
     BucketStorage.countFilesByBucket(store, bucketId)
   };
 
-  public func removeFile(store: BucketStorage.BucketStore, id: FileId) : ?Nat {
+  public func removeFile(
+    store: BucketStorage.BucketStore,
+    blobs: BlobStore.Service,
+    id: FileId,
+  ) : async ?Nat {
+    await blobs.delete(id);
     BucketStorage.deleteFile(store, id)
   };
 
@@ -164,7 +177,16 @@ module {
     BucketStorage.relocateFilePath(store, fileId, newPath)
   };
 
-  public func purgeBucket(store: BucketStorage.BucketStore, names: NameIndex, id: BucketId) {
+  public func purgeBucket(
+    store: BucketStorage.BucketStore,
+    blobs: BlobStore.Service,
+    names: NameIndex,
+    id: BucketId,
+  ) : async () {
+    let files = BucketStorage.getFilesByBucket(store, id);
+    for (file in files.vals()) {
+      await blobs.delete(file.id);
+    };
     BucketStorage.purgeBucketData(store, id);
     BucketStorage.deleteBucket(store, names, id);
   };

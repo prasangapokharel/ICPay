@@ -129,8 +129,10 @@ export function mimeFromExtension(ext: string): string | null {
   return EXT_TO_MIME[e] ?? null
 }
 
-// File input hint only — validation is size + blocked video extensions.
-export const FILE_ACCEPT = "*/*"
+// Native picker filter — validation still runs in uploadValidationError.
+export const FILE_ACCEPT = Object.entries(EXT_TO_MIME)
+  .flatMap(([ext, mime]) => [`.${ext}`, mime])
+  .join(",")
 
 const MIME_TO_EXT: Record<string, string> = {
   "image/heic": "heic",

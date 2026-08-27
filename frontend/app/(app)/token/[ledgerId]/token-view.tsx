@@ -24,6 +24,9 @@ import { isSwapToken } from "@/lib/swap/tokens"
 import { type TokenHolding } from "@/services/tokens"
 import { TokenHistoryList } from "@/components/token/token-history-list"
 import { TokenSnsMeta } from "@/components/token/token-sns-meta"
+import { TokenStandardsBadge } from "@/components/token/token-standards-badge"
+import { BtcWithdrawalList } from "@/components/chainkey/btc-withdrawal-list"
+import { CKBTC_LEDGER_ID } from "@/services/chainkey/constants"
 
 const ACTION_ICONS = {
   send: "/images/dashboard/icons8-circled-up-right-48.png",
@@ -108,6 +111,7 @@ export function TokenView() {
             <p className="text-xs text-muted-foreground">{token.name}</p>
           )}
           <TokenValue token={token} />
+          <TokenStandardsBadge ledgerId={token.ledgerId} />
         </div>
 
         <div className="mt-5 flex justify-center gap-10">
@@ -177,9 +181,13 @@ export function TokenView() {
 
       <TokenSnsMeta ledgerId={token.ledgerId} />
 
+      {token.ledgerId === CKBTC_LEDGER_ID ? (
+        <BtcWithdrawalList ledgerId={token.ledgerId} />
+      ) : null}
+
       <div className="space-y-2">
         <h2 className="text-sm font-semibold">{t("historyTitle")}</h2>
-        <TokenHistoryList token={token} />
+        <TokenHistoryList key={token.ledgerId} token={token} />
       </div>
     </div>
   )

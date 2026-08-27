@@ -88,11 +88,58 @@ module {
     #Stream: { contentType: Text; bucketId: Text; path: Text; firstChunk: Blob; totalSize: Nat };
   };
 
+  public func prepareServeFromStored(
+    service: BucketService.BucketService,
+    bucketSegment: Text,
+    path: Text,
+    stored: Blob,
+  ) : { #err: HttpTypes.HttpResponse; #ok: ServeResult } {
+    if (ApiKeyCrypto.isValidShape(bucketSegment)) {
+      return #err(
+        textResponse(
+          404,
+          "text/plain",
+          "Bucket not found — use the bucket name or id from the app, not an API key",
+        )
+      )
+    };
+    let bucketId = switch (BucketService.resolveBucketId(service, bucketSegment)) {
+      case (null) {
+        return #err(textResponse(404, "text/plain", "Bucket not found"))
+      };
+      case (?id) id;
+    };
+    switch (
+      BucketService.servePublicFileChunkFromStored(service, bucketId, path, 0, Config.HTTP_MAX_BODY_BYTES, stored)
+    ) {
+      case (#err("Bucket not found")) { #err(textResponse(404, "text/plain", "Bucket not found")) };
+      case (#err("File not found")) { #err(textResponse(404, "text/plain", "File not found")) };
+      case (#err("Bucket is private")) { #err(textResponse(403, "text/plain", "Forbidden")) };
+      case (#err(_)) { #err(textResponse(500, "text/plain", "Error")) };
+      case (#ok({ contentType; chunk; totalSize })) {
+        if (totalSize <= Config.HTTP_MAX_BODY_BYTES) {
+          if (chunk.size() == totalSize) {
+            #ok(#Direct({ contentType; data = chunk }))
+          } else {
+            switch (BucketService.servePublicFileChunkFromStored(service, bucketId, path, 0, totalSize, stored)) {
+              case (#err(_)) { #err(textResponse(500, "text/plain", "Error")) };
+              case (#ok({ contentType = ct; chunk = data; totalSize = _ })) {
+                #ok(#Direct({ contentType = ct; data }))
+              };
+            }
+          }
+        } else {
+          #ok(#Stream({ contentType; bucketId; path; firstChunk = chunk; totalSize }))
+        }
+      };
+    }
+  };
+
   public func prepareServe(
     service: BucketService.BucketService,
     bucketSegment: Text,
     path: Text,
-  ) : { #err: HttpTypes.HttpResponse; #ok: ServeResult } {
+  ) : async { #err: HttpTypes.HttpResponse; #ok: ServeResult } {
     if (ApiKeyCrypto.isValidShape(bucketSegment)) {
       return #err(
         textResponse(
@@ -111,7 +158,7 @@ module {
     // Never full-decrypt in http_request — query instruction limit traps on ~700KB+.
     // Slice decrypt matches streaming and stays within the IC query budget.
     switch (
-      BucketService.servePublicFileChunk(service, bucketId, path, 0, Config.HTTP_MAX_BODY_BYTES)
+      await BucketService.servePublicFileChunk(service, bucketId, path, 0, Config.HTTP_MAX_BODY_BYTES)
     ) {
       case (#err("Bucket not found")) { #err(textResponse(404, "text/plain", "Bucket not found")) };
       case (#err("File not found")) { #err(textResponse(404, "text/plain", "File not found")) };
@@ -122,7 +169,7 @@ module {
           if (chunk.size() == totalSize) {
             #ok(#Direct({ contentType; data = chunk }))
           } else {
-            switch (BucketService.servePublicFileChunk(service, bucketId, path, 0, totalSize)) {
+            switch (await BucketService.servePublicFileChunk(service, bucketId, path, 0, totalSize)) {
               case (#err(_)) { #err(textResponse(500, "text/plain", "Error")) };
               case (#ok({ contentType = ct; chunk = data; totalSize = _ })) {
                 #ok(#Direct({ contentType = ct; data }))
@@ -151,7 +198,7 @@ module {
     path: Text,
     firstChunk: Blob,
     totalSize: Nat,
-    callback: shared query HttpTypes.StreamToken -> async HttpTypes.StreamingCallbackHttpResponse,
+    callback: shared composite query HttpTypes.StreamToken -> async HttpTypes.StreamingCallbackHttpResponse,
   ) : HttpTypes.HttpResponse {
     let nextOffset = firstChunk.size();
     {
@@ -169,12 +216,46 @@ module {
     }
   };
 
+  public func streamingCallbackFromStored(
+    service: BucketService.BucketService,
+    token: HttpTypes.StreamToken,
+    stored: Blob,
+  ) : HttpTypes.StreamingCallbackHttpResponse {
+    switch (
+      BucketService.servePublicFileChunkFromStored(
+        service,
+        token.bucketId,
+        token.path,
+        token.offset,
+        Config.HTTP_CHUNK_BYTES,
+        stored,
+      )
+    ) {
+      case (#err(_)) {
+        { body = Blob.fromArray([]); token = null }
+      };
+      case (#ok({ chunk; totalSize })) {
+        let next = token.offset + chunk.size();
+        {
+          body = chunk;
+          token = if (next >= totalSize) { null } else {
+            ?{
+              bucketId = token.bucketId;
+              path = token.path;
+              offset = next;
+            }
+          };
+        }
+      };
+    }
+  };
+
   public func streamingCallback(
     service: BucketService.BucketService,
     token: HttpTypes.StreamToken,
-  ) : HttpTypes.StreamingCallbackHttpResponse {
+  ) : async HttpTypes.StreamingCallbackHttpResponse {
     switch (
-      BucketService.servePublicFileChunk(
+      await BucketService.servePublicFileChunk(
         service,
         token.bucketId,
         token.path,

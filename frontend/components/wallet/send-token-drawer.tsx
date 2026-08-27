@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
+import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -30,6 +31,8 @@ import { QrScanner } from "@/components/scan/scan"
 import { addressText, detectTypedAddress, type ScannedAddress } from "@/lib/wallet/icpAddress"
 import { parseIcrcPaymentUri } from "@/lib/wallet/paymentUri"
 import { useResolvedUsername } from "@/hooks/wallet/useWalletData"
+import { useAuth } from "@/components/auth/auth-provider"
+import { fetchTransferConsentMessage } from "@/services/ledger/consent"
 import { useDebounced } from "@/hooks/ui/useDebounced"
 import { cn } from "@/lib/ui/utils"
 import type { TokenHolding } from "@/services/tokens"
@@ -64,6 +67,8 @@ export function SendTokenDrawer({
 }) {
   const t = useTranslations("sendToken")
   const tc = useTranslations("common")
+  const locale = useLocale()
+  const { identity } = useAuth()
   // The scan button's label already exists under transfer, in all ten catalogs.
   const tt = useTranslations("transfer")
   const [username, setUsername] = useState("")
@@ -72,6 +77,7 @@ export function SendTokenDrawer({
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [scanOpen, setScanOpen] = useState(false)
+  const [confirming, setConfirming] = useState(false)
   // Anything but "username" means the field holds a principal or account id, so
   // the handle lookup is skipped and the raw text is sent as typed.
   const [mode, setMode] = useState<TransferMode>("username")
@@ -146,6 +152,14 @@ export function SendTokenDrawer({
     !memoTooLong &&
     !loading
 
+  const { data: consentText } = useSWR(
+    confirming && canSend && identity
+      ? (["transfer-consent", token.ledgerId, locale] as const)
+      : null,
+    () => fetchTransferConsentMessage(identity, token.ledgerId, locale),
+    { revalidateOnFocus: false }
+  )
+
   const handleSend = async () => {
     if (amount === null) return
     primeSuccessChime()
@@ -168,21 +182,69 @@ export function SendTokenDrawer({
     setSubaccount(null)
     setValue("")
     setMemo("")
+    setConfirming(false)
     onOpenChange(false)
   }
 
+  const resetForm = () => {
+    setConfirming(false)
+    setUsername("")
+    setMode("username")
+    setSubaccount(null)
+    setValue("")
+    setMemo("")
+    setError(null)
+  }
+
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} showSwipeHandle>
+    <Drawer
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) resetForm()
+        onOpenChange(next)
+      }}
+      showSwipeHandle
+    >
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle className="text-center">
-            {t("title", { symbol: token.symbol })}
+            {confirming ? t("confirmTitle") : t("title", { symbol: token.symbol })}
           </DrawerTitle>
           <DrawerDescription className="text-center">
-            {t("subtitle", { symbol: token.symbol })}
+            {confirming
+              ? t("confirmSubtitle", { symbol: token.symbol })
+              : t("subtitle", { symbol: token.symbol })}
           </DrawerDescription>
         </DrawerHeader>
 
+        {confirming ? (
+          <div className="space-y-4 px-4">
+            <div className="space-y-2 rounded-2xl bg-muted/40 p-4 text-sm">
+              <Row label={t("recipient")} value={recipient || "—"} />
+              <Row
+                label={tc("amount")}
+                value={amount === null ? "—" : `${full(amount)} ${token.symbol}`}
+                emphasis
+              />
+              <Row label={tc("fee")} value={`${full(token.fee)} ${token.symbol}`} />
+              <Row
+                label={t("total")}
+                value={total === null ? "—" : `${full(total)} ${token.symbol}`}
+                emphasis
+              />
+            </div>
+            {consentText ? (
+              <p className="rounded-xl border border-border/40 p-3 text-xs leading-relaxed text-muted-foreground">
+                {consentText}
+              </p>
+            ) : null}
+            {error ? (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : null}
+          </div>
+        ) : (
         <div className="space-y-4 px-4">
           {/* Recipient leads, the same order the transfer page uses: who is
               being paid is the first decision, and a wrong handle wastes the fee
@@ -324,12 +386,30 @@ export function SendTokenDrawer({
             </Alert>
           )}
         </div>
+        )}
 
-        <DrawerFooter>
-          <Button disabled={!canSend} onClick={handleSend}>
-            {loading && <Spinner className="size-4" />}
-            {loading ? t("sending") : insufficient ? t("insufficient") : t("send")}
+        <DrawerFooter className={confirming ? "flex-row gap-2" : undefined}>
+          {confirming ? (
+            <>
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setConfirming(false)}>
+                {tc("back")}
+              </Button>
+              <Button className="flex-1" disabled={!canSend} onClick={() => void handleSend()}>
+                {loading && <Spinner className="size-4" />}
+                {loading ? t("sending") : t("confirmSend")}
+              </Button>
+            </>
+          ) : (
+          <Button
+            disabled={!canSend}
+            onClick={() => {
+              if (!canSend) return
+              setConfirming(true)
+            }}
+          >
+            {insufficient ? t("insufficient") : t("send")}
           </Button>
+          )}
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

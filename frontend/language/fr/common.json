@@ -5,7 +5,7 @@
     "send": "Send",
     "bucket": "Bucket",
     "menu": "Menu",
-    "buyUsername": "Buy a username",
+    "buyUsername": "Shop",
     "live": "Live"
   },
   "common": {
@@ -311,6 +311,8 @@
     "upsell": "Want something shorter? Buy a premium username",
     "shareTitle": "Your payment link",
     "shareBody": "Anyone can open this to pay you — no account needed.",
+    "subaccountsTitle": "Indexed subaccounts",
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
     "shareSheetTitle": "Pay @{name} on ICPay",
     "shareSheetText": "Send me ICP at @{name}"
   },
@@ -356,7 +358,9 @@
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
     "historyTitle": "On-chain history",
-    "snsLink": "View SNS"
+    "snsLink": "View SNS",
+    "snsDashboard": "SNS dashboard",
+    "snsSwap": "SNS swap"
   },
   "sendToken": {
     "title": "Send {symbol}",
@@ -370,7 +374,10 @@
     "total": "Total deducted",
     "insufficient": "Insufficient balance",
     "send": "Send",
-    "sending": "Sending…"
+    "sending": "Sending…",
+    "confirmTitle": "Confirm send",
+    "confirmSubtitle": "Review before sending {symbol}.",
+    "confirmSend": "Confirm send"
   },
   "icpverse": {
     "searchPlaceholder": "Find your friends",
@@ -1133,6 +1140,7 @@
   },
   "tokenHistory": {
     "empty": "No indexed transactions yet.",
+    "loadMore": "Load more",
     "kind": {
       "send": "Sent",
       "receive": "Received"
@@ -1143,7 +1151,8 @@
     "btcWithdrawFee": "Est. withdraw fee: {minter} ckBTC minter + {network} BTC network",
     "ethGasFee": "Est. ETH withdraw gas: {gas} ckETH",
     "checkDeposit": "Check for BTC deposit",
-    "checkDone": "Balance updated. Refresh your wallet if ckBTC arrived."
+    "checkDone": "Balance updated. Refresh your wallet if ckBTC arrived.",
+    "withdrawalsTitle": "BTC withdrawals"
   },
   "governance": {
     "title": "Governance",
@@ -1159,6 +1168,13 @@
     "viewOnDashboard": "View on IC dashboard",
     "prevPage": "Previous",
     "nextPage": "Next",
-    "pageOf": "Page {page} of {total} · {count} proposals"
+    "pageOf": "Page {page} of {total} · {count} proposals",
+    "filter": {
+      "all": "All",
+      "open": "Open",
+      "executed": "Executed",
+      "rejected": "Rejected"
+    },
+    "snsProjectLink": "View SNS project"
   }
 }

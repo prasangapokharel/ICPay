@@ -15,7 +15,6 @@ import {
   resolveProfile,
   walletKey,
 } from "@/lib/wallet/walletCache"
-import { getCachedLedgerIds } from "@/lib/wallet/ledgerIdsCache"
 
 async function custodianForPrefetch(identity: Identity) {
   const deposit = await resolveDeposit(identity)
@@ -69,16 +68,6 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
       break
     case "/wallet":
       preload(walletKey(identity, "deposit-address")!, () => resolveDeposit(identity))
-      preload(walletKey(identity, "token-balances")!, async () => {
-        const owner = await custodianForPrefetch(identity)
-        const ledgerIds = await getCachedLedgerIds(identity)
-        return fetchBalances(
-          ledgerIds,
-          owner,
-          custodialSubaccount(identity.getPrincipal()),
-          identity
-        )
-      })
       break
     case "/settings":
       preload(walletKey(identity, "profile")!, () => resolveProfile(identity))
@@ -111,6 +100,13 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
       }
       break
   }
+}
+
+export function prefetchGovernance(identity: Identity | undefined) {
+  if (!identity) return
+  preload("governance-nns", () =>
+    import("@/services/governance/governance").then((m) => m.fetchOpenNnsProposals(identity))
+  )
 }
 
 export function prefetchUsernameProfile(username: string, identity: Identity | undefined) {

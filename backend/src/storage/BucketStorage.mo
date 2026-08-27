@@ -6,8 +6,7 @@ import Blob "mo:core/Blob";
 import Text "mo:core/Text";
 import Types "../types";
 
-/// Bucket stable store — file bytes kept as `Blob` (not `[Nat8]`) in `fileData`.
-/// The actor is `persistent`; maps survive upgrades via orthogonal persistence.
+/// Bucket stable store — file metadata only; bytes live on the blob store canister.
 module {
   type Bucket = Types.Bucket;
   type BucketId = Types.BucketId;
@@ -17,7 +16,6 @@ module {
   public type BucketStore = {
     buckets: Map.Map<BucketId, Bucket>;
     files: Map.Map<FileId, StoredFile>;
-    fileData: Map.Map<FileId, Blob>;
     pathIndex: Map.Map<Text, FileId>;
     ownerIndex: Map.Map<Principal, [BucketId]>;
     apiKeys: Map.Map<Text, Types.ApiKey>;
@@ -31,7 +29,6 @@ module {
     {
       buckets = Map.empty<BucketId, Bucket>();
       files = Map.empty<FileId, StoredFile>();
-      fileData = Map.empty<FileId, Blob>();
       pathIndex = Map.empty<Text, FileId>();
       ownerIndex = Map.empty<Principal, [BucketId]>();
       apiKeys = Map.empty<Text, Types.ApiKey>();
@@ -130,9 +127,8 @@ module {
     };
   };
 
-  public func putFile(store: BucketStore, file: StoredFile, data: Blob) {
+  public func putFile(store: BucketStore, file: StoredFile) {
     store.files.add(file.id, file);
-    store.fileData.add(file.id, data);
     store.pathIndex.add(pathKey(file.bucketId, file.path), file.id);
   };
 
@@ -147,10 +143,6 @@ module {
     }
   };
 
-  public func getFileData(store: BucketStore, id: FileId) : ?Blob {
-    store.fileData.get(id)
-  };
-
   public func getFilesByBucket(store: BucketStore, bucketId: BucketId) : [StoredFile] {
     Iter.toArray(
       Iter.filter<StoredFile>(Map.values(store.files), func(f) { f.bucketId == bucketId }),
@@ -163,7 +155,6 @@ module {
       case (null) null;
       case (?file) {
         store.files.remove(id);
-        store.fileData.remove(id);
         store.pathIndex.remove(pathKey(file.bucketId, file.path));
         ?file.size
       };

@@ -31,8 +31,10 @@ import {
   PINNED_LEDGER_IDS,
   metadataFromRegistry,
   metadataLedgerIds,
+  visibleMetadataLedgerIds,
   type TokenHolding,
 } from "@/services/tokens"
+import { fetchTokenBalancesTiered } from "@/lib/wallet/balanceSweep"
 
 const keyFor = walletKey
 
@@ -446,19 +448,32 @@ export function useTokenHoldings() {
   const { identity } = useAuth()
   const custodian = useCustodian()
   const registry = useTokenRegistry()
+  const { mutate: globalMutate } = useSWRConfig()
+  const principal = identity?.getPrincipal().toText()
+  const balancesKey = custodian && identity ? keyFor(identity, "token-balances") : null
 
   const { data: balances, isLoading: loadingBalances } = useSWR(
-    custodian && identity ? keyFor(identity, "token-balances") : null,
+    balancesKey,
     async () => {
       const ledgerIds = await getCachedLedgerIds(identity)
       const owner = custodian!
       const subaccount = custodialSubaccount(identity!.getPrincipal())
-      return await fetchBalances(ledgerIds, owner, subaccount, identity)
+      return fetchTokenBalancesTiered(
+        ledgerIds,
+        owner,
+        subaccount,
+        identity,
+        principal!,
+        (merged) => {
+          if (balancesKey) void globalMutate(balancesKey, merged, { revalidate: false })
+        }
+      )
     },
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
-  const metadataIds = balances ? metadataLedgerIds(balances) : []
+  const displayIds = balances ? metadataLedgerIds(balances) : []
+  const metadataIds = balances ? visibleMetadataLedgerIds(balances) : []
   const { data: metadata, isLoading: loadingMetadata } = useSWRImmutable(
     registry && metadataIds.length ? (["token-metadata", metadataIds.join(",")] as const) : null,
     async () => {
@@ -474,13 +489,13 @@ export function useTokenHoldings() {
     }
   )
 
-  const holdings: TokenHolding[] = metadataIds.flatMap((ledgerId) => {
-    const meta = metadata?.get(ledgerId)
+  const holdings: TokenHolding[] = displayIds.flatMap((ledgerId) => {
+    const meta =
+      metadata?.get(ledgerId) ??
+      (registry ? metadataFromRegistry(ledgerId, registry) : null)
     if (!meta) return []
     return [{ ...meta, balance: balances!.get(ledgerId)! }]
   })
-
-  const principal = identity?.getPrincipal().toText()
 
   useEffect(() => {
     if (principal && holdings.length > 0) writeHoldings(principal, holdings)
@@ -509,7 +524,12 @@ export function useTokenHoldings() {
     }),
     isLoading:
       shown.length === 0 &&
-      (loadingBalances || (metadataIds.length > 0 && loadingMetadata && !metadata)),
+      (loadingBalances ||
+        (displayIds.length > 0 &&
+          !registry &&
+          metadataIds.length > 0 &&
+          loadingMetadata &&
+          !metadata)),
   }
 }
 

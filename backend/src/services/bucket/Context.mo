@@ -1,4 +1,6 @@
 import Map "mo:core/Map";
+import BlobStore "../../blob/BlobStore";
+import RemoteBlobStore "../../blob/RemoteBlobStore";
 import Types "../../types";
 import TransferService "../TransferService";
 import UserStorage "../../storage/UserStorage";
@@ -18,6 +20,8 @@ module {
     users: UserStorage.UserMap;
     store: BucketStorage.BucketStore;
     names: BucketStorage.NameIndex;
+    blobs: BlobStore.Service;
+    remoteBlobActor: ?RemoteBlobStore.Actor;
     transfers: TransferService.TransferService;
     nextId: () -> Text;
     createLimits: RateLimitStorage.RateLimitMap;
@@ -32,6 +36,8 @@ module {
     users: UserStorage.UserMap,
     store: BucketStorage.BucketStore,
     names: BucketStorage.NameIndex,
+    blobs: BlobStore.Service,
+    remoteBlobActor: ?RemoteBlobStore.Actor,
     transfers: TransferService.TransferService,
     nextId: () -> Text,
     createLimits: RateLimitStorage.RateLimitMap,
@@ -45,6 +51,8 @@ module {
       users;
       store;
       names;
+      blobs;
+      remoteBlobActor;
       transfers;
       nextId;
       createLimits;
