@@ -39,6 +39,7 @@ module {
   public let downloadFile = Serve.downloadFile;
   public let servePublicFile = Serve.servePublicFile;
   public let servePublicFileChunk = Serve.servePublicFileChunk;
+  public let servePublicFileChunkFromStored = Serve.servePublicFileChunkFromStored;
   public let getPublicFileUrl = Serve.getPublicFileUrl;
   public let deleteFile = Serve.deleteFile;
   public let listFiles = Serve.listFiles;

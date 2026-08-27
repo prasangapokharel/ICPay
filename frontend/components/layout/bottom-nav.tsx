@@ -23,6 +23,9 @@ const navItems: NavItem[] = [
   { href: "/settings", labelKey: "menu", icon: "menu" },
 ]
 
+export const bottomNavSpacerClass =
+  "pb-[calc(5.5rem+max(0.75rem,env(safe-area-inset-bottom))+0.75rem)]"
+
 export function BottomNav() {
   const pathname = usePathname()
   const t = useTranslations("nav")
@@ -35,13 +38,13 @@ export function BottomNav() {
   return (
     <nav
       className={cn(
-        "fixed bottom-0 left-1/2 z-50 w-full max-w-md -translate-x-1/2",
-        "px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2"
+        "fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md",
+        "px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2"
       )}
     >
       <div
         className={cn(
-          "grid h-[4.25rem] grid-cols-5 items-stretch rounded-3xl px-1",
+          "grid min-h-[4.5rem] grid-cols-5 items-stretch rounded-3xl px-0.5 py-1",
           "border border-border/60 bg-background/95 shadow-lg backdrop-blur-xl"
         )}
       >
@@ -84,32 +87,26 @@ function NavTab({
       onFocus={onWarm}
       aria-label={label}
       aria-current={active ? "page" : undefined}
-      className={cn(
-        "flex min-w-0 flex-col items-center justify-center gap-1 transition-transform active:scale-95",
-        center ? "pb-0.5" : "pb-1.5 pt-1"
-      )}
+      className="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 pb-0.5 pt-1 transition-transform active:scale-95"
     >
       <span
         className={cn(
-          "flex shrink-0 items-center justify-center rounded-full",
-          center ? "size-11" : "size-9",
+          "flex size-9 shrink-0 items-center justify-center rounded-full",
           center
-            ? cn("bg-muted/50", active && "bg-muted")
+            ? cn("bg-muted/60 ring-1 ring-border/60", active && "bg-muted ring-primary/40")
             : cn("bg-gray-800", active && "bg-gray-700 dark:bg-foreground/15")
         )}
       >
-        <AppIcon name={icon} size={center ? 24 : 20} />
+        <AppIcon name={icon} size={center ? 22 : 20} />
       </span>
-      {!center && (
-        <span
-          className={cn(
-            "max-w-full truncate px-0.5 text-[10px] leading-tight",
-            active ? "font-semibold text-foreground" : "font-medium text-muted-foreground"
-          )}
-        >
-          {label}
-        </span>
-      )}
+      <span
+        className={cn(
+          "max-w-full truncate text-[11px] leading-none",
+          active ? "font-semibold text-foreground" : "font-medium text-muted-foreground"
+        )}
+      >
+        {label}
+      </span>
     </Link>
   )
 }

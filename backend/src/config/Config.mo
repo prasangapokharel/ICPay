@@ -130,6 +130,10 @@ module {
   // ICPay backend canister — public file URLs use https://{id}.raw.icp0.io/…
   public let BACKEND_CANISTER_ID: Text = "6vbhm-nqaaa-aaaan-q6muq-cai";
 
+  // Dedicated blob store for ICPay Cloud file bytes. Empty = in-process store
+  // (local replica / tests). Set after deploying icp_blob_store on mainnet.
+  public let BLOB_STORE_CANISTER_ID: Text = "fly6t-piaaa-aaaan-q6oga-cai";
+
   // Clean CDN host (Vercel proxy → canister /cloud/). Null keeps raw.icp0.io URLs.
   public let CLOUD_CDN_BASE: ?Text = null;
 

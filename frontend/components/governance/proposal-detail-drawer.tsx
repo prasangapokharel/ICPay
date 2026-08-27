@@ -12,8 +12,10 @@ import {
 } from "@/components/ui/drawer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useSnsTokenMeta } from "@/hooks/governance/useGovernance"
 import type { ProposalRow } from "@/services/governance/governance"
-import { nnsProposalUrl } from "@/services/governance/governance"
+import { nnsProposalUrl, snsDashboardUrl } from "@/services/governance/governance"
+import { useSnsRegistry } from "@/hooks/governance/useSnsRegistry"
 
 export function ProposalDetailDrawer({
   proposal,
@@ -25,11 +27,17 @@ export function ProposalDetailDrawer({
   onOpenChange: (open: boolean) => void
 }) {
   const t = useTranslations("governance")
+  const ledgerId = proposal?.ledgerId ?? null
+  const { meta } = useSnsTokenMeta(proposal?.source === "sns" ? ledgerId : null)
+  const { registry } = useSnsRegistry(proposal?.source === "sns" ? ledgerId : null)
 
   if (!proposal) return null
 
-  const dashboardUrl =
-    proposal.source === "nns" ? nnsProposalUrl(proposal.id) : undefined
+  const nnsUrl = proposal.source === "nns" ? nnsProposalUrl(proposal.id) : undefined
+  const snsUrl =
+    proposal.source === "sns" && registry?.rootCanisterId
+      ? snsDashboardUrl(registry.rootCanisterId)
+      : meta?.url
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange} showSwipeHandle>
@@ -63,19 +71,32 @@ export function ProposalDetailDrawer({
           )}
         </div>
 
-        {dashboardUrl ? (
-          <div className="px-4 pb-6 pt-2">
-            <Button
-              variant="outline"
-              className="w-full"
-              nativeButton={false}
-              render={<a href={dashboardUrl} target="_blank" rel="noopener noreferrer" />}
-            >
-              <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
-              {t("viewOnDashboard")}
-            </Button>
+        {(nnsUrl || snsUrl) && (
+          <div className="space-y-2 px-4 pb-6 pt-2">
+            {nnsUrl ? (
+              <Button
+                variant="outline"
+                className="w-full"
+                nativeButton={false}
+                render={<a href={nnsUrl} target="_blank" rel="noopener noreferrer" />}
+              >
+                <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
+                {t("viewOnDashboard")}
+              </Button>
+            ) : null}
+            {snsUrl ? (
+              <Button
+                variant="outline"
+                className="w-full"
+                nativeButton={false}
+                render={<a href={snsUrl} target="_blank" rel="noopener noreferrer" />}
+              >
+                <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
+                {t("snsProjectLink")}
+              </Button>
+            ) : null}
           </div>
-        ) : null}
+        )}
       </DrawerContent>
     </Drawer>
   )

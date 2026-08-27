@@ -53,7 +53,7 @@ function useRandomTicker(seed: number) {
 }
 
 export function MarketStats() {
-  const { price, loading } = useIcpPrice({ refreshInterval: 5_000 })
+  const { price, loading } = useIcpPrice({ refreshInterval: 60_000 })
   const liveUsd = price && price.usd > 0 ? price.usd : 0
   const count = useEasedPrice(liveUsd)
   const ticker = useRandomTicker(liveUsd)

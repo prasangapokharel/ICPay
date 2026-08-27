@@ -25,7 +25,7 @@ export const BUCKET_API_METHODS: DocsMethodRow[] = [
   { name: "completeFileUpload", kind: "update", auth: "owner / write key" },
   { name: "getUpload", kind: "query", auth: "owner / write key" },
   { name: "cancelUpload", kind: "update", auth: "owner / write key" },
-  { name: "downloadFile", kind: "query", auth: "owner / read key" },
+  { name: "downloadFile", kind: "update", auth: "owner / read key" },
   { name: "getPublicFileUrl", kind: "query", auth: "none" },
   { name: "listFiles", kind: "query", auth: "owner / read key" },
   { name: "getFile", kind: "query", auth: "owner / read key" },

@@ -1,12 +1,11 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
 import { NnsGovernanceCanister } from "@icp-sdk/canisters/nns"
-import { SnsWasmCanister } from "@icp-sdk/canisters/nns"
 import { initSnsWrapper } from "@icp-sdk/canisters/sns"
 import { createAgent } from "@/services/icp"
+import { fetchSnsRegistryList, findSnsRegistryRow } from "@/services/sns/registry"
 
 const NNS_GOVERNANCE_ID = "rrkah-fqaaa-aaaaa-aaaaq-cai"
-const SNS_WASM_ID = "qaa6y-5yaaa-aaaaa-aaafa-cai"
 
 export type ProposalRow = {
   id: bigint
@@ -26,8 +25,55 @@ function proposalStatusLabel(status: unknown): string {
   return String(status)
 }
 
+export type ProposalFilter = "all" | "open" | "executed" | "rejected"
+
+export type SnsRegistryEntry = {
+  ledgerId: string
+  rootCanisterId?: string
+  swapCanisterId?: string
+  governanceCanisterId?: string
+}
+
+export function filterProposals(rows: ProposalRow[], filter: ProposalFilter): ProposalRow[] {
+  if (filter === "all") return rows
+  return rows.filter((row) => proposalMatchesFilter(row, filter))
+}
+
+function proposalMatchesFilter(row: ProposalRow, filter: ProposalFilter): boolean {
+  const s = row.status.toLowerCase()
+  switch (filter) {
+    case "open":
+      return s.includes("open") || s === "adopted" || s === "open"
+    case "executed":
+      return s.includes("execut") || s === "executed"
+    case "rejected":
+      return s.includes("reject") || s.includes("fail") || s === "rejected"
+    default:
+      return true
+  }
+}
+
+export async function fetchSnsRegistryEntry(
+  identity: Identity | undefined,
+  ledgerId: string
+): Promise<SnsRegistryEntry | null> {
+  const rows = await fetchSnsRegistryList(identity)
+  const hit = findSnsRegistryRow(rows, ledgerId)
+  if (!hit) return null
+  return {
+    ledgerId: hit.ledgerId,
+    rootCanisterId: hit.rootCanisterId,
+    swapCanisterId: hit.swapCanisterId,
+    governanceCanisterId: hit.governanceCanisterId,
+  }
+}
+
 export function nnsProposalUrl(id: bigint): string {
   return `https://dashboard.internetcomputer.org/proposal/${id.toString()}`
+}
+
+export function snsDashboardUrl(rootCanisterId: string): string {
+  return `https://dashboard.internetcomputer.org/sns/${rootCanisterId}`
 }
 
 export async function fetchOpenNnsProposals(
@@ -65,14 +111,9 @@ async function snsRootForLedger(
   identity: Identity | undefined,
   ledgerId: string
 ): Promise<Principal | null> {
-  const agent = await createAgent(identity)
-  const wasm = SnsWasmCanister.create({
-    agent,
-    canisterId: Principal.fromText(SNS_WASM_ID),
-  })
-  const rows = await wasm.listSnses({ certified: false })
-  const hit = rows.find((r) => r.ledger_canister_id[0]?.toText() === ledgerId)
-  return hit?.root_canister_id[0] ?? null
+  const rows = await fetchSnsRegistryList(identity)
+  const hit = findSnsRegistryRow(rows, ledgerId)
+  return hit?.rootCanisterId ? Principal.fromText(hit.rootCanisterId) : null
 }
 
 export async function fetchSnsMeta(

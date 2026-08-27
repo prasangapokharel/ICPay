@@ -14,6 +14,7 @@ import BucketCrypto "../../utils/BucketCrypto";
 import BucketUrls "../../utils/BucketUrls";
 import Context "Context";
 import Auth "Auth";
+import BlobStore "../../blob/BlobStore";
 import Stats "Stats";
 
 module {
@@ -37,7 +38,7 @@ module {
     service: Context.BucketService,
     bucket: Types.Bucket,
     path: Text,
-  ) : Types.ApiResult<Blob> {
+  ) : async Types.ApiResult<Blob> {
     switch (Auth.validatePath(path)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -48,7 +49,7 @@ module {
       case (?f) f;
     };
 
-    switch (BucketRepo.getFileData(service.store, file.id)) {
+    switch (await BucketRepo.getFileData(service.blobs, file.id)) {
       case (null) { #err("File data not found") };
       case (?stored) {
         let key = BucketCrypto.deriveKey(bucket.owner, bucket.id);
@@ -65,7 +66,7 @@ module {
     bucketId: Types.BucketId,
     path: Text,
     caller: ?Principal,
-  ) : Types.ApiResult<{ contentType: Text; data: Blob }> {
+  ) : async Types.ApiResult<{ contentType: Text; data: Blob }> {
     switch (Auth.validatePath(path)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -95,7 +96,7 @@ module {
       case (?f) f;
     };
 
-    switch (BucketRepo.getFileData(service.store, file.id)) {
+    switch (await BucketRepo.getFileData(service.blobs, file.id)) {
       case (null) { #err("File data not found") };
       case (?stored) {
         let key = BucketCrypto.deriveKey(bucket.owner, bucketId);
@@ -114,7 +115,7 @@ module {
     offset: Nat,
     limit: Nat,
     caller: ?Principal,
-  ) : Types.ApiResult<{ contentType: Text; chunk: Blob; totalSize: Nat }> {
+  ) : async Types.ApiResult<{ contentType: Text; chunk: Blob; totalSize: Nat }> {
     switch (Auth.validatePath(path)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -144,7 +145,7 @@ module {
       case (?f) f;
     };
 
-    switch (BucketRepo.getFileData(service.store, file.id)) {
+    switch (await BucketRepo.getFileData(service.blobs, file.id)) {
       case (null) { #err("File data not found") };
       case (?stored) {
         let key = BucketCrypto.deriveKey(bucket.owner, bucketId);
@@ -171,14 +172,11 @@ module {
     bucketId: Types.BucketId,
     path: Text,
     apiKey: ?Text,
-  ) : Types.ApiResult<Blob> {
+  ) : async Types.ApiResult<Blob> {
     switch (Auth.resolveReadAuth(service, caller, bucketId, apiKey)) {
       case (#err(e)) { #err(e) };
       case (#ok({ bucket })) {
-        switch (loadFileBlob(service, bucket, path)) {
-          case (#err(e)) { #err(e) };
-          case (#ok(data)) { #ok(data) };
-        }
+        await loadFileBlob(service, bucket, path)
       };
     }
   };
@@ -187,8 +185,63 @@ module {
     service: Context.BucketService,
     bucketId: Types.BucketId,
     path: Text,
-  ) : Types.ApiResult<{ contentType: Text; data: Blob }> {
-    loadPublicFile(service, bucketId, path, null)
+  ) : async Types.ApiResult<{ contentType: Text; data: Blob }> {
+    await loadPublicFile(service, bucketId, path, null)
+  };
+
+  func chunkFromStored(
+    file: Types.StoredFile,
+    bucketOwner: Principal,
+    bucketId: Types.BucketId,
+    stored: Blob,
+    offset: Nat,
+    limit: Nat,
+  ) : Types.ApiResult<{ contentType: Text; chunk: Blob; totalSize: Nat }> {
+    let key = BucketCrypto.deriveKey(bucketOwner, bucketId);
+    let total = file.size;
+    if (offset >= total) {
+      return #ok({ contentType = file.contentType; chunk = Blob.fromArray([]); totalSize = total })
+    };
+    let chunk = if (BucketCrypto.isFastFingerprint(file.checksum)) {
+      BucketCrypto.decryptSlice(stored, key, offset, limit)
+    } else {
+      switch (decryptStoredFile(stored, key, file.checksum)) {
+        case (null) { return #err("File corrupted — checksum mismatch") };
+        case (?data) { blobSlice(data, offset, if (offset + limit > total) { total } else { offset + limit }) };
+      }
+    };
+    #ok({ contentType = file.contentType; chunk; totalSize = total })
+  };
+
+  public func servePublicFileChunkFromStored(
+    service: Context.BucketService,
+    bucketId: Types.BucketId,
+    path: Text,
+    offset: Nat,
+    limit: Nat,
+    stored: Blob,
+  ) : Types.ApiResult<{ contentType: Text; chunk: Blob; totalSize: Nat }> {
+    switch (Auth.validatePath(path)) {
+      case (?err) { return #err(err) };
+      case (null) {};
+    };
+
+    let bucket = switch (BucketRepo.get(service.store, bucketId)) {
+      case (null) { return #err("Bucket not found") };
+      case (?b) b;
+    };
+
+    switch (bucket.visibility) {
+      case (#Private) { return #err("Bucket is private") };
+      case (#Public) {};
+    };
+
+    let file = switch (BucketRepo.getFileByPath(service.store, bucketId, path)) {
+      case (null) { return #err("File not found") };
+      case (?f) f;
+    };
+
+    chunkFromStored(file, bucket.owner, bucketId, stored, offset, limit)
   };
 
   public func servePublicFileChunk(
@@ -197,11 +250,8 @@ module {
     path: Text,
     offset: Nat,
     limit: Nat,
-  ) : Types.ApiResult<{ contentType: Text; chunk: Blob; totalSize: Nat }> {
-    switch (loadPublicFileChunk(service, bucketId, path, offset, limit, null)) {
-      case (#err(e)) { #err(e) };
-      case (#ok(result)) { #ok(result) };
-    }
+  ) : async Types.ApiResult<{ contentType: Text; chunk: Blob; totalSize: Nat }> {
+    await loadPublicFileChunk(service, bucketId, path, offset, limit, null)
   };
 
   public func getPublicFileUrl(
@@ -265,7 +315,7 @@ module {
       case (?f) f;
     };
 
-    switch (BucketRepo.removeFile(service.store, file.id)) {
+    switch (await BucketRepo.removeFile(service.store, service.blobs, file.id)) {
       case (null) { return #err("File not found") };
       case (?size) {
         let newUsed = if (bucket.storageUsed >= size) {
@@ -308,10 +358,15 @@ module {
     #ok(Stats.paginateFiles(mapped, page, pageSize))
   };
 
-  public func isStoredEncrypted(store: BucketStorage.BucketStore, fileId: Types.FileId, plaintext: Blob) : Bool {
-    switch (BucketRepo.getFileData(store, fileId)) {
+  public func isStoredEncrypted(
+    service: Context.BucketService,
+    fileId: Types.FileId,
+    plaintext: Blob,
+  ) : async Bool {
+    switch (await BucketRepo.getFileData(service.blobs, fileId)) {
       case (null) true;
       case (?stored) stored != plaintext;
     }
   };
+
 };

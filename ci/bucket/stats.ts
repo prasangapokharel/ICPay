@@ -1,25 +1,10 @@
-import { spawnSync } from "node:child_process"
-import { BACKEND, CANISTER, dfxOut, network } from "../lib.ts"
+import { BACKEND, CANISTER, canisterIds, dfxOut, network } from "../lib.ts"
 
 // npm run ci bucket:stats
 //
-// Cloud bucket rollup + cycle runway so you know when to top up.
-// Calls getBucketCloudStats on the canister (storage sold, files, burn rate)
-// and canister:status (idle burn the storage-only estimate misses).
+// Cloud bucket rollup + real cycle runway (idle memory burn + logical storage).
 
 const CYCLES_PER_ICP = 1_000_000_000_000
-
-const env = { ...process.env, DFX_WARNING: "-mainnet_plaintext_identity" }
-
-function tryQuery(method: string): string | null {
-  const res = spawnSync(
-    "dfx",
-    ["canister", "call", CANISTER, method, "--query", "--network", network()],
-    { cwd: BACKEND, env, encoding: "utf8" },
-  )
-  if (res.status !== 0) return null
-  return res.stdout?.trim() ?? null
-}
 
 type CloudStats = {
   bucketCount: number
@@ -54,7 +39,7 @@ function fieldBool(text: string, name: string): boolean {
 }
 
 function parseCloudStats(candid: string): CloudStats | null {
-  if (!candid.includes("variant { ok")) return null
+  if (!candid.includes("ok = record")) return null
   return {
     bucketCount: fieldNum(candid, "bucketCount"),
     activeBuckets: fieldNum(candid, "activeBuckets"),
@@ -82,7 +67,7 @@ function formatBytes(n: number): string {
 }
 
 function formatT(cycles: number): string {
-  return `${(cycles / 1e12).toFixed(2)}T`
+  return `${(cycles / 1e12).toFixed(3)}T`
 }
 
 function formatIcpFromCycles(cycles: number): string {
@@ -93,68 +78,92 @@ function formatIcpE8s(e8s: number): string {
   return `${(e8s / 1e8).toFixed(2)} ICP`
 }
 
-const statusRaw = dfxOut(["canister", "status", CANISTER])
-const balance = Number(statusRaw.match(/Balance: ([\d_]+)/)?.[1]?.replaceAll("_", "") ?? "0")
-const idlePerDay = Number(
-  statusRaw.match(/Idle cycles burned per day: ([\d_]+)/)?.[1]?.replaceAll("_", "") ?? "0",
-)
-
-const raw = tryQuery("getBucketCloudStats")
-const cloud = raw ? parseCloudStats(raw) : null
-if (!cloud) {
-  console.log("getBucketCloudStats not on this canister yet — deploy backend first.\n")
+function canisterStatus(name: string) {
+  const raw = dfxOut(["canister", "status", name])
+  return {
+    balance: Number(raw.match(/Balance: ([\d_]+)/)?.[1]?.replaceAll("_", "") ?? "0"),
+    idlePerDay: Number(
+      raw.match(/Idle cycles burned per day: ([\d_]+)/)?.[1]?.replaceAll("_", "") ?? "0",
+    ),
+    memoryBytes: Number(raw.match(/Memory Size: ([\d_]+)/)?.[1]?.replaceAll("_", "") ?? "0"),
+  }
 }
 
-if (cloud) {
-  const storageGB = cloud.storageUsedBytes / 1e9
-  const capacityGB = cloud.capacityBytes / 1e9
-  const totalDailyBurn = cloud.cyclesDailyBurn + idlePerDay
-  const totalMonthlyBurn = totalDailyBurn * 30
-  const daysAtTotalBurn =
-    totalDailyBurn > 0 ? Math.floor(cloud.cyclesBalance / totalDailyBurn) : 999
-  const target60d = totalDailyBurn * 60
-  const topUpTotal =
-    cloud.cyclesBalance >= target60d ? 0 : target60d - cloud.cyclesBalance
-
-  console.log("=== ICPay Cloud — bucket stats ===\n")
-  console.log(`Buckets   ${cloud.bucketCount} total  (${cloud.activeBuckets} active, ${cloud.expiredBuckets} expired)`)
-  console.log(`Files     ${cloud.fileCount}`)
-  console.log(
-    `Storage   ${formatBytes(cloud.storageUsedBytes)} used / ${formatBytes(cloud.capacityBytes)} sold (${cloud.utilizationPercent}% full)`,
-  )
-  console.log(`          ${storageGB.toFixed(2)} GB used / ${capacityGB.toFixed(2)} GB capacity tiers sold`)
-  console.log(
-    `Revenue   ~${formatIcpE8s(cloud.estimatedCapacityRevenueE8s)} at create/renew list prices (treasury, not cycles)`,
-  )
-
-  console.log("\n=== Cycles (canister) ===\n")
-  console.log(`Balance   ${cloud.cyclesBalance.toLocaleString("en-US")}  (${formatT(cloud.cyclesBalance)})`)
-  console.log(`Status    ${cloud.cyclesStatus}${cloud.canAcceptNewBuckets ? "" : " — new buckets blocked"}`)
-  console.log(`Storage burn   ${formatT(cloud.cyclesDailyBurn)}/day  (${formatIcpFromCycles(cloud.cyclesMonthlyBurn)}/30d)`)
-  console.log(`Idle burn      ${formatT(idlePerDay)}/day  (canister base, not in storage estimate)`)
-  console.log(`Total burn     ${formatT(totalDailyBurn)}/day  (~${daysAtTotalBurn} days at current usage)`)
-
-  console.log("\n=== Top up ===\n")
-  if (topUpTotal > 0) {
-    console.log(`Suggested   ${formatT(topUpTotal)} cycles (~${formatIcpFromCycles(topUpTotal)} equiv)`)
-    console.log(`            to reach ~60 days runway (storage + idle)`)
-    console.log(`\n  npm run ci cycles:convert <icp>`)
-    console.log(`  npm run ci cycles:topup ${topUpTotal}`)
-  } else {
-    console.log(`Runway OK   ~${daysAtTotalBurn} days at total burn — no top-up needed now`)
+const backend = canisterStatus(CANISTER)
+const blobId = canisterIds().icp_blob_store?.ic
+let blob = { balance: 0, idlePerDay: 0, memoryBytes: 0, fileCount: 0, fileBytes: 0 }
+if (blobId && network() === "ic") {
+  blob = { ...canisterStatus("icp_blob_store"), fileCount: 0, fileBytes: 0 }
+  try {
+    const statsRaw = dfxOut(["canister", "call", blobId, "stats", "()", "--query"])
+    blob.fileCount = fieldNum(statsRaw, "count")
+    blob.fileBytes = fieldNum(statsRaw, "bytes")
+  } catch {
+    // blob store may be missing on local replica
   }
+}
 
-  if (cloud.recommendedTopUpCycles > 0 && topUpTotal === 0) {
-    console.log(
-      `\nNote: canister suggests ${formatT(cloud.recommendedTopUpCycles)} for storage-only 60d target.`,
-    )
-  }
+const cloudRaw = dfxOut(["canister", "call", CANISTER, "getBucketCloudStats", "()", "--query"])
+const cloud = parseCloudStats(cloudRaw)
+
+if (!cloud) {
+  console.error("Could not parse getBucketCloudStats")
+  process.exit(1)
+}
+
+const storageGB = cloud.storageUsedBytes / 1e9
+const capacityGB = cloud.capacityBytes / 1e9
+const totalDailyBurn = cloud.cyclesDailyBurn + backend.idlePerDay + blob.idlePerDay
+const daysAtTotalBurn = totalDailyBurn > 0 ? Math.floor(cloud.cyclesBalance / totalDailyBurn) : 999
+const target60d = totalDailyBurn * 60
+const topUpTotal = cloud.cyclesBalance >= target60d ? 0 : target60d - cloud.cyclesBalance
+
+console.log("=== ICPay Cloud — bucket stats ===\n")
+console.log(`Buckets   ${cloud.bucketCount} total  (${cloud.activeBuckets} active, ${cloud.expiredBuckets} expired)`)
+console.log(`Files     ${cloud.fileCount}`)
+console.log(
+  `Storage   ${formatBytes(cloud.storageUsedBytes)} used / ${formatBytes(cloud.capacityBytes)} sold (${cloud.utilizationPercent}% full)`,
+)
+console.log(`          ${storageGB.toFixed(2)} GB used / ${capacityGB.toFixed(2)} GB capacity tiers sold`)
+console.log(
+  `Revenue   ~${formatIcpE8s(cloud.estimatedCapacityRevenueE8s)} at create/renew list prices (treasury, not cycles)`,
+)
+
+console.log("\n=== Memory (canisters) ===\n")
+console.log(`Backend   ${formatBytes(backend.memoryBytes)} billed  (${formatBytes(cloud.storageUsedBytes)} logical metadata)`)
+if (blobId) {
+  console.log(
+    `Blob      ${formatBytes(blob.memoryBytes)} billed  (${formatBytes(blob.fileBytes)} logical in ${blob.fileCount} files)`,
+  )
+}
+console.log(
+  "\nNote: backend ghost stable pages and blob IC overhead inflate billed memory vs logical bytes.",
+)
+console.log("      CI/tests never upload to mainnet. SDK/live-test scripts need BUCKET_LIVE_TEST=1.")
+console.log("      Reinstall is never an option — budget idle burn.")
+
+console.log("\n=== Cycles ===\n")
+console.log(`Balance   ${cloud.cyclesBalance.toLocaleString("en-US")}  (${formatT(cloud.cyclesBalance)})`)
+console.log(`Status    ${cloud.cyclesStatus}${cloud.canAcceptNewBuckets ? "" : " — new buckets blocked"}`)
+console.log(`Logical storage burn  ${formatT(cloud.cyclesDailyBurn)}/day  (metadata bytes only — often ~0)`)
+console.log(`Backend idle burn     ${formatT(backend.idlePerDay)}/day  (real memory rent)`)
+if (blobId) {
+  console.log(`Blob store idle burn  ${formatT(blob.idlePerDay)}/day`)
+}
+console.log(`Total burn            ${formatT(totalDailyBurn)}/day  (~${daysAtTotalBurn} days runway)`)
+
+console.log("\n=== Top up ===\n")
+if (topUpTotal > 0) {
+  console.log(`Suggested   ${formatT(topUpTotal)} cycles (~${formatIcpFromCycles(topUpTotal)} equiv)`)
+  console.log(`            to reach ~60 days runway (idle + logical storage)`)
+  console.log(`\n  npm run ci cycles:convert <icp>`)
+  console.log(`  npm run ci cycles:topup ${topUpTotal}`)
 } else {
-  console.log("=== Cycles (canister only) ===\n")
-  console.log(`Balance   ${balance.toLocaleString("en-US")}  (${formatT(balance)})`)
-  console.log(`Idle burn ${formatT(idlePerDay)}/day`)
-  if (idlePerDay > 0) {
-    console.log(`Runway    ~${Math.floor(balance / idlePerDay)} days (idle only)`)
-  }
-  console.log("\nDeploy backend with getBucketCloudStats, then re-run: npm run ci bucket:stats")
+  console.log(`Runway OK   ~${daysAtTotalBurn} days at total burn — no top-up needed now`)
+}
+
+if (cloud.recommendedTopUpCycles > 0 && topUpTotal === 0) {
+  console.log(
+    `\nNote: canister storage-only estimate suggests ${formatT(cloud.recommendedTopUpCycles)} for 60d.`,
+  )
 }

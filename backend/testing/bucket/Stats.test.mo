@@ -18,6 +18,7 @@ import Types "../../src/types";
 import BucketUrls "../../src/utils/BucketUrls";
 import BillingService "../../src/services/BillingService";
 import Fixtures "./Fixtures";
+import BlobHarness "./BlobHarness";
 
 let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
@@ -45,8 +46,9 @@ let transfers = TransferService.create(
   users, usernames, txs, txsByUser, ledger, nextUid, RateLimitStorage.createRateLimitMap(),
   depositSubaccounts, depositAccountIds,
 );
+let blobs = BlobHarness.local();
 let svc = BucketService.create(
-  users, store, names, transfers, nextUid,
+  users, store, names, blobs, null, transfers, nextUid,
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),

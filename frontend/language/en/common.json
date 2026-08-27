@@ -6,7 +6,7 @@
     "bucket": "Bucket",
     "menu": "Menu",
     "live": "Live",
-    "buyUsername": "Buy a username"
+    "buyUsername": "Shop"
   },
   "common": {
     "send": "Send",
@@ -342,6 +342,8 @@
     "upsell": "Want something shorter? Buy a premium username",
     "shareTitle": "Your payment link",
     "shareBody": "Anyone can open this to pay you — no account needed.",
+    "subaccountsTitle": "Indexed subaccounts",
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
     "shareSheetTitle": "Pay @{name} on ICPay",
     "shareSheetText": "Send me ICP at @{name}"
   },
@@ -387,10 +389,13 @@
     "selfCustodyDust": "This is below the {symbol} network fee, so it cannot be moved.",
     "selfCustodyEmpty": "Nothing to move in — this token has not been sent to your principal.",
     "historyTitle": "On-chain history",
-    "snsLink": "View SNS"
+    "snsLink": "View SNS",
+    "snsDashboard": "SNS dashboard",
+    "snsSwap": "SNS swap"
   },
   "tokenHistory": {
     "empty": "No indexed transactions yet.",
+    "loadMore": "Load more",
     "kind": {
       "send": "Sent",
       "receive": "Received"
@@ -401,7 +406,8 @@
     "btcWithdrawFee": "Est. withdraw fee: {minter} ckBTC minter + {network} BTC network",
     "ethGasFee": "Est. ETH withdraw gas: {gas} ckETH",
     "checkDeposit": "Check for BTC deposit",
-    "checkDone": "Balance updated. Refresh your wallet if ckBTC arrived."
+    "checkDone": "Balance updated. Refresh your wallet if ckBTC arrived.",
+    "withdrawalsTitle": "BTC withdrawals"
   },
   "governance": {
     "title": "Governance",
@@ -417,7 +423,14 @@
     "viewOnDashboard": "View on IC dashboard",
     "prevPage": "Previous",
     "nextPage": "Next",
-    "pageOf": "Page {page} of {total} · {count} proposals"
+    "pageOf": "Page {page} of {total} · {count} proposals",
+    "filter": {
+      "all": "All",
+      "open": "Open",
+      "executed": "Executed",
+      "rejected": "Rejected"
+    },
+    "snsProjectLink": "View SNS project"
   },
   "sendToken": {
     "title": "Send {symbol}",
@@ -431,7 +444,10 @@
     "total": "Total deducted",
     "insufficient": "Insufficient balance",
     "send": "Send",
-    "sending": "Sending…"
+    "sending": "Sending…",
+    "confirmTitle": "Confirm send",
+    "confirmSubtitle": "Review before sending {symbol}.",
+    "confirmSend": "Confirm send"
   },
   "icpverse": {
     "searchPlaceholder": "Find your friends",

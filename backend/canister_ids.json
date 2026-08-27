@@ -1,4 +1,7 @@
 {
+  "icp_blob_store": {
+    "ic": "fly6t-piaaa-aaaan-q6oga-cai"
+  },
   "icp_wallet_backend": {
     "ic": "6vbhm-nqaaa-aaaan-q6muq-cai"
   },

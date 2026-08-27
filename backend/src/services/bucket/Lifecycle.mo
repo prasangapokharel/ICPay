@@ -267,7 +267,7 @@ module {
     service: Context.BucketService,
     caller: Principal,
     bucketId: Types.BucketId,
-  ) : Types.ApiResult<()> {
+  ) : async Types.ApiResult<()> {
     switch (Limits.allowManage(service, caller)) {
       case (?msg) { return #err(msg) };
       case (null) {};
@@ -282,7 +282,7 @@ module {
         if (fileCount > 0) {
           return #err("Bucket is not empty — delete all files first");
         };
-        BucketRepo.purgeBucket(service.store, service.names, bucket.id);
+        await BucketRepo.purgeBucket(service.store, service.blobs, service.names, bucket.id);
         #ok()
       };
     }

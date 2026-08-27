@@ -11,12 +11,14 @@ export function ServiceTile({
   icon,
   onClick,
   badge,
+  onPrefetch,
 }: {
   href?: string
   label: string
   icon: AppIconName
   onClick?: () => void
   badge?: string
+  onPrefetch?: () => void
 }) {
   const tile = (
     <>
@@ -60,7 +62,7 @@ export function ServiceTile({
       variant="ghost"
       size="sm"
       nativeButton={false}
-      render={<Link href={href ?? "#"} prefetch />}
+      render={<Link href={href ?? "#"} prefetch onMouseEnter={onPrefetch} onFocus={onPrefetch} />}
       className={className}
     >
       {tile}
