@@ -17,6 +17,7 @@ import LedgerService "../../src/services/LedgerService";
 import Config "../../src/config/Config";
 import Types "../../src/types";
 import Fixtures "./Fixtures";
+import BlobHarness "./BlobHarness";
 
 // Mock harness — no ledger, buckets seeded directly (same pattern as Flow.test.mo).
 
@@ -47,8 +48,9 @@ let transfers = TransferService.create(
   users, usernames, txs, txsByUser, ledger, nextUid, RateLimitStorage.createRateLimitMap(),
   depositSubaccounts, depositAccountIds,
 );
+let blobs = BlobHarness.local();
 let svc = BucketService.create(
-  users, store, names, transfers, nextUid,
+  users, store, names, blobs, null, transfers, nextUid,
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
@@ -113,7 +115,7 @@ switch (BucketService.createApiKey(svc, owner, "bucket-api-key-1", "writer", wri
   case (#err(e)) { assert false; Debug.print("FAIL [APIKEY]: create write key: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?readSecret)) {
+switch (await BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?readSecret)) {
   case (#ok(data)) {
     assert data == webp;
     Debug.print("PASS [APIKEY]: read key downloads private file by bucket name");
@@ -129,7 +131,7 @@ switch (BucketService.listFiles(svc, stranger, "site-assets", 0, 20, ?readSecret
   case (#err(e)) { assert false; Debug.print("FAIL [APIKEY]: read list: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?writeSecret)) {
+switch (await BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?writeSecret)) {
   case (#ok(_)) { assert false; Debug.print("FAIL [APIKEY]: write key allowed download") };
   case (#err(e)) {
     assert e == "API key lacks read permission";
@@ -137,7 +139,7 @@ switch (BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?
   };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", null)) {
+switch (await BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", null)) {
   case (#ok(_)) { assert false; Debug.print("FAIL [APIKEY]: stranger read private without key") };
   case (#err(_)) { Debug.print("PASS [APIKEY]: private bucket blocks stranger without key") };
 };
@@ -177,12 +179,12 @@ switch (BucketService.regenerateApiKey(svc, owner, "site-assets", readKeyId)) {
   case (#err(e)) { assert false; Debug.print("FAIL [APIKEY]: regenerate: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?readSecret)) {
+switch (await BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?readSecret)) {
   case (#ok(_)) { assert false; Debug.print("FAIL [APIKEY]: old secret still works") };
   case (#err(_)) { Debug.print("PASS [APIKEY]: old secret rejected after rotate") };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?rotatedSecret)) {
+switch (await BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?rotatedSecret)) {
   case (#ok(data)) {
     assert data == webp;
     Debug.print("PASS [APIKEY]: rotated secret downloads file");
@@ -195,7 +197,7 @@ switch (ApiKeyService.revokeApiKey(svc.store, names, owner, "site-assets", readK
   case (#err(e)) { assert false; Debug.print("FAIL [APIKEY]: revoke: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?rotatedSecret)) {
+switch (await BucketService.downloadFile(svc, stranger, "site-assets", "/hero.webp", ?rotatedSecret)) {
   case (#ok(_)) { assert false; Debug.print("FAIL [APIKEY]: revoked key still works") };
   case (#err(e)) {
     assert e == "API key revoked";

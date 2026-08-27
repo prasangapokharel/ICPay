@@ -3,6 +3,13 @@ import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { BucketClient } from "icpay-bucket"
 
+if (process.env.BUCKET_LIVE_TEST !== "1") {
+  process.stderr.write(
+    "Skipped: docs/sdk/test only runs against mainnet when BUCKET_LIVE_TEST=1 (writes real blob bytes).\n"
+  )
+  process.exit(0)
+}
+
 const root = dirname(fileURLToPath(import.meta.url))
 const apiKey = process.env.BUCKET_API_KEY
 const bucketId = process.env.BUCKET_ID ?? "icp"

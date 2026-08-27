@@ -33,6 +33,7 @@ module {
   public let downloadFile = Bucket.downloadFile;
   public let servePublicFile = Bucket.servePublicFile;
   public let servePublicFileChunk = Bucket.servePublicFileChunk;
+  public let servePublicFileChunkFromStored = Bucket.servePublicFileChunkFromStored;
   public let getPublicFileUrl = Bucket.getPublicFileUrl;
   public let deleteFile = Bucket.deleteFile;
   public let listFiles = Bucket.listFiles;

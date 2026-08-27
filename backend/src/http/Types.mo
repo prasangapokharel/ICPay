@@ -21,7 +21,7 @@ module {
 
   public type StreamingStrategy = {
     #Callback: {
-      callback: shared query StreamToken -> async StreamingCallbackHttpResponse;
+      callback: shared composite query StreamToken -> async StreamingCallbackHttpResponse;
       token: StreamToken;
     };
   };

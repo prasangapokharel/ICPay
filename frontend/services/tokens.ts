@@ -1,17 +1,14 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
 import { IcrcLedgerCanister, mapTokenMetadata } from "@icp-sdk/canisters/ledger/icrc"
-import { SnsWasmCanister } from "@icp-sdk/canisters/nns"
 import { createAgent } from "@/services/icp"
+import { fetchSnsRegistryList } from "@/services/sns/registry"
 import { query } from "@/services/client"
 import { listTokens } from "@/services/launch/launch"
 import { fetchTokenRegistry, type TokenMarket } from "@/lib/token/registry"
 
 // Mirrors backend Config.ICP_LEDGER_CANISTER_ID.
 export const ICP_LEDGER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"
-
-// The NNS SNS-W canister, which knows every SNS ever deployed.
-const SNS_WASM_ID = "qaa6y-5yaaa-aaaaa-aaafa-cai"
 
 // The chain-key tokens are not SNS-launched, so SNS-W does not list them.
 // Exported because these are also the rows the wallet shows unconditionally: a
@@ -43,6 +40,13 @@ export type TokenMetadata = Omit<TokenHolding, "balance">
 
 export function metadataLedgerIds(balances: Map<string, bigint>): string[] {
   return [...balances.keys()].sort()
+}
+
+export function visibleMetadataLedgerIds(balances: Map<string, bigint>): string[] {
+  return [...balances.entries()]
+    .filter(([id, balance]) => balance > 0n || PINNED_LEDGER_IDS.includes(id))
+    .map(([id]) => id)
+    .sort()
 }
 
 export function metadataFromRegistry(
@@ -91,14 +95,8 @@ export function listLaunchedLedgerIds(identity?: Identity): Promise<string[]> {
 }
 
 async function listSnsLedgerIds(identity?: Identity): Promise<string[]> {
-  const agent = await createAgent(identity)
-  const snsw = SnsWasmCanister.create({ agent, canisterId: Principal.fromText(SNS_WASM_ID) })
-  return snsw
-    .listSnses({ certified: false })
-    .then((instances) =>
-      instances.flatMap((i) => (i.ledger_canister_id[0] ? [i.ledger_canister_id[0].toText()] : []))
-    )
-    .catch((): string[] => [])
+  const rows = await fetchSnsRegistryList(identity)
+  return rows.map((row) => row.ledgerId)
 }
 
 // Discovery is one query call to SNS-W rather than the SNS aggregator's REST

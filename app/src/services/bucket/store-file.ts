@@ -1,18 +1,12 @@
-/**
- * Store a file in an ICPay bucket.
- *
- * Uses legacy uploadFileChunk(uploadId, data) on live mainnet by default.
- * Set NEXT_PUBLIC_BUCKET_UPLOAD_V2=true after backend deploy for indexed parallel chunks.
- */
-
 import type { Identity } from "@icp-sdk/core/agent"
 import { call, type Outcome } from "@/services/client"
 import type { WalletActor } from "@/services/wallet"
 import { guessFileMime } from "@/lib/bucket/bucket"
 import {
+  BUCKET_UPLOAD_SINGLE_MAX,
   readFileChunk,
   uploadChunkCount,
-  uploadLimits,
+  UPLOAD_CHUNK_CONCURRENCY,
 } from "@/lib/bucket/upload-chunk"
 
 export type StoreFileOptions = {
@@ -23,46 +17,13 @@ export type StoreFileOptions = {
   onProgress?: (pct: number) => void
 }
 
-async function sendChunkLegacy(
-  actor: WalletActor,
-  uploadId: string,
-  bytes: Uint8Array
-): Promise<Outcome<bigint>> {
-  return (await actor.uploadFileChunk(uploadId, bytes)) as Outcome<bigint>
-}
-
-async function sendChunkIndexed(
-  actor: WalletActor,
-  uploadId: string,
-  index: number,
-  bytes: Uint8Array
-): Promise<Outcome<bigint>> {
-  return (await actor.uploadFileChunkIndexed(
-    uploadId,
-    BigInt(index),
-    bytes
-  )) as Outcome<bigint>
-}
-
 async function sendChunks(
   actor: WalletActor,
   uploadId: string,
   file: File,
   onProgress?: (pct: number) => void
 ): Promise<Outcome<null>> {
-  const limits = uploadLimits()
-  const total = uploadChunkCount(file.size, limits.chunkBytes)
-
-  if (!limits.v2) {
-    for (let i = 0; i < total; i++) {
-      const bytes = await readFileChunk(file, i, limits.chunkBytes)
-      const res = await sendChunkLegacy(actor, uploadId, bytes)
-      if ("err" in res) return { err: res.err }
-      onProgress?.(10 + Math.round(((i + 1) / total) * 80))
-    }
-    return { ok: null }
-  }
-
+  const total = uploadChunkCount(file.size)
   let nextIndex = 0
   let completed = 0
   let failure: string | null = null
@@ -74,8 +35,12 @@ async function sendChunks(
       nextIndex += 1
       if (index >= total) return
 
-      const bytes = await readFileChunk(file, index, limits.chunkBytes)
-      const res = await sendChunkIndexed(actor, uploadId, index, bytes)
+      const bytes = await readFileChunk(file, index)
+      const res = (await actor.uploadFileChunkIndexed(
+        uploadId,
+        BigInt(index),
+        bytes
+      )) as Outcome<bigint>
       if ("err" in res) {
         failure = res.err
         return
@@ -86,21 +51,20 @@ async function sendChunks(
   }
 
   await Promise.all(
-    Array.from({ length: Math.min(limits.concurrency, total) }, () => worker())
+    Array.from({ length: Math.min(UPLOAD_CHUNK_CONCURRENCY, total) }, () => worker())
   )
 
   if (failure) return { err: failure }
   return { ok: null }
 }
 
-async function uploadSingleCall(
+async function uploadSmall(
   actor: WalletActor,
   file: File,
   options: StoreFileOptions,
-  contentType: string,
-  singleMaxBytes: number
+  contentType: string
 ): Promise<Outcome<string>> {
-  if (file.size > singleMaxBytes) {
+  if (file.size > BUCKET_UPLOAD_SINGLE_MAX) {
     return { err: "File too large for single upload — use chunked upload" }
   }
   options.onProgress?.(20)
@@ -116,18 +80,16 @@ async function uploadSingleCall(
   return res
 }
 
-/** Upload a file — chunked automatically, up to 10 MB assembled on canister. */
 export async function storeFile(
   identity: Identity | undefined,
   file: File,
   options: StoreFileOptions
 ): Promise<Outcome<string>> {
   const contentType = options.contentType ?? guessFileMime(file)
-  const limits = uploadLimits()
 
   return call(identity, "Upload failed", async (actor) => {
-    if (file.size <= limits.singleMaxBytes) {
-      return uploadSingleCall(actor, file, options, contentType, limits.singleMaxBytes)
+    if (file.size <= BUCKET_UPLOAD_SINGLE_MAX) {
+      return uploadSmall(actor, file, options, contentType)
     }
 
     options.onProgress?.(5)

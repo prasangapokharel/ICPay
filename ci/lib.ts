@@ -11,11 +11,31 @@ export const BACKEND = resolve(repo, "backend")
 export const FRONTEND = resolve(repo, "frontend")
 
 export const CANISTER = "icp_wallet_backend"
-export const WALLET_CANISTER_ID = (
-  JSON.parse(readFileSync(resolve(BACKEND, "canister_ids.json"), "utf8")) as {
-    icp_wallet_backend: { ic: string }
-  }
-).icp_wallet_backend.ic
+export const OWNED_CANISTERS = [
+  { name: "icp_wallet_backend", label: "backend" },
+  { name: "icp_wallet_frontend", label: "frontend" },
+  { name: "icp_blob_store", label: "blob store" },
+] as const
+export type OwnedCanisterName = (typeof OWNED_CANISTERS)[number]["name"]
+
+export function canisterIds(): Record<string, { ic?: string }> {
+  return JSON.parse(readFileSync(resolve(BACKEND, "canister_ids.json"), "utf8"))
+}
+
+/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store */
+export function resolveOwnedCanister(target?: string): OwnedCanisterName | undefined {
+  if (!target) return undefined
+  const key = target.toLowerCase().replace(/_/g, " ").trim()
+  const hit = OWNED_CANISTERS.find(
+    (c) =>
+      c.name === target ||
+      c.label === key ||
+      (key === "blob" && c.name === "icp_blob_store"),
+  )
+  return hit?.name
+}
+
+export const WALLET_CANISTER_ID = canisterIds().icp_wallet_backend?.ic ?? ""
 export const ICPAY_LEDGER_ID = "5fsnk-rqaaa-aaaan-q6m4q-cai"
 export const ICP_INDEX = "qhbym-qaaaa-aaaaa-aaafq-cai"
 

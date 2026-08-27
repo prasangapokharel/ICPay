@@ -3,6 +3,7 @@ import BucketService "../../services/BucketService";
 import ApiKeyService "../../services/ApiKeyService";
 import MiddlewareAuth "../../middleware/Auth";
 import Blob "mo:core/Blob";
+import Principal "mo:core/Principal";
 
 mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
 
@@ -115,12 +116,12 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
     )
   };
 
-  public shared query ({ caller }) func downloadFile(
+  public shared ({ caller }) func downloadFile(
     bucketId: Types.BucketId,
     path: Text,
     apiKey: ?Text,
   ) : async Types.ApiResult<Blob> {
-    BucketService.downloadFile(
+    await BucketService.downloadFile(
       buckets,
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       bucketId,
@@ -349,7 +350,7 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
     destinationPath: Text,
     apiKey: ?Text,
   ) : async Types.ApiResult<Types.FilePublic> {
-    BucketService.copyFile(
+    await BucketService.copyFile(
       buckets,
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       bucketId,
@@ -506,7 +507,7 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
     operations: [Types.FilePathOp],
     apiKey: ?Text,
   ) : async Types.ApiResult<Nat> {
-    BucketService.bulkCopyFiles(
+    await BucketService.bulkCopyFiles(
       buckets,
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       bucketId,
@@ -546,7 +547,7 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
   };
 
   public shared ({ caller }) func deleteBucket(bucketId: Types.BucketId) : async Types.ApiResult<()> {
-    BucketService.deleteBucket(
+    await BucketService.deleteBucket(
       buckets,
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       bucketId,

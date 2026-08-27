@@ -63,14 +63,37 @@ export async function fetchEthGasEstimate(identity?: Identity) {
   return minter.eip1559TransactionPrice({ certified: false })
 }
 
-export async function fetchBtcWithdrawalStatuses(identity: Identity) {
+export type BtcWithdrawalRow = {
+  id: bigint
+  status: string
+  amount: bigint
+  address: string
+}
+
+function btcStatusLabel(status: unknown): string {
+  if (status == null) return "Unknown"
+  if (typeof status === "object") {
+    return Object.keys(status as Record<string, unknown>)[0] ?? "Unknown"
+  }
+  return String(status)
+}
+
+export async function fetchBtcWithdrawalStatuses(
+  identity: Identity
+): Promise<BtcWithdrawalRow[]> {
   const agent = await createAgent(identity)
   const minter = CkBtcMinterCanister.create({
     agent,
     canisterId: Principal.fromText(CKBTC_MINTER_ID),
   })
-  return minter.retrieveBtcStatusV2ByAccount({
+  const rows = await minter.retrieveBtcStatusV2ByAccount({
     certified: false,
     account: { owner: identity.getPrincipal() },
   })
+  return rows.map((row) => ({
+    id: row.id,
+    status: btcStatusLabel(row.status),
+    amount: 0n,
+    address: "",
+  }))
 }

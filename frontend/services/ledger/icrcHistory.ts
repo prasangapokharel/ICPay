@@ -11,13 +11,20 @@ export type IcrcTxRow = {
   counterparty?: string
 }
 
+export type IcrcHistoryPage = {
+  rows: IcrcTxRow[]
+  oldestId?: bigint
+  hasMore: boolean
+}
+
 export async function fetchIcrcTransactions(
   identity: Identity | undefined,
   ledgerId: string,
   owner: Principal,
   subaccount?: Uint8Array,
-  maxResults = 25n
-): Promise<IcrcTxRow[]> {
+  maxResults = 10n,
+  start?: bigint
+): Promise<IcrcHistoryPage> {
   const agent = await createAgent(identity)
   const ledger = IcrcLedgerCanister.create({
     agent,
@@ -28,7 +35,7 @@ export async function fetchIcrcTransactions(
   try {
     indexId = await ledger.getIndexPrincipal({ certified: false })
   } catch {
-    return []
+    return { rows: [], hasMore: false }
   }
 
   const index = IcrcIndexCanister.create({ agent, canisterId: indexId })
@@ -36,9 +43,10 @@ export async function fetchIcrcTransactions(
     certified: false,
     account: subaccount ? { owner, subaccount } : { owner },
     max_results: maxResults,
+    start,
   })
 
-  return page.transactions.flatMap((row) => {
+  const rows = page.transactions.flatMap((row) => {
     const tx = row.transaction
     if (!tx || tx.kind.toLowerCase() !== "transfer") return []
     const transfer = tx.transfer[0]
@@ -60,6 +68,13 @@ export async function fetchIcrcTransactions(
       },
     ]
   })
+
+  const oldest = page.oldest_tx_id[0]
+  return {
+    rows,
+    oldestId: oldest,
+    hasMore: oldest !== undefined && rows.length > 0,
+  }
 }
 
 function bytesEqual(a?: Uint8Array, b?: Uint8Array): boolean {

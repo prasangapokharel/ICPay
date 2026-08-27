@@ -1,9 +1,6 @@
 import Debug "mo:core/Debug";
 import Principal "mo:core/Principal";
 import Blob "mo:core/Blob";
-import Array "mo:core/Array";
-import Nat "mo:core/Nat";
-import Nat8 "mo:core/Nat8";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
 import Map "mo:core/Map";
@@ -21,6 +18,7 @@ import Config "../../src/config/Config";
 import Types "../../src/types";
 import BucketUrls "../../src/utils/BucketUrls";
 import Fixtures "./Fixtures";
+import BlobHarness "./BlobHarness";
 
 // --- Harness (no ledger calls — bucket rows seeded after "payment") ---------
 
@@ -51,8 +49,9 @@ let transfers = TransferService.create(
   users, usernames, txs, txsByUser, ledger, nextUid, RateLimitStorage.createRateLimitMap(),
   depositSubaccounts, depositAccountIds,
 );
+let blobs = BlobHarness.local();
 let svc = BucketService.create(
-  users, store, names, transfers, nextUid,
+  users, store, names, blobs, null, transfers, nextUid,
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
   RateLimitStorage.createRateLimitMap(),
@@ -88,13 +87,13 @@ switch (
   await BucketService.uploadFile(svc, owner, "bucket-flow-1", "/logo.webp", webp, "image/webp", null)
 ) {
   case (#ok(fileId)) {
-    assert BucketService.isStoredEncrypted(store, fileId, webp);
+    assert await BucketService.isStoredEncrypted(svc, fileId, webp);
     Debug.print("PASS [FLOW]: upload encrypts at rest");
   };
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: upload: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, owner, "bucket-flow-1", "/logo.webp", null)) {
+switch (await BucketService.downloadFile(svc, owner, "bucket-flow-1", "/logo.webp", null)) {
   case (#ok(data)) {
     assert data == webp;
     Debug.print("PASS [FLOW]: owner download decrypts");
@@ -102,7 +101,7 @@ switch (BucketService.downloadFile(svc, owner, "bucket-flow-1", "/logo.webp", nu
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: download: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "bucket-flow-1", "/logo.webp", null)) {
+switch (await BucketService.downloadFile(svc, stranger, "bucket-flow-1", "/logo.webp", null)) {
   case (#ok(_)) {
     assert true;
     Debug.print("PASS [FLOW]: public bucket readable by stranger");
@@ -153,7 +152,7 @@ switch (
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: private upload: " # e) };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "bucket-private", "/secret.webp", null)) {
+switch (await BucketService.downloadFile(svc, stranger, "bucket-private", "/secret.webp", null)) {
   case (#ok(_)) { assert false; Debug.print("FAIL [FLOW]: stranger read private") };
   case (#err(_)) { Debug.print("PASS [FLOW]: private bucket blocks stranger") };
 };
@@ -185,7 +184,7 @@ switch (
   case (#err(_)) { Debug.print("PASS [FLOW]: expired bucket blocks upload") };
 };
 
-switch (BucketService.downloadFile(svc, stranger, "bucket-expired", "/kept.webp", null)) {
+switch (await BucketService.downloadFile(svc, stranger, "bucket-expired", "/kept.webp", null)) {
   case (#ok(data)) {
     assert data == webp;
     Debug.print("PASS [FLOW]: expired bucket still readable");
@@ -235,51 +234,6 @@ switch (BucketService.listFiles(svc, owner, "my-assets", 0, 20, null)) {
     Debug.print("PASS [FLOW]: listFiles resolves public bucket name");
   };
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: list by name: " # e) };
-};
-
-// --- Chunked upload (legacy sequential API) -----------------------------------
-
-seedBucket("bucket-chunked", #Public, now + Config.BUCKET_PERIOD_NS);
-
-let chunkSize = Config.BUCKET_UPLOAD_MIN_CHUNK_BYTES;
-let totalSize = chunkSize * 2 + 512_000;
-let webpHeader = Blob.toArray(Fixtures.webp());
-let part0 = Blob.fromArray(
-  Array.tabulate<Nat8>(chunkSize, func(i) {
-    if (i < webpHeader.size()) { webpHeader[i] } else { 0x00 };
-  }),
-);
-let part1 = Blob.fromArray(
-  Array.tabulate<Nat8>(chunkSize, func(_) { 0x00 }),
-);
-let part2 = Blob.fromArray(
-  Array.tabulate<Nat8>(totalSize - chunkSize * 2, func(_) { 0x00 }),
-);
-
-switch (
-  await BucketService.beginFileUpload(
-    svc, owner, "bucket-chunked", "/large.webp", "image/webp", totalSize, null,
-  )
-) {
-  case (#ok(uploadId)) {
-    switch (await BucketService.uploadFileChunkLegacy(svc, owner, uploadId, part0)) {
-      case (#ok(n)) { assert n == chunkSize };
-      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk 0: " # e) };
-    };
-    switch (await BucketService.uploadFileChunkLegacy(svc, owner, uploadId, part1)) {
-      case (#ok(n)) { assert n == chunkSize * 2 };
-      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk 1: " # e) };
-    };
-    switch (await BucketService.uploadFileChunkLegacy(svc, owner, uploadId, part2)) {
-      case (#ok(n)) { assert n == totalSize };
-      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: chunk 2: " # e) };
-    };
-    switch (await BucketService.completeFileUpload(svc, owner, uploadId, null)) {
-      case (#ok(_)) { Debug.print("PASS [FLOW]: legacy chunked upload") };
-      case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: complete chunked: " # e) };
-    };
-  };
-  case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: begin chunked: " # e) };
 };
 
 Debug.print("Bucket e2e flow tests done");

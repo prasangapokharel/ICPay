@@ -135,7 +135,7 @@ module {
     switch (existing) {
       case (null) {};
       case (?f) {
-        ignore BucketRepo.removeFile(service.store, f.id);
+        ignore await BucketRepo.removeFile(service.store, service.blobs, f.id);
       };
     };
 
@@ -156,7 +156,7 @@ module {
       tags = [];
     };
 
-    BucketRepo.saveFile(service.store, file, sealed.ciphertext);
+    await BucketRepo.saveFile(service.store, service.blobs, file, sealed.ciphertext);
     BucketRepo.updateUsage(service.store, service.names, bucket.id, newUsed);
     #ok(fileId)
   };

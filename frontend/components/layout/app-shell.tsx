@@ -3,7 +3,7 @@
 import type { ReactNode } from "react"
 import { usePathname } from "next/navigation"
 import { AppHeader } from "@/components/layout/app-header"
-import { BottomNav } from "@/components/layout/bottom-nav"
+import { BottomNav, bottomNavSpacerClass } from "@/components/layout/bottom-nav"
 import { LiveSessionProvider } from "@/components/live/live-session-provider"
 import { cn } from "@/lib/ui/utils"
 
@@ -41,9 +41,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               channels
                 ? cn(
                     "h-full overflow-hidden px-0 pt-0",
-                    channelChat ? "pb-0" : "pb-28 md:pb-0"
+                    channelChat ? "pb-0" : cn(bottomNavSpacerClass, "md:pb-0")
                   )
-                : "px-4 pb-28 pt-2"
+                : cn("px-4 pt-2", bottomNavSpacerClass)
             )}
           >
             {children}
