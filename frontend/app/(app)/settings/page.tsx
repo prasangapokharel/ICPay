@@ -117,6 +117,13 @@ export default function MenuPage() {
       key: "more",
       items: [
         {
+          href: "/icpay/presale",
+          key: "icpayToken",
+          icon: "icpay",
+          keywords: "presale token icpay buy sale",
+          badge: "presaleBadge",
+        },
+        {
           href: "/blog",
           key: "blog",
           icon: "blog",

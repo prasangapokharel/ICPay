@@ -15,7 +15,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Tick02Icon,
   Cancel01Icon,
-  ShoppingBag01Icon,
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons"
 import {
@@ -50,6 +49,7 @@ import {
   useLiveBalance,
 } from "@/hooks/wallet/useWalletData"
 import { SendSuccess } from "@/components/wallet/send-success"
+import { AMBER_EMBED_BTN, BgImageCard } from "@/components/ui/bg-image-card"
 import { primeSuccessChime } from "@/lib/ui/successChime"
 import { cn } from "@/lib/ui/utils"
 
@@ -117,12 +117,13 @@ export default function UsernamePage() {
   }
 
   return (
-    <div className="space-y-6 pt-2">
+    <div className="space-y-4 pt-2">
       <div>
         <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
+      <BgImageCard contentClassName="space-y-6 px-5 py-7">
       <div className="space-y-2">
         <Label htmlFor="buy-username">{t("label")}</Label>
         <div className="relative">
@@ -222,15 +223,11 @@ export default function UsernamePage() {
 
       <Button
         size="lg"
-        className="w-full"
+        className={cn("h-12 w-full rounded-2xl text-base font-semibold", AMBER_EMBED_BTN)}
         disabled={!canBuy}
         onClick={handleBuy}
       >
-        {buying ? (
-          <Spinner className="size-4" />
-        ) : (
-          <HugeiconsIcon icon={ShoppingBag01Icon} className="size-4" />
-        )}
+        {buying ? <Spinner className="size-4" /> : null}
         {buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}
       </Button>
 
@@ -322,6 +319,7 @@ export default function UsernamePage() {
           {t("brandProtectionLink")}
         </Link>
       </div>
+      </BgImageCard>
     </div>
   )
 }
