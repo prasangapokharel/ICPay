@@ -1,6 +1,13 @@
 "use client"
 
-import { createContext, useCallback, useContext, useSyncExternalStore, type ReactNode } from "react"
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react"
 import { NextIntlClientProvider } from "next-intl"
 import { DEFAULT_LOCALE, STORAGE_KEY, isLocale, type Locale } from "@/language/config"
 import en from "@/language/en/common.json"
@@ -56,22 +63,42 @@ function getServerSnapshot(): Locale {
   return DEFAULT_LOCALE
 }
 
+function subscribeTimeZone() {
+  return () => {}
+}
+
+function getTimeZoneSnapshot() {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone
+}
+
+function getServerTimeZoneSnapshot() {
+  return "UTC"
+}
+
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const timeZone = useSyncExternalStore(
+    subscribeTimeZone,
+    getTimeZoneSnapshot,
+    getServerTimeZoneSnapshot
+  )
 
   const setLocale = useCallback((next: Locale) => {
     localStorage.setItem(STORAGE_KEY, next)
     listeners.forEach((fn) => fn())
   }, [])
 
+  useEffect(() => {
+    document.documentElement.lang = locale
+  }, [locale])
+
   return (
     <LocaleContext.Provider value={{ locale, setLocale }}>
       <NextIntlClientProvider
+        key={locale}
         locale={locale}
         messages={MESSAGES[locale]}
-        // No server timezone in a static export; the browser's is the only
-        // correct one and silences next-intl's environment warning.
-        timeZone={Intl.DateTimeFormat().resolvedOptions().timeZone}
+        timeZone={timeZone}
         now={undefined}
       >
         {children}

@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AMBER_EMBED_BTN, BgImageCard } from "@/components/ui/bg-image-card"
 import {
   Field,
   FieldContent,
@@ -21,7 +20,6 @@ import { useLiveBalance } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
 import { calculateListPriceE8s } from "@/lib/bucket/pricing"
 import { ICP_FEE } from "@/lib/wallet/utils"
-import { cn } from "@/lib/ui/utils"
 import type { BucketVisibilityVariant } from "@/services/bucket/types"
 
 export function BucketCreateForm({
@@ -69,7 +67,7 @@ export function BucketCreateForm({
         </Alert>
       )}
 
-      <BgImageCard contentClassName="space-y-6 px-5 py-7">
+      <div className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="bucket-name">{t("name")}</Label>
         <Input
@@ -155,8 +153,7 @@ export function BucketCreateForm({
       )}
 
       <Button
-        size="lg"
-        className={cn("h-12 w-full rounded-2xl text-base font-semibold", AMBER_EMBED_BTN)}
+        className="w-full"
         disabled={
           submitting ||
           !canCreate ||
@@ -169,7 +166,7 @@ export function BucketCreateForm({
       >
         {submitting ? t("creating") : insufficient ? t("insufficientBalance") : t("create")}
       </Button>
-      </BgImageCard>
+      </div>
     </div>
   )
 }
