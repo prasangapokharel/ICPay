@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
@@ -14,7 +14,7 @@ import { PresaleStatsPanel } from "@/components/icpay/presale-stats-panel"
 import { PresaleGuideDialog } from "@/components/icpay/presale-guide-dialog"
 import { GradientBadge } from "@/components/ui/gradient-badge"
 import { AMBER_EMBED_BTN, BgImageCard } from "@/components/ui/bg-image-card"
-import { hasSeenPresaleGuide } from "@/lib/icpay/presaleGuide"
+import { hasSeenPresaleGuide, markPresaleGuideSeen } from "@/lib/icpay/presaleGuide"
 import { cn } from "@/lib/ui/utils"
 
 export function IcpayPresaleHero({ symbol }: { symbol: string }) {
@@ -22,13 +22,9 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
   const { identity } = useAuth()
   const { sale, isLoading } = useIcpaySale()
   const [buyOpen, setBuyOpen] = useState(false)
-  const [guideOpen, setGuideOpen] = useState(false)
-
-  useEffect(() => {
-    if (sale?.active && !hasSeenPresaleGuide()) {
-      setGuideOpen(true)
-    }
-  }, [sale?.active])
+  const [manualGuideOpen, setManualGuideOpen] = useState(false)
+  const guideOpen =
+    manualGuideOpen || Boolean(sale?.active && !hasSeenPresaleGuide())
 
   return (
     <section className="space-y-4">
@@ -55,7 +51,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
             </div>
             <button
               type="button"
-              onClick={() => setGuideOpen(true)}
+              onClick={() => setManualGuideOpen(true)}
               className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               aria-label={t("viewGuide")}
             >
@@ -106,7 +102,17 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
           )}
       </BgImageCard>
 
-      <PresaleGuideDialog open={guideOpen} onOpenChange={setGuideOpen} />
+      <PresaleGuideDialog
+        open={guideOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            markPresaleGuideSeen()
+            setManualGuideOpen(false)
+          } else {
+            setManualGuideOpen(true)
+          }
+        }}
+      />
       {buyOpen ? (
         <BuyIcpayDrawer open={buyOpen} onOpenChange={setBuyOpen} symbol={symbol} />
       ) : null}

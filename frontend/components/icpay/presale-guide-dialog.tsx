@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -48,16 +48,15 @@ export function PresaleGuideDialog({
   const last = step === STEPS.length - 1
   const first = step === 0
 
-  useEffect(() => {
-    if (open) setStep(0)
-  }, [open])
-
   return (
     <Dialog
       open={open}
       onOpenChange={(next) => {
         if (!next) close()
-        else onOpenChange(true)
+        else {
+          setStep(0)
+          onOpenChange(true)
+        }
       }}
     >
       <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-md">
