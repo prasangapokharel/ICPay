@@ -11,20 +11,19 @@ import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  Wallet01Icon,
   ShieldKeyIcon,
   FlashIcon,
   Key01Icon,
-  GoogleIcon,
-  AppleIcon,
-  MicrosoftIcon,
 } from "@hugeicons/core-free-icons"
 import type { OpenIdProvider } from "@icp-sdk/auth/client"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Typewriter } from "@/components/shared/typewriter"
 import { MarketStats } from "@/components/auth/market-stats"
+import { LanguageSwitch } from "@/components/i18n/language-switch"
+import { useAutoLocale } from "@/hooks/i18n/use-auto-locale"
 import { createAuthClient, resumeRedirectSignIn } from "@/services/auth/auth"
 import { primeLoginChime } from "@/lib/ui/successChime"
+import { cn } from "@/lib/ui/utils"
 
 const features = [
   { icon: ShieldKeyIcon, key: "custodial" },
@@ -33,10 +32,10 @@ const features = [
 ] as const
 
 const openIdProviders = [
-  { id: "google" as const, icon: GoogleIcon },
-  { id: "apple" as const, icon: AppleIcon },
-  { id: "microsoft" as const, icon: MicrosoftIcon },
-] satisfies { id: OpenIdProvider; icon: typeof GoogleIcon }[]
+  { id: "google" as const, src: "/images/auth/google-icon.svg" },
+  { id: "apple" as const, src: "/images/auth/apple.svg", iconClassName: "dark:invert" },
+  { id: "microsoft" as const, src: "/images/auth/microsoft-icon.svg" },
+] satisfies { id: OpenIdProvider; src: string; iconClassName?: string }[]
 
 export default function LoginPage() {
   const { login, acceptIdentity, isAuthenticated, isLoading } = useAuth()
@@ -44,7 +43,7 @@ export default function LoginPage() {
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const t = useTranslations("login")
-  const tSettings = useTranslations("settings")
+  useAutoLocale()
 
   useEffect(() => {
     void createAuthClient()
@@ -89,7 +88,10 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-svh justify-center">
-      <div className="relative flex w-full max-w-md flex-col overflow-hidden px-6 pb-10 pt-16 shadow-xl sm:my-8 sm:max-h-[calc(100svh-4rem)] sm:rounded-3xl sm:border sm:border-border/50">
+      <div className="relative flex w-full max-w-md flex-col overflow-hidden px-6 pb-[max(3.5rem,env(safe-area-inset-bottom)+2rem)] pt-16 shadow-xl sm:my-8 sm:max-h-[calc(100svh-4rem)] sm:rounded-3xl sm:border sm:border-border/50">
+        <div className="absolute right-4 top-[max(1rem,env(safe-area-inset-top)+0.5rem)] z-10 sm:right-6">
+          <LanguageSwitch />
+        </div>
         <Image
           src="/images/connectbg/1.png"
           alt=""
@@ -104,10 +106,10 @@ export default function LoginPage() {
           <Image
             src="/images/logo/logo.png"
             alt="ICP Wallet"
-            width={96}
-            height={96}
+            width={128}
+            height={128}
             priority
-            className="mt-6 size-24 object-contain"
+            className="mt-6 h-28 w-28 object-contain sm:h-32 sm:w-32"
           />
           <h1 className="mt-6 text-2xl font-bold tracking-tight">{t("heading")}</h1>
           <p className="mt-2 h-10 text-balance text-sm text-muted-foreground">
@@ -117,8 +119,8 @@ export default function LoginPage() {
           <ul className="mt-10 w-full space-y-4 text-left">
             {features.map(({ icon, key }) => (
               <li key={key} className="flex items-start gap-3">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                  <HugeiconsIcon icon={icon} className="size-4 text-primary" />
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary">
+                  <HugeiconsIcon icon={icon} className="size-4 text-primary-foreground" strokeWidth={1.75} />
                 </span>
                 <div>
                   <p className="text-sm font-medium">{t(`features.${key}Title`)}</p>
@@ -136,27 +138,31 @@ export default function LoginPage() {
             </Alert>
           )}
           <Button size="lg" className="w-full" onClick={() => startLogin()} disabled={connecting}>
-            {connecting ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Wallet01Icon} className="size-5" />}
+            {connecting ? <Spinner className="size-4" /> : null}
             {connecting ? t("connecting") : t("connect")}
           </Button>
-          <p className="text-center text-xs text-muted-foreground">
-            {t("redirectNote")}
-          </p>
 
           <div className="flex flex-col items-center gap-2 pt-1">
             <p className="text-xs text-muted-foreground">{t("orContinue")}</p>
             <ButtonGroup>
-              {openIdProviders.map(({ id, icon }) => (
+              {openIdProviders.map(({ id, src, iconClassName }) => (
                 <Button
                   key={id}
                   variant="outline"
                   size="icon"
-                  className="size-10"
+                  className="size-11 rounded-xl"
                   onClick={() => startLogin({ openIdProvider: id })}
                   disabled={connecting}
                   aria-label={t(`openId.${id}`)}
                 >
-                  <HugeiconsIcon icon={icon} className="size-4" />
+                  <Image
+                    src={src}
+                    alt=""
+                    width={24}
+                    height={24}
+                    unoptimized
+                    className={cn("size-6 object-contain", iconClassName)}
+                  />
                 </Button>
               ))}
             </ButtonGroup>
@@ -165,7 +171,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <p className="text-center text-xs text-muted-foreground">
+          <p className="px-2 pb-1 text-center text-xs leading-relaxed text-muted-foreground">
             {t("legalPrefix")}{" "}
             <Link href="/terms" className="underline underline-offset-2">
               {t("legalTerms")}
@@ -176,21 +182,6 @@ export default function LoginPage() {
             </Link>
             .
           </p>
-
-          <nav className="flex justify-center gap-4 text-xs text-muted-foreground">
-            <Link href="/about" className="underline underline-offset-2">
-              {tSettings("items.about")}
-            </Link>
-            <Link href="/faq" className="underline underline-offset-2">
-              {tSettings("items.faq")}
-            </Link>
-            <Link href="/roadmap" className="underline underline-offset-2">
-              {tSettings("items.roadmap")}
-            </Link>
-            <Link href="/transparency" className="underline underline-offset-2">
-              {tSettings("items.transparency")}
-            </Link>
-          </nav>
         </div>
       </div>
     </div>
