@@ -1,4 +1,4 @@
-export const DEFAULT_WALLPAPER_ID = 14
+export const DEFAULT_WALLPAPER_ID = 1
 
 export const WALLPAPER_THEMES = [1, 13, 14, 15] as const
 

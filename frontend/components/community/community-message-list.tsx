@@ -57,8 +57,6 @@ export function CommunityMessageList({
   const [showJumpToLatest, setShowJumpToLatest] = useState(false)
   const [forwardOpen, setForwardOpen] = useState(false)
   const [forwardText, setForwardText] = useState("")
-  const pinned = pinnedId != null ? messages.find((m) => m.id === pinnedId) : undefined
-  const rest = pinnedId != null ? messages.filter((m) => m.id !== pinnedId) : messages
 
   const BOTTOM_THRESHOLD = 120
 
@@ -170,26 +168,11 @@ export function CommunityMessageList({
             </div>
           ) : (
             <MessageGroup className="gap-1">
-              {pinned && (
-                <BroadcastMessage
-                  message={pinned}
-                  pinned
-                  isOwner={isOwner}
-                  canReact={canReact}
-                  canForward={canForward}
-                  onPin={onPin}
-                  onDelete={onDelete}
-                  onReact={onReact}
-                  onForward={() => {
-                    setForwardText(pinned.text)
-                    setForwardOpen(true)
-                  }}
-                />
-              )}
-              {rest.map((msg) => (
+              {messages.map((msg) => (
                 <BroadcastMessage
                   key={msg.id.toString()}
                   message={msg}
+                  pinned={pinnedId != null && msg.id === pinnedId}
                   delivered={isOwner && deliveredIds.has(msg.id.toString())}
                   isOwner={isOwner}
                   canReact={canReact}

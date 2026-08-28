@@ -17,7 +17,6 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
-import { Marker, MarkerContent } from "@/components/ui/marker"
 import { Message, MessageContent, MessageFooter } from "@/components/ui/message"
 import { Spinner } from "@/components/ui/spinner"
 import { formatMessageTime } from "@/lib/community/format"
@@ -129,11 +128,6 @@ export function BroadcastMessage({
         deleting && "pointer-events-none scale-[0.98] opacity-40"
       )}
     >
-      {pinned && (
-        <Marker className="px-3.5 pt-1 text-[11px]">
-          <MarkerContent>{t("pinned")}</MarkerContent>
-        </Marker>
-      )}
       <BubbleContent>
         <CommunityMessageContent text={message.text} />
       </BubbleContent>
