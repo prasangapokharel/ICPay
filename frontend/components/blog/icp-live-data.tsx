@@ -15,8 +15,6 @@ import {
 } from "recharts"
 import { fetchIcpToken, type IcpTokenData } from "@/services/blog/price/price"
 
-const E8S = 1_000_000_00
-
 function fmt(n: number, decimals = 2) {
   return n.toLocaleString("en-US", { maximumFractionDigits: decimals })
 }

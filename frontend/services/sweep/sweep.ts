@@ -1,5 +1,4 @@
 import type { Identity } from "@icp-sdk/core/agent"
-import { fromNullable } from "@dfinity/utils"
 import { IcrcTransferError } from "@icp-sdk/canisters/ledger/icrc"
 import type { Principal } from "@icp-sdk/core/principal"
 import type { Outcome } from "@/services/client"

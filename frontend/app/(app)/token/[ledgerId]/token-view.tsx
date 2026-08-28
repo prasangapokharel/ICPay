@@ -10,9 +10,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { TokenLogo } from "@/components/token/token-logo"
 import { formatTokenAmount } from "@/lib/wallet/utils"
-import { resolveTokenIcon } from "@/lib/token/icon"
 import { TokenFiatHint } from "@/components/token/token-fiat-hint"
-import { useTokenRegistry } from "@/lib/token/registry"
 import { useTokenHolding, useSelfCustodyBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { useTokenLedgerId } from "@/lib/routing/rewrittenRoute"
 import { SelfCustodyCard } from "@/components/wallet/self-custody-card"
@@ -40,7 +38,6 @@ export function TokenView() {
   const t = useTranslations("token")
   const router = useRouter()
   const { identity } = useAuth()
-  const registry = useTokenRegistry()
   const refreshWallet = useRefreshWallet()
   const [sendOpen, setSendOpen] = useState(false)
   const [sent, setSent] = useState<Sent | null>(null)

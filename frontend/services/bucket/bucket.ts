@@ -1,6 +1,6 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { call, query, unwrap, type Outcome } from "@/services/client"
-import { storeFile, type StoreFileOptions } from "@/services/bucket/store-file"
+import { storeFile } from "@/services/bucket/store-file"
 
 export { storeFile, type StoreFileOptions } from "@/services/bucket/store-file"
 import type {
