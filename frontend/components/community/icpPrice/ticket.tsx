@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { formatUsdPrecise } from "@/lib/market/icpPrice"
+import { ICP_LOGO } from "@/lib/token/icon"
 import { IcpPriceSparkline } from "@/components/community/icpPrice/sparkline"
 import { cn } from "@/lib/ui/utils"
 
@@ -20,7 +21,7 @@ export function IcpPriceTicket({ className }: { className?: string }) {
       )}
     >
       <Image
-        src="/images/logo/logo.png"
+        src={ICP_LOGO}
         alt=""
         width={22}
         height={22}

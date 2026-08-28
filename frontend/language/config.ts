@@ -11,6 +11,13 @@ export const LOCALES = [
   { code: "de", label: "Deutsch", country: "DE" },
   { code: "pt", label: "Português", country: "BR" },
   { code: "ru", label: "Русский", country: "RU" },
+  { code: "ar", label: "العربية", country: "IQ" },
+  { code: "ne", label: "नेपाली", country: "NP" },
+  { code: "tl", label: "Filipino", country: "PH" },
+  { code: "id", label: "Bahasa Indonesia", country: "ID" },
+  { code: "vi", label: "Tiếng Việt", country: "VN" },
+  { code: "th", label: "ไทย", country: "TH" },
+  { code: "tr", label: "Türkçe", country: "TR" },
 ] as const
 
 export type Locale = (typeof LOCALES)[number]["code"]

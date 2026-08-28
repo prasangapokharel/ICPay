@@ -10,6 +10,7 @@ import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { useTokenHoldings } from "@/hooks/wallet/useWalletData"
 import { ICP_LEDGER_ID } from "@/services/tokens"
+import { ICP_LOGO } from "@/lib/token/icon"
 import { TokenList } from "@/components/wallet/token-list"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -52,7 +53,7 @@ export default function WalletPage() {
           </span>
 
           <span className="liquid-glass-primary flex items-center gap-1.5 rounded-full px-3 py-1.5">
-            <Image src="/images/logo/logo.png" alt="ICP" width={16} height={16} className="size-4" />
+            <Image src={ICP_LOGO} alt="ICP" width={16} height={16} className="size-4" />
             <span className="text-[11px] font-semibold tracking-wide">
               {t("icpBalance")}
             </span>

@@ -25,9 +25,24 @@ def deep_merge(base: dict, target: dict) -> dict:
     return target
 
 
+def bootstrap(en: dict) -> int:
+    created = 0
+    for code in locale_codes():
+        if code == "en":
+            continue
+        path = ROOT / code / "common.json"
+        if path.exists():
+            continue
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(en, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        created += 1
+        print(f"{code}: bootstrapped from en")
+    return created
+
+
 def main() -> None:
-    en_path = ROOT / "en" / "common.json"
-    en = json.loads(en_path.read_text(encoding="utf-8"))
+    en = json.loads((ROOT / "en" / "common.json").read_text(encoding="utf-8"))
+    bootstrap(en)
     updated = 0
 
     for code in locale_codes():

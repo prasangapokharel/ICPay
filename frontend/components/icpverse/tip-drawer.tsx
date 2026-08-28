@@ -26,6 +26,7 @@ import {
 } from "@/lib/wallet/utils"
 import { AmountInput } from "@/components/shared/amount-input"
 import { avatarUriFor } from "@/lib/profile/avatar"
+import { ICP_LOGO } from "@/lib/token/icon"
 import { primeSuccessChime } from "@/lib/ui/successChime"
 import { cn } from "@/lib/ui/utils"
 
@@ -137,7 +138,7 @@ export function TipDrawer({
                   )}
                 >
                   <Image
-                    src="/images/logo/logo.png"
+                    src={ICP_LOGO}
                     alt=""
                     width={40}
                     height={40}
