@@ -1,8 +1,6 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon } from "@hugeicons/core-free-icons"
 import {
   Drawer,
   DrawerContent,
@@ -80,7 +78,6 @@ export function ProposalDetailDrawer({
                 nativeButton={false}
                 render={<a href={nnsUrl} target="_blank" rel="noopener noreferrer" />}
               >
-                <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
                 {t("viewOnDashboard")}
               </Button>
             ) : null}
@@ -91,7 +88,6 @@ export function ProposalDetailDrawer({
                 nativeButton={false}
                 render={<a href={snsUrl} target="_blank" rel="noopener noreferrer" />}
               >
-                <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
                 {t("snsProjectLink")}
               </Button>
             ) : null}

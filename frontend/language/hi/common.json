@@ -6,7 +6,9 @@
     "bucket": "क्लाउड",
     "menu": "मेन्यू",
     "buyUsername": "यूज़रनेम खरीदें",
-    "live": "Live"
+    "live": "Live",
+    "history": "इतिहास",
+    "presale": "प्रीसेल"
   },
   "common": {
     "send": "भेजें",
@@ -55,7 +57,7 @@
     "sections": {
       "money": "पैसा",
       "identity": "पहचान",
-      "storage": "Storage",
+      "storage": "संग्रहण",
       "activity": "गतिविधि",
       "more": "अधिक",
       "preferences": "प्राथमिकताएँ",
@@ -68,8 +70,8 @@
       "tokens": "टोकन",
       "launch": "टोकन लॉन्च",
       "icpayToken": "ICPAY टोकन",
-      "buyName": "Buy Premium",
-      "buyNameBadge": "Premium",
+      "buyName": "प्रीमियम खरीदें",
+      "buyNameBadge": "प्रीमियम",
       "profile": "प्रोफ़ाइल",
       "icpverse": "आईसीपीवर्स",
       "myQr": "मेरा QR",
@@ -85,14 +87,14 @@
       "swap": "स्वैप",
       "bucket": "क्लाउड",
       "blog": "ब्लॉग",
-      "analytics": "Analytics",
-      "live": "Live",
-      "community": "Channels",
-      "communityBadge": "Beta",
-      "presaleBadge": "Live",
-      "governance": "Governance"
+      "analytics": "विश्लेषण",
+      "live": "लाइव",
+      "community": "चैनल",
+      "communityBadge": "बीटा",
+      "presaleBadge": "लाइव",
+      "governance": "शासन"
     },
-    "preferencesDescription": "भाषा, मुद्रा और कानूनी पृष्ठ"
+    "preferencesDescription": "भाषा, मुद्रा, दिखावट और ध्वनि"
   },
   "language": {
     "label": "भाषा",

@@ -6,7 +6,9 @@
     "bucket": "Cloud",
     "menu": "Menü",
     "buyUsername": "Benutzernamen kaufen",
-    "live": "Live"
+    "live": "Live",
+    "history": "Verlauf",
+    "presale": "Vorverkauf"
   },
   "common": {
     "send": "Senden",
@@ -68,7 +70,7 @@
       "tokens": "Token",
       "launch": "Token starten",
       "icpayToken": "ICPAY-Token",
-      "buyName": "Buy Premium",
+      "buyName": "Premium kaufen",
       "buyNameBadge": "Premium",
       "profile": "Profil",
       "icpverse": "ICPversum",
@@ -85,14 +87,14 @@
       "swap": "Tauschen",
       "bucket": "Cloud",
       "blog": "Blog",
-      "analytics": "Analytics",
+      "analytics": "Analysen",
       "live": "Live",
-      "community": "Channels",
-      "communityBadge": "Beta",
-      "presaleBadge": "Live",
-      "governance": "Governance"
+      "community": "Kanäle",
+      "communityBadge": "Test",
+      "presaleBadge": "Aktiv",
+      "governance": "Abstimmung"
     },
-    "preferencesDescription": "Sprach-, Währungs- und Rechtsseiten"
+    "preferencesDescription": "Sprache, Währung, Darstellung und Ton"
   },
   "language": {
     "label": "Sprache",

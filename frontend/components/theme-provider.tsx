@@ -10,8 +10,8 @@ function ThemeProvider({
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="system"
-      enableSystem
+      defaultTheme="dark"
+      enableSystem={false}
       disableTransitionOnChange
       {...props}
     >
@@ -77,8 +77,7 @@ const THEME_COLOR = { light: "#ffffff", dark: "#0a0a0a" } as const
 
 // Runs before paint so the status bar never flashes the wrong shade.
 const themeColorScript = `(function(){try{
-var t=localStorage.getItem('theme');
-var d=t==='dark'||((!t||t==='system')&&matchMedia('(prefers-color-scheme: dark)').matches);
+var d=localStorage.getItem('theme')!=='light';
 var m=document.createElement('meta');
 m.name='theme-color';m.content=d?'${THEME_COLOR.dark}':'${THEME_COLOR.light}';
 document.head.appendChild(m);

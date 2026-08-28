@@ -6,7 +6,9 @@
     "bucket": "Облако",
     "menu": "Меню",
     "buyUsername": "Купить имя пользователя",
-    "live": "Live"
+    "live": "Live",
+    "history": "История",
+    "presale": "Пресейл"
   },
   "common": {
     "send": "Отправить",
@@ -68,8 +70,8 @@
       "tokens": "Токены",
       "launch": "Запуск токена",
       "icpayToken": "Токен ICPAY",
-      "buyName": "Buy Premium",
-      "buyNameBadge": "Premium",
+      "buyName": "Купить Premium",
+      "buyNameBadge": "Премиум",
       "profile": "Профиль",
       "icpverse": "ICP-вселенная",
       "myQr": "Мой QR",
@@ -85,14 +87,14 @@
       "swap": "Обмен",
       "bucket": "Облако",
       "blog": "Блог",
-      "analytics": "Analytics",
-      "live": "Live",
-      "community": "Channels",
-      "communityBadge": "Beta",
-      "presaleBadge": "Live",
-      "governance": "Governance"
+      "analytics": "Аналитика",
+      "live": "В эфире",
+      "community": "Каналы",
+      "communityBadge": "Бета",
+      "presaleBadge": "В эфире",
+      "governance": "Управление"
     },
-    "preferencesDescription": "Страницы языка, валюты и юридические"
+    "preferencesDescription": "Язык, валюта, оформление и звук"
   },
   "language": {
     "label": "Язык",

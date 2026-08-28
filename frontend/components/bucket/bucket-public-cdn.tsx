@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDown01Icon, Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import {
@@ -24,7 +24,6 @@ import {
   resolvePublicFileUrl,
   type BucketUrlMode,
 } from "@/lib/bucket/cdn"
-import { cn } from "@/lib/ui/utils"
 
 export function BucketPublicCdn({ publicBaseUrl }: { publicBaseUrl: string }) {
   const t = useTranslations("bucket")
@@ -51,11 +50,6 @@ export function BucketPublicCdn({ publicBaseUrl }: { publicBaseUrl: string }) {
             className="w-full justify-between text-muted-foreground"
           >
             <span>{t("publicCdn")}</span>
-            <HugeiconsIcon
-              icon={ArrowDown01Icon}
-              className={cn("size-3.5 shrink-0 transition-transform", open && "rotate-180")}
-              strokeWidth={1.75}
-            />
           </Button>
         }
       />

@@ -24,7 +24,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
 import { avatarUriFor } from "@/lib/profile/avatar"
 import { primeSuccessChime, playSuccessChime } from "@/lib/ui/successChime"
@@ -363,12 +363,10 @@ function PaySuccess({
             as two competing actions. */}
         <Button
           variant="outline"
-          size="icon-lg"
           onClick={handleShare}
-          aria-label={t("shareReceipt")}
-          className="size-12 rounded-2xl"
+          className="shrink-0"
         >
-          <HugeiconsIcon icon={shared ? Tick02Icon : Share08Icon} className="size-4.5" />
+          {shared ? tc("copied") : t("shareReceipt")}
         </Button>
       </div>
     </div>

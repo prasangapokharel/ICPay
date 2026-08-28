@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
-import { Copy01Icon, Tick02Icon, UserQuestion01Icon } from "@hugeicons/core-free-icons"
+import { UserQuestion01Icon } from "@hugeicons/core-free-icons"
 import { PayQr } from "@/components/profile/pay-qr"
 import { QuickPayDrawer } from "@/components/profile/quick-pay-drawer"
 import { avatarUriFor } from "@/lib/profile/avatar"
@@ -31,6 +31,7 @@ type PayRequest = { amount: bigint; memo?: string }
 
 export function PublicProfile() {
   const t = useTranslations("publicProfile")
+  const tc = useTranslations("common")
   const raw = useRewrittenLastSegment()
   const username = raw.toLowerCase()
   const { identity, isAuthenticated, login } = useAuth()
@@ -161,10 +162,9 @@ export function PublicProfile() {
             <span className="min-w-0 flex-1 truncate font-mono text-xs">
               {payAddress.slice(0, 14)}…{payAddress.slice(-10)}
             </span>
-            <HugeiconsIcon
-              icon={copied ? Tick02Icon : Copy01Icon}
-              className={copied ? "size-4 shrink-0 text-primary" : "size-4 shrink-0 text-muted-foreground"}
-            />
+            <span className="shrink-0 text-xs font-medium text-muted-foreground">
+              {copied ? tc("copied") : tc("copy")}
+            </span>
           </Button>
 
           {/* Both forms address the same custodial subaccount, so the choice is

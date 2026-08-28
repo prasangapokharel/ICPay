@@ -2,8 +2,6 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
@@ -39,7 +37,6 @@ export function BucketCard({ bucket }: { bucket: BucketPublic }) {
           {isPublicVisibility(bucket.visibility) ? t("public") : t("private")}
         </span>
       </span>
-      <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 shrink-0 text-muted-foreground" />
     </Button>
   )
 }

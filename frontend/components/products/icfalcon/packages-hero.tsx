@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon, ArrowLeft01Icon, TerminalIcon } from "@hugeicons/core-free-icons"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -80,7 +80,6 @@ export function PackagesHero() {
             nativeButton={false}
             render={<Link href="/products/icFalcon" />}
           >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="mr-1.5 size-4" />
             ICFalcon
           </Button>
           <Button
@@ -89,7 +88,6 @@ export function PackagesHero() {
             nativeButton={false}
             render={<Link href="/products/icFalcon/commands" />}
           >
-            <HugeiconsIcon icon={TerminalIcon} className="mr-1.5 size-4" />
             Commands
           </Button>
         </div>

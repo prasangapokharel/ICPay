@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
-import { ArrowRight01Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
+import { InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
 import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, shortenCounterparty } from "@/lib/wallet/utils"
 import { useLedgerSymbol } from "@/hooks/wallet/useWalletData"
@@ -35,14 +35,13 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
             render={<Link href="/transactions" />}
           >
             {t("seeMore")}
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" />
           </Button>
         )}
       </div>
 
       {transactions.length === 0 ? (
-        <div className="rounded-2xl border border-dashed py-5 text-center">
-          <HugeiconsIcon icon={InboxIcon} className="mx-auto size-6 text-muted-foreground/50" />
+        <div className="rounded-2xl border border-dashed text-center">
+          <HugeiconsIcon icon={InboxIcon} className="mx-auto size-4 text-muted-foreground/50" />
           <p className="mt-3 text-sm font-medium">{t("noTransactions")}</p>
           <p className="mt-1 text-xs text-muted-foreground">{t("noTransactionsHint")}</p>
         </div>

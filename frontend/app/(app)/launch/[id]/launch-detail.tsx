@@ -2,8 +2,6 @@
 
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -26,7 +24,6 @@ export function LaunchDetail() {
       onClick={() => router.push("/launch")}
       className="-ml-2 h-auto px-2 py-1 text-muted-foreground"
     >
-      <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
       {t("back")}
     </Button>
   )

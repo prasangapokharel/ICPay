@@ -7,8 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Upload01Icon } from "@hugeicons/core-free-icons"
 import { formatAmount, parseIcp, isHexAccountId, ICP_FEE } from "@/lib/wallet/utils"
 import { AmountInput } from "@/components/shared/amount-input"
 import { primeSuccessChime } from "@/lib/ui/successChime"
@@ -120,7 +118,7 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
       )}
 
       <Button type="submit" className="w-full" disabled={!canSubmit}>
-        {loading ? <Spinner className="size-4" /> : <HugeiconsIcon icon={Upload01Icon} className="size-4" />}
+        {loading && <Spinner className="size-4" />}
         {loading ? t("sending") : t("submit")}
       </Button>
     </form>

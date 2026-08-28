@@ -5,8 +5,6 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Download01Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { useAnalytics } from "@/hooks/analytics/useAnalytics"
@@ -99,7 +97,6 @@ export default function AnalyticsPage() {
                 {t("refresh")}
               </Button>
               <Button size="sm" disabled={exporting || rowCount === 0} onClick={handleExport}>
-                <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
                 {exporting ? t("exporting") : exportLabel}
               </Button>
             </div>

@@ -6,7 +6,9 @@
     "bucket": "云存储",
     "menu": "菜单",
     "buyUsername": "购买用户名",
-    "live": "Live"
+    "live": "Live",
+    "history": "历史",
+    "presale": "预售"
   },
   "common": {
     "send": "发送",
@@ -68,8 +70,8 @@
       "tokens": "代币",
       "launch": "发行代币",
       "icpayToken": "ICPAY 代币",
-      "buyName": "Buy Premium",
-      "buyNameBadge": "Premium",
+      "buyName": "购买高级版",
+      "buyNameBadge": "高级版",
       "profile": "个人资料",
       "icpverse": "ICP 宇宙",
       "myQr": "我的二维码",
@@ -85,14 +87,14 @@
       "swap": "兑换",
       "bucket": "云存储",
       "blog": "博客",
-      "analytics": "Analytics",
-      "live": "Live",
-      "community": "Channels",
-      "communityBadge": "Beta",
-      "presaleBadge": "Live",
-      "governance": "Governance"
+      "analytics": "分析",
+      "live": "直播",
+      "community": "频道",
+      "communityBadge": "测试版",
+      "presaleBadge": "进行中",
+      "governance": "治理"
     },
-    "preferencesDescription": "语言、货币和法律页面"
+    "preferencesDescription": "语言、货币、外观和声音"
   },
   "language": {
     "label": "语言",
