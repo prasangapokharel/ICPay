@@ -1,11 +1,7 @@
 "use client"
 
-import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon } from "@hugeicons/core-free-icons"
-import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { type TokenHolding } from "@/services/tokens"
@@ -20,21 +16,9 @@ export function TokenList({
 }: {
   holdings: TokenHolding[]
   isLoading: boolean
-  // Balances sitting at the user's own principal rather than in ICPay, keyed by
-  // ledger. Only the ledgers we can actually sweep are in it.
   outside?: Map<string, bigint>
 }) {
   const t = useTranslations("wallet")
-  const [query, setQuery] = useState("")
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return holdings
-    return holdings.filter(
-      (token) =>
-        token.symbol.toLowerCase().includes(q) || token.name.toLowerCase().includes(q),
-    )
-  }, [holdings, query])
 
   if (isLoading && holdings.length === 0) {
     return (
@@ -62,42 +46,19 @@ export function TokenList({
   }
 
   return (
-    <div className="space-y-3">
-      <div className="relative">
-        <HugeiconsIcon
-          icon={Search01Icon}
-          className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+    <ul className="space-y-0.5">
+      {holdings.map((token) => (
+        <TokenRow
+          key={token.ledgerId}
+          token={token}
+          outside={
+            (outside?.get(token.ledgerId) ?? 0n) > token.fee
+              ? outside!.get(token.ledgerId)!
+              : undefined
+          }
         />
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("searchTokens")}
-          className="rounded-full bg-muted/60 pl-10 shadow-none focus-visible:bg-background"
-        />
-      </div>
-
-      {filtered.length === 0 ? (
-        <p className="px-1 py-6 text-center text-sm text-muted-foreground">
-          {t("noTokensFound")}
-        </p>
-      ) : (
-        <ul className="space-y-0.5">
-          {filtered.map((token) => (
-            <TokenRow
-              key={token.ledgerId}
-              token={token}
-              // Below the fee it cannot be moved, so naming it would only send the
-              // user to a page whose button is disabled.
-              outside={
-                (outside?.get(token.ledgerId) ?? 0n) > token.fee
-                  ? outside!.get(token.ledgerId)!
-                  : undefined
-              }
-            />
-          ))}
-        </ul>
-      )}
-    </div>
+      ))}
+    </ul>
   )
 }
 
@@ -112,7 +73,7 @@ function TokenRow({ token, outside }: { token: TokenHolding; outside?: bigint })
         prefetch
         onMouseEnter={() => prefetchAppRoute(href, identity)}
         onFocus={() => prefetchAppRoute(href, identity)}
-        className="flex items-center gap-3 rounded-2xl px-1 py-2.5 transition-colors hover:bg-muted/60 active:scale-[0.99]"
+        className="flex items-center gap-3 rounded-2xl px-1 py-2.5"
       >
         <TokenLogo token={token} />
 
@@ -125,9 +86,6 @@ function TokenRow({ token, outside }: { token: TokenHolding; outside?: bigint })
           <p className="text-sm font-semibold tabular-nums">
             {formatTokenAmount(token.balance, token.decimals)}
           </p>
-          {/* The amount, not just a flag: someone holding their whole launched
-              supply outside custody sees a zero row otherwise, and the number is
-              what tells them the sweep is worth opening. */}
           {outside !== undefined && (
             <p className="mt-0.5 text-[11px] font-medium tabular-nums text-primary">
               {t("outsideAmount", {
