@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { LOGIN_BG } from "@/lib/ui/brand-images"
 
 export const metadata: Metadata = {
   title: "Sign In",
@@ -8,5 +9,10 @@ export const metadata: Metadata = {
 }
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  return children
+  return (
+    <>
+      <link rel="preload" as="image" href={LOGIN_BG} fetchPriority="high" />
+      {children}
+    </>
+  )
 }

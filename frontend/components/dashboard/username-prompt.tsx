@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { USERNAME_FREE_MIN_LENGTH } from "@/lib/profile/username"
+import { APP_LOGO } from "@/lib/ui/brand-images"
 
 // A username is required rather than suggested: without one, nobody can send
 // this account ICP by name. So there is no dismiss path -- no close button, no
@@ -28,7 +29,7 @@ export function UsernamePrompt({ username }: { username?: string }) {
           <div className="mb-3 flex justify-center">
             <span className="flex size-14 items-center justify-center overflow-hidden rounded-2xl bg-muted ring-1 ring-border">
               <Image
-                src="/images/logo/logo.png"
+                src={APP_LOGO}
                 alt=""
                 width={112}
                 height={112}
