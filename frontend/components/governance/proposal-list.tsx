@@ -2,8 +2,6 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { ProposalDetailDrawer } from "@/components/governance/proposal-detail-drawer"
@@ -90,7 +88,6 @@ export function ProposalList({
               disabled={!hasPrev}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
             >
-              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-3" />
               {t("prevPage")}
             </Button>
             <Button
@@ -101,7 +98,6 @@ export function ProposalList({
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
             >
               {t("nextPage")}
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" />
             </Button>
           </div>
         </div>

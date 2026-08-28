@@ -15,7 +15,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, ArrowRight01Icon, LinkSquare02Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
+import { LinkSquare02Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
 import type { TransactionPublic } from "@/services/types"
 import { formatTokenAmount, formatTime, getTxStatusVariant, txTypeLabel, txStatusLabel, explorerTxUrl, shortenCounterparty } from "@/lib/wallet/utils"
@@ -39,7 +39,7 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
 
   if (transactions.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed py-12 text-center">
+      <div className="rounded-2xl border border-dashed  text-center">
         <HugeiconsIcon icon={InboxIcon} className="mx-auto size-6 text-muted-foreground/50" />
         <p className="mt-3 text-sm font-medium">{td("noTransactions")}</p>
         <p className="mt-1 text-xs text-muted-foreground">{td("noTransactionsHint")}</p>
@@ -67,7 +67,6 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
               disabled={!hasPrev}
               onClick={() => onPageChange(page - 1)}
             >
-              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-3" />
               {t("previous")}
             </Button>
             <Button
@@ -77,7 +76,6 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
               onClick={() => onPageChange(page + 1)}
             >
               {t("next")}
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" />
             </Button>
           </div>
         </div>
@@ -110,7 +108,7 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
     <AccordionItem value={tx.id} className="border-b-0 px-0">
       {/* The trigger appends its own chevron with ml-auto; gap-2 and a shrunk
           icon keep it from pushing the amount column off the right edge. */}
-      <AccordionTrigger className="items-center gap-2 px-4 py-3.5 hover:no-underline **:data-[slot=accordion-trigger-icon]:ml-1 **:data-[slot=accordion-trigger-icon]:size-3.5">
+      <AccordionTrigger className="items-center gap-2  hover:no-underline **:data-[slot=accordion-trigger-icon]:ml-1 **:data-[slot=accordion-trigger-icon]:size-3.5">
         {handle ? (
           // Rendered as a span inside the trigger button -- a nested <a> would be
           // invalid HTML -- so the navigation is done by hand, and the click is
@@ -130,7 +128,7 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
               e.stopPropagation()
               router.push(`/icpverse/${handle}`)
             }}
-            className="shrink-0 rounded-full outline-none transition-transform focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
+            className="shrink-0 rounded-full outline-none transition-transform "
           >
             <Avatar className="size-10">
               <AvatarImage src={avatarUri} alt="" />
@@ -182,8 +180,8 @@ function TransactionItem({ tx }: { tx: TransactionPublic }) {
         </div>
       </AccordionTrigger>
 
-      <AccordionContent className="px-4 pb-4">
-        <dl className="space-y-2.5 rounded-xl bg-muted/40 p-3 text-xs">
+      <AccordionContent className="">
+        <dl className="space-y-2.5 rounded-xl bg-transparent p-1 text-xs">
           <Row label={t("rowFrom")}>
             <span className="break-all font-mono">{tx.from}</span>
           </Row>

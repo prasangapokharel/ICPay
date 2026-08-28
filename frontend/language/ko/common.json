@@ -6,7 +6,9 @@
     "bucket": "클라우드",
     "menu": "메뉴",
     "buyUsername": "사용자 이름 구매",
-    "live": "Live"
+    "live": "Live",
+    "history": "내역",
+    "presale": "프리세일"
   },
   "common": {
     "send": "보내기",
@@ -68,8 +70,9 @@
       "tokens": "토큰",
       "launch": "토큰 발행",
       "icpayToken": "ICPAY 토큰",
-      "buyName": "Buy Premium",
-      "buyNameBadge": "Premium",
+      "presaleBadge": "라이브",
+      "buyName": "프리미엄 구매",
+      "buyNameBadge": "프리미엄",
       "profile": "프로필",
       "icpverse": "ICP 유니버스",
       "myQr": "내 QR",
@@ -85,14 +88,13 @@
       "swap": "스왑",
       "bucket": "클라우드",
       "blog": "블로그",
-      "analytics": "Analytics",
-      "live": "Live",
-      "community": "Channels",
-      "communityBadge": "Beta",
-      "presaleBadge": "Live",
-      "governance": "Governance"
+      "analytics": "분석",
+      "live": "라이브",
+      "community": "채널",
+      "communityBadge": "베타",
+      "governance": "거버넌스"
     },
-    "preferencesDescription": "언어, 통화 및 법적 페이지"
+    "preferencesDescription": "언어, 통화, 화면 및 소리"
   },
   "language": {
     "label": "언어",

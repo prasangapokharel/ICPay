@@ -6,7 +6,9 @@
     "bucket": "Bucket",
     "menu": "Menu",
     "live": "Live",
-    "buyUsername": "Shop"
+    "buyUsername": "Shop",
+    "history": "History",
+    "presale": "Presale"
   },
   "common": {
     "send": "Send",
@@ -92,7 +94,7 @@
       "community": "Channels",
       "communityBadge": "Beta"
     },
-    "preferencesDescription": "Language, currency and legal pages"
+    "preferencesDescription": "Language, currency, appearance and sound"
   },
   "language": {
     "label": "Language",

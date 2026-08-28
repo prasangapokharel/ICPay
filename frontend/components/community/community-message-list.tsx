@@ -7,7 +7,6 @@ import {
   PendingBroadcastMessage,
 } from "@/components/community/community-broadcast-message"
 import { CommunityForwardModal } from "@/components/community/community-forward-modal"
-import { CommunityIcon } from "@/components/community/community-icon"
 import { Button } from "@/components/ui/button"
 import { MessageGroup } from "@/components/ui/message"
 import { cn } from "@/lib/ui/utils"
@@ -221,7 +220,6 @@ export function CommunityMessageList({
           className="absolute bottom-4 right-4 z-10 rounded-full shadow-lg"
           onClick={scrollToBottom}
         >
-          <CommunityIcon name="arrowDown" size={16} />
           {tc("jumpToLatest")}
         </Button>
       )}

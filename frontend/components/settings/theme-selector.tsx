@@ -9,10 +9,7 @@ import { Switch } from "@/components/ui/switch"
 export function ThemeSelector() {
   const { resolvedTheme, setTheme } = useTheme()
   const t = useTranslations("theme")
-
-  // The drawer only mounts on open, so next-themes has already read the stored
-  // theme by the time this renders -- no mount guard needed.
-  const dark = resolvedTheme === "dark"
+  const dark = resolvedTheme !== "light"
 
   return (
     <div className="flex items-center gap-3 rounded-2xl border px-4 py-3.5">

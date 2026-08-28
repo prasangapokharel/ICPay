@@ -10,7 +10,7 @@ import { AppIcon, type AppIconName } from "@/components/ui/app-icon"
 
 type NavItem = {
   href: string
-  labelKey: "home" | "icpverse" | "bucket" | "menu" | "buyUsername"
+  labelKey: "home" | "icpverse" | "history" | "menu" | "presale"
   icon: AppIconName
   center?: boolean
 }
@@ -18,8 +18,8 @@ type NavItem = {
 const navItems: NavItem[] = [
   { href: "/", labelKey: "home", icon: "home" },
   { href: "/icpverse", labelKey: "icpverse", icon: "icpverse" },
-  { href: "/username", labelKey: "buyUsername", icon: "shop", center: true },
-  { href: "/bucket", labelKey: "bucket", icon: "bucket" },
+  { href: "/icpay/presale", labelKey: "presale", icon: "icpay", center: true },
+  { href: "/transactions", labelKey: "history", icon: "history" },
   { href: "/settings", labelKey: "menu", icon: "menu" },
 ]
 
@@ -79,6 +79,8 @@ function NavTab({
   center?: boolean
   onWarm: () => void
 }) {
+  const filled = center && icon === "icpay"
+
   return (
     <Link
       href={href}
@@ -91,13 +93,23 @@ function NavTab({
     >
       <span
         className={cn(
-          "flex size-9 shrink-0 items-center justify-center rounded-full",
-          center
-            ? cn("bg-muted/60 ring-1 ring-border/60", active && "bg-muted ring-primary/40")
-            : cn("bg-gray-800", active && "bg-gray-700 dark:bg-foreground/15")
+          "flex size-9 shrink-0 overflow-hidden rounded-full",
+          !filled && "items-center justify-center",
+          filled
+            ? cn("ring-1 ring-border/60", active && "ring-primary/40")
+            : cn(
+                "bg-gray-800",
+                center && "bg-muted/60 ring-1 ring-border/60",
+                active &&
+                  (center ? "bg-muted ring-primary/40" : "bg-gray-700 dark:bg-foreground/15")
+              )
         )}
       >
-        <AppIcon name={icon} size={center ? 22 : 20} />
+        <AppIcon
+          name={icon}
+          size={filled ? 36 : center ? 22 : 20}
+          className={filled ? "size-full object-cover" : undefined}
+        />
       </span>
       <span
         className={cn(

@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Share08Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -111,7 +109,6 @@ export function ReceiptPreview({
 
         <DialogFooter>
           <Button onClick={handleShare} disabled={!blob || busy}>
-            <HugeiconsIcon icon={Share08Icon} className="size-4" />
             {tc("share")}
           </Button>
         </DialogFooter>

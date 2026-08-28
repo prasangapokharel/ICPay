@@ -53,9 +53,9 @@ export function AmountInput({
       <div className="flex items-baseline justify-between">
         <Label htmlFor={id}>{label}</Label>
         {balance !== undefined && (
-          <span className="text-xs text-muted-foreground">
+          <span className="rounded-full bg-muted/60 px-2.5 py-1 text-xs text-muted-foreground">
             {t("balance")}{" "}
-            <span className="font-medium tabular-nums text-foreground">
+            <span className="font-semibold tabular-nums text-foreground">
               {formatAmount(balance)} ICP
             </span>
           </span>

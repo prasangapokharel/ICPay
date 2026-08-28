@@ -9,8 +9,6 @@ import { SocialLinksEditor } from "@/components/profile/social-links-editor"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { usePatchDashboardUser, useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { updateUsername } from "@/services/profile/profile"
@@ -77,10 +75,7 @@ export default function ProfilePage() {
           className="mt-1 gap-1.5 text-muted-foreground"
         >
           <span className="font-mono text-xs">{shortPrincipal(principal)}</span>
-          <HugeiconsIcon
-            icon={copied ? Tick02Icon : Copy01Icon}
-            className={copied ? "size-3.5 text-primary" : "size-3.5"}
-          />
+          <span className="text-xs">{copied ? tc("copied") : tc("copy")}</span>
         </Button>
       </div>
 

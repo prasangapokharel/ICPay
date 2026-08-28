@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useSyncExternalStore } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
@@ -13,8 +13,9 @@ import { BuyIcpayDrawer } from "@/components/icpay/buy-icpay-drawer"
 import { PresaleStatsPanel } from "@/components/icpay/presale-stats-panel"
 import { PresaleGuideDialog } from "@/components/icpay/presale-guide-dialog"
 import { GradientBadge } from "@/components/ui/gradient-badge"
-import { BgImageCard } from "@/components/ui/bg-image-card"
+import { BgImageCard, AMBER_EMBED_BTN } from "@/components/ui/bg-image-card"
 import { hasSeenPresaleGuide } from "@/lib/icpay/presaleGuide"
+import { cn } from "@/lib/ui/utils"
 
 export function IcpayPresaleHero({ symbol }: { symbol: string }) {
   const t = useTranslations("buyIcpay")
@@ -22,8 +23,19 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
   const { sale, isLoading } = useIcpaySale()
   const [buyOpen, setBuyOpen] = useState(false)
   const [manualGuideOpen, setManualGuideOpen] = useState(false)
+  const [autoDismissed, setAutoDismissed] = useState(false)
+  const unseenGuide = useSyncExternalStore(
+    () => () => {},
+    () => !hasSeenPresaleGuide(),
+    () => false
+  )
   const guideOpen =
-    manualGuideOpen || Boolean(sale?.active && !hasSeenPresaleGuide())
+    manualGuideOpen || (Boolean(sale?.active) && unseenGuide && !autoDismissed)
+
+  const closeGuide = () => {
+    setManualGuideOpen(false)
+    setAutoDismissed(true)
+  }
 
   return (
     <section className="space-y-4">
@@ -82,7 +94,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
 
           {identity ? (
             <Button
-              className="w-full"
+              className={cn("w-full font-semibold", AMBER_EMBED_BTN)}
               disabled={!sale?.active}
               onClick={() => setBuyOpen(true)}
             >
@@ -90,7 +102,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
             </Button>
           ) : (
             <Button
-              className="w-full"
+              className={cn("w-full font-semibold", AMBER_EMBED_BTN)}
               nativeButton={false}
               render={<Link href="/login" />}
             >
@@ -101,7 +113,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
 
       <PresaleGuideDialog
         open={guideOpen}
-        onOpenChange={(open) => setManualGuideOpen(open)}
+        onClose={closeGuide}
       />
       {buyOpen ? (
         <BuyIcpayDrawer open={buyOpen} onOpenChange={setBuyOpen} symbol={symbol} />

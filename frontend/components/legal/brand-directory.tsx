@@ -11,7 +11,6 @@ import {
   Search01Icon,
   Crown02Icon,
   ArrowUpRight01Icon,
-  Copy01Icon,
 } from "@hugeicons/core-free-icons"
 import { RESERVED_BRANDS } from "@/lib/profile/reservedBrands"
 
@@ -120,7 +119,6 @@ export function BrandDirectory() {
             onClick={copyProof}
             className="h-8 gap-1.5 rounded-full text-xs"
           >
-            <HugeiconsIcon icon={Copy01Icon} className="size-3.5" />
             {copied ? t("copied") : t("copyTemplate")}
           </Button>
         </div>

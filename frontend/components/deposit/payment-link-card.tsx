@@ -15,8 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { buildPaymentLink } from "@/services/pay/pay"
 import { copyText, memoByteLength, MEMO_MAX_BYTES, parseIcp } from "@/lib/wallet/utils"
 
@@ -166,7 +164,6 @@ export function PaymentLinkDialog({
                   {generatedLink.replace(/^https?:\/\//, "")}
                 </p>
                 <Button variant="outline" onClick={handleCopy} className="w-full">
-                  <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" />
                   {copied ? tc("copied") : t("copyLink")}
                 </Button>
               </div>

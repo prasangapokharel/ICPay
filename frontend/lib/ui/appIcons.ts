@@ -2,6 +2,8 @@ export const appIcons = {
   home: "/images/icons8/icons8-safe-48.png",
   icpverse: "/images/icons8/icons8-merchant-account-48.png",
   send: "/images/icons8/icons8-online-money-transfer-48.png",
+  deposit: "/images/dashboard/icons8-circled-down-left-48.png",
+  withdraw: "/images/dashboard/icons8-circled-up-right-48.png",
   menu: "/images/icons8/icons8-squared-menu-48.png",
   shop: "/images/navballcenter/icons8-shop-48.png",
   wallet: "/images/icons8/icons8-card-wallet-48.png",

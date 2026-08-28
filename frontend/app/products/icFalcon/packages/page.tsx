@@ -4,8 +4,6 @@ import { useState, useEffect } from "react"
 import { PackagesHero } from "@/components/products/icfalcon/packages-hero"
 import { PackagesGrid } from "@/components/products/icfalcon/packages-grid"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft02Icon, ArrowRight02Icon } from "@hugeicons/core-free-icons"
 import { ProductFooter } from "@/components/products/shared/product-footer"
 
 const PACKAGES_PER_PAGE = 12
@@ -81,7 +79,6 @@ export default function PackagesPage() {
                     disabled={currentPage === 1}
                     className="gap-1"
                   >
-                    <HugeiconsIcon icon={ArrowLeft02Icon} className="size-4" />
                     Previous
                   </Button>
 
@@ -122,7 +119,6 @@ export default function PackagesPage() {
                     className="gap-1"
                   >
                     Next
-                    <HugeiconsIcon icon={ArrowRight02Icon} className="size-4" />
                   </Button>
                 </div>
               )}

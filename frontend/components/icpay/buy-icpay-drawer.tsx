@@ -5,6 +5,8 @@ import Link from "next/link"
 import { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { AMBER_EMBED_BTN } from "@/components/ui/bg-image-card"
+import { cn } from "@/lib/ui/utils"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -57,6 +59,7 @@ export function BuyIcpayDrawer({
   symbol: string
 }) {
   const t = useTranslations("buyIcpay")
+  const tc = useTranslations("common")
   const { identity } = useAuth()
   const { sale, rate, refresh } = useIcpaySale()
   const balance = useLiveBalance()
@@ -163,6 +166,15 @@ export function BuyIcpayDrawer({
             </Alert>
           ) : (
             <>
+              {balance !== undefined && (
+                <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/50 bg-muted/40 px-4 py-3">
+                  <span className="text-xs font-medium text-muted-foreground">{tc("balance")}</span>
+                  <span className="text-sm font-semibold tabular-nums text-foreground">
+                    {formatAmount(balance)} ICP
+                  </span>
+                </div>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="buy-icp">{t("pay")}</Label>
                 <Input
@@ -248,11 +260,6 @@ export function BuyIcpayDrawer({
                 </div>
               )}
 
-              {balance !== undefined && (
-                <p className="text-xs text-muted-foreground">
-                  {t("balance", { amount: formatAmount(balance) })}
-                </p>
-              )}
             </>
           )}
 
@@ -265,11 +272,11 @@ export function BuyIcpayDrawer({
 
         <DrawerFooter>
           {!identity ? (
-            <Button className="w-full" nativeButton={false} render={<Link href="/login" />}>
+            <Button className={cn("w-full font-semibold", AMBER_EMBED_BTN)} nativeButton={false} render={<Link href="/login" />}>
               {t("loginToBuy")}
             </Button>
           ) : (
-            <Button className="w-full" disabled={!canBuy} onClick={handleBuy}>
+            <Button className={cn("w-full font-semibold", AMBER_EMBED_BTN)} disabled={!canBuy} onClick={handleBuy}>
               {loading ? (
                 <>
                   <Spinner className="size-4" />

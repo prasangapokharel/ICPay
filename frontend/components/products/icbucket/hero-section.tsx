@@ -8,9 +8,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Copy01Icon,
   Tick02Icon,
-  Github01Icon,
-  FileAttachmentIcon,
-  Package01Icon,
 } from "@hugeicons/core-free-icons"
 
 export function HeroSection() {
@@ -86,7 +83,6 @@ export function HeroSection() {
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link href="https://icpay.app/bucket">
                   <Button size="lg">
-                    <HugeiconsIcon icon={FileAttachmentIcon} className="mr-2 size-4" />
                     Try ICBucket
                   </Button>
                 </Link>
@@ -96,13 +92,11 @@ export function HeroSection() {
                   rel="noopener noreferrer"
                 >
                   <Button size="lg" variant="outline">
-                    <HugeiconsIcon icon={Github01Icon} className="mr-2 size-4" />
                     GitHub
                   </Button>
                 </Link>
                 <Link href="/products/icBucket/packages">
                   <Button size="lg" variant="outline">
-                    <HugeiconsIcon icon={Package01Icon} className="mr-2 size-4" />
                     Packages
                   </Button>
                 </Link>

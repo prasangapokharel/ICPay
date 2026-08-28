@@ -1,7 +1,5 @@
 import { cn } from "@/lib/ui/utils"
 
-const BADGE_SRC = "/images/svg/badge/1.svg"
-
 export function GradientBadge({
   children,
   className,
@@ -14,21 +12,14 @@ export function GradientBadge({
   return (
     <span
       className={cn(
-        "relative inline-flex shrink-0 items-center justify-center",
-        size === "sm" ? "h-4 px-2" : "h-5 px-2.5",
+        "inline-flex shrink-0 rounded-full bg-gradient-to-br from-[#FFC229] to-[#13FF91] p-px",
         className
       )}
     >
-      <img
-        src={BADGE_SRC}
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute inset-0 size-full object-fill"
-      />
       <span
         className={cn(
-          "relative z-10 font-semibold uppercase leading-none tracking-wide text-foreground",
-          size === "sm" ? "text-[8px]" : "text-[10px]"
+          "inline-flex items-center justify-center whitespace-nowrap rounded-full bg-[#121215] font-semibold uppercase leading-none tracking-wide text-white",
+          size === "sm" ? "h-[15px] px-1.5 text-[8px]" : "h-[19px] px-2 text-[10px]"
         )}
       >
         {children}

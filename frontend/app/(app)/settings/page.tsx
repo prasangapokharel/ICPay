@@ -35,6 +35,24 @@ export default function MenuPage() {
       key: "money",
       items: [
         {
+          href: "/transfer",
+          key: "send",
+          icon: "send",
+          keywords: "send transfer pay username principal",
+        },
+        {
+          href: "/deposit",
+          key: "deposit",
+          icon: "deposit",
+          keywords: "receive deposit address qr icp",
+        },
+        {
+          href: "/withdraw",
+          key: "withdraw",
+          icon: "withdraw",
+          keywords: "withdraw cash out external wallet",
+        },
+        {
           href: "/wallet",
           key: "tokens",
           icon: "wallet",
@@ -52,12 +70,16 @@ export default function MenuPage() {
           icon: "launch",
           keywords: "create token icrc mint deploy",
         },
+      ],
+    },
+    {
+      key: "storage",
+      items: [
         {
-          href: "/icpay/presale",
-          key: "icpayToken",
-          icon: "icpay",
-          keywords: "presale token icpay buy sale",
-          badge: "presaleBadge",
+          href: "/bucket",
+          key: "bucket",
+          icon: "bucket",
+          keywords: "bucket storage upload files cdn cloud",
         },
       ],
     },

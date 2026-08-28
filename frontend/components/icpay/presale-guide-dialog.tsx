@@ -31,10 +31,10 @@ const STEPS = [
 
 export function PresaleGuideDialog({
   open,
-  onOpenChange,
+  onClose,
 }: {
   open: boolean
-  onOpenChange: (open: boolean) => void
+  onClose: () => void
 }) {
   const t = useTranslations("buyIcpay")
   const [step, setStep] = useState(0)
@@ -42,7 +42,7 @@ export function PresaleGuideDialog({
   const dismiss = () => {
     markPresaleGuideSeen()
     setStep(0)
-    onOpenChange(false)
+    onClose()
   }
 
   const current = STEPS[step]
@@ -54,10 +54,6 @@ export function PresaleGuideDialog({
       open={open}
       onOpenChange={(next) => {
         if (!next) dismiss()
-        else {
-          setStep(0)
-          onOpenChange(true)
-        }
       }}
     >
       <DialogContent showCloseButton={false} className="gap-0 overflow-hidden p-0 sm:max-w-md">
@@ -66,21 +62,23 @@ export function PresaleGuideDialog({
             type="button"
             variant="ghost"
             size="icon-sm"
-            className="absolute top-3 right-3 text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+            className="absolute top-3 right-3 z-10 text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground"
             onClick={dismiss}
             aria-label={t("guideClose")}
           >
             <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={1.75} />
           </Button>
           <div className="flex items-center gap-3 pr-8">
-            <Image
-              src="/images/logo/icpay/token.png"
-              alt=""
-              width={48}
-              height={48}
-              unoptimized
-              className="size-12 rounded-full ring-2 ring-primary-foreground/30"
-            />
+            <span className="relative flex size-12 shrink-0 overflow-hidden rounded-full ring-2 ring-primary-foreground/30">
+              <Image
+                src="/images/logo/icpay/token.png"
+                alt=""
+                width={48}
+                height={48}
+                unoptimized
+                className="size-full object-cover"
+              />
+            </span>
             <div>
               <DialogHeader className="text-left">
                 <DialogTitle className="text-lg text-primary-foreground">{t("heroTitle")}</DialogTitle>
@@ -112,10 +110,10 @@ export function PresaleGuideDialog({
           </div>
         </div>
 
-        <DialogFooter className="flex-col gap-3 border-t border-border/60 px-6 py-4 sm:flex-col">
+        <DialogFooter className="border-t border-border/60 px-6 py-4">
           <div className="flex w-full gap-2">
             <Button
-              variant="ghost"
+              variant="outline"
               className="flex-1"
               disabled={first}
               onClick={() => setStep((s) => Math.max(0, s - 1))}
@@ -132,16 +130,6 @@ export function PresaleGuideDialog({
               </Button>
             )}
           </div>
-          {!last && (
-            <Button
-              type="button"
-              variant="ghost"
-              className="w-full text-muted-foreground"
-              onClick={dismiss}
-            >
-              {t("guideSkip")}
-            </Button>
-          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

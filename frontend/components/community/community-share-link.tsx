@@ -32,7 +32,6 @@ export function CommunityCopyLinkButton({
       className={cn("h-11 w-full justify-center gap-2 rounded-xl bg-muted/40", className)}
       onClick={() => void handle()}
     >
-      <CommunityIcon name={copied ? "check" : "copy"} size={18} />
       {copied ? tc("copied") : label}
     </Button>
   )
@@ -61,7 +60,6 @@ export function CommunityShareLinkButton({
       className={cn("h-11 w-full justify-center gap-2 rounded-xl bg-muted/40", className)}
       onClick={() => void handle()}
     >
-      <CommunityIcon name={copied ? "check" : "share"} size={18} />
       {copied ? tc("copied") : tc("share")}
     </Button>
   )
