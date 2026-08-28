@@ -19,6 +19,115 @@ export function sortedBlogPosts(): BlogPost[] {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "instant-crypto-payments-icpay",
+    title: "Instant Crypto Payments with ICPay: Send ICP in Seconds, Not Minutes",
+    description:
+      "Instant crypto payments with ICPay — sub-second ICP transfers, username sends, 0.0001 ICP fees, and passkey login. The fastest way to pay on the Internet Computer.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 5,
+    category: "Product",
+  },
+  {
+    slug: "icrc-1-token-standard",
+    title: "ICRC-1 Token Standard Explained: The ERC-20 of the Internet Computer",
+    description:
+      "ICRC-1 and ICRC-2 token standards on ICP — transfers, fees, wallet support, and ICRC-1 token integration for merchants and developers.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 6,
+    category: "Developers",
+  },
+  {
+    slug: "depin-on-internet-computer",
+    title: "DePIN on Internet Computer: Decentralized Physical Infrastructure Networks Explained",
+    description:
+      "DePIN crypto on ICP — how decentralized physical infrastructure networks use canisters for coordination, ICRC payments, and on-chain data.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 6,
+    category: "Ecosystem",
+  },
+  {
+    slug: "sovereign-cloud-vs-aws-web3",
+    title: "Sovereign Cloud vs. AWS: Why Next-Gen Web3 DApps Are Built 100% On-Chain",
+    description:
+      "Decentralized cloud vs AWS for Web3 hosting — why ICPay and other DApps run frontend, backend, and data on-chain instead of centralized servers.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 7,
+    category: "Infrastructure",
+  },
+  {
+    slug: "ckbtc-cketh-chain-key-security",
+    title: "ckBTC & ckETH Explained: How Chain-Key Tech Eliminates Cross-Chain Bridge Hacks",
+    description:
+      "ckBTC vs wBTC — chain-key cryptography makes cross-chain assets safer than wrapped tokens. Secure crypto bridges without custodians.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 7,
+    category: "Chain Fusion",
+  },
+  {
+    slug: "on-chain-ai-internet-computer",
+    title: "On-Chain AI on Internet Computer: How AI Models Run Directly Inside Canisters",
+    description:
+      "On-chain AI crypto on ICP — AI smart contracts in canisters without AWS. Decentralized AI infrastructure with verified outputs and cycle-based billing.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 7,
+    category: "Technology",
+  },
+  {
+    slug: "accept-icp-payments-ecommerce",
+    title: "How to Accept ICP and ICRC-1 Tokens on Your E-Commerce Store",
+    description:
+      "Accept crypto payments with ICP payment gateway setup — payment links, QR codes, and ICRC-1 token integration for merchants.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 7,
+    category: "Merchants",
+  },
+  {
+    slug: "ckbtc-without-btc-network-fees",
+    title: "How to Send and Receive Bitcoin (ckBTC) Without Paying BTC Network Fees",
+    description:
+      "ckBTC payments on ICP — send Bitcoin at layer-1 speed without BTC network fees or bridge contracts. Zero-bridge Bitcoin with threshold cryptography.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 6,
+    category: "Chain Fusion",
+  },
+  {
+    slug: "internet-identity-vs-seed-phrases",
+    title: "Internet Identity vs. Seed Phrases: Why Passkeys Are the Future of Crypto Security",
+    description:
+      "Internet Identity vs seed phrases — passkey crypto wallet security with biometrics. The seed phrase alternative ICPay uses for safer crypto.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 6,
+    category: "Security",
+  },
+  {
+    slug: "gasless-crypto-transactions-icpay",
+    title: "How to Send Crypto with Zero Gas Fees Using ICPay",
+    description:
+      "Gasless crypto transactions on ICP — ICPay wallet users never pay gas. Cycle-based queries and the reverse gas model for instant crypto payments.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 6,
+    category: "Product",
+  },
+  {
+    slug: "jackson-hole-2026-crypto-payments",
+    title:
+      "Jackson Hole 2026: What Kevin Warsh's Fed Speech Means for Bitcoin, Stablecoins and Crypto Payments",
+    description:
+      "Fed Chair Kevin Warsh's Jackson Hole 2026 keynote puts stablecoins and crypto payments on the agenda. What it means for Bitcoin, rate expectations, and on-chain wallets.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 6,
+    category: "Market watch",
+  },
+  {
+    slug: "un-sovereign-ai-crypto-infrastructure",
+    title: "Why the UN's Sovereign AI Push Validates Crypto Infrastructure",
+    description:
+      "The UN is piloting decentralized AI to help governments escape Big Tech cloud dependency. For crypto projects built on sovereign infrastructure like the Internet Computer, this validates the architectural bet made years ago.",
+    publishedAt: "2026-08-25",
+    readingMinutes: 6,
+    category: "Infrastructure",
+  },
+  {
     slug: "icpay-swap-and-live",
     title: "ICPay Swap & Live: Trade Tokens and Voice Rooms on the Internet Computer",
     description:
@@ -45,11 +154,11 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "best-icp-wallet",
-    title: "Best ICP Wallet in 2026: Store and Send Internet Computer",
+    title: "Best ICP Wallet in 2026: Why ICPay Is the Top Internet Computer Wallet",
     description:
-      "How to store, send, and receive ICP safely — custodial vs self-custody, Internet Identity, and username transfers.",
-    publishedAt: "2026-08-10",
-    readingMinutes: 7,
+      "The best ICP wallet in 2026 — ICPay leads with Internet Identity login, username transfers, on-chain custody, and native ICRC-1 ledger calls. Compare features and alternatives.",
+    publishedAt: "2026-08-28",
+    readingMinutes: 8,
   },
   {
     slug: "what-is-internet-identity",
