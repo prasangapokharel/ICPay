@@ -23,6 +23,7 @@ import { LanguageSwitch } from "@/components/i18n/language-switch"
 import { useAutoLocale } from "@/hooks/i18n/use-auto-locale"
 import { createAuthClient, resumeRedirectSignIn } from "@/services/auth/auth"
 import { primeLoginChime } from "@/lib/ui/successChime"
+import { APP_LOGO, LOGIN_BG } from "@/lib/ui/brand-images"
 import { cn } from "@/lib/ui/utils"
 
 const features = [
@@ -93,28 +94,33 @@ export default function LoginPage() {
           <LanguageSwitch />
         </div>
         <Image
-          src="/images/connectbg/1.png"
+          src={LOGIN_BG}
           alt=""
           fill
           priority
+          fetchPriority="high"
           sizes="(max-width: 640px) 100vw, 28rem"
           className="-z-10 object-cover object-center dark:opacity-35"
         />
         <div className="pointer-events-none absolute inset-0 -z-10 bg-background/50 dark:bg-background/75" />
         <div className="flex flex-1 flex-col items-center justify-center text-center">
-          <MarketStats />
           <Image
-            src="/images/logo/logo.png"
+            src={APP_LOGO}
             alt="ICP Wallet"
             width={128}
             height={128}
             priority
+            fetchPriority="high"
+            sizes="(max-width: 640px) 7rem, 8rem"
             className="mt-6 h-28 w-28 object-contain sm:h-32 sm:w-32"
           />
           <h1 className="mt-6 text-2xl font-bold tracking-tight">{t("heading")}</h1>
           <p className="mt-2 h-10 text-balance text-sm text-muted-foreground">
             <Typewriter text={t("tagline")} />
           </p>
+          <div className="mt-6">
+            <MarketStats />
+          </div>
 
           <ul className="mt-10 w-full space-y-4 text-left">
             {features.map(({ icon, key }) => (

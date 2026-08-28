@@ -3,6 +3,7 @@ import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Github01Icon, Globe02Icon, Package01Icon } from "@hugeicons/core-free-icons"
+import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
 
 export type ProductPackageLink = {
   label: string
@@ -135,7 +136,7 @@ export function ProductFooter({
                 <div className="flex items-center gap-3">
                   <div className="relative size-12 overflow-hidden rounded-full bg-primary/10">
                     <Image
-                      src="/images/logo/icpay/token.png"
+                      src={ICPAY_TOKEN_ICON}
                       alt="ICPay"
                       width={48}
                       height={48}

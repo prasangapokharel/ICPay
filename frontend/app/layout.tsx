@@ -107,8 +107,12 @@ export default function RootLayout({
     >
       <head>
         <ThemeColorScript />
-        {/* On-chain asset canister: load the prerendered shell before Next hydrates. */}
-        <script src="/onchain-shell.js" />
+        {/* IC asset canister only — skip on Vercel so login LCP is not blocked. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var h=location.hostname;if(h.indexOf(".icp0.io")===-1&&h.indexOf(".ic0.app")===-1)return;document.write('<script src="/onchain-shell.js"><\\/script>');})();`,
+          }}
+        />
       </head>
       <body>
         <script

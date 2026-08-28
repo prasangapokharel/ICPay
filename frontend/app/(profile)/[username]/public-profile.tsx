@@ -22,6 +22,7 @@ import { accountIdentifier, icrc1Account } from "@/lib/wallet/accountId"
 import { isPossibleHandle, isReservedHandle } from "@/lib/profile/reservedHandles"
 import { useResolvedUsername, useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
+import { APP_LOGO } from "@/lib/ui/brand-images"
 import { custodialSubaccount } from "@/services/tokens"
 import { WALLET_CANISTER_ID } from "@/services/icp"
 import { tip } from "@/services/transfer/transfer"
@@ -239,7 +240,7 @@ function Footer() {
     <div className="mt-auto flex flex-col items-center pt-12">
       <Link href="/" className="flex items-center gap-2 text-sm font-semibold tracking-tight">
         <Image
-          src="/images/logo/logo.png"
+          src={APP_LOGO}
           alt=""
           width={40}
           height={40}

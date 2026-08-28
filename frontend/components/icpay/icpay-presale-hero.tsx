@@ -16,6 +16,7 @@ import { GradientBadge } from "@/components/ui/gradient-badge"
 import { BgImageCard, AMBER_EMBED_BTN } from "@/components/ui/bg-image-card"
 import { hasSeenPresaleGuide } from "@/lib/icpay/presaleGuide"
 import { cn } from "@/lib/ui/utils"
+import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
 
 export function IcpayPresaleHero({ symbol }: { symbol: string }) {
   const t = useTranslations("buyIcpay")
@@ -44,7 +45,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
             <div className="flex items-center gap-3">
               <span className="relative flex size-13 shrink-0 overflow-hidden rounded-full">
                 <Image
-                  src="/images/logo/icpay/token.png"
+                  src={ICPAY_TOKEN_ICON}
                   alt=""
                   width={52}
                   height={52}
