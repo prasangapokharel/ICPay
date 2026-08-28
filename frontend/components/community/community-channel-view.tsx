@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { CommunityIcon } from "@/components/community/community-icon"
@@ -136,11 +137,13 @@ export function CommunityChannelView({
         "relative flex h-full min-h-0 flex-1 flex-col overflow-hidden"
       )}
     >
-      <img
+      <Image
         aria-hidden
         src={wallpaperUrl}
         alt=""
-        className="pointer-events-none absolute inset-0 size-full object-cover object-center"
+        fill
+        unoptimized
+        className="pointer-events-none object-cover object-center"
         draggable={false}
       />
 

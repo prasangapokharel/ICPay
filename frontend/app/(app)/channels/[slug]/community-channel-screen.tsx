@@ -36,6 +36,13 @@ import { useMemo, useEffect, useState, useCallback } from "react"
 
 export function CommunityChannelScreen() {
   const slug = useRewrittenLastSegment()
+  if (!slug || slug === "slug") {
+    return null
+  }
+  return <CommunityChannelScreenBody key={slug} slug={slug} />
+}
+
+function CommunityChannelScreenBody({ slug }: { slug: string }) {
   const searchParams = useSearchParams()
   const urlInvite = searchParams.get("code") ?? undefined
   const t = useTranslations("community")
@@ -88,11 +95,6 @@ export function CommunityChannelScreen() {
   const [scrollToMessageId, setScrollToMessageId] = useState<bigint | null>(null)
   const clearScrollTarget = useCallback(() => setScrollToMessageId(null), [])
 
-  useEffect(() => {
-    setPendingMessages([])
-    setDeliveredIds(new Set())
-  }, [slug])
-
   const removePending = (clientId: string) => {
     setPendingMessages((prev) => prev.filter((m) => m.clientId !== clientId))
   }
@@ -136,10 +138,6 @@ export function CommunityChannelScreen() {
     cacheLatestMessage(slug, last.id, last.createdAt)
     markChannelRead(principal, slug, last.id)
   }, [slug, identity, messages, canReadMessages])
-
-  if (!slug || slug === "slug") {
-    return null
-  }
 
   if (!channel && isLoading) {
     return (

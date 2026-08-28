@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, type ReactNode } from "react"
+import Image from "next/image"
 import {
   parseTelegramMessage,
   type BlockNode,
@@ -97,14 +98,13 @@ function renderBlock(
         )}
       >
         {showSourceIcon ? (
-          <img
+          <Image
             src={sourceFaviconUrl(sourceUrl!)}
             alt=""
             width={16}
             height={16}
+            unoptimized
             className="mt-0.5 size-4 shrink-0 rounded-sm"
-            loading="lazy"
-            decoding="async"
           />
         ) : null}
         <span>{content}</span>

@@ -8,8 +8,16 @@ import { ProductFooter } from "@/components/products/shared/product-footer"
 
 const PACKAGES_PER_PAGE = 12
 
+type FalconPackage = {
+  slug: string
+  version: string
+  description: string
+  path: string
+  import: string
+}
+
 export default function PackagesPage() {
-  const [packages, setPackages] = useState<any[]>([])
+  const [packages, setPackages] = useState<FalconPackage[]>([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
 
