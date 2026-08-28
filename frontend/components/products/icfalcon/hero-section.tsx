@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon, Github01Icon } from "@hugeicons/core-free-icons"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -97,7 +97,6 @@ export function HeroSection() {
               />
             }
           >
-            <HugeiconsIcon icon={Github01Icon} className="mr-2 size-5" />
             GitHub
           </Button>
           <Button

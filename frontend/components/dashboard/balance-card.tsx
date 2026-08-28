@@ -32,12 +32,12 @@ export function BalanceCard({
   const fiat = useFiatValue(usdValue)
 
   return (
-    <div className="rounded-3xl bg-blue-200/80 pt-4 shadow-accent-foreground">
-      <div className="relative mt-2 rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg">
+    <div className="rounded-3xl bg-blue-200/80 pt-3 shadow-accent-foreground">
+      <div className="relative mt-2 rounded-3xl bg-primary p-3 text-primary-foreground shadow-lg">
       {/* Top row: metallic EMV-style chip + glass network pill */}
       <div className="relative z-10 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
-        <span className="relative flex h-7 w-9 shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_-1px_2px_rgba(120,80,10,0.4),0_1px_2px_rgba(0,0,0,0.25)]">
+        <span className="relative flex h-6 w-8 shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_-1px_2px_rgba(120,80,10,0.4),0_1px_2px_rgba(0,0,0,0.25)]">
           {/* Contact-pad grid lines, like a real EMV chip */}
           <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-amber-800/30" />
           <span className="absolute inset-y-0 left-1/3 w-px bg-amber-800/30" />

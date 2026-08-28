@@ -7,7 +7,6 @@ import {
   Coins01Icon,
   Alert02Icon,
   Copy01Icon,
-  LinkSquare02Icon,
   ShieldKeyIcon,
 } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
@@ -114,7 +113,6 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
                 size="sm"
                 render={
                   <a href={url} target="_blank" rel="noopener noreferrer nofollow">
-                    <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" />
                     {t(`${key}Label`)}
                   </a>
                 }
@@ -134,7 +132,6 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
               {t("viewOnDashboard")}
             </a>
           }

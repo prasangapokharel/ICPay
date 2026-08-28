@@ -3,11 +3,6 @@
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  BookOpen01Icon,
-  Key01Icon,
-} from "@hugeicons/core-free-icons"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -84,7 +79,6 @@ export function BucketDetail() {
         </BucketUploadDesktopTrigger>
       )}
       <Button variant="ghost" size="sm" nativeButton={false} render={<Link href="/bucket/docs" />}>
-        <HugeiconsIcon icon={BookOpen01Icon} className="size-3.5" strokeWidth={1.75} />
         {t("docs")}
       </Button>
     </ButtonGroup>
@@ -171,7 +165,6 @@ export function BucketDetail() {
             </h1>
             <ButtonGroup className="shrink-0">
               <Button variant="outline" size="sm" onClick={() => setApiKeysOpen(true)}>
-                <HugeiconsIcon icon={Key01Icon} className="size-3.5" strokeWidth={1.75} />
                 {t("apiKeysShort")}
               </Button>
               <Button variant="outline" size="sm" onClick={() => setRenewOpen(true)}>

@@ -5,8 +5,6 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { sweepToCustody } from "@/services/sweep/sweep"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -101,11 +99,7 @@ export function SelfCustodyCard({
           )}
 
           <Button className="w-full" onClick={handleSweep} disabled={loading || !deposit}>
-            {loading ? (
-              <Spinner className="size-4" />
-            ) : (
-              <HugeiconsIcon icon={ArrowDown01Icon} className="size-4" />
-            )}
+            {loading && <Spinner className="size-4" />}
             {loading ? t("selfCustodyMoving") : t("selfCustodyMove")}
           </Button>
         </>

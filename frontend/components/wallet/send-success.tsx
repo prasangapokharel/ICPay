@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet/utils"
@@ -138,12 +138,11 @@ export function SendSuccess({
           <>
             <Button
               variant="outline"
-              size="icon-lg"
+              size="sm"
               onClick={() => setPreviewOpen(true)}
-              aria-label={t("shareReceipt")}
-              className="size-12 rounded-2xl"
+              className="shrink-0"
             >
-              <HugeiconsIcon icon={Share08Icon} className="size-4.5" />
+              {t("shareReceipt")}
             </Button>
             <ReceiptPreview
               open={previewOpen}

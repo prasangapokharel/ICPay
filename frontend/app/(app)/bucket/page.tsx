@@ -70,12 +70,9 @@ export default function BucketPage() {
       <Button
         type="button"
         variant="outline"
-        className="h-auto w-full justify-start gap-3 border-dashed p-4"
+        className="h-auto w-full justify-start border-dashed p-4"
         onClick={() => setShowForm(true)}
       >
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-800">
-          <AppIcon name="bucket" size={20} />
-        </span>
         <span className="min-w-0 text-left">
           <span className="block text-sm font-bold">{t("createCta")}</span>
           <span className="block text-xs font-medium text-muted-foreground">{t("createCtaBody")}</span>

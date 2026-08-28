@@ -4,8 +4,6 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Share08Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { copyText } from "@/lib/wallet/utils"
 import { profileUrlFor } from "@/lib/profile/url"
 
@@ -55,23 +53,18 @@ export function ShareProfileCard({ username }: { username: string }) {
 
         <Button
           variant="outline"
-          size="icon-sm"
+          size="sm"
           onClick={handleCopy}
-          aria-label={tc("copy")}
-          className="shrink-0 rounded-full"
+          className="shrink-0"
         >
-          <HugeiconsIcon
-            icon={copied ? Tick02Icon : Copy01Icon}
-            className={copied ? "size-4 text-primary" : "size-4"}
-          />
+          {copied ? tc("copied") : tc("copy")}
         </Button>
         <Button
-          size="icon-sm"
+          size="sm"
           onClick={handleShare}
-          aria-label={tc("share")}
-          className="shrink-0 rounded-full"
+          className="shrink-0"
         >
-          <HugeiconsIcon icon={Share08Icon} className="size-4" />
+          {tc("share")}
         </Button>
       </CardContent>
     </Card>

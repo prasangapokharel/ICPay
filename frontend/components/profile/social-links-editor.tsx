@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Github01Icon, Linkedin01Icon, Globe02Icon, Add01Icon, Cancel01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Github01Icon, Linkedin01Icon, Globe02Icon, Add01Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { SocialLink, SocialPlatform, UserPublic } from "@/services/types"
@@ -42,6 +42,7 @@ export function SocialLinksEditor({
   onUpdate: (updated: UserPublic) => void
 }) {
   const t = useTranslations("socialLinks")
+  const tc = useTranslations("common")
   const { identity } = useAuth()
   const [open, setOpen] = useState<Platform | null>(null)
   const [url, setUrl] = useState("")
@@ -140,9 +141,7 @@ export function SocialLinksEditor({
                       disabled={saving || !url.trim()}
                       className="h-7 text-xs"
                     >
-                      {saved
-                        ? <HugeiconsIcon icon={Tick02Icon} className="size-3.5" />
-                        : saving ? "…" : t("saveBtn")}
+                      {saved ? t("saved") : saving ? "…" : t("saveBtn")}
                     </Button>
                     <Button
                       variant="ghost"
@@ -150,7 +149,7 @@ export function SocialLinksEditor({
                       onClick={() => setOpen(null)}
                       className="h-7 text-xs text-muted-foreground"
                     >
-                      <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+                      {tc("cancel")}
                     </Button>
                   </div>
                 </div>

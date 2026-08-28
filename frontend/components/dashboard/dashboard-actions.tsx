@@ -26,7 +26,7 @@ export function DashboardActions() {
   const t = useTranslations("common")
 
   return (
-    <div className="flex justify-around px-6 pt-1">
+    <div className="flex justify-around ">
       {actions.map((item) => (
         <Link
           key={item.href}

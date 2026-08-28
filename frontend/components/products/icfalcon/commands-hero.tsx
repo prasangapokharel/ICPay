@@ -1,7 +1,5 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, Package01Icon } from "@hugeicons/core-free-icons"
 
 export function CommandsHero() {
   return (
@@ -21,7 +19,6 @@ export function CommandsHero() {
             nativeButton={false}
             render={<Link href="/products/icFalcon" />}
           >
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="mr-1.5 size-4" />
             ICFalcon
           </Button>
           <Button
@@ -30,7 +27,6 @@ export function CommandsHero() {
             nativeButton={false}
             render={<Link href="/products/icFalcon/packages" />}
           >
-            <HugeiconsIcon icon={Package01Icon} className="mr-1.5 size-4" />
             Packages
           </Button>
         </div>

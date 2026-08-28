@@ -33,7 +33,7 @@ export function ServiceTile({
           <AppIcon name={icon} size={24} />
         </span>
         {badge ? (
-          <GradientBadge className="absolute -right-2 -top-2" size="sm">
+          <GradientBadge className="absolute -right-2 -top-2 z-10" size="sm">
             {badge}
           </GradientBadge>
         ) : null}

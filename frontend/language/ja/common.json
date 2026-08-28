@@ -6,7 +6,9 @@
     "bucket": "クラウド",
     "menu": "メニュー",
     "buyUsername": "ユーザー名を購入",
-    "live": "Live"
+    "live": "Live",
+    "history": "履歴",
+    "presale": "プレセール"
   },
   "common": {
     "send": "送金",
@@ -68,8 +70,8 @@
       "tokens": "トークン",
       "launch": "トークン発行",
       "icpayToken": "ICPAY トークン",
-      "buyName": "Buy Premium",
-      "buyNameBadge": "Premium",
+      "buyName": "プレミアム購入",
+      "buyNameBadge": "プレミアム",
       "profile": "プロフィール",
       "icpverse": "ICPバース",
       "myQr": "マイ QR",
@@ -85,14 +87,14 @@
       "swap": "スワップ",
       "bucket": "クラウド",
       "blog": "ブログ",
-      "analytics": "Analytics",
-      "live": "Live",
-      "community": "Channels",
-      "communityBadge": "Beta",
-      "presaleBadge": "Live",
-      "governance": "Governance"
+      "analytics": "分析",
+      "live": "ライブ",
+      "community": "チャンネル",
+      "communityBadge": "ベータ",
+      "presaleBadge": "開催中",
+      "governance": "ガバナンス"
     },
-    "preferencesDescription": "言語・通貨・法務ページ"
+    "preferencesDescription": "言語、通貨、表示とサウンド"
   },
   "language": {
     "label": "言語",
