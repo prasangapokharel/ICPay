@@ -1,14 +1,14 @@
 import { ICP_LEDGER_ID } from "@/services/tokens"
 import type { TokenMarket } from "@/lib/token/registry"
 
-const ICP_ICON = "/images/logo/logo.png"
+export const ICP_LOGO = "/images/logo/icp/icp_logo.014fd35c.svg"
 
 export function resolveTokenIcon(
   ledgerId: string,
   logo?: string,
   registry?: Map<string, TokenMarket> | null
 ): string | undefined {
-  if (ledgerId === ICP_LEDGER_ID) return ICP_ICON
+  if (ledgerId === ICP_LEDGER_ID) return ICP_LOGO
 
   const registryLogo = registry?.get(ledgerId)?.logo
   if (registryLogo?.startsWith("https://")) return registryLogo

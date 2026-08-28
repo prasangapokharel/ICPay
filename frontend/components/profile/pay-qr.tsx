@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/ui/utils"
+import { ICP_LOGO } from "@/lib/token/icon"
 
 // Rendered from a dynamic import so the qrcode library stays out of the initial
 // bundle for a page whose first paint is an avatar and a name.
@@ -56,7 +57,7 @@ export function PayQr({
         />
         <span className="absolute left-1/2 top-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-background shadow-sm ring-1 ring-black/10">
           <Image
-            src="/images/logo/logo.png"
+            src={ICP_LOGO}
             alt=""
             width={40}
             height={40}

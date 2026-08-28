@@ -1,4 +1,5 @@
 import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet/utils"
+import { ICP_LOGO } from "@/lib/token/icon"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 
@@ -70,7 +71,7 @@ function stamp(d: Date): string {
 // once per session -- the file never changes.
 let logoPromise: Promise<string> | null = null
 function logoDataUri(): Promise<string> {
-  logoPromise ??= fetch("/images/logo/logo.png")
+  logoPromise ??= fetch(ICP_LOGO)
     .then((r) => r.blob())
     .then(
       (blob) =>

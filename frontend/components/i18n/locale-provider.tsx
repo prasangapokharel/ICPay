@@ -20,12 +20,37 @@ import fr from "@/language/fr/common.json"
 import de from "@/language/de/common.json"
 import pt from "@/language/pt/common.json"
 import ru from "@/language/ru/common.json"
+import ar from "@/language/ar/common.json"
+import ne from "@/language/ne/common.json"
+import tl from "@/language/tl/common.json"
+import id from "@/language/id/common.json"
+import vi from "@/language/vi/common.json"
+import th from "@/language/th/common.json"
+import tr from "@/language/tr/common.json"
 
 // Statically imported rather than dynamic import(): the catalogs are ~3 KB each
 // and gzip to far less, so bundling all of them costs less than the loading
 // state a fetch-per-locale would need -- and a static export has no server to
 // stream them from. Revisit if the catalogs grow past a few hundred keys.
-const MESSAGES: Record<Locale, typeof en> = { en, hi, zh, ja, ko, es, fr, de, pt, ru }
+const MESSAGES: Record<Locale, typeof en> = {
+  en,
+  hi,
+  zh,
+  ja,
+  ko,
+  es,
+  fr,
+  de,
+  pt,
+  ru,
+  ar,
+  ne,
+  tl,
+  id,
+  vi,
+  th,
+  tr,
+}
 
 type LocaleContextType = {
   locale: Locale
