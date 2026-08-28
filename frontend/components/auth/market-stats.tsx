@@ -28,47 +28,41 @@ function useEasedPrice(target: number, duration = 500) {
   return value
 }
 
-// Two trailing digits that roll to random values between refreshes, but snap
-// to the real 3rd-4th decimals the moment a fresh price arrives.
-function useRandomTicker(seed: number) {
-  const [ticks, setTicks] = useState("00")
-  const seeded = useRef(false)
+function tickerFromSeed(seed: number) {
+  return Math.floor((Math.abs(seed * 100) % 1) * 100)
+    .toString()
+    .padStart(2, "0")
+}
+
+function RollingTicker({ seed }: { seed: number }) {
+  const [ticks, setTicks] = useState(() => tickerFromSeed(seed))
 
   useEffect(() => {
-    const real = Math.floor(Math.abs(seed * 100) % 1 * 100)
-    setTicks(real.toString().padStart(2, "0"))
-    seeded.current = true
-  }, [seed])
-
-  useEffect(() => {
-    if (!seeded.current) return
     const id = setInterval(
       () => setTicks(Math.floor(Math.random() * 100).toString().padStart(2, "0")),
       120,
     )
     return () => clearInterval(id)
-  }, [seed])
+  }, [])
 
-  return ticks
+  return <span className="text-primary/60">{ticks}</span>
 }
 
 export function MarketStats() {
   const { price, loading } = useIcpPrice({ refreshInterval: 60_000 })
   const liveUsd = price && price.usd > 0 ? price.usd : 0
   const count = useEasedPrice(liveUsd)
-  const ticker = useRandomTicker(liveUsd)
 
   return (
-    <div className="flex justify-center">
-      <span className="font-mono text-2xl font-light tracking-[0.12em] tabular-nums text-primary/40 drop-shadow-sm sm:text-3xl">
-        <span className="mr-1 text-xl align-middle text-primary/50 sm:text-2xl">$</span>
+    <div className="flex justify-center leading-none">
+      <span className="font-mono text-4xl font-light tracking-[0.12em] tabular-nums text-primary/40 drop-shadow-sm sm:text-5xl sm:tracking-[0.15em]">
         {liveUsd > 0 ? (
           <>
             {count.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
-            <span className="text-primary/60">{ticker}</span>
+            <RollingTicker key={liveUsd} seed={liveUsd} />
           </>
         ) : (
           <span className="text-primary/30">{loading ? "···" : "—"}</span>

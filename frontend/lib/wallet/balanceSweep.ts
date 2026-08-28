@@ -5,7 +5,7 @@ import { readHoldings } from "@/lib/wallet/holdingsCache"
 
 const BATCH_SIZE = 5
 
-export function tierALedgerIds(principal: string | undefined, allIds: string[]): string[] {
+export function tierALedgerIds(principal: string | undefined): string[] {
   const seen = new Set(PINNED_LEDGER_IDS)
   const ids = [...PINNED_LEDGER_IDS]
   if (principal) {
@@ -27,7 +27,7 @@ export async function fetchTokenBalancesTiered(
   principal: string,
   onProgress: (map: Map<string, bigint>) => void
 ): Promise<Map<string, bigint>> {
-  const tierA = tierALedgerIds(principal, allIds)
+  const tierA = tierALedgerIds(principal)
   const tierASet = new Set(tierA)
   const map = await fetchBalances(tierA, owner, subaccount, identity)
 

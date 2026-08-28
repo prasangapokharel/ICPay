@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { cn } from "@/lib/ui/utils"
 
 export const PRESALE_CARD_BG = "/images/presale/bg.svg"
@@ -24,11 +25,13 @@ export function BgImageCard({
         className
       )}
     >
-      <img
+      <Image
         src={PRESALE_CARD_BG}
         alt=""
         aria-hidden
-        className="pointer-events-none absolute inset-0 size-full object-cover"
+        fill
+        unoptimized
+        className="pointer-events-none object-cover"
       />
       <div className="absolute inset-0 bg-background/75" />
       <div className={cn("relative", contentClassName)}>{children}</div>

@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl"
 import { useCommunityWallpaper } from "@/hooks/community/useCommunityWallpaper"
-import { wallpaperUrl, type WallpaperId } from "@/lib/community/wallpaper"
+import Image from "next/image"
+import { wallpaperUrl } from "@/lib/community/wallpaper"
 import { cn } from "@/lib/ui/utils"
 
 export function CommunityWallpaperPicker({ slug }: { slug: string }) {
@@ -31,11 +32,12 @@ export function CommunityWallpaperPicker({ slug }: { slug: string }) {
                   : "border-border/50 opacity-90 hover:opacity-100 hover:ring-1 hover:ring-border/60"
               )}
             >
-              <img
+              <Image
                 src={url}
                 alt=""
-                className="size-full object-cover object-center"
-                decoding="async"
+                fill
+                unoptimized
+                className="object-cover object-center"
                 draggable={false}
               />
               {isDefault ? (
