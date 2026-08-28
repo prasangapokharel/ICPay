@@ -27,7 +27,7 @@ export const appIcons = {
   upload: "/images/icons8/icons8-add-48.png",
   empty: "/images/icons8/icons8-bounced-check-48.png",
   community: "/images/icons8/MESSAGING/icons8-chat-bubble-48.png",
-  icpay: "/images/logo/icpay/token.png",
+  icpay: "/images/logo/icpay/token-72.webp",
   chatSend: "/images/icons8/MESSAGING/icons8-email-send-48.png",
   chatBack: "/images/icons8/icons8-back-arrow-48.png",
   chatMore: "/images/icons8/MESSAGING/icons8-more-48.png",

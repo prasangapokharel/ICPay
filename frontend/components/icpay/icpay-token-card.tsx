@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import { formatUsd, formatUsdPrecise } from "@/lib/market/icpPrice"
+import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
 import { formatTokenAmount, shortPrincipal, copyText } from "@/lib/wallet/utils"
 import { useIcpayStats } from "@/hooks/icpay/useIcpayStats"
 import { InfoTip } from "@/components/icpay/info-tip"
@@ -38,7 +39,7 @@ export function IcpayTokenCard() {
     <section className="space-y-6">
       <div className="flex flex-col items-center gap-3 text-center">
         <Image
-          src="/images/logo/icpay/token.png"
+          src={ICPAY_TOKEN_ICON}
           alt=""
           width={56}
           height={56}

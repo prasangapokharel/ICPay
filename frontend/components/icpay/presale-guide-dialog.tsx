@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { markPresaleGuideSeen } from "@/lib/icpay/presaleGuide"
+import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
 
 const STEPS = [
   { titleKey: "guideStep1Title", bodyKey: "guideStep1Body", icon: ShoppingBag01Icon },
@@ -71,7 +72,7 @@ export function PresaleGuideDialog({
           <div className="flex items-center gap-3 pr-8">
             <span className="relative flex size-12 shrink-0 overflow-hidden rounded-full ring-2 ring-primary-foreground/30">
               <Image
-                src="/images/logo/icpay/token.png"
+                src={ICPAY_TOKEN_ICON}
                 alt=""
                 width={48}
                 height={48}

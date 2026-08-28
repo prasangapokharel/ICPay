@@ -60,8 +60,8 @@ export function MarketStats() {
 
   return (
     <div className="flex justify-center">
-      <span className="font-mono text-5xl font-light tracking-[0.15em] tabular-nums text-primary/40 drop-shadow-sm">
-        <span className="mr-1 text-3xl align-middle text-primary/50">$</span>
+      <span className="font-mono text-2xl font-light tracking-[0.12em] tabular-nums text-primary/40 drop-shadow-sm sm:text-3xl">
+        <span className="mr-1 text-xl align-middle text-primary/50 sm:text-2xl">$</span>
         {liveUsd > 0 ? (
           <>
             {count.toLocaleString("en-US", {
