@@ -16,7 +16,7 @@ export function IcpPriceTicket({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "inline-flex max-w-full items-center gap-2 rounded-xl border border-border/40 bg-background/45 px-2 py-1.5 shadow-sm backdrop-blur-sm",
+        "inline-flex max-w-full items-center gap-2 rounded-2xl border border-border/40 bg-background px-2 py-1.5 shadow-sm backdrop-blur-sm",
         className
       )}
     >
@@ -35,8 +35,8 @@ export function IcpPriceTicket({ className }: { className?: string }) {
         {price ? (
           <span
             className={cn(
-              "rounded-full px-1.5 py-px text-[10px] font-semibold leading-none tabular-nums",
-              up ? "bg-foreground text-background" : "bg-destructive/15 text-destructive"
+              "rounded-full px-1.5 py-px text-[10px] font-semibold leading-none tabular-nums text-black",
+              up ? "bg-emerald-400" : "bg-red-500"
             )}
           >
             {formattedChange}
