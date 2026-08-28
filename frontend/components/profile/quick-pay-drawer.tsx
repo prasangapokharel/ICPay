@@ -27,6 +27,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
 import { avatarUriFor } from "@/lib/profile/avatar"
+import { ICP_LOGO } from "@/lib/token/icon"
 import { primeSuccessChime, playSuccessChime } from "@/lib/ui/successChime"
 import {
   E8S,
@@ -194,7 +195,7 @@ export function QuickPayDrawer({
                           )}
                         >
                           <Image
-                            src="/images/logo/logo.png"
+                            src={ICP_LOGO}
                             alt=""
                             width={40}
                             height={40}

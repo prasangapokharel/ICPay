@@ -36,6 +36,7 @@ import type { Purchase } from "@/services/types"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { formatAmount, ICP_FEE, shortPrincipal } from "@/lib/wallet/utils"
+import { ICP_LOGO } from "@/lib/token/icon"
 import {
   priceFor,
   tierFor,
@@ -190,7 +191,7 @@ export default function UsernamePage() {
             </span>
             <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
               <Image
-                src="/images/logo/logo.png"
+                src={ICP_LOGO}
                 alt=""
                 width={40}
                 height={40}

@@ -7,6 +7,7 @@ import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { cn } from "@/lib/ui/utils"
 import type { IcpPrice } from "@/lib/market/icpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
+import { ICP_LOGO } from "@/lib/token/icon"
 
 type BalanceCardProps = {
   balance: string
@@ -54,7 +55,7 @@ export function BalanceCard({
         </div>
 
         <span className="liquid-glass-primary flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5">
-          <Image src="/images/logo/logo.png" alt="ICP" width={16} height={16} className="size-4" />
+          <Image src={ICP_LOGO} alt="ICP" width={16} height={16} className="size-4" />
           <span className="text-[11px] font-semibold tracking-wide">ICP</span>
         </span>
       </div>

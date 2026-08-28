@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/ui/utils"
+import { ICP_LOGO } from "@/lib/token/icon"
 
 type QrCodeProps = {
   value: string
@@ -62,7 +63,7 @@ export function QrCode({ value, logo, className }: QrCodeProps) {
               />
               <span className="absolute left-1/2 top-1/2 flex size-[clamp(2rem,22%,3rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-background shadow-sm ring-1 ring-black/10">
                 <Image
-                  src={logo ?? "/images/logo/logo.png"}
+                  src={logo ?? ICP_LOGO}
                   alt=""
                   width={48}
                   height={48}
