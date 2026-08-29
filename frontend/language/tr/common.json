@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "Internet Identity ile giriş seçenekleri",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "Hangi dosya türleri desteklenir?",
-            "answer": "Tüm dosya türleri: görüntüler, videolar, PDF, JSON, HTML, CSS, JS vb. İçerik türü korunur. Herkese açık bucket'lar doğru MIME türleriyle dosya sunar (ör. <img src='...'> çalışır)."
+            "answer": "Tüm dosya türleri: görüntüler, videolar, PDF, JSON, HTML, CSS, JS vb. İçerik türü korunur. Herkese açık bucket'lar doğru MIME türleriyle dosya sunar (ör. görüntü URL'leri çalışır)."
           },
           "4": {
             "question": "S3'ten ICBucket'a nasıl geçilir?",

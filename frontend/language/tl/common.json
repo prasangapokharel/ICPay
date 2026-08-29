@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "Mga opsyon sa sign-in sa Internet Identity",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "Anong file types ang suportado?",
-            "answer": "Lahat ng file types: images, videos, PDF, JSON, HTML, CSS, JS, atbp. Napapanatili ang content type. Nagseserb ang public buckets ng files na may tamang MIME types (hal. gumagana ang <img src='...'>)."
+            "answer": "Lahat ng file types: images, videos, PDF, JSON, HTML, CSS, JS, atbp. Napapanatili ang content type. Nagseserb ang public buckets ng files na may tamang MIME types para sa direktang browser access (hal. gumagana ang image URLs)."
           },
           "4": {
             "question": "Paano mag-migrate mula S3 patungong ICBucket?",

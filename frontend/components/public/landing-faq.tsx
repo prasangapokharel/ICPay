@@ -14,7 +14,7 @@ export function LandingFaq() {
   const t = useTranslations("publicSite.landing.faq")
 
   return (
-    <section className="border-b border-border/60 bg-muted/20">
+    <section className="border-b border-border/60 bg-background">
       <div className="mx-auto max-w-3xl px-4 py-16 md:px-6 md:py-20">
         <div className="mb-8 space-y-2 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">

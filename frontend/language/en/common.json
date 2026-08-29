@@ -1315,6 +1315,8 @@
       "sectionResources": "Resources",
       "sectionLegal": "Legal",
       "sectionCommunity": "Community",
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore",
       "copyright": "© 2026 ICPay. All rights reserved.",
       "blog": "Blog",
       "channels": "Channels",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "What file types are supported?",
-            "answer": "All file types: images, videos, PDFs, JSON, HTML, CSS, JS, etc. Content type is preserved. Public buckets serve files with correct MIME types for direct browser access (e.g., <img src='...'> works)."
+            "answer": "All file types: images, videos, PDFs, JSON, HTML, CSS, JS, etc. Content type is preserved. Public buckets serve files with correct MIME types for direct browser access (e.g., image URLs work in the browser)."
           },
           "4": {
             "question": "How do I migrate from S3 to ICBucket?",

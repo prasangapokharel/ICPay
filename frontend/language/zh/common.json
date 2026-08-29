@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "通过 Internet Identity 登录",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "支持哪些文件类型？",
-            "answer": "所有文件类型：图片、视频、PDF、JSON、HTML、CSS、JS 等。内容类型会保留。公开存储桶以正确的 MIME 类型提供文件，可直接在浏览器中访问（例如 <img src='...'> 可用）。"
+            "answer": "所有文件类型：图片、视频、PDF、JSON、HTML、CSS、JS 等。内容类型会保留。公开存储桶以正确的 MIME 类型提供文件，可直接在浏览器中访问（例如图片 URL 可用）。"
           },
           "4": {
             "question": "如何从 S3 迁移到 ICBucket？",

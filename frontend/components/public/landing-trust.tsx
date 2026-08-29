@@ -29,7 +29,7 @@ export function LandingTrust() {
   })
 
   return (
-    <section className="border-b border-border/60 bg-muted/20">
+    <section className="border-b border-border/60 bg-background">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
         <div className="mb-10 max-w-2xl space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">

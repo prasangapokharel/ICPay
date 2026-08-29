@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "Tùy chọn đăng nhập qua Internet Identity",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "Hỗ trợ loại file nào?",
-            "answer": "Mọi loại file: hình ảnh, video, PDF, JSON, HTML, CSS, JS, v.v. Loại nội dung được giữ nguyên. Bucket công khai phục vụ file với MIME type đúng (ví dụ <img src='...'> hoạt động)."
+            "answer": "Mọi loại file: hình ảnh, video, PDF, JSON, HTML, CSS, JS, v.v. Loại nội dung được giữ nguyên. Bucket công khai phục vụ file với MIME type đúng cho truy cập trực tiếp trên trình duyệt (ví dụ URL hình ảnh hoạt động)."
           },
           "4": {
             "question": "Làm thế nào di chuyển từ S3 sang ICBucket?",

@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "Anmeldeoptionen über Internet Identity",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "Welche Dateitypen werden unterstützt?",
-            "answer": "Alle Dateitypen: Bilder, Videos, PDFs, JSON, HTML, CSS, JS usw. Der Content-Type bleibt erhalten. Öffentliche Buckets liefern Dateien mit korrekten MIME-Types für direkten Browserzugriff (z. B. funktioniert <img src='...'>)."
+            "answer": "Alle Dateitypen: Bilder, Videos, PDFs, JSON, HTML, CSS, JS usw. Der Content-Type bleibt erhalten. Öffentliche Buckets liefern Dateien mit korrekten MIME-Types für direkten Browserzugriff (z. B. Bild-URLs funktionieren)."
           },
           "4": {
             "question": "Wie migriere ich von S3 zu ICBucket?",
