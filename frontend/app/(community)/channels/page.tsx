@@ -1,11 +1,6 @@
 import type { Metadata } from "next"
-import { connection } from "next/server"
-import { Suspense } from "react"
-import { isChannelIndexable } from "@/lib/community/seo"
-import { toCommunityChannelSnapshot } from "@/lib/community/snapshot"
-import { listAllPublicChannelsForSeo } from "@/services/community/community"
+import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
 import { ChannelsIndexView } from "@/components/community/channels-index-view"
-import { Spinner } from "@/components/ui/spinner"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 
@@ -32,23 +27,7 @@ export const metadata: Metadata = {
   },
 }
 
-async function ChannelsIndexLoader() {
-  await connection()
-  const channels = await listAllPublicChannelsForSeo()
-  const open = channels.map(toCommunityChannelSnapshot).filter(isChannelIndexable)
-  return <ChannelsIndexView channels={open} />
-}
-
-export default function ChannelsIndexPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-svh items-center justify-center">
-          <Spinner className="size-6 text-muted-foreground" />
-        </div>
-      }
-    >
-      <ChannelsIndexLoader />
-    </Suspense>
-  )
+export default async function ChannelsIndexPage() {
+  const channels = await listCachedIndexableChannelSnapshots()
+  return <ChannelsIndexView channels={channels} />
 }
