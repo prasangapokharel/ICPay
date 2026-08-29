@@ -19,7 +19,7 @@ export function HeroSection() {
   }
 
   return (
-    <section className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-16 text-center">
+    <section className="flex min-h-[80vh] flex-col items-center justify-center border-b border-border/60 bg-background px-4 py-16 text-center">
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="flex justify-center">
           <Image
@@ -61,7 +61,7 @@ export function HeroSection() {
             >
               <HugeiconsIcon
                 icon={copied ? Tick02Icon : Copy01Icon}
-                className="size-5"
+                className={`size-5 ${copied ? "text-primary" : "text-muted-foreground"}`}
               />
             </button>
           </div>

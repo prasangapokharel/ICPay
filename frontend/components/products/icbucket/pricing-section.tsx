@@ -1,16 +1,22 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
+import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import {
   BUCKET_POPULAR_TIER_GB,
   calculateListPriceE8s,
   calculatePriceE8s,
 } from "@/lib/bucket/pricing"
+import { formatUsd } from "@/lib/market/icpPrice"
 import { formatAmount } from "@/lib/wallet/utils"
+
+type PriceCurrency = "icp" | "usd"
 
 const PLANS = [
   {
@@ -71,23 +77,62 @@ const PLANS = [
   },
 ] as const
 
+function icpFromE8s(e8s: bigint): number {
+  return Number(e8s) / 1e8
+}
+
 function formatIcp(e8s: bigint): string {
   return `${formatAmount(e8s)} ICP`
 }
 
+function formatPlanPrice(
+  e8s: bigint,
+  currency: PriceCurrency,
+  usdPerIcp: number | undefined
+): string {
+  if (currency === "icp") return formatIcp(e8s)
+  if (usdPerIcp === undefined) return "…"
+  return formatUsd(icpFromE8s(e8s) * usdPerIcp)
+}
+
 export function PricingSection() {
+  const [currency, setCurrency] = useState<PriceCurrency>("icp")
+  const { price, loading } = useIcpPrice()
+  const usdPerIcp = price?.usd
+
   return (
-    <section className="py-16 md:py-24">
+    <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 space-y-4 text-center">
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Simple, Transparent Pricing
+              Storage Economics
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              30-day plans paid from your ICPay balance in ICP. No credit card. Renew anytime —
-              unused time stacks.
+              Pay upfront in ICP from your ICPay balance — no credit card, no surprise monthly
+              bills. Each tier is a 30-day plan; renew anytime and unused time stacks.
             </p>
+            <Tabs
+              value={currency}
+              onValueChange={(value) => setCurrency((value as PriceCurrency) ?? "icp")}
+              className="flex justify-center pt-2"
+            >
+              <TabsList className="h-10 rounded-full p-1">
+                <TabsTrigger value="icp" className="min-w-16 rounded-full px-5">
+                  ICP
+                </TabsTrigger>
+                <TabsTrigger value="usd" className="min-w-16 rounded-full px-5">
+                  USD
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            {currency === "usd" ? (
+              <p className="text-xs text-muted-foreground">
+                {loading || !price
+                  ? "Loading live ICP price…"
+                  : `USD estimates use CoinGecko · 1 ICP ≈ ${formatUsd(price.usd)}`}
+              </p>
+            ) : null}
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -114,11 +159,11 @@ export function PricingSection() {
                     <div className="space-y-1">
                       {showDiscount ? (
                         <p className="text-lg text-muted-foreground line-through tabular-nums">
-                          {formatIcp(listPriceE8s)}
+                          {formatPlanPrice(listPriceE8s, currency, usdPerIcp)}
                         </p>
                       ) : null}
                       <CardDescription className="text-4xl font-bold text-foreground tabular-nums">
-                        {formatIcp(priceE8s)}
+                        {formatPlanPrice(priceE8s, currency, usdPerIcp)}
                       </CardDescription>
                       <CardDescription className="text-sm">per 30 days</CardDescription>
                     </div>
@@ -153,10 +198,11 @@ export function PricingSection() {
             })}
           </div>
 
-          <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-muted-foreground">
-            Prices include IC storage cycle cost plus a 20% margin, rounded to 0.5 ICP steps.
-            Strikethrough shows the previous list price. Live checkout always uses the canister
-            quote. Tiers up to 500 GB available in the app.
+          <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
+            Live prices come from the canister: IC storage cycle cost plus a 20% margin, rounded to
+            0.5 ICP steps. Strikethrough shows the previous list price. Tiers up to 500 GB are
+            available in the app.
+            {currency === "usd" ? " Checkout is always in ICP." : null}
           </p>
         </div>
       </div>

@@ -67,7 +67,7 @@ export default function LoginPage() {
   }, [acceptIdentity, t])
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) router.replace("/")
+    if (!isLoading && isAuthenticated) router.replace("/home")
   }, [isLoading, isAuthenticated, router])
 
   if (isLoading || isAuthenticated) {

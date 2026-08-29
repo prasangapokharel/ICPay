@@ -1,12 +1,9 @@
-import Link from "next/link"
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 
 const faqs = [
   {
@@ -73,7 +70,8 @@ const faqs = [
 
 export function FaqSection() {
   return (
-    <section className="border-t bg-muted/20 px-4 py-24">
+    <section className="bg-background py-16 md:py-24">
+      <div className="container mx-auto px-4">
       <div className="mx-auto max-w-3xl">
         <div className="mb-12 text-center">
           <h2 className="mb-3 text-3xl font-bold tracking-tight">
@@ -84,7 +82,7 @@ export function FaqSection() {
           </p>
         </div>
 
-        <Accordion className="mb-12">
+        <Accordion>
           {faqs.map((faq, i) => (
             <AccordionItem key={i} value={`item-${i}`}>
               <AccordionTrigger>{faq.question}</AccordionTrigger>
@@ -96,45 +94,7 @@ export function FaqSection() {
             </AccordionItem>
           ))}
         </Accordion>
-
-        <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="mb-3 text-sm font-semibold">More questions?</p>
-            <p className="mb-4 text-sm text-muted-foreground">
-              Check the documentation or open an issue on GitHub.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                nativeButton={false}
-                render={
-                  <Link
-                    href="https://github.com/prasangapokharel/IcFalcon#documentation"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                }
-              >
-                Documentation
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                nativeButton={false}
-                render={
-                  <Link
-                    href="https://github.com/prasangapokharel/IcFalcon/issues"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                }
-              >
-                GitHub Issues
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      </div>
       </div>
     </section>
   )

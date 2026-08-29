@@ -17,6 +17,19 @@ export function sortedBlogPosts(): BlogPost[] {
   return [...BLOG_POSTS].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 }
 
+export function blogCategories(): string[] {
+  const categories = new Set<string>()
+  for (const post of BLOG_POSTS) {
+    if (post.category) categories.add(post.category)
+  }
+  return Array.from(categories).sort((a, b) => a.localeCompare(b))
+}
+
+export function filterBlogPostsByCategory(posts: BlogPost[], category: string): BlogPost[] {
+  if (category === "all") return posts
+  return posts.filter((post) => post.category === category)
+}
+
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "instant-crypto-payments-icpay",

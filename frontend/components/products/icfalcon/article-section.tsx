@@ -2,7 +2,8 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export function ArticleSection() {
   return (
-    <section className="px-4 py-24">
+    <section className="border-b border-border/60 bg-background py-16 md:py-24">
+      <div className="container mx-auto px-4">
       <article className="mx-auto max-w-4xl space-y-12">
         <div className="space-y-4 text-center">
           <h2 className="text-3xl font-bold tracking-tight">
@@ -187,6 +188,7 @@ export function ArticleSection() {
           </Card>
         </div>
       </article>
+      </div>
     </section>
   )
 }

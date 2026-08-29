@@ -16,7 +16,7 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-  { href: "/", labelKey: "home", icon: "home" },
+  { href: "/home", labelKey: "home", icon: "home" },
   { href: "/icpverse", labelKey: "icpverse", icon: "icpverse" },
   { href: "/icpay/presale", labelKey: "presale", icon: "icpay", center: true },
   { href: "/transactions", labelKey: "history", icon: "history" },
@@ -31,7 +31,7 @@ export function BottomNav() {
   const t = useTranslations("nav")
   const { identity } = useAuth()
   const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href)
+    href === "/home" ? pathname === "/home" : pathname.startsWith(href)
 
   const warmRoute = (href: string) => prefetchAppRoute(href, identity)
 

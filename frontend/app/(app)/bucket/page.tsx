@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { AppIcon } from "@/components/ui/app-icon"
+import { BgImageCard } from "@/components/ui/bg-image-card"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
 import { BucketCard } from "@/components/bucket/bucket-card"
 import { BucketCreateForm } from "@/components/bucket/bucket-create-form"
@@ -42,11 +43,18 @@ export default function BucketPage() {
     return (
       <div className="space-y-4 pt-2">
         <BucketBackButton onClick={() => setShowForm(false)} />
-        <div>
-          <h1 className="text-xl font-bold tracking-tight">{t("formTitle")}</h1>
-          <p className="text-sm text-muted-foreground">{t("formSubtitle")}</p>
-        </div>
-        <BucketCreateForm onCreate={handleCreate} />
+        <BgImageCard contentClassName="space-y-6 px-5 py-7">
+          <div className="flex items-center gap-3">
+            <span className="flex size-13 shrink-0 items-center justify-center">
+              <AppIcon name="bucket" size={28} />
+            </span>
+            <div>
+              <h1 className="text-lg font-bold tracking-tight">{t("formTitle")}</h1>
+              <p className="text-xs text-muted-foreground">{t("formSubtitle")}</p>
+            </div>
+          </div>
+          <BucketCreateForm onCreate={handleCreate} />
+        </BgImageCard>
       </div>
     )
   }
