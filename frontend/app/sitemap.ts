@@ -1,14 +1,33 @@
 import type { MetadataRoute } from "next"
 import { BLOG_POSTS } from "@/services/blog/blog"
+import { isChannelIndexable } from "@/lib/community/seo"
+import { listAllPublicChannelsForSeo } from "@/services/community/community"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
+const staticExport = process.env.ICP_STATIC_EXPORT === "1"
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogEntries: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
     url: `${siteUrl}/blog/${post.slug}`,
     changeFrequency: "monthly",
     priority: post.slug === "icp-price" ? 0.8 : 0.6,
   }))
+
+  let channelEntries: MetadataRoute.Sitemap = []
+  if (!staticExport) {
+    try {
+      const channels = await listAllPublicChannelsForSeo()
+      channelEntries = channels
+        .filter(isChannelIndexable)
+        .map((ch) => ({
+          url: `${siteUrl}/channels/${encodeURIComponent(ch.slug)}`,
+          changeFrequency: "weekly" as const,
+          priority: 0.55,
+        }))
+    } catch {
+      channelEntries = []
+    }
+  }
 
   return [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
@@ -21,6 +40,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${siteUrl}/transparency`, changeFrequency: "monthly", priority: 0.3 },
     { url: `${siteUrl}/blog`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${siteUrl}/channels`, changeFrequency: "weekly", priority: 0.65 },
     ...blogEntries,
+    ...channelEntries,
   ]
 }

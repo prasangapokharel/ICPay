@@ -17,6 +17,7 @@ const PRIVATE = [
   "/username",
   "/icpverse",
   "/u",
+  "/channels/new",
 ]
 
 const BLOG_PUBLIC = BLOG_POSTS.map((post) => `/blog/${post.slug}`)
@@ -34,6 +35,7 @@ const PUBLIC = [
   "/transparency",
   "/login",
   "/blog",
+  "/channels",
   ...BLOG_PUBLIC,
 ]
 
