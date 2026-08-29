@@ -50,6 +50,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
                   width={52}
                   height={52}
                   unoptimized
+                  priority
                   className="size-full object-cover"
                 />
               </span>

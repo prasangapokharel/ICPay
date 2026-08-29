@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next"
 import { BLOG_POSTS } from "@/services/blog/blog"
-import { isChannelIndexable } from "@/lib/community/seo"
-import { listAllPublicChannelsForSeo } from "@/services/community/community"
+import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 const staticExport = process.env.ICP_STATIC_EXPORT === "1"
@@ -16,14 +15,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let channelEntries: MetadataRoute.Sitemap = []
   if (!staticExport) {
     try {
-      const channels = await listAllPublicChannelsForSeo()
-      channelEntries = channels
-        .filter(isChannelIndexable)
-        .map((ch) => ({
-          url: `${siteUrl}/channels/${encodeURIComponent(ch.slug)}`,
-          changeFrequency: "weekly" as const,
-          priority: 0.55,
-        }))
+      const channels = await listCachedIndexableChannelSnapshots()
+      channelEntries = channels.map((ch) => ({
+        url: `${siteUrl}/channels/${encodeURIComponent(ch.slug)}`,
+        changeFrequency: "weekly" as const,
+        priority: 0.55,
+      }))
     } catch {
       channelEntries = []
     }

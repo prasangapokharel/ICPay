@@ -8,11 +8,13 @@ export function AppIcon({
   name,
   size = 22,
   mono = false,
+  priority = false,
   className,
 }: {
   name: AppIconName
   size?: number
   mono?: boolean
+  priority?: boolean
   className?: string
 }) {
   return (
@@ -22,6 +24,7 @@ export function AppIcon({
       width={size}
       height={size}
       unoptimized
+      priority={priority}
       className={cn("shrink-0 object-contain", mono && "invert dark:invert-0", className)}
     />
   )

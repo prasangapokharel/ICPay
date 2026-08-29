@@ -6,9 +6,9 @@ import { CommunityWorkspace } from "@/components/community/community-workspace"
 import { ChannelsPublicDirectory } from "@/components/community/channels-public-directory"
 import { AppShell } from "@/components/layout/app-shell"
 import { Spinner } from "@/components/ui/spinner"
-import type { CommunityChannelPublic } from "@/services/community/community"
+import type { CommunityChannelSnapshot } from "@/lib/community/snapshot"
 
-export function ChannelsIndexView({ channels }: { channels: CommunityChannelPublic[] }) {
+export function ChannelsIndexView({ channels }: { channels: CommunityChannelSnapshot[] }) {
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {

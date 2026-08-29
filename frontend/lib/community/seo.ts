@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
+import type { CommunityChannelSnapshot } from "@/lib/community/snapshot"
 import {
   isCommunityOpen,
   isCommunityPaid,
   ownerHandle,
-  type CommunityChannelPublic,
 } from "@/services/community/community"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
@@ -20,24 +20,24 @@ export function channelOgImageUrl(slug: string): string {
   return `${siteUrl}/api/community/avatar/${encodeURIComponent(slug)}`
 }
 
-export function isChannelIndexable(channel: CommunityChannelPublic): boolean {
+export function isChannelIndexable(channel: Pick<CommunityChannelSnapshot, "visibility">): boolean {
   return isCommunityOpen(channel.visibility)
 }
 
-export function channelTitle(channel: CommunityChannelPublic): string {
+export function channelTitle(channel: Pick<CommunityChannelSnapshot, "name" | "slug">): string {
   return `${channel.name} (@${channel.slug}) — ICP Community on ICPay`
 }
 
-export function channelDescription(channel: CommunityChannelPublic): string {
+export function channelDescription(channel: CommunityChannelSnapshot): string {
   const bio = channel.bio.trim()
-  const members = channel.memberCount.toString()
+  const members = channel.memberCount
   const owner = ownerHandle(channel)
   const access = isCommunityPaid(channel.access) ? "Paid membership" : "Free to join"
   const lead = bio || `${channel.name} is a public Internet Computer community channel on ICPay.`
   return `${lead} ${members} members · hosted by ${owner}. ${access}. Join with Internet Identity — no seed phrase.`
 }
 
-export function channelKeywords(channel: CommunityChannelPublic): string[] {
+export function channelKeywords(channel: CommunityChannelSnapshot): string[] {
   const base = [
     channel.name,
     channel.slug,
@@ -53,7 +53,7 @@ export function channelKeywords(channel: CommunityChannelPublic): string[] {
 
 export function channelMetadata(
   slug: string,
-  channel: CommunityChannelPublic | null
+  channel: CommunityChannelSnapshot | null
 ): Metadata {
   if (!channel) {
     return {
@@ -93,7 +93,7 @@ export function channelMetadata(
 
 export function channelJsonLd(
   slug: string,
-  channel: CommunityChannelPublic
+  channel: CommunityChannelSnapshot
 ): Record<string, unknown> {
   const owner = channel.ownerUsername[0]
   return {

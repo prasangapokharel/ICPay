@@ -4,7 +4,7 @@ import {
   channelMetadata,
   isChannelIndexable,
 } from "@/lib/community/seo"
-import { getPublicCommunityChannel } from "@/services/community/community"
+import { getCachedPublicChannelSnapshot } from "@/lib/community/publicCache"
 import { ChannelSlugView } from "@/components/community/channel-slug-view"
 
 export const instant = false
@@ -20,13 +20,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (slug === "slug") {
     return { title: "ICPay Channels", robots: { index: false, follow: false } }
   }
-  const channel = await getPublicCommunityChannel(slug)
+  const channel = await getCachedPublicChannelSnapshot(slug)
   return channelMetadata(slug, channel)
 }
 
 export default async function ChannelPublicPage({ params }: PageProps) {
   const { slug } = await params
-  const channel = slug === "slug" ? null : await getPublicCommunityChannel(slug)
+  const channel = slug === "slug" ? null : await getCachedPublicChannelSnapshot(slug)
   const jsonLd =
     channel && isChannelIndexable(channel) ? channelJsonLd(slug, channel) : null
 

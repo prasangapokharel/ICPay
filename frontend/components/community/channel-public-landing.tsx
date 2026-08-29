@@ -6,11 +6,11 @@ import { CommunityAvatar } from "@/components/community/community-avatar"
 import { Button } from "@/components/ui/button"
 import { formatCommunityPriceE8s } from "@/lib/community/format"
 import { channelPath } from "@/lib/community/seo"
+import type { CommunityChannelSnapshot } from "@/lib/community/snapshot"
 import {
   isCommunityOpen,
   isCommunityPaid,
   ownerHandle,
-  type CommunityChannelPublic,
 } from "@/services/community/community"
 import { APP_LOGO } from "@/lib/ui/brand-images"
 import Image from "next/image"
@@ -20,7 +20,7 @@ export function ChannelPublicLanding({
   channel,
 }: {
   slug: string
-  channel: CommunityChannelPublic | null
+  channel: CommunityChannelSnapshot | null
 }) {
   const t = useTranslations("community")
 
@@ -40,7 +40,7 @@ export function ChannelPublicLanding({
   }
 
   const bio = channel.bio.trim()
-  const members = channel.memberCount.toString()
+  const members = channel.memberCount
   const owner = ownerHandle(channel)
   const listed = isCommunityOpen(channel.visibility)
   const paid = isCommunityPaid(channel.access)
@@ -90,7 +90,9 @@ export function ChannelPublicLanding({
             </div>
             <div>
               <dt className="text-muted-foreground">Access</dt>
-              <dd className="font-semibold">{paid ? `${formatCommunityPriceE8s(channel.priceE8s)} ICP` : "Free"}</dd>
+              <dd className="font-semibold">
+                {paid ? `${formatCommunityPriceE8s(BigInt(channel.priceE8s))} ICP` : "Free"}
+              </dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Visibility</dt>

@@ -143,6 +143,7 @@ export function CommunityChannelView({
         alt=""
         fill
         unoptimized
+        priority
         className="pointer-events-none object-cover object-center"
         draggable={false}
       />
