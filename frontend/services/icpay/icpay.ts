@@ -1,10 +1,9 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { fromNullable } from "@dfinity/utils"
-import { fetchTokenMetadata, ICP_LEDGER_ID } from "@/services/tokens"
+import { fetchTokenMetadata, ICP_LEDGER_ID, ICPAY_LEDGER_ID } from "@/services/tokens"
 import { icrcLedger } from "@/services/ledger/icrc"
 
-// ICPay's own token. Distinct from the wallet canister, which holds custody.
-export const ICPAY_LEDGER_ID = "5fsnk-rqaaa-aaaan-q6m4q-cai"
+export { ICPAY_LEDGER_ID }
 
 // Market data comes from ICPSwap, the only venue ICPAY trades on, so its pool is
 // the price. It is the one source that answers with CORS open to any origin --

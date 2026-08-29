@@ -29,6 +29,7 @@ import {
   custodialSubaccount,
   ICP_LEDGER_ID,
   PINNED_LEDGER_IDS,
+  ICPAY_LEDGER_ID,
   metadataFromRegistry,
   metadataLedgerIds,
   visibleMetadataLedgerIds,
@@ -517,6 +518,8 @@ export function useTokenHoldings() {
     holdings: shown.slice().sort((a, b) => {
       if (a.ledgerId === ICP_LEDGER_ID) return -1
       if (b.ledgerId === ICP_LEDGER_ID) return 1
+      if (a.ledgerId === ICPAY_LEDGER_ID) return -1
+      if (b.ledgerId === ICPAY_LEDGER_ID) return 1
       if (a.balance > 0n !== b.balance > 0n) return a.balance > 0n ? -1 : 1
       const pinnedA = PINNED_LEDGER_IDS.includes(a.ledgerId)
       if (pinnedA !== PINNED_LEDGER_IDS.includes(b.ledgerId)) return pinnedA ? -1 : 1

@@ -10,11 +10,15 @@ import { fetchTokenRegistry, type TokenMarket } from "@/lib/token/registry"
 // Mirrors backend Config.ICP_LEDGER_CANISTER_ID.
 export const ICP_LEDGER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"
 
+// ICPay's own ICRC-1. Pinned so the wallet always shows a deposit row, same as ck*.
+export const ICPAY_LEDGER_ID = "5fsnk-rqaaa-aaaan-q6m4q-cai"
+
 // The chain-key tokens are not SNS-launched, so SNS-W does not list them.
 // Exported because these are also the rows the wallet shows unconditionally: a
 // list that hides ckBTC until you hold some gives you nowhere to deposit it to.
 export const PINNED_LEDGER_IDS = [
   ICP_LEDGER_ID,
+  ICPAY_LEDGER_ID,
   "mxzaz-hqaaa-aaaar-qaada-cai", // ckBTC
   "ss2fx-dyaaa-aaaar-qacoq-cai", // ckETH
   "xevnm-gaaaa-aaaar-qafnq-cai", // ckUSDC
