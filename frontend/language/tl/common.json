@@ -367,7 +367,17 @@
     "noTokensFound": "Walang mga token na tumutugma sa paghahanap na iyon.",
     "outsideAmount": "+{amount} sa labas",
     "swapCta": "Magpalit",
-    "selfCustodyNotice": "May hawak kang pondo sa labas ng ICPay. Buksan ang token para ilipat sila."
+    "selfCustodyNotice": "May hawak kang pondo sa labas ng ICPay. Buksan ang token para ilipat sila.",
+    "addToken": "Add token",
+    "addTokenTitle": "Add custom token",
+    "addTokenHint": "Paste an ICRC ledger canister ID. It is saved on this device only.",
+    "addTokenLabel": "Ledger canister",
+    "addTokenPlaceholder": "e.g. ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "addTokenInvalid": "Enter a valid canister ID.",
+    "addTokenExists": "This token is already in your list.",
+    "addTokenNotFound": "Could not load token metadata from this canister.",
+    "addTokenAction": "Add token",
+    "customToken": "Custom token"
   },
   "token": {
     "back": "wallet",

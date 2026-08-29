@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
@@ -7,6 +8,8 @@ import { formatAmount, E8S } from "@/lib/wallet/utils"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { useTokenHoldings } from "@/hooks/wallet/useWalletData"
+import { useCustomLedgerIds } from "@/hooks/wallet/useCustomLedgerIds"
+import { useAuth } from "@/components/auth/auth-provider"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 import { ICP_LOGO } from "@/lib/token/icon"
 import { TokenList } from "@/components/wallet/token-list"
@@ -14,11 +17,19 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function WalletPage() {
   const t = useTranslations("wallet")
-  const { holdings, isLoading: holdingsLoading } = useTokenHoldings()
+  const { identity } = useAuth()
+  const principal = identity?.getPrincipal().toText()
+  const { ids: customIds, add: addCustomId } = useCustomLedgerIds(principal)
+  const { holdings, isLoading: holdingsLoading, refresh } = useTokenHoldings(customIds)
   const liveBalance = holdings.find((h) => h.ledgerId === ICP_LEDGER_ID)?.balance
   const { price } = useIcpPrice()
   const usd = price ? (Number(liveBalance ?? 0n) / Number(E8S)) * price.usd : null
   const fiat = useFiatValue(usd)
+
+  const existingLedgerIds = useMemo(
+    () => [...new Set([...holdings.map((h) => h.ledgerId), ...customIds])],
+    [holdings, customIds]
+  )
 
   return (
     <div className="space-y-6">
@@ -64,7 +75,15 @@ export default function WalletPage() {
 
       <Card className="bg-background">
         <CardContent>
-          <TokenList holdings={holdings} isLoading={holdingsLoading} />
+          <TokenList
+            holdings={holdings}
+            isLoading={holdingsLoading}
+            existingLedgerIds={existingLedgerIds}
+            onAddCustom={(ledgerId, meta) => {
+              addCustomId(ledgerId, meta)
+              void refresh()
+            }}
+          />
         </CardContent>
       </Card>
     </div>

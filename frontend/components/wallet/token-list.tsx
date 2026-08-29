@@ -1,11 +1,16 @@
 "use client"
 
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Add01Icon } from "@hugeicons/core-free-icons"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 import { formatTokenAmount } from "@/lib/wallet/utils"
-import { type TokenHolding } from "@/services/tokens"
+import { type TokenHolding, type TokenMetadata } from "@/services/tokens"
 import { TokenLogo } from "@/components/token/token-logo"
+import { AddTokenDrawer } from "@/components/wallet/add-token-drawer"
 import { useAuth } from "@/components/auth/auth-provider"
 import { prefetchAppRoute } from "@/lib/navigation/prefetchRoute"
 
@@ -13,16 +18,42 @@ export function TokenList({
   holdings,
   isLoading,
   outside,
+  existingLedgerIds = [],
+  onAddCustom,
 }: {
   holdings: TokenHolding[]
   isLoading: boolean
   outside?: Map<string, bigint>
+  existingLedgerIds?: string[]
+  onAddCustom?: (ledgerId: string, meta: TokenMetadata) => void
 }) {
   const t = useTranslations("wallet")
+  const [addOpen, setAddOpen] = useState(false)
+
+  const listHeader = useMemo(
+    () =>
+      onAddCustom ? (
+        <div className="mb-2 flex items-center justify-between gap-2 px-1">
+          <p className="text-sm font-medium text-muted-foreground">{t("tokens")}</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            className="size-8 rounded-full"
+            aria-label={t("addToken")}
+            onClick={() => setAddOpen(true)}
+          >
+            <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={2} />
+          </Button>
+        </div>
+      ) : null,
+    [onAddCustom, t]
+  )
 
   if (isLoading && holdings.length === 0) {
     return (
       <div className="space-y-2">
+        {listHeader}
         {[0, 1, 2].map((i) => (
           <div key={i} className="flex items-center gap-3 rounded-2xl px-1 py-2.5">
             <Skeleton className="size-9 rounded-full" />
@@ -39,26 +70,46 @@ export function TokenList({
 
   if (holdings.length === 0) {
     return (
-      <p className="px-1 py-6 text-center text-sm text-muted-foreground">
-        {t("noTokens")}
-      </p>
+      <>
+        {listHeader}
+        <p className="px-1 py-6 text-center text-sm text-muted-foreground">{t("noTokens")}</p>
+        {onAddCustom ? (
+          <AddTokenDrawer
+            open={addOpen}
+            onOpenChange={setAddOpen}
+            existingIds={existingLedgerIds}
+            onAdded={onAddCustom}
+          />
+        ) : null}
+      </>
     )
   }
 
   return (
-    <ul className="space-y-0.5">
-      {holdings.map((token) => (
-        <TokenRow
-          key={token.ledgerId}
-          token={token}
-          outside={
-            (outside?.get(token.ledgerId) ?? 0n) > token.fee
-              ? outside!.get(token.ledgerId)!
-              : undefined
-          }
+    <>
+      {listHeader}
+      <ul className="space-y-0.5">
+        {holdings.map((token) => (
+          <TokenRow
+            key={token.ledgerId}
+            token={token}
+            outside={
+              (outside?.get(token.ledgerId) ?? 0n) > token.fee
+                ? outside!.get(token.ledgerId)!
+                : undefined
+            }
+          />
+        ))}
+      </ul>
+      {onAddCustom ? (
+        <AddTokenDrawer
+          open={addOpen}
+          onOpenChange={setAddOpen}
+          existingIds={existingLedgerIds}
+          onAdded={onAddCustom}
         />
-      ))}
-    </ul>
+      ) : null}
+    </>
   )
 }
 
