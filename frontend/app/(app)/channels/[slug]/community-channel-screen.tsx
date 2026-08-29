@@ -18,7 +18,8 @@ import {
   useInvalidateCommunityLists,
   useMyCommunityChannels,
 } from "@/hooks/community/useCommunity"
-import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
+import { useChannelSlug, useChannelMessageId } from "@/lib/routing/rewrittenRoute"
+import { parseChannelMessageId } from "@/lib/community/messageLink"
 import { cacheLatestMessage, getCachedLatest, markChannelRead } from "@/lib/community/readState"
 import { createPendingMessage, type PendingMessage } from "@/lib/community/pendingMessage"
 import {
@@ -35,7 +36,7 @@ import { useSearchParams } from "next/navigation"
 import { useMemo, useEffect, useState, useCallback } from "react"
 
 export function CommunityChannelScreen() {
-  const slug = useRewrittenLastSegment()
+  const slug = useChannelSlug()
   if (!slug || slug === "slug") {
     return null
   }
@@ -44,6 +45,7 @@ export function CommunityChannelScreen() {
 
 function CommunityChannelScreenBody({ slug }: { slug: string }) {
   const searchParams = useSearchParams()
+  const messageIdParam = useChannelMessageId()
   const urlInvite = searchParams.get("code") ?? undefined
   const t = useTranslations("community")
   const { identity } = useAuth()
@@ -93,7 +95,14 @@ function CommunityChannelScreenBody({ slug }: { slug: string }) {
   const [pendingMessages, setPendingMessages] = useState<PendingMessage[]>([])
   const [deliveredIds, setDeliveredIds] = useState<Set<string>>(() => new Set())
   const [scrollToMessageId, setScrollToMessageId] = useState<bigint | null>(null)
+  const [highlightMessageId, setHighlightMessageId] = useState<bigint | null>(null)
   const clearScrollTarget = useCallback(() => setScrollToMessageId(null), [])
+
+  useEffect(() => {
+    const id = parseChannelMessageId(messageIdParam)
+    if (id == null) return
+    setScrollToMessageId(id)
+  }, [messageIdParam])
 
   const removePending = (clientId: string) => {
     setPendingMessages((prev) => prev.filter((m) => m.clientId !== clientId))
@@ -155,7 +164,7 @@ function CommunityChannelScreenBody({ slug }: { slug: string }) {
   const pinnedPreview =
     pinnedId != null ? messages.find((m) => m.id === pinnedId) : undefined
   const ownerUsername = channel.ownerUsername[0]
-  const showMemberBar = isJoined && !isOwner && canReadMessages
+  const showMemberBar = !isOwner
 
   return (
     <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
@@ -266,7 +275,14 @@ function CommunityChannelScreenBody({ slug }: { slug: string }) {
             void invalidate()
           }}
           scrollToMessageId={scrollToMessageId}
-          onScrollToMessageDone={clearScrollTarget}
+          highlightMessageId={highlightMessageId}
+          onScrollToMessageDone={() => {
+            if (scrollToMessageId != null) {
+              setHighlightMessageId(scrollToMessageId)
+              window.setTimeout(() => setHighlightMessageId(null), 2400)
+            }
+            clearScrollTarget()
+          }}
         />
       }
     />

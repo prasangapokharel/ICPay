@@ -76,6 +76,10 @@
       "destination": "/channels/join/:slug"
     },
     {
+      "source": "/channels/:slug/:messageId",
+      "destination": "/channels/:slug/:messageId"
+    },
+    {
       "source": "/channels/:slug",
       "destination": "/channels/:slug"
     },

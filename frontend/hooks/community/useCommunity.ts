@@ -96,6 +96,16 @@ export function useCommunityChannel(slug: string) {
   return { channel: data, error, isLoading, refresh: mutate }
 }
 
+export function useCommunityChannelLookup(slug: string | null) {
+  const { identity } = useAuth()
+  const { data, error, isLoading } = useSWR(
+    slug ? (["community-channel-lookup", slug, identity?.getPrincipal().toText()] as const) : null,
+    () => getCommunityChannel(identity, slug!),
+    QUERY_OPTS
+  )
+  return { channel: data ?? null, error, isLoading }
+}
+
 export function useCommunityMessages(slug: string, enabled: boolean) {
   const { identity } = useAuth()
   const { data, error, isLoading, mutate } = useSWR(

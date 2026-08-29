@@ -29,6 +29,7 @@ export function CommunityMessageList({
   onReact,
   onForward,
   scrollToMessageId,
+  highlightMessageId,
   onScrollToMessageDone,
 }: {
   channel: CommunityChannelPublic
@@ -45,6 +46,7 @@ export function CommunityMessageList({
   onReact?: (messageId: bigint, code: ReactionCode) => Promise<void>
   onForward?: (targetSlug: string, text: string) => Promise<void>
   scrollToMessageId?: bigint | null
+  highlightMessageId?: bigint | null
   onScrollToMessageDone?: () => void
 }) {
   const t = useTranslations("community")
@@ -135,7 +137,7 @@ export function CommunityMessageList({
       if (scrollRef.current) syncScrollState(scrollRef.current)
       onScrollToMessageDone?.()
     })
-  }, [scrollToMessageId, onScrollToMessageDone])
+  }, [scrollToMessageId, messages, onScrollToMessageDone])
 
   const handleScroll = () => {
     const el = scrollRef.current
@@ -172,6 +174,8 @@ export function CommunityMessageList({
                 <BroadcastMessage
                   key={msg.id.toString()}
                   message={msg}
+                  channelSlug={channel.slug}
+                  highlighted={highlightMessageId != null && msg.id === highlightMessageId}
                   pinned={pinnedId != null && msg.id === pinnedId}
                   delivered={isOwner && deliveredIds.has(msg.id.toString())}
                   isOwner={isOwner}
