@@ -9,10 +9,10 @@ import { CommunityAvatar } from "@/components/community/community-avatar"
 import { CommunityChannelPremiumLabel } from "@/components/community/community-channel-premium-label"
 import { CommunityChannelInfo } from "@/components/community/community-channel-info"
 import { CommunityComposer } from "@/components/community/community-composer"
+import { CommunityMarkdownGuideDialog } from "@/components/community/community-markdown-guide-dialog"
 import { CommunityMemberBar } from "@/components/community/community-member-bar"
 import {
   CommunityCopyMenuItem,
-  CommunityShareMenuItem,
 } from "@/components/community/community-share-link"
 import { Button } from "@/components/ui/button"
 import {
@@ -89,6 +89,7 @@ export function CommunityChannelView({
   const [joinBusy, setJoinBusy] = useState(false)
   const [joinErr, setJoinErr] = useState<string | null>(null)
   const [infoOpen, setInfoOpen] = useState(false)
+  const [guideOpen, setGuideOpen] = useState(false)
   const [showJoinConfirm, setShowJoinConfirm] = useState(false)
   const members = channel.memberCount.toString()
   const canRead =
@@ -210,7 +211,10 @@ export function CommunityChannelView({
               <DropdownMenuItem onClick={() => setInfoOpen(true)}>
                 {t("channelInfo")}
               </DropdownMenuItem>
-              <CommunityShareMenuItem onCopy={copyChannelLink} />
+              <DropdownMenuItem onClick={() => setGuideOpen(true)}>
+                <CommunityIcon name="guide" size={16} />
+                {t("markdownGuide")}
+              </DropdownMenuItem>
               {isOwner && inviteCode && (
                 <CommunityCopyMenuItem onCopy={copyInvite} label={t("copyInviteLink")} />
               )}
@@ -241,24 +245,6 @@ export function CommunityChannelView({
         ) : (
           <div className="min-h-0 flex-1" />
         )}
-        {needsJoin && (
-          <div className="relative z-10 shrink-0 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
-            <Button
-              className="h-12 w-full rounded-full text-base font-semibold shadow-lg"
-              disabled={joinBusy}
-              onClick={handleJoinClick}
-            >
-              {joinBusy
-                ? t("joining")
-                : isCommunityPaid(channel.access)
-                  ? t("payToJoin", { price: formatCommunityPriceE8s(channel.priceE8s) })
-                  : t("join")}
-            </Button>
-            {joinErr && !isCommunityPaid(channel.access) && (
-              <p className="mt-2 text-center text-xs text-destructive">{joinErr}</p>
-            )}
-          </div>
-        )}
       </div>
 
       {isOwner && canRead && (
@@ -267,7 +253,7 @@ export function CommunityChannelView({
         </div>
       )}
 
-      {showMemberBar && canRead && onSelectMessage && (
+      {showMemberBar && onSelectMessage && (canRead || needsJoin) && (
         <CommunityMemberBar
           messages={messages}
           ownerUsername={ownerUsername}
@@ -276,6 +262,15 @@ export function CommunityChannelView({
           onTip={onTip}
           onSelectMessage={onSelectMessage}
           onWallpaper={onWallpaper}
+          isJoined={isMember}
+          onJoin={handleJoinClick}
+          joinBusy={joinBusy}
+          joinLabel={
+            isCommunityPaid(channel.access)
+              ? t("payToJoin", { price: formatCommunityPriceE8s(channel.priceE8s) })
+              : undefined
+          }
+          joinErr={joinErr && !isCommunityPaid(channel.access) ? joinErr : null}
         />
       )}
 
@@ -321,6 +316,8 @@ export function CommunityChannelView({
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
+
+      <CommunityMarkdownGuideDialog open={guideOpen} onOpenChange={setGuideOpen} />
 
       <CommunityChannelInfo
         channel={channel}
