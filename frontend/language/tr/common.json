@@ -404,7 +404,8 @@
     "historyTitle": "Zincir üstü geçmiş",
     "snsLink": "SNS'i görüntüle",
     "snsDashboard": "SNS dashboard",
-    "snsSwap": "SNS swap"
+    "snsSwap": "SNS swap",
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
   },
   "tokenHistory": {
     "empty": "Henüz dizinlenmiş işlem yok.",

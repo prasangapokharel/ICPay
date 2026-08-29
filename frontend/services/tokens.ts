@@ -4,7 +4,8 @@ import { IcrcLedgerCanister, mapTokenMetadata } from "@icp-sdk/canisters/ledger/
 import { createAgent } from "@/services/icp"
 import { fetchSnsRegistryList } from "@/services/sns/registry"
 import { query } from "@/services/client"
-import { listTokens } from "@/services/launch/launch"
+import { getCustomLedgerIdsSnapshot } from "@/lib/wallet/customTokens"
+import { getTokenByLedger, listTokens, statusOf } from "@/services/launch/launch"
 import { fetchTokenRegistry, type TokenMarket } from "@/lib/token/registry"
 
 // Mirrors backend Config.ICP_LEDGER_CANISTER_ID.
@@ -53,6 +54,18 @@ export function visibleMetadataLedgerIds(balances: Map<string, bigint>): string[
     .sort()
 }
 
+export function mergeWalletLedgerIds(registryIds: string[], customLedgerIds: string[]): string[] {
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const id of [...PINNED_LEDGER_IDS, ...registryIds, ...customLedgerIds]) {
+    if (!seen.has(id)) {
+      seen.add(id)
+      out.push(id)
+    }
+  }
+  return out.sort()
+}
+
 export function metadataFromRegistry(
   ledgerId: string,
   registry: Map<string, TokenMarket>
@@ -82,6 +95,20 @@ export function isLedgerSupported(
   ledgerId: string
 ): Promise<boolean> {
   return query(identity, (actor) => actor.isLedgerSupported(ledgerId))
+}
+
+export async function canMoveToCustody(
+  identity: Identity | undefined,
+  ledgerId: string
+): Promise<boolean> {
+  if (await isLedgerSupported(identity, ledgerId)) return true
+  const token = await getTokenByLedger(identity, ledgerId)
+  if (token !== null && statusOf(token) === "active") return true
+  if (identity) {
+    const custom = getCustomLedgerIdsSnapshot(identity.getPrincipal().toText())
+    if (custom.includes(ledgerId)) return true
+  }
+  return false
 }
 
 // The ledgers ICPay itself created. Split out because the wallet also checks

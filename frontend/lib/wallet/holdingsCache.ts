@@ -25,6 +25,15 @@ export function readHoldings(principal: string): TokenHolding[] | undefined {
   }
 }
 
+export function cachedBalanceMap(principal: string | undefined): Map<string, bigint> {
+  const map = new Map<string, bigint>()
+  if (!principal) return map
+  for (const holding of readHoldings(principal) ?? []) {
+    map.set(holding.ledgerId, holding.balance)
+  }
+  return map
+}
+
 export function writeHoldings(principal: string, holdings: TokenHolding[]) {
   try {
     localStorage.setItem(

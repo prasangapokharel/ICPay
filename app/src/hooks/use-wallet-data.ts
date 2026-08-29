@@ -15,6 +15,7 @@ import { checkUsername } from "@/services/buy/buy"
 import { compareBySuggestion } from "@/lib/verifed/premium-tick"
 import { fetchAccountStats, type AccountStats } from "@/services/account/account"
 import { getItem, setItem } from "@/services/storage/kv"
+import { getCustomTokenMetaSnapshot } from "@/lib/wallet/customTokens"
 import {
   listLedgerIds,
   listLaunchedLedgerIds,
@@ -24,6 +25,7 @@ import {
   ICP_LEDGER_ID,
   PINNED_LEDGER_IDS,
   type TokenHolding,
+  type TokenMetadata,
 } from "@/services/tokens"
 
 // Keys are arrays so every page asking for the same data hits one cache entry.
@@ -440,42 +442,53 @@ function dedupeById(users: UserPublic[]): UserPublic[] {
 // Read straight from each ICRC-1 ledger, never through the wallet canister:
 // icrc1_balance_of is a query, so the sweep costs no cycles and adds no backend
 // load.
-export function useTokenHoldings() {
+export function useTokenHoldings(customLedgerIds: string[] = []) {
   const { identity } = useAuth()
   const custodian = useCustodian()
+  const principal = identity?.getPrincipal().toText()
+  const customKey = customLedgerIds.slice().sort().join(",")
 
-  // Phase 1 -- balances only, across every known ledger. Discovery is folded in
-  // so the whole sweep is one cache entry.
-  const { data: balances, isLoading: loadingBalances } = useSWR(
-    custodian && identity ? keyFor(identity, "token-balances") : null,
+  const { data: balances, isLoading: loadingBalances, mutate } = useSWR(
+    custodian && identity ? keyFor(identity, "token-balances", customKey) : null,
     async () => {
       const ledgerIds = await listLedgerIds(identity)
+      const seen = new Set(ledgerIds)
+      const merged = [...ledgerIds]
+      for (const id of customLedgerIds) {
+        if (!seen.has(id)) {
+          merged.push(id)
+          seen.add(id)
+        }
+      }
       const owner = custodian!
       const subaccount = custodialSubaccount(identity!.getPrincipal())
-      return await fetchBalances(ledgerIds, owner, subaccount, identity)
+      return await fetchBalances(merged, owner, subaccount, identity)
     },
     { revalidateOnFocus: true, revalidateOnMount: true, keepPreviousData: false, dedupingInterval: 2_000 }
   )
 
-  // Phase 2 -- metadata for every discovered ledger, not just the held ones. A
-  // token nobody holds still needs a name and a logo to be worth depositing to,
-  // and naming all of them is now one request to the NNS token index rather than
-  // one ledger call each. Keyed by the id list so it refetches when a new token
-  // appears rather than on every balance change, and immutable because a symbol
-  // and decimals never change.
-  const shownIds = balances ? [...balances.keys()].sort() : []
+  const balanceIds = balances ? [...balances.keys()] : []
+  const shownIds = [...new Set([...balanceIds, ...customLedgerIds])].sort()
+  const customMeta = principal ? getCustomTokenMetaSnapshot(principal) : new Map<string, TokenMetadata>()
   const { data: metadata, isLoading: loadingMetadata } = useSWRImmutable(
     shownIds.length ? (["token-metadata", shownIds.join(",")] as const) : null,
     async () => {
-      const entries = await Promise.all(shownIds.map((id) => fetchTokenMetadata(id, identity)))
-      return new Map(entries.flatMap((m) => (m ? [[m.ledgerId, m] as const] : [])))
+      const entries = await Promise.all(
+        shownIds.map(async (id) => {
+          const cached = customMeta.get(id)
+          if (cached) return [id, cached] as const
+          const meta = await fetchTokenMetadata(id, identity)
+          return meta ? ([id, meta] as const) : null
+        }),
+      )
+      return new Map(entries.flatMap((entry) => (entry ? [entry] : [])))
     }
   )
 
   const holdings: TokenHolding[] = shownIds.flatMap((ledgerId) => {
-    const meta = metadata?.get(ledgerId)
+    const meta = metadata?.get(ledgerId) ?? customMeta.get(ledgerId)
     if (!meta) return []
-    return [{ ...meta, balance: balances!.get(ledgerId)! }]
+    return [{ ...meta, balance: balances?.get(ledgerId) ?? 0n }]
   })
 
   return {
@@ -490,6 +503,7 @@ export function useTokenHoldings() {
     isLoading:
       holdings.length === 0 &&
       (loadingBalances || (shownIds.length > 0 && loadingMetadata && !metadata)),
+    refresh: () => void mutate(),
   }
 }
 

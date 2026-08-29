@@ -404,7 +404,8 @@
     "historyTitle": "On-chain na kasaysayan",
     "snsLink": "Tingnan ang SNS",
     "snsDashboard": "Dashboard ng SNS",
-    "snsSwap": "SNS palitan"
+    "snsSwap": "SNS palitan",
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
   },
   "tokenHistory": {
     "empty": "Wala pang naka-index na transaksyon.",

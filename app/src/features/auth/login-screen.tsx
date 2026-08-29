@@ -14,7 +14,6 @@ import { Typewriter } from '@/components/shared/typewriter'
 import { MarketStats } from '@/features/auth/market-stats'
 import { InternetIdentityModal } from '@/features/auth/internet-identity-modal'
 import { AuthWaiting } from '@/features/auth/auth-waiting'
-import { NFID_PROVIDER } from '@/services/icp'
 import { loginWithPopup, PopupBlockedError } from '@/services/auth/ii-popup'
 import {
   createAuthSession,
@@ -22,8 +21,9 @@ import {
   II_CALLBACK,
   loginWithNative,
   openAuthInBrowser,
+  type AuthBridgeOptions,
 } from '@/services/auth/ii-native'
-import { images } from '@/constants/images'
+import { authIcons, images, type OpenIdProvider } from '@/constants/images'
 import { useTheme } from '@/components/theme/theme-provider'
 import type { Ed25519KeyIdentity } from '@icp-sdk/core/identity'
 
@@ -33,13 +33,19 @@ const features: { icon: AppIconName; key: 'custodial' | 'passwords' | 'instant' 
   { icon: 'instant', key: 'instant' },
 ]
 
+const openIdProviders = [
+  { id: 'google' as const, source: authIcons.google, invertDark: false },
+  { id: 'apple' as const, source: authIcons.apple, invertDark: true },
+  { id: 'microsoft' as const, source: authIcons.microsoft, invertDark: false },
+] satisfies { id: OpenIdProvider; source: number; invertDark: boolean }[]
+
 export function LoginScreen() {
   const { completeLogin, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [iiOpen, setIiOpen] = useState(false)
-  const [provider, setProvider] = useState<string | undefined>(undefined)
+  const [authOptions, setAuthOptions] = useState<AuthBridgeOptions | undefined>(undefined)
   const [browserSession, setBrowserSession] = useState<Ed25519KeyIdentity | null>(null)
   const pendingRef = useRef<Ed25519KeyIdentity | null>(null)
   const t = useTranslations('login')
@@ -76,23 +82,23 @@ export function LoginScreen() {
     )
   }
 
-  const startLogin = (next?: string) => {
+  const startLogin = (options?: AuthBridgeOptions) => {
     setError(null)
     setConnecting(true)
-    if (Platform.OS === 'web') {
-      void runWebLogin(next)
+    setAuthOptions(options)
+    if (Platform.OS === 'web' && !options?.openIdProvider && !options?.provider) {
+      void runWebLogin()
       return
     }
-    setProvider(next)
-    void runNativeLogin(next)
+    void runNativeLogin(options)
   }
 
-  const runNativeLogin = async (next?: string) => {
+  const runNativeLogin = async (options?: AuthBridgeOptions) => {
     const session = createAuthSession()
     pendingRef.current = session
     setBrowserSession(session)
     try {
-      const identity = await loginWithNative(next, session)
+      const identity = await loginWithNative(options, session)
       if (!identity) return
       pendingRef.current = null
       await completeLogin(identity)
@@ -104,9 +110,9 @@ export function LoginScreen() {
     }
   }
 
-  const runWebLogin = async (next?: string) => {
+  const runWebLogin = async () => {
     try {
-      const identity = await loginWithPopup(next)
+      const identity = await loginWithPopup()
       if (!identity) {
         setConnecting(false)
         return
@@ -182,7 +188,7 @@ export function LoginScreen() {
                 disabled={connecting}
                 onPress={() => {
                   setError(null)
-                  const session = openAuthInBrowser(provider, pendingRef.current ?? createAuthSession())
+                  const session = openAuthInBrowser(authOptions, pendingRef.current ?? createAuthSession())
                   pendingRef.current = session
                   setBrowserSession(session)
                   setError(t('browserHint'))
@@ -191,17 +197,29 @@ export function LoginScreen() {
                 {t('openInBrowser')}
               </Button>
             )}
-            <Text className="pt-1 text-center text-xs text-muted-foreground">{t('orContinue')}</Text>
-            <Button
-              variant="outline"
-              size="sm"
-              className="self-center px-5"
-              disabled={connecting}
-              onPress={() => startLogin(NFID_PROVIDER)}
-            >
-              NFID
-            </Button>
-            <Text className="text-center text-xs text-muted-foreground">{t('nfidNote')}</Text>
+            <View className="items-center gap-2 pt-1">
+              <Text className="text-xs text-muted-foreground">{t('orContinue')}</Text>
+              <View className="flex-row gap-2">
+                {openIdProviders.map(({ id, source, invertDark }) => (
+                  <Pressable
+                    key={id}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(`openId.${id}`)}
+                    disabled={connecting}
+                    onPress={() => startLogin({ openIdProvider: id })}
+                    className="size-11 items-center justify-center rounded-xl border border-border bg-background active:opacity-80"
+                  >
+                    <Image
+                      source={source}
+                      className="size-6"
+                      contentFit="contain"
+                      style={invertDark && resolved === 'dark' ? { tintColor: '#fff' } : undefined}
+                    />
+                  </Pressable>
+                ))}
+              </View>
+              <Text className="text-center text-xs text-muted-foreground">{t('openIdNote')}</Text>
+            </View>
             <Text className="text-center text-xs text-muted-foreground">
               {t('legalPrefix')} {t('legalTerms')} {t('legalAnd')} {t('legalPrivacy')}.
             </Text>
@@ -220,7 +238,7 @@ export function LoginScreen() {
         <InternetIdentityModal
           open={iiOpen}
           session={browserSession}
-          provider={provider}
+          options={authOptions}
           onClose={() => {
             setIiOpen(false)
             setConnecting(false)

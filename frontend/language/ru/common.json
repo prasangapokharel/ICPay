@@ -373,7 +373,8 @@
     "historyTitle": "On-chain history",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
-    "snsSwap": "SNS swap"
+    "snsSwap": "SNS swap",
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
   },
   "sendToken": {
     "title": "Отправить {symbol}",

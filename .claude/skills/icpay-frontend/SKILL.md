@@ -17,7 +17,7 @@ from what is in your training data; the real docs ship at
 `next.config.ts` sets `output: "export"` for production builds. There is **no
 server at runtime**. That rules out:
 
-- Route handlers / API routes
+- Route handlers / API routes (except routes Vercel keeps dynamic at deploy time)
 - Server Actions
 - `next/image` optimization (`images.unoptimized` is already set)
 - Middleware, ISR, `revalidate`, dynamic `generateMetadata` at request time
@@ -30,12 +30,52 @@ All data comes from the canister, in the browser, after hydration.
 
 | Path | What lives there |
 |---|---|
-| `app/` | Routes. Groups: `(auth)` login, `(app)` authenticated screens, `(legal)` public pages, `(profile)` public `@handle` pages. |
-| `components/` | Shared UI. `auth/`, `i18n/`, `fiat/`, `theme-provider`, plus shadcn primitives. |
-| `services/` | Canister client layer — this is the only place that talks to the IC. |
-| `hooks/` | React hooks holding view logic. |
-| `lib/` | Pure helpers by module — see [`lib-standard/SKILL.md`](../../.agents/skills/lib-standard/SKILL.md) |
-| `language/` | The 10 message catalogs plus `config.ts`. |
+| `app/(app)/` | **Authenticated app** — wallet, transfer, channels composer, settings. Do not wrap these in the public shell. |
+| `app/(auth)/` | Login |
+| `app/(legal)/` | Public legal/info pages — uses `PublicLayout` |
+| `app/(profile)/` | Public `@username` profile pages |
+| `app/(community)/` | Public channel SEO routes |
+| `app/(public)/` | Landing (`/`), blog, icbucket, icfalcon, products — `PublicLayout` wide |
+| `components/public/` | `nav.tsx`, `footer.tsx`, `layout.tsx`, landing sections |
+| `components/` | Domain UI + shadcn primitives |
+| `services/` | Canister client layer — the only place that talks to the IC |
+| `hooks/` | React hooks holding view logic |
+| `lib/` | Pure helpers by module |
+| `lib/public/site-links.ts` | Nav/footer link lists for public pages |
+| `language/` | The 10 message catalogs plus `config.ts` |
+
+## Public desktop shell
+
+Use `PublicLayout` for every **marketing / legal / blog** page outside
+`(app)`. Authenticated screens keep `AppShell` + `bottom-nav`.
+
+```tsx
+import { PublicLayout } from "@/components/public/layout"
+
+// Legal, blog — centered reading column
+<PublicLayout variant="content">{children}</PublicLayout>
+
+// Product landings — full-width sections
+<PublicLayout variant="wide">{children}</PublicLayout>
+```
+
+| Component | Role |
+|---|---|
+| `PublicNav` | Sticky top bar — logo, Blog / Channels / ICBucket / ICFalcon / About, Sign in |
+| `PublicFooter` | Four-column footer — products, resources, legal, community |
+| `LandingHero` | Binance-style hero with banner image + wallet video |
+| `LandingProducts` | Product cards for Wallet, ICBucket, ICFalcon |
+| `ProductOpenSourceBanner` | Optional CTA block above the footer on product pages |
+
+Route groups already wired:
+
+- `app/(public)/layout.tsx` — landing, blog, icbucket, icfalcon, products
+- `app/(public)/blog/layout.tsx` — inner reading column
+- `app/(legal)/layout.tsx`
+- Authenticated home dashboard: `app/(app)/home` (`/home`)
+
+Do **not** duplicate nav/footer markup in individual pages. Add links in
+`lib/public/site-links.ts`.
 
 ## Talking to the canister
 
@@ -84,6 +124,8 @@ catalogs are in sync; run it after touching any of them.
 User-facing strings go through `t()`. The exception is on-chain data — a memo is
 read by the recipient from the ledger, not rendered from a catalog, so it stays
 English in every locale (see the tip-memo prefix in `components/icpverse/tip-drawer.tsx`).
+
+Public marketing pages (legal, blog, products) are English-only for now.
 
 ## Verification
 

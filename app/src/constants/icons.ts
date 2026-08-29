@@ -48,6 +48,7 @@ export const icons = {
   linkedin: require('../../assets/Icons8/social/icons8-linkedin-48.png'),
   website: require('../../assets/Icons8/interface/icons8-webpage-48.png'),
   list: require('../../assets/Icons8/interface/icons8-list-48.png'),
+  community: require('../../assets/Icons8/MESSAGING/icons8-chat-bubble-48.png'),
 } as const
 
 export type AppIconName = keyof typeof icons
