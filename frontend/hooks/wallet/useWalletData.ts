@@ -13,6 +13,7 @@ import {
   walletKey,
 } from "@/lib/wallet/walletCache"
 import { getCachedLedgerIds } from "@/lib/wallet/ledgerIdsCache"
+import { getCustomTokenMetaSnapshot } from "@/lib/wallet/customTokens"
 import { useTokenRegistry } from "@/lib/token/registry"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import type { DashboardData, UserPublic } from "@/services/types"
@@ -445,44 +446,63 @@ function dedupeById(users: UserPublic[]): UserPublic[] {
 // Read straight from each ICRC-1 ledger, never through the wallet canister:
 // icrc1_balance_of is a query, so the sweep costs no cycles and adds no backend
 // load.
-export function useTokenHoldings() {
+export function useTokenHoldings(customLedgerIds: string[] = []) {
   const { identity } = useAuth()
   const custodian = useCustodian()
   const registry = useTokenRegistry()
   const { mutate: globalMutate } = useSWRConfig()
   const principal = identity?.getPrincipal().toText()
-  const balancesKey = custodian && identity ? keyFor(identity, "token-balances") : null
+  const customKey = customLedgerIds.slice().sort().join(",")
+  const balancesKey =
+    custodian && identity ? keyFor(identity, "token-balances", customKey) : null
 
-  const { data: balances, isLoading: loadingBalances } = useSWR(
+  const { data: balances, isLoading: loadingBalances, mutate } = useSWR(
     balancesKey,
     async () => {
       const ledgerIds = await getCachedLedgerIds(identity)
+      const seen = new Set(ledgerIds)
+      const merged = [...ledgerIds]
+      for (const id of customLedgerIds) {
+        if (!seen.has(id)) {
+          merged.push(id)
+          seen.add(id)
+        }
+      }
       const owner = custodian!
       const subaccount = custodialSubaccount(identity!.getPrincipal())
       return fetchTokenBalancesTiered(
-        ledgerIds,
+        merged,
         owner,
         subaccount,
         identity,
         principal!,
-        (merged) => {
-          if (balancesKey) void globalMutate(balancesKey, merged, { revalidate: false })
+        (partial) => {
+          if (balancesKey) void globalMutate(balancesKey, partial, { revalidate: false })
         }
       )
     },
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
-  const displayIds = balances ? metadataLedgerIds(balances) : []
-  const metadataIds = balances ? visibleMetadataLedgerIds(balances) : []
+  const balanceIds = balances ? metadataLedgerIds(balances) : []
+  const displayIds = [...new Set([...balanceIds, ...customLedgerIds])].sort()
+  const metadataIds = [
+    ...new Set([
+      ...(balances ? visibleMetadataLedgerIds(balances) : []),
+      ...customLedgerIds,
+    ]),
+  ].sort()
+  const customMeta = principal ? getCustomTokenMetaSnapshot(principal) : new Map()
   const { data: metadata, isLoading: loadingMetadata } = useSWRImmutable(
-    registry && metadataIds.length ? (["token-metadata", metadataIds.join(",")] as const) : null,
+    metadataIds.length ? (["token-metadata", metadataIds.join(",")] as const) : null,
     async () => {
       const entries = await Promise.all(
         metadataIds.map(async (id) => {
-          const fromRegistry = metadataFromRegistry(id, registry!)
+          const cached = customMeta.get(id)
+          if (cached) return [id, cached] as const
+          const fromRegistry = registry ? metadataFromRegistry(id, registry) : null
           if (fromRegistry) return [id, fromRegistry] as const
-          const meta = await fetchTokenMetadata(id, identity, registry!)
+          const meta = await fetchTokenMetadata(id, identity, registry ?? undefined)
           return meta ? ([id, meta] as const) : null
         })
       )
@@ -493,9 +513,10 @@ export function useTokenHoldings() {
   const holdings: TokenHolding[] = displayIds.flatMap((ledgerId) => {
     const meta =
       metadata?.get(ledgerId) ??
+      customMeta.get(ledgerId) ??
       (registry ? metadataFromRegistry(ledgerId, registry) : null)
     if (!meta) return []
-    return [{ ...meta, balance: balances!.get(ledgerId)! }]
+    return [{ ...meta, balance: balances?.get(ledgerId) ?? 0n }]
   })
 
   useEffect(() => {
@@ -533,6 +554,7 @@ export function useTokenHoldings() {
           metadataIds.length > 0 &&
           loadingMetadata &&
           !metadata)),
+    refresh: () => void mutate(),
   }
 }
 
