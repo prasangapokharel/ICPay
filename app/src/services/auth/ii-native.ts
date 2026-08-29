@@ -7,11 +7,17 @@ import {
 } from '@icp-sdk/core/identity'
 import type { Identity } from '@icp-sdk/core/agent'
 import { persistIdentity } from '@/services/auth/auth'
+import type { OpenIdProvider } from '@/constants/images'
 
 WebBrowser.maybeCompleteAuthSession()
 
 export const II_CALLBACK = 'icpay://ii-callback'
 export const AUTH_BRIDGE_URL = 'https://icpay.app/native-auth'
+
+export type AuthBridgeOptions = {
+  provider?: string
+  openIdProvider?: OpenIdProvider
+}
 
 function toHex(bytes: Uint8Array): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
@@ -24,12 +30,18 @@ function sameBytes(a: Uint8Array, b: Uint8Array): boolean {
   return n === 0
 }
 
-export function buildAuthBridgeUrl(session: Ed25519KeyIdentity, provider?: string): string {
+function resolveOptions(options?: AuthBridgeOptions | string): AuthBridgeOptions {
+  return typeof options === 'string' ? { provider: options } : (options ?? {})
+}
+
+export function buildAuthBridgeUrl(session: Ed25519KeyIdentity, options?: AuthBridgeOptions | string): string {
+  const { provider, openIdProvider } = resolveOptions(options)
   const params = new URLSearchParams({
     appKey: toHex(new Uint8Array(session.getPublicKey().toDer())),
     redirect: II_CALLBACK,
   })
   if (provider) params.set('provider', provider)
+  if (openIdProvider) params.set('openIdProvider', openIdProvider)
   return `${AUTH_BRIDGE_URL}#${params.toString()}`
 }
 
@@ -52,16 +64,19 @@ export function createAuthSession(): Ed25519KeyIdentity {
 }
 
 export async function loginWithNative(
-  provider?: string,
+  options?: AuthBridgeOptions | string,
   session = createAuthSession(),
 ): Promise<Identity | null> {
-  const authUrl = buildAuthBridgeUrl(session, provider)
+  const authUrl = buildAuthBridgeUrl(session, options)
   const result = await WebBrowser.openAuthSessionAsync(authUrl, II_CALLBACK)
   if (result.type !== 'success' || !('url' in result) || !result.url) return null
   return identityFromCallback(result.url, session)
 }
 
-export function openAuthInBrowser(provider?: string, session = createAuthSession()): Ed25519KeyIdentity {
-  void Linking.openURL(buildAuthBridgeUrl(session, provider))
+export function openAuthInBrowser(
+  options?: AuthBridgeOptions | string,
+  session = createAuthSession(),
+): Ed25519KeyIdentity {
+  void Linking.openURL(buildAuthBridgeUrl(session, options))
   return session
 }

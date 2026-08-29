@@ -404,7 +404,8 @@
     "historyTitle": "التاريخ على السلسلة",
     "snsLink": "عرض خدمات الشبكات الاجتماعية",
     "snsDashboard": "لوحة القيادة SNS",
-    "snsSwap": "مبادلة SNS"
+    "snsSwap": "مبادلة SNS",
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
   },
   "tokenHistory": {
     "empty": "لا يوجد عدد كبير من المعاملات المبهرسة حتى الآن.",

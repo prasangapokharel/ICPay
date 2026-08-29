@@ -254,6 +254,7 @@ persistent actor self {
   // Chain-key symbols are compiled in, so seeding them costs no calls and runs
   // on every start rather than needing a migration. Reserving is idempotent.
   TokenService.seedReservedSymbols(tokenService, ["ICP", "CKBTC", "CKETH", "CKUSDC", "CKUSDT"]);
+  ignore TokenService.registerLaunchedLedgers(tokenService);
 
   // Timers do not survive an upgrade, so this is armed at actor scope: it runs on
   // fresh install and again after every deploy, where a postupgrade-only hook
@@ -274,9 +275,9 @@ persistent actor self {
   include UsersApi(userService, mwConfig);
   include AdminApi(adminService, mwConfig);
   include DashboardApi(dashboardService, mwConfig);
-  include DepositApi(depositService, mwConfig);
+  include DepositApi(depositService, tokenService, mwConfig);
   include WithdrawApi(withdrawService, mwConfig);
-  include LedgersApi(ledger, mwConfig);
+  include LedgersApi(ledger, tokenService, mwConfig);
   include TransferApi(transferService, mwConfig);
   include UsernameSaleApi(usernameSaleService, mwConfig);
   include SaleApi(saleService, mwConfig);

@@ -7,8 +7,9 @@ import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { sweepToCustody } from "@/services/sweep/sweep"
+import { syncDeposits } from "@/services/deposit/deposit"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useDepositAddress, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useDepositAddress, useLedgerSupported, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import type { TokenHolding } from "@/services/tokens"
 
 export function SelfCustodyCard({
@@ -23,20 +24,18 @@ export function SelfCustodyCard({
   const { identity } = useAuth()
   const { data: deposit } = useDepositAddress()
   const refreshWallet = useRefreshWallet()
+  const { supported, isLoading: checkingSupport } = useLedgerSupported(token.ledgerId)
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [moved, setMoved] = useState(false)
 
-  // The fee is charged on top of the amount, so the whole balance can never be
-  // sent -- and a balance at or below the fee cannot move at all.
   const net = balance > token.fee ? balance - token.fee : 0n
   const full = (v: bigint) => formatTokenAmount(v, token.decimals, token.decimals)
+  const canMove = supported === true && net > 0n
 
   const handleSweep = async () => {
-    // Without the custodian the destination is unknown, and guessing it would
-    // send real funds to an account nobody controls.
-    if (!deposit) return
+    if (!deposit || !canMove) return
     setLoading(true)
     setError(null)
 
@@ -47,6 +46,8 @@ export function SelfCustodyCard({
       setLoading(false)
       return
     }
+
+    await syncDeposits(identity, token.ledgerId)
 
     setMoved(true)
     setLoading(false)
@@ -92,16 +93,28 @@ export function SelfCustodyCard({
             />
           </div>
 
+          {supported === false && (
+            <Alert>
+              <AlertDescription>{t("selfCustodyUnsupported")}</AlertDescription>
+            </Alert>
+          )}
+
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
-          <Button className="w-full" onClick={handleSweep} disabled={loading || !deposit}>
-            {loading && <Spinner className="size-4" />}
-            {loading ? t("selfCustodyMoving") : t("selfCustodyMove")}
-          </Button>
+          {canMove && (
+            <Button
+              className="w-full"
+              onClick={handleSweep}
+              disabled={loading || !deposit || checkingSupport}
+            >
+              {loading && <Spinner className="size-4" />}
+              {loading ? t("selfCustodyMoving") : t("selfCustodyMove")}
+            </Button>
+          )}
         </>
       ) : (
         balance > 0n && (

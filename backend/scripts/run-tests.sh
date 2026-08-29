@@ -88,6 +88,7 @@ run_test "$ROOT/testing/services/TransactionService.test.mo" "TransactionService
 run_test "$ROOT/testing/services/AnalyticsService.test.mo" "AnalyticsService"
 run_test "$ROOT/testing/services/SettingsService.test.mo" "SettingsService"
 run_test "$ROOT/testing/services/TokenService.test.mo" "TokenService"
+run_test "$ROOT/testing/services/TokenCustody.test.mo" "TokenCustody"
 run_test "$ROOT/testing/services/BookmarkService.test.mo" "BookmarkService"
 run_test "$ROOT/testing/services/LiveService.test.mo" "LiveService"
 run_test "$ROOT/testing/services/IcCommunityService.test.mo" "IcCommunityService"

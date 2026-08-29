@@ -74,6 +74,8 @@ const snsWasmIdl: IDL.InterfaceFactory = ({ IDL }) => {
   })
 }
 
+export type TokenMetadata = Omit<TokenHolding, "balance">
+
 export type TokenHolding = {
   ledgerId: string
   balance: bigint

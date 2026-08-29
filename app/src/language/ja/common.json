@@ -5,7 +5,9 @@
     "send": "送金",
     "menu": "メニュー",
     "buyUsername": "ユーザー名を購入",
-    "live": "Hotspot"
+    "live": "Hotspot",
+    "history": "History",
+    "presale": "Presale"
   },
   "common": {
     "send": "送金",
@@ -86,7 +88,9 @@
       "blog": "ブログ",
       "analytics": "Analytics",
       "live": "Live",
-      "security": "セキュリティ"
+      "security": "セキュリティ",
+      "community": "Channels",
+      "communityBadge": "Beta"
     },
     "preferencesDescription": "言語・通貨・法務ページ"
   },
@@ -132,7 +136,13 @@
     "legalAnd": "および",
     "legalPrivacy": "プライバシーポリシー",
     "openInBrowser": "Open in browser",
-    "browserHint": "If the in-app window fails, continue in your browser."
+    "browserHint": "If the in-app window fails, continue in your browser.",
+    "openIdNote": "Uses your linked Google, Apple, or Microsoft account through Internet Identity.",
+    "openId": {
+      "google": "Continue with Google",
+      "apple": "Continue with Apple",
+      "microsoft": "Continue with Microsoft"
+    }
   },
   "transfer": {
     "title": "送金",
@@ -325,7 +335,16 @@
     "noTokensFound": "該当するトークンはありません。",
     "outsideAmount": "+{amount} 外部",
     "selfCustodyNotice": "ICPay の外に資金があります。トークンを開いて移してください。",
-    "swapCta": "スワップ"
+    "swapCta": "スワップ",
+    "addToken": "Add token",
+    "addTokenTitle": "Add custom token",
+    "addTokenHint": "Paste an ICRC ledger canister ID. It is saved on this device only.",
+    "addTokenLabel": "Ledger canister",
+    "addTokenPlaceholder": "e.g. ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "addTokenInvalid": "Enter a valid canister ID.",
+    "addTokenExists": "This token is already in your list.",
+    "addTokenNotFound": "Could not load token metadata from this canister.",
+    "addTokenAction": "Add token"
   },
   "token": {
     "back": "ウォレット",
@@ -1000,7 +1019,24 @@
     "disclosureInfo": "ICPAY's minting account is a live key — supply is not fixed and more tokens can be issued. Always verify icrc1_total_supply and icrc1_minting_account on the ledger before you buy.",
     "progressInfoTitle": "Progress & remaining",
     "progressInfo": "Sold = presale cap − remaining inventory.\n\nCap is 10,000,000 ICPAY. Remaining is the live balance in the canister sale subaccount on the ICPAY ledger.\n\nICP raised = ICPAY sold ÷ 20,000.",
-    "presaleInfoTitle": "About the presale"
+    "presaleInfoTitle": "About the presale",
+    "heroTitle": "ICPAY Presale",
+    "heroSubtitle": "Early access before the DEX launch",
+    "heroRate": "1 ICP = 20,000 ICPAY",
+    "liveBadge": "Live",
+    "viewGuide": "How the presale works",
+    "guideNext": "Next",
+    "guidePrevious": "Previous",
+    "guideClose": "Close guide",
+    "guideStart": "Start buying",
+    "guideStep1Title": "Welcome to the presale",
+    "guideStep1Body": "Buy ICPAY at a fixed rate with ICP from your ICPay wallet. Tokens land in your account as soon as the purchase confirms.",
+    "guideStep2Title": "Liquidity on day one",
+    "guideStep2Body": "When the presale ends, every ICP raised is paired with ICPAY and added to the ICPSwap pool at the same rate — early buyers are not left underwater.",
+    "guideStep3Title": "Premium identity",
+    "guideStep3Body": "ICPAY holders can claim premium usernames on ICPay — shorter handles, verified badges, and priority across the app.",
+    "guideStep4Title": "Ready to buy?",
+    "guideStep4Body": "Pick an amount between 0.1 and 50 ICP per purchase, review the quote, and confirm. You can buy again anytime while inventory lasts."
   },
   "deviceSecurity": {
     "title": "セキュリティ",
@@ -1027,5 +1063,55 @@
     "unlockBio": "この端末でロック解除",
     "unlockBody": "この支払いを確認するには PIN を入力してください",
     "failed": "ロックを解除できませんでした。もう一度お試しください。"
+  },
+  "community": {
+    "title": "Channels",
+    "subtitle": "Broadcast communities — read free, post as creator",
+    "newChannel": "New",
+    "explore": "Explore",
+    "mine": "My channels",
+    "empty": "No channels yet",
+    "emptyHint": "Create one or explore public channels.",
+    "membersLabel": "members",
+    "free": "Free",
+    "paid": "Paid",
+    "join": "Join",
+    "payToJoin": "Pay {price} ICP",
+    "getIn": "Get in",
+    "joining": "Joining…",
+    "leave": "Leave channel",
+    "postPlaceholder": "Broadcast a message…",
+    "pinned": "Pinned",
+    "noMessages": "No messages yet",
+    "joinToRead": "Get in to start reading",
+    "joinPrice": "{price} ICP one-time",
+    "createTitle": "New channel",
+    "createSubtitle": "Telegram-style broadcast for your audience",
+    "name": "Name",
+    "namePlaceholder": "Alpha Calls",
+    "slug": "Username",
+    "slugHint": "3–32 chars, lowercase, digits, underscores",
+    "slugInvalid": "Name and username (min 3 chars) required",
+    "bio": "Bio",
+    "bioPlaceholder": "What is this channel about?",
+    "visibility": "Visibility",
+    "public": "Public",
+    "private": "Private",
+    "access": "Access",
+    "price": "Price (ICP)",
+    "priceHint": "0.1 – 10 ICP, one-time to join",
+    "priceInvalid": "Enter {min} – {max} ICP",
+    "create": "Create channel",
+    "creating": "Creating…",
+    "createFailed": "Could not create channel",
+    "joinFailed": "Could not join",
+    "leaveFailed": "Could not leave",
+    "ownerChannel": "Your channel",
+    "joined": "Joined",
+    "membersCount": "{count} members",
+    "sendAria": "Send broadcast",
+    "pin": "Pin message",
+    "unpin": "Unpin message",
+    "delete": "Delete message"
   }
 }

@@ -8,14 +8,14 @@ import { cn } from '@/lib/utils'
 
 const navItems: {
   href: string
-  labelKey: 'home' | 'icpverse' | 'send' | 'menu' | 'live'
+  labelKey: 'home' | 'icpverse' | 'history' | 'menu' | 'presale'
   icon: AppIconName
   center?: boolean
 }[] = [
   { href: '/', labelKey: 'home', icon: 'home' },
   { href: '/icpverse', labelKey: 'icpverse', icon: 'icpverse' },
-  { href: '/live', labelKey: 'live', icon: 'live', center: true },
-  { href: '/transfer', labelKey: 'send', icon: 'send' },
+  { href: '/icpay/presale', labelKey: 'presale', icon: 'icpay', center: true },
+  { href: '/transactions', labelKey: 'history', icon: 'history' },
   { href: '/settings', labelKey: 'menu', icon: 'menu' },
 ]
 
@@ -57,6 +57,7 @@ function NavTab({
   center?: boolean
 }) {
   const router = useRouter()
+  const filled = center && icon === 'icpay'
   return (
     <Pressable
       accessibilityRole="button"
@@ -67,24 +68,22 @@ function NavTab({
     >
       <View
         className={cn(
-          'items-center justify-center rounded-full',
+          'items-center justify-center overflow-hidden rounded-full',
           center ? 'size-12' : 'size-9',
-          active ? 'bg-foreground/10' : 'bg-muted/60',
+          filled ? 'ring-1 ring-border/60' : active ? 'bg-foreground/10' : 'bg-muted/60',
         )}
       >
-        <AppIcon name={icon} size={center ? 26 : 16} />
+        <AppIcon name={icon} size={filled ? 36 : center ? 26 : 16} />
       </View>
-      {center ? null : (
-        <Text
-          numberOfLines={1}
-          className={cn(
-            'mt-0.5 max-w-full px-0.5 text-[10px] font-medium',
-            active ? 'text-foreground' : 'text-muted-foreground',
-          )}
-        >
-          {label}
-        </Text>
-      )}
+      <Text
+        numberOfLines={1}
+        className={cn(
+          'mt-0.5 max-w-full px-0.5 text-[10px] font-medium',
+          active ? 'text-foreground' : 'text-muted-foreground',
+        )}
+      >
+        {label}
+      </Text>
     </Pressable>
   )
 }

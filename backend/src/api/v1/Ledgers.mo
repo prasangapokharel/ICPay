@@ -1,9 +1,10 @@
 import Principal "mo:core/Principal";
 import Types "../../types";
 import LedgerService "../../services/LedgerService";
+import TokenService "../../services/TokenService";
 import MiddlewareAuth "../../middleware/Auth";
 
-mixin (ledger: LedgerService.LedgerService, mwConfig: MiddlewareAuth.Config) {
+mixin (ledger: LedgerService.LedgerService, tokens: TokenService.TokenService, mwConfig: MiddlewareAuth.Config) {
   // Controller-only, matching AdminService: this grows the set of canisters the
   // custodian is willing to call, which is an authorization decision even though
   // the data comes from the NNS.
@@ -15,6 +16,6 @@ mixin (ledger: LedgerService.LedgerService, mwConfig: MiddlewareAuth.Config) {
   };
 
   public shared query func isLedgerSupported(ledgerId: Text) : async Bool {
-    LedgerService.isAllowed(ledger, ledgerId);
+    TokenService.isCustodiedLedger(tokens, ledgerId);
   };
 };

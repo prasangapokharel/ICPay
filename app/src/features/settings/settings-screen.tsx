@@ -45,6 +45,7 @@ export function SettingsScreen() {
       key: 'identity',
       items: [
         { href: '/icpverse', key: 'icpverse', icon: 'icpverse' },
+        { href: '/channels', key: 'community', icon: 'community', badge: 'communityBadge' },
         { href: '/live', key: 'live', icon: 'live' },
       ],
     },
@@ -104,7 +105,7 @@ export function SettingsScreen() {
                   <AppIcon name={item.icon} size={24} />
                   {item.badge ? (
                     <View className="absolute -top-1.5 -right-1.5 rounded-md bg-amber-300 px-1.5 py-0.5">
-                      <Text className="text-[9px] font-bold uppercase">{item.badge}</Text>
+                      <Text className="text-[9px] font-bold uppercase">{t(`items.${item.badge}`)}</Text>
                     </View>
                   ) : null}
                 </View>

@@ -404,7 +404,8 @@
     "historyTitle": "Lịch sử on-chain",
     "snsLink": "Xem SNS",
     "snsDashboard": "Bảng điều khiển SNS",
-    "snsSwap": "Swap SNS"
+    "snsSwap": "Swap SNS",
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
   },
   "tokenHistory": {
     "empty": "Chưa có giao dịch được lập chỉ mục.",

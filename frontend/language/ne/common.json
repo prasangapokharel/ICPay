@@ -404,7 +404,8 @@
     "historyTitle": "अन-चेन इतिहास",
     "snsLink": "SNS हेर्नुहोस्",
     "snsDashboard": "SNS ड्यासबोर्ड",
-    "snsSwap": "SNS स्वैप"
+    "snsSwap": "SNS स्वैप",
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
   },
   "tokenHistory": {
     "empty": "कुनै अनुक्रमित लेनदेन छैन।",

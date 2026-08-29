@@ -404,7 +404,8 @@
     "historyTitle": "Sejarah on-chain",
     "snsLink": "Lihat SNS",
     "snsDashboard": "Dasbor SNS",
-    "snsSwap": "pertukaran SNS"
+    "snsSwap": "pertukaran SNS",
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
   },
   "tokenHistory": {
     "empty": "Belum ada transaksi yang diindeks.",
