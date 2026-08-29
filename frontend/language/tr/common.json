@@ -367,7 +367,17 @@
     "noTokensFound": "Aramayla eşleşen token yok.",
     "outsideAmount": "+{amount} dışarıda",
     "swapCta": "Swap",
-    "selfCustodyNotice": "Fonları ICPay dışında tutuyorsunuz. İçeri taşımak için token'ı açın."
+    "selfCustodyNotice": "Fonları ICPay dışında tutuyorsunuz. İçeri taşımak için token'ı açın.",
+    "addToken": "Add token",
+    "addTokenTitle": "Add custom token",
+    "addTokenHint": "Paste an ICRC ledger canister ID. It is saved on this device only.",
+    "addTokenLabel": "Ledger canister",
+    "addTokenPlaceholder": "e.g. ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "addTokenInvalid": "Enter a valid canister ID.",
+    "addTokenExists": "This token is already in your list.",
+    "addTokenNotFound": "Could not load token metadata from this canister.",
+    "addTokenAction": "Add token",
+    "customToken": "Custom token"
   },
   "token": {
     "back": "Cüzdan",

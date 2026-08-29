@@ -336,7 +336,17 @@
     "noTokensFound": "Нет токенов, соответствующих запросу.",
     "outsideAmount": "+{amount} снаружи",
     "selfCustodyNotice": "У вас есть средства вне ICPay. Откройте токен, чтобы перевести их.",
-    "swapCta": "Обмен"
+    "swapCta": "Обмен",
+    "addToken": "Add token",
+    "addTokenTitle": "Add custom token",
+    "addTokenHint": "Paste an ICRC ledger canister ID. It is saved on this device only.",
+    "addTokenLabel": "Ledger canister",
+    "addTokenPlaceholder": "e.g. ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "addTokenInvalid": "Enter a valid canister ID.",
+    "addTokenExists": "This token is already in your list.",
+    "addTokenNotFound": "Could not load token metadata from this canister.",
+    "addTokenAction": "Add token",
+    "customToken": "Custom token"
   },
   "token": {
     "back": "Кошелёк",
