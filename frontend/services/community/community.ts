@@ -57,9 +57,13 @@ export function isCommunityPaid(a: CommunityAccess): boolean {
   return "paid" in a
 }
 
-export function ownerHandle(channel: CommunityChannelPublic): string {
+export function ownerHandle(channel: {
+  owner: Principal | string
+  ownerUsername: [] | [string]
+}): string {
   const u = channel.ownerUsername[0]
-  return u ? `@${u}` : channel.owner.toText().slice(0, 8) + "…"
+  const text = typeof channel.owner === "string" ? channel.owner : channel.owner.toText()
+  return u ? `@${u}` : text.slice(0, 8) + "…"
 }
 
 export async function listPublicCommunityChannels(

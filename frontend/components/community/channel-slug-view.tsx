@@ -6,14 +6,14 @@ import { CommunityWorkspace } from "@/components/community/community-workspace"
 import { ChannelPublicLanding } from "@/components/community/channel-public-landing"
 import { AppShell } from "@/components/layout/app-shell"
 import { Spinner } from "@/components/ui/spinner"
-import type { CommunityChannelPublic } from "@/services/community/community"
+import type { CommunityChannelSnapshot } from "@/lib/community/snapshot"
 
 export function ChannelSlugView({
   slug,
   channel,
 }: {
   slug: string
-  channel: CommunityChannelPublic | null
+  channel: CommunityChannelSnapshot | null
 }) {
   const { isAuthenticated, isLoading } = useAuth()
 

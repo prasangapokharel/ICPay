@@ -1,12 +1,13 @@
 import Link from "next/link"
 import { CommunityAvatar } from "@/components/community/community-avatar"
 import { channelPath } from "@/lib/community/seo"
-import { ownerHandle, type CommunityChannelPublic } from "@/services/community/community"
+import type { CommunityChannelSnapshot } from "@/lib/community/snapshot"
+import { ownerHandle } from "@/services/community/community"
 
 export function ChannelsPublicDirectory({
   channels,
 }: {
-  channels: CommunityChannelPublic[]
+  channels: CommunityChannelSnapshot[]
 }) {
   return (
     <div className="min-h-svh bg-muted/40">
@@ -58,7 +59,7 @@ export function ChannelsPublicDirectory({
                         <p className="mt-1 line-clamp-2 text-sm text-foreground/80">{bio}</p>
                       ) : null}
                       <p className="mt-1 text-xs text-muted-foreground">
-                        {ch.memberCount.toString()} members · {ownerHandle(ch)}
+                        {ch.memberCount} members · {ownerHandle(ch)}
                       </p>
                     </div>
                   </Link>

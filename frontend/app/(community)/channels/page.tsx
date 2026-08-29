@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { connection } from "next/server"
 import { Suspense } from "react"
 import { isChannelIndexable } from "@/lib/community/seo"
+import { toCommunityChannelSnapshot } from "@/lib/community/snapshot"
 import { listAllPublicChannelsForSeo } from "@/services/community/community"
 import { ChannelsIndexView } from "@/components/community/channels-index-view"
 import { Spinner } from "@/components/ui/spinner"
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
 async function ChannelsIndexLoader() {
   await connection()
   const channels = await listAllPublicChannelsForSeo()
-  const open = channels.filter(isChannelIndexable)
+  const open = channels.map(toCommunityChannelSnapshot).filter(isChannelIndexable)
   return <ChannelsIndexView channels={open} />
 }
 
