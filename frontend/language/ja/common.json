@@ -852,6 +852,16 @@
     "docsTitle": "ICPay Cloudガイド",
     "docsSubtitle": "オンチェーン暗号化ファイルストレージ",
     "docsStorageTitle": "提供内容",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "バケットはICPay残高から月額課金されます。ファイルはcanister上で保存時暗号化されます。",
     "docsImagesOnly": "画像、ドキュメント、コード、アーカイブ、音声、フォント（完全なリストはPricingを参照）。",
     "docsWebpNote": "ネイティブ形式は最大10 MB。大きなファイルは自動チャンク分割（IC ingress制限は1回2 MiB）。",
@@ -1223,5 +1233,725 @@
       "rejected": "Rejected"
     },
     "snsProjectLink": "View SNS project"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "メニュー",
+      "signIn": "サインイン",
+      "wallet": "ウォレット",
+      "openWallet": "ウォレットを開く",
+      "openMenu": "メニューを開く",
+      "sectionProducts": "プロダクト",
+      "sectionResources": "リソース",
+      "sectionLegal": "法的情報",
+      "primary": {
+        "blog": "ブログ"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay ウォレット",
+          "description": "Internet Identity でサインインし、ユーザー名で ICP を送金。"
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "API キー、SDK、ICP プランに対応したオンチェーンストレージ。"
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "グローバル CLI 付きの本番向け Motoko フレームワーク。"
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "ICFalcon プロジェクトのコマンドとワークフロー。"
+        },
+        "icpHubPackages": {
+          "title": "ICP-Hub パッケージ",
+          "description": "Internet Computer 開発向けの厳選パッケージ。"
+        },
+        "icbucketDocs": {
+          "title": "ICBucket ドキュメント",
+          "description": "ストレージの API リファレンスと統合ガイド。"
+        },
+        "blog": {
+          "title": "ブログ",
+          "description": "ガイド、チュートリアル、ICP エコシステムの記事。"
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "概要",
+          "description": "ICPay とは何か、ユーザー名決済の仕組み。"
+        },
+        "faq": {
+          "title": "よくある質問",
+          "description": "ウォレットとプロダクトに関するよくある質問への回答。"
+        },
+        "roadmap": {
+          "title": "ロードマップ",
+          "description": "リリース済み機能、今後の予定、作らないもの。"
+        },
+        "brands": {
+          "title": "ブランド",
+          "description": "商標とブランド利用ポリシー。"
+        },
+        "terms": {
+          "title": "利用規約",
+          "description": "ICPay 利用に関するサービス規約。"
+        },
+        "privacy": {
+          "title": "プライバシー",
+          "description": "データとアカウント情報の取り扱い。"
+        },
+        "transparency": {
+          "title": "透明性",
+          "description": "カストディモデル、手数料、オンチェーン運用。"
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "プロダクト",
+      "sectionResources": "リソース",
+      "sectionLegal": "法的情報",
+      "sectionCommunity": "コミュニティ",
+      "copyright": "© 2026 ICPay. All rights reserved.",
+      "blog": "ブログ",
+      "channels": "チャンネル",
+      "wallet": "ウォレット",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "wallet": "ICPay ウォレット"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "ICP-Hub パッケージ",
+        "icbucketDocs": "ICBucket ドキュメント",
+        "blog": "ブログ"
+      },
+      "legal": {
+        "about": "概要",
+        "faq": "よくある質問",
+        "roadmap": "ロードマップ",
+        "brands": "ブランド",
+        "terms": "利用規約",
+        "privacy": "プライバシー",
+        "transparency": "透明性"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      }
+    },
+    "heroSignOptions": {
+      "label": "Internet Identity によるサインイン",
+      "ariaLabel": "Internet Identity 経由の Google、Apple、Microsoft サインイン"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Internet Computer ウォレット",
+        "title": "ユーザー名で ICP を送る。63 文字のアドレスは不要",
+        "tagline": "ICPay は Internet Computer 上のオープンソース・カストディアルウォレットです。ハンドルを取得し、誰からでも支払いを受け取り、チャンネル、オンチェーンストレージ、Motoko ツールをひとつのエコシステムで探索できます。",
+        "openWallet": "ウォレットを開く",
+        "browseChannels": "チャンネルを見る",
+        "signIn": "サインイン",
+        "aboutIcPay": "ICPay について",
+        "imageAlt": "モバイル版 ICPay ウォレット"
+      },
+      "cta": {
+        "signedInTitle": "サインイン済みです",
+        "signedInBody": "ウォレットを開いて ICP を送金したり、残高を確認したり、チャンネルやトークンを探索しましょう。",
+        "readyTitle": "ユーザー名で ICP を動かす準備はできましたか？",
+        "readyBody": "Internet Identity でサインインし、ハンドルを取得すれば、数秒で送金を始められます。シードフレーズ不要。ブラウザ拡張も不要です。",
+        "openWallet": "ウォレットを開く",
+        "browseChannels": "チャンネルを見る",
+        "signIn": "サインイン"
+      },
+      "features": {
+        "eyebrow": "プラットフォーム",
+        "title": "日常ユーザーと ICP 開発者のために構築",
+        "subtitle": "ICPay はウォレット以上のものです。Internet Computer 上の決済、コミュニティ、ストレージ、canister 開発への入り口です。",
+        "items": {
+          "0": {
+            "title": "ユーザー名決済",
+            "body": "ハンドルを取得して icpay.app/yourname を共有。送金者はアカウントも 63 文字の principal も不要です。"
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "パスキーまたは連携アカウントでサインイン。シードフレーズの書き留めもブラウザ拡張も不要です。"
+          },
+          "2": {
+            "title": "チャンネル",
+            "body": "Telegram 風のブロードキャストコミュニティ。公開ディスカバリー、非公開招待、Markdown 投稿に対応。"
+          },
+          "3": {
+            "title": "ICBucket ストレージ",
+            "body": "API キーと SDK 付きのオンチェーンファイルストレージ。カード請求の代わりに ICP で 30 日プランを購入。"
+          },
+          "4": {
+            "title": "ICFalcon フレームワーク",
+            "body": "レイヤー強制、テスト、Internet Computer アプリ向けグローバル CLI を備えた本番向け Motoko スキャフォールド。"
+          },
+          "5": {
+            "title": "透明なカストディ",
+            "body": "資金は公式 ICP レジャーのユーザー別サブアカウントに保管。バックエンドはオープンソースで、メインネットではアップグレードのみ。"
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "よくある質問",
+        "title": "よくある質問",
+        "subtitle": "ウォレット、カストディモデル、ICPay スタックのその他についての簡潔な回答。",
+        "items": {
+          "0": {
+            "question": "ICPay とは何ですか？",
+            "answer": "ICPay は Internet Computer 上のカストディアルウォレットです。Internet Identity でサインインし、ユーザー名を取得して、長い principal アドレスの代わりにそのハンドルで ICP の送受信ができます。"
+          },
+          "1": {
+            "question": "シードフレーズは必要ですか？",
+            "answer": "いいえ。認証は Internet Identity が処理します。パスキーまたは連携 ID プロバイダーでアクセスを承認するだけで、紙に保存するニーモニックはありません。"
+          },
+          "2": {
+            "question": "ICPay はセルフカストディですか？",
+            "answer": "ICPay はカストディアルです。残高は ICPay canister が管理するユーザー別サブアカウントに保管され、あなたの principal のみが送金を承認できます。バックエンドコードはオープンソースでメインネットにデプロイされています。"
+          },
+          "3": {
+            "question": "ウォレット以外に何が含まれますか？",
+            "answer": "同じエコシステムには公開チャンネル、ICBucket オンチェーンストレージ、ICFalcon（構造化 CLI で canister を構築・デプロイする Motoko フレームワーク）が含まれます。"
+          },
+          "4": {
+            "question": "チャンネルはどのように機能しますか？",
+            "answer": "チャンネルはブロードキャストコミュニティです。オーナーは Telegram 風 Markdown で更新を投稿します。公開チャンネルは探索で見つけられ、非公開チャンネルはユーザー名または招待リンクでアクセスできます。"
+          },
+          "5": {
+            "question": "詳しくはどこで読めますか？",
+            "answer": "概要、よくある質問、透明性の各ページで製品詳細を確認するか、ブログで Internet Computer のガイドと開発者リソースをご覧ください。"
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "仕組み",
+        "title": "使い方は難しいですか？",
+        "subtitle": "そうでもありません。Internet Identity サインインからユーザー名での ICP 送金まで 6 ステップ。ブラウザ拡張もニーモニックの書き留めも不要です。",
+        "stepLabel": "ステップ {step}",
+        "steps": {
+          "0": {
+            "title": "Internet Identity でサインイン",
+            "body": "パスキーまたは連携アカウントを使用。パスワード帳もシードフレーズの紛失もありません。"
+          },
+          "1": {
+            "title": "@username を取得",
+            "body": "ハンドルは一度だけ選択。63 文字の principal の代わりに icpay.app/yourname で支払いを受け取れます。"
+          },
+          "2": {
+            "title": "リンクまたはアドレスを共有",
+            "body": "ICP で支払う必要がある人に、ユーザー名ページまたは入金アドレスを送ります。"
+          },
+          "3": {
+            "title": "@username で送金",
+            "body": "数秒で ICP を転送。ハンドルを入力し、金額を確認すれば、レジャーにオンチェーンで記録されます。"
+          },
+          "4": {
+            "title": "すべての転送を追跡",
+            "body": "残高と履歴は公式 ICP レジャーに紐づきます。ブロックエクスプローラーで任意のトランザクションを開けます。"
+          },
+          "5": {
+            "title": "フルスタックを活用",
+            "body": "コミュニティにはチャンネル、オンチェーンファイルには ICBucket、Motoko 開発には ICFalcon——同じエコシステムです。"
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "支払い方法",
+        "title": "ユーザー名で送金、またはスキャンして支払い",
+        "subtitle": "@username を入力して ICP を送金するか、プロフィール QR コードを開いて受け取ります。同じウォレット、2 つの方法——どちらも Internet Computer レジャーで決済されます。",
+        "imageAlt": "ICPay 決済フロー：左はユーザー名での ICP 送金、右は QR コードスキャン決済"
+      },
+      "products": {
+        "eyebrow": "エコシステム",
+        "title": "ICPay 上に構築されたすべて",
+        "subtitle": "ウォレット、ストレージ、canister ツールをひとつのスタックに——Internet Computer のビルダーと日常ユーザー向けに設計。",
+        "items": {
+          "wallet": {
+            "title": "ICPay ウォレット",
+            "description": "ユーザー名ハンドルと Internet Identity で ICP の送受信・保管。",
+            "cta": "ウォレットを開く"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "API キー、SDK、30 日 ICP プラン付きのオンチェーンクラウドストレージ。",
+            "cta": "ストレージを探索"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "レイヤードアーキテクチャとグローバル CLI を備えた本番向け Motoko フレームワーク。",
+            "cta": "ICP で構築"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "社会的証明",
+        "title": "信頼できますか？",
+        "subtitle": "ICPay はカストディアルで、まだ監査を受けていません——率直にお伝えします。今日検証できるのはオープンソースコード、メインネット canister、公開された透明性ポリシーです。",
+        "visit": "訪問 →",
+        "readMore": "詳しく見る →",
+        "items": {
+          "github": {
+            "label": "GitHub でオープンソース",
+            "description": "バックエンド Motoko と Next.js フロントエンドは公開されています。資金移動、認証、アップグレードパスを自分で確認できます。"
+          },
+          "backendCanister": {
+            "label": "メインネットバックエンド canister",
+            "description": "ウォレットロジックは Internet Computer メインネットの {canisterId} で動作しています。"
+          },
+          "transparency": {
+            "label": "透明性ページ",
+            "description": "公開されたカストディモデル、手数料、運営者の権限範囲——検証可能なオンチェーンアドレス付き。"
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "@IcpayOfficial からの製品アップデート、ローンチ、Internet Computer エコシステムニュース。"
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "ICPay 公式 LinkedIn ページからの会社アップデートとチーム投稿。"
+          },
+          "frontendCanister": {
+            "label": "オンチェーンフロントエンド",
+            "description": "静的アセットと II 派生オリジンは {canisterId} から配信されます。"
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "オンチェーンクラウドストレージ",
+        "title": "ICBucket",
+        "tagline": "S3 互換 API でファイルをオンチェーンに保存。サーバー不要、AWS の請求も不要 — ICPay 残高から ICP で支払うシンプルな 30 日プラン。",
+        "tryIcBucket": "ICBucket を試す",
+        "github": "GitHub",
+        "packages": "パッケージ",
+        "imageAlt": "モバイル版 ICBucket"
+      },
+      "install": {
+        "title": "インストール",
+        "subtitle": "Node.js、Python、Rust、Go 向け SDK。npm、PyPI、crates.io、Go modules からインストールできます。",
+        "copyLabel": "クリップボードにコピー",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "統合ガイド",
+        "title": "ICBucket の統合方法",
+        "subtitle": "バケットを作成し、SDK でファイルをアップロードし、HTTPS で公開アセットを配信 — すべて ICPay 残高から、S3 互換 API で。",
+        "videoAriaLabel": "ICBucket の統合方法"
+      },
+      "problemSolution": {
+        "title": "課題と解決策",
+        "subtitle": "従来のクラウドストレージは高額で、集中管理され、複雑です。ICBucket はオンチェーンストレージ、30 日 ICP プラン、S3 スタイル API でこれを解決します。",
+        "problemColumn": "課題",
+        "solutionColumn": "解決策",
+        "rows": {
+          "0": {
+            "problemTitle": "高額な月額請求",
+            "problemDescription": "AWS S3、Google Cloud Storage、Azure Blob は月額課金です。コストは年々積み重なり、10 GB のプロジェクトでも 5 年で $240 を超えることがあります。",
+            "solutionTitle": "シンプルな 30 日プラン",
+            "solutionDescription": "ICPay 残高から ICP で支払い — 1 GB あたり 30 日で 0.5 ICP から。クレジットカード不要。いつでも更新でき、未使用期間は積み上がります。"
+          },
+          "1": {
+            "problemTitle": "集中管理",
+            "problemDescription": "ファイルは他社のサーバーに保存されます。プロバイダーは予告なくアカウントを停止したり、価格を引き上げたり、サービスを終了したりできます。",
+            "solutionTitle": "分散型・検閲耐性",
+            "solutionDescription": "ファイルは Internet Computer のレプリカに分散保存されます。単一障害点はなく、データを削除できるのはあなただけです。"
+          },
+          "2": {
+            "problemTitle": "複雑なセットアップ",
+            "problemDescription": "S3 のセットアップには AWS アカウント、IAM ロール、バケットポリシー、CORS 設定が必要 — ファイルを 1 つアップロードするだけでも。",
+            "solutionTitle": "S3 互換 API",
+            "solutionDescription": "createBucket、uploadFile、downloadFile などおなじみのメソッドを備えた S3 のドロップイン代替。既存コードを数分で移行できます。"
+          },
+          "3": {
+            "problemTitle": "ベンダーロックイン",
+            "problemDescription": "プロバイダーごとに API が異なります。S3 から Azure への移行はコードの書き直しが必要 — 真のポータビリティはありません。",
+            "solutionTitle": "オンチェーン検証可能性",
+            "solutionDescription": "すべてのアップロードはオンチェーンで追跡可能。canister URL によるコンテンツアドレス指定 — 不変で監査可能です。"
+          }
+        }
+      },
+      "pricing": {
+        "title": "ストレージの料金体系",
+        "subtitle": "ICPay 残高から ICP で前払い — クレジットカード不要、想定外の月額請求もなし。各ティアは 30 日プラン。いつでも更新でき、未使用期間は積み上がります。",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "リアルタイム ICP 価格を読み込み中…",
+        "priceHint": "USD 見積もりは CoinGecko を使用 · 1 ICP ≈ {price}",
+        "mostPopular": "最も人気",
+        "per30Days": "30 日あたり",
+        "capacity": "{capacityGb} GB 容量",
+        "getStarted": "始める",
+        "footer": "ライブ価格は canister から取得：IC ストレージの cycle コストに 20% マージンを加え、0.5 ICP 単位で丸めています。取り消し線は以前の定価を示します。最大 500 GB のティアはアプリで利用できます。",
+        "footerCheckoutIcp": " 決済は常に ICP で行われます。",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "1 GB 予約容量",
+              "1": "公開・非公開バケット",
+              "2": "API キー認証",
+              "3": "チャンクアップロード",
+              "4": "グローバル CDN URL",
+              "5": "保存時暗号化",
+              "6": "いつでも更新 — 期間は積み上がる"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "5 GB 予約容量",
+              "1": "複数の API キー",
+              "2": "ファイルメタデータとタグ",
+              "3": "検索とフォルダ一覧",
+              "4": "一括コピー / 移動 / 削除",
+              "5": "TypeScript、Python、Go SDK",
+              "6": "いつでも更新 — 期間は積み上がる"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "10 GB 予約容量",
+              "1": "複数バケット",
+              "2": "チーム API キー",
+              "3": "一括操作",
+              "4": "オンチェーン監査トレイル",
+              "5": "HTTPS ファイル配信",
+              "6": "いつでも更新 — 期間は積み上がる"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "50 GB 予約容量",
+              "1": "Business の全機能",
+              "2": "高スループットアップロード",
+              "3": "本番ワークロード",
+              "4": "dApp と NFT アセットホスティング",
+              "5": "静的サイトアセット",
+              "6": "いつでも更新 — 期間は積み上がる"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "ICPay の最新情報",
+        "subtitle": "Internet Computer 向けオンチェーンストレージの構築に取り組む私たちの歩みをフォロー"
+      },
+      "features": {
+        "title": "オンチェーンストレージに必要なすべて",
+        "subtitle": "ICBucket はエンタープライズ級のクラウドストレージ機能を、エンタープライズ級の複雑さや月額請求なしで提供します。",
+        "items": {
+          "0": {
+            "title": "柔軟な容量ティア",
+            "description": "1GB から 100GB まで選択可能。小さく始めて、必要に応じてスケール。いつでも更新して保存期間を延長できます。"
+          },
+          "1": {
+            "title": "チャンクアップロード",
+            "description": "大きなファイルをチャンク（最大 2MB/チャンク）でアップロード。並列アップロードで高速転送。接続が切れても再開可能。"
+          },
+          "2": {
+            "title": "API キー管理",
+            "description": "バケットごとに複数の API キーを作成し、細かい権限（読み取り/書き込み/削除）を設定。いつでも失効・再生成できます。"
+          },
+          "3": {
+            "title": "公開・非公開バケット",
+            "description": "公開バケットは HTTPS でファイルを配信。非公開バケットは認証が必要。静的サイトと安全なバックアップの両方に最適。"
+          },
+          "4": {
+            "title": "S3 互換 API",
+            "description": "AWS S3 のドロップイン代替。おなじみのメソッド：createBucket、uploadFile、listFiles。既存コードを数分で移行。"
+          },
+          "5": {
+            "title": "オンチェーンセキュリティ",
+            "description": "ファイルは IC レプリカに分散保存。canister レベルのアクセス制御。サーバー侵害やデータ漏洩の心配なし。"
+          },
+          "6": {
+            "title": "ファイルメタデータと検索",
+            "description": "ファイルにタグ付け、カスタムメタデータを追加。名前、タグ、プレフィックスで検索。フォルダ一覧、日付やサイズでフィルタ。"
+          },
+          "7": {
+            "title": "高速コンテンツ配信",
+            "description": "ファイルは IC canister から直接配信。CDN 設定不要。IC 境界ノード経由でグローバル配信。"
+          }
+        }
+      },
+      "architecture": {
+        "title": "ストレージの仕組み",
+        "subtitle": "ファイルは従来のクラウド VM ではなく、Internet Computer 上の ICPay ウォレット canister 内に保存されます。アプリは canister と通信し、サブネットが暗号化データを保持します。",
+        "canisterId": "Canister ID · {canisterId}",
+        "diagramAriaLabel": "ICBucket アーキテクチャ図",
+        "writePath": "書き込みパス",
+        "readPath": "読み取りパス",
+        "uploadSteps": {
+          "0": "バケットを 1 回作成（容量分の ICP を支払い）。",
+          "1": "beginFileUpload → 2 MB チャンクを送信 → completeFileUpload。",
+          "2": "canister が各ファイルを暗号化し、stable memory に書き込みます。"
+        },
+        "readSteps": {
+          "0": "非公開ファイル：アプリから署名付き downloadFile 更新呼び出し。",
+          "1": "公開ファイル：canister ゲートウェイ URL でそのまま HTTPS GET。",
+          "2": "AWS バケットも別のストレージサーバーも不要 — 1 つのオンチェーン canister だけ。"
+        }
+      },
+      "comparison": {
+        "title": "ICBucket の比較",
+        "subtitle": "ICBucket と従来のクラウドストレージプロバイダーの比較。私たちの違いをご覧ください。",
+        "featureColumn": "機能",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "30 日 ICP プラン",
+          "1": "ICP で支払い（クレジットカード不要）",
+          "2": "分散型",
+          "3": "検閲耐性",
+          "4": "オンチェーン検証可能",
+          "5": "アカウント停止リスクなし",
+          "6": "S3 互換 API",
+          "7": "公開 HTTPS URL",
+          "8": "API キー認証",
+          "9": "チャンクアップロード"
+        }
+      },
+      "apiGuide": {
+        "title": "SDK と API リファレンス",
+        "subtitle": "Node.js、Python、Rust、Go 向け SDK を備えた S3 互換 API。AWS S3 のドロップイン代替。",
+        "codeExamples": "コード例",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "インストール",
+        "createInit": "作成と初期化",
+        "uploadFiles": "ファイルのアップロード",
+        "downloadAccess": "ダウンロードとアクセス",
+        "fileManagement": "ファイル管理",
+        "apiKeyTitle": "API キー管理",
+        "apiKeyIntro": "バケットごとに複数の API キーを細かい権限で作成：",
+        "permRead": "read",
+        "permReadDesc": "ファイルのダウンロード",
+        "permWrite": "write",
+        "permWriteDesc": "ファイルのアップロード",
+        "permDelete": "delete",
+        "permDeleteDesc": "ファイルの削除",
+        "apiKeyFooter": "Web UI からいつでもキーを失効・再生成できます。",
+        "rateLimitsTitle": "レート制限",
+        "rateLimitsIntro": "canister の安定性を確保するためのフェアユース制限：",
+        "rateLimitUpload": "アップロード：API キーあたり 100 リクエスト/分",
+        "rateLimitDownload": "ダウンロード：1000 リクエスト/分（公開ファイル）",
+        "rateLimitList": "一覧/検索：50 リクエスト/分",
+        "rateLimitChunk": "チャンクサイズ：最大 2MB/チャンク",
+        "rateLimitsFooter": "より高い制限やエンタープライズプランについてはお問い合わせください。"
+      },
+      "faq": {
+        "title": "よくある質問",
+        "subtitle": "ICBucket について知っておくべきこと。答えが見つかりませんか？お問い合わせください。",
+        "items": {
+          "0": {
+            "question": "ICBucket は AWS S3 とどう違いますか？",
+            "answer": "ICBucket は Internet Computer 上の分散型ストレージです。クレジットカードの AWS 請求の代わりに、ICPay 残高から 30 日ごとに ICP で支払います（例：5 GB で 2.5 ICP）。ファイルは IC レプリカにオンチェーンで保存されます。API キーと SDK で移行もスムーズです。"
+          },
+          "1": {
+            "question": "課金はどのように機能しますか？",
+            "answer": "各バケットは 30 日プランで、ICPay 残高から ICP で前払いします。期限切れになるとバケットは読み取り専用になり、更新するまで書き込めません。更新するとさらに 30 日が追加され、未使用期間は積み上がります。価格は canister からリアルタイムで提示されます（cycle コスト + マージン）。"
+          },
+          "2": {
+            "question": "本番アプリに ICBucket を使えますか？",
+            "answer": "はい。ICBucket は本番対応で、33 件のテストがすべて合格、チャンクアップロード、API キー認証、cycle 監視に対応しています。NFT メタデータ、dApp アセット、静的サイトですでに利用されています。ただし、IC 上のカストディアルストレージです — ミッションクリティカルなデータをデプロイする前にトレードオフを理解してください。"
+          },
+          "3": {
+            "question": "どのファイル形式に対応していますか？",
+            "answer": "すべてのファイル形式：画像、動画、PDF、JSON、HTML、CSS、JS など。コンテンツタイプは保持されます。公開バケットは正しい MIME タイプでファイルを配信し、ブラウザから直接アクセスできます（例：<img src='...'> が動作します）。"
+          },
+          "4": {
+            "question": "S3 から ICBucket へどう移行しますか？",
+            "answer": "icpay-bucket SDK をインストールし、バケットを作成し、API キーを生成します。AWS SDK の呼び出しを ICBucket SDK の呼び出しに置き換えます（API はほぼ同一）。S3 からファイルをダウンロードし、ICBucket にアップロード。アプリ内の URL を更新します。小規模プロジェクトなら多くの場合 1 時間未満で完了します。"
+          },
+          "5": {
+            "question": "canister の cycle がなくなったらどうなりますか？",
+            "answer": "ICBucket の canister は監視され、バケット収益から自動的にチャージされます。cycle が危険なほど低下した場合、バケット所有者に更新を通知します。最悪の場合（canister が削除される）、ファイルは失われます — ただし適切な cycle 管理があれば極めて稀です。"
+          },
+          "6": {
+            "question": "NFT メタデータに ICBucket を使えますか？",
+            "answer": "はい、最適なユースケースです。metadata.json と画像ファイルをアップロードし、不変のオンチェーン URL（https://6vbhm-...-cai.icp0.io/bucket/nft-1.json）を取得。IPFS ゲートウェイ不要、リンク切れなし。公開バケットは即座にファイルを配信します。"
+          },
+          "7": {
+            "question": "ファイルサイズの制限はありますか？",
+            "answer": "単一ファイルのアップロードは 1 リクエストあたり 2MB に制限されています（IC 呼び出しサイズ制限）。より大きなファイルにはチャンクアップロードを使用 — クライアント側で 2MB チャンクに分割。SDK が自動処理します。最大 500MB のファイルまでテスト済みです。"
+          },
+          "8": {
+            "question": "ファイルを削除できますか？",
+            "answer": "はい、バケット所有者は Web UI または API でファイルを削除できます。削除されたファイルは canister から即座に除去され、ストレージクォータが解放されます。一括削除で多数のファイルを一度にクリーンアップできます。"
+          },
+          "9": {
+            "question": "バケットを公開にするには？",
+            "answer": "バケット作成時に visibility: 'public' を設定します。公開バケットは認証なしで HTTPS 経由でファイルを配信します。URL を知っている人なら誰でもアクセス可能。静的サイト、公開アセット、NFT メタデータに最適です。"
+          },
+          "10": {
+            "question": "ICBucket で静的ウェブサイトをホストできますか？",
+            "answer": "はい。HTML、CSS、JS、画像を公開バケットにアップロード。canister URL（https://6vbhm-...-cai.icp0.io/bucket/index.html）でアクセス。コンテンツタイプを正しく設定してください。index.html の自動配信はまだありません — URL にフルパスを指定してください。"
+          },
+          "11": {
+            "question": "ICBucket と IPFS の違いは？",
+            "answer": "ICBucket は S3 互換 API でファイルを IC canister に保存します。IPFS はコンテンツアドレス指定のピアツーピアです。ICBucket はゲートウェイ依存がなく、即時アクセス、よりシンプルな API。IPFS は分散化に優れますがアクセスは遅く不安定。ニーズに応じて選択してください。"
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "ICFalcon フレームワーク",
+        "title": "ICFalcon",
+        "subtitle": "Internet Computer 向け本番対応 Motoko フレームワーク",
+        "features": "強制レイヤードアーキテクチャ · Next.js フロントエンド · グローバル CLI · Internet Identity 認証",
+        "installLabel": "1 コマンドでインストール",
+        "copyCommand": "コマンドをコピー",
+        "installHint": "依存関係のインストール、ローカルデプロイ、localhost:3000 での開発サーバー起動まで実行",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "パッケージ"
+      },
+      "problemSolution": {
+        "title": "実際の課題を解決するために構築",
+        "subtitle": "ICFalcon は ICP 開発における一般的な摩擦点を解消します",
+        "problemHeading": "課題",
+        "solutionHeading": "解決策",
+        "problems": {
+          "0": {
+            "title": "標準化されたアーキテクチャがない",
+            "description": "多くの Motoko プロジェクトはゼロから始まり、レイヤリング、テスト、デプロイパターンに関する明確な指針がありません。チームは毎回構造を一から作り直します。"
+          },
+          "1": {
+            "title": "ツールが分散している",
+            "description": "ICP アプリの構築は dfx、mops、npm、カスタムスクリプトの使い分けを意味します。環境をまたいだスキャフォールディング、ビルド、デプロイのための統一 CLI がありません。"
+          },
+          "2": {
+            "title": "フロントエンドとバックエンドの統合の複雑さ",
+            "description": "Next.js フロントエンドを Motoko canister に接続するには、actor の手動生成、Identity 管理、環境設定が必要です。"
+          },
+          "3": {
+            "title": "限られたスターターテンプレート",
+            "description": "既存のテンプレートは本番対応には薄すぎるか、適応には固すぎるかのどちらか。実際のアプリ向けの中間的な選択肢がありません。"
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "本番向けレイヤリング",
+            "description": "4 層アーキテクチャ（api → service → repository → storage）を初日から強制。すべてのモジュールが同じパターンに従い、オンボーディングと保守が予測可能になります。"
+          },
+          "1": {
+            "title": "グローバル falcon CLI",
+            "description": "1 コマンドでモジュールのスキャフォールディング、パッケージのインストール、ビルド、テスト、デプロイ。ローカルと mainnet 環境でシームレスに動作し、対話式の確認付き。"
+          },
+          "2": {
+            "title": "統合スタック",
+            "description": "mo:core の Motoko バックエンド、shadcn/ui の Next.js フロントエンド、Internet Identity 認証、静的エクスポート。すべてが最初から接続済み。"
+          },
+          "3": {
+            "title": "Hub エコシステム",
+            "description": "`falcon add pkg <name>` で icp-hub から実績のあるパッケージをインストール。Ledger 統合、ファイルストレージ、レート制限など — プラグアンドプレイ。"
+          }
+        }
+      },
+      "article": {
+        "title": "ICFalcon とは？",
+        "subtitle": "Internet Computer アプリケーション構築に構造、ツール、スピードを提供するフレームワーク",
+        "frameworkTitle": "ボイラープレートではなくフレームワーク",
+        "frameworkP1": "ICFalcon は Motoko アプリケーション向けのオピニオネートな出発点です。4 層バックエンドアーキテクチャ（api → service → repository → storage）を強制し、モダンな Next.js フロントエンドと組み合わせ、スキャフォールディング、ビルド、デプロイ用のグローバル CLI を提供します。",
+        "frameworkP2": "構造を自分で考える最小限のテンプレートとは異なり、ICFalcon はスケールするパターンを提供します — ICPay のような本番アプリで使われているものと同じです。初日から stable memory 管理、マイグレーションガイド、Internet Identity 統合、テストハーネスが揃います。",
+        "layeringTitle": "レイヤードバックエンドアーキテクチャ",
+        "layeringP1": "バックエンドは厳格な関心の分離に従います。API モジュールは HTTP とバリデーションを担当。Services はビジネスロジックを含みます。Repositories はデータアクセスを抽象化。Storage は stable memory を管理します。",
+        "layeringP2": "このレイヤリングは規約で強制され、リポジトリ内で文書化されています。falcon m:f Product で新しいモジュールをスキャフォールディングすると、4 層すべてが生成され、main.mo に接続され、対応するフロントエンドサービスファイルが作成されます。推測も手動配線も不要です。",
+        "frontendTitle": "フロントエンド統合",
+        "frontendP1": "フロントエンドは shadcn/ui コンポーネントと Internet Identity 認証を備えた Next.js です。静的ファイル（output: \"export\"）にエクスポートするため、asset canister や Vercel などの従来のホストに配置できます。",
+        "frontendP2": "Agent 設定、Identity 派生、canister ID は事前に配線済み。バックエンド canister は .did ファイルを提供し、フロントエンドが自動取得します。actor の手動生成や環境変数のやりくりは不要です。",
+        "cliTitle": "falcon CLI",
+        "cliP1": "すべての操作は 1 つのグローバルコマンドで実行。プロジェクトの初期化（falcon s:init）。モジュールのスキャフォールディング（falcon m:f Name）。テストの実行（falcon b:test --local）。デプロイ（falcon b:deploy、確認プロンプト付き）。",
+        "cliP2": "CLI は dfx、mops、npm をラップし、モジュール、API エンドポイント、フロントエンドサービスのスキャフォールディングを追加します。--local フラグでローカルまたは mainnet を指定し、安全のためデフォルトは mainnet。コマンドは ops/docs/commands.md に記載されています。",
+        "hubTitle": "Hub パッケージ",
+        "hubP1": "ICFalcon はプラグアンドプレイの Motoko パッケージ集 icp-hub と統合しています。falcon add pkg <name> で Ledger 統合、ファイルストレージ、レート制限、その他の一般的なパターンをインストール。各パッケージは同じ 4 層構造に従い、テストを含みます。",
+        "hubP2": "パッケージは独立してバージョン管理・テストされます。Hub はオープンソースなので、モジュールをコントリビュートしたり、カスタムニーズ向けにフォークしたりできます。",
+        "audienceTitle": "誰のためのものか？",
+        "audienceP1": "ICFalcon は構造を一から作り直さずに本番対応の ICP アプリを出荷したい開発者向けです。stable memory、レイヤードバックエンド、Internet Identity 認証、モダンなフロントエンドが必要な canister を構築するなら、ICFalcon がより早く到達できます。",
+        "audienceP2": "最小限のテンプレートではありません。オピニオネートです。レイヤリングは強制され、CLI が主要インターフェースであり、スタックは Motoko + Next.js です。そのスタックが必要で明確な出発点が欲しいなら、ICFalcon がそれです。",
+        "stackTitle": "スタック概要",
+        "stackBackend": "バックエンド：",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "フロントエンド：",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "ツール：",
+        "stackToolingValue": "falcon CLI · モジュールスキャフォールド · icp-hub パッケージ"
+      },
+      "faq": {
+        "title": "よくある質問",
+        "subtitle": "ICFalcon とその使い方に関する一般的な質問",
+        "items": {
+          "0": {
+            "question": "ICFalcon とは何ですか？",
+            "answer": "ICFalcon は Internet Computer アプリケーション構築用のオープンソース Motoko フレームワークです。本番対応のバックエンドアーキテクチャ、Next.js フロントエンド、スキャフォールディング・ビルド・デプロイ用のグローバル CLI を提供します。"
+          },
+          "1": {
+            "question": "ICFalcon を使うには Motoko の知識が必要ですか？",
+            "answer": "はい。ICFalcon は Motoko フレームワークなので、言語に慣れている必要があります。ただし、レイヤードアーキテクチャとスキャフォールディングコマンドにより、手動で書くボイラープレートは減ります。"
+          },
+          "2": {
+            "question": "ICFalcon は dfx new とどう違いますか？",
+            "answer": "dfx new は最小限の出発点を与えます。ICFalcon は強制レイヤリング、stable memory 管理、Internet Identity 統合、モジュールスキャフォールディング用 CLI を備えた本番向けの構造を提供します。設計上オピニオネートです。"
+          },
+          "3": {
+            "question": "既存の canister で ICFalcon を使えますか？",
+            "answer": "ICFalcon は移行ツールではなく出発点として設計されています。既存の canister がある場合、アーキテクチャの一部（レイヤリングパターン、CLI コマンド）を採用できますが、完全統合には手作業が必要です。"
+          },
+          "4": {
+            "question": "falcon CLI とは？",
+            "answer": "falcon CLI は dfx、mops、npm をラップするグローバルコマンドです。プロジェクト初期化、モジュールスキャフォールディング、テスト、ビルド、デプロイを担当します。--local フラグでローカルまたは mainnet を指定します。"
+          },
+          "5": {
+            "question": "パッケージはどこからインストールしますか？",
+            "answer": "バックエンドパッケージは mops（Motoko パッケージマネージャー）と icp-hub（厳選されたプラグアンドプレイモジュール集）からインストールします。フロントエンドパッケージは npm です。falcon CLI は `falcon add pkg <name>` で一部を抽象化します。"
+          },
+          "6": {
+            "question": "ICFalcon は本番対応ですか？",
+            "answer": "アーキテクチャは本番対応で、ICPay のようなライブアプリで使われています。ただし ICFalcon 自体はフレームワークであり、SaaS 製品ではありません。canister は自分で所有し、テスト、デプロイ、保守の責任があります。"
+          },
+          "7": {
+            "question": "ICFalcon は Rust canister に対応していますか？",
+            "answer": "いいえ。ICFalcon は Motoko フレームワークです。Rust が必要な場合は、別のスターターを使うか、ゼロから構築してください。"
+          },
+          "8": {
+            "question": "mainnet にデプロイするには？",
+            "answer": "`falcon b:deploy` を実行（--local なし）。CLI は mainnet へのデプロイ前に確認を求めます。デフォルトはアップグレードモード。データ損失を避けるため、再インストールモードは使用しません。"
+          },
+          "9": {
+            "question": "レイヤリングをカスタマイズできますか？",
+            "answer": "4 層アーキテクチャ（api → service → repository → storage）は規約と CLI スキャフォールディングで強制されます。逸脱は可能ですが、一貫した構造と自動スキャフォールディングの利点は失われます。"
+          },
+          "10": {
+            "question": "ICFalcon にコントリビュートするには？",
+            "answer": "リポジトリをフォークし、機能ブランチを作成し、pull request を開いてください。AGENTS.md のパターンに従い、提出前に `falcon b:test --local` と `falcon p:check --local` を実行してください。Hub パッケージは icp-hub に別途コントリビュートします。"
+          },
+          "11": {
+            "question": "ICFalcon は無料で使えますか？",
+            "answer": "はい。ICFalcon はオープンソースです。ソースコードは現状のまま使用・改変可能です。Hub パッケージは icp-hub 上の各エントリのライセンスに従います。"
+          }
+        }
+      }
+    }
   }
 }

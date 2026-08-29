@@ -852,6 +852,16 @@
     "docsTitle": "ICPay Cloud 指南",
     "docsSubtitle": "链上加密文件存储",
     "docsStorageTitle": "您将获得",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "存储桶按月从 ICPay 余额扣费。文件在 canister 上静态加密存储。",
     "docsImagesOnly": "图片、文档、代码、压缩包、音频和字体（完整列表见定价）。",
     "docsWebpNote": "原生格式最大 10 MB。大文件自动分片（IC 单次调用 ingress 限制为 2 MiB）。",
@@ -1223,5 +1233,725 @@
       "rejected": "Rejected"
     },
     "snsProjectLink": "View SNS project"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "菜单",
+      "signIn": "登录",
+      "wallet": "钱包",
+      "openWallet": "打开钱包",
+      "openMenu": "打开菜单",
+      "sectionProducts": "产品",
+      "sectionResources": "资源",
+      "sectionLegal": "法律",
+      "primary": {
+        "blog": "博客"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay 钱包",
+          "description": "通过 Internet Identity 登录，用用户名发送 ICP。"
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "链上存储，支持 API 密钥、SDK 和 ICP 套餐。"
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "生产级 Motoko 框架，配备全局 CLI。"
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "ICFalcon 项目的命令与工作流。"
+        },
+        "icpHubPackages": {
+          "title": "ICP-Hub 软件包",
+          "description": "精选的 Internet Computer 开发软件包。"
+        },
+        "icbucketDocs": {
+          "title": "ICBucket 文档",
+          "description": "存储 API 参考与集成指南。"
+        },
+        "blog": {
+          "title": "博客",
+          "description": "指南、教程与 ICP 生态文章。"
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "关于",
+          "description": "了解 ICPay 及用户名支付如何运作。"
+        },
+        "faq": {
+          "title": "常见问题",
+          "description": "钱包与产品相关常见问题解答。"
+        },
+        "roadmap": {
+          "title": "路线图",
+          "description": "已发布功能、下一步计划及不会构建的内容。"
+        },
+        "brands": {
+          "title": "品牌",
+          "description": "商标与品牌使用政策。"
+        },
+        "terms": {
+          "title": "服务条款",
+          "description": "使用 ICPay 的服务条款。"
+        },
+        "privacy": {
+          "title": "隐私",
+          "description": "我们如何处理数据与账户信息。"
+        },
+        "transparency": {
+          "title": "透明度",
+          "description": "托管模式、费用与链上操作。"
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "产品",
+      "sectionResources": "资源",
+      "sectionLegal": "法律",
+      "sectionCommunity": "社区",
+      "copyright": "© 2026 ICPay. 保留所有权利。",
+      "blog": "博客",
+      "channels": "频道",
+      "wallet": "钱包",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "wallet": "ICPay 钱包"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "ICP-Hub 软件包",
+        "icbucketDocs": "ICBucket 文档",
+        "blog": "博客"
+      },
+      "legal": {
+        "about": "关于",
+        "faq": "常见问题",
+        "roadmap": "路线图",
+        "brands": "品牌",
+        "terms": "服务条款",
+        "privacy": "隐私",
+        "transparency": "透明度"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      }
+    },
+    "heroSignOptions": {
+      "label": "通过 Internet Identity 登录",
+      "ariaLabel": "通过 Internet Identity 使用 Google、Apple 和 Microsoft 登录"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Internet Computer 钱包",
+        "title": "用用户名发送 ICP，无需 63 位地址",
+        "tagline": "ICPay 是 Internet Computer 上的开源托管钱包。领取用户名，接收任何人的付款，并在一个生态中探索频道、链上存储和 Motoko 工具。",
+        "openWallet": "打开钱包",
+        "browseChannels": "浏览频道",
+        "signIn": "登录",
+        "aboutIcPay": "关于 ICPay",
+        "imageAlt": "移动端 ICPay 钱包"
+      },
+      "cta": {
+        "signedInTitle": "您已登录",
+        "signedInBody": "打开钱包发送 ICP、查看余额，或探索频道和代币。",
+        "readyTitle": "准备好用用户名转账 ICP 了吗？",
+        "readyBody": "使用 Internet Identity 登录，领取用户名，几秒钟即可开始转账。无需助记词，无需浏览器扩展。",
+        "openWallet": "打开钱包",
+        "browseChannels": "浏览频道",
+        "signIn": "登录"
+      },
+      "features": {
+        "eyebrow": "平台",
+        "title": "为日常用户和 ICP 开发者打造",
+        "subtitle": "ICPay 不只是钱包，更是 Internet Computer 上支付、社区、存储和 canister 开发的入口。",
+        "items": {
+          "0": {
+            "title": "用户名支付",
+            "body": "领取用户名并分享 icpay.app/yourname。发送方无需账户或 63 位 principal。"
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "使用通行密钥或关联账户登录。无需抄写助记词，也无需浏览器扩展。"
+          },
+          "2": {
+            "title": "频道",
+            "body": "类似 Telegram 的广播社区，支持公开发现、私密邀请和 Markdown 帖子。"
+          },
+          "3": {
+            "title": "ICBucket 存储",
+            "body": "链上文件存储，配备 API 密钥和 SDK。用 ICP 购买简单的 30 天套餐，无需信用卡账单。"
+          },
+          "4": {
+            "title": "ICFalcon 框架",
+            "body": "生产级 Motoko 脚手架，强制分层架构、测试套件和面向 Internet Computer 应用的全局 CLI。"
+          },
+          "5": {
+            "title": "透明托管",
+            "body": "资金存放在官方 ICP 账本的用户子账户中。后端开源，主网仅支持升级部署。"
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "常见问题",
+        "title": "常见问题",
+        "subtitle": "关于钱包、托管模式和 ICPay 生态的快速解答。",
+        "items": {
+          "0": {
+            "question": "什么是 ICPay？",
+            "answer": "ICPay 是 Internet Computer 上的托管钱包。使用 Internet Identity 登录，领取用户名，通过用户名而非冗长的 principal 地址发送或接收 ICP。"
+          },
+          "1": {
+            "question": "需要助记词吗？",
+            "answer": "不需要。身份验证由 Internet Identity 处理。您通过通行密钥或关联的身份提供商授权访问——无需在纸上保存助记词。"
+          },
+          "2": {
+            "question": "ICPay 是自托管的吗？",
+            "answer": "ICPay 是托管钱包：您的余额存放在 ICPay canister 控制的用户子账户中，只有您的 principal 可以授权转账。后端代码开源并部署在主网。"
+          },
+          "3": {
+            "question": "除了钱包还有什么？",
+            "answer": "同一生态还包括公开频道、ICBucket 链上存储，以及 ICFalcon——用于构建和部署 canister 的 Motoko 框架，配备结构化 CLI。"
+          },
+          "4": {
+            "question": "频道如何运作？",
+            "answer": "频道是广播社区。所有者可发布类似 Telegram 风格的 Markdown 更新。公开频道可在探索页发现；私密频道可通过用户名或邀请链接访问。"
+          },
+          "5": {
+            "question": "在哪里了解更多？",
+            "answer": "访问关于、常见问题和透明度页面了解产品详情，或浏览博客获取 Internet Computer 指南和开发者资源。"
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "如何运作",
+        "title": "使用起来难吗？",
+        "subtitle": "并不难。从 Internet Identity 登录到用用户名发送 ICP 只需六步——无需浏览器扩展，也无需抄写助记词。",
+        "stepLabel": "第 {step} 步",
+        "steps": {
+          "0": {
+            "title": "使用 Internet Identity 登录",
+            "body": "使用通行密钥或关联账户。无需密码本，也无需担心丢失助记词。"
+          },
+          "1": {
+            "title": "领取您的 @username",
+            "body": "一次性选择用户名。他人通过 icpay.app/yourname 向您付款，而非 63 位 principal。"
+          },
+          "2": {
+            "title": "分享链接或地址",
+            "body": "将您的用户名页面或充值地址发送给需要向您支付 ICP 的任何人。"
+          },
+          "3": {
+            "title": "通过 @username 发送",
+            "body": "几秒钟内完成 ICP 转账。输入用户名，确认金额，账本将记录在链上。"
+          },
+          "4": {
+            "title": "追踪每笔转账",
+            "body": "余额和历史记录关联官方 ICP 账本。可在区块浏览器中查看任意交易。"
+          },
+          "5": {
+            "title": "使用完整技术栈",
+            "body": "频道用于社区，ICBucket 用于链上文件，ICFalcon 用于 Motoko 开发——同一生态。"
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "如何支付",
+        "title": "通过用户名发送或扫码支付",
+        "subtitle": "输入 @username 发送 ICP，或打开个人资料二维码收款。同一钱包，两种方式——均在 Internet Computer 账本上结算。",
+        "imageAlt": "ICPay 支付流程：左侧通过用户名发送 ICP，右侧扫码支付"
+      },
+      "products": {
+        "eyebrow": "生态",
+        "title": "基于 ICPay 构建的一切",
+        "subtitle": "钱包、存储和 canister 工具集于一体——为 Internet Computer 上的开发者和日常用户而设计。",
+        "items": {
+          "wallet": {
+            "title": "ICPay 钱包",
+            "description": "使用用户名和 Internet Identity 发送、接收和持有 ICP。",
+            "cta": "打开钱包"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "链上云存储，配备 API 密钥、SDK 和 30 天 ICP 套餐。",
+            "cta": "探索存储"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "生产级 Motoko 框架，分层架构和全局 CLI。",
+            "cta": "在 ICP 上构建"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "社会证明",
+        "title": "可以信任吗？",
+        "subtitle": "ICPay 是托管钱包且尚未经过审计——我们直言不讳。您今天可以验证的是开源代码、主网 canister 和已发布的透明度政策。",
+        "visit": "访问 →",
+        "readMore": "了解更多 →",
+        "items": {
+          "github": {
+            "label": "GitHub 开源",
+            "description": "后端 Motoko 和 Next.js 前端均为公开。可自行审查资金流转、身份验证和升级路径。"
+          },
+          "backendCanister": {
+            "label": "主网后端 canister",
+            "description": "钱包逻辑运行于 Internet Computer 主网的 {canisterId}。"
+          },
+          "transparency": {
+            "label": "透明度页面",
+            "description": "已发布的托管模式、费用及运营方权限范围——附可验证的链上地址。"
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "来自 @IcpayOfficial 的产品更新、发布和 Internet Computer 生态新闻。"
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "ICPay 官方 LinkedIn 页面的公司动态和团队帖子。"
+          },
+          "frontendCanister": {
+            "label": "链上前端",
+            "description": "静态资源和 II 派生来源由 {canisterId} 提供。"
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "链上云存储",
+        "title": "ICBucket",
+        "tagline": "通过 S3 兼容 API 在链上存储文件。无需服务器，无需 AWS 账单——从 ICPay 余额用 ICP 购买简单的 30 天套餐。",
+        "tryIcBucket": "试用 ICBucket",
+        "github": "GitHub",
+        "packages": "软件包",
+        "imageAlt": "移动端 ICBucket"
+      },
+      "install": {
+        "title": "安装",
+        "subtitle": "支持 Node.js、Python、Rust 和 Go 的 SDK。从 npm、PyPI、crates.io 或 Go modules 安装。",
+        "copyLabel": "复制到剪贴板",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "集成指南",
+        "title": "如何集成 ICBucket？",
+        "subtitle": "创建存储桶，用 SDK 上传文件，通过 HTTPS 提供公开资源——全部从 ICPay 余额支付，使用 S3 兼容 API。",
+        "videoAriaLabel": "如何集成 ICBucket"
+      },
+      "problemSolution": {
+        "title": "问题与解决方案",
+        "subtitle": "传统云存储昂贵、中心化且复杂。ICBucket 通过链上存储、30 天 ICP 套餐和 S3 风格 API 解决这些问题。",
+        "problemColumn": "问题",
+        "solutionColumn": "解决方案",
+        "rows": {
+          "0": {
+            "problemTitle": "昂贵的月费账单",
+            "problemDescription": "AWS S3、Google Cloud Storage 和 Azure Blob 按月收费。成本逐年累积——一个 10 GB 项目五年可能超过 $240。",
+            "solutionTitle": "简单的 30 天套餐",
+            "solutionDescription": "从 ICPay 余额用 ICP 支付——1 GB 每 30 天仅需 0.5 ICP 起。无需信用卡。随时续费，未用时间可叠加。"
+          },
+          "1": {
+            "problemTitle": "中心化控制",
+            "problemDescription": "您的文件存放在他人服务器上。服务商可随时暂停账户、涨价或关闭服务。",
+            "solutionTitle": "去中心化与抗审查",
+            "solutionDescription": "文件分布在 Internet Computer 副本节点上。无单点故障——只有您能删除自己的数据。"
+          },
+          "2": {
+            "problemTitle": "复杂的配置",
+            "problemDescription": "配置 S3 需要 AWS 账户、IAM 角色、存储桶策略和 CORS 配置——仅仅为了上传一个文件。",
+            "solutionTitle": "S3 兼容 API",
+            "solutionDescription": "S3 的即插即用替代方案，熟悉的方法：createBucket、uploadFile、downloadFile。几分钟内迁移现有代码。"
+          },
+          "3": {
+            "problemTitle": "供应商锁定",
+            "problemDescription": "各提供商使用不同 API。从 S3 迁移到 Azure 意味着重写代码——没有真正的可移植性。",
+            "solutionTitle": "链上可验证性",
+            "solutionDescription": "每次上传都可在链上追溯。通过 canister URL 实现内容寻址——不可篡改且可审计。"
+          }
+        }
+      },
+      "pricing": {
+        "title": "存储经济",
+        "subtitle": "从 ICPay 余额预付 ICP——无需信用卡，无意外月费。每个档位为 30 天套餐；随时续费，未用时间可叠加。",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "正在加载实时 ICP 价格…",
+        "priceHint": "美元估算使用 CoinGecko · 1 ICP ≈ {price}",
+        "mostPopular": "最受欢迎",
+        "per30Days": "每 30 天",
+        "capacity": "{capacityGb} GB 容量",
+        "getStarted": "开始使用",
+        "footer": "实时价格来自 canister：IC 存储 cycle 成本加 20% 利润，按 0.5 ICP 阶梯取整。删除线显示原标价。应用中提供最高 500 GB 档位。",
+        "footerCheckoutIcp": " 结账始终以 ICP 支付。",
+        "plans": {
+          "starter": {
+            "name": "入门版",
+            "features": {
+              "0": "1 GB 预留容量",
+              "1": "公开与私有存储桶",
+              "2": "API 密钥认证",
+              "3": "分块上传",
+              "4": "全球 CDN URL",
+              "5": "静态加密",
+              "6": "随时续费——时间可叠加"
+            }
+          },
+          "pro": {
+            "name": "专业版",
+            "features": {
+              "0": "5 GB 预留容量",
+              "1": "多个 API 密钥",
+              "2": "文件元数据与标签",
+              "3": "搜索与文件夹列表",
+              "4": "批量复制 / 移动 / 删除",
+              "5": "TypeScript、Python 与 Go SDK",
+              "6": "随时续费——时间可叠加"
+            }
+          },
+          "business": {
+            "name": "商业版",
+            "features": {
+              "0": "10 GB 预留容量",
+              "1": "多个存储桶",
+              "2": "团队 API 密钥",
+              "3": "批量操作",
+              "4": "链上审计追踪",
+              "5": "HTTPS 文件分发",
+              "6": "随时续费——时间可叠加"
+            }
+          },
+          "scale": {
+            "name": "扩展版",
+            "features": {
+              "0": "50 GB 预留容量",
+              "1": "商业版全部功能",
+              "2": "更高吞吐量上传",
+              "3": "生产工作负载",
+              "4": "dApp 与 NFT 资源托管",
+              "5": "静态网站资源",
+              "6": "随时续费——时间可叠加"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "ICPay 最新动态",
+        "subtitle": "关注我们在 Internet Computer 上构建链上存储的历程"
+      },
+      "features": {
+        "title": "链上存储所需的一切",
+        "subtitle": "ICBucket 提供企业级云存储功能，无需企业级复杂度或月费账单。",
+        "items": {
+          "0": {
+            "title": "灵活的容量档位",
+            "description": "从 1GB 到 100GB 可选。从小规模起步，按需扩展。随时续费以延长存储期限。"
+          },
+          "1": {
+            "title": "分块上传",
+            "description": "分块上传大文件（每块最大 2MB）。并行上传加速传输。连接中断后可续传。"
+          },
+          "2": {
+            "title": "API 密钥管理",
+            "description": "为每个存储桶创建多个 API 密钥，细粒度权限（读/写/删）。随时撤销和重新生成。"
+          },
+          "3": {
+            "title": "公开与私有存储桶",
+            "description": "公开存储桶通过 HTTPS 提供文件。私有存储桶需要认证。适合静态网站和安全备份。"
+          },
+          "4": {
+            "title": "S3 兼容 API",
+            "description": "AWS S3 的即插即用替代。熟悉的方法：createBucket、uploadFile、listFiles。几分钟内迁移现有代码。"
+          },
+          "5": {
+            "title": "链上安全",
+            "description": "文件分布在 IC 副本节点上。Canister 级访问控制。无服务器漏洞，无数据泄露。"
+          },
+          "6": {
+            "title": "文件元数据与搜索",
+            "description": "为文件添加标签和自定义元数据。按名称、标签或前缀搜索。列出文件夹，按日期或大小筛选。"
+          },
+          "7": {
+            "title": "快速内容分发",
+            "description": "文件直接从 IC canister 提供。无需配置 CDN。通过 IC 边界节点全球分发。"
+          }
+        }
+      },
+      "architecture": {
+        "title": "存储如何运作",
+        "subtitle": "文件存放在 Internet Computer 上的 ICPay 钱包 canister 内——而非传统云 VM。您的应用与 canister 通信；子网存储加密数据。",
+        "canisterId": "Canister ID · {canisterId}",
+        "diagramAriaLabel": "ICBucket 架构图",
+        "writePath": "写入路径",
+        "readPath": "读取路径",
+        "uploadSteps": {
+          "0": "一次性创建存储桶（支付 ICP 购买容量）。",
+          "1": "beginFileUpload → 发送 2 MB 分块 → completeFileUpload。",
+          "2": "Canister 加密每个文件并写入稳定内存。"
+        },
+        "readSteps": {
+          "0": "私有文件：从应用发起签名的 downloadFile 更新调用。",
+          "1": "公开文件：在 canister 网关 URL 上直接 HTTPS GET。",
+          "2": "无需 AWS 存储桶或独立存储服务器——一个链上 canister 搞定。"
+        }
+      },
+      "comparison": {
+        "title": "ICBucket 对比",
+        "subtitle": "ICBucket 与传统云存储提供商的对比。了解我们的不同之处。",
+        "featureColumn": "功能",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "30 天 ICP 套餐",
+          "1": "ICP 支付（无需信用卡）",
+          "2": "去中心化",
+          "3": "抗审查",
+          "4": "链上可验证",
+          "5": "无账户封禁风险",
+          "6": "S3 兼容 API",
+          "7": "公开 HTTPS URL",
+          "8": "API 密钥认证",
+          "9": "分块上传"
+        }
+      },
+      "apiGuide": {
+        "title": "SDK 与 API 参考",
+        "subtitle": "S3 兼容 API，支持 Node.js、Python、Rust 和 Go SDK。AWS S3 的即插即用替代。",
+        "codeExamples": "代码示例",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "安装",
+        "createInit": "创建与初始化",
+        "uploadFiles": "上传文件",
+        "downloadAccess": "下载与访问",
+        "fileManagement": "文件管理",
+        "apiKeyTitle": "API 密钥管理",
+        "apiKeyIntro": "为每个存储桶创建多个 API 密钥，细粒度权限：",
+        "permRead": "read",
+        "permReadDesc": "下载文件",
+        "permWrite": "write",
+        "permWriteDesc": "上传文件",
+        "permDelete": "delete",
+        "permDeleteDesc": "删除文件",
+        "apiKeyFooter": "随时通过 Web UI 撤销和重新生成密钥。",
+        "rateLimitsTitle": "速率限制",
+        "rateLimitsIntro": "公平使用限制以确保 canister 稳定性：",
+        "rateLimitUpload": "上传：每个 API 密钥 100 次请求/分钟",
+        "rateLimitDownload": "下载：1000 次请求/分钟（公开文件）",
+        "rateLimitList": "列表/搜索：50 次请求/分钟",
+        "rateLimitChunk": "分块大小：每块最大 2MB",
+        "rateLimitsFooter": "如需更高限额或企业套餐，请联系我们。"
+      },
+      "faq": {
+        "title": "常见问题",
+        "subtitle": "关于 ICBucket 您需要了解的一切。找不到答案？请联系我们。",
+        "items": {
+          "0": {
+            "question": "ICBucket 与 AWS S3 有何不同？",
+            "answer": "ICBucket 是 Internet Computer 上的去中心化存储。每 30 天从 ICPay 余额用 ICP 支付（例如 5 GB 需 2.5 ICP），而非信用卡 AWS 账单。文件分布在 IC 副本节点的链上。API 密钥和 SDK 使迁移变得简单。"
+          },
+          "1": {
+            "question": "计费如何运作？",
+            "answer": "每个存储桶是 30 天套餐，从 ICPay 余额预付 ICP。到期后存储桶变为只读，直到续费。续费增加 30 天——未用时间可叠加。价格由 canister 实时报价（cycle 成本 + 利润）。"
+          },
+          "2": {
+            "question": "可以用于生产应用吗？",
+            "answer": "可以。ICBucket 已可用于生产，33 项测试全部通过，支持分块上传、API 密钥认证和 cycle 监控。已用于 NFT 元数据、dApp 资源和静态网站。但请注意，这是 IC 上的托管存储——部署关键数据前请了解权衡。"
+          },
+          "3": {
+            "question": "支持哪些文件类型？",
+            "answer": "所有文件类型：图片、视频、PDF、JSON、HTML、CSS、JS 等。内容类型会保留。公开存储桶以正确的 MIME 类型提供文件，可直接在浏览器中访问（例如 <img src='...'> 可用）。"
+          },
+          "4": {
+            "question": "如何从 S3 迁移到 ICBucket？",
+            "answer": "安装 icpay-bucket SDK，创建存储桶，生成 API 密钥。将 AWS SDK 调用替换为 ICBucket SDK 调用（API 几乎相同）。从 S3 下载文件，上传到 ICBucket。更新应用中的 URL。小型项目迁移通常不到 1 小时。"
+          },
+          "5": {
+            "question": "canister 的 cycle 耗尽会怎样？",
+            "answer": "ICBucket canister 受到监控，并从存储桶收入自动充值。如果 cycle 降至临界低位，我们会通知存储桶所有者续费。最坏情况（canister 被删除）文件会丢失——但在适当的 cycle 管理下极为罕见。"
+          },
+          "6": {
+            "question": "可以用于 NFT 元数据吗？",
+            "answer": "可以，非常适合。上传 metadata.json 和图片文件。获得不可变的链上 URL（https://6vbhm-...-cai.icp0.io/bucket/nft-1.json）。无需 IPFS 网关，无失效链接。公开存储桶即时提供文件。"
+          },
+          "7": {
+            "question": "有文件大小限制吗？",
+            "answer": "单次上传限制为每次请求 2MB（IC 调用大小限制）。更大文件请使用分块上传——在客户端将文件拆分为 2MB 块。SDK 自动处理。已测试最大 500MB 文件。"
+          },
+          "8": {
+            "question": "可以删除文件吗？",
+            "answer": "可以，存储桶所有者可通过 Web UI 或 API 删除文件。删除的文件立即从 canister 移除。存储配额释放。支持批量删除以一次清理多个文件。"
+          },
+          "9": {
+            "question": "如何将存储桶设为公开？",
+            "answer": "创建存储桶时设置 visibility: 'public'。公开存储桶通过 HTTPS 无需认证即可提供文件。任何拥有 URL 的人都可以访问。适合静态网站、公开资源和 NFT 元数据。"
+          },
+          "10": {
+            "question": "可以在 ICBucket 上托管静态网站吗？",
+            "answer": "可以。将 HTML、CSS、JS、图片上传到公开存储桶。通过 canister URL 访问（https://6vbhm-...-cai.icp0.io/bucket/index.html）。正确设置内容类型。暂不支持 index.html 自动服务——请在 URL 中指定完整路径。"
+          },
+          "11": {
+            "question": "ICBucket 与 IPFS 有何区别？",
+            "answer": "ICBucket 使用 S3 兼容 API 将文件存储在 IC canister 中。IPFS 是内容寻址的点对点网络。ICBucket 无网关依赖，即时访问，API 更简单。IPFS 去中心化更好但访问较慢且不可预测。根据需求选择。"
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "ICFalcon 框架",
+        "title": "ICFalcon",
+        "subtitle": "面向 Internet Computer 的生产级 Motoko 框架",
+        "features": "强制分层架构 · Next.js 前端 · 全局 CLI · Internet Identity 认证",
+        "installLabel": "一条命令安装",
+        "copyCommand": "复制命令",
+        "installHint": "安装依赖、本地部署并在 localhost:3000 启动开发服务器",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "软件包"
+      },
+      "problemSolution": {
+        "title": "为解决实际问题而构建",
+        "subtitle": "ICFalcon 消除 ICP 开发中的常见摩擦点",
+        "problemHeading": "问题",
+        "solutionHeading": "解决方案",
+        "problems": {
+          "0": {
+            "title": "缺乏标准化架构",
+            "description": "大多数 Motoko 项目从零开始，没有分层、测试或部署模式的明确指导。团队每次都重新设计结构。"
+          },
+          "1": {
+            "title": "工具分散",
+            "description": "构建 ICP 应用意味着同时管理 dfx、mops、npm 和自定义脚本。没有统一的 CLI 用于跨环境脚手架、构建或部署。"
+          },
+          "2": {
+            "title": "前后端集成复杂",
+            "description": "将 Next.js 前端连接到 Motoko canister 需要手动生成 actor、管理身份和配置环境。"
+          },
+          "3": {
+            "title": "入门模板有限",
+            "description": "现有模板要么过于简陋无法用于生产，要么过于固执难以适配。没有适合真实应用的中间选择。"
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "生产级分层",
+            "description": "四层架构（api → service → repository → storage）从第一天起强制执行。每个模块遵循相同模式，使上手和维护可预测。"
+          },
+          "1": {
+            "title": "全局 falcon CLI",
+            "description": "一条命令完成模块脚手架、安装软件包、构建、测试和部署。在本地和主网环境无缝工作，带交互式确认。"
+          },
+          "2": {
+            "title": "集成技术栈",
+            "description": "mo:core Motoko 后端、shadcn/ui Next.js 前端、Internet Identity 认证和静态导出。开箱即用全部连接。"
+          },
+          "3": {
+            "title": "Hub 生态",
+            "description": "通过 `falcon add pkg <name>` 从 icp-hub 安装久经考验的软件包。账本集成、文件存储、速率限制等——即插即用。"
+          }
+        }
+      },
+      "article": {
+        "title": "什么是 ICFalcon？",
+        "subtitle": "为构建 Internet Computer 应用提供结构、工具和速度的框架",
+        "frameworkTitle": "框架，而非样板代码",
+        "frameworkP1": "ICFalcon 是 Motoko 应用的固执己见起点。它强制执行四层后端架构（api → service → repository → storage），搭配现代 Next.js 前端，并提供全局 CLI 用于脚手架、构建和部署。",
+        "frameworkP2": "与让您自行摸索结构的极简模板不同，ICFalcon 提供可扩展的模式——与 ICPay 等生产应用使用的相同。从第一天起您就获得稳定内存管理、迁移指南、Internet Identity 集成和测试框架。",
+        "layeringTitle": "分层后端架构",
+        "layeringP1": "后端遵循严格的关注点分离。API 模块处理 HTTP 和验证。Services 包含业务逻辑。Repositories 抽象数据访问。Storage 管理稳定内存。",
+        "layeringP2": "分层通过约定强制执行并在仓库中记录。使用 falcon m:f Product 脚手架新模块时，它会生成全部四层，连接到 main.mo，并创建匹配的前端服务文件。无需猜测，无需手动连接。",
+        "frontendTitle": "前端集成",
+        "frontendP1": "前端是带 shadcn/ui 组件和 Internet Identity 认证的 Next.js。导出为静态文件（output: \"export\"），可托管在 asset canister 或 Vercel 等常规主机上。",
+        "frontendP2": "Agent 配置、身份派生和 canister ID 已预连接。后端 canister 提供 .did 文件，前端自动获取。无需手动生成 actor 或折腾环境变量。",
+        "cliTitle": "falcon CLI",
+        "cliP1": "所有操作通过一条全局命令运行。初始化项目（falcon s:init）。脚手架模块（falcon m:f Name）。运行测试（falcon b:test --local）。部署（falcon b:deploy，提示确认）。",
+        "cliP2": "CLI 封装 dfx、mops 和 npm，并添加模块、API 端点和前端服务的脚手架。通过 --local 标志定位本地或主网，默认为主网以确保安全。命令记录在 ops/docs/commands.md。",
+        "hubTitle": "Hub 软件包",
+        "hubP1": "ICFalcon 与 icp-hub 集成，即插即用的 Motoko 软件包集合。通过 falcon add pkg <name> 安装账本集成、文件存储、速率限制或其他常见模式。每个软件包遵循相同的四层结构并包含测试。",
+        "hubP2": "软件包独立版本管理和测试。Hub 是开源的，您可以贡献模块回来或为自定义需求 fork。",
+        "audienceTitle": "适合谁？",
+        "audienceP1": "ICFalcon 适合希望在不重新发明结构的情况下发布生产级 ICP 应用的开发者。如果您正在构建需要稳定内存、分层后端、Internet Identity 认证和现代前端的 canister，ICFalcon 让您更快到达目标。",
+        "audienceP2": "它不是极简模板。它有明确主张。分层是强制的，CLI 是主要接口，技术栈是 Motoko + Next.js。如果您需要这个技术栈并想要清晰的起点，ICFalcon 就是答案。",
+        "stackTitle": "技术栈概览",
+        "stackBackend": "后端：",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "前端：",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "工具：",
+        "stackToolingValue": "falcon CLI · 模块脚手架 · icp-hub 软件包"
+      },
+      "faq": {
+        "title": "常见问题",
+        "subtitle": "关于 ICFalcon 及其使用的常见问题",
+        "items": {
+          "0": {
+            "question": "什么是 ICFalcon？",
+            "answer": "ICFalcon 是用于构建 Internet Computer 应用的开源 Motoko 框架。它提供生产级后端架构、Next.js 前端和用于脚手架、构建和部署的全局 CLI。"
+          },
+          "1": {
+            "question": "使用 ICFalcon 需要了解 Motoko 吗？",
+            "answer": "需要。ICFalcon 是 Motoko 框架，因此需要熟悉该语言。但分层架构和脚手架命令减少了需要手动编写的样板代码。"
+          },
+          "2": {
+            "question": "ICFalcon 与 dfx new 有何不同？",
+            "answer": "dfx new 提供极简起点。ICFalcon 提供生产级结构，强制分层、稳定内存管理、Internet Identity 集成和模块脚手架 CLI。设计上固执己见。"
+          },
+          "3": {
+            "question": "可以与现有 canister 一起使用吗？",
+            "answer": "ICFalcon 设计为起点，而非迁移工具。如果您有现有 canister，可以采纳部分架构（分层模式、CLI 命令），但完全集成需要手动工作。"
+          },
+          "4": {
+            "question": "falcon CLI 是什么？",
+            "answer": "falcon CLI 是封装 dfx、mops 和 npm 的全局命令。它处理项目初始化、模块脚手架、测试、构建和部署。命令通过 --local 标志定位本地或主网。"
+          },
+          "5": {
+            "question": "从哪里安装软件包？",
+            "answer": "后端软件包从 mops（Motoko 包管理器）和 icp-hub（精选即插即用模块集合）安装。前端软件包来自 npm。falcon CLI 通过 `falcon add pkg <name>` 抽象了部分流程。"
+          },
+          "6": {
+            "question": "ICFalcon 可用于生产吗？",
+            "answer": "架构已可用于生产，并在 ICPay 等线上应用中使用。但 ICFalcon 本身是框架，而非 SaaS 产品。您拥有自己的 canister，负责测试、部署和维护。"
+          },
+          "7": {
+            "question": "ICFalcon 支持 Rust canister 吗？",
+            "answer": "不支持。ICFalcon 是 Motoko 框架。如果需要 Rust，请使用其他入门模板或从零构建。"
+          },
+          "8": {
+            "question": "如何部署到主网？",
+            "answer": "运行 `falcon b:deploy`（不带 --local）。CLI 会在部署到主网前提示确认。默认为升级模式；从不使用重装模式以避免数据丢失。"
+          },
+          "9": {
+            "question": "可以自定义分层吗？",
+            "answer": "四层架构（api → service → repository → storage）通过约定和 CLI 脚手架强制执行。可以偏离，但会失去一致结构和自动脚手架的好处。"
+          },
+          "10": {
+            "question": "如何为 ICFalcon 做贡献？",
+            "answer": "Fork 仓库，创建功能分支，提交 pull request。遵循 AGENTS.md 中的模式，提交前运行 `falcon b:test --local` 和 `falcon p:check --local`。Hub 软件包请单独贡献到 icp-hub。"
+          },
+          "11": {
+            "question": "ICFalcon 免费吗？",
+            "answer": "是的。ICFalcon 是开源的。源代码按原样提供供使用和修改。Hub 软件包按其 icp-hub 条目中的许可授权。"
+          }
+        }
+      }
+    }
   }
 }

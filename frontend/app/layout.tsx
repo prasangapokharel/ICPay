@@ -6,6 +6,7 @@ import { ThemeProvider, ThemeColorScript } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { SwrProvider } from "@/components/swr-provider"
 import { LocaleProvider } from "@/components/i18n/locale-provider"
+import { AutoLocale } from "@/components/i18n/auto-locale"
 import { FiatProvider } from "@/components/fiat/fiat-provider"
 import { cn } from "@/lib/ui/utils"
 
@@ -121,6 +122,7 @@ export default function RootLayout({
         />
         <ThemeProvider>
           <LocaleProvider>
+            <AutoLocale />
             <FiatProvider>
               <SwrProvider>
                 <AuthProvider>{children}</AuthProvider>

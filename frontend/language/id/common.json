@@ -1164,6 +1164,16 @@
     "docsTitle": "Panduan ICPay Cloud",
     "docsSubtitle": "Penyimpanan file terenkripsi secara on-chain",
     "docsStorageTitle": "Apa yang Anda dapatkan",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "Bucket dibayar setiap bulan dari saldo ICPay Anda. File tetap terenkripsi saat disimpan di tabung.",
     "docsImagesOnly": "Gambar, dokumen, kode, arsip, audio, dan font (lihat Harga untuk daftar lengkap).",
     "docsWebpNote": "Format asli hingga 10 MB. File besar dipotong secara otomatis (batas masuknya IC adalah 2 MiB per panggilan).",
@@ -1223,5 +1233,725 @@
     "prevPage": "Sebelumnya",
     "nextPage": "Berikutnya",
     "pageOf": "Halaman {page} dari {total} · {count} file"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "Menu",
+      "signIn": "Masuk",
+      "wallet": "Dompet",
+      "openWallet": "Buka dompet",
+      "openMenu": "Buka menu",
+      "sectionProducts": "Produk",
+      "sectionResources": "Sumber Daya",
+      "sectionLegal": "Legal",
+      "primary": {
+        "blog": "Blog"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay Wallet",
+          "description": "Kirim ICP dengan username melalui masuk Internet Identity."
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "Penyimpanan on-chain dengan API key, SDK, dan paket ICP."
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "Framework Motoko produksi dengan CLI global."
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "Perintah dan alur kerja untuk proyek ICFalcon."
+        },
+        "icpHubPackages": {
+          "title": "Paket ICP-Hub",
+          "description": "Paket terkurasi untuk pengembangan Internet Computer."
+        },
+        "icbucketDocs": {
+          "title": "Dokumentasi ICBucket",
+          "description": "Referensi API dan panduan integrasi penyimpanan."
+        },
+        "blog": {
+          "title": "Blog",
+          "description": "Panduan, tutorial, dan artikel ekosistem ICP."
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "Tentang",
+          "description": "Apa itu ICPay dan cara kerja pembayaran username."
+        },
+        "faq": {
+          "title": "FAQ",
+          "description": "Jawaban pertanyaan umum tentang dompet dan produk."
+        },
+        "roadmap": {
+          "title": "Roadmap",
+          "description": "Yang sudah dirilis, selanjutnya, dan yang tidak akan kami bangun."
+        },
+        "brands": {
+          "title": "Merek",
+          "description": "Kebijakan merek dagang dan penggunaan brand."
+        },
+        "terms": {
+          "title": "Ketentuan",
+          "description": "Ketentuan layanan penggunaan ICPay."
+        },
+        "privacy": {
+          "title": "Privasi",
+          "description": "Cara kami menangani data dan informasi akun."
+        },
+        "transparency": {
+          "title": "Transparansi",
+          "description": "Model kustodi, biaya, dan operasi on-chain."
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "Produk",
+      "sectionResources": "Sumber Daya",
+      "sectionLegal": "Legal",
+      "sectionCommunity": "Komunitas",
+      "copyright": "© 2026 ICPay. Hak cipta dilindungi.",
+      "blog": "Blog",
+      "channels": "Saluran",
+      "wallet": "Dompet",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "wallet": "ICPay Wallet"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "Paket ICP-Hub",
+        "icbucketDocs": "Dokumentasi ICBucket",
+        "blog": "Blog"
+      },
+      "legal": {
+        "about": "Tentang",
+        "faq": "FAQ",
+        "roadmap": "Roadmap",
+        "brands": "Merek",
+        "terms": "Ketentuan",
+        "privacy": "Privasi",
+        "transparency": "Transparansi"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      }
+    },
+    "heroSignOptions": {
+      "label": "Opsi masuk melalui Internet Identity",
+      "ariaLabel": "Masuk Google, Apple, dan Microsoft melalui Internet Identity"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Dompet Internet Computer",
+        "title": "Kirim ICP dengan username, bukan alamat 63 karakter",
+        "tagline": "ICPay adalah dompet kustodi open-source di Internet Computer. Klaim handle, terima pembayaran dari siapa saja, dan jelajahi saluran, penyimpanan on-chain, serta alat Motoko dari satu ekosistem.",
+        "openWallet": "Buka dompet",
+        "browseChannels": "Jelajahi saluran",
+        "signIn": "Masuk",
+        "aboutIcPay": "Tentang ICPay",
+        "imageAlt": "Dompet ICPay di ponsel"
+      },
+      "cta": {
+        "signedInTitle": "Anda sudah masuk",
+        "signedInBody": "Buka dompet untuk mengirim ICP, cek saldo, atau jelajahi saluran dan token.",
+        "readyTitle": "Siap transfer ICP dengan username?",
+        "readyBody": "Masuk dengan Internet Identity, klaim handle Anda, dan mulai kirim dalam hitungan detik. Tanpa seed phrase. Tanpa ekstensi browser.",
+        "openWallet": "Buka dompet",
+        "browseChannels": "Jelajahi saluran",
+        "signIn": "Masuk"
+      },
+      "features": {
+        "eyebrow": "Platform",
+        "title": "Dibuat untuk pengguna sehari-hari dan pengembang ICP",
+        "subtitle": "ICPay lebih dari dompet. Ini pintu masuk ke pembayaran, komunitas, penyimpanan, dan pengembangan canister di Internet Computer.",
+        "items": {
+          "0": {
+            "title": "Pembayaran username",
+            "body": "Klaim handle dan bagikan icpay.app/yourname. Pengirim tidak perlu akun atau principal 63 karakter."
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "Masuk dengan passkey atau akun tertaut. Tanpa seed phrase dan tanpa ekstensi browser."
+          },
+          "2": {
+            "title": "Saluran",
+            "body": "Komunitas siaran ala Telegram dengan penemuan publik, undangan privat, dan posting markdown."
+          },
+          "3": {
+            "title": "Penyimpanan ICBucket",
+            "body": "Penyimpanan file on-chain dengan API key dan SDK. Bayar ICP dengan paket 30 hari sederhana, bukan tagihan kartu."
+          },
+          "4": {
+            "title": "Framework ICFalcon",
+            "body": "Kerangka Motoko produksi dengan layering terpaksa, tes, dan CLI global untuk aplikasi Internet Computer."
+          },
+          "5": {
+            "title": "Kustodi transparan",
+            "body": "Dana di subakun per pengguna pada ledger ICP resmi. Backend open source dan hanya upgrade di mainnet."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "FAQ",
+        "title": "Pertanyaan umum",
+        "subtitle": "Jawaban cepat tentang dompet, model kustodi, dan sisa stack ICPay.",
+        "items": {
+          "0": {
+            "question": "Apa itu ICPay?",
+            "answer": "ICPay adalah dompet kustodi Internet Computer. Masuk dengan Internet Identity, klaim username, dan kirim atau terima ICP dengan handle itu, bukan menyalin alamat principal panjang."
+          },
+          "1": {
+            "question": "Apakah saya perlu seed phrase?",
+            "answer": "Tidak. Autentikasi ditangani Internet Identity. Setujui akses dengan passkey atau penyedia identitas tertaut — tanpa mnemonic di kertas."
+          },
+          "2": {
+            "question": "Apakah ICPay self-custodial?",
+            "answer": "ICPay bersifat kustodi: saldo Anda di subakun per pengguna yang dikendalikan canister ICPay, dan hanya principal Anda yang bisa mengotorisasi transfer. Kode backend open source dan di-deploy di mainnet."
+          },
+          "3": {
+            "question": "Apa lagi selain dompet?",
+            "answer": "Ekosistem yang sama mencakup Saluran publik, penyimpanan on-chain ICBucket, dan ICFalcon — framework Motoko untuk membangun dan deploy canister dengan CLI terstruktur."
+          },
+          "4": {
+            "question": "Bagaimana cara kerja Saluran?",
+            "answer": "Saluran adalah komunitas siaran. Pemilik memposting pembaruan dengan markdown ala Telegram. Saluran publik bisa ditemukan di Explore; saluran privat diakses lewat username atau tautan undangan."
+          },
+          "5": {
+            "question": "Di mana saya bisa baca lebih lanjut?",
+            "answer": "Kunjungi halaman Tentang, FAQ, dan Transparansi untuk detail produk, atau jelajahi blog untuk panduan Internet Computer dan sumber daya pengembang."
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "Cara kerja",
+        "title": "Seberapa sulit menggunakannya?",
+        "subtitle": "Tidak terlalu. Enam langkah dari masuk Internet Identity hingga mengirim ICP dengan username — tanpa ekstensi browser dan tanpa mnemonic.",
+        "stepLabel": "Langkah {step}",
+        "steps": {
+          "0": {
+            "title": "Masuk dengan Internet Identity",
+            "body": "Gunakan passkey atau akun tertaut. Tanpa buku kata sandi dan tanpa seed phrase yang hilang."
+          },
+          "1": {
+            "title": "Klaim @username Anda",
+            "body": "Pilih handle sekali. Orang membayar Anda di icpay.app/yourname, bukan principal 63 karakter."
+          },
+          "2": {
+            "title": "Bagikan tautan atau alamat Anda",
+            "body": "Kirim halaman username atau alamat deposit kepada siapa pun yang perlu membayar Anda dalam ICP."
+          },
+          "3": {
+            "title": "Kirim dengan @username",
+            "body": "Transfer ICP dalam hitungan detik. Ketik handle, konfirmasi jumlah, dan ledger mencatatnya on-chain."
+          },
+          "4": {
+            "title": "Lacak setiap transfer",
+            "body": "Saldo dan riwayat terikat ke ledger ICP resmi. Buka transaksi apa pun di block explorer."
+          },
+          "5": {
+            "title": "Gunakan stack lengkap",
+            "body": "Saluran untuk komunitas, ICBucket untuk file on-chain, dan ICFalcon untuk pengembangan Motoko — ekosistem yang sama."
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "Cara membayar",
+        "title": "Kirim dengan username atau pindai untuk bayar",
+        "subtitle": "Ketik @username untuk mengirim ICP, atau buka kode QR profil untuk menerima. Dompet sama, dua jalur — keduanya diselesaikan di ledger Internet Computer.",
+        "imageAlt": "Alur pembayaran ICPay: kirim ICP dengan username di kiri, pindai QR untuk bayar di kanan"
+      },
+      "products": {
+        "eyebrow": "Ekosistem",
+        "title": "Semua yang dibangun di atas ICPay",
+        "subtitle": "Dompet, penyimpanan, dan alat canister dalam satu stack — untuk builder dan pengguna sehari-hari di Internet Computer.",
+        "items": {
+          "wallet": {
+            "title": "ICPay Wallet",
+            "description": "Kirim, terima, dan simpan ICP dengan handle username dan Internet Identity.",
+            "cta": "Buka dompet"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "Penyimpanan cloud on-chain dengan API key, SDK, dan paket ICP 30 hari.",
+            "cta": "Jelajahi penyimpanan"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "Framework Motoko produksi dengan arsitektur berlapis dan CLI global.",
+            "cta": "Bangun di ICP"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "Bukti sosial",
+        "title": "Bisakah saya mempercayainya?",
+        "subtitle": "ICPay bersifat kustodi dan belum diaudit — kami katakan dengan jelas. Yang bisa Anda verifikasi hari ini: kode open source, canister mainnet, dan kebijakan transparansi yang dipublikasikan.",
+        "visit": "Kunjungi →",
+        "readMore": "Baca selengkapnya →",
+        "items": {
+          "github": {
+            "label": "Open source di GitHub",
+            "description": "Motoko backend dan frontend Next.js bersifat publik. Periksa pergerakan dana, auth, dan jalur upgrade sendiri."
+          },
+          "backendCanister": {
+            "label": "Canister backend mainnet",
+            "description": "Logika dompet berjalan di {canisterId} pada mainnet Internet Computer."
+          },
+          "transparency": {
+            "label": "Halaman transparansi",
+            "description": "Model kustodi, biaya, dan apa yang operator bisa dan tidak bisa lakukan — dengan alamat on-chain untuk diverifikasi."
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "Pembaruan produk, peluncuran, dan berita ekosistem Internet Computer dari @IcpayOfficial."
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "Pembaruan perusahaan dan posting tim dari halaman LinkedIn resmi ICPay."
+          },
+          "frontendCanister": {
+            "label": "Frontend on-chain",
+            "description": "Aset statis dan asal derivasi II disajikan dari {canisterId}."
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "Penyimpanan cloud on-chain",
+        "title": "ICBucket",
+        "tagline": "Simpan file on-chain dengan API kompatibel S3. Tanpa server, tanpa tagihan AWS — paket 30 hari sederhana dibayar ICP dari saldo ICPay Anda.",
+        "tryIcBucket": "Coba ICBucket",
+        "github": "GitHub",
+        "packages": "Paket",
+        "imageAlt": "ICBucket di ponsel"
+      },
+      "install": {
+        "title": "Instalasi",
+        "subtitle": "SDK untuk Node.js, Python, Rust, dan Go. Instal dari npm, PyPI, crates.io, atau modul Go.",
+        "copyLabel": "Salin ke clipboard",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "Panduan integrasi",
+        "title": "Bagaimana Mengintegrasikan ICBucket?",
+        "subtitle": "Buat bucket, unggah file dengan SDK, dan sajikan aset publik lewat HTTPS — semua dari saldo ICPay dengan API kompatibel S3.",
+        "videoAriaLabel": "Cara mengintegrasikan ICBucket"
+      },
+      "problemSolution": {
+        "title": "Masalah & Solusi",
+        "subtitle": "Penyimpanan cloud tradisional mahal, terpusat, dan rumit. ICBucket memperbaikinya dengan penyimpanan on-chain, paket ICP 30 hari, dan API ala S3.",
+        "problemColumn": "Masalah",
+        "solutionColumn": "Solusi",
+        "rows": {
+          "0": {
+            "problemTitle": "Tagihan Bulanan Mahal",
+            "problemDescription": "AWS S3, Google Cloud Storage, dan Azure Blob menagih bulanan. Biaya menumpuk — proyek 10 GB bisa melebihi $240 dalam lima tahun.",
+            "solutionTitle": "Paket 30 Hari Sederhana",
+            "solutionDescription": "Bayar dari saldo ICPay dalam ICP — mulai 0,5 ICP untuk 1 GB per 30 hari. Tanpa kartu kredit. Perpanjang kapan saja dan waktu yang tidak terpakai menumpuk."
+          },
+          "1": {
+            "problemTitle": "Kontrol Terpusat",
+            "problemDescription": "File Anda ada di server orang lain. Penyedia bisa menangguhkan akun, menaikkan harga, atau menutup layanan tanpa pemberitahuan.",
+            "solutionTitle": "Desentralisasi & Tahan Sensor",
+            "solutionDescription": "File disimpan di replika Internet Computer. Tanpa titik kegagalan tunggal — hanya Anda yang bisa menghapus data."
+          },
+          "2": {
+            "problemTitle": "Setup Rumit",
+            "problemDescription": "Setup S3 memerlukan akun AWS, peran IAM, kebijakan bucket, dan konfigurasi CORS — hanya untuk mengunggah file.",
+            "solutionTitle": "API Kompatibel S3",
+            "solutionDescription": "Pengganti langsung S3 dengan metode familiar: createBucket, uploadFile, downloadFile. Migrasi kode yang ada dalam hitungan menit."
+          },
+          "3": {
+            "problemTitle": "Ketergantungan Vendor",
+            "problemDescription": "Setiap penyedia memakai API berbeda. Pindah dari S3 ke Azure berarti menulis ulang kode — tanpa portabilitas nyata.",
+            "solutionTitle": "Verifikasi On-Chain",
+            "solutionDescription": "Setiap unggahan dapat dilacak on-chain. Content-addressable lewat URL canister — tidak berubah dan dapat diaudit."
+          }
+        }
+      },
+      "pricing": {
+        "title": "Ekonomi Penyimpanan",
+        "subtitle": "Bayar di muka dalam ICP dari saldo ICPay — tanpa kartu kredit, tanpa tagihan bulanan mengejutkan. Setiap tingkat adalah paket 30 hari; perpanjang kapan saja dan waktu yang tidak terpakai menumpuk.",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "Memuat harga ICP langsung…",
+        "priceHint": "Estimasi USD dari CoinGecko · 1 ICP ≈ {price}",
+        "mostPopular": "Paling Populer",
+        "per30Days": "per 30 hari",
+        "capacity": "Kapasitas {capacityGb} GB",
+        "getStarted": "Mulai",
+        "footer": "Harga langsung dari canister: biaya siklus penyimpanan IC plus margin 20%, dibulatkan ke langkah 0,5 ICP. Coret menunjukkan harga daftar sebelumnya. Tingkat hingga 500 GB tersedia di aplikasi.",
+        "footerCheckoutIcp": " Checkout selalu dalam ICP.",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "Kapasitas terpesan 1 GB",
+              "1": "Bucket publik & privat",
+              "2": "Autentikasi API key",
+              "3": "Unggahan terpotong",
+              "4": "URL CDN global",
+              "5": "Terenkripsi saat disimpan",
+              "6": "Perpanjang kapan saja — waktu menumpuk"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "Kapasitas terpesan 5 GB",
+              "1": "Beberapa API key",
+              "2": "Metadata & tag file",
+              "3": "Pencarian & daftar folder",
+              "4": "Salin / pindah / hapus massal",
+              "5": "SDK TypeScript, Python & Go",
+              "6": "Perpanjang kapan saja — waktu menumpuk"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "Kapasitas terpesan 10 GB",
+              "1": "Beberapa bucket",
+              "2": "API key tim",
+              "3": "Operasi massal",
+              "4": "Jejak audit on-chain",
+              "5": "Pengiriman file HTTPS",
+              "6": "Perpanjang kapan saja — waktu menumpuk"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "Kapasitas terpesan 50 GB",
+              "1": "Semua fitur Business",
+              "2": "Unggahan throughput lebih tinggi",
+              "3": "Beban kerja produksi",
+              "4": "Hosting aset dApp & NFT",
+              "5": "Aset situs statis",
+              "6": "Perpanjang kapan saja — waktu menumpuk"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "Terbaru dari ICPay",
+        "subtitle": "Ikuti perjalanan kami membangun penyimpanan on-chain untuk Internet Computer"
+      },
+      "features": {
+        "title": "Semua yang Anda Butuhkan untuk Penyimpanan On-Chain",
+        "subtitle": "ICBucket menyediakan fitur penyimpanan cloud kelas enterprise tanpa kompleksitas enterprise atau tagihan bulanan.",
+        "items": {
+          "0": {
+            "title": "Tingkat Kapasitas Fleksibel",
+            "description": "Pilih dari 1GB hingga 100GB. Mulai kecil, skala sesuai kebutuhan. Perpanjang kapan saja untuk memperpanjang durasi penyimpanan."
+          },
+          "1": {
+            "title": "Unggahan Terpotong",
+            "description": "Unggah file besar dalam potongan (hingga 2MB per potongan). Unggahan paralel untuk transfer lebih cepat. Lanjutkan saat koneksi putus."
+          },
+          "2": {
+            "title": "Manajemen API Key",
+            "description": "Buat beberapa API key per bucket dengan izin granular (baca/tulis/hapus). Cabut dan regenerasi kapan saja."
+          },
+          "3": {
+            "title": "Bucket Publik & Privat",
+            "description": "Bucket publik menyajikan file lewat HTTPS. Bucket privat memerlukan auth. Cocok untuk situs statis dan cadangan aman."
+          },
+          "4": {
+            "title": "API Kompatibel S3",
+            "description": "Pengganti langsung AWS S3. Metode familiar: createBucket, uploadFile, listFiles. Migrasi kode yang ada dalam hitungan menit."
+          },
+          "5": {
+            "title": "Keamanan On-Chain",
+            "description": "File disimpan di replika IC. Kontrol akses tingkat canister. Tanpa pelanggaran server, tanpa kebocoran data."
+          },
+          "6": {
+            "title": "Metadata & Pencarian File",
+            "description": "Tag file, tambahkan metadata kustom. Cari berdasarkan nama, tag, atau awalan. Daftar folder, filter berdasarkan tanggal atau ukuran."
+          },
+          "7": {
+            "title": "Pengiriman Konten Cepat",
+            "description": "File disajikan langsung dari canister IC. Tanpa setup CDN. Distribusi global lewat boundary node IC."
+          }
+        }
+      },
+      "architecture": {
+        "title": "Cara Kerja Penyimpanan",
+        "subtitle": "File berada di dalam canister dompet ICPay di Internet Computer — bukan di VM cloud tradisional. Aplikasi Anda berbicara ke canister; subnet menyimpan data terenkripsi.",
+        "canisterId": "ID Canister · {canisterId}",
+        "diagramAriaLabel": "Diagram arsitektur ICBucket",
+        "writePath": "Jalur tulis",
+        "readPath": "Jalur baca",
+        "uploadSteps": {
+          "0": "Buat bucket sekali (bayar ICP untuk kapasitas).",
+          "1": "beginFileUpload → kirim potongan 2 MB → completeFileUpload.",
+          "2": "Canister mengenkripsi setiap file dan menulis ke memori stabil."
+        },
+        "readSteps": {
+          "0": "File privat: pembaruan downloadFile bertanda tangan dari aplikasi Anda.",
+          "1": "File publik: HTTPS GET biasa pada URL gateway canister.",
+          "2": "Tanpa bucket AWS, tanpa server penyimpanan terpisah — satu canister on-chain."
+        }
+      },
+      "comparison": {
+        "title": "Perbandingan ICBucket",
+        "subtitle": "ICBucket vs. penyedia penyimpanan cloud tradisional. Lihat apa yang membedakan kami.",
+        "featureColumn": "Fitur",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "Paket ICP 30 Hari",
+          "1": "Bayar dengan ICP (tanpa kartu kredit)",
+          "2": "Desentralisasi",
+          "3": "Tahan Sensor",
+          "4": "Verifikasi On-Chain",
+          "5": "Tanpa Risiko Penangguhan Akun",
+          "6": "API Kompatibel S3",
+          "7": "URL HTTPS Publik",
+          "8": "Auth API Key",
+          "9": "Unggahan Terpotong"
+        }
+      },
+      "apiGuide": {
+        "title": "Referensi SDK & API",
+        "subtitle": "API kompatibel S3 dengan SDK untuk Node.js, Python, Rust, dan Go. Pengganti langsung AWS S3.",
+        "codeExamples": "Contoh Kode",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "Instalasi",
+        "createInit": "Buat & Inisialisasi",
+        "uploadFiles": "Unggah File",
+        "downloadAccess": "Unduh & Akses",
+        "fileManagement": "Manajemen File",
+        "apiKeyTitle": "Manajemen API Key",
+        "apiKeyIntro": "Buat beberapa API key per bucket dengan izin granular:",
+        "permRead": "read",
+        "permReadDesc": "Unduh file",
+        "permWrite": "write",
+        "permWriteDesc": "Unggah file",
+        "permDelete": "delete",
+        "permDeleteDesc": "Hapus file",
+        "apiKeyFooter": "Cabut dan regenerasi key kapan saja lewat UI web.",
+        "rateLimitsTitle": "Batas Laju",
+        "rateLimitsIntro": "Batas penggunaan wajar untuk stabilitas canister:",
+        "rateLimitUpload": "Unggah: 100 permintaan/menit per API key",
+        "rateLimitDownload": "Unduh: 1000 permintaan/menit (file publik)",
+        "rateLimitList": "Daftar/Cari: 50 permintaan/menit",
+        "rateLimitChunk": "Ukuran potongan: Maks 2MB per potongan",
+        "rateLimitsFooter": "Hubungi kami untuk batas lebih tinggi atau paket enterprise."
+      },
+      "faq": {
+        "title": "Pertanyaan yang Sering Diajukan",
+        "subtitle": "Semua yang perlu Anda ketahui tentang ICBucket. Tidak menemukan jawaban? Hubungi kami.",
+        "items": {
+          "0": {
+            "question": "Apa bedanya ICBucket dengan AWS S3?",
+            "answer": "ICBucket adalah penyimpanan desentralisasi di Internet Computer. Anda membayar ICP setiap 30 hari dari saldo ICPay (mis. 2,5 ICP untuk 5 GB) alih-alih tagihan AWS kartu kredit. File ada on-chain di replika IC. API key dan SDK memudahkan migrasi."
+          },
+          "1": {
+            "question": "Bagaimana cara kerja penagihan?",
+            "answer": "Setiap bucket adalah paket 30 hari dibayar di muka ICP dari saldo ICPay. Saat habis, bucket hanya-baca hingga diperpanjang. Perpanjangan menambah 30 hari — waktu yang tidak terpakai menumpuk. Harga dikutip langsung dari canister (biaya siklus + margin)."
+          },
+          "2": {
+            "question": "Bisakah ICBucket untuk aplikasi produksi?",
+            "answer": "Ya. ICBucket siap produksi dengan 33 tes lulus, unggahan terpotong, auth API key, dan pemantauan siklus. Sudah dipakai untuk metadata NFT, aset dApp, dan situs statis. Namun ini penyimpanan kustodi di IC — pahami trade-off sebelum deploy data kritis."
+          },
+          "3": {
+            "question": "Jenis file apa yang didukung?",
+            "answer": "Semua jenis file: gambar, video, PDF, JSON, HTML, CSS, JS, dll. Tipe konten dipertahankan. Bucket publik menyajikan file dengan MIME type yang benar (mis. <img src='...'> berfungsi)."
+          },
+          "4": {
+            "question": "Bagaimana migrasi dari S3 ke ICBucket?",
+            "answer": "Instal icpay-bucket SDK, buat bucket, buat API key. Ganti panggilan AWS SDK dengan panggilan ICBucket SDK (API hampir identik). Unduh dari S3, unggah ke ICBucket. Perbarui URL di aplikasi. Kebanyakan migrasi <1 jam untuk proyek kecil."
+          },
+          "5": {
+            "question": "Bagaimana jika canister kehabisan siklus?",
+            "answer": "Canister ICBucket dipantau dan diisi ulang otomatis dari pendapatan bucket. Jika siklus sangat rendah, kami memberi tahu pemilik bucket untuk memperpanjang. Dalam kasus terburuk (canister dihapus), file hilang — sangat jarang dengan manajemen siklus yang baik."
+          },
+          "6": {
+            "question": "Bisakah ICBucket untuk metadata NFT?",
+            "answer": "Ya, kasus penggunaan sempurna. Unggah metadata.json dan file gambar. Dapatkan URL on-chain tidak berubah (https://6vbhm-...-cai.icp0.io/bucket/nft-1.json). Tanpa gateway IPFS, tanpa tautan rusak. Bucket publik menyajikan file seketika."
+          },
+          "7": {
+            "question": "Apakah ada batas ukuran file?",
+            "answer": "Unggahan tunggal dibatasi 2MB per permintaan (batas ukuran panggilan IC). Untuk file lebih besar, gunakan unggahan terpotong — bagi menjadi potongan 2MB di sisi klien. SDK menanganinya otomatis. Diuji hingga file 500MB."
+          },
+          "8": {
+            "question": "Bisakah menghapus file?",
+            "answer": "Ya, pemilik bucket bisa menghapus lewat UI web atau API. File yang dihapus langsung dihapus dari canister. Kuota penyimpanan dibebaskan. Hapus massal didukung."
+          },
+          "9": {
+            "question": "Bagaimana membuat bucket publik?",
+            "answer": "Atur visibility: 'public' saat membuat bucket. Bucket publik menyajikan file lewat HTTPS tanpa auth. Siapa pun dengan URL bisa mengakses. Cocok untuk situs statis, aset publik, dan metadata NFT."
+          },
+          "10": {
+            "question": "Bisakah hosting situs statis di ICBucket?",
+            "answer": "Ya. Unggah HTML, CSS, JS, gambar ke bucket publik. Akses lewat URL canister (https://6vbhm-...-cai.icp0.io/bucket/index.html). Atur tipe konten dengan benar. Belum ada auto-serve index.html — tentukan path lengkap di URL."
+          },
+          "11": {
+            "question": "Apa bedanya ICBucket dan IPFS?",
+            "answer": "ICBucket menyimpan file di canister IC dengan API kompatibel S3. IPFS content-addressed dan peer-to-peer. ICBucket tanpa ketergantungan gateway, akses instan, API lebih sederhana. IPFS lebih desentralisasi tapi akses lebih lambat/tidak terduga. Pilih sesuai kebutuhan."
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "Framework ICFalcon",
+        "title": "ICFalcon",
+        "subtitle": "Framework Motoko Siap Produksi untuk Internet Computer",
+        "features": "Arsitektur berlapis terpaksa · Frontend Next.js · CLI global · Auth Internet Identity",
+        "installLabel": "Instal dengan satu perintah",
+        "copyCommand": "Salin perintah",
+        "installHint": "Menginstal dependensi, deploy lokal, dan memulai dev server di localhost:3000",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "Paket"
+      },
+      "problemSolution": {
+        "title": "Dibuat untuk menyelesaikan masalah nyata",
+        "subtitle": "ICFalcon menghilangkan titik gesekan umum dalam pengembangan ICP",
+        "problemHeading": "Masalah",
+        "solutionHeading": "Solusi",
+        "problems": {
+          "0": {
+            "title": "Tidak ada arsitektur standar",
+            "description": "Kebanyakan proyek Motoko dimulai dari nol tanpa panduan jelas tentang layering, pengujian, atau pola deploy. Tim menciptakan ulang struktur setiap kali."
+          },
+          "1": {
+            "title": "Alat tersebar",
+            "description": "Membangun aplikasi ICP berarti mengelola dfx, mops, npm, dan skrip kustom. Tanpa CLI terpadu untuk scaffolding, build, atau deploy di berbagai lingkungan."
+          },
+          "2": {
+            "title": "Kompleksitas integrasi frontend-backend",
+            "description": "Menghubungkan frontend Next.js ke canister Motoko memerlukan pembuatan actor manual, manajemen identitas, dan konfigurasi lingkungan."
+          },
+          "3": {
+            "title": "Template awal terbatas",
+            "description": "Template yang ada terlalu minimal atau terlalu opinionated. Tidak ada jalan tengah untuk aplikasi dunia nyata."
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "Layering siap produksi",
+            "description": "Arsitektur empat lapisan (api → service → repository → storage) dipaksakan sejak hari pertama. Setiap modul mengikuti pola yang sama — onboarding dan pemeliharaan dapat diprediksi."
+          },
+          "1": {
+            "title": "CLI global falcon",
+            "description": "Satu perintah untuk scaffolding modul, menginstal paket, build, tes, dan deploy. Berjalan mulus di lokal dan mainnet dengan konfirmasi interaktif."
+          },
+          "2": {
+            "title": "Stack terintegrasi",
+            "description": "Backend Motoko dengan mo:core, frontend Next.js dengan shadcn/ui, auth Internet Identity, dan ekspor statis. Semua terhubung out of the box."
+          },
+          "3": {
+            "title": "Ekosistem Hub",
+            "description": "Instal paket teruji dari icp-hub dengan `falcon add pkg <name>`. Integrasi ledger, penyimpanan file, pembatasan laju, dan lainnya — plug and play."
+          }
+        }
+      },
+      "article": {
+        "title": "Apa itu ICFalcon?",
+        "subtitle": "Framework yang memberi struktur, alat, dan kecepatan untuk membangun aplikasi Internet Computer",
+        "frameworkTitle": "Framework, bukan boilerplate",
+        "frameworkP1": "ICFalcon adalah titik awal opinionated untuk aplikasi Motoko. Memaksakan arsitektur backend empat lapisan (api → service → repository → storage), dipasangkan dengan frontend Next.js modern, dan menyediakan CLI global untuk scaffolding, build, dan deploy.",
+        "frameworkP2": "Berbeda dari template minimal, ICFalcon memberi pola yang dapat diskalakan — sama seperti di aplikasi produksi seperti ICPay. Manajemen memori stabil, panduan migrasi, integrasi Internet Identity, dan harness pengujian sejak hari pertama.",
+        "layeringTitle": "Arsitektur backend berlapis",
+        "layeringP1": "Backend mengikuti pemisahan perhatian yang ketat. Modul API menangani HTTP dan validasi. Layanan berisi logika bisnis. Repositori mengabstraksi akses data. Penyimpanan mengelola memori stabil.",
+        "layeringP2": "Layering ini dipaksakan oleh konvensi dan didokumentasikan di repo. Saat Anda scaffolding modul dengan falcon m:f Product, keempat lapisan dibuat, dihubungkan ke main.mo, dan file layanan frontend yang cocok dibuat. Tanpa tebak-tebakan, tanpa kabel manual.",
+        "frontendTitle": "Integrasi frontend",
+        "frontendP1": "Frontend adalah Next.js dengan komponen shadcn/ui dan autentikasi Internet Identity. Mengekspor ke file statis (output: \"export\") agar bisa di-host di asset canister atau host konvensional seperti Vercel.",
+        "frontendP2": "Konfigurasi agent, derivasi identitas, dan ID canister sudah terhubung. Canister backend menyajikan file .did yang diambil otomatis oleh frontend. Tanpa pembuatan actor manual atau juggling lingkungan.",
+        "cliTitle": "CLI falcon",
+        "cliP1": "Setiap operasi melalui satu perintah global. Inisialisasi proyek (falcon s:init). Scaffolding modul (falcon m:f Name). Jalankan tes (falcon b:test --local). Deploy (falcon b:deploy, meminta konfirmasi).",
+        "cliP2": "CLI membungkus dfx, mops, dan npm, serta menambahkan scaffolding untuk modul, endpoint API, dan layanan frontend. Menargetkan lokal atau mainnet dengan flag --local, default mainnet untuk keamanan. Perintah didokumentasikan di ops/docs/commands.md.",
+        "hubTitle": "Paket Hub",
+        "hubP1": "ICFalcon terintegrasi dengan icp-hub, koleksi paket Motoko plug-and-play. Instal integrasi ledger, penyimpanan file, pembatasan laju, atau pola umum lain dengan falcon add pkg <name>. Setiap paket mengikuti struktur empat lapisan dan menyertakan tes.",
+        "hubP2": "Paket diberi versi dan diuji secara independen. Hub bersifat open source — Anda bisa berkontribusi atau fork untuk kebutuhan kustom.",
+        "audienceTitle": "Untuk siapa?",
+        "audienceP1": "ICFalcon untuk pengembang yang ingin mengirim aplikasi ICP siap produksi tanpa menciptakan ulang struktur. Jika Anda membangun canister yang membutuhkan memori stabil, backend berlapis, auth Internet Identity, dan frontend modern, ICFalcon membawa Anda lebih cepat.",
+        "audienceP2": "Bukan template minimal. Ini opinionated. Layering dipaksakan, CLI adalah antarmuka utama, dan stack adalah Motoko + Next.js. Jika Anda butuh stack itu dan titik awal yang jelas, ICFalcon adalah jawabannya.",
+        "stackTitle": "Ringkasan stack",
+        "stackBackend": "Backend:",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "Frontend:",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "Alat:",
+        "stackToolingValue": "falcon CLI · scaffold modul · paket icp-hub"
+      },
+      "faq": {
+        "title": "Pertanyaan yang Sering Diajukan",
+        "subtitle": "Pertanyaan umum tentang ICFalcon dan cara menggunakannya",
+        "items": {
+          "0": {
+            "question": "Apa itu ICFalcon?",
+            "answer": "ICFalcon adalah framework Motoko open source untuk membangun aplikasi Internet Computer. Menyediakan arsitektur backend siap produksi, frontend Next.js, dan CLI global untuk scaffolding, build, dan deploy."
+          },
+          "1": {
+            "question": "Apakah saya perlu tahu Motoko?",
+            "answer": "Ya. ICFalcon adalah framework Motoko, jadi familiaritas dengan bahasa diperlukan. Namun arsitektur berlapis dan perintah scaffolding mengurangi boilerplate yang harus ditulis manual."
+          },
+          "2": {
+            "question": "Apa bedanya ICFalcon dengan dfx new?",
+            "answer": "dfx new memberi titik awal minimal. ICFalcon memberi struktur siap produksi dengan layering terpaksa, manajemen memori stabil, integrasi Internet Identity, dan CLI untuk scaffolding modul. Opinionated by design."
+          },
+          "3": {
+            "question": "Bisakah ICFalcon dengan canister yang ada?",
+            "answer": "ICFalcon dirancang sebagai titik awal, bukan alat migrasi. Anda bisa mengadopsi bagian arsitektur (pola layering, perintah CLI) tetapi integrasi penuh memerlukan kerja manual."
+          },
+          "4": {
+            "question": "Apa itu CLI falcon?",
+            "answer": "CLI falcon adalah perintah global yang membungkus dfx, mops, dan npm. Menangani inisialisasi proyek, scaffolding modul, pengujian, build, dan deploy. Menargetkan lokal atau mainnet dengan flag --local."
+          },
+          "5": {
+            "question": "Dari mana saya menginstal paket?",
+            "answer": "Paket backend diinstal dari mops dan icp-hub. Paket frontend dari npm. CLI menyederhanakan sebagian dengan `falcon add pkg <name>`."
+          },
+          "6": {
+            "question": "Apakah ICFalcon siap produksi?",
+            "answer": "Arsitekturnya siap produksi dan digunakan di aplikasi live seperti ICPay. Namun ICFalcon adalah framework, bukan produk SaaS. Anda memiliki canister dan bertanggung jawab atas pengujian, deploy, dan pemeliharaan."
+          },
+          "7": {
+            "question": "Apakah ICFalcon mendukung canister Rust?",
+            "answer": "Tidak. ICFalcon adalah framework Motoko. Untuk Rust, gunakan starter lain atau bangun dari awal."
+          },
+          "8": {
+            "question": "Bagaimana deploy ke mainnet?",
+            "answer": "Jalankan `falcon b:deploy` (tanpa --local). CLI akan meminta konfirmasi sebelum deploy ke mainnet. Mode upgrade adalah default; mode reinstall tidak pernah digunakan untuk menghindari kehilangan data."
+          },
+          "9": {
+            "question": "Bisakah menyesuaikan layering?",
+            "answer": "Arsitektur empat lapisan (api → service → repository → storage) dipaksakan oleh konvensi dan scaffold CLI. Anda bisa menyimpang, tetapi kehilangan manfaat struktur konsisten dan scaffolding otomatis."
+          },
+          "10": {
+            "question": "Bagaimana berkontribusi ke ICFalcon?",
+            "answer": "Fork repositori, buat cabang fitur, dan buka pull request. Ikuti pola di AGENTS.md dan jalankan `falcon b:test --local` serta `falcon p:check --local` sebelum mengirim. Untuk paket hub, kontribusi ke icp-hub secara terpisah."
+          },
+          "11": {
+            "question": "Apakah ICFalcon gratis?",
+            "answer": "Ya. ICFalcon bersifat open source. Kode sumber disediakan apa adanya untuk digunakan dan dimodifikasi. Paket hub dilisensikan per entri di icp-hub."
+          }
+        }
+      }
+    }
   }
 }

@@ -1,0 +1,34 @@
+---
+title: TypeScript SDK
+description: Install, client setup, and upload for icpay-bucket v1.2+.
+group: Bucket SDK
+order: 1
+eyebrow: Bucket SDK
+---
+
+## Install
+
+```bash
+npm install icpay-bucket
+```
+
+Requires Node.js 18+.
+
+## Client
+
+```typescript
+import { ICBucket } from "icpay-bucket"
+
+const bucket = new ICBucket({
+  bucketId: "your-bucket-id",
+  apiKey: "your-api-key",
+})
+
+await bucket.uploadFile("logo.png", fileBuffer, {
+  contentType: "image/png",
+})
+```
+
+## Result pattern
+
+`icpay-bucket` v1.2+ returns `Result<T>` from every method — check `ok` / `err` before using the value.

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import Image from "next/image"
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 export function HeroSection() {
+  const t = useTranslations("publicSite.icfalcon.hero")
   const [copied, setCopied] = useState(false)
   const command = "npm create icfalcon@latest my-app"
 
@@ -24,7 +26,7 @@ export function HeroSection() {
         <div className="flex justify-center">
           <Image
             src="/images/product/icfalcon/icfalcon.png"
-            alt="ICFalcon Framework"
+            alt={t("imageAlt")}
             width={280}
             height={280}
             priority
@@ -34,19 +36,14 @@ export function HeroSection() {
 
         <div className="space-y-4">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            ICFalcon
+            {t("title")}
           </h1>
-          <p className="text-xl text-muted-foreground sm:text-2xl">
-            Production-Ready Motoko Framework for Internet Computer
-          </p>
-          <p className="text-base text-muted-foreground">
-            Enforced layered architecture · Next.js frontend · Global CLI ·
-            Internet Identity auth
-          </p>
+          <p className="text-xl text-muted-foreground sm:text-2xl">{t("subtitle")}</p>
+          <p className="text-base text-muted-foreground">{t("features")}</p>
         </div>
 
         <div className="mx-auto max-w-2xl space-y-3">
-          <p className="text-sm font-semibold">Install with one command</p>
+          <p className="text-sm font-semibold">{t("installLabel")}</p>
           <div className="relative">
             <Input
               value={command}
@@ -57,7 +54,7 @@ export function HeroSection() {
             <button
               onClick={handleCopy}
               className="absolute right-2 top-1/2 -translate-y-1/2 transition-colors hover:text-foreground"
-              aria-label="Copy command"
+              aria-label={t("copyCommand")}
             >
               <HugeiconsIcon
                 icon={copied ? Tick02Icon : Copy01Icon}
@@ -65,10 +62,7 @@ export function HeroSection() {
               />
             </button>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Installs dependencies, deploys locally, and starts dev server at
-            localhost:3000
-          </p>
+          <p className="text-xs text-muted-foreground">{t("installHint")}</p>
         </div>
 
         <div className="flex flex-col items-center gap-4 pt-6 sm:flex-row sm:justify-center">
@@ -83,7 +77,7 @@ export function HeroSection() {
               />
             }
           >
-            npm
+            {t("npm")}
           </Button>
           <Button
             variant="outline"
@@ -97,7 +91,7 @@ export function HeroSection() {
               />
             }
           >
-            GitHub
+            {t("github")}
           </Button>
           <Button
             variant="outline"
@@ -105,7 +99,7 @@ export function HeroSection() {
             nativeButton={false}
             render={<Link href="/products/icFalcon/packages" />}
           >
-            Packages
+            {t("packages")}
           </Button>
         </div>
       </div>

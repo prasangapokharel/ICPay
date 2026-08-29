@@ -1164,6 +1164,16 @@
     "docsTitle": "ICPay क्लाउड गाइड",
     "docsSubtitle": "अन-चेन ईन्क्रिप्टेड फाइल भण्डारण",
     "docsStorageTitle": "के पाउनुहुन्छ",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "तपाईंको ICPay ब्यालेन्स बाल्टीहरू मापदण्ड राख्छन्। फाइलहरू क्यानिस्टरमा आराममा इन्क्रिप्टेड रहन।",
     "docsImagesOnly": "छविहरू, कागजातहरू, कोडहरू, अभिलेखहरू, अडियो, र फन्टहरू (पूर्ण सूचीको लागि मूल्य निर्धारण गर्नुहोस्)।",
     "docsWebpNote": "१० एमबी सम्मको मूल ढाँचा। ठूला फाइलहरू स्वैच्छिक रूपमा टुक्रातिर (IC प्रवेश सीमा प्रति कल 2 MiB हो)।",
@@ -1223,5 +1233,725 @@
     "prevPage": "अघिल्लो",
     "nextPage": "अर्को",
     "pageOf": "पृष्ठ {page} को {total} · {count} फाइलहरू"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "मेनु",
+      "signIn": "साइन इन",
+      "wallet": "वालेट",
+      "openWallet": "वालेट खोल्नुहोस्",
+      "openMenu": "मेनु खोल्नुहोस्",
+      "sectionProducts": "उत्पादनहरू",
+      "sectionResources": "स्रोतहरू",
+      "sectionLegal": "कानूनी",
+      "primary": {
+        "blog": "ब्लग"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay Wallet",
+          "description": "Internet Identity साइन-इनबाट यूजरनेममा ICP पठाउनुहोस्।"
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "API keys, SDKs र ICP योजनाहरूसँग अन-चेन भण्डारण।"
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "ग्लोबल CLI सहित प्रोडक्शन Motoko फ्रेमवर्क।"
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "ICFalcon प्रोजेक्टहरूका लागि आदेश र कार्यप्रवाह।"
+        },
+        "icpHubPackages": {
+          "title": "ICP-Hub Packages",
+          "description": "Internet Computer विकासका लागि क्युरेटेड प्याकेजहरू।"
+        },
+        "icbucketDocs": {
+          "title": "ICBucket Docs",
+          "description": "भण्डारणका लागि API सन्दर्भ र इन्टिग्रेशन गाइड।"
+        },
+        "blog": {
+          "title": "ब्लग",
+          "description": "गाइड, ट्युटोरियल र ICP इकोसिस्टम लेखहरू।"
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "परिचय",
+          "description": "ICPay के हो र यूजरनेम भुक्तानी कसरी काम गर्छ।"
+        },
+        "faq": {
+          "title": "सामान्य प्रश्न",
+          "description": "वालेट र उत्पादनका सामान्य प्रश्नहरूका उत्तर।"
+        },
+        "roadmap": {
+          "title": "रोडम्याप",
+          "description": "के शिप भयो, अर्को के छ, र हामी के बनाउँदैनौं।"
+        },
+        "brands": {
+          "title": "ब्रान्डहरू",
+          "description": "ट्रेडमार्क र ब्रान्ड प्रयोग नीति।"
+        },
+        "terms": {
+          "title": "सर्तहरू",
+          "description": "ICPay प्रयोगका सेवा सर्तहरू।"
+        },
+        "privacy": {
+          "title": "गोपनीयता",
+          "description": "हामी डेटा र खाता जानकारी कसरी व्यवस्थापन गर्छौं।"
+        },
+        "transparency": {
+          "title": "पारदर्शिता",
+          "description": "हिरासत मोडेल, शुल्क र अन-चेन सञ्चालन।"
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "उत्पादनहरू",
+      "sectionResources": "स्रोतहरू",
+      "sectionLegal": "कानूनी",
+      "sectionCommunity": "समुदाय",
+      "copyright": "© 2026 ICPay. सर्वाधिकार सुरक्षित।",
+      "blog": "ब्लग",
+      "channels": "च्यानलहरू",
+      "wallet": "वालेट",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "wallet": "ICPay Wallet"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "ICP-Hub Packages",
+        "icbucketDocs": "ICBucket Docs",
+        "blog": "ब्लग"
+      },
+      "legal": {
+        "about": "परिचय",
+        "faq": "सामान्य प्रश्न",
+        "roadmap": "रोडम्याप",
+        "brands": "ब्रान्डहरू",
+        "terms": "सर्तहरू",
+        "privacy": "गोपनीयता",
+        "transparency": "पारदर्शिता"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      }
+    },
+    "heroSignOptions": {
+      "label": "Internet Identity मार्फत साइन विकल्प",
+      "ariaLabel": "Internet Identity मार्फत Google, Apple र Microsoft साइन-इन"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Internet Computer वालेट",
+        "title": "६३-अक्षरको ठेगानाको बदला यूजरनेमबाट ICP पठाउनुहोस्",
+        "tagline": "ICPay Internet Computer मा खुला-स्रोत हिरासत वालेट हो। हैंडल दाबी गर्नुहोस्, जो कोहीबाट भुक्तानी प्राप्त गर्नुहोस्, र एउटै इकोसिस्टमबाट च्यानल, अन-चेन भण्डारण र Motoko टूलिङ अन्वेषण गर्नुहोस्।",
+        "openWallet": "वालेट खोल्नुहोस्",
+        "browseChannels": "च्यानलहरू ब्राउज गर्नुहोस्",
+        "signIn": "साइन इन",
+        "aboutIcPay": "ICPay को बारेमा",
+        "imageAlt": "मोबाइलमा ICPay वालेट"
+      },
+      "cta": {
+        "signedInTitle": "तपाईं साइन इन हुनुहुन्छ",
+        "signedInBody": "ICP पठाउन, ब्यालेन्स जाँच गर्न वा च्यानल र टोकन अन्वेषण गर्न वालेट खोल्नुहोस्।",
+        "readyTitle": "यूजरनेमबाट ICP पठाउन तयार?",
+        "readyBody": "Internet Identity साइन इन गर्नुहोस्, हैंडल दाबी गर्नुहोस् र सेकेन्डमा पठाउन सुरु गर्नुहोस्। seed phrase छैन। ब्राउजर एक्सटेन्सन आवश्यक छैन।",
+        "openWallet": "वालेट खोल्नुहोस्",
+        "browseChannels": "च्यानलहरू ब्राउज गर्नुहोस्",
+        "signIn": "साइन इन"
+      },
+      "features": {
+        "eyebrow": "प्लेटफर्म",
+        "title": "दैनिक प्रयोगकर्ता र ICP विकासकहरूका लागि",
+        "subtitle": "ICPay वालेट मात्र होइन। Internet Computer मा भुक्तानी, समुदाय, भण्डारण र क्यानिस्टर विकासको प्रवेश बिन्दु हो।",
+        "items": {
+          "0": {
+            "title": "यूजरनेम भुक्तानी",
+            "body": "हैंडल दाबी गर्नुहोस् र icpay.app/yourname साझा गर्नुहोस्। पठाउनेलाई खाता वा ६३-अक्षर principal चाहिँदैन।"
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "passkey वा लिंक गरिएको खाताबाट साइन इन। लेख्नुपर्ने seed phrase छैन र ब्राउजर एक्सटेन्सन आवश्यक छैन।"
+          },
+          "2": {
+            "title": "च्यानलहरू",
+            "body": "Telegram-शैली प्रसारण समुदाय — सार्वजनिक खोज, निजी निमन्त्रणा र markdown पोस्ट।"
+          },
+          "3": {
+            "title": "ICBucket भण्डारण",
+            "body": "API keys र SDKs सहित अन-चेन फाइल भण्डारण। कार्ड बिलको सट्टा सरल ३०-दिन योजनामा ICP भुक्तानी।"
+          },
+          "4": {
+            "title": "ICFalcon फ्रेमवर्क",
+            "body": "Internet Computer एप्सका लागि enforced layering, परीक्षण र ग्लोबल CLI सहित प्रोडक्शन Motoko scaffolding।"
+          },
+          "5": {
+            "title": "पारदर्शी हिरासत",
+            "body": "कोष अधिकारिक ICP लेजरमा per-user subaccounts मा रहन्छ। ब्याकएन्ड खुला-स्रोत छ र mainnet मा upgrade-only।"
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "सामान्य प्रश्न",
+        "title": "सामान्य प्रश्नहरू",
+        "subtitle": "वालेट, हिरासत मोडेल र बाँकी ICPay स्ट्याकका छिटो उत्तर।",
+        "items": {
+          "0": {
+            "question": "ICPay के हो?",
+            "answer": "ICPay हिरासत Internet Computer वालेट हो। Internet Identity साइन इन गर्नुहोस्, यूजरनेम दाबी गर्नुहोस्, र लामो principal ठेगाना कपी गर्नुको सट्टा त्यो हैंडलबाट ICP पठाउनुहोस् वा प्राप्त गर्नुहोस्।"
+          },
+          "1": {
+            "question": "मलाई seed phrase चाहिन्छ?",
+            "answer": "होइन। प्रमाणीकरण Internet Identity ले गर्छ। passkey वा लिंक identity provider बाट पहुँच स्वीकृत गर्नुहोस् — कागजमा स्टोर गर्ने mnemonic छैन।"
+          },
+          "2": {
+            "question": "ICPay self-custodial छ?",
+            "answer": "ICPay हिरासत छ: ब्यालेन्स ICPay क्यानिस्टरले नियन्त्रण गरेको per-user subaccount मा रहन्छ, र तपाईंको principal मात्र स्थानान्तरण अधिकृत गर्न सक्छ। ब्याकएन्ड कोड खुला-स्रोत छ र mainnet मा तैनात।"
+          },
+          "3": {
+            "question": "वालेट बाहेक अरू के छ?",
+            "answer": "यही इकोसिस्टममा सार्वजनिक Channels, ICBucket अन-चेन भण्डारण र ICFalcon — structured CLI सहित क्यानिस्टर बनाउने र तैनात गर्ने Motoko फ्रेमवर्क।"
+          },
+          "4": {
+            "question": "Channels कसरी काम गर्छ?",
+            "answer": "Channels प्रसारण समुदाय हुन्। मालिक Telegram-शैली markdown साथ अपडेट पोस्ट गर्छन्। सार्वजनिक च्यानल Explore मा फेला पर्छ; निजी यूजरनेम वा निमन्त्रणा लिंकबाट पहुँच।"
+          },
+          "5": {
+            "question": "थप कहाँ पढ्न सक्छु?",
+            "answer": "उत्पादन विवरणका लागि About, FAQ र Transparency पृष्ठ हेर्नुहोस्, वा Internet Computer गाइड र विकासक स्रोतका लागि ब्लग ब्राउज गर्नुहोस्।"
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "कसरी काम गर्छ",
+        "title": "प्रयोग गर्न कति गाह्रो छ?",
+        "subtitle": "धेरै होइन। Internet Identity साइन-इनबाट यूजरनेममा ICP पठाउन छ कदम — ब्राउजर एक्सटेन्सन छैन, लेख्नुपर्ने mnemonic छैन।",
+        "stepLabel": "कदम {step}",
+        "steps": {
+          "0": {
+            "title": "Internet Identity साइन इन",
+            "body": "passkey वा लिंक खाता प्रयोग गर्नुहोस्। पासवर्ड नोटबुक छैन र हराउने seed phrase छैन।"
+          },
+          "1": {
+            "title": "आफ्नो @username दाबी गर्नुहोस्",
+            "body": "एक पटक हैंडल छान्नुहोस्। मानिसहरू ६३-अक्षर principal को सट्टा icpay.app/yourname मा तिर्छन्।"
+          },
+          "2": {
+            "title": "लिंक वा ठेगाना साझा गर्नुहोस्",
+            "body": "यूजरनेम पृष्ठ वा जम्मा ठेगाना तपाईंलाई ICP मा तिर्नुपर्ने कसैलाई पठाउनुहोस्।"
+          },
+          "3": {
+            "title": "@username बाट पठाउनुहोस्",
+            "body": "सेकेन्डमा ICP स्थानान्तरण। हैंडल टाइप गर्नुहोस्, रकम पुष्टि गर्नुहोस्, लेजर अन-चेन रेकर्ड गर्छ।"
+          },
+          "4": {
+            "title": "हरेक स्थानान्तरण ट्र्याक गर्नुहोस्",
+            "body": "ब्यालेन्स र इतिहास अधिकारिक ICP लेजरसँग जोडिएको। ब्लक एक्सप्लोररमा कुनै पनि लेनदेन खोल्नुहोस्।"
+          },
+          "5": {
+            "title": "पूरा स्ट्याक प्रयोग गर्नुहोस्",
+            "body": "समुदायका लागि Channels, अन-चेन फाइलका लागि ICBucket, Motoko विकासका लागि ICFalcon — एउटै इकोसिस्टम।"
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "कसरी तिर्ने",
+        "title": "यूजरनेमबाट पठाउनुहोस् वा स्क्यान गरि तिर्नुहोस्",
+        "subtitle": "ICP पठाउन @username टाइप गर्नुहोस्, वा प्राप्त गर्न प्रोफाइल QR खोल्नुहोस्। एउटै वालेट, दुई बाटो — दुवै Internet Computer लेजरमा settle।",
+        "imageAlt": "ICPay भुक्तानी फ्लो: बाँया यूजरनेमबाट ICP पठाउनुहोस्, दाँया QR स्क्यान गरि तिर्नुहोस्"
+      },
+      "products": {
+        "eyebrow": "इकोसिस्टम",
+        "title": "ICPay मा बनेको सबै",
+        "subtitle": "एउटै स्ट्याकमा वालेट, भण्डारण र क्यानिस्टर टूलिङ — Internet Computer मा बिल्डर र दैनिक प्रयोगकर्ताका लागि।",
+        "items": {
+          "wallet": {
+            "title": "ICPay Wallet",
+            "description": "यूजरनेम हैंडल र Internet Identity सहित ICP पठाउनुहोस्, प्राप्त गर्नुहोस् र राख्नुहोस्।",
+            "cta": "वालेट खोल्नुहोस्"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "API keys, SDKs र ३०-दिन ICP योजनाहरूसँग अन-चेन क्लाउड भण्डारण।",
+            "cta": "भण्डारण अन्वेषण गर्नुहोस्"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "लेयर्ड आर्किटेक्चर र ग्लोबल CLI सहित प्रोडक्शन Motoko फ्रेमवर्क।",
+            "cta": "ICP मा बनाउनुहोस्"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "सामाजिक प्रमाण",
+        "title": "म यसमा भर पाउँछु?",
+        "subtitle": "ICPay हिरासत छ र ऑडिट भएको छैन — हामी स्पष्ट भन्छौं। आज तपाईं खुला-स्रोत कोड, mainnet क्यानिस्टर र प्रकाशित पारदर्शिता नीति प्रमाणित गर्न सक्नुहुन्छ।",
+        "visit": "हेर्नुहोस् →",
+        "readMore": "थप पढ्नुहोस् →",
+        "items": {
+          "github": {
+            "label": "GitHub मा खुला-स्रोत",
+            "description": "ब्याकएन्ड Motoko र Next.js फ्रन्टएन्ड सार्वजनिक। कोष चलाउन, auth र upgrade पथ आफैं जाँच गर्नुहोस्।"
+          },
+          "backendCanister": {
+            "label": "Mainnet ब्याकएन्ड क्यानिस्टर",
+            "description": "वालेट लजिक Internet Computer mainnet मा {canisterId} मा चल्छ।"
+          },
+          "transparency": {
+            "label": "पारदर्शिता पृष्ठ",
+            "description": "प्रकाशित हिरासत मोडेल, शुल्क र अपरेटर के गर्न/गर्न सक्दैन — प्रमाणित गर्न अन-चेन ठेगानाहरू।"
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "@IcpayOfficial बाट उत्पादन अपडेट, लन्च र Internet Computer इकोसिस्टम समाचार।"
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "अधिकारिक ICPay LinkedIn पृष्ठबाट कम्पनी अपडेट र टिम पोस्ट।"
+          },
+          "frontendCanister": {
+            "label": "अन-चेन फ्रन्टएन्ड",
+            "description": "स्ट्याटिक assets र II derivation origin {canisterId} बाट सर्भ हुन्छ।"
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "अन-चेन क्लाउड भण्डारण",
+        "title": "ICBucket",
+        "tagline": "S3-compatible API सहित फाइलहरू अन-चेन स्टोर गर्नुहोस्। सर्वर छैन, AWS बिल छैन — ICPay ब्यालेन्सबाट ICP मा सरल ३०-दिन योजनाहरू।",
+        "tryIcBucket": "ICBucket प्रयास गर्नुहोस्",
+        "github": "GitHub",
+        "packages": "Packages",
+        "imageAlt": "मोबाइलमा ICBucket"
+      },
+      "install": {
+        "title": "इन्स्टलेशन",
+        "subtitle": "Node.js, Python, Rust र Go का SDKs। npm, PyPI, crates.io वा Go modules बाट इन्स्टल गर्नुहोस्।",
+        "copyLabel": "क्लिपबोर्डमा प्रतिलिपि गर्नुहोस्",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "इन्टिग्रेशन गाइड",
+        "title": "ICBucket कसरी इन्टिग्रेट गर्ने?",
+        "subtitle": "बकेट बनाउनुहोस्, SDK बाट फाइल अपलोड गर्नुहोस्, HTTPS मा सार्वजनिक assets सर्भ गर्नुहोस् — S3-compatible API सहित ICPay ब्यालेन्सबाट।",
+        "videoAriaLabel": "ICBucket कसरी इन्टिग्रेट गर्ने"
+      },
+      "problemSolution": {
+        "title": "समस्या र समाधान",
+        "subtitle": "पारम्परिक क्लाउड भण्डारण महँगो, केन्द्रीकृत र जटिल छ। ICBucket अन-चेन भण्डारण, ३०-दिन ICP योजना र S3-शैली API ले समाधान गर्छ।",
+        "problemColumn": "समस्या",
+        "solutionColumn": "समाधान",
+        "rows": {
+          "0": {
+            "problemTitle": "महँगो मासिक बिल",
+            "problemDescription": "AWS S3, Google Cloud Storage र Azure Blob मासिक शुल्क लिन्छ। लागत वर्षौंमा बढ्छ — १० GB प्रोजेक्ट पाँच वर्षमा $२४० भन्दा बढी हुन सक्छ।",
+            "solutionTitle": "सरल ३०-दिन योजना",
+            "solutionDescription": "ICPay ब्यालेन्सबाट ICP मा भुक्तानी — १ GB का लागि ३० दिनमा ०.५ ICP देखि। क्रेडिट कार्ड छैन। जुनसुकै बेला नवीकरण, बाँकी समय जम्मा हुन्छ।"
+          },
+          "1": {
+            "problemTitle": "केन्द्रीकृत नियन्त्रण",
+            "problemDescription": "फाइलहरू अरूको सर्वरमा रहन्छ। प्रदाताले खाता suspend, मूल्य बढाउन वा सेवा बन्द गर्न सक्छ बिना सूचना।",
+            "solutionTitle": "विकेन्द्रीत र सेंसर-प्रतिरोधी",
+            "solutionDescription": "फाइलहरू Internet Computer replicas मा स्टोर। single point of failure छैन — तपाईं मात्र डेटा मेटाउन सक्नुहुन्छ।"
+          },
+          "2": {
+            "problemTitle": "जटिल सेटअप",
+            "problemDescription": "S3 सेटअपका लागि AWS खाता, IAM roles, bucket policies र CORS config — एउटा फाइल अपलोड गर्न।",
+            "solutionTitle": "S3-Compatible API",
+            "solutionDescription": "S3 को drop-in replacement: createBucket, uploadFile, downloadFile। मिनेटमा मौजूदा कोड migrate गर्नुहोस्।"
+          },
+          "3": {
+            "problemTitle": "वेन्डर लक-इन",
+            "problemDescription": "हरेक प्रदाता फरक API प्रयोग गर्छ। S3 बाट Azure जान कोड rewrite चाहिन्छ — वास्तविक portability छैन।",
+            "solutionTitle": "अन-चेन सत्यापन",
+            "solutionDescription": "हरेक अपलोड अन-चेन traceable। canister URLs बाट content-addressable — immutable र auditable।"
+          }
+        }
+      },
+      "pricing": {
+        "title": "भण्डारण अर्थशास्त्र",
+        "subtitle": "ICPay ब्यालेन्सबाट अग्रिम ICP मा भुक्तानी — क्रेडिट कार्ड छैन, अचानक मासिक बिल छैन। हरेक टियर ३०-दिन योजना; जुनसुकै बेला नवीकरण, बाँकी समय जम्मा हुन्छ।",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "लाइव ICP मूल्य लोड हुँदैछ…",
+        "priceHint": "USD अनुमान CoinGecko बाट · १ ICP ≈ {price}",
+        "mostPopular": "सबैभन्दा लोकप्रिय",
+        "per30Days": "३० दिनमा",
+        "capacity": "{capacityGb} GB क्षमता",
+        "getStarted": "सुरु गर्नुहोस्",
+        "footer": "लाइव मूल्य क्यानिस्टरबाट: IC भण्डारण cycle लागत प्लस २०% मार्जिन, ०.५ ICP स्टेपमा राउन्ड। स्ट्राइकथ्रु अघिल्लो सूची मूल्य देखाउँछ। एपमा ५०० GB सम्म टियर उपलब्ध।",
+        "footerCheckoutIcp": " चेकआउट सधैं ICP मा।",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "१ GB आरक्षित क्षमता",
+              "1": "सार्वजनिक र निजी buckets",
+              "2": "API key प्रमाणीकरण",
+              "3": "Chunked uploads",
+              "4": "ग्लोबल CDN URLs",
+              "5": "रेस्टमा एन्क्रिप्टेड",
+              "6": "जुनसुकै बेला नवीकरण — समय जम्मा हुन्छ"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "५ GB आरक्षित क्षमता",
+              "1": "धेरै API keys",
+              "2": "फाइल metadata र tags",
+              "3": "खोज र folder listing",
+              "4": "Bulk copy / move / delete",
+              "5": "TypeScript, Python र Go SDKs",
+              "6": "जुनसुकै बेला नवीकरण — समय जम्मा हुन्छ"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "१० GB आरक्षित क्षमता",
+              "1": "धेरै buckets",
+              "2": "टिम API keys",
+              "3": "Bulk operations",
+              "4": "अन-चेन audit trail",
+              "5": "HTTPS फाइल डेलिभरी",
+              "6": "जुनसुकै बेला नवीकरण — समय जम्मा हुन्छ"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "५० GB आरक्षित क्षमता",
+              "1": "सबै Business सुविधाहरू",
+              "2": "उच्च throughput uploads",
+              "3": "प्रोडक्शन workloads",
+              "4": "dApp र NFT asset hosting",
+              "5": "स्ट्याटिक साइट assets",
+              "6": "जुनसुकै बेला नवीकरण — समय जम्मा हुन्छ"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "ICPay बाट नवीनतम",
+        "subtitle": "Internet Computer का लागि अन-चेन भण्डारण बनाउने हाम्रो यात्रा फलो गर्नुहोस्"
+      },
+      "features": {
+        "title": "अन-चेन भण्डारणका लागि सबै कुरा",
+        "subtitle": "ICBucket एन्टरप्राइज-ग्रेड क्लाउड भण्डारण सुविधा बिना एन्टरप्राइज जटिलता वा मासिक बिल।",
+        "items": {
+          "0": {
+            "title": "लचिलो क्षमता टियर",
+            "description": "१GB देखि १००GB छान्नुहोस्। सानो सुरु, आवश्यक पर scale। भण्डारण अवधि बढाउन जुनसुकै बेला नवीकरण।"
+          },
+          "1": {
+            "title": "Chunked Uploads",
+            "description": "ठूला फाइल chunks मा अपलोड (प्रति chunk २MB सम्म)। छिटो ट्रान्सफरका लागि parallel uploads। कनेक्शन drop मा resume।"
+          },
+          "2": {
+            "title": "API Key व्यवस्थापन",
+            "description": "प्रति bucket धेरै API keys granular permissions (read/write/delete) सहित। जुनसुकै बेला revoke र regenerate।"
+          },
+          "3": {
+            "title": "सार्वजनिक र निजी Buckets",
+            "description": "सार्वजनिक buckets HTTPS बाट फाइल सर्भ। निजी auth चाहिन्छ। स्ट्याटिक साइट र सुरक्षित ब्याकअप दुवैका लागि।"
+          },
+          "4": {
+            "title": "S3-Compatible API",
+            "description": "AWS S3 को drop-in replacement। चिनिएका methods: createBucket, uploadFile, listFiles। मिनेटमा migrate।"
+          },
+          "5": {
+            "title": "अन-चेन सुरक्षा",
+            "description": "फाइलहरू IC replicas मा स्टोर। canister-स्तर पहुँच नियन्त्रण। सर्वर breach छैन, डेटा leak छैन।"
+          },
+          "6": {
+            "title": "फाइल Metadata र खोज",
+            "description": "फाइल tag गर्नुहोस्, कस्टम metadata थप्नुहोस्। नाम, tag वा prefix बाट खोज्नुहोस्। folder सूची, मिति वा आकार filter।"
+          },
+          "7": {
+            "title": "छिटो कन्टेन्ट डेलिभरी",
+            "description": "फाइल सीधै IC canisters बाट सर्भ। CDN सेटअप आवश्यक छैन। IC boundary nodes बाट ग्लोबल वितरण।"
+          }
+        }
+      },
+      "architecture": {
+        "title": "भण्डारण कसरी काम गर्छ",
+        "subtitle": "फाइलहरू Internet Computer मा ICPay वालेट क्यानिस्टर भित्र रहन्छ — पारम्परिक क्लाउड VM मा होइन। एप क्यानिस्टरसँग कुरा गर्छ; subnet एन्क्रिप्टेड डेटा स्टोर गर्छ।",
+        "canisterId": "Canister ID · {canisterId}",
+        "diagramAriaLabel": "ICBucket आर्किटेक्चर आरेख",
+        "writePath": "Write path",
+        "readPath": "Read path",
+        "uploadSteps": {
+          "0": "एक पटक bucket बनाउनुहोस् (क्षमताका लागि ICP तिर्नुहोस्)।",
+          "1": "beginFileUpload → २ MB chunks पठाउनुहोस् → completeFileUpload।",
+          "2": "क्यानिस्टर हरेक फाइल एन्क्रिप्ट गर्छ र stable memory मा लेख्छ।"
+        },
+        "readSteps": {
+          "0": "निजी फाइल: एपबाट signed downloadFile update।",
+          "1": "सार्वजनिक फाइल: canister gateway URL मा plain HTTPS GET।",
+          "2": "AWS bucket छैन, अलग storage सर्वर छैन — एउटै अन-चेन क्यानिस्टर।"
+        }
+      },
+      "comparison": {
+        "title": "ICBucket तुलना",
+        "subtitle": "ICBucket बनाम पारम्परिक क्लाउड भण्डारण। हामीलाई फरक के बनाउँछ हेर्नुहोस्।",
+        "featureColumn": "सुविधा",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "३०-दिन ICP योजना",
+          "1": "ICP बाट भुक्तानी (क्रेडिट कार्ड छैन)",
+          "2": "विकेन्द्रीत",
+          "3": "सेंसर-प्रतिरोधी",
+          "4": "अन-चेन सत्यापन",
+          "5": "खाता suspend जोखिम छैन",
+          "6": "S3-Compatible API",
+          "7": "सार्वजनिक HTTPS URLs",
+          "8": "API Key Auth",
+          "9": "Chunked Uploads"
+        }
+      },
+      "apiGuide": {
+        "title": "SDK र API सन्दर्भ",
+        "subtitle": "Node.js, Python, Rust र Go SDKs सहित S3-compatible API। AWS S3 को drop-in replacement।",
+        "codeExamples": "कोड उदाहरणहरू",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "इन्स्टलेशन",
+        "createInit": "बनाउनुहोस् र Initialize",
+        "uploadFiles": "फाइल अपलोड गर्नुहोस्",
+        "downloadAccess": "डाउनलोड र पहुँच",
+        "fileManagement": "फाइल व्यवस्थापन",
+        "apiKeyTitle": "API Key व्यवस्थापन",
+        "apiKeyIntro": "प्रति bucket granular permissions सहित धेरै API keys बनाउनुहोस्:",
+        "permRead": "read",
+        "permReadDesc": "फाइल डाउनलोड गर्नुहोस्",
+        "permWrite": "write",
+        "permWriteDesc": "फाइल अपलोड गर्नुहोस्",
+        "permDelete": "delete",
+        "permDeleteDesc": "फाइल मेटाउनुहोस्",
+        "apiKeyFooter": "वेब UI बाट जुनसुकै बेला keys revoke र regenerate गर्नुहोस्।",
+        "rateLimitsTitle": "Rate Limits",
+        "rateLimitsIntro": "क्यानिस्टर स्थिरताका लागि fair usage limits:",
+        "rateLimitUpload": "Upload: प्रति API key १०० requests/minute",
+        "rateLimitDownload": "Download: १००० requests/minute (सार्वजनिक फाइल)",
+        "rateLimitList": "List/Search: ५० requests/minute",
+        "rateLimitChunk": "Chunk size: प्रति chunk अधिकतम २MB",
+        "rateLimitsFooter": "उच्च limits वा एन्टरप्राइज योजनाका लागि सम्पर्क गर्नुहोस्।"
+      },
+      "faq": {
+        "title": "बारम्बार सोधिने प्रश्नहरू",
+        "subtitle": "ICBucket बारे जान्नुपर्ने सबै। उत्तर फेला परेन? सम्पर्क गर्नुहोस्।",
+        "items": {
+          "0": {
+            "question": "ICBucket AWS S3 बाट कसरी फरक?",
+            "answer": "ICBucket Internet Computer मा विकेन्द्रीत भण्डारण। क्रेडिट-कार्ड AWS बिलको सट्टा हरेक ३० दिन ICPay ब्यालेन्सबाट ICP (जस्तै ५ GB का लागि २.५ ICP)। फाइलहरू IC replicas मा अन-चेन। API keys र SDKs migration सजिलो बनाउँछ।"
+          },
+          "1": {
+            "question": "बिलिङ कसरी काम गर्छ?",
+            "answer": "हरेक bucket ३०-दिन योजना, ICPay ब्यालेन्सबाट अग्रिम ICP। म्याद सकिए bucket read-only जबसम्म नवीकरण नगर्नुहोस्। नवीकरण ३० दिन थप्छ — बाँकी समय जम्मा हुन्छ। मूल्य क्यानिस्टरबाट लाइव (cycle लागत + मार्जिन)।"
+          },
+          "2": {
+            "question": "प्रोडक्शन एप्सका लागि ICBucket प्रयोग गर्न सक्छु?",
+            "answer": "हो। ICBucket ३३ passing tests, chunked uploads, API key auth र cycle monitoring सहित production-ready। NFT metadata, dApp assets र स्ट्याटिक साइटमा प्रयोग। IC मा हिरासत भण्डारण — mission-critical डेटा अघि trade-offs बुझ्नुहोस्।"
+          },
+          "3": {
+            "question": "कुन फाइल प्रकार समर्थित?",
+            "answer": "सबै: images, videos, PDFs, JSON, HTML, CSS, JS आदि। content type संरक्षित। सार्वजनिक buckets सही MIME types सर्भ (जस्तै <img src='...'> काम गर्छ)।"
+          },
+          "4": {
+            "question": "S3 बाट ICBucket मा कसरी migrate?",
+            "answer": "icpay-bucket SDK इन्स्टल, bucket बनाउनुहोस्, API key generate। AWS SDK calls ICBucket SDK calls बदल्नुहोस् (लगभग समान API)। S3 बाट डाउनलोड, ICBucket मा अपलोड। एपमा URLs अपडेट। साना प्रोजेक्टमा अधिकतर <१ घण्टा।"
+          },
+          "5": {
+            "question": "क्यानिस्टरको cycles सकियो भने?",
+            "answer": "ICBucket canisters मonitor र bucket revenue बाट स्वचालित top-up। cycles गम्भीर रूपमा कम भयो bucket owners लाई नवीकरण सूचना। चरम (क्यानिस्टर deleted) मा फाइल हराउँछ — उचित cycle management मा अत्यन्त दुर्लभ।"
+          },
+          "6": {
+            "question": "NFT metadata का लागि ICBucket?",
+            "answer": "हो, उत्तम use case। metadata.json र image फाइल अपलोड। immutable अन-चेन URLs (https://6vbhm-...-cai.icp0.io/bucket/nft-1.json)। IPFS gateway छैन, broken links छैन। सार्वजनिक buckets तुरुन्त सर्भ।"
+          },
+          "7": {
+            "question": "फाइल आकार सीमा?",
+            "answer": "एकल अपलोड प्रति request २MB (IC call size limit)। ठूला फाइलका लागि chunked uploads — client-side २MB chunks। SDK स्वचालित। ५००MB फाइल परीक्षण।"
+          },
+          "8": {
+            "question": "फाइल मेटाउन सक्छु?",
+            "answer": "हो, bucket owners वेब UI वा API बाट मेटाउन सक्छन्। मेटाइएका फाइल तुरुन्त क्यानिस्टरबाट हट्छ। quota मुक्त। bulk delete समर्थित।"
+          },
+          "9": {
+            "question": "bucket सार्वजनिक कसरी बनाउने?",
+            "answer": "बनाउँदा visibility: 'public' सेट। सार्वजनिक buckets auth बिना HTTPS सर्भ। URL भएको जो कोही पहुँच। स्ट्याटिक साइट, सार्वजनिक assets र NFT metadata का लागि उत्तम।"
+          },
+          "10": {
+            "question": "ICBucket मा स्ट्याटिक वेबसाइट होस्ट गर्न सक्छु?",
+            "answer": "हो। HTML, CSS, JS, images सार्वजनिक bucket मा अपलोड। canister URL बाट (https://6vbhm-...-cai.icp0.io/bucket/index.html)। content types सही सेट। index.html auto-serve अहिले छैन — URL मा पूरा path।"
+          },
+          "11": {
+            "question": "ICBucket र IPFS बीच के फरक?",
+            "answer": "ICBucket S3-compatible API सहित IC canisters मा फाइल स्टोर। IPFS content-addressed, peer-to-peer। ICBucket मा gateway dependencies छैन, तुरुन्त पहुँच, सरल API। IPFS मा बेस्ट विकेन्द्रीकरण तर ढिलो/अनिश्चित पहुँच। आवश्यकतामा छान्नुहोस्।"
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "ICFalcon Framework",
+        "title": "ICFalcon",
+        "subtitle": "Internet Computer का लागि Production-Ready Motoko Framework",
+        "features": "Enforced layered architecture · Next.js frontend · Global CLI · Internet Identity auth",
+        "installLabel": "एक आदेशबाट इन्स्टल",
+        "copyCommand": "आदेश प्रतिलिपि गर्नुहोस्",
+        "installHint": "dependencies इन्स्टल, locally deploy र dev server localhost:3000 मा सुरु",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "Packages"
+      },
+      "problemSolution": {
+        "title": "वास्तविक समस्याहरूको लागि बनाइएको",
+        "subtitle": "ICFalcon ICP विकासमा सामान्य friction हटाउँछ",
+        "problemHeading": "समस्या",
+        "solutionHeading": "समाधान",
+        "problems": {
+          "0": {
+            "title": "मानकीकृत आर्किटेक्चर छैन",
+            "description": "धेरै Motoko प्रोजेक्ट शून्यबाट सुरु — layering, testing वा deployment मा स्पष्ट मार्गदर्शन छैन। टिम हरेक पटक structure reinvent गर्छ।"
+          },
+          "1": {
+            "title": "बिखरेको टूलिङ",
+            "description": "ICP एपका लागि dfx, mops, npm र custom scripts juggle। scaffolding, build वा deploy का लागि unified CLI छैन।"
+          },
+          "2": {
+            "title": "फ्रन्टएन्ड-ब्याकएन्ड इन्टिग्रेशन जटिलता",
+            "description": "Next.js फ्रन्टएन्ड Motoko क्यानिस्टर जोड्न manual actor generation, identity management र environment config चाहिन्छ।"
+          },
+          "3": {
+            "title": "सीमित starter templates",
+            "description": "मौजूदा templates धेरै minimal वा धेरै opinionated। real-world एप्सका लागि मध्यम बाटो छैन।"
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "प्रोडक्शन-शेप layering",
+            "description": "चार-लेयर आर्किटेक्चर (api → service → repository → storage) दिन एकबाट enforced। हरेक module एउटै प्याटर्न — onboarding र maintenance predictable।"
+          },
+          "1": {
+            "title": "ग्लोबल falcon CLI",
+            "description": "modules scaffold, packages install, build, test र deploy का लागि एउटै आदेश। local र mainnet मा interactive confirmations।"
+          },
+          "2": {
+            "title": "एकीकृत स्ट्याक",
+            "description": "mo:core Motoko ब्याकएन्ड, shadcn/ui Next.js फ्रन्टएन्ड, Internet Identity auth र static export। सब out of the box wired।"
+          },
+          "3": {
+            "title": "Hub इकोसिस्टम",
+            "description": "`falcon add pkg <name>` बाट icp-hub battle-tested packages। ledger integration, file storage, rate limiting — plug and play।"
+          }
+        }
+      },
+      "article": {
+        "title": "ICFalcon के हो?",
+        "subtitle": "Internet Computer एप्स बनाउन structure, tooling र speed दिने फ्रेमवर्क",
+        "frameworkTitle": "फ्रेमवर्क, boilerplate होइन",
+        "frameworkP1": "ICFalcon Motoko एप्सका लागि opinionated starting point। चार-लेयर ब्याकएन्ड (api → service → repository → storage) enforce, modern Next.js फ्रन्टएन्ड जोड्छ, scaffold, build र deploy का लागि global CLI दिन्छ।",
+        "frameworkP2": "minimal templates को विपरीत, ICFalcon scalable patterns दिन्छ — ICPay जस्ता production एप्समा प्रयोग। stable memory management, migration guides, Internet Identity integration र testing harness दिन एकबाट।",
+        "layeringTitle": "लेयर्ड ब्याकएन्ड आर्किटेक्चर",
+        "layeringP1": "ब्याकएन्ड strict separation of concerns। API modules HTTP र validation। Services business logic। Repositories data access। Storage stable memory।",
+        "layeringP2": "layering convention बाट enforced र repo मा documented। falcon m:f Product बाट नयाँ module scaffold — चार layers, main.mo मा wired, matching frontend service files। guessing, manual wiring छैन।",
+        "frontendTitle": "फ्रन्टएन्ड इन्टिग्रेशन",
+        "frontendP1": "फ्रन्टएन्ड Next.js shadcn/ui र Internet Identity auth सहित। static files export (output: \"export\") — asset canister वा Vercel जस्तो host मा।",
+        "frontendP2": "agent configuration, identity derivation र canister IDs pre-wired। ब्याकएन्ड क्यानिस्टर .did file सर्भ गर्छ जुन फ्रन्टएन्ड fetch गर्छ। manual actor generation वा environment juggling छैन।",
+        "cliTitle": "falcon CLI",
+        "cliP1": "हरेक सञ्चालन एउटै global command बाट। प्रोजेक्ट initialize (falcon s:init)। module scaffold (falcon m:f Name)। tests (falcon b:test --local)। deploy (falcon b:deploy, confirmation prompt)।",
+        "cliP2": "CLI dfx, mops र npm wrap गर्छ, modules, API endpoints र frontend services scaffolding थप्छ। --local flag बाट local वा mainnet, default mainnet सुरक्षा। ops/docs/commands.md मा documented।",
+        "hubTitle": "Hub packages",
+        "hubP1": "ICFalcon icp-hub plug-and-play Motoko packages सँग जोडिन्छ। falcon add pkg <name> बाट ledger integration, file storage, rate limiting। हरेक package चार-लेयर structure र tests।",
+        "hubP2": "packages independently versioned र tested। hub खुला-स्रोत — modules contribute वा fork गर्नुहोस्।",
+        "audienceTitle": "कसका लागि?",
+        "audienceP1": "ICFalcon विकासकहरूका लागि जो structure reinvent नगरी production-ready ICP एप्स ship गर्न चाहन्छन्। stable memory, layered backend, Internet Identity auth र modern frontend चाहिन्छ भने ICFalcon छिटो पुर्याउँछ।",
+        "audienceP2": "minimal template होइन। opinionated छ। layering enforced, CLI primary interface, stack Motoko + Next.js। यो stack चाहिन्छ र clear starting point चाहिन्छ भने ICFalcon हो।",
+        "stackTitle": "स्ट्याक अवलोकन",
+        "stackBackend": "ब्याकएन्ड:",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "फ्रन्टएन्ड:",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "टूलिङ:",
+        "stackToolingValue": "falcon CLI · module scaffolds · icp-hub packages"
+      },
+      "faq": {
+        "title": "बारम्बार सोधिने प्रश्नहरू",
+        "subtitle": "ICFalcon र प्रयोगका सामान्य प्रश्न",
+        "items": {
+          "0": {
+            "question": "ICFalcon के हो?",
+            "answer": "ICFalcon Internet Computer एप्सका लागि खुला-स्रोत Motoko फ्रेमवर्क। production-ready ब्याकएन्ड आर्किटेक्चर, Next.js फ्रन्टएन्ड र scaffold, build, deploy का लागि global CLI।"
+          },
+          "1": {
+            "question": "ICFalcon का लागि Motoko जान्नुपर्छ?",
+            "answer": "हो। ICFalcon Motoko फ्रेमवर्क, भाषा familiarity आवश्यक। layered architecture र scaffolding commands manual boilerplate कम गर्छ।"
+          },
+          "2": {
+            "question": "ICFalcon dfx new बाट कसरी फरक?",
+            "answer": "dfx new minimal starting point दिन्छ। ICFalcon enforced layering, stable memory, Internet Identity integration र module scaffolding CLI सहित production-shaped structure। design बाट opinionated।"
+          },
+          "3": {
+            "question": "मौजूदा क्यानिस्टरसँग ICFalcon?",
+            "answer": "ICFalcon starting point का लागि, migration tool होइन। मौजूदा क्यानिस्टरमा architecture केही (layering, CLI) अपनाउन सकिन्छ, पूर्ण integration manual काम।"
+          },
+          "4": {
+            "question": "falcon CLI के हो?",
+            "answer": "falcon CLI global command जो dfx, mops र npm wrap गर्छ। initialization, module scaffolding, testing, building, deployment। --local flag बाट local वा mainnet।"
+          },
+          "5": {
+            "question": "packages कहाँबाट install?",
+            "answer": "ब्याकएन्ड packages mops (Motoko package manager) र icp-hub बाट। फ्रन्टएन्ड npm। falcon CLI `falcon add pkg <name>` बाट केही abstract।"
+          },
+          "6": {
+            "question": "ICFalcon production-ready?",
+            "answer": "आर्किटेक्चर production-ready छ र ICPay जस्ता live एप्समा प्रयोग। ICFalcon फ्रेमवर्क, SaaS होइन। तपाईंको क्यानिस्टर, testing, deployment र maintenance तपाईंको जिम्मा।"
+          },
+          "7": {
+            "question": "ICFalcon Rust canisters समर्थन?",
+            "answer": "होइन। ICFalcon Motoko फ्रेमवर्क। Rust चाहिन्छ भने अर्को starter वा scratch बाट build।"
+          },
+          "8": {
+            "question": "mainnet मा deploy कसरी?",
+            "answer": "`falcon b:deploy` चलाउनुहोस् (बिना --local)। CLI mainnet deploy अघि confirmation prompt। upgrade mode default; data loss बचाउन reinstall mode कहिल्यै होइन।"
+          },
+          "9": {
+            "question": "layering customize गर्न सक्छु?",
+            "answer": "चार-लेयर (api → service → repository → storage) convention र CLI scaffolds बाट enforced। deviate गर्न सकिन्छ, तर consistent structure र automated scaffolding का फाइदा गुम्छ।"
+          },
+          "10": {
+            "question": "ICFalcon मा contribute कसरी?",
+            "answer": "repository fork, feature branch, pull request। AGENTS.md patterns follow, submit अघि `falcon b:test --local` र `falcon p:check --local` चलाउनुहोस्। hub packages का लागि icp-hub मा separately contribute।"
+          },
+          "11": {
+            "question": "ICFalcon नि:शुल्क?",
+            "answer": "हो। ICFalcon खुला-स्रोत। source code as-is प्रयोग र modification का लागि। hub packages icp-hub entries मा licensed।"
+          }
+        }
+      }
+    }
   }
 }

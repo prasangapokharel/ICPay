@@ -6,15 +6,10 @@ import { usePathname } from "next/navigation"
 import { MenuIcon } from "lucide-react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { News01Icon } from "@hugeicons/core-free-icons"
-import {
-  PUBLIC_LEGAL_MENU,
-  PUBLIC_PRIMARY_LINKS,
-  PUBLIC_PRODUCT_MENU,
-  PUBLIC_RESOURCE_MENU,
-  type NavMenuItem,
-} from "@/lib/public/site-links"
+import type { NavMenuItem } from "@/lib/public/site-links"
 import { cn } from "@/lib/ui/utils"
 import { NavMenuLinkRow } from "@/components/public/nav-menu-item"
+import { usePublicSiteLinks } from "@/hooks/i18n/use-public-site-links"
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -51,6 +46,14 @@ function MobileNavSection({
 export function PublicNavMobile() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const {
+    primaryLinks,
+    productMenu,
+    resourceMenu,
+    legalMenu,
+    sectionLabels,
+    navLabels,
+  } = usePublicSiteLinks()
 
   const close = () => setOpen(false)
 
@@ -61,7 +64,7 @@ export function PublicNavMobile() {
         size="icon-sm"
         variant="ghost"
         className="rounded-full text-muted-foreground hover:text-foreground lg:hidden"
-        aria-label="Open menu"
+        aria-label={navLabels.openMenu}
         onClick={() => setOpen(true)}
       >
         <MenuIcon className="size-4" />
@@ -70,12 +73,12 @@ export function PublicNavMobile() {
       <Drawer open={open} onOpenChange={setOpen} swipeDirection="right" showSwipeHandle>
         <DrawerContent className="max-h-[min(100dvh-1rem,100%)] data-[swipe-direction=right]:w-[min(100vw-1rem,20rem)]">
           <DrawerHeader className="border-b border-border/60 pb-4">
-            <DrawerTitle>Menu</DrawerTitle>
+            <DrawerTitle>{navLabels.menu}</DrawerTitle>
           </DrawerHeader>
 
           <div className="flex flex-col gap-6 overflow-y-auto px-2 py-4">
             <div className="space-y-1">
-              {PUBLIC_PRIMARY_LINKS.map((link) => (
+              {primaryLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -93,9 +96,9 @@ export function PublicNavMobile() {
               ))}
             </div>
 
-            <MobileNavSection title="Products" items={PUBLIC_PRODUCT_MENU} onNavigate={close} />
-            <MobileNavSection title="Resources" items={PUBLIC_RESOURCE_MENU} onNavigate={close} />
-            <MobileNavSection title="Legal" items={PUBLIC_LEGAL_MENU} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.products} items={productMenu} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.resources} items={resourceMenu} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.legal} items={legalMenu} onNavigate={close} />
           </div>
         </DrawerContent>
       </Drawer>

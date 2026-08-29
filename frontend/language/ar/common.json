@@ -1164,6 +1164,16 @@
     "docsTitle": "دليل ICPay",
     "docsSubtitle": "تخزين الملفات على الوثيقة",
     "docsStorageTitle": "ما حصل عليه",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "يتم دفع الدلاء شهريًا من رصيد ICPay الخاص بك. تسليط الضوء على الملفات المشفرة في الحالة الخفيفة على العلبة.",
     "docsImagesOnly": "الصور والمستندات والإرشادات الخاصة بأمر التجميد والمحفوظات والصوت والخطوط (راجع التسعير للحصول على النسخة الكاملة).",
     "docsWebpNote": "يصل الأصلي إلى 10 كيلو بايت. يتم فرز الملفات الدقيقة (حد دخول IC هو 2 ميجابايت لكل مكالمة).",
@@ -1223,5 +1233,725 @@
     "prevPage": "السابقة",
     "nextPage": "التالي",
     "pageOf": "صفحة {page} من {total} · {count} الملفات"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "القائمة",
+      "signIn": "تسجيل الدخول",
+      "wallet": "المحفظة",
+      "openWallet": "فتح المحفظة",
+      "openMenu": "فتح القائمة",
+      "sectionProducts": "المنتجات",
+      "sectionResources": "الموارد",
+      "sectionLegal": "قانوني",
+      "primary": {
+        "blog": "المدونة"
+      },
+      "products": {
+        "wallet": {
+          "title": "محفظة ICPay",
+          "description": "أرسل ICP عبر اسم المستخدم بتسجيل الدخول عبر Internet Identity."
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "تخزين على السلسلة مع مفاتيح API وSDK وخطط ICP."
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "إطار Motoko للإنتاج مع CLI عالمي."
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "أوامر وسير عمل لمشاريع ICFalcon."
+        },
+        "icpHubPackages": {
+          "title": "حزم ICP-Hub",
+          "description": "حزم منتقاة لتطوير Internet Computer."
+        },
+        "icbucketDocs": {
+          "title": "وثائق ICBucket",
+          "description": "مرجع API وأدلة التكامل للتخزين."
+        },
+        "blog": {
+          "title": "المدونة",
+          "description": "أدلة ودروس ومقالات عن نظام ICP البيئي."
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "حول",
+          "description": "ما هو ICPay وكيف تعمل المدفوعات عبر اسم المستخدم."
+        },
+        "faq": {
+          "title": "الأسئلة الشائعة",
+          "description": "إجابات عن أسئلة المحفظة والمنتجات الشائعة."
+        },
+        "roadmap": {
+          "title": "خارطة الطريق",
+          "description": "ما تم إطلاقه وما هو قادم وما لن نبنيه."
+        },
+        "brands": {
+          "title": "العلامات التجارية",
+          "description": "سياسة العلامات التجارية واستخدامها."
+        },
+        "terms": {
+          "title": "الشروط",
+          "description": "شروط الخدمة لاستخدام ICPay."
+        },
+        "privacy": {
+          "title": "الخصوصية",
+          "description": "كيف نتعامل مع البيانات ومعلومات الحساب."
+        },
+        "transparency": {
+          "title": "الشفافية",
+          "description": "نموذج الحفظ والرسوم والعمليات على السلسلة."
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "المنتجات",
+      "sectionResources": "الموارد",
+      "sectionLegal": "قانوني",
+      "sectionCommunity": "المجتمع",
+      "copyright": "© 2026 ICPay. جميع الحقوق محفوظة.",
+      "blog": "المدونة",
+      "channels": "القنوات",
+      "wallet": "المحفظة",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "wallet": "محفظة ICPay"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "حزم ICP-Hub",
+        "icbucketDocs": "وثائق ICBucket",
+        "blog": "المدونة"
+      },
+      "legal": {
+        "about": "حول",
+        "faq": "الأسئلة الشائعة",
+        "roadmap": "خارطة الطريق",
+        "brands": "العلامات التجارية",
+        "terms": "الشروط",
+        "privacy": "الخصوصية",
+        "transparency": "الشفافية"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      }
+    },
+    "heroSignOptions": {
+      "label": "خيارات تسجيل الدخول عبر Internet Identity",
+      "ariaLabel": "تسجيل الدخول عبر Google وApple وMicrosoft من خلال Internet Identity"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "محفظة Internet Computer",
+        "title": "أرسل ICP عبر اسم المستخدم، لا عبر عنوان من 63 حرفاً",
+        "tagline": "ICPay محفظة مفتوحة المصدر على Internet Computer. احصل على اسم مستخدم، استقبل المدفوعات من أي شخص، واستكشف القنوات والتخزين على السلسلة وأدوات Motoko من نظام بيئي واحد.",
+        "openWallet": "فتح المحفظة",
+        "browseChannels": "تصفح القنوات",
+        "signIn": "تسجيل الدخول",
+        "aboutIcPay": "حول ICPay",
+        "imageAlt": "محفظة ICPay على الجوال"
+      },
+      "cta": {
+        "signedInTitle": "أنت مسجّل الدخول",
+        "signedInBody": "افتح محفظتك لإرسال ICP أو التحقق من الأرصدة أو استكشاف القنوات والرموز.",
+        "readyTitle": "هل أنت مستعد لتحويل ICP عبر اسم مستخدم؟",
+        "readyBody": "سجّل الدخول عبر Internet Identity، احصل على اسمك، وابدأ الإرسال في ثوانٍ. بدون عبارة استرداد. بدون إضافة متصفح.",
+        "openWallet": "فتح المحفظة",
+        "browseChannels": "تصفح القنوات",
+        "signIn": "تسجيل الدخول"
+      },
+      "features": {
+        "eyebrow": "المنصة",
+        "title": "مصممة للمستخدمين اليوميين ومطوري ICP",
+        "subtitle": "ICPay أكثر من محفظة. إنها نقطة الدخول للمدفوعات والمجتمع والتخزين وتطوير الـ canister على Internet Computer.",
+        "items": {
+          "0": {
+            "title": "مدفوعات عبر اسم المستخدم",
+            "body": "احصل على اسم وشارك icpay.app/yourname. المرسلون لا يحتاجون حساباً ولا principal من 63 حرفاً."
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "سجّل الدخول بمفتاح مرور أو حساب مرتبط. بدون عبارة استرداد وبدون إضافة متصفح."
+          },
+          "2": {
+            "title": "القنوات",
+            "body": "مجتمعات بث على طراز Telegram مع اكتشاف عام ودعوات خاصة ومنشورات markdown."
+          },
+          "3": {
+            "title": "تخزين ICBucket",
+            "body": "تخزين ملفات على السلسلة مع مفاتيح API وSDK. ادفع بـ ICP بخطط 30 يوماً بسيطة بدلاً من فاتورة بطاقة."
+          },
+          "4": {
+            "title": "إطار ICFalcon",
+            "body": "هيكل Motoko للإنتاج مع طبقات مفروضة واختبارات وCLI عالمي لتطبيقات Internet Computer."
+          },
+          "5": {
+            "title": "حفظ شفاف",
+            "body": "الأموال في حسابات فرعية لكل مستخدم على دفتر ICP الرسمي. الخلفية مفتوحة المصدر وترقية فقط على mainnet."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "الأسئلة الشائعة",
+        "title": "أسئلة شائعة",
+        "subtitle": "إجابات سريعة عن المحفظة ونموذج الحفظ وبقية مكدس ICPay.",
+        "items": {
+          "0": {
+            "question": "ما هو ICPay؟",
+            "answer": "ICPay محفظة حفظ على Internet Computer. تسجّل الدخول عبر Internet Identity، تحصل على اسم مستخدم، وترسل أو تستقبل ICP بهذا الاسم بدلاً من نسخ عنوان principal طويل."
+          },
+          "1": {
+            "question": "هل أحتاج عبارة استرداد؟",
+            "answer": "لا. المصادقة عبر Internet Identity. توافق بالوصول بمفتاح مرور أو مزود هوية مرتبط — بدون mnemonic لتخزينه على ورق."
+          },
+          "2": {
+            "question": "هل ICPay ذاتية الحفظ؟",
+            "answer": "ICPay حفظية: رصيدك في حساب فرعي يتحكم به canister ICPay، وفقط principal الخاص بك يمكنه تفويض التحويلات. كود الخلفية مفتوح المصدر ومنشور على mainnet."
+          },
+          "3": {
+            "question": "ماذا يوجد بجانب المحفظة؟",
+            "answer": "نفس النظام البيئي يشمل القنوات العامة وتخزين ICBucket على السلسلة وICFalcon — إطار Motoko لبناء ونشر الـ canister مع CLI منظم."
+          },
+          "4": {
+            "question": "كيف تعمل القنوات؟",
+            "answer": "القنوات مجتمعات بث. المالكون ينشرون تحديثات بـ markdown على طراز Telegram. القنوات العامة تُكتشف في Explore؛ الخاصة تُصل عبر اسم المستخدم أو رابط دعوة."
+          },
+          "5": {
+            "question": "أين أقرأ المزيد؟",
+            "answer": "زر صفحات حول والأسئلة الشائعة والشفافية لتفاصيل المنتج، أو تصفح المدونة لأدلة Internet Computer وموارد المطورين."
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "كيف يعمل",
+        "title": "ما مدى صعوبة الاستخدام؟",
+        "subtitle": "ليس كثيراً. ست خطوات من تسجيل الدخول عبر Internet Identity إلى إرسال ICP عبر اسم المستخدم — بدون إضافة متصفح وبدون mnemonic.",
+        "stepLabel": "الخطوة {step}",
+        "steps": {
+          "0": {
+            "title": "سجّل الدخول عبر Internet Identity",
+            "body": "استخدم مفتاح مرور أو حساباً مرتبطاً. بدون دفتر كلمات مرور وبدون عبارة استرداد تضيع."
+          },
+          "1": {
+            "title": "احصل على @username",
+            "body": "اختر اسماً مرة واحدة. يدفعون لك على icpay.app/yourname بدلاً من principal من 63 حرفاً."
+          },
+          "2": {
+            "title": "شارك رابطك أو عنوانك",
+            "body": "أرسل صفحة اسم المستخدم أو عنوان الإيداع لمن يحتاج الدفع لك بـ ICP."
+          },
+          "3": {
+            "title": "أرسل عبر @username",
+            "body": "حوّل ICP في ثوانٍ. اكتب الاسم، أكّد المبلغ، والدفتر يسجّله على السلسلة."
+          },
+          "4": {
+            "title": "تتبع كل تحويل",
+            "body": "الأرصدة والسجل مرتبطان بدفتر ICP الرسمي. افتح أي معاملة في مستكشف الكتل."
+          },
+          "5": {
+            "title": "استخدم المكدس الكامل",
+            "body": "القنوات للمجتمع، ICBucket للملفات على السلسلة، وICFalcon لتطوير Motoko — نفس النظام البيئي."
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "كيفية الدفع",
+        "title": "أرسل عبر اسم المستخدم أو امسح للدفع",
+        "subtitle": "اكتب @username لإرسال ICP، أو افتح رمز QR للملف الشخصي للاستقبال. نفس المحفظة، مساران — كلاهما يُسوّى على دفتر Internet Computer.",
+        "imageAlt": "تدفق دفع ICPay: إرسال ICP عبر اسم المستخدم يساراً، مسح QR للدفع يميناً"
+      },
+      "products": {
+        "eyebrow": "النظام البيئي",
+        "title": "كل ما بُني على ICPay",
+        "subtitle": "محفظة وتخزين وأدوات canister في مكدس واحد — للمطورين والمستخدمين اليوميين على Internet Computer.",
+        "items": {
+          "wallet": {
+            "title": "محفظة ICPay",
+            "description": "أرسل واستقبل واحتفظ بـ ICP باسم مستخدم وInternet Identity.",
+            "cta": "فتح المحفظة"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "تخزين سحابي على السلسلة مع مفاتيح API وSDK وخطط ICP لـ 30 يوماً.",
+            "cta": "استكشف التخزين"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "إطار Motoko للإنتاج مع بنية طبقات وCLI عالمي.",
+            "cta": "ابنِ على ICP"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "إثبات اجتماعي",
+        "title": "هل يمكنني الوثوق به؟",
+        "subtitle": "ICPay حفظية ولم تُدقَّق بعد — نقول ذلك بوضوح. ما يمكنك التحقق منه اليوم: الكود مفتوح المصدر وcanister الـ mainnet وسياسة الشفافية المنشورة.",
+        "visit": "زيارة ←",
+        "readMore": "اقرأ المزيد ←",
+        "items": {
+          "github": {
+            "label": "مفتوح المصدر على GitHub",
+            "description": "Motoko للخلفية وNext.js للواجهة عامان. افحص حركة الأموال والمصادقة ومسارات الترقية بنفسك."
+          },
+          "backendCanister": {
+            "label": "canister الخلفية على mainnet",
+            "description": "منطق المحفظة يعمل على {canisterId} على mainnet لـ Internet Computer."
+          },
+          "transparency": {
+            "label": "صفحة الشفافية",
+            "description": "نموذج حفظ ورسوم وما يمكن للمشغّل فعله وما لا يمكن — مع عناوين على السلسلة للتحقق."
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "تحديثات المنتج والإطلاقات وأخبار نظام Internet Computer من @IcpayOfficial."
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "تحديثات الشركة ومنشورات الفريق من صفحة ICPay الرسمية على LinkedIn."
+          },
+          "frontendCanister": {
+            "label": "واجهة على السلسلة",
+            "description": "الأصول الثابتة وأصل اشتقاق II يُقدَّمان من {canisterId}."
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "تخزين سحابي على السلسلة",
+        "title": "ICBucket",
+        "tagline": "خزّن الملفات على السلسلة بواجهة متوافقة مع S3. بدون خوادم وبدون فواتير AWS — خطط 30 يوماً بسيطة تُدفع بـ ICP من رصيد ICPay.",
+        "tryIcBucket": "جرّب ICBucket",
+        "github": "GitHub",
+        "packages": "الحزم",
+        "imageAlt": "ICBucket على الجوال"
+      },
+      "install": {
+        "title": "التثبيت",
+        "subtitle": "SDK لـ Node.js وPython وRust وGo. ثبّت من npm وPyPI وcrates.io أو وحدات Go.",
+        "copyLabel": "نسخ إلى الحافظة",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "دليل التكامل",
+        "title": "كيف تدمج ICBucket؟",
+        "subtitle": "أنشئ bucket، ارفع الملفات بالـ SDK، وقدّم الأصول العامة عبر HTTPS — كل ذلك من رصيد ICPay بواجهة متوافقة مع S3.",
+        "videoAriaLabel": "كيفية دمج ICBucket"
+      },
+      "problemSolution": {
+        "title": "المشكلة والحل",
+        "subtitle": "التخزين السحابي التقليدي مكلف ومركزي ومعقّد. ICBucket يحل ذلك بتخزين على السلسلة وخطط ICP لـ 30 يوماً وواجهة على طراز S3.",
+        "problemColumn": "المشكلة",
+        "solutionColumn": "الحل",
+        "rows": {
+          "0": {
+            "problemTitle": "فواتير شهرية باهظة",
+            "problemDescription": "AWS S3 وGoogle Cloud Storage وAzure Blob تفرض رسوماً شهرية. التكاليف تتراكم — مشروع 10 GB قد يتجاوز 240 دولاراً خلال خمس سنوات.",
+            "solutionTitle": "خطط 30 يوماً بسيطة",
+            "solutionDescription": "ادفع من رصيد ICPay بـ ICP — من 0.5 ICP لـ 1 GB كل 30 يوماً. بدون بطاقة ائتمان. جدّد في أي وقت وتراكم الوقت غير المستخدم."
+          },
+          "1": {
+            "problemTitle": "تحكم مركزي",
+            "problemDescription": "ملفاتك على خوادم غيرك. المزودون قد يعلّقون الحسابات أو يرفعون الأسعار أو يوقفون الخدمة دون إشعار.",
+            "solutionTitle": "لامركزي ومقاوم للرقابة",
+            "solutionDescription": "الملفات موزعة على نسخ Internet Computer. لا نقطة فشل واحدة — أنت فقط من يحذف بياناتك."
+          },
+          "2": {
+            "problemTitle": "إعداد معقّد",
+            "problemDescription": "إعداد S3 يتطلب حساب AWS وأدوار IAM وسياسات bucket وإعداد CORS — فقط لرفع ملف.",
+            "solutionTitle": "واجهة متوافقة مع S3",
+            "solutionDescription": "بديل مباشر لـ S3 بأساليب مألوفة: createBucket وuploadFile وdownloadFile. انقل الكود الحالي في دقائق."
+          },
+          "3": {
+            "problemTitle": "ربط بالمزود",
+            "problemDescription": "كل مزود بواجهة مختلفة. الانتقال من S3 إلى Azure يعني إعادة كتابة الكود — بلا قابلية نقل حقيقية.",
+            "solutionTitle": "قابلية التحقق على السلسلة",
+            "solutionDescription": "كل رفع قابل للتتبع على السلسلة. عناوين حسب المحتوى عبر روابط canister — ثابتة وقابلة للتدقيق."
+          }
+        }
+      },
+      "pricing": {
+        "title": "اقتصاديات التخزين",
+        "subtitle": "ادفع مقدماً بـ ICP من رصيد ICPay — بدون بطاقة ائتمان وبدون فواتير شهرية مفاجئة. كل مستوى خطة 30 يوماً؛ جدّد في أي وقت والوقت غير المستخدم يتراكم.",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "جارٍ تحميل سعر ICP المباشر…",
+        "priceHint": "تقديرات USD من CoinGecko · 1 ICP ≈ {price}",
+        "mostPopular": "الأكثر شعبية",
+        "per30Days": "كل 30 يوماً",
+        "capacity": "سعة {capacityGb} GB",
+        "getStarted": "ابدأ",
+        "footer": "الأسعار المباشرة من الـ canister: تكلفة دورات تخزين IC زائد هامش 20%، مقربة لخطوات 0.5 ICP. الخط المشطوب يظهر السعر السابق. مستويات حتى 500 GB متاحة في التطبيق.",
+        "footerCheckoutIcp": " الدفع دائماً بـ ICP.",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "سعة محجوزة 1 GB",
+              "1": "buckets عامة وخاصة",
+              "2": "مصادقة مفتاح API",
+              "3": "رفع مجزّأ",
+              "4": "روابط CDN عالمية",
+              "5": "مشفّر عند التخزين",
+              "6": "جدّد في أي وقت — الوقت يتراكم"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "سعة محجوزة 5 GB",
+              "1": "مفاتيح API متعددة",
+              "2": "بيانات وصفية ووسوم للملفات",
+              "3": "بحث وقائمة مجلدات",
+              "4": "نسخ / نقل / حذف جماعي",
+              "5": "SDK لـ TypeScript وPython وGo",
+              "6": "جدّد في أي وقت — الوقت يتراكم"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "سعة محجوزة 10 GB",
+              "1": "buckets متعددة",
+              "2": "مفاتيح API للفريق",
+              "3": "عمليات جماعية",
+              "4": "سجل تدقيق على السلسلة",
+              "5": "تسليم ملفات عبر HTTPS",
+              "6": "جدّد في أي وقت — الوقت يتراكم"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "سعة محجوزة 50 GB",
+              "1": "كل ميزات Business",
+              "2": "رفع بإنتاجية أعلى",
+              "3": "أحمال إنتاج",
+              "4": "استضافة أصول dApp وNFT",
+              "5": "أصول مواقع ثابتة",
+              "6": "جدّد في أي وقت — الوقت يتراكم"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "الأحدث من ICPay",
+        "subtitle": "تابع رحلتنا في بناء تخزين على السلسلة لـ Internet Computer"
+      },
+      "features": {
+        "title": "كل ما تحتاجه للتخزين على السلسلة",
+        "subtitle": "ICBucket يوفر ميزات تخزين سحابي على مستوى المؤسسات بدون تعقيد المؤسسات أو الفواتير الشهرية.",
+        "items": {
+          "0": {
+            "title": "مستويات سعة مرنة",
+            "description": "اختر من 1GB إلى 100GB. ابدأ صغيراً وتوسّع حسب الحاجة. جدّد في أي وقت لتمديد مدة التخزين."
+          },
+          "1": {
+            "title": "رفع مجزّأ",
+            "description": "ارفع الملفات الكبيرة على أجزاء (حتى 2MB لكل جزء). رفع متوازٍ لنقل أسرع. استئناف عند انقطاع الاتصال."
+          },
+          "2": {
+            "title": "إدارة مفاتيح API",
+            "description": "أنشئ مفاتيح API متعددة لكل bucket بصلاحيات دقيقة (قراءة/كتابة/حذف). ألغِ وأعد التوليد في أي وقت."
+          },
+          "3": {
+            "title": "buckets عامة وخاصة",
+            "description": "العامة تقدّم الملفات عبر HTTPS. الخاصة تتطلب مصادقة. مثالية للمواقع الثابتة والنسخ الاحتياطية الآمنة."
+          },
+          "4": {
+            "title": "واجهة متوافقة مع S3",
+            "description": "بديل مباشر لـ AWS S3. أساليب مألوفة: createBucket وuploadFile وlistFiles. انقل الكود في دقائق."
+          },
+          "5": {
+            "title": "أمان على السلسلة",
+            "description": "الملفات على نسخ IC. تحكم على مستوى canister. بدون اختراق خوادم وبدون تسريب بيانات."
+          },
+          "6": {
+            "title": "بيانات وصفية وبحث",
+            "description": "وسم الملفات وأضف بيانات وصفية. ابحث بالاسم أو الوسم أو البادئة. اعرض المجلدات وفلتر بالتاريخ أو الحجم."
+          },
+          "7": {
+            "title": "تسليم محتوى سريع",
+            "description": "الملفات تُقدَّم مباشرة من canisters IC. بدون إعداد CDN. توزيع عالمي عبر boundary nodes لـ IC."
+          }
+        }
+      },
+      "architecture": {
+        "title": "كيف يعمل التخزين",
+        "subtitle": "الملفات داخل canister محفظة ICPay على Internet Computer — وليس على VM سحابية تقليدية. تطبيقك يتحدث مع الـ canister؛ الـ subnet يخزّن البيانات المشفّرة.",
+        "canisterId": "معرّف Canister · {canisterId}",
+        "diagramAriaLabel": "مخطط بنية ICBucket",
+        "writePath": "مسار الكتابة",
+        "readPath": "مسار القراءة",
+        "uploadSteps": {
+          "0": "أنشئ bucket مرة واحدة (ادفع ICP للسعة).",
+          "1": "beginFileUpload → أرسل أجزاء 2 MB → completeFileUpload.",
+          "2": "الـ canister يشفّر كل ملف ويكتب في الذاكرة المستقرة."
+        },
+        "readSteps": {
+          "0": "ملفات خاصة: تحديث downloadFile موقّع من تطبيقك.",
+          "1": "ملفات عامة: GET HTTPS عادي على رابط بوابة الـ canister.",
+          "2": "بدون bucket AWS وبدون خادم تخزين منفصل — canister واحد على السلسلة."
+        }
+      },
+      "comparison": {
+        "title": "مقارنة ICBucket",
+        "subtitle": "ICBucket مقابل مزودي التخزين السحابي التقليديين. ما الذي يميزنا.",
+        "featureColumn": "الميزة",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "خطط ICP لـ 30 يوماً",
+          "1": "الدفع بـ ICP (بدون بطاقة ائتمان)",
+          "2": "لامركزي",
+          "3": "مقاوم للرقابة",
+          "4": "قابل للتحقق على السلسلة",
+          "5": "بدون خطر تعليق الحساب",
+          "6": "واجهة متوافقة مع S3",
+          "7": "روابط HTTPS عامة",
+          "8": "مصادقة مفتاح API",
+          "9": "رفع مجزّأ"
+        }
+      },
+      "apiGuide": {
+        "title": "مرجع SDK وAPI",
+        "subtitle": "واجهة متوافقة مع S3 مع SDK لـ Node.js وPython وRust وGo. بديل مباشر لـ AWS S3.",
+        "codeExamples": "أمثلة الكود",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "التثبيت",
+        "createInit": "إنشاء وتهيئة",
+        "uploadFiles": "رفع الملفات",
+        "downloadAccess": "تنزيل والوصول",
+        "fileManagement": "إدارة الملفات",
+        "apiKeyTitle": "إدارة مفاتيح API",
+        "apiKeyIntro": "أنشئ مفاتيح API متعددة لكل bucket بصلاحيات دقيقة:",
+        "permRead": "read",
+        "permReadDesc": "تنزيل الملفات",
+        "permWrite": "write",
+        "permWriteDesc": "رفع الملفات",
+        "permDelete": "delete",
+        "permDeleteDesc": "حذف الملفات",
+        "apiKeyFooter": "ألغِ وأعد توليد المفاتيح في أي وقت عبر واجهة الويب.",
+        "rateLimitsTitle": "حدود المعدل",
+        "rateLimitsIntro": "حدود استخدام عادلة لاستقرار الـ canister:",
+        "rateLimitUpload": "رفع: 100 طلب/دقيقة لكل مفتاح API",
+        "rateLimitDownload": "تنزيل: 1000 طلب/دقيقة (ملفات عامة)",
+        "rateLimitList": "قائمة/بحث: 50 طلب/دقيقة",
+        "rateLimitChunk": "حجم الجزء: حد أقصى 2MB لكل جزء",
+        "rateLimitsFooter": "تواصل معنا لحدود أعلى أو خطط مؤسسية."
+      },
+      "faq": {
+        "title": "الأسئلة الشائعة",
+        "subtitle": "كل ما تحتاج معرفته عن ICBucket. لم تجد إجابة؟ تواصل معنا.",
+        "items": {
+          "0": {
+            "question": "كيف يختلف ICBucket عن AWS S3؟",
+            "answer": "ICBucket تخزين لامركزي على Internet Computer. تدفع بـ ICP كل 30 يوماً من رصيد ICPay (مثلاً 2.5 ICP لـ 5 GB) بدلاً من فاتورة AWS ببطاقة ائتمان. الملفات على السلسلة عبر نسخ IC. مفاتيح API وSDK تسهّل الهجرة."
+          },
+          "1": {
+            "question": "كيف تعمل الفوترة؟",
+            "answer": "كل bucket خطة 30 يوماً تُدفع مقدماً بـ ICP من رصيد ICPay. عند الانتهاء يصبح للقراءة فقط حتى التجديد. التجديد يضيف 30 يوماً أخرى — الوقت غير المستخدم يتراكم. الأسعار مباشرة من الـ canister (تكلفة الدورات + الهامش)."
+          },
+          "2": {
+            "question": "هل يمكن استخدام ICBucket لتطبيقات الإنتاج؟",
+            "answer": "نعم. ICBucket جاهز للإنتاج مع 33 اختباراً ناجحاً ورفع مجزّأ ومصادقة مفتاح API ومراقبة الدورات. يُستخدم لبيانات NFT وأصول dApp ومواقع ثابتة. مع ذلك، تخزين حفظي على IC — افهم المقايضات قبل نشر بيانات حرجة."
+          },
+          "3": {
+            "question": "ما أنواع الملفات المدعومة؟",
+            "answer": "كل الأنواع: صور وفيديو وPDF وJSON وHTML وCSS وJS وغيرها. نوع المحتوى محفوظ. الـ buckets العامة تقدّم الملفات بأنواع MIME صحيحة (مثلاً <img src='...'> يعمل)."
+          },
+          "4": {
+            "question": "كيف أهاجر من S3 إلى ICBucket؟",
+            "answer": "ثبّت icpay-bucket SDK، أنشئ bucket، ولّد مفتاح API. استبدل استدعاءات AWS SDK باستدعاءات ICBucket (واجهة شبه متطابقة). نزّل من S3 وارفع إلى ICBucket. حدّث الروابط في تطبيقك. معظم الهجرات أقل من ساعة للمشاريع الصغيرة."
+          },
+          "5": {
+            "question": "ماذا لو نفدت دورات الـ canister؟",
+            "answer": "canisters ICBucket تُراقَب وتُعبَّأ تلقائياً من إيرادات الـ buckets. إذا انخفضت الدورات بشكل حرج، نُبلّغ المالكين للتجديد. في أسوأ الحالات (حذف الـ canister) تُفقد الملفات — نادر جداً مع إدارة دورات سليمة."
+          },
+          "6": {
+            "question": "هل يمكن استخدام ICBucket لبيانات NFT؟",
+            "answer": "نعم، حالة استخدام مثالية. ارفع metadata.json وملفات الصور. احصل على روابط ثابتة على السلسلة (https://6vbhm-...-cai.icp0.io/bucket/nft-1.json). بدون بوابات IPFS وبدون روابط مكسورة. الـ buckets العامة تقدّم الملفات فوراً."
+          },
+          "7": {
+            "question": "هل يوجد حد لحجم الملف؟",
+            "answer": "الرفع الفردي محدود بـ 2MB لكل طلب (حد حجم استدعاء IC). للملفات الأكبر استخدم الرفع المجزّأ — قسّم إلى أجزاء 2MB من جانب العميل. الـ SDK يتولى ذلك تلقائياً. مُختبر حتى 500MB."
+          },
+          "8": {
+            "question": "هل يمكن حذف الملفات؟",
+            "answer": "نعم، مالكو الـ bucket يحذفون عبر واجهة الويب أو API. الملفات المحذوفة تُزال فوراً من الـ canister. تُحرَّر حصة التخزين. الحذف الجماعي مدعوم."
+          },
+          "9": {
+            "question": "كيف أجعل bucket عاماً؟",
+            "answer": "اضبط visibility: 'public' عند الإنشاء. الـ buckets العامة تقدّم الملفات عبر HTTPS بدون مصادقة. أي شخص لديه الرابط يصل للملفات. مثالي للمواقع الثابتة والأصول العامة وبيانات NFT."
+          },
+          "10": {
+            "question": "هل يمكن استضافة موقع ثابت على ICBucket؟",
+            "answer": "نعم. ارفع HTML وCSS وJS وصوراً إلى bucket عام. الوصول عبر رابط canister (https://6vbhm-...-cai.icp0.io/bucket/index.html). اضبط أنواع المحتوى. لا يوجد index.html تلقائي بعد — حدّد المسار الكامل في الرابط."
+          },
+          "11": {
+            "question": "ما الفرق بين ICBucket وIPFS؟",
+            "answer": "ICBucket يخزّن في canisters IC بواجهة متوافقة مع S3. IPFS يعتمد على المحتوى ونظير إلى نظير. ICBucket بلا اعتماد على بوابات ووصول فوري وواجهة أبسط. IPFS لامركزية أفضل لكن وصول أبطأ وأقل توقعاً. اختر حسب احتياجك."
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "إطار ICFalcon",
+        "title": "ICFalcon",
+        "subtitle": "إطار Motoko جاهز للإنتاج لـ Internet Computer",
+        "features": "بنية طبقات مفروضة · واجهة Next.js · CLI عالمي · مصادقة Internet Identity",
+        "installLabel": "ثبّت بأمر واحد",
+        "copyCommand": "نسخ الأمر",
+        "installHint": "يثبّت التبعيات وينشر محلياً ويشغّل خادم التطوير على localhost:3000",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "الحزم"
+      },
+      "problemSolution": {
+        "title": "مبني لحل مشاكل حقيقية",
+        "subtitle": "ICFalcon يزيل نقاط الاحتكاك الشائعة في تطوير ICP",
+        "problemHeading": "المشكلة",
+        "solutionHeading": "الحل",
+        "problems": {
+          "0": {
+            "title": "لا بنية معيارية",
+            "description": "معظم مشاريع Motoko تبدأ من الصفر بلا إرشاد واضح للطبقات أو الاختبار أو أنماط النشر. الفرق تعيد اختراع الهيكل كل مرة."
+          },
+          "1": {
+            "title": "أدوات متفرقة",
+            "description": "بناء تطبيق ICP يعني التوفيق بين dfx وmops وnpm وسكربتات مخصصة. بلا CLI موحّد للتوليد والبناء والنشر عبر البيئات."
+          },
+          "2": {
+            "title": "تعقيد تكامل الواجهة والخلفية",
+            "description": "ربط واجهة Next.js بـ canister Motoko يتطلب توليد actor يدوياً وإدارة هوية وإعداد بيئة."
+          },
+          "3": {
+            "title": "قوالب بداية محدودة",
+            "description": "القوالب الحالية إما بسيطة جداً أو رأيّة جداً. لا وسط عملي للتطبيقات الواقعية."
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "طبقات جاهزة للإنتاج",
+            "description": "بنية أربع طبقات (api → service → repository → storage) مفروضة من اليوم الأول. كل وحدة تتبع نفس النمط — انضمام وصيانة متوقعان."
+          },
+          "1": {
+            "title": "CLI عالمي falcon",
+            "description": "أمر واحد لتوليد الوحدات وتثبيت الحزم والبناء والاختبار والنشر. يعمل بسلاسة محلياً وعلى mainnet مع تأكيدات تفاعلية."
+          },
+          "2": {
+            "title": "مكدس متكامل",
+            "description": "خلفية Motoko مع mo:core وواجهة Next.js مع shadcn/ui ومصادقة Internet Identity وتصدير ثابت. كل شيء موصول مسبقاً."
+          },
+          "3": {
+            "title": "نظام Hub البيئي",
+            "description": "ثبّت حزماً مجربة من icp-hub بـ `falcon add pkg <name>`. تكامل دفتر وحفظ ملفات وتحديد معدل والمزيد — جاهز للاستخدام."
+          }
+        }
+      },
+      "article": {
+        "title": "ما هو ICFalcon؟",
+        "subtitle": "إطار يمنحك هيكلاً وأدوات وسرعة لبناء تطبيقات Internet Computer",
+        "frameworkTitle": "إطار، وليس قالباً جاهزاً",
+        "frameworkP1": "ICFalcon نقطة بداية رأيّة لتطبيقات Motoko. يفرض بنية خلفية من أربع طبقات (api → service → repository → storage)، يقترنها بواجهة Next.js حديثة، ويوفر CLI عالمياً للتوليد والبناء والنشر.",
+        "frameworkP2": "على عكس القوالب البسيطة، ICFalcon يعطيك أنماطاً قابلة للتوسع — نفسها في تطبيقات الإنتاج مثل ICPay. تحصل على إدارة ذاكرة مستقرة وأدلة ترحيل وتكامل Internet Identity وبيئة اختبار من اليوم الأول.",
+        "layeringTitle": "بنية خلفية طبقية",
+        "layeringP1": "الخلفية تتبع فصلاً صارماً للاهتمامات. وحدات API تتعامل مع HTTP والتحقق. الخدمات تحتوي منطق الأعمال. المستودعات تجرد الوصول للبيانات. التخزين يدير الذاكرة المستقرة.",
+        "layeringP2": "هذه الطبقات مفروضة بالاتفاق وموثّقة في المستودع. عند توليد وحدة بـ falcon m:f Product، تُنشأ الطبقات الأربع وتُوصَل في main.mo وتُنشأ ملفات خدمة الواجهة. بلا تخمين وبلا توصيل يدوي.",
+        "frontendTitle": "تكامل الواجهة",
+        "frontendP1": "الواجهة Next.js مع مكونات shadcn/ui ومصادقة Internet Identity. تُصدَّر كملفات ثابتة (output: \"export\") لاستضافتها على asset canister أو مضيف تقليدي مثل Vercel.",
+        "frontendP2": "إعداد الـ agent واشتقاق الهوية ومعرّفات canister موصولة مسبقاً. canister الخلفية يقدّم ملف .did تلقائياً للواجهة. بلا توليد actor يدوي أو توفيق بيئات.",
+        "cliTitle": "CLI falcon",
+        "cliP1": "كل عملية عبر أمر عالمي واحد. تهيئة مشروع (falcon s:init). توليد وحدة (falcon m:f Name). تشغيل اختبارات (falcon b:test --local). نشر (falcon b:deploy، يطلب تأكيداً).",
+        "cliP2": "الـ CLI يلف dfx وmops وnpm ويضيف توليداً للوحدات ونقاط API وخدمات الواجهة. يستهدف محلياً أو mainnet بعلم --local، افتراضياً mainnet للأمان. الأوامر موثّقة في ops/docs/commands.md.",
+        "hubTitle": "حزم Hub",
+        "hubP1": "ICFalcon يتكامل مع icp-hub، مجموعة حزم Motoko جاهزة. ثبّت تكامل دفتر أو تخزين ملفات أو تحديد معدل بـ falcon add pkg <name>. كل حزمة تتبع بنية أربع طبقات وتشمل اختبارات.",
+        "hubP2": "الحزم مُصدَّرة ومُختبرة بشكل مستقل. الـ hub مفتوح المصدر — يمكنك المساهمة أو التفرع لاحتياجات مخصصة.",
+        "audienceTitle": "لمن هو؟",
+        "audienceP1": "ICFalcon لمطورين يريدون شحن تطبيقات ICP جاهزة للإنتاج بلا إعادة اختراع الهيكل. إذا كنت تبني canister يحتاج ذاكرة مستقرة وخلفية طبقية ومصادقة Internet Identity وواجهة حديثة، ICFalcon يوصلك أسرع.",
+        "audienceP2": "ليس قالباً بسيطاً. إنه رأيّ. الطبقات مفروضة والـ CLI هو الواجهة الأساسية والمكدس Motoko + Next.js. إذا احتجت هذا المكدس ونقطة بداية واضحة، ICFalcon هو الخيار.",
+        "stackTitle": "نظرة على المكدس",
+        "stackBackend": "الخلفية:",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "الواجهة:",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "الأدوات:",
+        "stackToolingValue": "falcon CLI · توليد وحدات · حزم icp-hub"
+      },
+      "faq": {
+        "title": "الأسئلة الشائعة",
+        "subtitle": "أسئلة شائعة عن ICFalcon وكيفية استخدامه",
+        "items": {
+          "0": {
+            "question": "ما هو ICFalcon؟",
+            "answer": "ICFalcon إطار Motoko مفتوح المصدر لبناء تطبيقات Internet Computer. يوفر بنية خلفية جاهزة للإنتاج وواجهة Next.js وCLI عالمياً للتوليد والبناء والنشر."
+          },
+          "1": {
+            "question": "هل أحتاج معرفة Motoko؟",
+            "answer": "نعم. ICFalcon إطار Motoko، فالإلمام باللغة مطلوب. لكن البنية الطبقية وأوامر التوليد تقلل الكود المتكرر."
+          },
+          "2": {
+            "question": "كيف يختلف عن dfx new؟",
+            "answer": "dfx new يعطيك بداية بسيطة. ICFalcon يعطيك هيكلاً جاهزاً للإنتاج مع طبقات مفروضة وإدارة ذاكرة مستقرة وتكامل Internet Identity وCLI لتوليد الوحدات. رأيّ بالتصميم."
+          },
+          "3": {
+            "question": "هل يمكن استخدامه مع canister موجود؟",
+            "answer": "ICFalcon نقطة بداية وليس أداة هجرة. يمكنك تبني أجزاء من البنية (نمط الطبقات، أوامر CLI) لكن التكامل الكامل يتطلب عملاً يدوياً."
+          },
+          "4": {
+            "question": "ما هو CLI falcon؟",
+            "answer": "أمر عالمي يلف dfx وmops وnpm. يتولى تهيئة المشروع وتوليد الوحدات والاختبار والبناء والنشر. يستهدف محلياً أو mainnet بعلم --local."
+          },
+          "5": {
+            "question": "من أين أثبّت الحزم؟",
+            "answer": "حزم الخلفية من mops وicp-hub. حزم الواجهة من npm. CLI يبسط بعض ذلك بـ `falcon add pkg <name>`."
+          },
+          "6": {
+            "question": "هل ICFalcon جاهز للإنتاج؟",
+            "answer": "البنية جاهزة للإنتاج وتُستخدم في تطبيقات حية مثل ICPay. لكن ICFalcon إطار وليس SaaS. أنت تملك canister ومسؤول عن الاختبار والنشر والصيانة."
+          },
+          "7": {
+            "question": "هل يدعم canisters Rust؟",
+            "answer": "لا. ICFalcon إطار Motoko. لـ Rust استخدم بداية أخرى أو ابنِ من الصفر."
+          },
+          "8": {
+            "question": "كيف أنشر على mainnet؟",
+            "answer": "شغّل `falcon b:deploy` (بدون --local). الـ CLI يطلب تأكيداً قبل النشر على mainnet. وضع الترقية افتراضي؛ وضع إعادة التثبيت لا يُستخدم أبداً لتجنب فقدان البيانات."
+          },
+          "9": {
+            "question": "هل يمكن تخصيص الطبقات؟",
+            "answer": "البنية الأربع (api → service → repository → storage) مفروضة بالاتفاق والـ CLI. يمكنك الانحراف لكنك تفقد فوائد الهيكل المتسق والتوليد التلقائي."
+          },
+          "10": {
+            "question": "كيف أساهم في ICFalcon؟",
+            "answer": "انسخ المستودع، أنشئ فرع ميزة، وافتح pull request. اتبع الأنماط في AGENTS.md وشغّل `falcon b:test --local` و`falcon p:check --local` قبل الإرسال. لحزم hub ساهم في icp-hub منفصلاً."
+          },
+          "11": {
+            "question": "هل ICFalcon مجاني؟",
+            "answer": "نعم. ICFalcon مفتوح المصدر. الكود كما هو للاستخدام والتعديل. حزم hub مرخّصة حسب إدخالاتها على icp-hub."
+          }
+        }
+      }
+    }
   }
 }

@@ -1,0 +1,14 @@
+---
+title: Verify with curl
+description: Confirm a public file is reachable after upload.
+group: CDN & URLs
+order: 2
+---
+
+After upload, expect HTTP 200 and the correct `content-type` header:
+
+```bash
+curl -sS -I "https://{canister}.raw.icp0.io/cloud/icp/logo.webp"
+```
+
+Replace the canister ID, bucket name, and path with your values.

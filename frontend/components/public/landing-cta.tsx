@@ -1,10 +1,12 @@
 "use client"
 
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 
 export function LandingCta() {
+  const t = useTranslations("publicSite.landing.cta")
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
@@ -23,10 +25,10 @@ export function LandingCta() {
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-16 md:flex-row md:items-center md:px-6 md:py-20">
           <div className="space-y-3">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-              You are signed in
+              {t("signedInTitle")}
             </h2>
             <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
-              Open your wallet to send ICP, check balances, or explore channels and tokens.
+              {t("signedInBody")}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -36,7 +38,7 @@ export function LandingCta() {
               render={<Link href="/home" />}
               className="h-11 rounded-full px-7"
             >
-              Open wallet
+              {t("openWallet")}
             </Button>
             <Button
               size="lg"
@@ -45,7 +47,7 @@ export function LandingCta() {
               render={<Link href="/channels" />}
               className="h-11 rounded-full px-7"
             >
-              Browse channels
+              {t("browseChannels")}
             </Button>
           </div>
         </div>
@@ -58,11 +60,10 @@ export function LandingCta() {
       <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-16 md:flex-row md:items-center md:px-6 md:py-20">
         <div className="space-y-3">
           <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-            Ready to move ICP with a username?
+            {t("readyTitle")}
           </h2>
           <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
-            Sign in with Internet Identity, claim your handle, and start sending in seconds.
-            No seed phrase. No browser extension required.
+            {t("readyBody")}
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -72,7 +73,7 @@ export function LandingCta() {
             render={<Link href="/login" />}
             className="h-11 rounded-full px-7"
           >
-            Sign in
+            {t("signIn")}
           </Button>
           <Button
             size="lg"
@@ -81,7 +82,7 @@ export function LandingCta() {
             render={<Link href="/channels" />}
             className="h-11 rounded-full px-7"
           >
-            Browse channels
+            {t("browseChannels")}
           </Button>
         </div>
       </div>

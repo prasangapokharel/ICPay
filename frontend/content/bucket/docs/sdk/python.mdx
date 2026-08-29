@@ -1,0 +1,30 @@
+---
+title: Python SDK
+description: Install icpay-bucket and connect with your bucket API key.
+group: Bucket SDK
+order: 2
+eyebrow: Bucket SDK
+---
+
+## Install
+
+```bash
+pip install icpay-bucket
+```
+
+## Client
+
+```python
+from icpay_bucket import BucketClient
+
+client = BucketClient(
+    api_key="your-api-key",
+    bucket_id="your-bucket-id",
+)
+
+client.upload_file("logo.png", data, content_type="image/png")
+```
+
+## API keys
+
+Create read, write, or delete keys in the bucket detail page inside ICPay. Pass the secret as `api_key` when constructing the client.

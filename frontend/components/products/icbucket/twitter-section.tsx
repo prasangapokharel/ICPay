@@ -1,9 +1,12 @@
 "use client"
 
 import { useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
 
 export function TwitterSection() {
+  const t = useTranslations("publicSite.icbucket.twitter")
+
   useEffect(() => {
     const script = document.createElement("script")
     script.src = "https://platform.x.com/widgets.js"
@@ -21,12 +24,8 @@ export function TwitterSection() {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Latest from ICPay
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              Follow our journey building on-chain storage for the Internet Computer
-            </p>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

@@ -20,7 +20,6 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { Typewriter } from "@/components/shared/typewriter"
 import { MarketStats } from "@/components/auth/market-stats"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
-import { useAutoLocale } from "@/hooks/i18n/use-auto-locale"
 import { createAuthClient, resumeRedirectSignIn } from "@/services/auth/auth"
 import { primeLoginChime } from "@/lib/ui/successChime"
 import { APP_LOGO, LOGIN_BG } from "@/lib/ui/brand-images"
@@ -44,7 +43,6 @@ export default function LoginPage() {
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const t = useTranslations("login")
-  useAutoLocale()
 
   useEffect(() => {
     void createAuthClient()
