@@ -108,6 +108,7 @@ function NavTab({
         <AppIcon
           name={icon}
           size={filled ? 36 : center ? 22 : 20}
+          priority={filled}
           className={filled ? "size-full object-cover" : undefined}
         />
       </span>
