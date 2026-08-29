@@ -72,13 +72,14 @@ export function FaqSection() {
   ]
 
   return (
-    <section className="py-16 md:py-24">
+    <section className="bg-background py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl">
           <div className="mb-12 space-y-4 text-center">
-            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10">
-              <HugeiconsIcon icon={MessageQuestionIcon} className="size-8 text-primary" />
-            </div>
+            <HugeiconsIcon
+              icon={MessageQuestionIcon}
+              className="mx-auto size-8 text-primary"
+            />
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
               Frequently Asked Questions
             </h2>

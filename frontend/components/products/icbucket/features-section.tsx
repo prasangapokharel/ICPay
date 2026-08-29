@@ -64,7 +64,7 @@ export function FeaturesSection() {
   ]
 
   return (
-    <section className="py-16 md:py-24">
+    <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 space-y-4 text-center">
@@ -81,9 +81,7 @@ export function FeaturesSection() {
             {features.map((feature, index) => (
               <Card key={index} className="border-muted transition-colors hover:border-primary/50">
                 <CardHeader className="space-y-3">
-                  <div className="rounded-lg bg-primary/10 p-3 w-fit">
-                    <HugeiconsIcon icon={feature.icon} className="size-6 text-primary" />
-                  </div>
+                  <HugeiconsIcon icon={feature.icon} className="size-6 text-primary" />
                   <CardTitle className="text-lg">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>

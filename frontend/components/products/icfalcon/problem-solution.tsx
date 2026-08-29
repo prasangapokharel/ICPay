@@ -64,7 +64,8 @@ export function ProblemSolution() {
   ]
 
   return (
-    <section className="border-t bg-muted/20 px-4 py-24">
+    <section className="border-b border-border/60 bg-background py-16 md:py-24">
+      <div className="container mx-auto px-4">
       <div className="mx-auto max-w-6xl">
         <div className="mb-16 text-center">
           <h2 className="mb-3 text-3xl font-bold tracking-tight">
@@ -96,12 +97,12 @@ export function ProblemSolution() {
               {solutions.map((item, i) => (
                 <Card key={i} size="sm">
                   <CardHeader>
-                    <CardTitle>
+                    <CardTitle className="flex items-start gap-2">
                       <HugeiconsIcon
                         icon={item.icon}
-                        className="mr-2 inline-block size-5"
+                        className="mt-0.5 size-5 shrink-0 text-primary"
                       />
-                      {item.title}
+                      <span>{item.title}</span>
                     </CardTitle>
                     <CardDescription>{item.description}</CardDescription>
                   </CardHeader>
@@ -110,6 +111,7 @@ export function ProblemSolution() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </section>
   )

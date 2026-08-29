@@ -1,6 +1,8 @@
 "use client"
 
 import { Select as SelectPrimitive } from "@base-ui/react/select"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Globe02Icon } from "@hugeicons/core-free-icons"
 import ReactCountryFlag from "react-country-flag"
 import { LOCALES } from "@/language/config"
 import { useLocale } from "@/components/i18n/locale-provider"
@@ -20,9 +22,9 @@ export function LanguageSwitch() {
     >
       <SelectPrimitive.Trigger
         aria-label={active.label}
-        className="flex size-9 items-center justify-center rounded-full border bg-background transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-accent active:scale-95"
+        className="flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
       >
-        <Flag country={active.country} />
+        <HugeiconsIcon icon={Globe02Icon} className="size-4.5" strokeWidth={1.75} />
       </SelectPrimitive.Trigger>
       <SelectContent align="end">
         {LOCALES.map((l) => (

@@ -24,12 +24,14 @@ export function ComparisonSection() {
   ]
 
   const CheckIcon = () => (
-    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-5 text-green-500" />
+    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-5 text-primary" />
   )
-  const XIcon = () => <HugeiconsIcon icon={Cancel01Icon} className="size-5 text-red-500" />
+  const XIcon = () => (
+    <HugeiconsIcon icon={Cancel01Icon} className="size-5 text-muted-foreground" />
+  )
 
   return (
-    <section className="border-t bg-muted/30 py-16 md:py-24">
+    <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 space-y-4 text-center">

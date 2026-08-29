@@ -17,7 +17,7 @@ export function TwitterSection() {
   }, [])
 
   return (
-    <section className="border-t py-16 md:py-24">
+    <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 space-y-4 text-center">

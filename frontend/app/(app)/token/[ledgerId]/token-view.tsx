@@ -21,7 +21,6 @@ import { transfer, type TransferMode } from "@/services/transfer/transfer"
 import { isSwapToken } from "@/lib/swap/tokens"
 import { type TokenHolding } from "@/services/tokens"
 import { TokenHistoryList } from "@/components/token/token-history-list"
-import { TokenSnsMeta } from "@/components/token/token-sns-meta"
 import { TokenStandardsBadge } from "@/components/token/token-standards-badge"
 import { BtcWithdrawalList } from "@/components/chainkey/btc-withdrawal-list"
 import { CKBTC_LEDGER_ID } from "@/services/chainkey/constants"
@@ -175,8 +174,6 @@ export function TokenView() {
       {selfCustody !== undefined && selfCustody > 0n && (
         <SelfCustodyCard token={token} balance={selfCustody} />
       )}
-
-      <TokenSnsMeta ledgerId={token.ledgerId} />
 
       {token.ledgerId === CKBTC_LEDGER_ID ? (
         <BtcWithdrawalList ledgerId={token.ledgerId} />

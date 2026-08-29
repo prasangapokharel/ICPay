@@ -15,11 +15,13 @@ import {
 } from "@/components/ui/field"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { BucketPriceLabel } from "@/components/bucket/bucket-price-label"
+import { AMBER_EMBED_BTN } from "@/components/ui/bg-image-card"
 import { useBucketCycleStatus, useBucketPrice } from "@/hooks/bucket/useBucket"
 import { useLiveBalance } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
 import { calculateListPriceE8s } from "@/lib/bucket/pricing"
 import { ICP_FEE } from "@/lib/wallet/utils"
+import { cn } from "@/lib/ui/utils"
 import type { BucketVisibilityVariant } from "@/services/bucket/types"
 
 export function BucketCreateForm({
@@ -131,7 +133,7 @@ export function BucketCreateForm({
         </RadioGroup>
       </div>
 
-      <div className="rounded-2xl bg-muted/40 p-4">
+      <div className="rounded-2xl border border-dashed border-primary/20 bg-primary/5 px-4 py-3">
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">{t("price")}</span>
           {priceLoading || price === null ? (
@@ -153,7 +155,7 @@ export function BucketCreateForm({
       )}
 
       <Button
-        className="w-full"
+        className={cn("w-full font-semibold", AMBER_EMBED_BTN)}
         disabled={
           submitting ||
           !canCreate ||

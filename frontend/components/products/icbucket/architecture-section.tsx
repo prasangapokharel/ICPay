@@ -83,11 +83,11 @@ export function ArchitectureSection() {
   }, [rootId])
 
   return (
-    <section className="border-t bg-muted/30 py-16 md:py-24">
+    <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl space-y-10">
           <div className="space-y-3 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">How storage works</h2>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">How Storage Works</h2>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               Files live inside the ICPay wallet canister on Internet Computer — not on a
               traditional cloud VM. Your app talks to the canister; the subnet stores encrypted data.
