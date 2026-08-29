@@ -1164,6 +1164,16 @@
     "docsTitle": "ICPay Cloud rehberi",
     "docsSubtitle": "Zincir üstü şifreli dosya depolama",
     "docsStorageTitle": "Ne alırsınız",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "Bucket'lar ICPay bakiyenizden aylık ödenir. Dosyalar canister'da dinlenme halinde şifreli kalır.",
     "docsImagesOnly": "Görseller, belgeler, kod, arşivler, ses ve fontlar (tam liste için Pricing'e bakın).",
     "docsWebpNote": "Yerel format en fazla 10 MB. Büyük dosyalar otomatik parçalanır (IC ingress limiti çağrı başına 2 MiB).",
@@ -1223,5 +1233,725 @@
     "prevPage": "Prev",
     "nextPage": "Next",
     "pageOf": "Sayfa {page} / {total} · {count} dosya"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "Menü",
+      "signIn": "Giriş Yap",
+      "wallet": "Cüzdan",
+      "openWallet": "Cüzdanı aç",
+      "openMenu": "Menüyü aç",
+      "sectionProducts": "Ürünler",
+      "sectionResources": "Kaynaklar",
+      "sectionLegal": "Yasal",
+      "primary": {
+        "blog": "Blog"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay Wallet",
+          "description": "Internet Identity ile kullanıcı adıyla ICP gönderin."
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "API anahtarları, SDK'lar ve ICP planlarıyla on-chain depolama."
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "Global CLI'lı üretim Motoko framework'ü."
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "ICFalcon projeleri için komutlar ve iş akışları."
+        },
+        "icpHubPackages": {
+          "title": "ICP-Hub Paketleri",
+          "description": "Internet Computer geliştirme için seçilmiş paketler."
+        },
+        "icbucketDocs": {
+          "title": "ICBucket Dokümantasyonu",
+          "description": "Depolama için API referansı ve entegrasyon kılavuzları."
+        },
+        "blog": {
+          "title": "Blog",
+          "description": "Kılavuzlar, eğitimler ve ICP ekosistemi makaleleri."
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "Hakkında",
+          "description": "ICPay nedir ve kullanıcı adı ödemeleri nasıl çalışır."
+        },
+        "faq": {
+          "title": "SSS",
+          "description": "Cüzdan ve ürünlerle ilgili yaygın soruların yanıtları."
+        },
+        "roadmap": {
+          "title": "Yol Haritası",
+          "description": "Yayınlananlar, sırada olanlar ve inşa etmeyeceğimiz şeyler."
+        },
+        "brands": {
+          "title": "Markalar",
+          "description": "Ticari marka ve marka kullanım politikası."
+        },
+        "terms": {
+          "title": "Koşullar",
+          "description": "ICPay kullanımına ilişkin hizmet koşulları."
+        },
+        "privacy": {
+          "title": "Gizlilik",
+          "description": "Veri ve hesap bilgilerini nasıl işlediğimiz."
+        },
+        "transparency": {
+          "title": "Şeffaflık",
+          "description": "Saklama modeli, ücretler ve on-chain işlemler."
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "Ürünler",
+      "sectionResources": "Kaynaklar",
+      "sectionLegal": "Yasal",
+      "sectionCommunity": "Topluluk",
+      "copyright": "© 2026 ICPay. Tüm hakları saklıdır.",
+      "blog": "Blog",
+      "channels": "Kanallar",
+      "wallet": "Cüzdan",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "wallet": "ICPay Wallet"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "ICP-Hub Paketleri",
+        "icbucketDocs": "ICBucket Dokümantasyonu",
+        "blog": "Blog"
+      },
+      "legal": {
+        "about": "Hakkında",
+        "faq": "SSS",
+        "roadmap": "Yol Haritası",
+        "brands": "Markalar",
+        "terms": "Koşullar",
+        "privacy": "Gizlilik",
+        "transparency": "Şeffaflık"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      }
+    },
+    "heroSignOptions": {
+      "label": "Internet Identity ile giriş seçenekleri",
+      "ariaLabel": "Internet Identity üzerinden Google, Apple ve Microsoft girişi"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Internet Computer cüzdanı",
+        "title": "63 karakterlik adres yerine kullanıcı adıyla ICP gönderin",
+        "tagline": "ICPay, Internet Computer üzerinde açık kaynaklı saklama cüzdanıdır. Bir kullanıcı adı alın, herkesten ödeme alın ve kanalları, on-chain depolamayı ve Motoko araçlarını tek ekosistemden keşfedin.",
+        "openWallet": "Cüzdanı aç",
+        "browseChannels": "Kanallara göz at",
+        "signIn": "Giriş Yap",
+        "aboutIcPay": "ICPay Hakkında",
+        "imageAlt": "Mobilde ICPay cüzdanı"
+      },
+      "cta": {
+        "signedInTitle": "Giriş yaptınız",
+        "signedInBody": "ICP göndermek, bakiyeleri kontrol etmek veya kanalları ve token'ları keşfetmek için cüzdanınızı açın.",
+        "readyTitle": "Kullanıcı adıyla ICP transfer etmeye hazır mısınız?",
+        "readyBody": "Internet Identity ile giriş yapın, kullanıcı adınızı alın ve saniyeler içinde göndermeye başlayın. Seed phrase yok. Tarayıcı eklentisi gerekmez.",
+        "openWallet": "Cüzdanı aç",
+        "browseChannels": "Kanallara göz at",
+        "signIn": "Giriş Yap"
+      },
+      "features": {
+        "eyebrow": "Platform",
+        "title": "Günlük kullanıcılar ve ICP geliştiricileri için tasarlandı",
+        "subtitle": "ICPay bir cüzdandan fazlasıdır. Internet Computer'da ödemeler, topluluk, depolama ve canister geliştirmeye giriş noktasıdır.",
+        "items": {
+          "0": {
+            "title": "Kullanıcı adı ödemeleri",
+            "body": "Bir kullanıcı adı alın ve icpay.app/yourname paylaşın. Gönderenlerin hesaba veya 63 karakterlik principal'a ihtiyacı yoktur."
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "Passkey veya bağlı hesapla giriş yapın. Yazılacak seed phrase ve tarayıcı eklentisi yok."
+          },
+          "2": {
+            "title": "Kanallar",
+            "body": "Herkese açık keşif, özel davetler ve markdown gönderileriyle Telegram tarzı yayın toplulukları."
+          },
+          "3": {
+            "title": "ICBucket depolama",
+            "body": "API anahtarları ve SDK'larla on-chain dosya depolama. Kart faturası yerine basit 30 günlük ICP planlarıyla ödeyin."
+          },
+          "4": {
+            "title": "ICFalcon framework",
+            "body": "Zorunlu katmanlama, testler ve Internet Computer uygulamaları için global CLI ile üretim Motoko iskeleti."
+          },
+          "5": {
+            "title": "Şeffaf saklama",
+            "body": "Fonlar resmi ICP ledger'ında kullanıcı başına alt hesaplarda durur. Backend açık kaynaklıdır ve mainnet'te yalnızca yükseltilebilir."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "SSS",
+        "title": "Sık sorulan sorular",
+        "subtitle": "Cüzdan, saklama modeli ve ICPay yığınının geri kalanı hakkında hızlı yanıtlar.",
+        "items": {
+          "0": {
+            "question": "ICPay nedir?",
+            "answer": "ICPay, Internet Computer üzerinde saklama cüzdanıdır. Internet Identity ile giriş yapın, kullanıcı adı alın ve uzun principal adresi kopyalamak yerine bu adla ICP gönderin veya alın."
+          },
+          "1": {
+            "question": "Seed phrase'e ihtiyacım var mı?",
+            "answer": "Hayır. Kimlik doğrulama Internet Identity tarafından yönetilir. Passkey veya bağlı kimlik sağlayıcısıyla erişimi onaylarsınız — kağıda yazılacak mnemonic yoktur."
+          },
+          "2": {
+            "question": "ICPay self-custodial mı?",
+            "answer": "ICPay saklamalıdır: bakiyeniz ICPay canister'ının kontrol ettiği kullanıcı başına alt hesapta tutulur ve yalnızca principal'ınız transferleri yetkilendirebilir. Backend kodu açık kaynaklıdır ve mainnet'te dağıtılmıştır."
+          },
+          "3": {
+            "question": "Cüzdan dışında neler var?",
+            "answer": "Aynı ekosistem herkese açık Kanallar, ICBucket on-chain depolama ve yapılandırılmış CLI ile canister oluşturup dağıtmak için Motoko framework'ü ICFalcon'u içerir."
+          },
+          "4": {
+            "question": "Kanallar nasıl çalışır?",
+            "answer": "Kanallar yayın topluluklarıdır. Sahipler Telegram tarzı markdown ile güncellemeler paylaşır. Herkese açık kanallar Explore'da keşfedilebilir; özel kanallara kullanıcı adı veya davet bağlantısıyla ulaşılır."
+          },
+          "5": {
+            "question": "Daha fazlasını nerede okuyabilirim?",
+            "answer": "Ürün ayrıntıları için Hakkında, SSS ve Şeffaflık sayfalarını ziyaret edin veya Internet Computer kılavuzları ve geliştirici kaynakları için blogu inceleyin."
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "Nasıl çalışır",
+        "title": "Kullanmak ne kadar zor?",
+        "subtitle": "Pek değil. Internet Identity girişinden kullanıcı adıyla ICP göndermeye altı adım — tarayıcı eklentisi ve yazılacak mnemonic yok.",
+        "stepLabel": "Adım {step}",
+        "steps": {
+          "0": {
+            "title": "Internet Identity ile giriş yapın",
+            "body": "Passkey veya bağlı hesap kullanın. Şifre defteri ve kaybolacak seed phrase yok."
+          },
+          "1": {
+            "title": "@username'inizi alın",
+            "body": "Bir kez kullanıcı adı seçin. İnsanlar 63 karakterlik principal yerine icpay.app/yourname adresinden öder."
+          },
+          "2": {
+            "title": "Bağlantınızı veya adresinizi paylaşın",
+            "body": "Size ICP ile ödeme yapması gereken herkese kullanıcı adı sayfanızı veya yatırma adresinizi gönderin."
+          },
+          "3": {
+            "title": "@username ile gönderin",
+            "body": "Saniyeler içinde ICP transfer edin. Kullanıcı adı yazın, tutarı onaylayın, ledger on-chain kaydeder."
+          },
+          "4": {
+            "title": "Her transferi takip edin",
+            "body": "Bakiyeler ve geçmiş resmi ICP ledger'ına bağlıdır. Block explorer'da herhangi bir işlemi açın."
+          },
+          "5": {
+            "title": "Tüm yığını kullanın",
+            "body": "Topluluk için Kanallar, on-chain dosyalar için ICBucket ve Motoko geliştirme için ICFalcon — aynı ekosistem."
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "Nasıl ödenir",
+        "title": "Kullanıcı adıyla gönderin veya ödemek için tarayın",
+        "subtitle": "ICP göndermek için @username yazın veya almak için profil QR kodunu açın. Aynı cüzdan, iki yol — ikisi de Internet Computer ledger'ında sonuçlanır.",
+        "imageAlt": "ICPay ödeme akışı: solda kullanıcı adıyla ICP gönderme, sağda ödemek için QR tarama"
+      },
+      "products": {
+        "eyebrow": "Ekosistem",
+        "title": "ICPay üzerine inşa edilen her şey",
+        "subtitle": "Tek yığında cüzdan, depolama ve canister araçları — Internet Computer'daki geliştiriciler ve günlük kullanıcılar için.",
+        "items": {
+          "wallet": {
+            "title": "ICPay Wallet",
+            "description": "Kullanıcı adı ve Internet Identity ile ICP gönderin, alın ve tutun.",
+            "cta": "Cüzdanı aç"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "API anahtarları, SDK'lar ve 30 günlük ICP planlarıyla on-chain bulut depolama.",
+            "cta": "Depolamayı keşfet"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "Katmanlı mimari ve global CLI ile üretim Motoko framework'ü.",
+            "cta": "ICP üzerinde inşa et"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "Sosyal kanıt",
+        "title": "Güvenebilir miyim?",
+        "subtitle": "ICPay saklamalıdır ve denetlenmemiştir — bunu açıkça söylüyoruz. Bugün doğrulayabileceğiniz şeyler: açık kaynak kod, mainnet canister ve yayınlanan şeffaflık politikası.",
+        "visit": "Ziyaret et →",
+        "readMore": "Daha fazla oku →",
+        "items": {
+          "github": {
+            "label": "GitHub'da açık kaynak",
+            "description": "Motoko backend ve Next.js frontend herkese açıktır. Fon hareketini, auth'u ve yükseltme yollarını kendiniz inceleyin."
+          },
+          "backendCanister": {
+            "label": "Mainnet backend canister",
+            "description": "Cüzdan mantığı Internet Computer mainnet'te {canisterId} adresinde çalışır."
+          },
+          "transparency": {
+            "label": "Şeffaflık sayfası",
+            "description": "Yayınlanan saklama modeli, ücretler ve operatörün yapıp yapamayacakları — doğrulanacak on-chain adreslerle."
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "@IcpayOfficial'dan ürün güncellemeleri, lansmanlar ve Internet Computer ekosistemi haberleri."
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "Resmi ICPay LinkedIn sayfasından şirket güncellemeleri ve ekip gönderileri."
+          },
+          "frontendCanister": {
+            "label": "On-chain frontend",
+            "description": "Statik varlıklar ve II türetme kaynağı {canisterId} adresinden sunulur."
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "On-chain bulut depolama",
+        "title": "ICBucket",
+        "tagline": "S3 uyumlu API ile dosyaları on-chain saklayın. Sunucu yok, AWS faturası yok — ICPay bakiyenizden ICP ile ödenen basit 30 günlük planlar.",
+        "tryIcBucket": "ICBucket'ı dene",
+        "github": "GitHub",
+        "packages": "Paketler",
+        "imageAlt": "Mobilde ICBucket"
+      },
+      "install": {
+        "title": "Kurulum",
+        "subtitle": "Node.js, Python, Rust ve Go için SDK'lar. npm, PyPI, crates.io veya Go modüllerinden kurun.",
+        "copyLabel": "Panoya kopyala",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "Entegrasyon kılavuzu",
+        "title": "ICBucket Nasıl Entegre Edilir?",
+        "subtitle": "Bucket oluşturun, SDK ile dosya yükleyin ve HTTPS üzerinden herkese açık varlıkları sunun — hepsi S3 uyumlu API ile ICPay bakiyenizden.",
+        "videoAriaLabel": "ICBucket nasıl entegre edilir"
+      },
+      "problemSolution": {
+        "title": "Sorun ve Çözüm",
+        "subtitle": "Geleneksel bulut depolama pahalı, merkezi ve karmaşıktır. ICBucket bunu on-chain depolama, 30 günlük ICP planları ve S3 tarzı API ile çözer.",
+        "problemColumn": "Sorun",
+        "solutionColumn": "Çözüm",
+        "rows": {
+          "0": {
+            "problemTitle": "Pahalı Aylık Faturalar",
+            "problemDescription": "AWS S3, Google Cloud Storage ve Azure Blob aylık ücret alır. Maliyetler birikir — 10 GB'lık proje beş yılda 240$'ı aşabilir.",
+            "solutionTitle": "Basit 30 Günlük Planlar",
+            "solutionDescription": "ICPay bakiyenizden ICP ile ödeyin — 30 günde 1 GB için 0,5 ICP'den başlar. Kredi kartı yok. İstediğiniz zaman yenileyin, kullanılmayan süre birikir."
+          },
+          "1": {
+            "problemTitle": "Merkezi Kontrol",
+            "problemDescription": "Dosyalarınız başkasının sunucularında durur. Sağlayıcılar hesabı askıya alabilir, fiyat artırabilir veya haber vermeden hizmeti kapatabilir.",
+            "solutionTitle": "Merkeziyetsiz ve Sansüre Dayanıklı",
+            "solutionDescription": "Dosyalar Internet Computer replikalarında saklanır. Tek hata noktası yok — verilerinizi yalnızca siz silebilirsiniz."
+          },
+          "2": {
+            "problemTitle": "Karmaşık Kurulum",
+            "problemDescription": "S3 kurulumu AWS hesabı, IAM rolleri, bucket politikaları ve CORS yapılandırması gerektirir — sadece dosya yüklemek için.",
+            "solutionTitle": "S3 Uyumlu API",
+            "solutionDescription": "Tanıdık yöntemlerle S3'ün doğrudan yerine geçer: createBucket, uploadFile, downloadFile. Mevcut kodu dakikalar içinde taşıyın."
+          },
+          "3": {
+            "problemTitle": "Sağlayıcıya Bağımlılık",
+            "problemDescription": "Her sağlayıcı farklı API kullanır. S3'ten Azure'a geçmek kodu yeniden yazmak demektir — gerçek taşınabilirlik yok.",
+            "solutionTitle": "On-Chain Doğrulanabilirlik",
+            "solutionDescription": "Her yükleme on-chain izlenebilir. Canister URL'leriyle içerik adresli — değişmez ve denetlenebilir."
+          }
+        }
+      },
+      "pricing": {
+        "title": "Depolama Ekonomisi",
+        "subtitle": "ICPay bakiyenizden ICP ile peşin ödeyin — kredi kartı yok, sürpriz aylık fatura yok. Her kademe 30 günlük plandır; istediğiniz zaman yenileyin, kullanılmayan süre birikir.",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "Canlı ICP fiyatı yükleniyor…",
+        "priceHint": "USD tahminleri CoinGecko kullanır · 1 ICP ≈ {price}",
+        "mostPopular": "En Popüler",
+        "per30Days": "30 günde bir",
+        "capacity": "{capacityGb} GB kapasite",
+        "getStarted": "Başlayın",
+        "footer": "Canlı fiyatlar canister'dan gelir: IC depolama cycle maliyeti artı %20 marj, 0,5 ICP adımlarına yuvarlanır. Üstü çizili önceki liste fiyatını gösterir. 500 GB'a kadar kademeler uygulamada mevcuttur.",
+        "footerCheckoutIcp": " Ödeme her zaman ICP ile yapılır.",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "1 GB ayrılmış kapasite",
+              "1": "Herkese açık ve özel bucket'lar",
+              "2": "API anahtarı kimlik doğrulama",
+              "3": "Parçalı yüklemeler",
+              "4": "Global CDN URL'leri",
+              "5": "Dinlenme halinde şifreli",
+              "6": "İstediğiniz zaman yenileyin — süre birikir"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "5 GB ayrılmış kapasite",
+              "1": "Birden fazla API anahtarı",
+              "2": "Dosya metadata ve etiketler",
+              "3": "Arama ve klasör listeleme",
+              "4": "Toplu kopyala / taşı / sil",
+              "5": "TypeScript, Python ve Go SDK'ları",
+              "6": "İstediğiniz zaman yenileyin — süre birikir"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "10 GB ayrılmış kapasite",
+              "1": "Birden fazla bucket",
+              "2": "Ekip API anahtarları",
+              "3": "Toplu işlemler",
+              "4": "On-chain denetim izi",
+              "5": "HTTPS dosya teslimi",
+              "6": "İstediğiniz zaman yenileyin — süre birikir"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "50 GB ayrılmış kapasite",
+              "1": "Tüm Business özellikleri",
+              "2": "Daha yüksek throughput yüklemeleri",
+              "3": "Üretim iş yükleri",
+              "4": "dApp ve NFT varlık barındırma",
+              "5": "Statik site varlıkları",
+              "6": "İstediğiniz zaman yenileyin — süre birikir"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "ICPay'den son haberler",
+        "subtitle": "Internet Computer için on-chain depolama inşa etme yolculuğumuzu takip edin"
+      },
+      "features": {
+        "title": "On-Chain Depolama İçin İhtiyacınız Olan Her Şey",
+        "subtitle": "ICBucket, kurumsal karmaşıklık veya aylık faturalar olmadan kurumsal düzeyde bulut depolama özellikleri sunar.",
+        "items": {
+          "0": {
+            "title": "Esnek Kapasite Kademeleri",
+            "description": "1GB'dan 100GB'a kadar seçin. Küçük başlayın, gerektiğinde ölçeklendirin. Depolama süresini uzatmak için istediğiniz zaman yenileyin."
+          },
+          "1": {
+            "title": "Parçalı Yüklemeler",
+            "description": "Büyük dosyaları parçalar halinde yükleyin (parça başına 2MB'a kadar). Daha hızlı transfer için paralel yüklemeler. Bağlantı koptuğunda devam edin."
+          },
+          "2": {
+            "title": "API Anahtarı Yönetimi",
+            "description": "Bucket başına ayrıntılı izinlerle (okuma/yazma/silme) birden fazla API anahtarı oluşturun. İstediğiniz zaman iptal edin ve yeniden oluşturun."
+          },
+          "3": {
+            "title": "Herkese Açık ve Özel Bucket'lar",
+            "description": "Herkese açık bucket'lar dosyaları HTTPS üzerinden sunar. Özel bucket'lar kimlik doğrulama gerektirir. Statik siteler ve güvenli yedekler için ideal."
+          },
+          "4": {
+            "title": "S3 Uyumlu API",
+            "description": "AWS S3'ün doğrudan yerine geçer. Tanıdık yöntemler: createBucket, uploadFile, listFiles. Mevcut kodu dakikalar içinde taşıyın."
+          },
+          "5": {
+            "title": "On-Chain Güvenlik",
+            "description": "Dosyalar IC replikalarında saklanır. Canister düzeyinde erişim kontrolü. Sunucu ihlali yok, veri sızıntısı yok."
+          },
+          "6": {
+            "title": "Dosya Metadata ve Arama",
+            "description": "Dosyaları etiketleyin, özel metadata ekleyin. Ada, etikete veya öneke göre arayın. Klasörleri listeleyin, tarih veya boyuta göre filtreleyin."
+          },
+          "7": {
+            "title": "Hızlı İçerik Teslimi",
+            "description": "Dosyalar doğrudan IC canister'larından sunulur. CDN kurulumu gerekmez. IC boundary node'ları üzerinden global dağıtım."
+          }
+        }
+      },
+      "architecture": {
+        "title": "Depolama Nasıl Çalışır",
+        "subtitle": "Dosyalar Internet Computer'daki ICPay cüzdan canister'ının içinde durur — geleneksel bulut VM'sinde değil. Uygulamanız canister ile konuşur; subnet şifreli veriyi saklar.",
+        "canisterId": "Canister ID · {canisterId}",
+        "diagramAriaLabel": "ICBucket mimari diyagramı",
+        "writePath": "Yazma yolu",
+        "readPath": "Okuma yolu",
+        "uploadSteps": {
+          "0": "Bir kez bucket oluşturun (kapasite için ICP ödeyin).",
+          "1": "beginFileUpload → 2 MB parçalar gönderin → completeFileUpload.",
+          "2": "Canister her dosyayı şifreler ve stable memory'ye yazar."
+        },
+        "readSteps": {
+          "0": "Özel dosyalar: uygulamanızdan imzalı downloadFile güncellemesi.",
+          "1": "Herkese açık dosyalar: canister gateway URL'sinde düz HTTPS GET.",
+          "2": "AWS bucket yok, ayrı depolama sunucusu yok — tek on-chain canister."
+        }
+      },
+      "comparison": {
+        "title": "ICBucket Karşılaştırması",
+        "subtitle": "ICBucket vs. geleneksel bulut depolama sağlayıcıları. Bizi farklı kılan şeyi görün.",
+        "featureColumn": "Özellik",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "30 Günlük ICP Planları",
+          "1": "ICP ile ödeyin (kredi kartı yok)",
+          "2": "Merkeziyetsiz",
+          "3": "Sansüre Dayanıklı",
+          "4": "On-Chain Doğrulanabilir",
+          "5": "Hesap Askıya Alma Riski Yok",
+          "6": "S3 Uyumlu API",
+          "7": "Herkese Açık HTTPS URL'leri",
+          "8": "API Anahtarı Auth",
+          "9": "Parçalı Yüklemeler"
+        }
+      },
+      "apiGuide": {
+        "title": "SDK ve API Referansı",
+        "subtitle": "Node.js, Python, Rust ve Go için SDK'larla S3 uyumlu API. AWS S3'ün doğrudan yerine geçer.",
+        "codeExamples": "Kod Örnekleri",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "Kurulum",
+        "createInit": "Oluştur ve Başlat",
+        "uploadFiles": "Dosya Yükle",
+        "downloadAccess": "İndir ve Eriş",
+        "fileManagement": "Dosya Yönetimi",
+        "apiKeyTitle": "API Anahtarı Yönetimi",
+        "apiKeyIntro": "Bucket başına ayrıntılı izinlerle birden fazla API anahtarı oluşturun:",
+        "permRead": "read",
+        "permReadDesc": "Dosya indir",
+        "permWrite": "write",
+        "permWriteDesc": "Dosya yükle",
+        "permDelete": "delete",
+        "permDeleteDesc": "Dosya sil",
+        "apiKeyFooter": "Web arayüzü üzerinden istediğiniz zaman anahtarları iptal edin ve yeniden oluşturun.",
+        "rateLimitsTitle": "Hız Sınırları",
+        "rateLimitsIntro": "Canister kararlılığı için adil kullanım sınırları:",
+        "rateLimitUpload": "Yükleme: API anahtarı başına dakikada 100 istek",
+        "rateLimitDownload": "İndirme: dakikada 1000 istek (herkese açık dosyalar)",
+        "rateLimitList": "Listele/Ara: dakikada 50 istek",
+        "rateLimitChunk": "Parça boyutu: parça başına en fazla 2MB",
+        "rateLimitsFooter": "Daha yüksek limitler veya kurumsal planlar için bize ulaşın."
+      },
+      "faq": {
+        "title": "Sık Sorulan Sorular",
+        "subtitle": "ICBucket hakkında bilmeniz gereken her şey. Yanıt bulamadınız mı? Bize ulaşın.",
+        "items": {
+          "0": {
+            "question": "ICBucket AWS S3'ten nasıl farklıdır?",
+            "answer": "ICBucket, Internet Computer üzerinde merkeziyetsiz depolamadır. Kredi kartlı AWS faturası yerine ICPay bakiyenizden her 30 günde ICP ödersiniz (ör. 5 GB için 2,5 ICP). Dosyalar IC replikalarında on-chain durur. API anahtarları ve SDK'lar geçişi kolaylaştırır."
+          },
+          "1": {
+            "question": "Faturalandırma nasıl çalışır?",
+            "answer": "Her bucket, ICPay bakiyenizden peşin ICP ile ödenen 30 günlük plandır. Süresi dolunca bucket yenilenene kadar salt okunur olur. Yenileme 30 gün daha ekler — kullanılmayan süre birikir. Fiyatlar canister'dan canlı alınır (cycle maliyeti + marj)."
+          },
+          "2": {
+            "question": "ICBucket üretim uygulamaları için kullanılabilir mi?",
+            "answer": "Evet. ICBucket, 33 geçen test, parçalı yüklemeler, API anahtarı auth ve cycle izleme ile üretime hazırdır. NFT metadata, dApp varlıkları ve statik siteler için kullanılıyor. Yine de IC'de saklamalı depolamadır — kritik verileri dağıtmadan önce ödünleşimleri anlayın."
+          },
+          "3": {
+            "question": "Hangi dosya türleri desteklenir?",
+            "answer": "Tüm dosya türleri: görüntüler, videolar, PDF, JSON, HTML, CSS, JS vb. İçerik türü korunur. Herkese açık bucket'lar doğru MIME türleriyle dosya sunar (ör. <img src='...'> çalışır)."
+          },
+          "4": {
+            "question": "S3'ten ICBucket'a nasıl geçilir?",
+            "answer": "icpay-bucket SDK kurun, bucket oluşturun, API anahtarı üretin. AWS SDK çağrılarını ICBucket SDK çağrılarıyla değiştirin (neredeyse aynı API). S3'ten indirin, ICBucket'a yükleyin. Uygulamadaki URL'leri güncelleyin. Küçük projelerde çoğu geçiş <1 saat sürer."
+          },
+          "5": {
+            "question": "Canister cycle'ları biterse ne olur?",
+            "answer": "ICBucket canister'ları izlenir ve bucket gelirinden otomatik doldurulur. Cycle'lar kritik düşükse bucket sahiplerine yenileme bildirimi yaparız. En kötü durumda (canister silinirse) dosyalar kaybolur — ancak doğru cycle yönetimiyle son derece nadirdir."
+          },
+          "6": {
+            "question": "ICBucket NFT metadata için kullanılabilir mi?",
+            "answer": "Evet, mükemmel kullanım durumu. metadata.json ve görüntü dosyalarını yükleyin. Değişmez on-chain URL'ler alın (https://6vbhm-...-cai.icp0.io/bucket/nft-1.json). IPFS gateway yok, kırık bağlantı yok. Herkese açık bucket'lar dosyaları anında sunar."
+          },
+          "7": {
+            "question": "Dosya boyutu sınırı var mı?",
+            "answer": "Tek dosya yüklemeleri istek başına 2MB ile sınırlıdır (IC çağrı boyutu sınırı). Daha büyük dosyalar için parçalı yüklemeler kullanın — istemci tarafında 2MB parçalara bölün. SDK bunu otomatik halleder. 500MB dosyalara kadar test edildi."
+          },
+          "8": {
+            "question": "Dosyalar silinebilir mi?",
+            "answer": "Evet, bucket sahipleri web arayüzü veya API ile silebilir. Silinen dosyalar canister'dan hemen kaldırılır. Depolama kotası boşalır. Toplu silme desteklenir."
+          },
+          "9": {
+            "question": "Bucket'ı herkese açık nasıl yaparım?",
+            "answer": "Bucket oluştururken visibility: 'public' ayarlayın. Herkese açık bucket'lar auth olmadan HTTPS üzerinden dosya sunar. URL'si olan herkes erişebilir. Statik siteler, herkese açık varlıklar ve NFT metadata için ideal."
+          },
+          "10": {
+            "question": "ICBucket'ta statik web sitesi barındırabilir miyim?",
+            "answer": "Evet. HTML, CSS, JS, görüntüleri herkese açık bucket'a yükleyin. Canister URL'si üzerinden erişin (https://6vbhm-...-cai.icp0.io/bucket/index.html). İçerik türlerini doğru ayarlayın. Henüz index.html otomatik sunumu yok — URL'de tam yolu belirtin."
+          },
+          "11": {
+            "question": "ICBucket ile IPFS arasındaki fark nedir?",
+            "answer": "ICBucket dosyaları S3 uyumlu API ile IC canister'larında saklar. IPFS içerik adreslidir, eşler arasıdır. ICBucket'ın gateway bağımlılığı yoktur, anında erişim ve daha basit API vardır. IPFS daha iyi merkeziyetsizlik sunar ancak erişim daha yavaş/öngörülemezdir. İhtiyacınıza göre seçin."
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "ICFalcon Framework",
+        "title": "ICFalcon",
+        "subtitle": "Internet Computer için Üretime Hazır Motoko Framework'ü",
+        "features": "Zorunlu katmanlı mimari · Next.js frontend · Global CLI · Internet Identity auth",
+        "installLabel": "Tek komutla kur",
+        "copyCommand": "Komutu kopyala",
+        "installHint": "Bağımlılıkları kurar, yerel olarak dağıtır ve localhost:3000'de dev sunucusunu başlatır",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "Paketler"
+      },
+      "problemSolution": {
+        "title": "Gerçek sorunları çözmek için inşa edildi",
+        "subtitle": "ICFalcon, ICP geliştirmedeki yaygın sürtünme noktalarını ortadan kaldırır",
+        "problemHeading": "Sorun",
+        "solutionHeading": "Çözüm",
+        "problems": {
+          "0": {
+            "title": "Standart mimari yok",
+            "description": "Çoğu Motoko projesi katmanlama, test veya dağıtım kalıpları hakkında net rehberlik olmadan sıfırdan başlar. Ekipler her seferinde yapıyı yeniden icat eder."
+          },
+          "1": {
+            "title": "Dağınık araçlar",
+            "description": "ICP uygulaması oluşturmak dfx, mops, npm ve özel betikleri dengelemek demektir. Ortamlar arası iskele, derleme veya dağıtım için birleşik CLI yok."
+          },
+          "2": {
+            "title": "Frontend-backend entegrasyon karmaşıklığı",
+            "description": "Next.js frontend'i Motoko canister'a bağlamak manuel actor oluşturma, kimlik yönetimi ve ortam yapılandırması gerektirir."
+          },
+          "3": {
+            "title": "Sınırlı başlangıç şablonları",
+            "description": "Mevcut şablonlar ya üretime hazır olamayacak kadar minimal ya da uyarlanamayacak kadar katıdır. Gerçek dünya uygulamaları için orta yol yok."
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "Üretim şeklinde katmanlama",
+            "description": "Dört katmanlı mimari (api → service → repository → storage) ilk günden zorunlu. Her modül aynı kalıbı izler — işe alım ve bakım öngörülebilir."
+          },
+          "1": {
+            "title": "Global falcon CLI",
+            "description": "Modül iskelesi, paket kurma, derleme, test ve dağıtım için tek komut. Etkileşimli onaylarla yerel ve mainnet ortamlarında sorunsuz çalışır."
+          },
+          "2": {
+            "title": "Entegre yığın",
+            "description": "mo:core ile Motoko backend, shadcn/ui ile Next.js frontend, Internet Identity auth ve statik dışa aktarma. Her şey kutudan çıktığı gibi bağlı."
+          },
+          "3": {
+            "title": "Hub ekosistemi",
+            "description": "`falcon add pkg <name>` ile icp-hub'dan savaşta test edilmiş paketler kurun. Ledger entegrasyonu, dosya depolama, hız sınırlama ve daha fazlası — tak çalıştır."
+          }
+        }
+      },
+      "article": {
+        "title": "ICFalcon Nedir?",
+        "subtitle": "Internet Computer uygulamaları oluşturmak için yapı, araçlar ve hız sağlayan framework",
+        "frameworkTitle": "Framework, boilerplate değil",
+        "frameworkP1": "ICFalcon, Motoko uygulamaları için görüşlü bir başlangıç noktasıdır. Dört katmanlı backend mimarisini (api → service → repository → storage) zorunlu kılar, modern Next.js frontend ile eşleştirir ve iskele, derleme ve dağıtım için global CLI sağlar.",
+        "frameworkP2": "Yapıyı kendiniz çözmeniz gereken minimal şablonların aksine, ICFalcon ölçeklenebilir kalıplar verir — ICPay gibi üretim uygulamalarında kullanılanların aynısı. İlk günden kararlı bellek yönetimi, geçiş kılavuzları, Internet Identity entegrasyonu ve test harness alırsınız.",
+        "layeringTitle": "Katmanlı backend mimarisi",
+        "layeringP1": "Backend katı sorumluluk ayrımı izler. API modülleri HTTP ve doğrulamayı yönetir. Servisler iş mantığını içerir. Repository'ler veri erişimini soyutlar. Storage kararlı belleği yönetir.",
+        "layeringP2": "Bu katmanlama convention ile zorunlu kılınır ve repoda belgelenir. falcon m:f Product ile modül iskelesi oluşturduğunuzda dört katman üretilir, main.mo'ya bağlanır ve eşleşen frontend servis dosyaları oluşturulur. Tahmin yok, manuel kablolama yok.",
+        "frontendTitle": "Frontend entegrasyonu",
+        "frontendP1": "Frontend, shadcn/ui bileşenleri ve Internet Identity kimlik doğrulamasıyla Next.js'tir. Asset canister veya Vercel gibi geleneksel bir hostta barındırılabilmesi için statik dosyalara dışa aktarır (output: \"export\").",
+        "frontendP2": "Agent yapılandırması, kimlik türetme ve canister ID'leri önceden bağlıdır. Backend canister, frontend'in otomatik aldığı .did dosyasını sunar. Manuel actor oluşturma veya ortam yönetimi yok.",
+        "cliTitle": "falcon CLI",
+        "cliP1": "Her işlem tek global komut üzerinden çalışır. Proje başlat (falcon s:init). Modül iskelesi (falcon m:f Name). Test çalıştır (falcon b:test --local). Dağıt (falcon b:deploy, onay ister).",
+        "cliP2": "CLI, dfx, mops ve npm'i sarar; modüller, API uç noktaları ve frontend servisleri için iskele ekler. --local bayrağıyla yerel veya mainnet hedefler, güvenlik için varsayılan mainnet. Komutlar ops/docs/commands.md'de belgelenmiştir.",
+        "hubTitle": "Hub paketleri",
+        "hubP1": "ICFalcon, tak çalıştır Motoko paketleri koleksiyonu icp-hub ile entegre olur. falcon add pkg <name> ile ledger entegrasyonu, dosya depolama, hız sınırlama veya diğer yaygın kalıpları kurun. Her paket aynı dört katmanlı yapıyı izler ve test içerir.",
+        "hubP2": "Paketler bağımsız olarak sürümlenir ve test edilir. Hub açık kaynaklıdır — geri katkıda bulunabilir veya özel ihtiyaçlar için fork edebilirsiniz.",
+        "audienceTitle": "Kimler için?",
+        "audienceP1": "ICFalcon, yapıyı yeniden icat etmeden üretime hazır ICP uygulamaları göndermek isteyen geliştiriciler içindir. Kararlı bellek, katmanlı backend, Internet Identity auth ve modern frontend gerektiren bir canister oluşturuyorsanız, ICFalcon sizi daha hızlı götürür.",
+        "audienceP2": "Minimal şablon değil. Görüşlüdür. Katmanlama zorunlu, CLI birincil arayüz ve yığın Motoko + Next.js'tir. Bu yığına ve net başlangıç noktasına ihtiyacınız varsa, ICFalcon odur.",
+        "stackTitle": "Yığın özeti",
+        "stackBackend": "Backend:",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "Frontend:",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "Araçlar:",
+        "stackToolingValue": "falcon CLI · modül iskeleleri · icp-hub paketleri"
+      },
+      "faq": {
+        "title": "Sık Sorulan Sorular",
+        "subtitle": "ICFalcon ve nasıl kullanılacağı hakkında yaygın sorular",
+        "items": {
+          "0": {
+            "question": "ICFalcon nedir?",
+            "answer": "ICFalcon, Internet Computer uygulamaları oluşturmak için açık kaynaklı Motoko framework'üdür. Üretime hazır backend mimarisi, Next.js frontend ve iskele, derleme ve dağıtım için global CLI sağlar."
+          },
+          "1": {
+            "question": "Motoko bilmem gerekir mi?",
+            "answer": "Evet. ICFalcon bir Motoko framework'üdür, bu yüzden dile aşinalık gerekir. Ancak katmanlı mimari ve iskele komutları manuel yazmanız gereken boilerplate'i azaltır."
+          },
+          "2": {
+            "question": "ICFalcon dfx new'den nasıl farklıdır?",
+            "answer": "dfx new minimal başlangıç noktası verir. ICFalcon, zorunlu katmanlama, kararlı bellek yönetimi, Internet Identity entegrasyonu ve modül iskelesi için CLI ile üretim şeklinde yapı verir. Tasarım gereği görüşlüdür."
+          },
+          "3": {
+            "question": "ICFalcon mevcut canister ile kullanılabilir mi?",
+            "answer": "ICFalcon başlangıç noktası olarak tasarlanmıştır, geçiş aracı değil. Mimarinin parçalarını (katmanlama kalıbı, CLI komutları) benimseyebilirsiniz ancak tam entegrasyon manuel çalışma gerektirir."
+          },
+          "4": {
+            "question": "falcon CLI nedir?",
+            "answer": "falcon CLI, dfx, mops ve npm'i saran global komuttur. Proje başlatma, modül iskelesi, test, derleme ve dağıtımı yönetir. --local bayrağıyla yerel veya mainnet hedefler."
+          },
+          "5": {
+            "question": "Paketleri nereden kurarım?",
+            "answer": "Backend paketleri mops ve icp-hub'dan kurulur. Frontend paketleri npm'dendir. CLI, `falcon add pkg <name>` ile bunun bir kısmını soyutlar."
+          },
+          "6": {
+            "question": "ICFalcon üretime hazır mı?",
+            "answer": "Mimari üretime hazırdır ve ICPay gibi canlı uygulamalarda kullanılır. Ancak ICFalcon bir framework'tür, SaaS ürünü değil. Canister'ınızın sahibi sizsiniz ve test, dağıtım ve bakımdan siz sorumlusunuz."
+          },
+          "7": {
+            "question": "ICFalcon Rust canister'ları destekler mi?",
+            "answer": "Hayır. ICFalcon bir Motoko framework'üdür. Rust gerekiyorsa farklı bir başlangıç kullanın veya sıfırdan oluşturun."
+          },
+          "8": {
+            "question": "Mainnet'e nasıl dağıtırım?",
+            "answer": "`falcon b:deploy` çalıştırın (--local olmadan). CLI, mainnet'e dağıtmadan önce onay isteyecektir. Varsayılan yükseltme modudur; veri kaybını önlemek için yeniden kurulum modu asla kullanılmaz."
+          },
+          "9": {
+            "question": "Katmanlamayı özelleştirebilir miyim?",
+            "answer": "Dört katmanlı mimari (api → service → repository → storage) convention ve CLI iskeleleriyle zorunludur. Sapabilirsiniz ancak tutarlı yapı ve otomatik iskelemenin faydalarını kaybedersiniz."
+          },
+          "10": {
+            "question": "ICFalcon'a nasıl katkıda bulunurum?",
+            "answer": "Depoyu fork edin, özellik dalı oluşturun ve pull request açın. AGENTS.md'deki kalıpları izleyin ve göndermeden önce `falcon b:test --local` ve `falcon p:check --local` çalıştırın. Hub paketleri için ayrı olarak icp-hub'a katkıda bulunun."
+          },
+          "11": {
+            "question": "ICFalcon ücretsiz mi?",
+            "answer": "Evet. ICFalcon açık kaynaklıdır. Kaynak kodu olduğu gibi kullanım ve değiştirme için sağlanır. Hub paketleri icp-hub'daki girişlerine göre lisanslanır."
+          }
+        }
+      }
+    }
   }
 }

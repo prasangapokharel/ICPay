@@ -6,20 +6,14 @@ import { usePathname } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { News01Icon } from "@hugeicons/core-free-icons"
 import { APP_LOGO } from "@/lib/ui/brand-images"
-import {
-  PUBLIC_LEGAL_MENU,
-  PUBLIC_PRIMARY_LINKS,
-  PUBLIC_PRODUCT_MENU,
-  PUBLIC_RESOURCE_MENU,
-  type NavMenuItem,
-} from "@/lib/public/site-links"
+import type { NavMenuItem } from "@/lib/public/site-links"
 import { cn } from "@/lib/ui/utils"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
 import { NavMenuItemContent } from "@/components/public/nav-menu-item"
 import { PublicNavAuth } from "@/components/public/public-nav-auth"
 import { PublicNavMobile } from "@/components/public/public-nav-mobile"
 import { ThemeToggle } from "@/components/public/theme-toggle"
-import { getNavMenuIcon } from "@/lib/public/nav-menu-icons"
+import { usePublicSiteLinks } from "@/hooks/i18n/use-public-site-links"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -29,6 +23,8 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+
+import { getNavMenuIcon } from "@/lib/public/nav-menu-icons"
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/"
@@ -93,6 +89,13 @@ function NavDropdown({
 
 export function PublicNav() {
   const pathname = usePathname()
+  const {
+    primaryLinks,
+    productMenu,
+    resourceMenu,
+    legalMenu,
+    sectionLabels,
+  } = usePublicSiteLinks()
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/95 backdrop-blur-md">
@@ -115,7 +118,7 @@ export function PublicNav() {
 
           <NavigationMenu className="hidden max-w-none lg:flex" align="start">
             <NavigationMenuList className="flex-wrap justify-start gap-0.5">
-              {PUBLIC_PRIMARY_LINKS.map((link) => {
+              {primaryLinks.map((link) => {
                 const active = isActive(pathname, link.href)
                 return (
                   <NavigationMenuItem key={link.href}>
@@ -140,9 +143,9 @@ export function PublicNav() {
                 )
               })}
 
-              <NavDropdown label="Products" items={PUBLIC_PRODUCT_MENU} />
-              <NavDropdown label="Resources" items={PUBLIC_RESOURCE_MENU} columns={2} />
-              <NavDropdown label="Legal" items={PUBLIC_LEGAL_MENU} columns={2} />
+              <NavDropdown label={sectionLabels.products} items={productMenu} />
+              <NavDropdown label={sectionLabels.resources} items={resourceMenu} columns={2} />
+              <NavDropdown label={sectionLabels.legal} items={legalMenu} columns={2} />
             </NavigationMenuList>
           </NavigationMenu>
         </div>

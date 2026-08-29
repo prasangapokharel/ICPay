@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useId, useRef, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
 import { WALLET_CANISTER_ID } from "@/services/icp"
 
@@ -36,19 +37,11 @@ const ARCHITECTURE_DIAGRAM = `flowchart TB
   class canister,upload,http core
   class memory store`
 
-const UPLOAD_STEPS = [
-  "Create a bucket once (pay ICP for capacity).",
-  "beginFileUpload → send 2 MB chunks → completeFileUpload.",
-  "Canister encrypts each file and writes to stable memory.",
-]
-
-const READ_STEPS = [
-  "Private files: signed downloadFile update from your app.",
-  "Public files: plain HTTPS GET on the canister gateway URL.",
-  "No AWS bucket, no separate storage server — one on-chain canister.",
-]
+const UPLOAD_STEP_IDS = ["0", "1", "2"] as const
+const READ_STEP_IDS = ["0", "1", "2"] as const
 
 export function ArchitectureSection() {
+  const t = useTranslations("publicSite.icbucket.architecture")
   const rootId = useId().replace(/:/g, "")
   const hostRef = useRef<HTMLDivElement>(null)
   const [renderError, setRenderError] = useState(false)
@@ -87,13 +80,10 @@ export function ArchitectureSection() {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl space-y-10">
           <div className="space-y-3 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">How Storage Works</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              Files live inside the ICPay wallet canister on Internet Computer — not on a
-              traditional cloud VM. Your app talks to the canister; the subnet stores encrypted data.
-            </p>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
             <p className="font-mono text-xs text-muted-foreground">
-              Canister ID · {WALLET_CANISTER_ID}
+              {t("canisterId", { canisterId: WALLET_CANISTER_ID })}
             </p>
           </div>
 
@@ -107,7 +97,7 @@ export function ArchitectureSection() {
                 <div
                   ref={hostRef}
                   className="flex justify-center overflow-x-auto [&_svg]:max-w-full [&_svg]:h-auto"
-                  aria-label="ICBucket architecture diagram"
+                  aria-label={t("diagramAriaLabel")}
                 />
               )}
             </CardContent>
@@ -117,11 +107,11 @@ export function ArchitectureSection() {
             <Card size="sm">
               <CardContent className="space-y-3 pt-6">
                 <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                  Write path
+                  {t("writePath")}
                 </h3>
                 <ol className="list-decimal space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
-                  {UPLOAD_STEPS.map((step) => (
-                    <li key={step}>{step}</li>
+                  {UPLOAD_STEP_IDS.map((id) => (
+                    <li key={id}>{t(`uploadSteps.${id}`)}</li>
                   ))}
                 </ol>
               </CardContent>
@@ -129,11 +119,11 @@ export function ArchitectureSection() {
             <Card size="sm">
               <CardContent className="space-y-3 pt-6">
                 <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                  Read path
+                  {t("readPath")}
                 </h3>
                 <ol className="list-decimal space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
-                  {READ_STEPS.map((step) => (
-                    <li key={step}>{step}</li>
+                  {READ_STEP_IDS.map((id) => (
+                    <li key={id}>{t(`readSteps.${id}`)}</li>
                   ))}
                 </ol>
               </CardContent>

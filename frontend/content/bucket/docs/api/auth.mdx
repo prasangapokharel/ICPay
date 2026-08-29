@@ -1,0 +1,21 @@
+---
+title: Authentication
+description: Bucket owner calls use your Internet Identity principal. API keys add read, write, or delete scopes.
+group: API reference
+order: 2
+eyebrow: API reference
+---
+
+Bucket owner calls use your Internet Identity principal. API keys add **read**, **write**, or **delete** scopes — pass the secret as the optional `apiKey` argument.
+
+`bucketId` accepts the public bucket name or internal id.
+
+## Scopes
+
+| Scope | Methods |
+| --- | --- |
+| Read | `listFiles`, `downloadFile`, `getFile`, `searchFiles`, `listFolder` |
+| Write | Uploads, `updateFile`, `moveFile`, `copyFile`, tags, metadata |
+| Delete | `deleteFile`, `bulkDeleteFiles` |
+
+Create and manage keys in the bucket detail page inside ICPay.

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -18,63 +19,11 @@ import { formatAmount } from "@/lib/wallet/utils"
 
 type PriceCurrency = "icp" | "usd"
 
-const PLANS = [
-  {
-    name: "Starter",
-    capacityGb: 1,
-    features: [
-      "1 GB reserved capacity",
-      "Public & private buckets",
-      "API key authentication",
-      "Chunked uploads",
-      "Global CDN URLs",
-      "Encrypted at rest",
-      "Renew anytime — time stacks",
-    ],
-    popular: false,
-  },
-  {
-    name: "Pro",
-    capacityGb: 5,
-    features: [
-      "5 GB reserved capacity",
-      "Multiple API keys",
-      "File metadata & tags",
-      "Search & folder listing",
-      "Bulk copy / move / delete",
-      "TypeScript, Python & Go SDKs",
-      "Renew anytime — time stacks",
-    ],
-    popular: true,
-  },
-  {
-    name: "Business",
-    capacityGb: 10,
-    features: [
-      "10 GB reserved capacity",
-      "Multiple buckets",
-      "Team API keys",
-      "Bulk operations",
-      "On-chain audit trail",
-      "HTTPS file delivery",
-      "Renew anytime — time stacks",
-    ],
-    popular: false,
-  },
-  {
-    name: "Scale",
-    capacityGb: 50,
-    features: [
-      "50 GB reserved capacity",
-      "All Business features",
-      "Higher throughput uploads",
-      "Production workloads",
-      "dApp & NFT asset hosting",
-      "Static site assets",
-      "Renew anytime — time stacks",
-    ],
-    popular: false,
-  },
+const PLAN_DEFS = [
+  { id: "starter", capacityGb: 1 },
+  { id: "pro", capacityGb: 5 },
+  { id: "business", capacityGb: 10 },
+  { id: "scale", capacityGb: 50 },
 ] as const
 
 function icpFromE8s(e8s: bigint): number {
@@ -95,7 +44,13 @@ function formatPlanPrice(
   return formatUsd(icpFromE8s(e8s) * usdPerIcp)
 }
 
+const FEATURE_IDS = ["0", "1", "2", "3", "4", "5", "6"] as const
+
 export function PricingSection() {
+  const t = useTranslations("publicSite.icbucket.pricing") as (
+    key: string,
+    values?: Record<string, string | number>
+  ) => string
   const [currency, setCurrency] = useState<PriceCurrency>("icp")
   const { price, loading } = useIcpPrice()
   const usdPerIcp = price?.usd
@@ -105,13 +60,8 @@ export function PricingSection() {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Storage Economics
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              Pay upfront in ICP from your ICPay balance — no credit card, no surprise monthly
-              bills. Each tier is a 30-day plan; renew anytime and unused time stacks.
-            </p>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
             <Tabs
               value={currency}
               onValueChange={(value) => setCurrency((value as PriceCurrency) ?? "icp")}
@@ -119,24 +69,24 @@ export function PricingSection() {
             >
               <TabsList className="h-10 rounded-full p-1">
                 <TabsTrigger value="icp" className="min-w-16 rounded-full px-5">
-                  ICP
+                  {t("currencyIcp")}
                 </TabsTrigger>
                 <TabsTrigger value="usd" className="min-w-16 rounded-full px-5">
-                  USD
+                  {t("currencyUsd")}
                 </TabsTrigger>
               </TabsList>
             </Tabs>
             {currency === "usd" ? (
               <p className="text-xs text-muted-foreground">
                 {loading || !price
-                  ? "Loading live ICP price…"
-                  : `USD estimates use CoinGecko · 1 ICP ≈ ${formatUsd(price.usd)}`}
+                  ? t("loadingPrice")
+                  : t("priceHint", { price: formatUsd(price.usd) })}
               </p>
             ) : null}
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {PLANS.map((plan) => {
+            {PLAN_DEFS.map((plan) => {
               const priceE8s = calculatePriceE8s(plan.capacityGb)
               const listPriceE8s = calculateListPriceE8s(plan.capacityGb)
               const showDiscount = listPriceE8s > priceE8s
@@ -144,18 +94,18 @@ export function PricingSection() {
 
               return (
                 <Card
-                  key={plan.name}
+                  key={plan.id}
                   className={`relative overflow-visible ${popular ? "border-primary shadow-lg" : ""}`}
                 >
                   {popular ? (
                     <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap">
                       <div className="rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground shadow-md">
-                        Most Popular
+                        {t("mostPopular")}
                       </div>
                     </div>
                   ) : null}
                   <CardHeader className="space-y-3 pb-6 pt-8">
-                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                    <CardTitle className="text-2xl">{t(`plans.${plan.id}.name`)}</CardTitle>
                     <div className="space-y-1">
                       {showDiscount ? (
                         <p className="text-lg text-muted-foreground line-through tabular-nums">
@@ -165,21 +115,23 @@ export function PricingSection() {
                       <CardDescription className="text-4xl font-bold text-foreground tabular-nums">
                         {formatPlanPrice(priceE8s, currency, usdPerIcp)}
                       </CardDescription>
-                      <CardDescription className="text-sm">per 30 days</CardDescription>
+                      <CardDescription className="text-sm">{t("per30Days")}</CardDescription>
                     </div>
                     <CardDescription className="pt-2 text-base font-semibold">
-                      {plan.capacityGb} GB capacity
+                      {t("capacity", { capacityGb: plan.capacityGb })}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <ul className="space-y-3">
-                      {plan.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2">
+                      {FEATURE_IDS.map((featureId) => (
+                        <li key={featureId} className="flex items-start gap-2">
                           <HugeiconsIcon
                             icon={CheckmarkCircle02Icon}
                             className="mt-0.5 size-5 shrink-0 text-primary"
                           />
-                          <span className="text-sm text-muted-foreground">{feature}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {t(`plans.${plan.id}.features.${featureId}`)}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -189,7 +141,7 @@ export function PricingSection() {
                         variant={popular ? "default" : "outline"}
                         size="lg"
                       >
-                        Get Started
+                        {t("getStarted")}
                       </Button>
                     </Link>
                   </CardContent>
@@ -199,10 +151,8 @@ export function PricingSection() {
           </div>
 
           <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
-            Live prices come from the canister: IC storage cycle cost plus a 20% margin, rounded to
-            0.5 ICP steps. Strikethrough shows the previous list price. Tiers up to 500 GB are
-            available in the app.
-            {currency === "usd" ? " Checkout is always in ICP." : null}
+            {t("footer")}
+            {currency === "usd" ? t("footerCheckoutIcp") : null}
           </p>
         </div>
       </div>

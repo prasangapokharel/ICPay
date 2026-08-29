@@ -1,0 +1,16 @@
+---
+title: Public CDN URLs
+description: Public buckets expose copyable links on the IC raw HTTP gateway (per-canister host).
+group: CDN & URLs
+order: 1
+---
+
+Public buckets expose copyable links on the IC raw HTTP gateway:
+
+```text
+https://{canister}.raw.icp0.io/cloud/{bucket}/path/to/file.webp
+```
+
+A **Raw / CDN** toggle on the bucket page switches between the canister host and the `cloud.icpay.app` CDN (when enabled).
+
+Private buckets have no public URL — download with `downloadFile` while signed in.

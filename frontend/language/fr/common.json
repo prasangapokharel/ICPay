@@ -852,6 +852,16 @@
     "docsTitle": "Guide ICPay Cloud",
     "docsSubtitle": "Stockage de fichiers chiffré on-chain",
     "docsStorageTitle": "Ce que vous obtenez",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "Les buckets sont payés mensuellement depuis votre solde ICPay. Les fichiers restent chiffrés au repos sur le canister.",
     "docsImagesOnly": "Images, documents, code, archives, audio et polices (voir Pricing pour la liste complète).",
     "docsWebpNote": "Format natif jusqu'à 10 MB. Les gros fichiers sont découpés automatiquement (limite ingress IC : 2 MiB par appel).",
@@ -1223,5 +1233,725 @@
       "rejected": "Rejected"
     },
     "snsProjectLink": "View SNS project"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "Menu",
+      "signIn": "Se connecter",
+      "wallet": "Portefeuille",
+      "openWallet": "Ouvrir le portefeuille",
+      "openMenu": "Ouvrir le menu",
+      "sectionProducts": "Produits",
+      "sectionResources": "Ressources",
+      "sectionLegal": "Mentions légales",
+      "primary": {
+        "blog": "Blog"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay Wallet",
+          "description": "Envoyez des ICP par nom d'utilisateur avec Internet Identity."
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "Stockage on-chain avec clés API, SDK et forfaits ICP."
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "Framework Motoko de production avec un CLI global."
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "Commandes et workflows pour les projets ICFalcon."
+        },
+        "icpHubPackages": {
+          "title": "ICP-Hub Packages",
+          "description": "Paquets sélectionnés pour le développement sur Internet Computer."
+        },
+        "icbucketDocs": {
+          "title": "ICBucket Docs",
+          "description": "Référence API et guides d'intégration pour le stockage."
+        },
+        "blog": {
+          "title": "Blog",
+          "description": "Guides, tutoriels et articles sur l'écosystème ICP."
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "À propos",
+          "description": "Ce qu'est ICPay et comment fonctionnent les paiements par nom d'utilisateur."
+        },
+        "faq": {
+          "title": "Questions fréquentes",
+          "description": "Réponses aux questions courantes sur le portefeuille et les produits."
+        },
+        "roadmap": {
+          "title": "Feuille de route",
+          "description": "Ce qui est livré, ce qui arrive et ce que nous ne construirons pas."
+        },
+        "brands": {
+          "title": "Marques",
+          "description": "Politique de marques déposées et d'utilisation de la marque."
+        },
+        "terms": {
+          "title": "Conditions",
+          "description": "Conditions d'utilisation d'ICPay."
+        },
+        "privacy": {
+          "title": "Confidentialité",
+          "description": "Comment nous traitons les données et les informations de compte."
+        },
+        "transparency": {
+          "title": "Transparence",
+          "description": "Modèle de garde, frais et opérations on-chain."
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "Produits",
+      "sectionResources": "Ressources",
+      "sectionLegal": "Mentions légales",
+      "sectionCommunity": "Communauté",
+      "copyright": "© 2026 ICPay. Tous droits réservés.",
+      "blog": "Blog",
+      "channels": "Canaux",
+      "wallet": "Portefeuille",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "wallet": "ICPay Wallet"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "ICP-Hub Packages",
+        "icbucketDocs": "ICBucket Docs",
+        "blog": "Blog"
+      },
+      "legal": {
+        "about": "À propos",
+        "faq": "Questions fréquentes",
+        "roadmap": "Feuille de route",
+        "brands": "Marques",
+        "terms": "Conditions",
+        "privacy": "Confidentialité",
+        "transparency": "Transparence"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      }
+    },
+    "heroSignOptions": {
+      "label": "Options de connexion via Internet Identity",
+      "ariaLabel": "Connexion Google, Apple et Microsoft via Internet Identity"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Portefeuille Internet Computer",
+        "title": "Envoyez des ICP par nom d'utilisateur, pas une adresse de 63 caractères",
+        "tagline": "ICPay est un portefeuille dépositaire open source sur Internet Computer. Réservez un identifiant, recevez des paiements de n'importe qui et explorez les canaux, le stockage on-chain et les outils Motoko depuis un seul écosystème.",
+        "openWallet": "Ouvrir le portefeuille",
+        "browseChannels": "Parcourir les canaux",
+        "signIn": "Se connecter",
+        "aboutIcPay": "À propos d'ICPay",
+        "imageAlt": "Portefeuille ICPay sur mobile"
+      },
+      "cta": {
+        "signedInTitle": "Vous êtes connecté",
+        "signedInBody": "Ouvrez votre portefeuille pour envoyer des ICP, consulter vos soldes ou explorer les canaux et les jetons.",
+        "readyTitle": "Prêt à envoyer des ICP avec un nom d'utilisateur ?",
+        "readyBody": "Connectez-vous avec Internet Identity, réservez votre identifiant et commencez à envoyer en quelques secondes. Pas de phrase secrète. Aucune extension de navigateur requise.",
+        "openWallet": "Ouvrir le portefeuille",
+        "browseChannels": "Parcourir les canaux",
+        "signIn": "Se connecter"
+      },
+      "features": {
+        "eyebrow": "Plateforme",
+        "title": "Conçu pour les utilisateurs du quotidien et les développeurs ICP",
+        "subtitle": "ICPay est plus qu'un portefeuille. C'est la porte d'entrée vers les paiements, la communauté, le stockage et le développement de canisters sur Internet Computer.",
+        "items": {
+          "0": {
+            "title": "Paiements par nom d'utilisateur",
+            "body": "Réservez un identifiant et partagez icpay.app/votrenom. Les expéditeurs n'ont pas besoin de compte ni d'un principal de 63 caractères."
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "Connectez-vous avec un passkey ou un compte lié. Pas de phrase secrète à noter et aucune extension de navigateur requise."
+          },
+          "2": {
+            "title": "Canaux",
+            "body": "Communautés de diffusion façon Telegram avec découverte publique, invitations privées et publications en markdown."
+          },
+          "3": {
+            "title": "Stockage ICBucket",
+            "body": "Stockage de fichiers on-chain avec clés API et SDK. Payez en ICP avec des forfaits simples de 30 jours au lieu d'une facture par carte."
+          },
+          "4": {
+            "title": "Framework ICFalcon",
+            "body": "Scaffolding Motoko de production avec couches imposées, tests et un CLI global pour les applications Internet Computer."
+          },
+          "5": {
+            "title": "Garde transparente",
+            "body": "Les fonds sont dans des sous-comptes par utilisateur sur le ledger ICP officiel. Le backend est open source et en mise à jour uniquement sur mainnet."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "Questions fréquentes",
+        "title": "Questions courantes",
+        "subtitle": "Réponses rapides sur le portefeuille, le modèle de garde et le reste de l'écosystème ICPay.",
+        "items": {
+          "0": {
+            "question": "Qu'est-ce qu'ICPay ?",
+            "answer": "ICPay est un portefeuille dépositaire sur Internet Computer. Vous vous connectez avec Internet Identity, réservez un nom d'utilisateur et envoyez ou recevez des ICP avec cet identifiant au lieu de copier une longue adresse principal."
+          },
+          "1": {
+            "question": "Ai-je besoin d'une phrase secrète ?",
+            "answer": "Non. L'authentification est gérée par Internet Identity. Vous approuvez l'accès avec un passkey ou un fournisseur d'identité lié — il n'y a pas de mnémonique à conserver sur papier."
+          },
+          "2": {
+            "question": "ICPay est-il en auto-garde ?",
+            "answer": "ICPay est dépositaire : votre solde est détenu dans un sous-compte par utilisateur contrôlé par le canister ICPay, et seul votre principal peut autoriser les transferts. Le code backend est open source et déployé sur mainnet."
+          },
+          "3": {
+            "question": "Qu'est-ce qui est inclus en plus du portefeuille ?",
+            "answer": "Le même écosystème comprend les Canaux publics, le stockage on-chain ICBucket et ICFalcon — un framework Motoko pour créer et déployer des canisters avec un CLI structuré."
+          },
+          "4": {
+            "question": "Comment fonctionnent les Canaux ?",
+            "answer": "Les Canaux sont des communautés de diffusion. Les propriétaires publient des mises à jour en markdown façon Telegram. Les canaux publics sont découverts dans Explorer ; les canaux privés sont accessibles par nom d'utilisateur ou lien d'invitation."
+          },
+          "5": {
+            "question": "Où en savoir plus ?",
+            "answer": "Consultez les pages À propos, Questions fréquentes et Transparence pour les détails du produit, ou parcourez le blog pour des guides Internet Computer et des ressources pour développeurs."
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "Comment ça marche",
+        "title": "Est-ce difficile à utiliser ?",
+        "subtitle": "Pas vraiment. Six étapes de la connexion Internet Identity à l'envoi d'ICP par nom d'utilisateur — sans extension de navigateur ni mnémonique à noter.",
+        "stepLabel": "Étape {step}",
+        "steps": {
+          "0": {
+            "title": "Connectez-vous avec Internet Identity",
+            "body": "Utilisez un passkey ou un compte lié. Pas de carnet de mots de passe ni de phrase secrète à perdre."
+          },
+          "1": {
+            "title": "Réservez votre @nomdutilisateur",
+            "body": "Choisissez un identifiant une fois. On vous paie sur icpay.app/votrenom au lieu d'un principal de 63 caractères."
+          },
+          "2": {
+            "title": "Partagez votre lien ou adresse",
+            "body": "Envoyez votre page utilisateur ou adresse de dépôt à toute personne qui doit vous payer en ICP."
+          },
+          "3": {
+            "title": "Envoyez par @nomdutilisateur",
+            "body": "Transférez des ICP en quelques secondes. Saisissez un identifiant, confirmez le montant et le ledger l'enregistre on-chain."
+          },
+          "4": {
+            "title": "Suivez chaque transfert",
+            "body": "Les soldes et l'historique sont liés au ledger ICP officiel. Ouvrez toute transaction dans l'explorateur de blocs."
+          },
+          "5": {
+            "title": "Utilisez tout l'écosystème",
+            "body": "Canaux pour la communauté, ICBucket pour les fichiers on-chain et ICFalcon pour le développement Motoko — le même écosystème."
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "Comment payer",
+        "title": "Envoyez par nom d'utilisateur ou scannez pour payer",
+        "subtitle": "Saisissez un @nomdutilisateur pour envoyer des ICP, ou ouvrez un code QR de profil pour recevoir. Même portefeuille, deux chemins — les deux sont réglés sur le ledger Internet Computer.",
+        "imageAlt": "Flux de paiement ICPay : envoyer des ICP par nom d'utilisateur à gauche, scanner un code QR pour payer à droite"
+      },
+      "products": {
+        "eyebrow": "Écosystème",
+        "title": "Tout ce qui est construit sur ICPay",
+        "subtitle": "Portefeuille, stockage et outils de canisters dans une seule pile — conçu pour les créateurs et les utilisateurs du quotidien sur Internet Computer.",
+        "items": {
+          "wallet": {
+            "title": "ICPay Wallet",
+            "description": "Envoyez, recevez et conservez des ICP avec un identifiant et Internet Identity.",
+            "cta": "Ouvrir le portefeuille"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "Stockage cloud on-chain avec clés API, SDK et forfaits ICP de 30 jours.",
+            "cta": "Explorer le stockage"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "Framework Motoko de production avec architecture en couches et un CLI global.",
+            "cta": "Construire sur ICP"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "Preuve sociale",
+        "title": "Puis-je faire confiance ?",
+        "subtitle": "ICPay est dépositaire et n'a pas été audité — nous le disons clairement. Ce que vous pouvez vérifier aujourd'hui, c'est le code open source, le canister mainnet et la politique de transparence publiée.",
+        "visit": "Visiter →",
+        "readMore": "En savoir plus →",
+        "items": {
+          "github": {
+            "label": "Open source sur GitHub",
+            "description": "Le backend Motoko et le frontend Next.js sont publics. Inspectez vous-même les mouvements de fonds, l'authentification et les chemins de mise à jour."
+          },
+          "backendCanister": {
+            "label": "Canister backend mainnet",
+            "description": "La logique du portefeuille s'exécute à {canisterId} sur le mainnet Internet Computer."
+          },
+          "transparency": {
+            "label": "Page Transparence",
+            "description": "Modèle de garde, frais et ce que l'opérateur peut ou ne peut pas faire — avec des adresses on-chain à vérifier."
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "Mises à jour produit, lancements et actualités de l'écosystème Internet Computer de @IcpayOfficial."
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "Actualités de l'entreprise et publications de l'équipe sur la page LinkedIn officielle d'ICPay."
+          },
+          "frontendCanister": {
+            "label": "Frontend on-chain",
+            "description": "Assets statiques et origine de dérivation II servis depuis {canisterId}."
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "Stockage cloud on-chain",
+        "title": "ICBucket",
+        "tagline": "Stockez des fichiers on-chain avec une API compatible S3. Pas de serveurs, pas de factures AWS — des forfaits simples de 30 jours payés en ICP depuis votre solde ICPay.",
+        "tryIcBucket": "Essayer ICBucket",
+        "github": "GitHub",
+        "packages": "Packages",
+        "imageAlt": "ICBucket sur mobile"
+      },
+      "install": {
+        "title": "Installation",
+        "subtitle": "SDK pour Node.js, Python, Rust et Go. Installez depuis npm, PyPI, crates.io ou les modules Go.",
+        "copyLabel": "Copier dans le presse-papiers",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "Guide d'intégration",
+        "title": "Comment intégrer ICBucket ?",
+        "subtitle": "Créez un bucket, téléversez des fichiers avec le SDK et servez des assets publics en HTTPS — le tout depuis votre solde ICPay avec une API compatible S3.",
+        "videoAriaLabel": "Comment intégrer ICBucket"
+      },
+      "problemSolution": {
+        "title": "Le problème et la solution",
+        "subtitle": "Le stockage cloud traditionnel est coûteux, centralisé et complexe. ICBucket y remédie avec du stockage on-chain, des forfaits ICP de 30 jours et une API de style S3.",
+        "problemColumn": "Le problème",
+        "solutionColumn": "La solution",
+        "rows": {
+          "0": {
+            "problemTitle": "Factures mensuelles élevées",
+            "problemDescription": "AWS S3, Google Cloud Storage et Azure Blob facturent chaque mois. Les coûts s'accumulent sur des années — un projet de 10 GB peut dépasser 240 $ sur cinq ans.",
+            "solutionTitle": "Forfaits simples de 30 jours",
+            "solutionDescription": "Payez depuis votre solde ICPay en ICP — à partir de 0,5 ICP pour 1 GB par 30 jours. Pas de carte bancaire. Renouvelez à tout moment et cumulez le temps non utilisé."
+          },
+          "1": {
+            "problemTitle": "Contrôle centralisé",
+            "problemDescription": "Vos fichiers sont sur les serveurs d'autrui. Les fournisseurs peuvent suspendre des comptes, augmenter les prix ou fermer des services sans préavis.",
+            "solutionTitle": "Décentralisé et résistant à la censure",
+            "solutionDescription": "Les fichiers sont stockés sur les répliques Internet Computer. Pas de point de défaillance unique — vous seul pouvez supprimer vos données."
+          },
+          "2": {
+            "problemTitle": "Configuration complexe",
+            "problemDescription": "Configurer S3 nécessite un compte AWS, des rôles IAM, des politiques de bucket et une config CORS — juste pour téléverser un fichier.",
+            "solutionTitle": "API compatible S3",
+            "solutionDescription": "Remplacement direct de S3 avec des méthodes familières : createBucket, uploadFile, downloadFile. Migrez le code existant en quelques minutes."
+          },
+          "3": {
+            "problemTitle": "Dépendance au fournisseur",
+            "problemDescription": "Chaque fournisseur utilise des API différentes. Passer de S3 à Azure implique de réécrire le code — pas de véritable portabilité.",
+            "solutionTitle": "Vérifiabilité on-chain",
+            "solutionDescription": "Chaque téléversement est traçable on-chain. Adressage par contenu via les URLs de canister — immuable et auditable."
+          }
+        }
+      },
+      "pricing": {
+        "title": "Économie du stockage",
+        "subtitle": "Payez à l'avance en ICP depuis votre solde ICPay — pas de carte bancaire, pas de factures mensuelles surprises. Chaque niveau est un forfait de 30 jours ; renouvelez à tout moment et le temps non utilisé se cumule.",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "Chargement du prix ICP en direct…",
+        "priceHint": "Les estimations USD utilisent CoinGecko · 1 ICP ≈ {price}",
+        "mostPopular": "Le plus populaire",
+        "per30Days": "par 30 jours",
+        "capacity": "{capacityGb} GB de capacité",
+        "getStarted": "Commencer",
+        "footer": "Les prix en direct proviennent du canister : coût des cycles de stockage IC plus une marge de 20 %, arrondi par pas de 0,5 ICP. Le prix barré indique l'ancien tarif catalogue. Des niveaux jusqu'à 500 GB sont disponibles dans l'app.",
+        "footerCheckoutIcp": " Le paiement est toujours en ICP.",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "1 GB de capacité réservée",
+              "1": "Buckets publics et privés",
+              "2": "Authentification par clé API",
+              "3": "Téléversements par fragments",
+              "4": "URLs CDN globales",
+              "5": "Chiffrement au repos",
+              "6": "Renouvelez à tout moment — le temps se cumule"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "5 GB de capacité réservée",
+              "1": "Plusieurs clés API",
+              "2": "Métadonnées et tags de fichiers",
+              "3": "Recherche et listage de dossiers",
+              "4": "Copie / déplacement / suppression en masse",
+              "5": "SDK TypeScript, Python et Go",
+              "6": "Renouvelez à tout moment — le temps se cumule"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "10 GB de capacité réservée",
+              "1": "Plusieurs buckets",
+              "2": "Clés API d'équipe",
+              "3": "Opérations en masse",
+              "4": "Piste d'audit on-chain",
+              "5": "Livraison de fichiers HTTPS",
+              "6": "Renouvelez à tout moment — le temps se cumule"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "50 GB de capacité réservée",
+              "1": "Toutes les fonctionnalités Business",
+              "2": "Téléversements à plus haut débit",
+              "3": "Charges de production",
+              "4": "Hébergement d'assets dApp et NFT",
+              "5": "Assets de sites statiques",
+              "6": "Renouvelez à tout moment — le temps se cumule"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "Les dernières nouvelles d'ICPay",
+        "subtitle": "Suivez notre parcours de construction du stockage on-chain pour Internet Computer"
+      },
+      "features": {
+        "title": "Tout ce dont vous avez besoin pour le stockage on-chain",
+        "subtitle": "ICBucket offre des fonctionnalités de stockage cloud de niveau entreprise sans la complexité ni les factures mensuelles.",
+        "items": {
+          "0": {
+            "title": "Niveaux de capacité flexibles",
+            "description": "Choisissez de 1 GB à 100 GB. Commencez petit, évoluez selon vos besoins. Renouvelez à tout moment pour prolonger la durée de stockage."
+          },
+          "1": {
+            "title": "Téléversements par fragments",
+            "description": "Téléversez de gros fichiers par fragments (jusqu'à 2 Mo par fragment). Téléversements parallèles pour des transferts plus rapides. Reprise en cas de coupure de connexion."
+          },
+          "2": {
+            "title": "Gestion des clés API",
+            "description": "Créez plusieurs clés API par bucket avec des permissions granulaires (lecture/écriture/suppression). Révoquez et régénérez à tout moment."
+          },
+          "3": {
+            "title": "Buckets publics et privés",
+            "description": "Les buckets publics servent les fichiers en HTTPS. Les buckets privés exigent une authentification. Parfaits pour les sites statiques et les sauvegardes sécurisées."
+          },
+          "4": {
+            "title": "API compatible S3",
+            "description": "Remplacement direct d'AWS S3. Méthodes familières : createBucket, uploadFile, listFiles. Migrez le code existant en quelques minutes."
+          },
+          "5": {
+            "title": "Sécurité on-chain",
+            "description": "Fichiers stockés sur les répliques IC. Contrôle d'accès au niveau du canister. Pas de failles serveur ni de fuites de données."
+          },
+          "6": {
+            "title": "Métadonnées et recherche de fichiers",
+            "description": "Étiquetez les fichiers, ajoutez des métadonnées personnalisées. Recherchez par nom, tag ou préfixe. Listez les dossiers, filtrez par date ou taille."
+          },
+          "7": {
+            "title": "Livraison rapide de contenu",
+            "description": "Fichiers servis directement depuis les canisters IC. Pas de configuration CDN. Distribution globale via les nœuds frontière IC."
+          }
+        }
+      },
+      "architecture": {
+        "title": "Comment fonctionne le stockage",
+        "subtitle": "Les fichiers vivent dans le canister portefeuille ICPay sur Internet Computer — pas sur une VM cloud traditionnelle. Votre app communique avec le canister ; le sous-réseau stocke les données chiffrées.",
+        "canisterId": "Canister ID · {canisterId}",
+        "diagramAriaLabel": "Schéma d'architecture ICBucket",
+        "writePath": "Chemin d'écriture",
+        "readPath": "Chemin de lecture",
+        "uploadSteps": {
+          "0": "Créez un bucket une fois (payez en ICP pour la capacité).",
+          "1": "beginFileUpload → envoyez des fragments de 2 Mo → completeFileUpload.",
+          "2": "Le canister chiffre chaque fichier et écrit en mémoire stable."
+        },
+        "readSteps": {
+          "0": "Fichiers privés : mise à jour downloadFile signée depuis votre app.",
+          "1": "Fichiers publics : HTTPS GET simple sur l'URL de la passerelle du canister.",
+          "2": "Pas de bucket AWS ni de serveur de stockage séparé — un seul canister on-chain."
+        }
+      },
+      "comparison": {
+        "title": "Comment ICBucket se compare",
+        "subtitle": "ICBucket face aux fournisseurs de stockage cloud traditionnels. Découvrez ce qui nous distingue.",
+        "featureColumn": "Fonctionnalité",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "Forfaits ICP de 30 jours",
+          "1": "Paiement en ICP (sans carte bancaire)",
+          "2": "Décentralisé",
+          "3": "Résistant à la censure",
+          "4": "Vérifiable on-chain",
+          "5": "Pas de risque de suspension de compte",
+          "6": "API compatible S3",
+          "7": "URLs HTTPS publiques",
+          "8": "Authentification par clé API",
+          "9": "Téléversements par fragments"
+        }
+      },
+      "apiGuide": {
+        "title": "Référence SDK et API",
+        "subtitle": "API compatible S3 avec des SDK pour Node.js, Python, Rust et Go. Remplacement direct d'AWS S3.",
+        "codeExamples": "Exemples de code",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "Installation",
+        "createInit": "Créer et initialiser",
+        "uploadFiles": "Téléverser des fichiers",
+        "downloadAccess": "Télécharger et accéder",
+        "fileManagement": "Gestion des fichiers",
+        "apiKeyTitle": "Gestion des clés API",
+        "apiKeyIntro": "Créez plusieurs clés API par bucket avec des permissions granulaires :",
+        "permRead": "read",
+        "permReadDesc": "Télécharger des fichiers",
+        "permWrite": "write",
+        "permWriteDesc": "Téléverser des fichiers",
+        "permDelete": "delete",
+        "permDeleteDesc": "Supprimer des fichiers",
+        "apiKeyFooter": "Révoquez et régénérez les clés à tout moment via l'interface web.",
+        "rateLimitsTitle": "Limites de débit",
+        "rateLimitsIntro": "Limites d'usage équitable pour assurer la stabilité du canister :",
+        "rateLimitUpload": "Téléversement : 100 requêtes/minute par clé API",
+        "rateLimitDownload": "Téléchargement : 1000 requêtes/minute (fichiers publics)",
+        "rateLimitList": "Liste/Recherche : 50 requêtes/minute",
+        "rateLimitChunk": "Taille de fragment : max. 2 Mo par fragment",
+        "rateLimitsFooter": "Contactez-nous pour des limites plus élevées ou des forfaits entreprise."
+      },
+      "faq": {
+        "title": "Questions fréquentes",
+        "subtitle": "Tout ce qu'il faut savoir sur ICBucket. Vous ne trouvez pas de réponse ? Contactez-nous.",
+        "items": {
+          "0": {
+            "question": "En quoi ICBucket diffère-t-il d'AWS S3 ?",
+            "answer": "ICBucket est un stockage décentralisé sur Internet Computer. Vous payez en ICP tous les 30 jours depuis votre solde ICPay (p. ex. 2,5 ICP pour 5 GB) au lieu d'une facture AWS par carte bancaire. Les fichiers vivent on-chain sur les répliques IC. Les clés API et les SDK facilitent la migration."
+          },
+          "1": {
+            "question": "Comment fonctionne la facturation ?",
+            "answer": "Chaque bucket est un forfait de 30 jours payé à l'avance en ICP depuis votre solde ICPay. À l'expiration, le bucket passe en lecture seule jusqu'au renouvellement. Renouveler ajoute 30 jours supplémentaires — le temps non utilisé se cumule. Les prix sont cotés en direct depuis le canister (coût des cycles + marge)."
+          },
+          "2": {
+            "question": "Puis-je utiliser ICBucket pour des apps de production ?",
+            "answer": "Oui. ICBucket est prêt pour la production avec 33 tests réussis, des téléversements par fragments, l'authentification par clé API et la surveillance des cycles. Il est déjà utilisé pour les métadonnées NFT, les assets dApp et les sites statiques. Cela dit, c'est un stockage dépositaire sur IC — comprenez les compromis avant de déployer des données critiques."
+          },
+          "3": {
+            "question": "Quels types de fichiers sont pris en charge ?",
+            "answer": "Tous les types : images, vidéos, PDF, JSON, HTML, CSS, JS, etc. Le type de contenu est préservé. Les buckets publics servent les fichiers avec les bons types MIME pour un accès direct dans le navigateur (p. ex., <img src='...'> fonctionne)."
+          },
+          "4": {
+            "question": "Comment migrer de S3 vers ICBucket ?",
+            "answer": "Installez le SDK icpay-bucket, créez un bucket, générez une clé API. Remplacez les appels AWS SDK par ceux d'ICBucket (API quasi identique). Téléchargez les fichiers depuis S3, téléversez-les sur ICBucket. Mettez à jour les URLs dans votre app. La plupart des migrations prennent <1 heure pour les petits projets."
+          },
+          "5": {
+            "question": "Que se passe-t-il si le canister manque de cycles ?",
+            "answer": "Les canisters ICBucket sont surveillés et rechargés automatiquement grâce aux revenus des buckets. Si les cycles descendent à un niveau critique, nous notifions les propriétaires de bucket pour renouveler. Dans le pire des cas (canister supprimé), les fichiers sont perdus — mais c'est extrêmement rare avec une bonne gestion des cycles."
+          },
+          "6": {
+            "question": "Puis-je utiliser ICBucket pour les métadonnées NFT ?",
+            "answer": "Oui, cas d'usage idéal. Téléversez metadata.json et les fichiers image. Obtenez des URLs on-chain immuables (https://6vbhm-...-cai.icp0.io/bucket/nft-1.json). Pas de passerelles IPFS ni de liens cassés. Les buckets publics servent les fichiers instantanément."
+          },
+          "7": {
+            "question": "Y a-t-il une limite de taille de fichier ?",
+            "answer": "Les téléversements de fichier unique sont limités à 2 Mo par requête (limite de taille d'appel IC). Pour les fichiers plus volumineux, utilisez les téléversements par fragments — divisez les fichiers en fragments de 2 Mo côté client. Le SDK gère cela automatiquement. Testé jusqu'à des fichiers de 500 Mo."
+          },
+          "8": {
+            "question": "Puis-je supprimer des fichiers ?",
+            "answer": "Oui, les propriétaires de bucket peuvent supprimer des fichiers via l'interface web ou l'API. Les fichiers supprimés sont immédiatement retirés du canister. Le quota de stockage est libéré. La suppression en masse est disponible pour nettoyer de nombreux fichiers à la fois."
+          },
+          "9": {
+            "question": "Comment rendre un bucket public ?",
+            "answer": "Définissez visibility: 'public' lors de la création du bucket. Les buckets publics servent les fichiers en HTTPS sans authentification. Toute personne disposant de l'URL peut y accéder. Parfait pour les sites statiques, les assets publics et les métadonnées NFT."
+          },
+          "10": {
+            "question": "Puis-je héberger un site web statique sur ICBucket ?",
+            "answer": "Oui. Téléversez HTML, CSS, JS et images dans un bucket public. Accédez via l'URL du canister (https://6vbhm-...-cai.icp0.io/bucket/index.html). Définissez correctement les types de contenu. Pas encore de service automatique d'index.html — spécifiez le chemin complet dans l'URL."
+          },
+          "11": {
+            "question": "Quelle est la différence entre ICBucket et IPFS ?",
+            "answer": "ICBucket stocke les fichiers dans des canisters IC avec une API compatible S3. IPFS est adressé par contenu, pair à pair. ICBucket n'a pas de dépendance aux passerelles, offre un accès instantané et une API plus simple. IPFS offre une meilleure décentralisation mais un accès plus lent et imprévisible. Choisissez selon vos besoins."
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "Framework ICFalcon",
+        "title": "ICFalcon",
+        "subtitle": "Framework Motoko prêt pour la production sur Internet Computer",
+        "features": "Architecture en couches imposée · Frontend Next.js · CLI global · Authentification Internet Identity",
+        "installLabel": "Installer en une commande",
+        "copyCommand": "Copier la commande",
+        "installHint": "Installe les dépendances, déploie localement et démarre le serveur de développement sur localhost:3000",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "Packages"
+      },
+      "problemSolution": {
+        "title": "Conçu pour résoudre de vrais problèmes",
+        "subtitle": "ICFalcon élimine les points de friction courants du développement ICP",
+        "problemHeading": "Le problème",
+        "solutionHeading": "La solution",
+        "problems": {
+          "0": {
+            "title": "Pas d'architecture standardisée",
+            "description": "La plupart des projets Motoko partent de zéro sans guide clair sur les couches, les tests ou les modèles de déploiement. Les équipes réinventent la structure à chaque fois."
+          },
+          "1": {
+            "title": "Outils dispersés",
+            "description": "Construire une app ICP implique de jongler avec dfx, mops, npm et des scripts personnalisés. Pas de CLI unifié pour le scaffolding, la compilation ou le déploiement entre environnements."
+          },
+          "2": {
+            "title": "Complexité d'intégration frontend-backend",
+            "description": "Connecter un frontend Next.js à un canister Motoko nécessite la génération manuelle d'acteurs, la gestion d'identité et la configuration d'environnement."
+          },
+          "3": {
+            "title": "Modèles de démarrage limités",
+            "description": "Les modèles existants sont soit trop minimalistes pour la production, soit trop opinionés pour s'adapter. Pas de juste milieu pour les apps du monde réel."
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "Couches prêtes pour la production",
+            "description": "Architecture à quatre couches (api → service → repository → storage) imposée dès le premier jour. Chaque module suit le même modèle, rendant l'intégration et la maintenance prévisibles."
+          },
+          "1": {
+            "title": "CLI global falcon",
+            "description": "Une commande pour le scaffolding de modules, l'installation de paquets, la compilation, les tests et le déploiement. Fonctionne de manière fluide en local et sur mainnet avec des confirmations interactives."
+          },
+          "2": {
+            "title": "Stack intégrée",
+            "description": "Backend Motoko avec mo:core, frontend Next.js avec shadcn/ui, authentification Internet Identity et export statique. Tout est câblé dès le départ."
+          },
+          "3": {
+            "title": "Écosystème Hub",
+            "description": "Installez des paquets éprouvés depuis icp-hub avec `falcon add pkg <name>`. Intégration ledger, stockage de fichiers, limitation de débit et plus — plug and play."
+          }
+        }
+      },
+      "article": {
+        "title": "Qu'est-ce qu'ICFalcon ?",
+        "subtitle": "Un framework qui vous apporte structure, outillage et rapidité pour construire des applications sur Internet Computer",
+        "frameworkTitle": "Framework, pas un boilerplate",
+        "frameworkP1": "ICFalcon est un point de départ opinioné pour les applications Motoko. Il impose une architecture backend à quatre couches (api → service → repository → storage), l'associe à un frontend Next.js moderne et fournit un CLI global pour le scaffolding, la compilation et le déploiement.",
+        "frameworkP2": "Contrairement aux modèles minimalistes qui vous laissent découvrir la structure par vous-même, ICFalcon vous donne des modèles qui évoluent — les mêmes que ceux utilisés dans des apps de production comme ICPay. Vous obtenez la gestion de mémoire stable, des guides de migration, l'intégration Internet Identity et un environnement de test dès le premier jour.",
+        "layeringTitle": "Architecture backend en couches",
+        "layeringP1": "Le backend suit une séparation stricte des responsabilités. Les modules API gèrent HTTP et la validation. Les services contiennent la logique métier. Les repositories abstraient l'accès aux données. Le stockage gère la mémoire stable.",
+        "layeringP2": "Cette architecture en couches est imposée par convention et documentée dans le dépôt. Lorsque vous créez un nouveau module avec falcon m:f Product, il génère les quatre couches, les connecte dans main.mo et crée les fichiers de service frontend correspondants. Pas de devinettes, pas de câblage manuel.",
+        "frontendTitle": "Intégration frontend",
+        "frontendP1": "Le frontend est Next.js avec des composants shadcn/ui et l'authentification Internet Identity. Il exporte vers des fichiers statiques (output: \"export\") pour pouvoir être hébergé sur un canister d'assets ou un hébergeur conventionnel comme Vercel.",
+        "frontendP2": "La configuration de l'agent, la dérivation d'identité et les IDs de canister sont préconfigurés. Le canister backend sert un fichier .did que le frontend récupère automatiquement. Pas de génération manuelle d'acteurs ni de jonglage d'environnements.",
+        "cliTitle": "Le CLI falcon",
+        "cliP1": "Chaque opération passe par une commande globale. Initialisez un projet (falcon s:init). Créez un module (falcon m:f Name). Lancez les tests (falcon b:test --local). Déployez (falcon b:deploy, demande confirmation).",
+        "cliP2": "Le CLI encapsule dfx, mops et npm, et ajoute le scaffolding pour les modules, les endpoints API et les services frontend. Il cible local ou mainnet avec le drapeau --local, mainnet par défaut pour la sécurité. Les commandes sont documentées dans ops/docs/commands.md.",
+        "hubTitle": "Paquets Hub",
+        "hubP1": "ICFalcon s'intègre avec icp-hub, une collection de paquets Motoko plug-and-play. Installez l'intégration ledger, le stockage de fichiers, la limitation de débit ou d'autres modèles courants avec falcon add pkg <name>. Chaque paquet suit la même structure à quatre couches et inclut des tests.",
+        "hubP2": "Les paquets sont versionnés et testés indépendamment. Le hub est open source, vous pouvez donc contribuer des modules ou les forker pour des besoins personnalisés.",
+        "audienceTitle": "Pour qui est-ce ?",
+        "audienceP1": "ICFalcon est pour les développeurs qui veulent livrer des apps ICP prêtes pour la production sans réinventer la structure. Si vous construisez un canister qui a besoin de mémoire stable, d'un backend en couches, de l'authentification Internet Identity et d'un frontend moderne, ICFalcon vous y amène plus vite.",
+        "audienceP2": "Ce n'est pas un modèle minimal. C'est opinioné. Les couches sont imposées, le CLI est l'interface principale et la stack est Motoko + Next.js. Si vous avez besoin de cette stack et voulez un point de départ clair, ICFalcon est fait pour vous.",
+        "stackTitle": "Aperçu de la stack",
+        "stackBackend": "Backend :",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "Frontend :",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "Outillage :",
+        "stackToolingValue": "falcon CLI · scaffolds de modules · paquets icp-hub"
+      },
+      "faq": {
+        "title": "Questions fréquentes",
+        "subtitle": "Questions courantes sur ICFalcon et son utilisation",
+        "items": {
+          "0": {
+            "question": "Qu'est-ce qu'ICFalcon ?",
+            "answer": "ICFalcon est un framework Motoko open source pour construire des applications sur Internet Computer. Il fournit une architecture backend prête pour la production, un frontend Next.js et un CLI global pour le scaffolding, la compilation et le déploiement."
+          },
+          "1": {
+            "question": "Dois-je connaître Motoko pour utiliser ICFalcon ?",
+            "answer": "Oui. ICFalcon est un framework Motoko, donc une familiarité avec le langage est requise. Cependant, l'architecture en couches et les commandes de scaffolding réduisent la quantité de code répétitif à écrire manuellement."
+          },
+          "2": {
+            "question": "En quoi ICFalcon diffère-t-il de dfx new ?",
+            "answer": "dfx new vous donne un point de départ minimal. ICFalcon vous donne une structure prête pour la production avec des couches imposées, la gestion de mémoire stable, l'intégration Internet Identity et un CLI pour le scaffolding de modules. C'est opinioné par conception."
+          },
+          "3": {
+            "question": "Puis-je utiliser ICFalcon avec un canister existant ?",
+            "answer": "ICFalcon est conçu comme point de départ, pas comme outil de migration. Si vous avez un canister existant, vous pouvez adopter certaines parties de l'architecture (le modèle de couches, les commandes CLI) mais une intégration complète nécessiterait un travail manuel."
+          },
+          "4": {
+            "question": "Qu'est-ce que le CLI falcon ?",
+            "answer": "Le CLI falcon est une commande globale qui encapsule dfx, mops et npm. Il gère l'initialisation du projet, le scaffolding de modules, les tests, la compilation et le déploiement. Les commandes ciblent local ou mainnet avec le drapeau --local."
+          },
+          "5": {
+            "question": "D'où installer les paquets ?",
+            "answer": "Les paquets backend s'installent depuis mops (gestionnaire de paquets Motoko) et icp-hub (collection sélectionnée de modules plug-and-play). Les paquets frontend sont npm. Le CLI falcon abstrait une partie de cela avec `falcon add pkg <name>`."
+          },
+          "6": {
+            "question": "ICFalcon est-il prêt pour la production ?",
+            "answer": "L'architecture est prête pour la production et est utilisée dans des apps en production comme ICPay. Cependant, ICFalcon lui-même est un framework, pas un produit SaaS. Vous possédez votre canister et êtes responsable des tests, du déploiement et de la maintenance."
+          },
+          "7": {
+            "question": "ICFalcon prend-il en charge les canisters Rust ?",
+            "answer": "Non. ICFalcon est un framework Motoko. Si vous avez besoin de Rust, vous utiliseriez un autre starter ou construiriez à partir de zéro."
+          },
+          "8": {
+            "question": "Comment déployer sur mainnet ?",
+            "answer": "Exécutez `falcon b:deploy` (sans --local). Le CLI demandera confirmation avant de déployer sur mainnet. Le mode upgrade est le défaut ; le mode reinstall n'est jamais utilisé pour éviter la perte de données."
+          },
+          "9": {
+            "question": "Puis-je personnaliser les couches ?",
+            "answer": "L'architecture à quatre couches (api → service → repository → storage) est imposée par convention et les scaffolds du CLI. Vous pouvez vous en écarter, mais vous perdez les avantages d'une structure cohérente et d'un scaffolding automatisé."
+          },
+          "10": {
+            "question": "Comment contribuer à ICFalcon ?",
+            "answer": "Forkez le dépôt, créez une branche de fonctionnalité et ouvrez une pull request. Suivez les modèles dans AGENTS.md et exécutez `falcon b:test --local` et `falcon p:check --local` avant de soumettre. Pour les paquets hub, contribuez à icp-hub séparément."
+          },
+          "11": {
+            "question": "ICFalcon est-il gratuit ?",
+            "answer": "Oui. ICFalcon est open source. Le code source est fourni tel quel pour utilisation et modification. Les paquets hub sont sous licence selon leurs entrées sur icp-hub."
+          }
+        }
+      }
+    }
   }
 }

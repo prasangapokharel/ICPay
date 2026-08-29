@@ -1,19 +1,21 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 
 const COMMANDS = [
-  { lang: "npm", cmd: "npm install icpay-bucket", label: "Node.js / TypeScript" },
-  { lang: "pip", cmd: "pip install icpay-bucket", label: "Python" },
-  { lang: "cargo", cmd: "cargo add icpay-bucket", label: "Rust" },
-  { lang: "go", cmd: "go get github.com/icpay/icbucket-go", label: "Go" },
+  { lang: "npm", cmd: "npm install icpay-bucket" },
+  { lang: "pip", cmd: "pip install icpay-bucket" },
+  { lang: "cargo", cmd: "cargo add icpay-bucket" },
+  { lang: "go", cmd: "go get github.com/icpay/icbucket-go" },
 ] as const
 
 export function InstallSection() {
+  const t = useTranslations("publicSite.icbucket.install")
   const [copied, setCopied] = useState<string | null>(null)
 
   const copyToClipboard = async (text: string, lang: string) => {
@@ -31,18 +33,15 @@ export function InstallSection() {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 space-y-3 text-center md:mb-12">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">Installation</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              SDKs for Node.js, Python, Rust, and Go. Install from npm, PyPI, crates.io, or Go
-              modules.
-            </p>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             {COMMANDS.map((item) => (
               <div key={item.lang} className="space-y-2">
                 <span className="text-xs font-medium tracking-wide text-muted-foreground">
-                  {item.label}
+                  {t(`labels.${item.lang}`)}
                 </span>
                 <div className="relative">
                   <Input
@@ -55,7 +54,7 @@ export function InstallSection() {
                     variant="ghost"
                     onClick={() => copyToClipboard(item.cmd, item.lang)}
                     className="absolute right-1 top-1/2 size-9 -translate-y-1/2 p-0"
-                    aria-label="Copy to clipboard"
+                    aria-label={t("copyLabel")}
                   >
                     <HugeiconsIcon
                       icon={copied === item.lang ? Tick02Icon : Copy01Icon}

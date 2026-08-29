@@ -1,110 +1,105 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { BUCKET_DOC_NAV, bucketDocSectionIds } from "@/lib/bucket/docsNav"
+import { docHref } from "@/lib/bucket/docs/nav"
+import type { BucketDocNavGroup } from "@/lib/bucket/docs/types"
 import { cn } from "@/lib/ui/utils"
 
-function NavLink({
-  id,
-  label,
-  active,
-  nested,
-}: {
-  id: string
-  label: string
-  active: boolean
-  nested?: boolean
-}) {
+function NavLink({ slug, title, active }: { slug: string; title: string; active: boolean }) {
   return (
-    <a
-      href={`#${id}`}
+    <Link
+      href={docHref(slug)}
       className={cn(
-        "block rounded-lg px-3 py-2 text-sm transition-colors",
-        nested ? "pl-6 text-muted-foreground" : "font-medium",
+        "block rounded-md px-2.5 py-1.5 text-sm transition-colors",
         active
-          ? nested
-            ? "bg-primary/10 text-primary"
-            : "bg-muted text-foreground"
-          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+          ? "bg-primary/10 font-medium text-primary"
+          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
       )}
     >
-      {label}
-    </a>
+      {title}
+    </Link>
   )
 }
 
-export function BucketDocsSidebar({ className }: { className?: string }) {
+export function BucketDocsNav({
+  groups,
+  className,
+}: {
+  groups: BucketDocNavGroup[]
+  className?: string
+}) {
   const t = useTranslations("bucket")
-  const [activeId, setActiveId] = useState("overview")
-
-  useEffect(() => {
-    const ids = bucketDocSectionIds()
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null)
-
-    if (elements.length === 0) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-        if (visible[0]?.target.id) {
-          setActiveId(visible[0].target.id)
-        }
-      },
-      { rootMargin: "-20% 0px -55% 0px", threshold: [0, 0.25, 0.5, 1] }
-    )
-
-    elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
+  const pathname = usePathname()
 
   return (
     <nav className={cn("space-y-6", className)} aria-label="Documentation">
-      <p className="px-3 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-        On this page
-      </p>
-      <div className="space-y-4">
-        {BUCKET_DOC_NAV.map((item) => (
-          <div key={item.id} className="space-y-1">
-            <NavLink id={item.id} label={t(item.titleKey)} active={activeId === item.id} />
-            {item.children ? (
-              <div className="ml-3 space-y-0.5 border-l border-border/60">
-                {item.children.map((child) => (
-                  <NavLink
-                    key={child.id}
-                    id={child.id}
-                    label={t(child.titleKey)}
-                    active={activeId === child.id}
-                    nested
-                  />
-                ))}
-              </div>
-            ) : null}
-          </div>
-        ))}
+      <div className="space-y-1 px-2">
+        <Link
+          href="/bucket/docs"
+          className={cn(
+            "text-sm font-semibold transition-colors",
+            pathname === "/bucket/docs" ? "text-primary" : "text-foreground hover:text-primary"
+          )}
+        >
+          ICBucket
+        </Link>
+        <p className="text-xs text-muted-foreground">{t("docsSubtitle")}</p>
       </div>
+      {groups.map((group) => (
+        <div key={group.label} className="space-y-1.5">
+          <p className="px-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {group.label}
+          </p>
+          <div className="space-y-0.5">
+            {group.items.map((item) => (
+              <NavLink
+                key={item.slug}
+                slug={item.slug}
+                title={item.title}
+                active={pathname === docHref(item.slug)}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
     </nav>
   )
 }
 
-export function BucketDocsMobileNav() {
-  const t = useTranslations("bucket")
+export function BucketDocsMobileNav({ groups }: { groups: BucketDocNavGroup[] }) {
+  const pathname = usePathname()
 
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden">
-      {BUCKET_DOC_NAV.map((item) => (
-        <a
-          key={item.id}
-          href={`#${item.id}`}
-          className="shrink-0 rounded-full border border-border/60 bg-background px-4 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
-          {t(item.titleKey)}
-        </a>
-      ))}
+      <Link
+        href="/bucket/docs"
+        className={cn(
+          "shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors",
+          pathname === "/bucket/docs"
+            ? "border-primary bg-primary/10 text-primary"
+            : "border-border/60 text-muted-foreground hover:text-foreground"
+        )}
+      >
+        Home
+      </Link>
+      {groups.flatMap((group) =>
+        group.items.map((item) => (
+          <Link
+            key={item.slug}
+            href={docHref(item.slug)}
+            className={cn(
+              "shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors",
+              pathname === docHref(item.slug)
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border/60 text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {item.title}
+          </Link>
+        ))
+      )}
     </div>
   )
 }

@@ -33,7 +33,7 @@ import { tip } from "@/services/transfer/transfer"
 import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
 
-import { useMemo, useEffect, useState, useCallback } from "react"
+import { useMemo, useState } from "react"
 
 export function CommunityChannelScreen() {
   const slug = useChannelSlug()
@@ -94,15 +94,11 @@ function CommunityChannelScreenBody({ slug }: { slug: string }) {
 
   const [pendingMessages, setPendingMessages] = useState<PendingMessage[]>([])
   const [deliveredIds, setDeliveredIds] = useState<Set<string>>(() => new Set())
-  const [scrollToMessageId, setScrollToMessageId] = useState<bigint | null>(null)
+  const [dismissedMessageParam, setDismissedMessageParam] = useState<string | null>(null)
   const [highlightMessageId, setHighlightMessageId] = useState<bigint | null>(null)
-  const clearScrollTarget = useCallback(() => setScrollToMessageId(null), [])
-
-  useEffect(() => {
-    const id = parseChannelMessageId(messageIdParam)
-    if (id == null) return
-    setScrollToMessageId(id)
-  }, [messageIdParam])
+  const urlMessageId = useMemo(() => parseChannelMessageId(messageIdParam), [messageIdParam])
+  const scrollToMessageId =
+    urlMessageId != null && dismissedMessageParam !== messageIdParam ? urlMessageId : null
 
   const removePending = (clientId: string) => {
     setPendingMessages((prev) => prev.filter((m) => m.clientId !== clientId))
@@ -281,7 +277,7 @@ function CommunityChannelScreenBody({ slug }: { slug: string }) {
               setHighlightMessageId(scrollToMessageId)
               window.setTimeout(() => setHighlightMessageId(null), 2400)
             }
-            clearScrollTarget()
+            setDismissedMessageParam(messageIdParam ?? null)
           }}
         />
       }

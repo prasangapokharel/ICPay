@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useMemo } from "react"
+import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -9,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 
 export function PublicNavAuth() {
+  const t = useTranslations("publicSite.nav")
   const { identity, isAuthenticated, isLoading } = useAuth()
   const principal = identity?.getPrincipal().toText() ?? ""
 
@@ -31,11 +33,11 @@ export function PublicNavAuth() {
           render={<Link href="/home" />}
           className="hidden rounded-full px-4 sm:inline-flex"
         >
-          Wallet
+          {t("wallet")}
         </Button>
         <Link
           href="/home"
-          aria-label="Open wallet"
+          aria-label={t("openWallet")}
           className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Avatar className="size-9">
@@ -50,24 +52,13 @@ export function PublicNavAuth() {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <Button
-        size="sm"
-        variant="ghost"
-        nativeButton={false}
-        render={<Link href="/login" />}
-        className="hidden rounded-full px-4 sm:inline-flex"
-      >
-        Log in
-      </Button>
-      <Button
-        size="sm"
-        nativeButton={false}
-        render={<Link href="/login" />}
-        className="rounded-full px-4"
-      >
-        Sign up
-      </Button>
-    </div>
+    <Button
+      size="sm"
+      nativeButton={false}
+      render={<Link href="/login" />}
+      className="rounded-full px-4"
+    >
+      {t("signIn")}
+    </Button>
   )
 }

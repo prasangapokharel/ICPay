@@ -1164,6 +1164,16 @@
     "docsTitle": "Gabay sa ICPay Cloud",
     "docsSubtitle": "On-chain na naka-encrypt na imbakan ng file",
     "docsStorageTitle": "Kung ano ang makukuha mo",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "Ang mga bucket ay binabayaran buwan-buwan mula sa iyong balanse sa ICPay. Ang mga file ay mananatiling naka-encrypt habang nasa canister.",
     "docsImagesOnly": "Mga larawan, dokumento, code, archive, audio, at mga font (tingnan ang Pagpepresyo para sa buong listahan).",
     "docsWebpNote": "Native na format hanggang 10 MB. Awtomatikong kinukuha ang malalaking file (ang limitasyon sa pagpasok ng IC ay 2 MiB bawat tawag).",
@@ -1223,5 +1233,725 @@
     "prevPage": "Nakaraan",
     "nextPage": "Susunod",
     "pageOf": "Pahina {page} ng {total} · {count} file"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "Menu",
+      "signIn": "Mag-sign In",
+      "wallet": "Wallet",
+      "openWallet": "Buksan ang wallet",
+      "openMenu": "Buksan ang menu",
+      "sectionProducts": "Mga Produkto",
+      "sectionResources": "Mga Resource",
+      "sectionLegal": "Legal",
+      "primary": {
+        "blog": "Blog"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay Wallet",
+          "description": "Magpadala ng ICP gamit ang username sa Internet Identity sign-in."
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "On-chain storage na may API keys, SDK, at mga planong ICP."
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "Production Motoko framework na may global CLI."
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "Mga command at workflow para sa mga proyektong ICFalcon."
+        },
+        "icpHubPackages": {
+          "title": "ICP-Hub Packages",
+          "description": "Mga curated package para sa Internet Computer development."
+        },
+        "icbucketDocs": {
+          "title": "ICBucket Docs",
+          "description": "API reference at mga integration guide para sa storage."
+        },
+        "blog": {
+          "title": "Blog",
+          "description": "Mga gabay, tutorial, at artikulo tungkol sa ICP ecosystem."
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "Tungkol",
+          "description": "Ano ang ICPay at paano gumagana ang username payments."
+        },
+        "faq": {
+          "title": "FAQ",
+          "description": "Mga sagot sa karaniwang tanong tungkol sa wallet at produkto."
+        },
+        "roadmap": {
+          "title": "Roadmap",
+          "description": "Ano ang na-ship, susunod, at hindi namin bubuuin."
+        },
+        "brands": {
+          "title": "Mga Brand",
+          "description": "Patakaran sa trademark at paggamit ng brand."
+        },
+        "terms": {
+          "title": "Mga Tuntunin",
+          "description": "Mga tuntunin ng serbisyo sa paggamit ng ICPay."
+        },
+        "privacy": {
+          "title": "Privacy",
+          "description": "Paano namin hinahawakan ang data at impormasyon ng account."
+        },
+        "transparency": {
+          "title": "Transparency",
+          "description": "Custody model, mga bayad, at on-chain operations."
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "Mga Produkto",
+      "sectionResources": "Mga Resource",
+      "sectionLegal": "Legal",
+      "sectionCommunity": "Komunidad",
+      "copyright": "© 2026 ICPay. Lahat ng karapatan ay nakalaan.",
+      "blog": "Blog",
+      "channels": "Mga Channel",
+      "wallet": "Wallet",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "wallet": "ICPay Wallet"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "ICP-Hub Packages",
+        "icbucketDocs": "ICBucket Docs",
+        "blog": "Blog"
+      },
+      "legal": {
+        "about": "Tungkol",
+        "faq": "FAQ",
+        "roadmap": "Roadmap",
+        "brands": "Mga Brand",
+        "terms": "Mga Tuntunin",
+        "privacy": "Privacy",
+        "transparency": "Transparency"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      }
+    },
+    "heroSignOptions": {
+      "label": "Mga opsyon sa sign-in sa Internet Identity",
+      "ariaLabel": "Google, Apple, at Microsoft sign-in sa pamamagitan ng Internet Identity"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Internet Computer wallet",
+        "title": "Magpadala ng ICP gamit ang username, hindi 63-character na address",
+        "tagline": "Ang ICPay ay open-source custodial wallet sa Internet Computer. Kumuha ng handle, tumanggap ng bayad mula sa kahit sino, at tuklasin ang channels, on-chain storage, at Motoko tooling mula sa isang ecosystem.",
+        "openWallet": "Buksan ang wallet",
+        "browseChannels": "Mag-browse ng channels",
+        "signIn": "Mag-sign In",
+        "aboutIcPay": "Tungkol sa ICPay",
+        "imageAlt": "ICPay wallet sa mobile"
+      },
+      "cta": {
+        "signedInTitle": "Naka-sign in ka na",
+        "signedInBody": "Buksan ang wallet mo para magpadala ng ICP, tingnan ang balance, o tuklasin ang channels at tokens.",
+        "readyTitle": "Handa ka na bang mag-transfer ng ICP gamit ang username?",
+        "readyBody": "Mag-sign in sa Internet Identity, kumuha ng handle, at magsimulang magpadala sa ilang segundo. Walang seed phrase. Walang browser extension na kailangan.",
+        "openWallet": "Buksan ang wallet",
+        "browseChannels": "Mag-browse ng channels",
+        "signIn": "Mag-sign In"
+      },
+      "features": {
+        "eyebrow": "Platform",
+        "title": "Ginawa para sa pang-araw-araw na user at ICP developer",
+        "subtitle": "Higit pa sa wallet ang ICPay. Ito ang entry point sa payments, community, storage, at canister development sa Internet Computer.",
+        "items": {
+          "0": {
+            "title": "Username payments",
+            "body": "Kumuha ng handle at ibahagi ang icpay.app/yourname. Hindi kailangan ng account o 63-character na principal ang nagpapadala."
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "Mag-sign in gamit ang passkey o naka-link na account. Walang seed phrase na isusulat at walang browser extension na kailangan."
+          },
+          "2": {
+            "title": "Channels",
+            "body": "Telegram-style broadcast communities na may public discovery, private invites, at markdown posts."
+          },
+          "3": {
+            "title": "ICBucket storage",
+            "body": "On-chain file storage na may API keys at SDK. Magbayad sa ICP gamit ang simpleng 30-araw na plano sa halip na card bill."
+          },
+          "4": {
+            "title": "ICFalcon framework",
+            "body": "Production Motoko scaffolding na may enforced layering, tests, at global CLI para sa Internet Computer apps."
+          },
+          "5": {
+            "title": "Transparent custody",
+            "body": "Ang pondo ay nasa per-user subaccounts sa opisyal na ICP ledger. Open source ang backend at upgrade-only sa mainnet."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "FAQ",
+        "title": "Mga karaniwang tanong",
+        "subtitle": "Mabilis na sagot tungkol sa wallet, custody model, at iba pang bahagi ng ICPay stack.",
+        "items": {
+          "0": {
+            "question": "Ano ang ICPay?",
+            "answer": "Ang ICPay ay custodial Internet Computer wallet. Mag-sign in sa Internet Identity, kumuha ng username, at magpadala o tumanggap ng ICP gamit ang handle na iyon sa halip na kopyahin ang mahabang principal address."
+          },
+          "1": {
+            "question": "Kailangan ko ba ng seed phrase?",
+            "answer": "Hindi. Internet Identity ang nagha-handle ng authentication. Aprubahan ang access gamit ang passkey o naka-link na identity provider — walang mnemonic na itatago sa papel."
+          },
+          "2": {
+            "question": "Self-custodial ba ang ICPay?",
+            "answer": "Custodial ang ICPay: ang balance mo ay nasa per-user subaccount na kontrolado ng ICPay canister, at tanging ang principal mo ang makakapag-authorize ng transfer. Open source ang backend code at naka-deploy sa mainnet."
+          },
+          "3": {
+            "question": "Ano pa ang kasama bukod sa wallet?",
+            "answer": "Kasama sa parehong ecosystem ang public Channels, ICBucket on-chain storage, at ICFalcon — Motoko framework para sa pagbuo at pag-deploy ng canister na may structured CLI."
+          },
+          "4": {
+            "question": "Paano gumagana ang Channels?",
+            "answer": "Ang Channels ay broadcast communities. Nagpo-post ang mga owner ng updates gamit ang Telegram-style markdown. Maaaring matuklasan ang public channels sa Explore; ang private channels ay maabot sa username o invite link."
+          },
+          "5": {
+            "question": "Saan ako makakabasa pa?",
+            "answer": "Bisitahin ang About, FAQ, at Transparency pages para sa detalye ng produkto, o mag-browse ng blog para sa Internet Computer guides at developer resources."
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "Paano ito gumagana",
+        "title": "Gaano kahirap gamitin?",
+        "subtitle": "Hindi masyado. Anim na hakbang mula sa Internet Identity sign-in hanggang sa pagpapadala ng ICP gamit ang username — walang browser extension at walang mnemonic na isusulat.",
+        "stepLabel": "Hakbang {step}",
+        "steps": {
+          "0": {
+            "title": "Mag-sign in sa Internet Identity",
+            "body": "Gumamit ng passkey o naka-link na account. Walang password notebook at walang seed phrase na mawawala."
+          },
+          "1": {
+            "title": "Kunin ang @username mo",
+            "body": "Pumili ng handle isang beses. Magbabayad sila sa icpay.app/yourname sa halip na 63-character na principal."
+          },
+          "2": {
+            "title": "Ibahagi ang link o address mo",
+            "body": "Ipadala ang username page o deposit address sa sinumang kailangang magbayad sa iyo ng ICP."
+          },
+          "3": {
+            "title": "Magpadala gamit ang @username",
+            "body": "Mag-transfer ng ICP sa ilang segundo. I-type ang handle, kumpirmahin ang halaga, at ire-record ito ng ledger on-chain."
+          },
+          "4": {
+            "title": "Subaybayan ang bawat transfer",
+            "body": "Ang balance at history ay nakatali sa opisyal na ICP ledger. Buksan ang anumang transaction sa block explorer."
+          },
+          "5": {
+            "title": "Gamitin ang buong stack",
+            "body": "Channels para sa community, ICBucket para sa on-chain files, at ICFalcon para sa Motoko development — parehong ecosystem."
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "Paano magbayad",
+        "title": "Magpadala gamit ang username o mag-scan para magbayad",
+        "subtitle": "I-type ang @username para magpadala ng ICP, o buksan ang profile QR code para tumanggap. Parehong wallet, dalawang paraan — parehong nagse-settle sa Internet Computer ledger.",
+        "imageAlt": "ICPay payment flow: magpadala ng ICP gamit ang username sa kaliwa, mag-scan ng QR para magbayad sa kanan"
+      },
+      "products": {
+        "eyebrow": "Ecosystem",
+        "title": "Lahat ng binuo sa ICPay",
+        "subtitle": "Wallet, storage, at canister tooling sa isang stack — para sa mga builder at pang-araw-araw na user sa Internet Computer.",
+        "items": {
+          "wallet": {
+            "title": "ICPay Wallet",
+            "description": "Magpadala, tumanggap, at mag-hold ng ICP gamit ang username handle at Internet Identity.",
+            "cta": "Buksan ang wallet"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "On-chain cloud storage na may API keys, SDK, at 30-araw na ICP plan.",
+            "cta": "Tuklasin ang storage"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "Production Motoko framework na may layered architecture at global CLI.",
+            "cta": "Mag-build sa ICP"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "Social proof",
+        "title": "Maaari ba akong magtiwala dito?",
+        "subtitle": "Custodial ang ICPay at hindi pa na-audit — sinasabi namin iyon nang diretso. Ang maaari mong i-verify ngayon ay ang open-source code, mainnet canister, at published transparency policy.",
+        "visit": "Bisitahin →",
+        "readMore": "Magbasa pa →",
+        "items": {
+          "github": {
+            "label": "Open source sa GitHub",
+            "description": "Public ang backend Motoko at Next.js frontend. Suriin ang fund movement, auth, at upgrade paths mismo."
+          },
+          "backendCanister": {
+            "label": "Mainnet backend canister",
+            "description": "Tumatakbo ang wallet logic sa {canisterId} sa Internet Computer mainnet."
+          },
+          "transparency": {
+            "label": "Transparency page",
+            "description": "Published custody model, mga bayad, at kung ano ang kayang gawin ng operator — may on-chain addresses para i-verify."
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "Product updates, launches, at Internet Computer ecosystem news mula sa @IcpayOfficial."
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "Company updates at team posts mula sa opisyal na ICPay LinkedIn page."
+          },
+          "frontendCanister": {
+            "label": "On-chain frontend",
+            "description": "Static assets at II derivation origin na nagseserb mula sa {canisterId}."
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "On-chain cloud storage",
+        "title": "ICBucket",
+        "tagline": "Mag-imbak ng files on-chain gamit ang S3-compatible API. Walang server, walang AWS bill — simpleng 30-araw na plano na binabayaran sa ICP mula sa ICPay balance mo.",
+        "tryIcBucket": "Subukan ang ICBucket",
+        "github": "GitHub",
+        "packages": "Mga Package",
+        "imageAlt": "ICBucket sa mobile"
+      },
+      "install": {
+        "title": "Installation",
+        "subtitle": "SDK para sa Node.js, Python, Rust, at Go. I-install mula sa npm, PyPI, crates.io, o Go modules.",
+        "copyLabel": "Kopyahin sa clipboard",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "Integration guide",
+        "title": "Paano i-integrate ang ICBucket?",
+        "subtitle": "Gumawa ng bucket, mag-upload ng files gamit ang SDK, at mag-serve ng public assets sa HTTPS — lahat mula sa ICPay balance mo gamit ang S3-compatible API.",
+        "videoAriaLabel": "Paano i-integrate ang ICBucket"
+      },
+      "problemSolution": {
+        "title": "Ang Problema at ang Solusyon",
+        "subtitle": "Ang tradisyonal na cloud storage ay mahal, centralized, at komplikado. Inaayos ito ng ICBucket gamit ang on-chain storage, 30-araw na ICP plan, at S3-style API.",
+        "problemColumn": "Ang Problema",
+        "solutionColumn": "Ang Solusyon",
+        "rows": {
+          "0": {
+            "problemTitle": "Mahal na Buwanang Bill",
+            "problemDescription": "Sisingilin ka buwan-buwan ng AWS S3, Google Cloud Storage, at Azure Blob. Lumalaki ang gastos sa paglipas ng taon — maaaring lumampas sa $240 ang 10 GB project sa limang taon.",
+            "solutionTitle": "Simpleng 30-Araw na Plano",
+            "solutionDescription": "Magbayad mula sa ICPay balance mo sa ICP — mula 0.5 ICP para sa 1 GB kada 30 araw. Walang credit card. Mag-renew anumang oras at mag-stack ang hindi nagamit na oras."
+          },
+          "1": {
+            "problemTitle": "Centralized na Kontrol",
+            "problemDescription": "Ang files mo ay nasa server ng iba. Maaaring suspindihin ng provider ang account, magtaas ng presyo, o isara ang serbisyo nang walang abiso.",
+            "solutionTitle": "Decentralized at Censorship-Resistant",
+            "solutionDescription": "Naka-imbak ang files sa Internet Computer replicas. Walang single point of failure — ikaw lang ang makakapag-delete ng data mo."
+          },
+          "2": {
+            "problemTitle": "Komplikadong Setup",
+            "problemDescription": "Kailangan ng AWS account, IAM roles, bucket policies, at CORS config ang S3 setup — para lang mag-upload ng file.",
+            "solutionTitle": "S3-Compatible API",
+            "solutionDescription": "Drop-in replacement para sa S3 na may pamilyar na methods: createBucket, uploadFile, downloadFile. Ilipat ang existing code sa ilang minuto."
+          },
+          "3": {
+            "problemTitle": "Vendor Lock-in",
+            "problemDescription": "Iba-iba ang API ng bawat provider. Ang paglipat mula S3 patungong Azure ay nangangahulugang muling pagsusulat ng code — walang tunay na portability.",
+            "solutionTitle": "On-Chain Verifiability",
+            "solutionDescription": "Masusubaybayan ang bawat upload on-chain. Content-addressable sa pamamagitan ng canister URLs — immutable at auditable."
+          }
+        }
+      },
+      "pricing": {
+        "title": "Storage Economics",
+        "subtitle": "Magbayad nang pauna sa ICP mula sa ICPay balance mo — walang credit card, walang sorpresang buwanang bill. Bawat tier ay 30-araw na plano; mag-renew anumang oras at nag-stack ang hindi nagamit na oras.",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "Nilo-load ang live ICP price…",
+        "priceHint": "Ang USD estimates ay gumagamit ng CoinGecko · 1 ICP ≈ {price}",
+        "mostPopular": "Pinakasikat",
+        "per30Days": "kada 30 araw",
+        "capacity": "{capacityGb} GB capacity",
+        "getStarted": "Magsimula",
+        "footer": "Ang live prices ay galing sa canister: IC storage cycle cost plus 20% margin, naka-round sa 0.5 ICP steps. Ipinapakita ng strikethrough ang dating list price. Available sa app ang tiers hanggang 500 GB.",
+        "footerCheckoutIcp": " Laging ICP ang checkout.",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "1 GB reserved capacity",
+              "1": "Public at private buckets",
+              "2": "API key authentication",
+              "3": "Chunked uploads",
+              "4": "Global CDN URLs",
+              "5": "Encrypted at rest",
+              "6": "Mag-renew anumang oras — nag-stack ang oras"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "5 GB reserved capacity",
+              "1": "Maraming API keys",
+              "2": "File metadata at tags",
+              "3": "Search at folder listing",
+              "4": "Bulk copy / move / delete",
+              "5": "TypeScript, Python at Go SDK",
+              "6": "Mag-renew anumang oras — nag-stack ang oras"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "10 GB reserved capacity",
+              "1": "Maraming buckets",
+              "2": "Team API keys",
+              "3": "Bulk operations",
+              "4": "On-chain audit trail",
+              "5": "HTTPS file delivery",
+              "6": "Mag-renew anumang oras — nag-stack ang oras"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "50 GB reserved capacity",
+              "1": "Lahat ng Business features",
+              "2": "Mas mataas na throughput uploads",
+              "3": "Production workloads",
+              "4": "dApp at NFT asset hosting",
+              "5": "Static site assets",
+              "6": "Mag-renew anumang oras — nag-stack ang oras"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "Pinakabago mula sa ICPay",
+        "subtitle": "Sundan ang aming pagbuo ng on-chain storage para sa Internet Computer"
+      },
+      "features": {
+        "title": "Lahat ng Kailangan Mo para sa On-Chain Storage",
+        "subtitle": "Nagbibigay ang ICBucket ng enterprise-grade cloud storage features nang walang enterprise complexity o buwanang bill.",
+        "items": {
+          "0": {
+            "title": "Flexible Capacity Tiers",
+            "description": "Pumili mula 1GB hanggang 100GB. Magsimula nang maliit, mag-scale kung kailangan. Mag-renew anumang oras para pahabain ang storage duration."
+          },
+          "1": {
+            "title": "Chunked Uploads",
+            "description": "Mag-upload ng malalaking file nang chunked (hanggang 2MB bawat chunk). Parallel uploads para mas mabilis. Mag-resume kapag bumagsak ang koneksyon."
+          },
+          "2": {
+            "title": "API Key Management",
+            "description": "Gumawa ng maraming API keys bawat bucket na may granular permissions (read/write/delete). I-revoke at i-regenerate anumang oras."
+          },
+          "3": {
+            "title": "Public at Private Buckets",
+            "description": "Nagseserb ang public buckets ng files sa HTTPS. Kailangan ng auth ang private buckets. Perpekto para sa static sites at secure backups."
+          },
+          "4": {
+            "title": "S3-Compatible API",
+            "description": "Drop-in replacement para sa AWS S3. Pamilyar na methods: createBucket, uploadFile, listFiles. Ilipat ang existing code sa ilang minuto."
+          },
+          "5": {
+            "title": "On-Chain Security",
+            "description": "Naka-imbak ang files sa IC replicas. Canister-level access control. Walang server breach, walang data leak."
+          },
+          "6": {
+            "title": "File Metadata at Search",
+            "description": "I-tag ang files, magdagdag ng custom metadata. Maghanap ayon sa pangalan, tag, o prefix. I-list ang folders, i-filter ayon sa petsa o laki."
+          },
+          "7": {
+            "title": "Mabilis na Content Delivery",
+            "description": "Direktang nagseserb ang files mula sa IC canisters. Walang CDN setup na kailangan. Global distribution sa pamamagitan ng IC boundary nodes."
+          }
+        }
+      },
+      "architecture": {
+        "title": "Paano Gumagana ang Storage",
+        "subtitle": "Nasa loob ng ICPay wallet canister ang files sa Internet Computer — hindi sa tradisyonal na cloud VM. Nakikipag-usap ang app mo sa canister; nag-iimbak ng encrypted data ang subnet.",
+        "canisterId": "Canister ID · {canisterId}",
+        "diagramAriaLabel": "ICBucket architecture diagram",
+        "writePath": "Write path",
+        "readPath": "Read path",
+        "uploadSteps": {
+          "0": "Gumawa ng bucket isang beses (magbayad ng ICP para sa capacity).",
+          "1": "beginFileUpload → magpadala ng 2 MB chunks → completeFileUpload.",
+          "2": "Ini-encrypt ng canister ang bawat file at isinusulat sa stable memory."
+        },
+        "readSteps": {
+          "0": "Private files: signed downloadFile update mula sa app mo.",
+          "1": "Public files: plain HTTPS GET sa canister gateway URL.",
+          "2": "Walang AWS bucket, walang hiwalay na storage server — isang on-chain canister."
+        }
+      },
+      "comparison": {
+        "title": "Paano Naihahambing ang ICBucket",
+        "subtitle": "ICBucket vs. tradisyonal na cloud storage providers. Tingnan kung ano ang pinagkaiba namin.",
+        "featureColumn": "Feature",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "30-Araw na ICP Plan",
+          "1": "Magbayad gamit ang ICP (walang credit card)",
+          "2": "Decentralized",
+          "3": "Censorship-Resistant",
+          "4": "On-Chain Verifiable",
+          "5": "Walang Account Suspension Risk",
+          "6": "S3-Compatible API",
+          "7": "Public HTTPS URLs",
+          "8": "API Key Auth",
+          "9": "Chunked Uploads"
+        }
+      },
+      "apiGuide": {
+        "title": "SDK at API Reference",
+        "subtitle": "S3-compatible API na may SDK para sa Node.js, Python, Rust, at Go. Drop-in replacement para sa AWS S3.",
+        "codeExamples": "Mga Code Example",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "Installation",
+        "createInit": "Gumawa at I-initialize",
+        "uploadFiles": "Mag-upload ng Files",
+        "downloadAccess": "Mag-download at Access",
+        "fileManagement": "File Management",
+        "apiKeyTitle": "API Key Management",
+        "apiKeyIntro": "Gumawa ng maraming API keys bawat bucket na may granular permissions:",
+        "permRead": "read",
+        "permReadDesc": "Mag-download ng files",
+        "permWrite": "write",
+        "permWriteDesc": "Mag-upload ng files",
+        "permDelete": "delete",
+        "permDeleteDesc": "Mag-delete ng files",
+        "apiKeyFooter": "I-revoke at i-regenerate ang keys anumang oras sa web UI.",
+        "rateLimitsTitle": "Rate Limits",
+        "rateLimitsIntro": "Fair usage limits para sa canister stability:",
+        "rateLimitUpload": "Upload: 100 requests/minute bawat API key",
+        "rateLimitDownload": "Download: 1000 requests/minute (public files)",
+        "rateLimitList": "List/Search: 50 requests/minute",
+        "rateLimitChunk": "Chunk size: Max 2MB bawat chunk",
+        "rateLimitsFooter": "Makipag-ugnayan sa amin para sa mas mataas na limits o enterprise plans."
+      },
+      "faq": {
+        "title": "Mga Madalas Itanong",
+        "subtitle": "Lahat ng kailangan mong malaman tungkol sa ICBucket. Walang sagot? Makipag-ugnayan sa amin.",
+        "items": {
+          "0": {
+            "question": "Paano naiiba ang ICBucket sa AWS S3?",
+            "answer": "Ang ICBucket ay decentralized storage sa Internet Computer. Magbabayad ka sa ICP kada 30 araw mula sa ICPay balance mo (hal. 2.5 ICP para sa 5 GB) sa halip na AWS bill sa credit card. Nasa on-chain ang files sa IC replicas. Ginagawang madali ng API keys at SDK ang migration."
+          },
+          "1": {
+            "question": "Paano gumagana ang billing?",
+            "answer": "Bawat bucket ay 30-araw na plano na binabayaran nang pauna sa ICP mula sa ICPay balance mo. Kapag nag-expire, read-only ang bucket hanggang mag-renew. Nagdadagdag ng 30 araw ang pag-renew — nag-stack ang hindi nagamit na oras. Live quotes mula sa canister (cycle cost + margin)."
+          },
+          "2": {
+            "question": "Maaari bang gamitin ang ICBucket para sa production apps?",
+            "answer": "Oo. Production-ready ang ICBucket na may 33 passing tests, chunked uploads, API key auth, at cycle monitoring. Ginagamit na para sa NFT metadata, dApp assets, at static sites. Gayunpaman, custodial storage ito sa IC — unawain ang trade-offs bago mag-deploy ng mission-critical data."
+          },
+          "3": {
+            "question": "Anong file types ang suportado?",
+            "answer": "Lahat ng file types: images, videos, PDF, JSON, HTML, CSS, JS, atbp. Napapanatili ang content type. Nagseserb ang public buckets ng files na may tamang MIME types (hal. gumagana ang <img src='...'>)."
+          },
+          "4": {
+            "question": "Paano mag-migrate mula S3 patungong ICBucket?",
+            "answer": "I-install ang icpay-bucket SDK, gumawa ng bucket, mag-generate ng API key. Palitan ang AWS SDK calls ng ICBucket SDK calls (halos parehong API). I-download ang files mula S3, i-upload sa ICBucket. I-update ang URLs sa app mo. Karamihan ng migration ay <1 oras para sa maliliit na project."
+          },
+          "5": {
+            "question": "Ano kung maubos ang cycles ng canister?",
+            "answer": "Minomonitor at auto-top-up ang ICBucket canisters mula sa bucket revenue. Kung critically low ang cycles, ino-notify namin ang bucket owners na mag-renew. Sa pinakamasamang kaso (na-delete ang canister), mawawala ang files — pero napakabihira nito sa tamang cycle management."
+          },
+          "6": {
+            "question": "Maaari bang gamitin ang ICBucket para sa NFT metadata?",
+            "answer": "Oo, perpektong use case. Mag-upload ng metadata.json at image files. Kumuha ng immutable on-chain URLs (https://6vbhm-...-cai.icp0.io/bucket/nft-1.json). Walang IPFS gateways, walang broken links. Agad na nagseserb ang public buckets ng files."
+          },
+          "7": {
+            "question": "May file size limit ba?",
+            "answer": "Limitado sa 2MB bawat request ang single file uploads (IC call size limit). Para sa mas malalaking files, gumamit ng chunked uploads — hatiin sa 2MB chunks sa client side. Awtomatikong hinahawakan ng SDK ito. Nasubok hanggang 500MB files."
+          },
+          "8": {
+            "question": "Maaari bang mag-delete ng files?",
+            "answer": "Oo, maaaring mag-delete ang bucket owners sa web UI o API. Agad na tinatanggal ang deleted files mula sa canister. Malaya ang storage quota. Suportado ang bulk delete."
+          },
+          "9": {
+            "question": "Paano gawing public ang bucket?",
+            "answer": "Itakda ang visibility: 'public' kapag gumagawa ng bucket. Nagseserb ang public buckets ng files sa HTTPS nang walang auth. Sinumang may URL ay maaaring mag-access. Perpekto para sa static sites, public assets, at NFT metadata."
+          },
+          "10": {
+            "question": "Maaari bang mag-host ng static website sa ICBucket?",
+            "answer": "Oo. Mag-upload ng HTML, CSS, JS, images sa public bucket. I-access sa canister URL (https://6vbhm-...-cai.icp0.io/bucket/index.html). Itakda nang tama ang content types. Wala pang auto-serve ng index.html — tukuyin ang buong path sa URL."
+          },
+          "11": {
+            "question": "Ano ang pagkakaiba ng ICBucket at IPFS?",
+            "answer": "Iniimbak ng ICBucket ang files sa IC canisters na may S3-compatible API. Content-addressed at peer-to-peer ang IPFS. Walang gateway dependencies ang ICBucket, instant access, mas simpleng API. Mas mahusay ang decentralization ng IPFS pero mas mabagal/hindi predictable ang access. Pumili ayon sa pangangailangan mo."
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "ICFalcon Framework",
+        "title": "ICFalcon",
+        "subtitle": "Production-Ready Motoko Framework para sa Internet Computer",
+        "features": "Enforced layered architecture · Next.js frontend · Global CLI · Internet Identity auth",
+        "installLabel": "I-install sa isang command",
+        "copyCommand": "Kopyahin ang command",
+        "installHint": "Nag-i-install ng dependencies, nagde-deploy locally, at nagsisimula ng dev server sa localhost:3000",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "Mga Package"
+      },
+      "problemSolution": {
+        "title": "Ginawa para lutasin ang tunay na problema",
+        "subtitle": "Tinatanggal ng ICFalcon ang karaniwang friction points sa ICP development",
+        "problemHeading": "Ang Problema",
+        "solutionHeading": "Ang Solusyon",
+        "problems": {
+          "0": {
+            "title": "Walang standardized architecture",
+            "description": "Karamihan ng Motoko project ay nagsisimula mula sa zero nang walang malinaw na gabay sa layering, testing, o deployment patterns. Paulit-ulit na binubuo ng team ang structure."
+          },
+          "1": {
+            "title": "Kalat-kalat na tooling",
+            "description": "Ang pagbuo ng ICP app ay nangangahulugang pagbalanse sa dfx, mops, npm, at custom scripts. Walang unified CLI para sa scaffolding, build, o deploy sa iba't ibang environment."
+          },
+          "2": {
+            "title": "Komplikasyon sa frontend-backend integration",
+            "description": "Ang pagkonekta ng Next.js frontend sa Motoko canister ay nangangailangan ng manual actor generation, identity management, at environment configuration."
+          },
+          "3": {
+            "title": "Limitadong starter templates",
+            "description": "Masyadong minimal o masyadong opinionated ang existing templates. Walang gitnang lupa para sa real-world apps."
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "Production-shaped layering",
+            "description": "Four-layer architecture (api → service → repository → storage) na enforced mula day one. Parehong pattern ang bawat module — predictable ang onboarding at maintenance."
+          },
+          "1": {
+            "title": "Global falcon CLI",
+            "description": "Isang command para mag-scaffold ng modules, mag-install ng packages, mag-build, mag-test, at mag-deploy. Seamless sa local at mainnet na may interactive confirmations."
+          },
+          "2": {
+            "title": "Integrated stack",
+            "description": "Motoko backend na may mo:core, Next.js frontend na may shadcn/ui, Internet Identity auth, at static export. Lahat naka-wire out of the box."
+          },
+          "3": {
+            "title": "Hub ecosystem",
+            "description": "Mag-install ng battle-tested packages mula sa icp-hub gamit ang `falcon add pkg <name>`. Ledger integration, file storage, rate limiting, at iba pa — plug and play."
+          }
+        }
+      },
+      "article": {
+        "title": "Ano ang ICFalcon?",
+        "subtitle": "Framework na nagbibigay ng structure, tooling, at bilis para sa pagbuo ng Internet Computer applications",
+        "frameworkTitle": "Framework, hindi boilerplate",
+        "frameworkP1": "Ang ICFalcon ay opinionated starting point para sa Motoko applications. Enforced ang four-layer backend architecture (api → service → repository → storage), may modern Next.js frontend, at global CLI para sa scaffolding, build, at deploy.",
+        "frameworkP2": "Hindi tulad ng minimal templates, binibigyan ka ng ICFalcon ng patterns na uma-scale — pareho sa production apps tulad ng ICPay. Stable memory management, migration guides, Internet Identity integration, at testing harness mula day one.",
+        "layeringTitle": "Layered backend architecture",
+        "layeringP1": "Mahigpit ang separation of concerns sa backend. HTTP at validation ang hawak ng API modules. Business logic ang nasa services. Data access ang abstract ng repositories. Stable memory ang pinamamahalaan ng storage.",
+        "layeringP2": "Enforced ang layering na ito sa convention at documented sa repo. Kapag nag-scaffold ng module gamit ang falcon m:f Product, nalilikha ang apat na layer, naka-wire sa main.mo, at nalilikha ang matching frontend service files. Walang hula, walang manual wiring.",
+        "frontendTitle": "Frontend integration",
+        "frontendP1": "Next.js ang frontend na may shadcn/ui components at Internet Identity authentication. Nag-e-export sa static files (output: \"export\") para ma-host sa asset canister o conventional host tulad ng Vercel.",
+        "frontendP2": "Pre-wired ang agent configuration, identity derivation, at canister IDs. Nagse-serve ang backend canister ng .did file na awtomatikong kinukuha ng frontend. Walang manual actor generation o environment juggling.",
+        "cliTitle": "Ang falcon CLI",
+        "cliP1": "Lahat ng operation ay sa isang global command. Mag-initialize ng project (falcon s:init). Mag-scaffold ng module (falcon m:f Name). Mag-run ng tests (falcon b:test --local). Mag-deploy (falcon b:deploy, nagpo-prompt ng confirmation).",
+        "cliP2": "Binalot ng CLI ang dfx, mops, at npm, at nagdadagdag ng scaffolding para sa modules, API endpoints, at frontend services. Local o mainnet ang target gamit ang --local flag, default mainnet para sa safety. Documented ang commands sa ops/docs/commands.md.",
+        "hubTitle": "Hub packages",
+        "hubP1": "Nag-iintegrate ang ICFalcon sa icp-hub, koleksyon ng plug-and-play Motoko packages. Mag-install ng ledger integration, file storage, rate limiting, o iba pang common patterns gamit ang falcon add pkg <name>. Parehong four-layer structure at may tests ang bawat package.",
+        "hubP2": "Independently versioned at tested ang packages. Open-source ang hub — maaari kang mag-contribute o mag-fork para sa custom needs.",
+        "audienceTitle": "Para kanino ito?",
+        "audienceP1": "Para sa mga developer na gustong mag-ship ng production-ready ICP apps nang hindi muling binubuo ang structure. Kung gumagawa ka ng canister na kailangan ng stable memory, layered backend, Internet Identity auth, at modern frontend, mas mabilis ka makakarating sa ICFalcon.",
+        "audienceP2": "Hindi ito minimal template. Opinionated ito. Enforced ang layering, CLI ang primary interface, at Motoko + Next.js ang stack. Kung kailangan mo ang stack na iyon at malinaw na starting point, ICFalcon ang sagot.",
+        "stackTitle": "Stack overview",
+        "stackBackend": "Backend:",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "Frontend:",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "Tooling:",
+        "stackToolingValue": "falcon CLI · module scaffolds · icp-hub packages"
+      },
+      "faq": {
+        "title": "Mga Madalas Itanong",
+        "subtitle": "Karaniwang tanong tungkol sa ICFalcon at paano ito gamitin",
+        "items": {
+          "0": {
+            "question": "Ano ang ICFalcon?",
+            "answer": "Ang ICFalcon ay open-source Motoko framework para sa pagbuo ng Internet Computer applications. Nagbibigay ito ng production-ready backend architecture, Next.js frontend, at global CLI para sa scaffolding, build, at deploy."
+          },
+          "1": {
+            "question": "Kailangan ko bang alamin ang Motoko?",
+            "answer": "Oo. Motoko framework ang ICFalcon, kaya kailangan ang familiarity sa language. Gayunpaman, binabawasan ng layered architecture at scaffolding commands ang boilerplate na kailangan mong isulat manually."
+          },
+          "2": {
+            "question": "Paano naiiba ang ICFalcon sa dfx new?",
+            "answer": "Minimal starting point ang dfx new. Production-shaped structure ang binibigay ng ICFalcon na may enforced layering, stable memory management, Internet Identity integration, at CLI para sa module scaffolding. Opinionated by design."
+          },
+          "3": {
+            "question": "Maaari bang gamitin ang ICFalcon sa existing canister?",
+            "answer": "Starting point ang ICFalcon, hindi migration tool. Maaari mong gamitin ang ilang bahagi ng architecture (layering pattern, CLI commands) pero kailangan ng manual work ang full integration."
+          },
+          "4": {
+            "question": "Ano ang falcon CLI?",
+            "answer": "Global command ang falcon CLI na bumabalot sa dfx, mops, at npm. Project initialization, module scaffolding, testing, building, at deployment ang hinahawakan nito. Local o mainnet ang target gamit ang --local flag."
+          },
+          "5": {
+            "question": "Saan ako mag-iinstall ng packages?",
+            "answer": "Mula sa mops (Motoko package manager) at icp-hub (curated plug-and-play modules) ang backend packages. npm ang frontend packages. Sinasimplify ng falcon CLI ang ilan nito gamit ang `falcon add pkg <name>`."
+          },
+          "6": {
+            "question": "Production-ready ba ang ICFalcon?",
+            "answer": "Production-ready ang architecture at ginagamit sa live apps tulad ng ICPay. Gayunpaman, framework ang ICFalcon, hindi SaaS product. Ikaw ang may-ari ng canister at responsable sa testing, deployment, at maintenance."
+          },
+          "7": {
+            "question": "Sinusuportahan ba ng ICFalcon ang Rust canisters?",
+            "answer": "Hindi. Motoko framework ang ICFalcon. Kung kailangan mo ng Rust, gumamit ng ibang starter o mag-build mula sa scratch."
+          },
+          "8": {
+            "question": "Paano mag-deploy sa mainnet?",
+            "answer": "I-run ang `falcon b:deploy` (walang --local). Magpo-prompt ang CLI ng confirmation bago mag-deploy sa mainnet. Upgrade mode ang default; hindi ginagamit ang reinstall mode para maiwasan ang data loss."
+          },
+          "9": {
+            "question": "Maaari bang i-customize ang layering?",
+            "answer": "Enforced ng convention at CLI scaffolds ang four-layer architecture (api → service → repository → storage). Maaari kang lumihis, pero mawawala ang benepisyo ng consistent structure at automated scaffolding."
+          },
+          "10": {
+            "question": "Paano mag-contribute sa ICFalcon?",
+            "answer": "I-fork ang repository, gumawa ng feature branch, at mag-open ng pull request. Sundin ang patterns sa AGENTS.md at i-run ang `falcon b:test --local` at `falcon p:check --local` bago mag-submit. Para sa hub packages, mag-contribute sa icp-hub nang hiwalay."
+          },
+          "11": {
+            "question": "Libre bang gamitin ang ICFalcon?",
+            "answer": "Oo. Open-source ang ICFalcon. As-is ang source code para sa paggamit at pagbabago. Per-entry sa icp-hub ang license ng hub packages."
+          }
+        }
+      }
+    }
   }
 }

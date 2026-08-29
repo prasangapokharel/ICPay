@@ -1164,6 +1164,16 @@
     "docsTitle": "Hướng dẫn ICPay Cloud",
     "docsSubtitle": "Lưu trữ file mã hóa on-chain",
     "docsStorageTitle": "Bạn nhận được gì",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "Bucket trả hàng tháng từ số dư ICPay. File mã hóa khi nghỉ trên canister.",
     "docsImagesOnly": "Ảnh, tài liệu, mã, lưu trữ, âm thanh và font (xem Bảng giá để biết đầy đủ).",
     "docsWebpNote": "Định dạng gốc tối đa 10 MB. File lớn tự chia mảnh (giới hạn IC ingress là 2 MiB mỗi lần gọi).",
@@ -1223,5 +1233,725 @@
     "prevPage": "Trước",
     "nextPage": "Sau",
     "pageOf": "Trang {page} / {total} · {count} file"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "Menu",
+      "signIn": "Đăng nhập",
+      "wallet": "Ví",
+      "openWallet": "Mở ví",
+      "openMenu": "Mở menu",
+      "sectionProducts": "Sản phẩm",
+      "sectionResources": "Tài nguyên",
+      "sectionLegal": "Pháp lý",
+      "primary": {
+        "blog": "Blog"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay Wallet",
+          "description": "Gửi ICP bằng tên người dùng với đăng nhập Internet Identity."
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "Lưu trữ on-chain với API key, SDK và gói ICP."
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "Framework Motoko sản xuất với CLI toàn cục."
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "Lệnh và quy trình cho dự án ICFalcon."
+        },
+        "icpHubPackages": {
+          "title": "Gói ICP-Hub",
+          "description": "Gói được tuyển chọn cho phát triển Internet Computer."
+        },
+        "icbucketDocs": {
+          "title": "Tài liệu ICBucket",
+          "description": "Tham chiếu API và hướng dẫn tích hợp lưu trữ."
+        },
+        "blog": {
+          "title": "Blog",
+          "description": "Hướng dẫn, tutorial và bài viết hệ sinh thái ICP."
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "Giới thiệu",
+          "description": "ICPay là gì và thanh toán bằng tên người dùng hoạt động thế nào."
+        },
+        "faq": {
+          "title": "FAQ",
+          "description": "Câu trả lời cho câu hỏi thường gặp về ví và sản phẩm."
+        },
+        "roadmap": {
+          "title": "Lộ trình",
+          "description": "Đã phát hành, tiếp theo và những gì chúng tôi sẽ không xây dựng."
+        },
+        "brands": {
+          "title": "Thương hiệu",
+          "description": "Chính sách nhãn hiệu và sử dụng thương hiệu."
+        },
+        "terms": {
+          "title": "Điều khoản",
+          "description": "Điều khoản dịch vụ khi sử dụng ICPay."
+        },
+        "privacy": {
+          "title": "Quyền riêng tư",
+          "description": "Cách chúng tôi xử lý dữ liệu và thông tin tài khoản."
+        },
+        "transparency": {
+          "title": "Minh bạch",
+          "description": "Mô hình lưu ký, phí và hoạt động on-chain."
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "Sản phẩm",
+      "sectionResources": "Tài nguyên",
+      "sectionLegal": "Pháp lý",
+      "sectionCommunity": "Cộng đồng",
+      "copyright": "© 2026 ICPay. Bảo lưu mọi quyền.",
+      "blog": "Blog",
+      "channels": "Kênh",
+      "wallet": "Ví",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "wallet": "ICPay Wallet"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "Gói ICP-Hub",
+        "icbucketDocs": "Tài liệu ICBucket",
+        "blog": "Blog"
+      },
+      "legal": {
+        "about": "Giới thiệu",
+        "faq": "FAQ",
+        "roadmap": "Lộ trình",
+        "brands": "Thương hiệu",
+        "terms": "Điều khoản",
+        "privacy": "Quyền riêng tư",
+        "transparency": "Minh bạch"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      }
+    },
+    "heroSignOptions": {
+      "label": "Tùy chọn đăng nhập qua Internet Identity",
+      "ariaLabel": "Đăng nhập Google, Apple và Microsoft qua Internet Identity"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Ví Internet Computer",
+        "title": "Gửi ICP bằng tên người dùng, không phải địa chỉ 63 ký tự",
+        "tagline": "ICPay là ví lưu ký mã nguồn mở trên Internet Computer. Nhận tên, nhận thanh toán từ bất kỳ ai, và khám phá kênh, lưu trữ on-chain và công cụ Motoko từ một hệ sinh thái.",
+        "openWallet": "Mở ví",
+        "browseChannels": "Duyệt kênh",
+        "signIn": "Đăng nhập",
+        "aboutIcPay": "Về ICPay",
+        "imageAlt": "Ví ICPay trên di động"
+      },
+      "cta": {
+        "signedInTitle": "Bạn đã đăng nhập",
+        "signedInBody": "Mở ví để gửi ICP, kiểm tra số dư hoặc khám phá kênh và token.",
+        "readyTitle": "Sẵn sàng chuyển ICP bằng tên người dùng?",
+        "readyBody": "Đăng nhập bằng Internet Identity, nhận tên của bạn và bắt đầu gửi trong vài giây. Không cần seed phrase. Không cần tiện ích trình duyệt.",
+        "openWallet": "Mở ví",
+        "browseChannels": "Duyệt kênh",
+        "signIn": "Đăng nhập"
+      },
+      "features": {
+        "eyebrow": "Nền tảng",
+        "title": "Xây dựng cho người dùng hàng ngày và nhà phát triển ICP",
+        "subtitle": "ICPay không chỉ là ví. Đó là cửa vào thanh toán, cộng đồng, lưu trữ và phát triển canister trên Internet Computer.",
+        "items": {
+          "0": {
+            "title": "Thanh toán bằng tên người dùng",
+            "body": "Nhận tên và chia sẻ icpay.app/yourname. Người gửi không cần tài khoản hay principal 63 ký tự."
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "Đăng nhập bằng passkey hoặc tài khoản liên kết. Không cần seed phrase và không cần tiện ích trình duyệt."
+          },
+          "2": {
+            "title": "Kênh",
+            "body": "Cộng đồng phát sóng kiểu Telegram với khám phá công khai, lời mời riêng và bài viết markdown."
+          },
+          "3": {
+            "title": "Lưu trữ ICBucket",
+            "body": "Lưu trữ file on-chain với API key và SDK. Trả ICP với gói 30 ngày đơn giản thay vì hóa đơn thẻ."
+          },
+          "4": {
+            "title": "Framework ICFalcon",
+            "body": "Khung Motoko sản xuất với phân lớp bắt buộc, kiểm thử và CLI toàn cục cho ứng dụng Internet Computer."
+          },
+          "5": {
+            "title": "Lưu ký minh bạch",
+            "body": "Tiền nằm trong tài khoản phụ theo người dùng trên sổ cái ICP chính thức. Backend mã nguồn mở và chỉ nâng cấp trên mainnet."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "FAQ",
+        "title": "Câu hỏi thường gặp",
+        "subtitle": "Câu trả lời nhanh về ví, mô hình lưu ký và phần còn lại của stack ICPay.",
+        "items": {
+          "0": {
+            "question": "ICPay là gì?",
+            "answer": "ICPay là ví lưu ký Internet Computer. Đăng nhập bằng Internet Identity, nhận tên người dùng và gửi hoặc nhận ICP bằng tên đó thay vì sao chép địa chỉ principal dài."
+          },
+          "1": {
+            "question": "Tôi có cần seed phrase không?",
+            "answer": "Không. Xác thực do Internet Identity xử lý. Bạn phê duyệt truy cập bằng passkey hoặc nhà cung cấp danh tính liên kết — không có mnemonic để lưu trên giấy."
+          },
+          "2": {
+            "question": "ICPay có tự lưu ký không?",
+            "answer": "ICPay là lưu ký: số dư của bạn nằm trong tài khoản phụ do canister ICPay kiểm soát, và chỉ principal của bạn mới có thể ủy quyền chuyển khoản. Mã backend mã nguồn mở và triển khai trên mainnet."
+          },
+          "3": {
+            "question": "Còn gì ngoài ví?",
+            "answer": "Cùng hệ sinh thái bao gồm Kênh công khai, lưu trữ on-chain ICBucket và ICFalcon — framework Motoko để xây dựng và triển khai canister với CLI có cấu trúc."
+          },
+          "4": {
+            "question": "Kênh hoạt động thế nào?",
+            "answer": "Kênh là cộng đồng phát sóng. Chủ sở hữu đăng cập nhật bằng markdown kiểu Telegram. Kênh công khai có thể khám phá trong Explore; kênh riêng truy cập qua tên người dùng hoặc liên kết mời."
+          },
+          "5": {
+            "question": "Tôi đọc thêm ở đâu?",
+            "answer": "Truy cập trang Giới thiệu, FAQ và Minh bạch để biết chi tiết sản phẩm, hoặc duyệt blog để có hướng dẫn Internet Computer và tài nguyên nhà phát triển."
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "Cách hoạt động",
+        "title": "Sử dụng có khó không?",
+        "subtitle": "Không lắm. Sáu bước từ đăng nhập Internet Identity đến gửi ICP bằng tên người dùng — không cần tiện ích trình duyệt và không cần mnemonic.",
+        "stepLabel": "Bước {step}",
+        "steps": {
+          "0": {
+            "title": "Đăng nhập bằng Internet Identity",
+            "body": "Dùng passkey hoặc tài khoản liên kết. Không cần sổ mật khẩu và không có seed phrase để mất."
+          },
+          "1": {
+            "title": "Nhận @username của bạn",
+            "body": "Chọn tên một lần. Mọi người trả bạn tại icpay.app/yourname thay vì principal 63 ký tự."
+          },
+          "2": {
+            "title": "Chia sẻ liên kết hoặc địa chỉ",
+            "body": "Gửi trang tên người dùng hoặc địa chỉ nạp cho bất kỳ ai cần trả bạn bằng ICP."
+          },
+          "3": {
+            "title": "Gửi bằng @username",
+            "body": "Chuyển ICP trong vài giây. Nhập tên, xác nhận số tiền và sổ cái ghi lại on-chain."
+          },
+          "4": {
+            "title": "Theo dõi mọi chuyển khoản",
+            "body": "Số dư và lịch sử gắn với sổ cái ICP chính thức. Mở bất kỳ giao dịch nào trên trình khám phá khối."
+          },
+          "5": {
+            "title": "Dùng toàn bộ stack",
+            "body": "Kênh cho cộng đồng, ICBucket cho file on-chain và ICFalcon cho phát triển Motoko — cùng hệ sinh thái."
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "Cách thanh toán",
+        "title": "Gửi bằng tên người dùng hoặc quét để thanh toán",
+        "subtitle": "Nhập @username để gửi ICP, hoặc mở mã QR hồ sơ để nhận. Cùng ví, hai cách — cả hai đều thanh toán trên sổ cái Internet Computer.",
+        "imageAlt": "Luồng thanh toán ICPay: gửi ICP bằng tên người dùng bên trái, quét QR để thanh toán bên phải"
+      },
+      "products": {
+        "eyebrow": "Hệ sinh thái",
+        "title": "Mọi thứ xây dựng trên ICPay",
+        "subtitle": "Ví, lưu trữ và công cụ canister trong một stack — cho nhà xây dựng và người dùng hàng ngày trên Internet Computer.",
+        "items": {
+          "wallet": {
+            "title": "ICPay Wallet",
+            "description": "Gửi, nhận và giữ ICP với tên người dùng và Internet Identity.",
+            "cta": "Mở ví"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "Lưu trữ đám mây on-chain với API key, SDK và gói ICP 30 ngày.",
+            "cta": "Khám phá lưu trữ"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "Framework Motoko sản xuất với kiến trúc phân lớp và CLI toàn cục.",
+            "cta": "Xây dựng trên ICP"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "Bằng chứng xã hội",
+        "title": "Tôi có thể tin tưởng không?",
+        "subtitle": "ICPay là lưu ký và chưa được kiểm toán — chúng tôi nói rõ điều đó. Những gì bạn có thể xác minh hôm nay: mã mã nguồn mở, canister mainnet và chính sách minh bạch đã công bố.",
+        "visit": "Truy cập →",
+        "readMore": "Đọc thêm →",
+        "items": {
+          "github": {
+            "label": "Mã nguồn mở trên GitHub",
+            "description": "Motoko backend và frontend Next.js công khai. Tự kiểm tra luồng tiền, xác thực và đường nâng cấp."
+          },
+          "backendCanister": {
+            "label": "Canister backend mainnet",
+            "description": "Logic ví chạy tại {canisterId} trên mainnet Internet Computer."
+          },
+          "transparency": {
+            "label": "Trang minh bạch",
+            "description": "Mô hình lưu ký, phí và những gì nhà vận hành có thể và không thể làm — với địa chỉ on-chain để xác minh."
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "Cập nhật sản phẩm, ra mắt và tin tức hệ sinh thái Internet Computer từ @IcpayOfficial."
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "Cập nhật công ty và bài đăng nhóm từ trang LinkedIn chính thức của ICPay."
+          },
+          "frontendCanister": {
+            "label": "Frontend on-chain",
+            "description": "Tài sản tĩnh và nguồn gốc dẫn xuất II phục vụ từ {canisterId}."
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "Lưu trữ đám mây on-chain",
+        "title": "ICBucket",
+        "tagline": "Lưu file on-chain với API tương thích S3. Không server, không hóa đơn AWS — gói 30 ngày đơn giản trả bằng ICP từ số dư ICPay.",
+        "tryIcBucket": "Dùng thử ICBucket",
+        "github": "GitHub",
+        "packages": "Gói",
+        "imageAlt": "ICBucket trên di động"
+      },
+      "install": {
+        "title": "Cài đặt",
+        "subtitle": "SDK cho Node.js, Python, Rust và Go. Cài từ npm, PyPI, crates.io hoặc module Go.",
+        "copyLabel": "Sao chép vào clipboard",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "Hướng dẫn tích hợp",
+        "title": "Làm thế nào để tích hợp ICBucket?",
+        "subtitle": "Tạo bucket, tải file lên bằng SDK và phục vụ tài sản công khai qua HTTPS — tất cả từ số dư ICPay với API tương thích S3.",
+        "videoAriaLabel": "Cách tích hợp ICBucket"
+      },
+      "problemSolution": {
+        "title": "Vấn đề & Giải pháp",
+        "subtitle": "Lưu trữ đám mây truyền thống đắt, tập trung và phức tạp. ICBucket khắc phục bằng lưu trữ on-chain, gói ICP 30 ngày và API kiểu S3.",
+        "problemColumn": "Vấn đề",
+        "solutionColumn": "Giải pháp",
+        "rows": {
+          "0": {
+            "problemTitle": "Hóa đơn hàng tháng đắt đỏ",
+            "problemDescription": "AWS S3, Google Cloud Storage và Azure Blob tính phí hàng tháng. Chi phí tích lũy theo năm — dự án 10 GB có thể vượt $240 trong năm năm.",
+            "solutionTitle": "Gói 30 ngày đơn giản",
+            "solutionDescription": "Trả từ số dư ICPay bằng ICP — từ 0,5 ICP cho 1 GB mỗi 30 ngày. Không cần thẻ tín dụng. Gia hạn bất cứ lúc nào và thời gian chưa dùng được cộng dồn."
+          },
+          "1": {
+            "problemTitle": "Kiểm soát tập trung",
+            "problemDescription": "File của bạn nằm trên server của người khác. Nhà cung cấp có thể đình chỉ tài khoản, tăng giá hoặc đóng dịch vụ không báo trước.",
+            "solutionTitle": "Phi tập trung & chống kiểm duyệt",
+            "solutionDescription": "File được lưu trên các bản sao Internet Computer. Không có điểm lỗi duy nhất — chỉ bạn mới xóa được dữ liệu."
+          },
+          "2": {
+            "problemTitle": "Thiết lập phức tạp",
+            "problemDescription": "Thiết lập S3 cần tài khoản AWS, vai trò IAM, chính sách bucket và cấu hình CORS — chỉ để tải một file lên.",
+            "solutionTitle": "API tương thích S3",
+            "solutionDescription": "Thay thế trực tiếp S3 với phương thức quen thuộc: createBucket, uploadFile, downloadFile. Di chuyển mã hiện có trong vài phút."
+          },
+          "3": {
+            "problemTitle": "Phụ thuộc nhà cung cấp",
+            "problemDescription": "Mỗi nhà cung cấp dùng API khác nhau. Chuyển từ S3 sang Azure nghĩa là viết lại mã — không có tính di động thực sự.",
+            "solutionTitle": "Xác minh on-chain",
+            "solutionDescription": "Mọi lần tải lên có thể truy vết on-chain. Địa chỉ theo nội dung qua URL canister — bất biến và có thể kiểm toán."
+          }
+        }
+      },
+      "pricing": {
+        "title": "Kinh tế lưu trữ",
+        "subtitle": "Trả trước bằng ICP từ số dư ICPay — không thẻ tín dụng, không hóa đơn hàng tháng bất ngờ. Mỗi cấp là gói 30 ngày; gia hạn bất cứ lúc nào và thời gian chưa dùng được cộng dồn.",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "Đang tải giá ICP trực tiếp…",
+        "priceHint": "Ước tính USD từ CoinGecko · 1 ICP ≈ {price}",
+        "mostPopular": "Phổ biến nhất",
+        "per30Days": "mỗi 30 ngày",
+        "capacity": "Dung lượng {capacityGb} GB",
+        "getStarted": "Bắt đầu",
+        "footer": "Giá trực tiếp từ canister: chi phí chu kỳ lưu trữ IC cộng biên 20%, làm tròn bước 0,5 ICP. Gạch ngang hiển thị giá niêm yết trước. Cấp đến 500 GB có trong ứng dụng.",
+        "footerCheckoutIcp": " Thanh toán luôn bằng ICP.",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "Dung lượng đặt trước 1 GB",
+              "1": "Bucket công khai & riêng tư",
+              "2": "Xác thực API key",
+              "3": "Tải lên theo khối",
+              "4": "URL CDN toàn cầu",
+              "5": "Mã hóa khi lưu trữ",
+              "6": "Gia hạn bất cứ lúc nào — thời gian cộng dồn"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "Dung lượng đặt trước 5 GB",
+              "1": "Nhiều API key",
+              "2": "Metadata & thẻ file",
+              "3": "Tìm kiếm & liệt kê thư mục",
+              "4": "Sao chép / di chuyển / xóa hàng loạt",
+              "5": "SDK TypeScript, Python & Go",
+              "6": "Gia hạn bất cứ lúc nào — thời gian cộng dồn"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "Dung lượng đặt trước 10 GB",
+              "1": "Nhiều bucket",
+              "2": "API key nhóm",
+              "3": "Thao tác hàng loạt",
+              "4": "Nhật ký kiểm toán on-chain",
+              "5": "Phân phối file HTTPS",
+              "6": "Gia hạn bất cứ lúc nào — thời gian cộng dồn"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "Dung lượng đặt trước 50 GB",
+              "1": "Tất cả tính năng Business",
+              "2": "Tải lên thông lượng cao hơn",
+              "3": "Khối lượng công việc sản xuất",
+              "4": "Lưu trữ tài sản dApp & NFT",
+              "5": "Tài sản trang tĩnh",
+              "6": "Gia hạn bất cứ lúc nào — thời gian cộng dồn"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "Mới nhất từ ICPay",
+        "subtitle": "Theo dõi hành trình xây dựng lưu trữ on-chain cho Internet Computer"
+      },
+      "features": {
+        "title": "Mọi thứ bạn cần cho lưu trữ on-chain",
+        "subtitle": "ICBucket cung cấp tính năng lưu trữ đám mây cấp doanh nghiệp mà không có độ phức tạp doanh nghiệp hay hóa đơn hàng tháng.",
+        "items": {
+          "0": {
+            "title": "Cấp dung lượng linh hoạt",
+            "description": "Chọn từ 1GB đến 100GB. Bắt đầu nhỏ, mở rộng khi cần. Gia hạn bất cứ lúc nào để kéo dài thời gian lưu trữ."
+          },
+          "1": {
+            "title": "Tải lên theo khối",
+            "description": "Tải file lớn theo khối (tối đa 2MB mỗi khối). Tải song song để chuyển nhanh hơn. Tiếp tục khi mất kết nối."
+          },
+          "2": {
+            "title": "Quản lý API key",
+            "description": "Tạo nhiều API key mỗi bucket với quyền chi tiết (đọc/ghi/xóa). Thu hồi và tạo lại bất cứ lúc nào."
+          },
+          "3": {
+            "title": "Bucket công khai & riêng tư",
+            "description": "Bucket công khai phục vụ file qua HTTPS. Bucket riêng cần xác thực. Phù hợp cho trang tĩnh và sao lưu an toàn."
+          },
+          "4": {
+            "title": "API tương thích S3",
+            "description": "Thay thế trực tiếp AWS S3. Phương thức quen thuộc: createBucket, uploadFile, listFiles. Di chuyển mã hiện có trong vài phút."
+          },
+          "5": {
+            "title": "Bảo mật on-chain",
+            "description": "File lưu trên bản sao IC. Kiểm soát truy cập cấp canister. Không vi phạm server, không rò rỉ dữ liệu."
+          },
+          "6": {
+            "title": "Metadata & tìm kiếm file",
+            "description": "Gắn thẻ file, thêm metadata tùy chỉnh. Tìm theo tên, thẻ hoặc tiền tố. Liệt kê thư mục, lọc theo ngày hoặc kích thước."
+          },
+          "7": {
+            "title": "Phân phối nội dung nhanh",
+            "description": "File phục vụ trực tiếp từ canister IC. Không cần thiết lập CDN. Phân phối toàn cầu qua boundary node IC."
+          }
+        }
+      },
+      "architecture": {
+        "title": "Lưu trữ hoạt động thế nào",
+        "subtitle": "File nằm trong canister ví ICPay trên Internet Computer — không phải VM đám mây truyền thống. Ứng dụng của bạn nói chuyện với canister; subnet lưu dữ liệu đã mã hóa.",
+        "canisterId": "ID Canister · {canisterId}",
+        "diagramAriaLabel": "Sơ đồ kiến trúc ICBucket",
+        "writePath": "Đường ghi",
+        "readPath": "Đường đọc",
+        "uploadSteps": {
+          "0": "Tạo bucket một lần (trả ICP cho dung lượng).",
+          "1": "beginFileUpload → gửi khối 2 MB → completeFileUpload.",
+          "2": "Canister mã hóa mỗi file và ghi vào bộ nhớ ổn định."
+        },
+        "readSteps": {
+          "0": "File riêng: cập nhật downloadFile có chữ ký từ ứng dụng.",
+          "1": "File công khai: HTTPS GET thuần trên URL gateway canister.",
+          "2": "Không bucket AWS, không server lưu trữ riêng — một canister on-chain."
+        }
+      },
+      "comparison": {
+        "title": "So sánh ICBucket",
+        "subtitle": "ICBucket so với nhà cung cấp lưu trữ đám mây truyền thống. Xem điều gì làm chúng tôi khác biệt.",
+        "featureColumn": "Tính năng",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "Gói ICP 30 ngày",
+          "1": "Trả bằng ICP (không thẻ tín dụng)",
+          "2": "Phi tập trung",
+          "3": "Chống kiểm duyệt",
+          "4": "Xác minh on-chain",
+          "5": "Không rủi ro đình chỉ tài khoản",
+          "6": "API tương thích S3",
+          "7": "URL HTTPS công khai",
+          "8": "Xác thực API key",
+          "9": "Tải lên theo khối"
+        }
+      },
+      "apiGuide": {
+        "title": "Tham chiếu SDK & API",
+        "subtitle": "API tương thích S3 với SDK cho Node.js, Python, Rust và Go. Thay thế trực tiếp AWS S3.",
+        "codeExamples": "Ví dụ mã",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "Cài đặt",
+        "createInit": "Tạo & Khởi tạo",
+        "uploadFiles": "Tải file lên",
+        "downloadAccess": "Tải xuống & Truy cập",
+        "fileManagement": "Quản lý file",
+        "apiKeyTitle": "Quản lý API key",
+        "apiKeyIntro": "Tạo nhiều API key mỗi bucket với quyền chi tiết:",
+        "permRead": "read",
+        "permReadDesc": "Tải file xuống",
+        "permWrite": "write",
+        "permWriteDesc": "Tải file lên",
+        "permDelete": "delete",
+        "permDeleteDesc": "Xóa file",
+        "apiKeyFooter": "Thu hồi và tạo lại key bất cứ lúc nào qua giao diện web.",
+        "rateLimitsTitle": "Giới hạn tốc độ",
+        "rateLimitsIntro": "Giới hạn sử dụng hợp lý để đảm bảo ổn định canister:",
+        "rateLimitUpload": "Tải lên: 100 yêu cầu/phút mỗi API key",
+        "rateLimitDownload": "Tải xuống: 1000 yêu cầu/phút (file công khai)",
+        "rateLimitList": "Liệt kê/Tìm kiếm: 50 yêu cầu/phút",
+        "rateLimitChunk": "Kích thước khối: Tối đa 2MB mỗi khối",
+        "rateLimitsFooter": "Liên hệ chúng tôi để giới hạn cao hơn hoặc gói doanh nghiệp."
+      },
+      "faq": {
+        "title": "Câu hỏi thường gặp",
+        "subtitle": "Mọi thứ bạn cần biết về ICBucket. Không tìm thấy câu trả lời? Liên hệ chúng tôi.",
+        "items": {
+          "0": {
+            "question": "ICBucket khác AWS S3 thế nào?",
+            "answer": "ICBucket là lưu trữ phi tập trung trên Internet Computer. Bạn trả ICP mỗi 30 ngày từ số dư ICPay (ví dụ 2,5 ICP cho 5 GB) thay vì hóa đơn AWS bằng thẻ tín dụng. File nằm on-chain trên bản sao IC. API key và SDK giúp di chuyển dễ dàng."
+          },
+          "1": {
+            "question": "Thanh toán hoạt động thế nào?",
+            "answer": "Mỗi bucket là gói 30 ngày trả trước ICP từ số dư ICPay. Khi hết hạn bucket chỉ đọc cho đến khi gia hạn. Gia hạn thêm 30 ngày — thời gian chưa dùng được cộng dồn. Giá báo trực tiếp từ canister (chi phí chu kỳ + biên)."
+          },
+          "2": {
+            "question": "Có thể dùng ICBucket cho ứng dụng sản xuất không?",
+            "answer": "Có. ICBucket sẵn sàng sản xuất với 33 kiểm thử đạt, tải lên theo khối, xác thực API key và giám sát chu kỳ. Đã dùng cho metadata NFT, tài sản dApp và trang tĩnh. Tuy nhiên đây là lưu trữ lưu ký trên IC — hiểu đánh đổi trước khi triển khai dữ liệu quan trọng."
+          },
+          "3": {
+            "question": "Hỗ trợ loại file nào?",
+            "answer": "Mọi loại file: hình ảnh, video, PDF, JSON, HTML, CSS, JS, v.v. Loại nội dung được giữ nguyên. Bucket công khai phục vụ file với MIME type đúng (ví dụ <img src='...'> hoạt động)."
+          },
+          "4": {
+            "question": "Làm thế nào di chuyển từ S3 sang ICBucket?",
+            "answer": "Cài icpay-bucket SDK, tạo bucket, tạo API key. Thay lệnh gọi AWS SDK bằng lệnh gọi ICBucket SDK (API gần như giống hệt). Tải file từ S3, tải lên ICBucket. Cập nhật URL trong ứng dụng. Hầu hết di chuyển <1 giờ cho dự án nhỏ."
+          },
+          "5": {
+            "question": "Nếu canister hết chu kỳ thì sao?",
+            "answer": "Canister ICBucket được giám sát và nạp tự động từ doanh thu bucket. Nếu chu kỳ xuống quá thấp, chúng tôi thông báo chủ bucket gia hạn. Trường hợp xấu nhất (canister bị xóa), file mất — rất hiếm với quản lý chu kỳ đúng."
+          },
+          "6": {
+            "question": "Có thể dùng ICBucket cho metadata NFT không?",
+            "answer": "Có, trường hợp sử dụng hoàn hảo. Tải metadata.json và file hình ảnh lên. Nhận URL on-chain bất biến (https://6vbhm-...-cai.icp0.io/bucket/nft-1.json). Không gateway IPFS, không liên kết hỏng. Bucket công khai phục vụ file ngay lập tức."
+          },
+          "7": {
+            "question": "Có giới hạn kích thước file không?",
+            "answer": "Tải lên đơn giới hạn 2MB mỗi yêu cầu (giới hạn kích thước lệnh gọi IC). Với file lớn hơn, dùng tải lên theo khối — chia thành khối 2MB phía client. SDK xử lý tự động. Đã thử nghiệm đến file 500MB."
+          },
+          "8": {
+            "question": "Có thể xóa file không?",
+            "answer": "Có, chủ bucket có thể xóa qua giao diện web hoặc API. File đã xóa bị loại ngay khỏi canister. Hạn mức lưu trữ được giải phóng. Hỗ trợ xóa hàng loạt."
+          },
+          "9": {
+            "question": "Làm thế nào để bucket công khai?",
+            "answer": "Đặt visibility: 'public' khi tạo bucket. Bucket công khai phục vụ file qua HTTPS không cần xác thực. Ai có URL đều truy cập được. Phù hợp cho trang tĩnh, tài sản công khai và metadata NFT."
+          },
+          "10": {
+            "question": "Có thể lưu trữ trang tĩnh trên ICBucket không?",
+            "answer": "Có. Tải HTML, CSS, JS, hình ảnh lên bucket công khai. Truy cập qua URL canister (https://6vbhm-...-cai.icp0.io/bucket/index.html). Đặt loại nội dung đúng. Chưa có auto-serve index.html — chỉ định đường dẫn đầy đủ trong URL."
+          },
+          "11": {
+            "question": "ICBucket khác IPFS thế nào?",
+            "answer": "ICBucket lưu file trong canister IC với API tương thích S3. IPFS địa chỉ theo nội dung, peer-to-peer. ICBucket không phụ thuộc gateway, truy cập tức thì, API đơn giản hơn. IPFS phi tập trung hơn nhưng truy cập chậm/khó đoán. Chọn theo nhu cầu."
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "Framework ICFalcon",
+        "title": "ICFalcon",
+        "subtitle": "Framework Motoko Sẵn Sàng Sản Xuất cho Internet Computer",
+        "features": "Kiến trúc phân lớp bắt buộc · Frontend Next.js · CLI toàn cục · Xác thực Internet Identity",
+        "installLabel": "Cài đặt bằng một lệnh",
+        "copyCommand": "Sao chép lệnh",
+        "installHint": "Cài phụ thuộc, triển khai cục bộ và khởi động dev server tại localhost:3000",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "Gói"
+      },
+      "problemSolution": {
+        "title": "Xây dựng để giải quyết vấn đề thực",
+        "subtitle": "ICFalcon loại bỏ điểm cản trở phổ biến trong phát triển ICP",
+        "problemHeading": "Vấn đề",
+        "solutionHeading": "Giải pháp",
+        "problems": {
+          "0": {
+            "title": "Không có kiến trúc chuẩn",
+            "description": "Hầu hết dự án Motoko bắt đầu từ đầu không có hướng dẫn rõ về phân lớp, kiểm thử hay mẫu triển khai. Nhóm tái phát minh cấu trúc mỗi lần."
+          },
+          "1": {
+            "title": "Công cụ rời rạc",
+            "description": "Xây ứng dụng ICP nghĩa là cân bằng dfx, mops, npm và script tùy chỉnh. Không có CLI thống nhất cho scaffolding, build hay deploy trên môi trường."
+          },
+          "2": {
+            "title": "Phức tạp tích hợp frontend-backend",
+            "description": "Kết nối frontend Next.js với canister Motoko cần tạo actor thủ công, quản lý danh tính và cấu hình môi trường."
+          },
+          "3": {
+            "title": "Template khởi đầu hạn chế",
+            "description": "Template hiện có quá tối giản hoặc quá cứng nhắc. Không có điểm giữa cho ứng dụng thực tế."
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "Phân lớp sẵn sàng sản xuất",
+            "description": "Kiến trúc bốn lớp (api → service → repository → storage) bắt buộc từ ngày đầu. Mỗi module theo cùng mẫu — onboarding và bảo trì có thể dự đoán."
+          },
+          "1": {
+            "title": "CLI toàn cục falcon",
+            "description": "Một lệnh để scaffold module, cài gói, build, test và deploy. Hoạt động mượt trên local và mainnet với xác nhận tương tác."
+          },
+          "2": {
+            "title": "Stack tích hợp",
+            "description": "Backend Motoko với mo:core, frontend Next.js với shadcn/ui, xác thực Internet Identity và xuất tĩnh. Mọi thứ được nối sẵn."
+          },
+          "3": {
+            "title": "Hệ sinh thái Hub",
+            "description": "Cài gói đã thử nghiệm từ icp-hub bằng `falcon add pkg <name>`. Tích hợp sổ cái, lưu trữ file, giới hạn tốc độ và hơn nữa — plug and play."
+          }
+        }
+      },
+      "article": {
+        "title": "ICFalcon là gì?",
+        "subtitle": "Framework cung cấp cấu trúc, công cụ và tốc độ để xây dựng ứng dụng Internet Computer",
+        "frameworkTitle": "Framework, không phải boilerplate",
+        "frameworkP1": "ICFalcon là điểm khởi đầu có quan điểm cho ứng dụng Motoko. Bắt buộc kiến trúc backend bốn lớp (api → service → repository → storage), kết hợp frontend Next.js hiện đại và cung cấp CLI toàn cục để scaffold, build và deploy.",
+        "frameworkP2": "Khác với template tối giản, ICFalcon cho bạn mẫu có thể mở rộng — giống trong ứng dụng sản xuất như ICPay. Bạn có quản lý bộ nhớ ổn định, hướng dẫn di chuyển, tích hợp Internet Identity và harness kiểm thử từ ngày đầu.",
+        "layeringTitle": "Kiến trúc backend phân lớp",
+        "layeringP1": "Backend tuân thủ tách biệt trách nhiệm nghiêm ngặt. Module API xử lý HTTP và xác thực. Service chứa logic nghiệp vụ. Repository trừu tượng hóa truy cập dữ liệu. Storage quản lý bộ nhớ ổn định.",
+        "layeringP2": "Phân lớp này bắt buộc theo quy ước và được ghi trong repo. Khi scaffold module bằng falcon m:f Product, bốn lớp được tạo, nối vào main.mo và tạo file dịch vụ frontend tương ứng. Không đoán, không nối thủ công.",
+        "frontendTitle": "Tích hợp frontend",
+        "frontendP1": "Frontend là Next.js với component shadcn/ui và xác thực Internet Identity. Xuất ra file tĩnh (output: \"export\") để host trên asset canister hoặc host thông thường như Vercel.",
+        "frontendP2": "Cấu hình agent, dẫn xuất danh tính và ID canister được nối sẵn. Canister backend phục vụ file .did mà frontend tự động lấy. Không tạo actor thủ công hay cân bằng môi trường.",
+        "cliTitle": "CLI falcon",
+        "cliP1": "Mọi thao tác qua một lệnh toàn cục. Khởi tạo dự án (falcon s:init). Scaffold module (falcon m:f Name). Chạy test (falcon b:test --local). Deploy (falcon b:deploy, nhắc xác nhận).",
+        "cliP2": "CLI bọc dfx, mops và npm, thêm scaffolding cho module, endpoint API và dịch vụ frontend. Nhắm local hoặc mainnet bằng cờ --local, mặc định mainnet để an toàn. Lệnh được ghi trong ops/docs/commands.md.",
+        "hubTitle": "Gói Hub",
+        "hubP1": "ICFalcon tích hợp với icp-hub, bộ sưu tập gói Motoko plug-and-play. Cài tích hợp sổ cái, lưu trữ file, giới hạn tốc độ hoặc mẫu phổ biến khác bằng falcon add pkg <name>. Mỗi gói theo cấu trúc bốn lớp và có test.",
+        "hubP2": "Gói được phiên bản hóa và kiểm thử độc lập. Hub mã nguồn mở — bạn có thể đóng góp hoặc fork cho nhu cầu tùy chỉnh.",
+        "audienceTitle": "Dành cho ai?",
+        "audienceP1": "ICFalcon dành cho nhà phát triển muốn ship ứng dụng ICP sẵn sàng sản xuất mà không tái phát minh cấu trúc. Nếu bạn xây canister cần bộ nhớ ổn định, backend phân lớp, xác thực Internet Identity và frontend hiện đại, ICFalcon đưa bạn đến nhanh hơn.",
+        "audienceP2": "Không phải template tối giản. Nó có quan điểm. Phân lớp bắt buộc, CLI là giao diện chính và stack là Motoko + Next.js. Nếu bạn cần stack đó và điểm khởi đầu rõ ràng, ICFalcon là lựa chọn.",
+        "stackTitle": "Tổng quan stack",
+        "stackBackend": "Backend:",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "Frontend:",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "Công cụ:",
+        "stackToolingValue": "falcon CLI · scaffold module · gói icp-hub"
+      },
+      "faq": {
+        "title": "Câu hỏi thường gặp",
+        "subtitle": "Câu hỏi phổ biến về ICFalcon và cách sử dụng",
+        "items": {
+          "0": {
+            "question": "ICFalcon là gì?",
+            "answer": "ICFalcon là framework Motoko mã nguồn mở để xây dựng ứng dụng Internet Computer. Cung cấp kiến trúc backend sẵn sàng sản xuất, frontend Next.js và CLI toàn cục để scaffold, build và deploy."
+          },
+          "1": {
+            "question": "Tôi có cần biết Motoko không?",
+            "answer": "Có. ICFalcon là framework Motoko nên cần quen thuộc với ngôn ngữ. Tuy nhiên kiến trúc phân lớp và lệnh scaffolding giảm boilerplate phải viết thủ công."
+          },
+          "2": {
+            "question": "ICFalcon khác dfx new thế nào?",
+            "answer": "dfx new cho điểm khởi đầu tối giản. ICFalcon cho cấu trúc sẵn sàng sản xuất với phân lớp bắt buộc, quản lý bộ nhớ ổn định, tích hợp Internet Identity và CLI scaffold module. Có quan điểm theo thiết kế."
+          },
+          "3": {
+            "question": "Có thể dùng ICFalcon với canister hiện có không?",
+            "answer": "ICFalcon thiết kế làm điểm khởi đầu, không phải công cụ di chuyển. Bạn có thể áp dụng phần kiến trúc (mẫu phân lớp, lệnh CLI) nhưng tích hợp đầy đủ cần làm thủ công."
+          },
+          "4": {
+            "question": "CLI falcon là gì?",
+            "answer": "CLI falcon là lệnh toàn cục bọc dfx, mops và npm. Xử lý khởi tạo dự án, scaffold module, kiểm thử, build và deploy. Nhắm local hoặc mainnet bằng cờ --local."
+          },
+          "5": {
+            "question": "Cài gói từ đâu?",
+            "answer": "Gói backend cài từ mops và icp-hub. Gói frontend từ npm. CLI đơn giản hóa một phần bằng `falcon add pkg <name>`."
+          },
+          "6": {
+            "question": "ICFalcon sẵn sàng sản xuất chưa?",
+            "answer": "Kiến trúc sẵn sàng sản xuất và được dùng trong ứng dụng live như ICPay. Tuy nhiên ICFalcon là framework, không phải sản phẩm SaaS. Bạn sở hữu canister và chịu trách nhiệm kiểm thử, deploy và bảo trì."
+          },
+          "7": {
+            "question": "ICFalcon có hỗ trợ canister Rust không?",
+            "answer": "Không. ICFalcon là framework Motoko. Với Rust, dùng starter khác hoặc xây từ đầu."
+          },
+          "8": {
+            "question": "Làm thế nào deploy lên mainnet?",
+            "answer": "Chạy `falcon b:deploy` (không có --local). CLI sẽ nhắc xác nhận trước khi deploy lên mainnet. Chế độ upgrade là mặc định; chế độ reinstall không bao giờ dùng để tránh mất dữ liệu."
+          },
+          "9": {
+            "question": "Có thể tùy chỉnh phân lớp không?",
+            "answer": "Kiến trúc bốn lớp (api → service → repository → storage) bắt buộc theo quy ước và scaffold CLI. Bạn có thể lệch nhưng mất lợi ích cấu trúc nhất quán và scaffolding tự động."
+          },
+          "10": {
+            "question": "Làm thế nào đóng góp cho ICFalcon?",
+            "answer": "Fork repo, tạo nhánh tính năng và mở pull request. Theo mẫu trong AGENTS.md và chạy `falcon b:test --local` cùng `falcon p:check --local` trước khi gửi. Với gói hub, đóng góp riêng cho icp-hub."
+          },
+          "11": {
+            "question": "ICFalcon có miễn phí không?",
+            "answer": "Có. ICFalcon mã nguồn mở. Mã nguồn cung cấp nguyên trạng để sử dụng và sửa đổi. Gói hub được cấp phép theo mục trên icp-hub."
+          }
+        }
+      }
+    }
   }
 }

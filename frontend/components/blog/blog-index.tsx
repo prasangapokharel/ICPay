@@ -8,8 +8,7 @@ import {
   filterBlogPostsByCategory,
   type BlogPost,
 } from "@/services/blog/blog"
-import { cn } from "@/lib/ui/utils"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -81,6 +80,7 @@ export function BlogIndex({ posts }: { posts: BlogPost[] }) {
   )
 
   const featured = filteredPosts[0]
+  const gridPosts = filteredPosts.slice(1)
 
   return (
     <div className="space-y-10">
@@ -91,48 +91,36 @@ export function BlogIndex({ posts }: { posts: BlogPost[] }) {
         </p>
       </header>
 
+      <Tabs value={activeCategory} onValueChange={setActiveCategory} className="gap-6">
+        <div className="-mx-4 overflow-x-auto px-4 scrollbar-none md:mx-0 md:px-0">
+          <TabsList
+            variant="line"
+            className="inline-flex h-auto w-max min-w-full flex-nowrap justify-start gap-2 rounded-none bg-transparent p-0 md:flex-wrap md:gap-2"
+          >
+            {categories.map((category) => (
+              <TabsTrigger
+                key={category}
+                value={category}
+                className="h-9 shrink-0 flex-none rounded-full border border-border/60 bg-transparent px-4 py-2 text-sm font-medium whitespace-nowrap text-muted-foreground data-active:border-primary data-active:bg-primary/10 data-active:text-primary"
+              >
+                {category === "all" ? "All" : category}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+      </Tabs>
+
       {featured && <BlogFeaturedCard post={featured} />}
 
-      <Tabs value={activeCategory} onValueChange={setActiveCategory} className="gap-6">
-        <TabsList
-          variant="line"
-          className="h-auto w-full flex-wrap justify-start gap-2 rounded-none bg-transparent p-0"
-        >
-          {categories.map((category) => (
-            <TabsTrigger
-              key={category}
-              value={category}
-              className="h-9 shrink-0 rounded-full border border-border/60 bg-transparent px-4 py-2 text-sm font-medium text-muted-foreground data-active:border-primary data-active:bg-primary/10 data-active:text-primary"
-            >
-              {category === "all" ? "All" : category}
-            </TabsTrigger>
+      {gridPosts.length > 0 ? (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {gridPosts.map((post) => (
+            <BlogGridCard key={post.slug} post={post} />
           ))}
-        </TabsList>
-
-        {categories.map((category) => {
-          const categoryPosts = filterBlogPostsByCategory(posts, category)
-          const [, ...gridPosts] = categoryPosts
-
-          return (
-            <TabsContent key={category} value={category} className="mt-0 outline-none">
-              {categoryPosts.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No posts in this category yet.</p>
-              ) : (
-                <div
-                  className={cn(
-                    "grid gap-5",
-                    gridPosts.length > 0 ? "sm:grid-cols-2 lg:grid-cols-3" : "hidden"
-                  )}
-                >
-                  {gridPosts.map((post) => (
-                    <BlogGridCard key={post.slug} post={post} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          )
-        })}
-      </Tabs>
+        </div>
+      ) : filteredPosts.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No posts in this category yet.</p>
+      ) : null}
     </div>
   )
 }

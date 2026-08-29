@@ -1,3 +1,6 @@
+"use client"
+
+import { useTranslations } from "next-intl"
 import {
   Table,
   TableBody,
@@ -9,19 +12,21 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { CheckmarkCircle02Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
 
+const FEATURE_MATRIX = [
+  { id: "0", icbucket: true, s3: false, gcs: false, azure: false },
+  { id: "1", icbucket: true, s3: false, gcs: false, azure: false },
+  { id: "2", icbucket: true, s3: false, gcs: false, azure: false },
+  { id: "3", icbucket: true, s3: false, gcs: false, azure: false },
+  { id: "4", icbucket: true, s3: false, gcs: false, azure: false },
+  { id: "5", icbucket: true, s3: false, gcs: false, azure: false },
+  { id: "6", icbucket: true, s3: true, gcs: false, azure: false },
+  { id: "7", icbucket: true, s3: true, gcs: true, azure: true },
+  { id: "8", icbucket: true, s3: true, gcs: true, azure: true },
+  { id: "9", icbucket: true, s3: true, gcs: true, azure: true },
+] as const
+
 export function ComparisonSection() {
-  const features = [
-    { name: "30-Day ICP Plans", icbucket: true, s3: false, gcs: false, azure: false },
-    { name: "Pay with ICP (no credit card)", icbucket: true, s3: false, gcs: false, azure: false },
-    { name: "Decentralized", icbucket: true, s3: false, gcs: false, azure: false },
-    { name: "Censorship-Resistant", icbucket: true, s3: false, gcs: false, azure: false },
-    { name: "On-Chain Verifiable", icbucket: true, s3: false, gcs: false, azure: false },
-    { name: "No Account Suspension Risk", icbucket: true, s3: false, gcs: false, azure: false },
-    { name: "S3-Compatible API", icbucket: true, s3: true, gcs: false, azure: false },
-    { name: "Public HTTPS URLs", icbucket: true, s3: true, gcs: true, azure: true },
-    { name: "API Key Auth", icbucket: true, s3: true, gcs: true, azure: true },
-    { name: "Chunked Uploads", icbucket: true, s3: true, gcs: true, azure: true },
-  ]
+  const t = useTranslations("publicSite.icbucket.comparison")
 
   const CheckIcon = () => (
     <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-5 text-primary" />
@@ -35,29 +40,27 @@ export function ComparisonSection() {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              How ICBucket Compares
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              ICBucket vs. traditional cloud storage providers. See what makes us different.
-            </p>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
           </div>
 
           <div className="overflow-x-auto rounded-lg border bg-card">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead className="w-[250px] text-center font-bold">Feature</TableHead>
-                  <TableHead className="text-center font-bold">ICBucket</TableHead>
-                  <TableHead className="text-center font-bold">AWS S3</TableHead>
-                  <TableHead className="text-center font-bold">Google Cloud</TableHead>
-                  <TableHead className="text-center font-bold">Azure Blob</TableHead>
+                  <TableHead className="w-[250px] text-center font-bold">{t("featureColumn")}</TableHead>
+                  <TableHead className="text-center font-bold">{t("icbucketColumn")}</TableHead>
+                  <TableHead className="text-center font-bold">{t("s3Column")}</TableHead>
+                  <TableHead className="text-center font-bold">{t("gcsColumn")}</TableHead>
+                  <TableHead className="text-center font-bold">{t("azureColumn")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {features.map((feature, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="text-center font-medium">{feature.name}</TableCell>
+                {FEATURE_MATRIX.map((feature) => (
+                  <TableRow key={feature.id}>
+                    <TableCell className="text-center font-medium">
+                      {t(`features.${feature.id}`)}
+                    </TableCell>
                     <TableCell className="text-center">
                       <div className="flex justify-center">
                         {feature.icbucket ? <CheckIcon /> : <XIcon />}

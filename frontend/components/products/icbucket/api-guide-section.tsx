@@ -1,7 +1,12 @@
+"use client"
+
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export function ApiGuideSection() {
+  const t = useTranslations("publicSite.icbucket.apiGuide")
+
   const examples = {
     node: {
       install: `npm install icpay-bucket`,
@@ -197,59 +202,54 @@ let results = bucket.search_files("logo").await?;`,
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              SDK & API Reference
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              S3-compatible API with SDKs for Node.js, Python, Rust, and Go. Drop-in replacement
-              for AWS S3.
-            </p>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Code Examples</CardTitle>
+              <CardTitle>{t("codeExamples")}</CardTitle>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="node" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="node">Node.js</TabsTrigger>
-                  <TabsTrigger value="python">Python</TabsTrigger>
-                  <TabsTrigger value="rust">Rust</TabsTrigger>
+                  <TabsTrigger value="node">{t("nodeTab")}</TabsTrigger>
+                  <TabsTrigger value="python">{t("pythonTab")}</TabsTrigger>
+                  <TabsTrigger value="rust">{t("rustTab")}</TabsTrigger>
                 </TabsList>
 
                 {Object.entries(examples).map(([lang, code]) => (
                   <TabsContent key={lang} value={lang} className="space-y-6">
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">Installation</h3>
+                      <h3 className="text-lg font-semibold">{t("installation")}</h3>
                       <pre className="overflow-x-auto rounded-lg bg-muted p-4">
                         <code className="text-sm">{code.install}</code>
                       </pre>
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">Create & Initialize</h3>
+                      <h3 className="text-lg font-semibold">{t("createInit")}</h3>
                       <pre className="overflow-x-auto rounded-lg bg-muted p-4">
                         <code className="text-sm">{code.create}</code>
                       </pre>
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">Upload Files</h3>
+                      <h3 className="text-lg font-semibold">{t("uploadFiles")}</h3>
                       <pre className="overflow-x-auto rounded-lg bg-muted p-4">
                         <code className="text-sm">{code.upload}</code>
                       </pre>
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">Download & Access</h3>
+                      <h3 className="text-lg font-semibold">{t("downloadAccess")}</h3>
                       <pre className="overflow-x-auto rounded-lg bg-muted p-4">
                         <code className="text-sm">{code.download}</code>
                       </pre>
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">File Management</h3>
+                      <h3 className="text-lg font-semibold">{t("fileManagement")}</h3>
                       <pre className="overflow-x-auto rounded-lg bg-muted p-4">
                         <code className="text-sm">{code.manage}</code>
                       </pre>
@@ -263,49 +263,41 @@ let results = bucket.search_files("logo").await?;`,
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">API Key Management</CardTitle>
+                <CardTitle className="text-lg">{t("apiKeyTitle")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Create multiple API keys per bucket with granular permissions:
-                </p>
+                <p className="text-sm text-muted-foreground">{t("apiKeyIntro")}</p>
                 <ul className="space-y-1 text-sm">
                   <li>
-                    <code className="rounded bg-muted px-1 py-0.5 text-xs">read</code> - Download
-                    files
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">{t("permRead")}</code> -{" "}
+                    {t("permReadDesc")}
                   </li>
                   <li>
-                    <code className="rounded bg-muted px-1 py-0.5 text-xs">write</code> - Upload
-                    files
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">{t("permWrite")}</code> -{" "}
+                    {t("permWriteDesc")}
                   </li>
                   <li>
-                    <code className="rounded bg-muted px-1 py-0.5 text-xs">delete</code> - Delete
-                    files
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">{t("permDelete")}</code> -{" "}
+                    {t("permDeleteDesc")}
                   </li>
                 </ul>
-                <p className="text-sm text-muted-foreground">
-                  Revoke and regenerate keys anytime via the web UI.
-                </p>
+                <p className="text-sm text-muted-foreground">{t("apiKeyFooter")}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Rate Limits</CardTitle>
+                <CardTitle className="text-lg">{t("rateLimitsTitle")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Fair usage limits to ensure canister stability:
-                </p>
+                <p className="text-sm text-muted-foreground">{t("rateLimitsIntro")}</p>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>• Upload: 100 requests/minute per API key</li>
-                  <li>• Download: 1000 requests/minute (public files)</li>
-                  <li>• List/Search: 50 requests/minute</li>
-                  <li>• Chunk size: Max 2MB per chunk</li>
+                  <li>• {t("rateLimitUpload")}</li>
+                  <li>• {t("rateLimitDownload")}</li>
+                  <li>• {t("rateLimitList")}</li>
+                  <li>• {t("rateLimitChunk")}</li>
                 </ul>
-                <p className="text-sm text-muted-foreground">
-                  Contact us for higher limits or enterprise plans.
-                </p>
+                <p className="text-sm text-muted-foreground">{t("rateLimitsFooter")}</p>
               </CardContent>
             </Card>
           </div>
