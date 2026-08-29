@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "خيارات تسجيل الدخول عبر Internet Identity",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "ما أنواع الملفات المدعومة؟",
-            "answer": "كل الأنواع: صور وفيديو وPDF وJSON وHTML وCSS وJS وغيرها. نوع المحتوى محفوظ. الـ buckets العامة تقدّم الملفات بأنواع MIME صحيحة (مثلاً <img src='...'> يعمل)."
+            "answer": "كل الأنواع: صور وفيديو وPDF وJSON وHTML وCSS وJS وغيرها. نوع المحتوى محفوظ. الـ buckets العامة تقدّم الملفات بأنواع MIME صحيحة للوصول المباشر من المتصفح (مثلاً روابط الصور تعمل)."
           },
           "4": {
             "question": "كيف أهاجر من S3 إلى ICBucket؟",

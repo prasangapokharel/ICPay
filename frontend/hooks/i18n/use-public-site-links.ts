@@ -70,6 +70,18 @@ export function usePublicSiteLinks() {
       "legal"
     ),
     communityLinks: mapFooterLabels(PUBLIC_COMMUNITY_LINK_DEFS, "community"),
+    companyLinks: mapFooterLabels(
+      PUBLIC_LEGAL_MENU_DEFS.slice(0, 4).map((def) => ({ id: def.id, href: def.href })),
+      "legal"
+    ),
+    policyLinks: mapFooterLabels(
+      PUBLIC_LEGAL_MENU_DEFS.slice(4).map((def) => ({ id: def.id, href: def.href })),
+      "legal"
+    ),
+    exploreLinks: [
+      { href: "/channels", label: tFooter("channels") },
+      { href: "/blog", label: tFooter("blog") },
+    ],
     sectionLabels: {
       products: tNav("sectionProducts"),
       resources: tNav("sectionResources"),
@@ -80,6 +92,8 @@ export function usePublicSiteLinks() {
       resources: tFooter("sectionResources"),
       legal: tFooter("sectionLegal"),
       community: tFooter("sectionCommunity"),
+      company: tFooter("sectionCompany"),
+      explore: tFooter("sectionExplore"),
     },
     navLabels: {
       menu: tNav("menu"),

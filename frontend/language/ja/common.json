@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "Internet Identity によるサインイン",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "どのファイル形式に対応していますか？",
-            "answer": "すべてのファイル形式：画像、動画、PDF、JSON、HTML、CSS、JS など。コンテンツタイプは保持されます。公開バケットは正しい MIME タイプでファイルを配信し、ブラウザから直接アクセスできます（例：<img src='...'> が動作します）。"
+            "answer": "すべてのファイル形式：画像、動画、PDF、JSON、HTML、CSS、JS など。コンテンツタイプは保持されます。公開バケットは正しい MIME タイプでファイルを配信し、ブラウザから直接アクセスできます（例：画像 URL が利用できます）。"
           },
           "4": {
             "question": "S3 から ICBucket へどう移行しますか？",

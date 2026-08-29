@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "Internet Identity से साइन विकल्प",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "कौन से फ़ाइल प्रकार समर्थित हैं?",
-            "answer": "सभी: images, videos, PDFs, JSON, HTML, CSS, JS आदि। content type संरक्षित। सार्वजनिक buckets सही MIME types से सर्व करते हैं (जैसे <img src='...'> काम करता है)।"
+            "answer": "सभी: images, videos, PDFs, JSON, HTML, CSS, JS आदि। content type संरक्षित। सार्वजनिक buckets सही MIME types से सर्व करते हैं (जैसे image URLs काम करती हैं)।"
           },
           "4": {
             "question": "S3 से ICBucket पर कैसे migrate करूँ?",

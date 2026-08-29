@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "ตัวเลือกเข้าสู่ระบบผ่าน Internet Identity",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "รองรับประเภทไฟล์อะไรบ้าง?",
-            "answer": "ทุกประเภท: รูปภาพ วิดีโอ PDF JSON HTML CSS JS ฯลฯ ประเภทเนื้อหาคงอยู่ bucket สาธารณะให้บริการไฟล์ด้วย MIME type ที่ถูกต้อง (เช่น <img src='...'> ใช้งานได้)"
+            "answer": "ทุกประเภท: รูปภาพ วิดีโอ PDF JSON HTML CSS JS ฯลฯ ประเภทเนื้อหาคงอยู่ bucket สาธารณะให้บริการไฟล์ด้วย MIME type ที่ถูกต้องสำหรับเข้าถึงโดยตรงในเบราว์เซอร์ (เช่น URL รูปภาพใช้งานได้)"
           },
           "4": {
             "question": "ย้ายจาก S3 ไป ICBucket อย่างไร?",

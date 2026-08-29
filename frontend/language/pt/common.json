@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "Opções de login via Internet Identity",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "Quais tipos de arquivo são suportados?",
-            "answer": "Todos os tipos: imagens, vídeos, PDFs, JSON, HTML, CSS, JS, etc. O tipo de conteúdo é preservado. Buckets públicos servem arquivos com tipos MIME corretos para acesso direto no navegador (ex.: <img src='...'> funciona)."
+            "answer": "Todos os tipos: imagens, vídeos, PDFs, JSON, HTML, CSS, JS, etc. O tipo de conteúdo é preservado. Buckets públicos servem arquivos com tipos MIME corretos para acesso direto no navegador (ex.: URLs de imagem funcionam)."
           },
           "4": {
             "question": "Como migro do S3 para o ICBucket?",

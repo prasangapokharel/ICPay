@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "Opciones de inicio de sesión con Internet Identity",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "¿Qué tipos de archivo se admiten?",
-            "answer": "Todos los tipos: imágenes, vídeos, PDF, JSON, HTML, CSS, JS, etc. Se conserva el tipo de contenido. Los buckets públicos sirven archivos con tipos MIME correctos para acceso directo en el navegador (p. ej., <img src='...'> funciona)."
+            "answer": "Todos los tipos: imágenes, vídeos, PDF, JSON, HTML, CSS, JS, etc. Se conserva el tipo de contenido. Los buckets públicos sirven archivos con tipos MIME correctos para acceso directo en el navegador (p. ej., las URLs de imagen funcionan)."
           },
           "4": {
             "question": "¿Cómo migro de S3 a ICBucket?",

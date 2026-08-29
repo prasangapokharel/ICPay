@@ -1344,7 +1344,9 @@
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore"
     },
     "heroSignOptions": {
       "label": "Opsi masuk melalui Internet Identity",
@@ -1777,7 +1779,7 @@
           },
           "3": {
             "question": "Jenis file apa yang didukung?",
-            "answer": "Semua jenis file: gambar, video, PDF, JSON, HTML, CSS, JS, dll. Tipe konten dipertahankan. Bucket publik menyajikan file dengan MIME type yang benar (mis. <img src='...'> berfungsi)."
+            "answer": "Semua jenis file: gambar, video, PDF, JSON, HTML, CSS, JS, dll. Tipe konten dipertahankan. Bucket publik menyajikan file dengan MIME type yang benar untuk akses langsung di browser (mis. URL gambar berfungsi)."
           },
           "4": {
             "question": "Bagaimana migrasi dari S3 ke ICBucket?",
