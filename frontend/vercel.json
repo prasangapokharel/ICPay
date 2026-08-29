@@ -73,11 +73,11 @@
     },
     {
       "source": "/channels/join/:slug",
-      "destination": "/channels/join/slug"
+      "destination": "/channels/join/:slug"
     },
     {
       "source": "/channels/:slug",
-      "destination": "/channels/slug"
+      "destination": "/channels/:slug"
     },
     {
       "source": "/:username([A-Za-z0-9_]{1,8})",

@@ -18,6 +18,14 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main className="flex-1 px-4 py-6">{children}</main>
         <footer className="border-t px-4 py-5">
+          <nav className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            <Link href="/channels" className="text-muted-foreground hover:text-foreground">
+              Communities
+            </Link>
+            <Link href="/about" className="text-muted-foreground hover:text-foreground">
+              About
+            </Link>
+          </nav>
           <p className="text-xs text-muted-foreground">© 2026 ICPay. All rights reserved.</p>
         </footer>
       </div>
