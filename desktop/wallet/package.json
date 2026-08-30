@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build:shell": "mkdir -p dist && cp shell/index.html dist/index.html",
+    "build:shell": "node scripts/build-shell.mjs",
     "tauri": "tauri",
     "build": "npm run build:shell && npm run tauri build",
     "stage": "bash scripts/stage.sh"
