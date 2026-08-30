@@ -93,7 +93,7 @@ node_modules/
 !backend/testing/pkg/
 
 # Desktop wallet build outputs (CI copies artifacts here locally)
-downloads/
+/downloads/
 
 # Desktop wallet
 desktop/wallet/node_modules/

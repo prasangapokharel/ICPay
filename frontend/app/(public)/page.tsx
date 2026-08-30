@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { LandingCta } from "@/components/public/landing-cta"
+import { LandingDownloads } from "@/components/public/landing-downloads"
 import { LandingFaq } from "@/components/public/landing-faq"
 import { LandingFeatures } from "@/components/public/landing-features"
 import { LandingHero } from "@/components/public/landing-hero"
@@ -39,6 +40,7 @@ export default function LandingPage() {
       <LandingHowItWorks />
       <LandingHowToPay />
       <LandingTrust />
+      <LandingDownloads />
       <LandingFaq />
       <LandingCta />
     </>

@@ -9,6 +9,7 @@ export function pageImageUrl(path: string): string {
 export const PAGE_IMAGES = {
   landing: {
     heroPhone: page("landing/hero-phone.png"),
+    laptopMockup: page("landing/laptop-mockup.png"),
     paymentFlow: page("landing/payment-flow.webp"),
   },
   icbucket: {
@@ -23,5 +24,11 @@ export const PAGE_IMAGES = {
   },
   presale: {
     cardBg: page("presale/bg.svg"),
+  },
+  downloads: {
+    windows: page("downloads/microsoft-windows-icon.svg"),
+    linux: page("downloads/linux-tux.svg"),
+    fedora: page("downloads/fedora.svg"),
+    macos: page("downloads/apple.svg"),
   },
 } as const
