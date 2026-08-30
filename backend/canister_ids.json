@@ -7,5 +7,8 @@
   },
   "icp_wallet_frontend": {
     "ic": "63dke-waaaa-aaaan-q6mvq-cai"
+  },
+  "icpay_trade": {
+    "ic": "gomfy-saaaa-aaaan-q6onq-cai"
   }
 }

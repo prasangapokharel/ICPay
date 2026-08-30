@@ -169,4 +169,17 @@ assert(TxRepo.getUserTxCount(txsByUser, "uid-never-transacted") == 0);
 assert(TxRepo.getByUser(txsByUser, "uid-never-transacted", 10, 0).size() == 0);
 Debug.print("PASS: unknown user reads as empty");
 
+let swapOut = TxRepo.create(
+  txs, txsByUser, "tx-swap-out", userId, #swapOut, icp, 20_000_000, 0,
+  "wallet", "trade", null, now,
+);
+ignore TxRepo.completeTx(txs, "tx-swap-out", 10, now);
+let swapIn = TxRepo.create(
+  txs, txsByUser, "tx-swap-in", userId, #swapIn, icp, 5_000_000, 0,
+  "trade", "wallet", null, now,
+);
+ignore TxRepo.completeTx(txs, "tx-swap-in", 11, now);
+assert(TxRepo.getTotalDepositAmount(txsByUser, userId, icp) == 85_000_000);
+Debug.print("PASS: getTotalDepositAmount nets swap in and swap out");
+
 Debug.print("ALL TRANSACTION REPOSITORY TESTS PASSED");

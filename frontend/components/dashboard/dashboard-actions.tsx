@@ -11,7 +11,7 @@ const actions = [
     icon: "/images/dashboard/icons8-circled-up-right-48.png",
   },
   {
-    href: "/swap",
+    href: "/trade",
     labelKey: "swap" as const,
     icon: "/images/dashboard/icons8-dividends-48.png",
   },

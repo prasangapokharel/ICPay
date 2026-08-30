@@ -71,6 +71,8 @@ frontend/next-env.d.ts
 # Backend dependencies and local canister output
 backend/.dfx/
 backend/.mops/
+backend/rust/**/target/
+backend/target/
 .dfx/
 
 # Package-manager and debug logs

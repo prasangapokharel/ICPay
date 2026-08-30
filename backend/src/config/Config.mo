@@ -186,11 +186,8 @@ module {
 
   // Swap module
   public let ICPAY_LEDGER_ID: Text = "5fsnk-rqaaa-aaaan-q6m4q-cai";
-  public let ICPSWAP_FACTORY: Text = "4mmnk-kiaaa-aaaag-qbllq-cai";
+  public let TRADE_CANISTER_ID: Text = "gomfy-saaaa-aaaan-q6onq-cai";
   public let ANALYTICS_EXPORT_FEE_E8S: Nat = 10_000_000; // 0.1 ICP when export is not included with the handle tier
-  public let SWAP_ICP_SERVICE_FEE_E8S: Nat = 10_000_000; // 0.1 ICP flat per swap
-  public let MAX_SWAP_RETRIES: Nat = 10;         // pending swap auto-retry ceiling
-  public let RATE_SWAP = { maxPerWindow = 3; windowSeconds = 60 };
 
   // ICPay Cloud — separate maps in main.mo so create/upload/renew do not share a counter.
   public let RATE_BUCKET_CREATE = { maxPerWindow = 3; windowSeconds = 60 };

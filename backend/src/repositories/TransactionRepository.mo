@@ -169,7 +169,11 @@ module {
   };
 
   public func getTotalDepositAmount(byUser: TxStorage.TxByUser, userId: Types.UserId, ledgerId: Text): Nat {
-    sumAmountOnLedger(byUser, userId, #deposit, ledgerId);
+    let deposits = sumAmountOnLedger(byUser, userId, #deposit, ledgerId);
+    let swapIns = sumAmountOnLedger(byUser, userId, #swapIn, ledgerId);
+    let swapOuts = sumAmountOnLedger(byUser, userId, #swapOut, ledgerId);
+    let credited = deposits + swapIns;
+    if (credited >= swapOuts) { credited - swapOuts } else { 0 };
   };
 
   public func getTotalWithdrawalAmount(byUser: TxStorage.TxByUser, userId: Types.UserId): Nat {
