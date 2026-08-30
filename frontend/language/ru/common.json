@@ -1246,7 +1246,8 @@
       "sectionResources": "Ресурсы",
       "sectionLegal": "Правовая информация",
       "primary": {
-        "blog": "Блог"
+        "blog": "Блог",
+        "charity": "Благотворительность"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "Прозрачность",
           "description": "Модель хранения, комиссии и ончейн-операции."
+        },
+        "charity": {
+          "title": "Благотворительность",
+          "description": "Официальные QR-коды государственной помощи при бедствиях."
         }
-      }
+      },
+      "sectionMore": "Ещё"
     },
     "footer": {
       "sectionProducts": "Продукты",
@@ -1338,7 +1344,8 @@
         "brands": "Бренды",
         "terms": "Условия",
         "privacy": "Конфиденциальность",
-        "transparency": "Прозрачность"
+        "transparency": "Прозрачность",
+        "charity": "Благотворительность"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "Благотворительность"
     },
     "heroSignOptions": {
       "label": "Варианты входа через Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Экосистема Hub",
-            "description": "Устанавливайте проверенные пакеты из icp-hub с `falcon add pkg <name>`. Интеграция с ledger, хранение файлов, rate limiting и другое — plug and play."
+            "description": "Устанавливайте проверенные пакеты из icp-hub с `falcon add pkg [name]`. Интеграция с ledger, хранение файлов, rate limiting и другое — plug and play."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "Каждая операция через одну глобальную команду. Инициализация проекта (falcon s:init). Каркас модуля (falcon m:f Name). Запуск тестов (falcon b:test --local). Развёртывание (falcon b:deploy, с запросом подтверждения).",
         "cliP2": "CLI оборачивает dfx, mops и npm и добавляет каркас для модулей, API-эндпоинтов и сервисов фронтенда. Целевая среда — local или mainnet с флагом --local, по умолчанию mainnet для безопасности. Команды описаны в ops/docs/commands.md.",
         "hubTitle": "Пакеты Hub",
-        "hubP1": "ICFalcon интегрируется с icp-hub — коллекцией plug-and-play пакетов Motoko. Установите интеграцию с ledger, хранение файлов, rate limiting и другие паттерны через falcon add pkg <name>. Каждый пакет следует той же четырёхслойной структуре и включает тесты.",
+        "hubP1": "ICFalcon интегрируется с icp-hub — коллекцией plug-and-play пакетов Motoko. Установите интеграцию с ledger, хранение файлов, rate limiting и другие паттерны через falcon add pkg [name]. Каждый пакет следует той же четырёхслойной структуре и включает тесты.",
         "hubP2": "Пакеты версионируются и тестируются независимо. Hub с открытым исходным кодом — можно вносить модули обратно или форкать под свои нужды.",
         "audienceTitle": "Для кого это?",
         "audienceP1": "ICFalcon для разработчиков, которые хотят выпускать продакшен-приложения ICP без изобретения структуры. Если вы строите канистру со stable memory, слоистым бэкендом, аутентификацией Internet Identity и современным фронтендом — ICFalcon ускорит путь.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "Откуда устанавливать пакеты?",
-            "answer": "Бэкенд-пакеты — из mops (менеджер пакетов Motoko) и icp-hub (подобранная коллекция plug-and-play модулей). Фронтенд-пакеты — npm. falcon CLI частично абстрагирует это через `falcon add pkg <name>`."
+            "answer": "Бэкенд-пакеты — из mops (менеджер пакетов Motoko) и icp-hub (подобранная коллекция plug-and-play модулей). Фронтенд-пакеты — npm. falcon CLI частично абстрагирует это через `falcon add pkg [name]`."
           },
           "6": {
             "question": "Готов ли ICFalcon к продакшену?",

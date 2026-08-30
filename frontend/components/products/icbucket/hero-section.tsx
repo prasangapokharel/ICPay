@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl"
 import { Typewriter } from "@/components/shared/typewriter"
 import { HeroSignOptions } from "@/components/public/hero-sign-options"
 import { Button } from "@/components/ui/button"
-import { LANDING_MEDIA } from "@/lib/public/landing-media"
+import { PAGE_IMAGES } from "@/lib/public/page-images"
 
 export function HeroSection() {
   const t = useTranslations("publicSite.icbucket.hero")
@@ -63,12 +63,13 @@ export function HeroSection() {
 
         <div className="relative mx-auto w-full max-w-xs sm:max-w-sm lg:max-w-md">
           <Image
-            src={LANDING_MEDIA.bucketMockup}
+            src={PAGE_IMAGES.icbucket.heroPhone}
             alt={t("imageAlt")}
             width={800}
             height={1280}
             priority
-            className="h-auto w-full"
+            className="w-full"
+            style={{ height: "auto" }}
           />
         </div>
       </div>

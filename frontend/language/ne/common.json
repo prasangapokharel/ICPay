@@ -1246,7 +1246,8 @@
       "sectionResources": "स्रोतहरू",
       "sectionLegal": "कानूनी",
       "primary": {
-        "blog": "ब्लग"
+        "blog": "ब्लग",
+        "charity": "च्यारिटी"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "पारदर्शिता",
           "description": "हिरासत मोडेल, शुल्क र अन-चेन सञ्चालन।"
+        },
+        "charity": {
+          "title": "च्यारिटी",
+          "description": "आधिकारिक सरकारी विपदा राहत QR कोडहरू।"
         }
-      }
+      },
+      "sectionMore": "थप"
     },
     "footer": {
       "sectionProducts": "उत्पादनहरू",
@@ -1338,7 +1344,8 @@
         "brands": "ब्रान्डहरू",
         "terms": "सर्तहरू",
         "privacy": "गोपनीयता",
-        "transparency": "पारदर्शिता"
+        "transparency": "पारदर्शिता",
+        "charity": "च्यारिटी"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "च्यारिटी"
     },
     "heroSignOptions": {
       "label": "Internet Identity मार्फत साइन विकल्प",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Hub इकोसिस्टम",
-            "description": "`falcon add pkg <name>` बाट icp-hub battle-tested packages। ledger integration, file storage, rate limiting — plug and play।"
+            "description": "`falcon add pkg [name]` बाट icp-hub battle-tested packages। ledger integration, file storage, rate limiting — plug and play।"
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "हरेक सञ्चालन एउटै global command बाट। प्रोजेक्ट initialize (falcon s:init)। module scaffold (falcon m:f Name)। tests (falcon b:test --local)। deploy (falcon b:deploy, confirmation prompt)।",
         "cliP2": "CLI dfx, mops र npm wrap गर्छ, modules, API endpoints र frontend services scaffolding थप्छ। --local flag बाट local वा mainnet, default mainnet सुरक्षा। ops/docs/commands.md मा documented।",
         "hubTitle": "Hub packages",
-        "hubP1": "ICFalcon icp-hub plug-and-play Motoko packages सँग जोडिन्छ। falcon add pkg <name> बाट ledger integration, file storage, rate limiting। हरेक package चार-लेयर structure र tests।",
+        "hubP1": "ICFalcon icp-hub plug-and-play Motoko packages सँग जोडिन्छ। falcon add pkg [name] बाट ledger integration, file storage, rate limiting। हरेक package चार-लेयर structure र tests।",
         "hubP2": "packages independently versioned र tested। hub खुला-स्रोत — modules contribute वा fork गर्नुहोस्।",
         "audienceTitle": "कसका लागि?",
         "audienceP1": "ICFalcon विकासकहरूका लागि जो structure reinvent नगरी production-ready ICP एप्स ship गर्न चाहन्छन्। stable memory, layered backend, Internet Identity auth र modern frontend चाहिन्छ भने ICFalcon छिटो पुर्याउँछ।",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "packages कहाँबाट install?",
-            "answer": "ब्याकएन्ड packages mops (Motoko package manager) र icp-hub बाट। फ्रन्टएन्ड npm। falcon CLI `falcon add pkg <name>` बाट केही abstract।"
+            "answer": "ब्याकएन्ड packages mops (Motoko package manager) र icp-hub बाट। फ्रन्टएन्ड npm। falcon CLI `falcon add pkg [name]` बाट केही abstract।"
           },
           "6": {
             "question": "ICFalcon production-ready?",

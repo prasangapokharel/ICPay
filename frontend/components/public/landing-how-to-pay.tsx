@@ -26,11 +26,13 @@ export function LandingHowToPay() {
           <Image
             src={LANDING_MEDIA.paymentFlow}
             alt={t("imageAlt")}
+            title={t("imageAlt")}
             width={2240}
             height={1260}
             loading="lazy"
             sizes="(max-width: 1280px) 100vw, 1280px"
-            className="h-auto w-full"
+            className="w-full"
+            style={{ height: "auto" }}
           />
         </div>
       </div>

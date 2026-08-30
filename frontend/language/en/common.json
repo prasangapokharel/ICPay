@@ -1246,7 +1246,8 @@
       "sectionResources": "Resources",
       "sectionLegal": "Legal",
       "primary": {
-        "blog": "Blog"
+        "blog": "Blog",
+        "charity": "Charity"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "Transparency",
           "description": "Custody model, fees, and on-chain operations."
+        },
+        "charity": {
+          "title": "Charity",
+          "description": "Official government disaster relief QR codes."
         }
-      }
+      },
+      "sectionMore": "More"
     },
     "footer": {
       "sectionProducts": "Products",
@@ -1340,14 +1346,16 @@
         "brands": "Brands",
         "terms": "Terms",
         "privacy": "Privacy",
-        "transparency": "Transparency"
+        "transparency": "Transparency",
+        "charity": "Charity"
       },
       "community": {
         "github": "GitHub",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
-      }
+      },
+      "charity": "Charity"
     },
     "heroSignOptions": {
       "label": "Sign options via Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Hub ecosystem",
-            "description": "Install battle-tested packages from icp-hub with `falcon add pkg <name>`. Ledger integration, file storage, rate limiting, and more — plug and play."
+            "description": "Install battle-tested packages from icp-hub with `falcon add pkg [name]`. Ledger integration, file storage, rate limiting, and more — plug and play."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "Every operation runs through one global command. Initialize a project (falcon s:init). Scaffold a module (falcon m:f Name). Run tests (falcon b:test --local). Deploy (falcon b:deploy, prompts for confirmation).",
         "cliP2": "The CLI wraps dfx, mops, and npm, and adds scaffolding for modules, API endpoints, and frontend services. It targets local or mainnet with a --local flag, defaulting to mainnet for safety. Commands are documented in ops/docs/commands.md.",
         "hubTitle": "Hub packages",
-        "hubP1": "ICFalcon integrates with icp-hub, a collection of plug-and-play Motoko packages. Install ledger integration, file storage, rate limiting, or other common patterns with falcon add pkg <name>. Each package follows the same four-layer structure and includes tests.",
+        "hubP1": "ICFalcon integrates with icp-hub, a collection of plug-and-play Motoko packages. Install ledger integration, file storage, rate limiting, or other common patterns with falcon add pkg [name]. Each package follows the same four-layer structure and includes tests.",
         "hubP2": "Packages are versioned and tested independently. The hub is open-source, so you can contribute modules back or fork them for custom needs.",
         "audienceTitle": "Who is it for?",
         "audienceP1": "ICFalcon is for developers who want to ship production-ready ICP apps without reinventing structure. If you are building a canister that needs stable memory, a layered backend, Internet Identity auth, and a modern frontend, ICFalcon gets you there faster.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "Where do I install packages from?",
-            "answer": "Backend packages are installed from mops (Motoko package manager) and icp-hub (a curated collection of plug-and-play modules). Frontend packages are npm. The falcon CLI abstracts some of this with `falcon add pkg <name>`."
+            "answer": "Backend packages are installed from mops (Motoko package manager) and icp-hub (a curated collection of plug-and-play modules). Frontend packages are npm. The falcon CLI abstracts some of this with `falcon add pkg [name]`."
           },
           "6": {
             "question": "Is ICFalcon production-ready?",

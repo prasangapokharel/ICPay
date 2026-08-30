@@ -1,7 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import ReactCountryFlag from "react-country-flag"
+import { LocaleFlag } from "@/components/i18n/locale-flag"
 import {
   Select,
   SelectContent,
@@ -19,7 +19,7 @@ export function LanguageSelect() {
 
   return (
     <div className="flex min-w-0 items-center gap-3 rounded-2xl border px-4 py-3.5">
-      <Flag country={active.country} />
+      <LocaleFlag country={active.country} label={active.label} />
       <div className="min-w-0 flex-1">
         <p className="text-sm">{t("label")}</p>
         <p className="truncate text-xs text-muted-foreground">{t("description")}</p>
@@ -36,7 +36,7 @@ export function LanguageSelect() {
           {LOCALES.map((l) => (
             <SelectItem key={l.code} value={l.code}>
               <span className="flex items-center gap-2">
-                <Flag country={l.country} />
+                <LocaleFlag country={l.country} label={l.label} />
                 {l.label}
               </span>
             </SelectItem>
@@ -47,15 +47,3 @@ export function LanguageSelect() {
   )
 }
 
-// svg mode rather than the emoji default: Windows ships no colour flag glyphs,
-// so the emoji path renders as two letter boxes there.
-function Flag({ country }: { country: string }) {
-  return (
-    <ReactCountryFlag
-      svg
-      countryCode={country}
-      aria-hidden
-      style={{ width: "1.15rem", height: "1.15rem", borderRadius: "9999px", objectFit: "cover" }}
-    />
-  )
-}

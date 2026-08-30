@@ -1246,7 +1246,8 @@
       "sectionResources": "Sumber Daya",
       "sectionLegal": "Legal",
       "primary": {
-        "blog": "Blog"
+        "blog": "Blog",
+        "charity": "Amal"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "Transparansi",
           "description": "Model kustodi, biaya, dan operasi on-chain."
+        },
+        "charity": {
+          "title": "Amal",
+          "description": "Kode QR bantuan bencana resmi pemerintah."
         }
-      }
+      },
+      "sectionMore": "Lainnya"
     },
     "footer": {
       "sectionProducts": "Produk",
@@ -1338,7 +1344,8 @@
         "brands": "Merek",
         "terms": "Ketentuan",
         "privacy": "Privasi",
-        "transparency": "Transparansi"
+        "transparency": "Transparansi",
+        "charity": "Amal"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "Amal"
     },
     "heroSignOptions": {
       "label": "Opsi masuk melalui Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Ekosistem Hub",
-            "description": "Instal paket teruji dari icp-hub dengan `falcon add pkg <name>`. Integrasi ledger, penyimpanan file, pembatasan laju, dan lainnya — plug and play."
+            "description": "Instal paket teruji dari icp-hub dengan `falcon add pkg [name]`. Integrasi ledger, penyimpanan file, pembatasan laju, dan lainnya — plug and play."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "Setiap operasi melalui satu perintah global. Inisialisasi proyek (falcon s:init). Scaffolding modul (falcon m:f Name). Jalankan tes (falcon b:test --local). Deploy (falcon b:deploy, meminta konfirmasi).",
         "cliP2": "CLI membungkus dfx, mops, dan npm, serta menambahkan scaffolding untuk modul, endpoint API, dan layanan frontend. Menargetkan lokal atau mainnet dengan flag --local, default mainnet untuk keamanan. Perintah didokumentasikan di ops/docs/commands.md.",
         "hubTitle": "Paket Hub",
-        "hubP1": "ICFalcon terintegrasi dengan icp-hub, koleksi paket Motoko plug-and-play. Instal integrasi ledger, penyimpanan file, pembatasan laju, atau pola umum lain dengan falcon add pkg <name>. Setiap paket mengikuti struktur empat lapisan dan menyertakan tes.",
+        "hubP1": "ICFalcon terintegrasi dengan icp-hub, koleksi paket Motoko plug-and-play. Instal integrasi ledger, penyimpanan file, pembatasan laju, atau pola umum lain dengan falcon add pkg [name]. Setiap paket mengikuti struktur empat lapisan dan menyertakan tes.",
         "hubP2": "Paket diberi versi dan diuji secara independen. Hub bersifat open source — Anda bisa berkontribusi atau fork untuk kebutuhan kustom.",
         "audienceTitle": "Untuk siapa?",
         "audienceP1": "ICFalcon untuk pengembang yang ingin mengirim aplikasi ICP siap produksi tanpa menciptakan ulang struktur. Jika Anda membangun canister yang membutuhkan memori stabil, backend berlapis, auth Internet Identity, dan frontend modern, ICFalcon membawa Anda lebih cepat.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "Dari mana saya menginstal paket?",
-            "answer": "Paket backend diinstal dari mops dan icp-hub. Paket frontend dari npm. CLI menyederhanakan sebagian dengan `falcon add pkg <name>`."
+            "answer": "Paket backend diinstal dari mops dan icp-hub. Paket frontend dari npm. CLI menyederhanakan sebagian dengan `falcon add pkg [name]`."
           },
           "6": {
             "question": "Apakah ICFalcon siap produksi?",

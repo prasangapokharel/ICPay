@@ -1246,7 +1246,8 @@
       "sectionResources": "资源",
       "sectionLegal": "法律",
       "primary": {
-        "blog": "博客"
+        "blog": "博客",
+        "charity": "慈善"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "透明度",
           "description": "托管模式、费用与链上操作。"
+        },
+        "charity": {
+          "title": "慈善",
+          "description": "政府官方救灾捐赠二维码。"
         }
-      }
+      },
+      "sectionMore": "更多"
     },
     "footer": {
       "sectionProducts": "产品",
@@ -1338,7 +1344,8 @@
         "brands": "品牌",
         "terms": "服务条款",
         "privacy": "隐私",
-        "transparency": "透明度"
+        "transparency": "透明度",
+        "charity": "慈善"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "慈善"
     },
     "heroSignOptions": {
       "label": "通过 Internet Identity 登录",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Hub 生态",
-            "description": "通过 `falcon add pkg <name>` 从 icp-hub 安装久经考验的软件包。账本集成、文件存储、速率限制等——即插即用。"
+            "description": "通过 `falcon add pkg [name]` 从 icp-hub 安装久经考验的软件包。账本集成、文件存储、速率限制等——即插即用。"
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "所有操作通过一条全局命令运行。初始化项目（falcon s:init）。脚手架模块（falcon m:f Name）。运行测试（falcon b:test --local）。部署（falcon b:deploy，提示确认）。",
         "cliP2": "CLI 封装 dfx、mops 和 npm，并添加模块、API 端点和前端服务的脚手架。通过 --local 标志定位本地或主网，默认为主网以确保安全。命令记录在 ops/docs/commands.md。",
         "hubTitle": "Hub 软件包",
-        "hubP1": "ICFalcon 与 icp-hub 集成，即插即用的 Motoko 软件包集合。通过 falcon add pkg <name> 安装账本集成、文件存储、速率限制或其他常见模式。每个软件包遵循相同的四层结构并包含测试。",
+        "hubP1": "ICFalcon 与 icp-hub 集成，即插即用的 Motoko 软件包集合。通过 falcon add pkg [name] 安装账本集成、文件存储、速率限制或其他常见模式。每个软件包遵循相同的四层结构并包含测试。",
         "hubP2": "软件包独立版本管理和测试。Hub 是开源的，您可以贡献模块回来或为自定义需求 fork。",
         "audienceTitle": "适合谁？",
         "audienceP1": "ICFalcon 适合希望在不重新发明结构的情况下发布生产级 ICP 应用的开发者。如果您正在构建需要稳定内存、分层后端、Internet Identity 认证和现代前端的 canister，ICFalcon 让您更快到达目标。",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "从哪里安装软件包？",
-            "answer": "后端软件包从 mops（Motoko 包管理器）和 icp-hub（精选即插即用模块集合）安装。前端软件包来自 npm。falcon CLI 通过 `falcon add pkg <name>` 抽象了部分流程。"
+            "answer": "后端软件包从 mops（Motoko 包管理器）和 icp-hub（精选即插即用模块集合）安装。前端软件包来自 npm。falcon CLI 通过 `falcon add pkg [name]` 抽象了部分流程。"
           },
           "6": {
             "question": "ICFalcon 可用于生产吗？",

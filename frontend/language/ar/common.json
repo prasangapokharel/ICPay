@@ -1246,7 +1246,8 @@
       "sectionResources": "الموارد",
       "sectionLegal": "قانوني",
       "primary": {
-        "blog": "المدونة"
+        "blog": "المدونة",
+        "charity": "الخيرية"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "الشفافية",
           "description": "نموذج الحفظ والرسوم والعمليات على السلسلة."
+        },
+        "charity": {
+          "title": "الخيرية",
+          "description": "رموز QR الرسمية لصندوق الإغاثة الحكومي."
         }
-      }
+      },
+      "sectionMore": "المزيد"
     },
     "footer": {
       "sectionProducts": "المنتجات",
@@ -1338,7 +1344,8 @@
         "brands": "العلامات التجارية",
         "terms": "الشروط",
         "privacy": "الخصوصية",
-        "transparency": "الشفافية"
+        "transparency": "الشفافية",
+        "charity": "الخيرية"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "الخيرية"
     },
     "heroSignOptions": {
       "label": "خيارات تسجيل الدخول عبر Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "نظام Hub البيئي",
-            "description": "ثبّت حزماً مجربة من icp-hub بـ `falcon add pkg <name>`. تكامل دفتر وحفظ ملفات وتحديد معدل والمزيد — جاهز للاستخدام."
+            "description": "ثبّت حزماً مجربة من icp-hub بـ `falcon add pkg [name]`. تكامل دفتر وحفظ ملفات وتحديد معدل والمزيد — جاهز للاستخدام."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "كل عملية عبر أمر عالمي واحد. تهيئة مشروع (falcon s:init). توليد وحدة (falcon m:f Name). تشغيل اختبارات (falcon b:test --local). نشر (falcon b:deploy، يطلب تأكيداً).",
         "cliP2": "الـ CLI يلف dfx وmops وnpm ويضيف توليداً للوحدات ونقاط API وخدمات الواجهة. يستهدف محلياً أو mainnet بعلم --local، افتراضياً mainnet للأمان. الأوامر موثّقة في ops/docs/commands.md.",
         "hubTitle": "حزم Hub",
-        "hubP1": "ICFalcon يتكامل مع icp-hub، مجموعة حزم Motoko جاهزة. ثبّت تكامل دفتر أو تخزين ملفات أو تحديد معدل بـ falcon add pkg <name>. كل حزمة تتبع بنية أربع طبقات وتشمل اختبارات.",
+        "hubP1": "ICFalcon يتكامل مع icp-hub، مجموعة حزم Motoko جاهزة. ثبّت تكامل دفتر أو تخزين ملفات أو تحديد معدل بـ falcon add pkg [name]. كل حزمة تتبع بنية أربع طبقات وتشمل اختبارات.",
         "hubP2": "الحزم مُصدَّرة ومُختبرة بشكل مستقل. الـ hub مفتوح المصدر — يمكنك المساهمة أو التفرع لاحتياجات مخصصة.",
         "audienceTitle": "لمن هو؟",
         "audienceP1": "ICFalcon لمطورين يريدون شحن تطبيقات ICP جاهزة للإنتاج بلا إعادة اختراع الهيكل. إذا كنت تبني canister يحتاج ذاكرة مستقرة وخلفية طبقية ومصادقة Internet Identity وواجهة حديثة، ICFalcon يوصلك أسرع.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "من أين أثبّت الحزم؟",
-            "answer": "حزم الخلفية من mops وicp-hub. حزم الواجهة من npm. CLI يبسط بعض ذلك بـ `falcon add pkg <name>`."
+            "answer": "حزم الخلفية من mops وicp-hub. حزم الواجهة من npm. CLI يبسط بعض ذلك بـ `falcon add pkg [name]`."
           },
           "6": {
             "question": "هل ICFalcon جاهز للإنتاج؟",

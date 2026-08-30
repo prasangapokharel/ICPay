@@ -1,7 +1,9 @@
 import Image from "next/image"
 import { cn } from "@/lib/ui/utils"
 
-export const PRESALE_CARD_BG = "/images/presale/bg.svg"
+import { PAGE_IMAGES } from "@/lib/public/page-images"
+
+export const PRESALE_CARD_BG = PAGE_IMAGES.presale.cardBg
 
 export const AMBER_EMBED_BTN =
   "bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950 shadow-md shadow-amber-500/20 hover:from-amber-200 hover:via-yellow-300 hover:to-amber-500 disabled:opacity-50"

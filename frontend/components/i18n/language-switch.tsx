@@ -19,12 +19,12 @@ export function LanguageSwitch() {
         aria-label={active.label}
         className="flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:scale-95 sm:size-9"
       >
-        <LocaleFlag country={active.country} size="sm" />
+        <LocaleFlag country={active.country} label={active.label} size="sm" />
       </SelectPrimitive.Trigger>
       <SelectContent align="end">
         {LOCALES.map((l) => (
           <SelectItem key={l.code} value={l.code}>
-            <LocaleFlag country={l.country} />
+            <LocaleFlag country={l.country} label={l.label} />
             {l.label}
           </SelectItem>
         ))}

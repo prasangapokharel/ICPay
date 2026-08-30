@@ -1246,7 +1246,8 @@
       "sectionResources": "리소스",
       "sectionLegal": "법적 고지",
       "primary": {
-        "blog": "블로그"
+        "blog": "블로그",
+        "charity": "기부"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "투명성",
           "description": "보관 모델, 수수료, 온체인 운영."
+        },
+        "charity": {
+          "title": "기부",
+          "description": "정부 공식 재난 구호 QR 코드."
         }
-      }
+      },
+      "sectionMore": "더보기"
     },
     "footer": {
       "sectionProducts": "제품",
@@ -1338,7 +1344,8 @@
         "brands": "브랜드",
         "terms": "이용약관",
         "privacy": "개인정보",
-        "transparency": "투명성"
+        "transparency": "투명성",
+        "charity": "기부"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "기부"
     },
     "heroSignOptions": {
       "label": "Internet Identity로 로그인",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Hub 생태계",
-            "description": "`falcon add pkg <name>`으로 icp-hub에서 검증된 패키지를 설치하세요. 원장 통합, 파일 스토리지, 속도 제한 등 — 플러그 앤 플레이."
+            "description": "`falcon add pkg [name]`으로 icp-hub에서 검증된 패키지를 설치하세요. 원장 통합, 파일 스토리지, 속도 제한 등 — 플러그 앤 플레이."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "모든 작업은 하나의 글로벌 명령으로 실행됩니다. 프로젝트 초기화(falcon s:init). 모듈 스캐폴딩(falcon m:f Name). 테스트 실행(falcon b:test --local). 배포(falcon b:deploy, 확인 프롬프트).",
         "cliP2": "CLI는 dfx, mops, npm을 감싸고 모듈, API 엔드포인트, 프론트엔드 서비스 스캐폴딩을 추가합니다. --local 플래그로 로컬 또는 메인넷을 대상으로 하며, 안전을 위해 기본값은 메인넷입니다. 명령은 ops/docs/commands.md에 문서화되어 있습니다.",
         "hubTitle": "Hub 패키지",
-        "hubP1": "ICFalcon은 플러그 앤 플레이 Motoko 패키지 모음인 icp-hub와 통합됩니다. falcon add pkg <name>으로 원장 통합, 파일 스토리지, 속도 제한 또는 기타 일반 패턴을 설치하세요. 각 패키지는 동일한 4계층 구조를 따르고 테스트를 포함합니다.",
+        "hubP1": "ICFalcon은 플러그 앤 플레이 Motoko 패키지 모음인 icp-hub와 통합됩니다. falcon add pkg [name]으로 원장 통합, 파일 스토리지, 속도 제한 또는 기타 일반 패턴을 설치하세요. 각 패키지는 동일한 4계층 구조를 따르고 테스트를 포함합니다.",
         "hubP2": "패키지는 독립적으로 버전 관리되고 테스트됩니다. Hub는 오픈소스이므로 모듈을 기여하거나 커스텀 필요에 맞게 포크할 수 있습니다.",
         "audienceTitle": "누구를 위한 것인가?",
         "audienceP1": "ICFalcon은 구조를 다시 발명하지 않고 프로덕션 준비 ICP 앱을 출시하려는 개발자를 위한 것입니다. stable memory, 계층형 백엔드, Internet Identity 인증, 현대적인 프론트엔드가 필요한 canister를 구축 중이라면 ICFalcon이 더 빠르게 도달하게 해줍니다.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "패키지는 어디서 설치하나요?",
-            "answer": "백엔드 패키지는 mops(Motoko 패키지 관리자)와 icp-hub(큐레이션된 플러그 앤 플레이 모듈 모음)에서 설치합니다. 프론트엔드 패키지는 npm입니다. falcon CLI는 `falcon add pkg <name>`으로 일부를 추상화합니다."
+            "answer": "백엔드 패키지는 mops(Motoko 패키지 관리자)와 icp-hub(큐레이션된 플러그 앤 플레이 모듈 모음)에서 설치합니다. 프론트엔드 패키지는 npm입니다. falcon CLI는 `falcon add pkg [name]`으로 일부를 추상화합니다."
           },
           "6": {
             "question": "ICFalcon은 프로덕션 준비가 되었나요?",

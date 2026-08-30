@@ -1246,7 +1246,8 @@
       "sectionResources": "Kaynaklar",
       "sectionLegal": "Yasal",
       "primary": {
-        "blog": "Blog"
+        "blog": "Blog",
+        "charity": "Yardım"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "Şeffaflık",
           "description": "Saklama modeli, ücretler ve on-chain işlemler."
+        },
+        "charity": {
+          "title": "Yardım",
+          "description": "Resmi devlet afet yardımı QR kodları."
         }
-      }
+      },
+      "sectionMore": "Daha fazla"
     },
     "footer": {
       "sectionProducts": "Ürünler",
@@ -1338,7 +1344,8 @@
         "brands": "Markalar",
         "terms": "Koşullar",
         "privacy": "Gizlilik",
-        "transparency": "Şeffaflık"
+        "transparency": "Şeffaflık",
+        "charity": "Yardım"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "Yardım"
     },
     "heroSignOptions": {
       "label": "Internet Identity ile giriş seçenekleri",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Hub ekosistemi",
-            "description": "`falcon add pkg <name>` ile icp-hub'dan savaşta test edilmiş paketler kurun. Ledger entegrasyonu, dosya depolama, hız sınırlama ve daha fazlası — tak çalıştır."
+            "description": "`falcon add pkg [name]` ile icp-hub'dan savaşta test edilmiş paketler kurun. Ledger entegrasyonu, dosya depolama, hız sınırlama ve daha fazlası — tak çalıştır."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "Her işlem tek global komut üzerinden çalışır. Proje başlat (falcon s:init). Modül iskelesi (falcon m:f Name). Test çalıştır (falcon b:test --local). Dağıt (falcon b:deploy, onay ister).",
         "cliP2": "CLI, dfx, mops ve npm'i sarar; modüller, API uç noktaları ve frontend servisleri için iskele ekler. --local bayrağıyla yerel veya mainnet hedefler, güvenlik için varsayılan mainnet. Komutlar ops/docs/commands.md'de belgelenmiştir.",
         "hubTitle": "Hub paketleri",
-        "hubP1": "ICFalcon, tak çalıştır Motoko paketleri koleksiyonu icp-hub ile entegre olur. falcon add pkg <name> ile ledger entegrasyonu, dosya depolama, hız sınırlama veya diğer yaygın kalıpları kurun. Her paket aynı dört katmanlı yapıyı izler ve test içerir.",
+        "hubP1": "ICFalcon, tak çalıştır Motoko paketleri koleksiyonu icp-hub ile entegre olur. falcon add pkg [name] ile ledger entegrasyonu, dosya depolama, hız sınırlama veya diğer yaygın kalıpları kurun. Her paket aynı dört katmanlı yapıyı izler ve test içerir.",
         "hubP2": "Paketler bağımsız olarak sürümlenir ve test edilir. Hub açık kaynaklıdır — geri katkıda bulunabilir veya özel ihtiyaçlar için fork edebilirsiniz.",
         "audienceTitle": "Kimler için?",
         "audienceP1": "ICFalcon, yapıyı yeniden icat etmeden üretime hazır ICP uygulamaları göndermek isteyen geliştiriciler içindir. Kararlı bellek, katmanlı backend, Internet Identity auth ve modern frontend gerektiren bir canister oluşturuyorsanız, ICFalcon sizi daha hızlı götürür.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "Paketleri nereden kurarım?",
-            "answer": "Backend paketleri mops ve icp-hub'dan kurulur. Frontend paketleri npm'dendir. CLI, `falcon add pkg <name>` ile bunun bir kısmını soyutlar."
+            "answer": "Backend paketleri mops ve icp-hub'dan kurulur. Frontend paketleri npm'dendir. CLI, `falcon add pkg [name]` ile bunun bir kısmını soyutlar."
           },
           "6": {
             "question": "ICFalcon üretime hazır mı?",

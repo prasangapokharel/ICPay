@@ -41,7 +41,7 @@ export function PublicNavAuth() {
           className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <Avatar className="size-9">
-            {avatarUri && <AvatarImage src={avatarUri} alt="" />}
+            {avatarUri && <AvatarImage src={avatarUri} alt={t("openWallet")} />}
             <AvatarFallback className="bg-muted text-xs font-medium">
               {principal.slice(0, 2).toUpperCase()}
             </AvatarFallback>

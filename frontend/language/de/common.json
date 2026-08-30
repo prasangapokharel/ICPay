@@ -1246,7 +1246,8 @@
       "sectionResources": "Ressourcen",
       "sectionLegal": "Rechtliches",
       "primary": {
-        "blog": "Blog"
+        "blog": "Blog",
+        "charity": "Wohltätigkeit"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "Transparenz",
           "description": "Verwahrungsmodell, Gebühren und On-Chain-Operationen."
+        },
+        "charity": {
+          "title": "Wohltätigkeit",
+          "description": "Offizielle staatliche Katastrophenhilfe-QR-Codes."
         }
-      }
+      },
+      "sectionMore": "Mehr"
     },
     "footer": {
       "sectionProducts": "Produkte",
@@ -1338,7 +1344,8 @@
         "brands": "Marken",
         "terms": "Nutzungsbedingungen",
         "privacy": "Datenschutz",
-        "transparency": "Transparenz"
+        "transparency": "Transparenz",
+        "charity": "Wohltätigkeit"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "Wohltätigkeit"
     },
     "heroSignOptions": {
       "label": "Anmeldeoptionen über Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Hub-Ökosystem",
-            "description": "Installiere erprobte Pakete von icp-hub mit `falcon add pkg <name>`. Ledger-Integration, Dateispeicher, Rate Limiting und mehr — Plug and Play."
+            "description": "Installiere erprobte Pakete von icp-hub mit `falcon add pkg [name]`. Ledger-Integration, Dateispeicher, Rate Limiting und mehr — Plug and Play."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "Jede Operation läuft über einen globalen Befehl. Projekt initialisieren (falcon s:init). Modul scaffolden (falcon m:f Name). Tests ausführen (falcon b:test --local). Deployen (falcon b:deploy, fragt nach Bestätigung).",
         "cliP2": "Die CLI umschließt dfx, mops und npm und fügt Scaffolding für Module, API-Endpunkte und Frontend-Services hinzu. Sie zielt auf lokal oder Mainnet mit einem --local-Flag, standardmäßig Mainnet aus Sicherheitsgründen. Befehle sind in ops/docs/commands.md dokumentiert.",
         "hubTitle": "Hub-Pakete",
-        "hubP1": "ICFalcon integriert sich mit icp-hub, einer Sammlung von Plug-and-Play-Motoko-Paketen. Installiere Ledger-Integration, Dateispeicher, Rate Limiting oder andere gängige Muster mit falcon add pkg <name>. Jedes Paket folgt derselben Vier-Schichten-Struktur und enthält Tests.",
+        "hubP1": "ICFalcon integriert sich mit icp-hub, einer Sammlung von Plug-and-Play-Motoko-Paketen. Installiere Ledger-Integration, Dateispeicher, Rate Limiting oder andere gängige Muster mit falcon add pkg [name]. Jedes Paket folgt derselben Vier-Schichten-Struktur und enthält Tests.",
         "hubP2": "Pakete sind versioniert und unabhängig getestet. Der Hub ist Open Source — du kannst Module zurückbeitragen oder für eigene Bedürfnisse forken.",
         "audienceTitle": "Für wen ist es?",
         "audienceP1": "ICFalcon ist für Entwickler, die produktionsreife ICP-Apps ausliefern wollen, ohne die Struktur neu zu erfinden. Wenn du einen Canister mit Stable Memory, geschichtetem Backend, Internet Identity Auth und modernem Frontend baust, bringt dich ICFalcon schneller ans Ziel.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "Wo installiere ich Pakete her?",
-            "answer": "Backend-Pakete werden von mops (Motoko package manager) und icp-hub (kuratierte Sammlung von Plug-and-Play-Modulen) installiert. Frontend-Pakete sind npm. Die falcon CLI abstrahiert Teile davon mit `falcon add pkg <name>`."
+            "answer": "Backend-Pakete werden von mops (Motoko package manager) und icp-hub (kuratierte Sammlung von Plug-and-Play-Modulen) installiert. Frontend-Pakete sind npm. Die falcon CLI abstrahiert Teile davon mit `falcon add pkg [name]`."
           },
           "6": {
             "question": "Ist ICFalcon produktionsreif?",

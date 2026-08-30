@@ -1246,7 +1246,8 @@
       "sectionResources": "Tài nguyên",
       "sectionLegal": "Pháp lý",
       "primary": {
-        "blog": "Blog"
+        "blog": "Blog",
+        "charity": "Từ thiện"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "Minh bạch",
           "description": "Mô hình lưu ký, phí và hoạt động on-chain."
+        },
+        "charity": {
+          "title": "Từ thiện",
+          "description": "Mã QR cứu trợ thiên tai chính thức của chính phủ."
         }
-      }
+      },
+      "sectionMore": "Thêm"
     },
     "footer": {
       "sectionProducts": "Sản phẩm",
@@ -1338,7 +1344,8 @@
         "brands": "Thương hiệu",
         "terms": "Điều khoản",
         "privacy": "Quyền riêng tư",
-        "transparency": "Minh bạch"
+        "transparency": "Minh bạch",
+        "charity": "Từ thiện"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "Từ thiện"
     },
     "heroSignOptions": {
       "label": "Tùy chọn đăng nhập qua Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Hệ sinh thái Hub",
-            "description": "Cài gói đã thử nghiệm từ icp-hub bằng `falcon add pkg <name>`. Tích hợp sổ cái, lưu trữ file, giới hạn tốc độ và hơn nữa — plug and play."
+            "description": "Cài gói đã thử nghiệm từ icp-hub bằng `falcon add pkg [name]`. Tích hợp sổ cái, lưu trữ file, giới hạn tốc độ và hơn nữa — plug and play."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "Mọi thao tác qua một lệnh toàn cục. Khởi tạo dự án (falcon s:init). Scaffold module (falcon m:f Name). Chạy test (falcon b:test --local). Deploy (falcon b:deploy, nhắc xác nhận).",
         "cliP2": "CLI bọc dfx, mops và npm, thêm scaffolding cho module, endpoint API và dịch vụ frontend. Nhắm local hoặc mainnet bằng cờ --local, mặc định mainnet để an toàn. Lệnh được ghi trong ops/docs/commands.md.",
         "hubTitle": "Gói Hub",
-        "hubP1": "ICFalcon tích hợp với icp-hub, bộ sưu tập gói Motoko plug-and-play. Cài tích hợp sổ cái, lưu trữ file, giới hạn tốc độ hoặc mẫu phổ biến khác bằng falcon add pkg <name>. Mỗi gói theo cấu trúc bốn lớp và có test.",
+        "hubP1": "ICFalcon tích hợp với icp-hub, bộ sưu tập gói Motoko plug-and-play. Cài tích hợp sổ cái, lưu trữ file, giới hạn tốc độ hoặc mẫu phổ biến khác bằng falcon add pkg [name]. Mỗi gói theo cấu trúc bốn lớp và có test.",
         "hubP2": "Gói được phiên bản hóa và kiểm thử độc lập. Hub mã nguồn mở — bạn có thể đóng góp hoặc fork cho nhu cầu tùy chỉnh.",
         "audienceTitle": "Dành cho ai?",
         "audienceP1": "ICFalcon dành cho nhà phát triển muốn ship ứng dụng ICP sẵn sàng sản xuất mà không tái phát minh cấu trúc. Nếu bạn xây canister cần bộ nhớ ổn định, backend phân lớp, xác thực Internet Identity và frontend hiện đại, ICFalcon đưa bạn đến nhanh hơn.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "Cài gói từ đâu?",
-            "answer": "Gói backend cài từ mops và icp-hub. Gói frontend từ npm. CLI đơn giản hóa một phần bằng `falcon add pkg <name>`."
+            "answer": "Gói backend cài từ mops và icp-hub. Gói frontend từ npm. CLI đơn giản hóa một phần bằng `falcon add pkg [name]`."
           },
           "6": {
             "question": "ICFalcon sẵn sàng sản xuất chưa?",

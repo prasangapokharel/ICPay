@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/products/icfalcon/hero-section"
 import { ProblemSolution } from "@/components/products/icfalcon/problem-solution"
 import { ArticleSection } from "@/components/products/icfalcon/article-section"
 import { FaqSection } from "@/components/products/icfalcon/faq-section"
+import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
 export const metadata: Metadata = {
   title: "ICFalcon - Motoko Framework for Internet Computer | ICPay",
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
     siteName: "ICPay",
     images: [
       {
-        url: "https://icpay.app/images/product/icfalcon/icfalcon.png",
+        url: pageImageUrl(PAGE_IMAGES.icfalcon.hero),
         width: 1200,
         height: 630,
         alt: "ICFalcon - Motoko Framework",
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
     title: "ICFalcon - Motoko Framework for Internet Computer",
     description:
       "Production-ready Motoko framework. Start building: npm create icfalcon@latest",
-    images: ["https://icpay.app/images/product/icfalcon/icfalcon.png"],
+    images: [pageImageUrl(PAGE_IMAGES.icfalcon.hero)],
     creator: "@IcpayOfficial",
   },
   alternates: {

@@ -2,6 +2,7 @@ import type { IconSvgElement } from "@hugeicons/react"
 import {
   BookOpen02Icon,
   CloudIcon,
+  FavouriteIcon,
   File01Icon,
   InformationCircleIcon,
   MessageQuestionIcon,
@@ -17,6 +18,7 @@ import {
 } from "@hugeicons/core-free-icons"
 
 export const NAV_MENU_ICONS: Record<string, IconSvgElement> = {
+  "/charity": FavouriteIcon,
   "/blog": News01Icon,
   "/login": Wallet01Icon,
   "/icbucket": CloudIcon,

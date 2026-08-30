@@ -1246,7 +1246,8 @@
       "sectionResources": "Recursos",
       "sectionLegal": "Jurídico",
       "primary": {
-        "blog": "Blog"
+        "blog": "Blog",
+        "charity": "Caridade"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "Transparência",
           "description": "Modelo de custódia, taxas e operações on-chain."
+        },
+        "charity": {
+          "title": "Caridade",
+          "description": "Códigos QR oficiais de ajuda humanitária do governo."
         }
-      }
+      },
+      "sectionMore": "Mais"
     },
     "footer": {
       "sectionProducts": "Produtos",
@@ -1338,7 +1344,8 @@
         "brands": "Marcas",
         "terms": "Termos",
         "privacy": "Privacidade",
-        "transparency": "Transparência"
+        "transparency": "Transparência",
+        "charity": "Caridade"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "Caridade"
     },
     "heroSignOptions": {
       "label": "Opções de login via Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Ecossistema Hub",
-            "description": "Instale pacotes testados em produção do icp-hub com `falcon add pkg <name>`. Integração com ledger, armazenamento de arquivos, limitação de taxa e mais — plug and play."
+            "description": "Instale pacotes testados em produção do icp-hub com `falcon add pkg [name]`. Integração com ledger, armazenamento de arquivos, limitação de taxa e mais — plug and play."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "Cada operação passa por um comando global. Inicialize um projeto (falcon s:init). Faça scaffolding de um módulo (falcon m:f Name). Execute testes (falcon b:test --local). Implante (falcon b:deploy, pede confirmação).",
         "cliP2": "A CLI envolve dfx, mops e npm, e adiciona scaffolding para módulos, endpoints API e serviços frontend. Aponta para local ou mainnet com a flag --local, padrão mainnet por segurança. Os comandos estão documentados em ops/docs/commands.md.",
         "hubTitle": "Pacotes Hub",
-        "hubP1": "O ICFalcon integra com icp-hub, uma coleção de pacotes Motoko plug-and-play. Instale integração com ledger, armazenamento de arquivos, limitação de taxa ou outros padrões comuns com falcon add pkg <name>. Cada pacote segue a mesma estrutura de quatro camadas e inclui testes.",
+        "hubP1": "O ICFalcon integra com icp-hub, uma coleção de pacotes Motoko plug-and-play. Instale integração com ledger, armazenamento de arquivos, limitação de taxa ou outros padrões comuns com falcon add pkg [name]. Cada pacote segue a mesma estrutura de quatro camadas e inclui testes.",
         "hubP2": "Os pacotes são versionados e testados independentemente. O hub é de código aberto, então você pode contribuir módulos de volta ou fazer fork para necessidades personalizadas.",
         "audienceTitle": "Para quem é?",
         "audienceP1": "O ICFalcon é para desenvolvedores que querem lançar apps ICP prontos para produção sem reinventar a estrutura. Se você está construindo um canister que precisa de memória estável, backend em camadas, autenticação Internet Identity e um frontend moderno, o ICFalcon leva você lá mais rápido.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "De onde instalo os pacotes?",
-            "answer": "Pacotes backend são instalados do mops (gerenciador de pacotes Motoko) e icp-hub (coleção selecionada de módulos plug-and-play). Pacotes frontend são npm. A CLI falcon abstrai parte disso com `falcon add pkg <name>`."
+            "answer": "Pacotes backend são instalados do mops (gerenciador de pacotes Motoko) e icp-hub (coleção selecionada de módulos plug-and-play). Pacotes frontend são npm. A CLI falcon abstrai parte disso com `falcon add pkg [name]`."
           },
           "6": {
             "question": "O ICFalcon está pronto para produção?",

@@ -76,10 +76,12 @@ export function LandingHero() {
           <Image
             src={LANDING_MEDIA.heroMockup}
             alt={t("imageAlt")}
+            title={t("imageAlt")}
             width={800}
             height={1280}
             priority
-            className="h-auto w-full"
+            className="w-full"
+            style={{ height: "auto" }}
           />
         </div>
       </div>

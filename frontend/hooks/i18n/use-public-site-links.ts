@@ -85,7 +85,7 @@ export function usePublicSiteLinks() {
     sectionLabels: {
       products: tNav("sectionProducts"),
       resources: tNav("sectionResources"),
-      legal: tNav("sectionLegal"),
+      more: tNav("sectionMore"),
     },
     footerSectionLabels: {
       products: tFooter("sectionProducts"),
