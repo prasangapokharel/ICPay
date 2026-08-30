@@ -24,8 +24,7 @@ import type {
   ApiResult_19,
   ApiResult_20,
   ApiResult_21,
-  SwapQuoteResult,
-  SwapResult,
+  TradeDepositResult,
 } from "@/services/types"
 
 export interface WalletActor {
@@ -149,22 +148,14 @@ export interface WalletActor {
     bucketId: string,
     keyId: string
   ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
-  getSwapQuote: (
-    tokenIn: string,
-    tokenOut: string,
-    amountIn: bigint
-  ) => Promise<{ ok: SwapQuoteResult; err?: never } | { err: string; ok?: never }>
-  executeSwap: (
-    tokenIn: string,
-    tokenOut: string,
-    amountIn: bigint,
-    amountOutMin: bigint
-  ) => Promise<{ ok: SwapResult; err?: never } | { err: string; ok?: never }>
-  recoverFailedSwapInput: (
-    tokenIn: string,
-    tokenOut: string,
-    amountIn: bigint
-  ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  depositForTrade: (
+    ledgerId: string,
+    amount: bigint
+  ) => Promise<{ ok: TradeDepositResult; err?: never } | { err: string; ok?: never }>
+  withdrawFromTrade: (
+    ledgerId: string,
+    amount: bigint
+  ) => Promise<{ ok: TradeDepositResult; err?: never } | { err: string; ok?: never }>
   createLiveRoom: (
     title: string,
     visibility: { open: null } | { inviteOnly: null },

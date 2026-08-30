@@ -129,6 +129,10 @@ export type SwapResult = {
   txId: TxId
 }
 
+export type TradeDepositResult = {
+  blockIndex: bigint
+}
+
 export type PaginatedResult = {
   items: TransactionPublic[]
   total: bigint

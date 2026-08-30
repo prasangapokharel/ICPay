@@ -59,7 +59,7 @@ export default function MenuPage() {
           keywords: "balance ckbtc holdings",
         },
         {
-          href: "/swap",
+          href: "/trade",
           key: "swap",
           icon: "swap",
           keywords: "exchange trade icpswap convert",

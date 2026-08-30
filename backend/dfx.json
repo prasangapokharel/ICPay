@@ -15,6 +15,12 @@
       "type": "pull",
       "id": "ryjl3-tyaaa-aaaaa-aaaba-cai"
     },
+    "icpay_trade": {
+      "candid": "rust/trade/icpay_trade.did",
+      "package": "icpay_trade",
+      "crate": "icpay_trade",
+      "type": "rust"
+    },
     "icp_blob_store": {
       "type": "motoko",
       "main": "blob_store/src/main.mo",
@@ -43,7 +49,11 @@
   },
   "networks": {
     "ic": {
-      "providers": ["https://icp0.io"],
+      "providers": [
+        "https://icp0.io",
+        "https://icp-api.io",
+        "https://ic0.app"
+      ],
       "type": "persistent"
     }
   },

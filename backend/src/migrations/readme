@@ -17,6 +17,7 @@ One module per mainnet upgrade that changes **persisted** record shapes.
 - `StampLedgerId.mo`
 - `AddBucketApiKeys.mo`
 - `AddBucketFileMeta.mo`
+- `DropMotokoSwap.mo`
 
 ## Enhanced Motoko multi-migration
 

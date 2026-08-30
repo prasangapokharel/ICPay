@@ -145,7 +145,7 @@ export function TokenView() {
           </Link>
           {isSwapToken(token.ledgerId) && (
             <Link
-              href={`/swap?from=${token.ledgerId}`}
+              href={`/trade?from=${token.ledgerId}`}
               prefetch
               aria-label={t("swap")}
               className="transition-transform active:scale-95"

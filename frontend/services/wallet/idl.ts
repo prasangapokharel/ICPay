@@ -212,25 +212,11 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const ApiResult_20 = IDL.Variant({ ok: AnalyticsData, err: IDL.Text })
   const ApiResult_21 = IDL.Variant({ ok: AnalyticsExportResult, err: IDL.Text })
 
-  const SwapQuoteResult = IDL.Record({
-    amountOut: IDL.Nat,
-    amountOutRaw: IDL.Nat,
-    icpServiceFee: IDL.Nat,
-    swapFee: IDL.Nat,
-    priceImpact: IDL.Text,
-    poolId: IDL.Text,
-  })
-
-  const SwapResult = IDL.Record({
+  const TradeDepositResult = IDL.Record({
     blockIndex: IDL.Nat64,
-    amountIn: IDL.Nat,
-    amountOut: IDL.Nat,
-    icpServiceFee: IDL.Nat,
-    txId: IDL.Text,
   })
 
-  const ApiResultSwapQuote = IDL.Variant({ ok: SwapQuoteResult, err: IDL.Text })
-  const ApiResultSwap = IDL.Variant({ ok: SwapResult, err: IDL.Text })
+  const ApiResultTradeDeposit = IDL.Variant({ ok: TradeDepositResult, err: IDL.Text })
 
   const BucketVisibility = IDL.Variant({
     Public: IDL.Null,
@@ -648,21 +634,8 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
       []
     ),
     deleteBucket: IDL.Func([IDL.Text], [ApiResultUnit], []),
-    getSwapQuote: IDL.Func(
-      [IDL.Text, IDL.Text, IDL.Nat],
-      [ApiResultSwapQuote],
-      []
-    ),
-    executeSwap: IDL.Func(
-      [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat],
-      [ApiResultSwap],
-      []
-    ),
-    recoverFailedSwapInput: IDL.Func(
-      [IDL.Text, IDL.Text, IDL.Nat],
-      [ApiResultNat],
-      []
-    ),
+    depositForTrade: IDL.Func([IDL.Text, IDL.Nat], [ApiResultTradeDeposit], []),
+    withdrawFromTrade: IDL.Func([IDL.Text, IDL.Nat], [ApiResultTradeDeposit], []),
     createLiveRoom: IDL.Func(
       [IDL.Text, LiveVisibility, IDL.Opt(IDL.Text)],
       [ApiResultLiveCreate],

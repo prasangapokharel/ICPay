@@ -11,8 +11,10 @@ export const BACKEND = resolve(repo, "backend")
 export const FRONTEND = resolve(repo, "frontend")
 
 export const CANISTER = "icp_wallet_backend"
+export const TRADE_CANISTER = "icpay_trade"
 export const OWNED_CANISTERS = [
   { name: "icp_wallet_backend", label: "backend" },
+  { name: "icpay_trade", label: "trade" },
   { name: "icp_wallet_frontend", label: "frontend" },
   { name: "icp_blob_store", label: "blob store" },
 ] as const
@@ -30,7 +32,8 @@ export function resolveOwnedCanister(target?: string): OwnedCanisterName | undef
     (c) =>
       c.name === target ||
       c.label === key ||
-      (key === "blob" && c.name === "icp_blob_store"),
+      (key === "blob" && c.name === "icp_blob_store") ||
+      (key === "trade" && c.name === "icpay_trade"),
   )
   return hit?.name
 }

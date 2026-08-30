@@ -1,0 +1,33 @@
+// [Account](https://github.com/dfinity/ICRC-1/blob/main/standards/ICRC-3/README.md#value)
+// representation of ledgers supporting the ICRC-1 standard.
+type Account = record { owner : principal; subaccount : opt blob };
+type ApiResult = variant { Ok : SwapResult; Err : text };
+type ApiResult_1 = variant { Ok : SwapQuoteResult; Err : text };
+type InitArgs = record { wallet_canister : principal; treasury : principal };
+type Result = variant { Ok; Err : text };
+type Result_1 = variant { Ok : nat; Err : text };
+type SwapQuoteResult = record {
+  amount_after_fee : nat;
+  service_fee : nat;
+  amount_out_raw : nat;
+  amount_out : nat;
+  swap_fee : nat;
+  price_impact : text;
+  pool_id : principal;
+};
+type SwapResult = record {
+  service_fee : nat;
+  tx_id : text;
+  block_index : nat64;
+  amount_out : nat;
+  amount_in : nat;
+};
+service : (InitArgs) -> {
+  credit_from_wallet : (principal, text, nat, nat64) -> (Result);
+  debit_to_wallet : (principal, text, nat, Account) -> (Result_1);
+  execute_swap : (text, text, nat, nat) -> (ApiResult);
+  // M1: wire to factory + pool quote. Slippage default is exposed for clients until then.
+  get_swap_quote : (text, text, nat) -> (ApiResult_1) query;
+  get_trading_balance : (principal, text) -> (nat) query;
+  health : () -> (text) query;
+}
