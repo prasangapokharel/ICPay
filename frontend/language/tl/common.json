@@ -1246,7 +1246,8 @@
       "sectionResources": "Mga Resource",
       "sectionLegal": "Legal",
       "primary": {
-        "blog": "Blog"
+        "blog": "Blog",
+        "charity": "Kawanggawa"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "Transparency",
           "description": "Custody model, mga bayad, at on-chain operations."
+        },
+        "charity": {
+          "title": "Kawanggawa",
+          "description": "Opisyal na QR code ng gobyerno para sa tulong sa kalamidad."
         }
-      }
+      },
+      "sectionMore": "Higit pa"
     },
     "footer": {
       "sectionProducts": "Mga Produkto",
@@ -1338,7 +1344,8 @@
         "brands": "Mga Brand",
         "terms": "Mga Tuntunin",
         "privacy": "Privacy",
-        "transparency": "Transparency"
+        "transparency": "Transparency",
+        "charity": "Kawanggawa"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "Kawanggawa"
     },
     "heroSignOptions": {
       "label": "Mga opsyon sa sign-in sa Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Hub ecosystem",
-            "description": "Mag-install ng battle-tested packages mula sa icp-hub gamit ang `falcon add pkg <name>`. Ledger integration, file storage, rate limiting, at iba pa — plug and play."
+            "description": "Mag-install ng battle-tested packages mula sa icp-hub gamit ang `falcon add pkg [name]`. Ledger integration, file storage, rate limiting, at iba pa — plug and play."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "Lahat ng operation ay sa isang global command. Mag-initialize ng project (falcon s:init). Mag-scaffold ng module (falcon m:f Name). Mag-run ng tests (falcon b:test --local). Mag-deploy (falcon b:deploy, nagpo-prompt ng confirmation).",
         "cliP2": "Binalot ng CLI ang dfx, mops, at npm, at nagdadagdag ng scaffolding para sa modules, API endpoints, at frontend services. Local o mainnet ang target gamit ang --local flag, default mainnet para sa safety. Documented ang commands sa ops/docs/commands.md.",
         "hubTitle": "Hub packages",
-        "hubP1": "Nag-iintegrate ang ICFalcon sa icp-hub, koleksyon ng plug-and-play Motoko packages. Mag-install ng ledger integration, file storage, rate limiting, o iba pang common patterns gamit ang falcon add pkg <name>. Parehong four-layer structure at may tests ang bawat package.",
+        "hubP1": "Nag-iintegrate ang ICFalcon sa icp-hub, koleksyon ng plug-and-play Motoko packages. Mag-install ng ledger integration, file storage, rate limiting, o iba pang common patterns gamit ang falcon add pkg [name]. Parehong four-layer structure at may tests ang bawat package.",
         "hubP2": "Independently versioned at tested ang packages. Open-source ang hub — maaari kang mag-contribute o mag-fork para sa custom needs.",
         "audienceTitle": "Para kanino ito?",
         "audienceP1": "Para sa mga developer na gustong mag-ship ng production-ready ICP apps nang hindi muling binubuo ang structure. Kung gumagawa ka ng canister na kailangan ng stable memory, layered backend, Internet Identity auth, at modern frontend, mas mabilis ka makakarating sa ICFalcon.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "Saan ako mag-iinstall ng packages?",
-            "answer": "Mula sa mops (Motoko package manager) at icp-hub (curated plug-and-play modules) ang backend packages. npm ang frontend packages. Sinasimplify ng falcon CLI ang ilan nito gamit ang `falcon add pkg <name>`."
+            "answer": "Mula sa mops (Motoko package manager) at icp-hub (curated plug-and-play modules) ang backend packages. npm ang frontend packages. Sinasimplify ng falcon CLI ang ilan nito gamit ang `falcon add pkg [name]`."
           },
           "6": {
             "question": "Production-ready ba ang ICFalcon?",

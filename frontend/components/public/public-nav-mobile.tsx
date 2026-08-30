@@ -5,9 +5,9 @@ import { useState } from "react"
 import { usePathname } from "next/navigation"
 import { MenuIcon } from "lucide-react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { News01Icon } from "@hugeicons/core-free-icons"
 import type { NavMenuItem } from "@/lib/public/site-links"
 import { cn } from "@/lib/ui/utils"
+import { getNavMenuIcon } from "@/lib/public/nav-menu-icons"
 import { NavMenuLinkRow } from "@/components/public/nav-menu-item"
 import { usePublicSiteLinks } from "@/hooks/i18n/use-public-site-links"
 import { Button } from "@/components/ui/button"
@@ -90,7 +90,11 @@ export function PublicNavMobile() {
                       : "text-foreground"
                   )}
                 >
-                  <HugeiconsIcon icon={News01Icon} className="size-5 text-primary" strokeWidth={1.75} />
+                  <HugeiconsIcon
+                    icon={getNavMenuIcon(link.href)}
+                    className="size-5 text-primary"
+                    strokeWidth={1.75}
+                  />
                   <span className="text-sm font-medium">{link.label}</span>
                 </Link>
               ))}
@@ -98,7 +102,7 @@ export function PublicNavMobile() {
 
             <MobileNavSection title={sectionLabels.products} items={productMenu} onNavigate={close} />
             <MobileNavSection title={sectionLabels.resources} items={resourceMenu} onNavigate={close} />
-            <MobileNavSection title={sectionLabels.legal} items={legalMenu} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.more} items={legalMenu} onNavigate={close} />
           </div>
         </DrawerContent>
       </Drawer>

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import Image from "next/image"
+import { PAGE_IMAGES } from "@/lib/public/page-images"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,12 +26,14 @@ export function HeroSection() {
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="flex justify-center">
           <Image
-            src="/images/product/icfalcon/icfalcon.png"
+            src={PAGE_IMAGES.icfalcon.hero}
             alt={t("imageAlt")}
+            title={t("imageAlt")}
             width={280}
             height={280}
             priority
-            className="h-auto w-[280px] rounded-2xl"
+            className="w-[280px] rounded-2xl"
+            style={{ height: "auto" }}
           />
         </div>
 

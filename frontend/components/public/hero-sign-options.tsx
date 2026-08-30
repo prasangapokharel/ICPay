@@ -20,7 +20,8 @@ export function HeroSignOptions() {
           >
             <Image
               src={provider.src}
-              alt=""
+              alt={provider.label}
+              title={provider.label}
               width={22}
               height={22}
               unoptimized

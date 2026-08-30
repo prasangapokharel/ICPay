@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 import { BLOG_POSTS } from "@/services/blog/blog"
+import { CHARITY_CAMPAIGNS } from "@/lib/public/charity/campaigns"
 import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
@@ -26,6 +27,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
+  const charityEntries: MetadataRoute.Sitemap = [
+    { url: `${siteUrl}/charity`, changeFrequency: "weekly", priority: 0.75 },
+    ...CHARITY_CAMPAIGNS.map((campaign) => ({
+      url: `${siteUrl}${campaign.href}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+      lastModified: new Date("2026-08-30"),
+    })),
+  ]
+
   return [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.8 },
@@ -37,6 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${siteUrl}/transparency`, changeFrequency: "monthly", priority: 0.3 },
     { url: `${siteUrl}/blog`, changeFrequency: "weekly", priority: 0.7 },
+    ...charityEntries,
     { url: `${siteUrl}/channels`, changeFrequency: "weekly", priority: 0.65 },
     ...blogEntries,
     ...channelEntries,

@@ -7,6 +7,7 @@ import { LandingHowItWorks } from "@/components/public/landing-how-it-works"
 import { LandingHowToPay } from "@/components/public/landing-how-to-pay"
 import { LandingProducts } from "@/components/public/landing-products"
 import { LandingTrust } from "@/components/public/landing-trust"
+import { LANDING_MEDIA } from "@/lib/public/landing-media"
 
 export const metadata: Metadata = {
   title: "ICPay — Send ICP by Username",
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://res.cloudinary.com/dn2ycbmrc/image/upload/v1788002660/Pink_Hue_Minimalist_Simple_Futuristic_Crypto_NFT_Blockchain_Article_Blog_Banner_hanoin.png",
+        url: LANDING_MEDIA.ogImage,
         width: 1200,
         height: 630,
         alt: "ICPay",

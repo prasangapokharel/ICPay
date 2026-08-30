@@ -22,7 +22,7 @@ import { MarketStats } from "@/components/auth/market-stats"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
 import { createAuthClient, resumeRedirectSignIn } from "@/services/auth/auth"
 import { primeLoginChime } from "@/lib/ui/successChime"
-import { APP_LOGO } from "@/lib/ui/brand-images"
+import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import { cn } from "@/lib/ui/utils"
 
 const features = [
@@ -96,7 +96,8 @@ export default function LoginPage() {
             <MarketStats />
             <Image
               src={APP_LOGO}
-              alt="ICP Wallet"
+              alt={APP_LOGO_ALT}
+              title={APP_LOGO_ALT}
               width={128}
               height={128}
               priority
@@ -140,7 +141,10 @@ export default function LoginPage() {
             <div className="flex flex-col items-center gap-3 pt-3">
               <p className="text-xs text-muted-foreground">{t("orContinue")}</p>
               <ButtonGroup>
-                {openIdProviders.map(({ id, src, iconClassName }) => (
+                {openIdProviders.map(({ id, src, iconClassName }) => {
+                  const providerLabel = t(`openId.${id}`)
+
+                  return (
                   <Button
                     key={id}
                     variant="outline"
@@ -148,18 +152,20 @@ export default function LoginPage() {
                     className="size-11 rounded-xl"
                     onClick={() => startLogin({ openIdProvider: id })}
                     disabled={connecting}
-                    aria-label={t(`openId.${id}`)}
+                    aria-label={providerLabel}
                   >
                     <Image
                       src={src}
-                      alt=""
+                      alt={providerLabel}
+                      title={providerLabel}
                       width={24}
                       height={24}
                       unoptimized
                       className={cn("size-6 object-contain", iconClassName)}
                     />
                   </Button>
-                ))}
+                  )
+                })}
               </ButtonGroup>
               <p className="text-center text-xs text-muted-foreground">
                 {t("openIdNote")}

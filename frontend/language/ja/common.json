@@ -1246,7 +1246,8 @@
       "sectionResources": "リソース",
       "sectionLegal": "法的情報",
       "primary": {
-        "blog": "ブログ"
+        "blog": "ブログ",
+        "charity": "チャリティ"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "透明性",
           "description": "カストディモデル、手数料、オンチェーン運用。"
+        },
+        "charity": {
+          "title": "チャリティ",
+          "description": "政府公式の災害救援QRコード。"
         }
-      }
+      },
+      "sectionMore": "その他"
     },
     "footer": {
       "sectionProducts": "プロダクト",
@@ -1338,7 +1344,8 @@
         "brands": "ブランド",
         "terms": "利用規約",
         "privacy": "プライバシー",
-        "transparency": "透明性"
+        "transparency": "透明性",
+        "charity": "チャリティ"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "チャリティ"
     },
     "heroSignOptions": {
       "label": "Internet Identity によるサインイン",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Hub エコシステム",
-            "description": "`falcon add pkg <name>` で icp-hub から実績のあるパッケージをインストール。Ledger 統合、ファイルストレージ、レート制限など — プラグアンドプレイ。"
+            "description": "`falcon add pkg [name]` で icp-hub から実績のあるパッケージをインストール。Ledger 統合、ファイルストレージ、レート制限など — プラグアンドプレイ。"
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "すべての操作は 1 つのグローバルコマンドで実行。プロジェクトの初期化（falcon s:init）。モジュールのスキャフォールディング（falcon m:f Name）。テストの実行（falcon b:test --local）。デプロイ（falcon b:deploy、確認プロンプト付き）。",
         "cliP2": "CLI は dfx、mops、npm をラップし、モジュール、API エンドポイント、フロントエンドサービスのスキャフォールディングを追加します。--local フラグでローカルまたは mainnet を指定し、安全のためデフォルトは mainnet。コマンドは ops/docs/commands.md に記載されています。",
         "hubTitle": "Hub パッケージ",
-        "hubP1": "ICFalcon はプラグアンドプレイの Motoko パッケージ集 icp-hub と統合しています。falcon add pkg <name> で Ledger 統合、ファイルストレージ、レート制限、その他の一般的なパターンをインストール。各パッケージは同じ 4 層構造に従い、テストを含みます。",
+        "hubP1": "ICFalcon はプラグアンドプレイの Motoko パッケージ集 icp-hub と統合しています。falcon add pkg [name] で Ledger 統合、ファイルストレージ、レート制限、その他の一般的なパターンをインストール。各パッケージは同じ 4 層構造に従い、テストを含みます。",
         "hubP2": "パッケージは独立してバージョン管理・テストされます。Hub はオープンソースなので、モジュールをコントリビュートしたり、カスタムニーズ向けにフォークしたりできます。",
         "audienceTitle": "誰のためのものか？",
         "audienceP1": "ICFalcon は構造を一から作り直さずに本番対応の ICP アプリを出荷したい開発者向けです。stable memory、レイヤードバックエンド、Internet Identity 認証、モダンなフロントエンドが必要な canister を構築するなら、ICFalcon がより早く到達できます。",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "パッケージはどこからインストールしますか？",
-            "answer": "バックエンドパッケージは mops（Motoko パッケージマネージャー）と icp-hub（厳選されたプラグアンドプレイモジュール集）からインストールします。フロントエンドパッケージは npm です。falcon CLI は `falcon add pkg <name>` で一部を抽象化します。"
+            "answer": "バックエンドパッケージは mops（Motoko パッケージマネージャー）と icp-hub（厳選されたプラグアンドプレイモジュール集）からインストールします。フロントエンドパッケージは npm です。falcon CLI は `falcon add pkg [name]` で一部を抽象化します。"
           },
           "6": {
             "question": "ICFalcon は本番対応ですか？",

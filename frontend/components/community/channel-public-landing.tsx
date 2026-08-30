@@ -12,7 +12,7 @@ import {
   isCommunityPaid,
   ownerHandle,
 } from "@/services/community/community"
-import { APP_LOGO } from "@/lib/ui/brand-images"
+import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import Image from "next/image"
 
 export function ChannelPublicLanding({
@@ -27,7 +27,7 @@ export function ChannelPublicLanding({
   if (!channel) {
     return (
       <div className="flex min-h-svh flex-col items-center justify-center gap-4 px-6 text-center">
-        <Image src={APP_LOGO} alt="ICPay" width={40} height={40} className="opacity-80" />
+        <Image src={APP_LOGO} alt={APP_LOGO_ALT} title={APP_LOGO_ALT} width={40} height={40} className="opacity-80" />
         <h1 className="text-lg font-semibold tracking-tight">Channel not found</h1>
         <p className="max-w-sm text-sm text-muted-foreground">
           This channel does not exist or the link is wrong.
@@ -50,7 +50,7 @@ export function ChannelPublicLanding({
     <div className="min-h-svh bg-muted/40">
       <header className="border-b border-border/40 bg-background">
         <div className="mx-auto flex max-w-lg items-center gap-2 px-4 py-3">
-          <Image src={APP_LOGO} alt="ICPay" width={28} height={28} />
+          <Image src={APP_LOGO} alt={APP_LOGO_ALT} title={APP_LOGO_ALT} width={28} height={28} />
           <span className="text-sm font-medium text-muted-foreground">ICPay Channels</span>
         </div>
       </header>

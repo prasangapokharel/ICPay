@@ -1246,7 +1246,8 @@
       "sectionResources": "Recursos",
       "sectionLegal": "Aviso legal",
       "primary": {
-        "blog": "Blog"
+        "blog": "Blog",
+        "charity": "Caridad"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "Transparencia",
           "description": "Modelo de custodia, comisiones y operaciones on-chain."
+        },
+        "charity": {
+          "title": "Caridad",
+          "description": "Códigos QR oficiales de ayuda humanitaria gubernamental."
         }
-      }
+      },
+      "sectionMore": "Más"
     },
     "footer": {
       "sectionProducts": "Productos",
@@ -1338,7 +1344,8 @@
         "brands": "Marcas",
         "terms": "Términos",
         "privacy": "Privacidad",
-        "transparency": "Transparencia"
+        "transparency": "Transparencia",
+        "charity": "Caridad"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "Caridad"
     },
     "heroSignOptions": {
       "label": "Opciones de inicio de sesión con Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "Ecosistema Hub",
-            "description": "Instala paquetes probados en batalla desde icp-hub con `falcon add pkg <name>`. Integración con ledger, almacenamiento de archivos, limitación de velocidad y más — plug and play."
+            "description": "Instala paquetes probados en batalla desde icp-hub con `falcon add pkg [name]`. Integración con ledger, almacenamiento de archivos, limitación de velocidad y más — plug and play."
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "Cada operación pasa por un comando global. Inicializa un proyecto (falcon s:init). Haz scaffolding de un módulo (falcon m:f Name). Ejecuta pruebas (falcon b:test --local). Despliega (falcon b:deploy, pide confirmación).",
         "cliP2": "La CLI envuelve dfx, mops y npm, y añade scaffolding para módulos, endpoints API y servicios frontend. Apunta a local o mainnet con la bandera --local, por defecto mainnet por seguridad. Los comandos están documentados en ops/docs/commands.md.",
         "hubTitle": "Paquetes Hub",
-        "hubP1": "ICFalcon se integra con icp-hub, una colección de paquetes Motoko plug-and-play. Instala integración con ledger, almacenamiento de archivos, limitación de velocidad u otros patrones comunes con falcon add pkg <name>. Cada paquete sigue la misma estructura de cuatro capas e incluye pruebas.",
+        "hubP1": "ICFalcon se integra con icp-hub, una colección de paquetes Motoko plug-and-play. Instala integración con ledger, almacenamiento de archivos, limitación de velocidad u otros patrones comunes con falcon add pkg [name]. Cada paquete sigue la misma estructura de cuatro capas e incluye pruebas.",
         "hubP2": "Los paquetes se versionan y prueban de forma independiente. El hub es de código abierto, así que puedes contribuir módulos o hacer fork para necesidades personalizadas.",
         "audienceTitle": "¿Para quién es?",
         "audienceP1": "ICFalcon es para desarrolladores que quieren lanzar apps ICP listas para producción sin reinventar la estructura. Si construyes un canister que necesita memoria estable, backend en capas, autenticación Internet Identity y un frontend moderno, ICFalcon te lleva allí más rápido.",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "¿De dónde instalo los paquetes?",
-            "answer": "Los paquetes backend se instalan desde mops (gestor de paquetes Motoko) e icp-hub (colección seleccionada de módulos plug-and-play). Los paquetes frontend son npm. La CLI falcon abstrae parte de esto con `falcon add pkg <name>`."
+            "answer": "Los paquetes backend se instalan desde mops (gestor de paquetes Motoko) e icp-hub (colección seleccionada de módulos plug-and-play). Los paquetes frontend son npm. La CLI falcon abstrae parte de esto con `falcon add pkg [name]`."
           },
           "6": {
             "question": "¿ICFalcon está listo para producción?",

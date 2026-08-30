@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { APP_LOGO } from "@/lib/ui/brand-images"
+import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import type { SiteLink } from "@/lib/public/site-links"
 import { ThemeToggle } from "@/components/public/theme-toggle"
 import { usePublicSiteLinks } from "@/hooks/i18n/use-public-site-links"
@@ -28,7 +28,13 @@ function FooterLink({ link }: { link: SiteLink }) {
 function FooterGroup({ title, links }: { title: string; links: SiteLink[] }) {
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-semibold tracking-tight text-foreground">{title}</h3>
+      <p
+        role="heading"
+        aria-level={3}
+        className="text-sm font-semibold tracking-tight text-foreground"
+      >
+        {title}
+      </p>
       <ul className="space-y-2">
         {links.map((link) => (
           <li key={`${title}-${link.href}`}>
@@ -74,7 +80,8 @@ export function PublicFooter() {
               >
                 <Image
                   src={APP_LOGO}
-                  alt="ICPay"
+                  alt={APP_LOGO_ALT}
+                  title={APP_LOGO_ALT}
                   width={36}
                   height={36}
                   className="size-9 rounded-lg object-cover"

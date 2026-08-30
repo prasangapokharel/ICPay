@@ -9,6 +9,8 @@ import { LocaleProvider } from "@/components/i18n/locale-provider"
 import { AutoLocale } from "@/components/i18n/auto-locale"
 import { FiatProvider } from "@/components/fiat/fiat-provider"
 import { cn } from "@/lib/ui/utils"
+import { SiteAnalytics } from "@/components/analytics/site-analytics"
+import { SITE_VERIFICATION } from "@/lib/public/site-verification"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -53,8 +55,8 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   verification: {
-    google: "6jnIRWeq6mzEmElP-A7kd2_VRBtz8PAl8vsUnWZSFoc",
-    yandex: "5ad19f1b1325ba5b",
+    google: SITE_VERIFICATION.google,
+    yandex: SITE_VERIFICATION.yandex,
   },
 }
 
@@ -130,6 +132,7 @@ export default function RootLayout({
             </FiatProvider>
           </LocaleProvider>
         </ThemeProvider>
+        <SiteAnalytics />
         <Analytics />
       </body>
     </html>

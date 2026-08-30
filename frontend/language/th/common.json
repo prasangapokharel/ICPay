@@ -1246,7 +1246,8 @@
       "sectionResources": "ทรัพยากร",
       "sectionLegal": "กฎหมาย",
       "primary": {
-        "blog": "บล็อก"
+        "blog": "บล็อก",
+        "charity": "การกุศล"
       },
       "products": {
         "wallet": {
@@ -1308,8 +1309,13 @@
         "transparency": {
           "title": "ความโปร่งใส",
           "description": "โมเดลการเก็บรักษา ค่าธรรมเนียม และการดำเนินการ on-chain"
+        },
+        "charity": {
+          "title": "การกุศล",
+          "description": "คิวอาร์โค้ดช่วยเหลือภัยพิบัติอย่างเป็นทางการของรัฐบาล"
         }
-      }
+      },
+      "sectionMore": "เพิ่มเติม"
     },
     "footer": {
       "sectionProducts": "ผลิตภัณฑ์",
@@ -1338,7 +1344,8 @@
         "brands": "แบรนด์",
         "terms": "ข้อกำหนด",
         "privacy": "ความเป็นส่วนตัว",
-        "transparency": "ความโปร่งใส"
+        "transparency": "ความโปร่งใส",
+        "charity": "การกุศล"
       },
       "community": {
         "github": "GitHub",
@@ -1347,7 +1354,8 @@
         "discord": "Discord"
       },
       "sectionCompany": "Company",
-      "sectionExplore": "Explore"
+      "sectionExplore": "Explore",
+      "charity": "การกุศล"
     },
     "heroSignOptions": {
       "label": "ตัวเลือกเข้าสู่ระบบผ่าน Internet Identity",
@@ -1868,7 +1876,7 @@
           },
           "3": {
             "title": "ระบบนิเวศ Hub",
-            "description": "ติดตั้งแพ็กเกจที่ผ่านการทดสอบจาก icp-hub ด้วย `falcon add pkg <name>` การผสานรวม ledger ที่เก็บไฟล์ จำกัดอัตรา และอื่นๆ — plug and play"
+            "description": "ติดตั้งแพ็กเกจที่ผ่านการทดสอบจาก icp-hub ด้วย `falcon add pkg [name]` การผสานรวม ledger ที่เก็บไฟล์ จำกัดอัตรา และอื่นๆ — plug and play"
           }
         }
       },
@@ -1888,7 +1896,7 @@
         "cliP1": "ทุกการดำเนินการผ่านคำสั่งสากลเดียว เริ่มต้นโปรเจกต์ (falcon s:init) scaffold โมดูล (falcon m:f Name) รันทดสอบ (falcon b:test --local) deploy (falcon b:deploy แจ้งยืนยัน)",
         "cliP2": "CLI ห่อ dfx, mops และ npm และเพิ่ม scaffolding สำหรับโมดูล endpoint API และบริการฟรอนต์เอนด์ กำหนดเป้า local หรือ mainnet ด้วยแฟล็ก --local ค่าเริ่มต้น mainnet เพื่อความปลอดภัย คำสั่งบันทึกใน ops/docs/commands.md",
         "hubTitle": "แพ็กเกจ Hub",
-        "hubP1": "ICFalcon ผสานรวมกับ icp-hub ชุดแพ็กเกจ Motoko plug-and-play ติดตั้งการผสานรวม ledger ที่เก็บไฟล์ จำกัดอัตรา หรือรูปแบบทั่วไปอื่นด้วย falcon add pkg <name> แต่ละแพ็กเกจใช้โครงสร้างสี่เลเยอร์และมีการทดสอบ",
+        "hubP1": "ICFalcon ผสานรวมกับ icp-hub ชุดแพ็กเกจ Motoko plug-and-play ติดตั้งการผสานรวม ledger ที่เก็บไฟล์ จำกัดอัตรา หรือรูปแบบทั่วไปอื่นด้วย falcon add pkg [name] แต่ละแพ็กเกจใช้โครงสร้างสี่เลเยอร์และมีการทดสอบ",
         "hubP2": "แพ็กเกจมีเวอร์ชันและทดสอบแยกกัน hub เป็นโอเพนซอร์ส — คุณสามารถมีส่วนร่วมหรือ fork สำหรับความต้องการเฉพาะ",
         "audienceTitle": "เหมาะกับใคร?",
         "audienceP1": "ICFalcon สำหรับนักพัฒนาที่ต้องการส่งแอป ICP พร้อมโปรดักชันโดยไม่สร้างโครงสร้างใหม่ หากคุณสร้าง canister ที่ต้องการหน่วยความจำคงที่ แบ็กเอนด์แบบเลเยอร์ auth Internet Identity และฟรอนต์เอนด์สมัยใหม่ ICFalcon พาคุณไปถึงเร็วขึ้น",
@@ -1927,7 +1935,7 @@
           },
           "5": {
             "question": "ติดตั้งแพ็กเกจจากไหน?",
-            "answer": "แพ็กเกจแบ็กเอนด์ติดตั้งจาก mops และ icp-hub แพ็กเกจฟรอนต์เอนด์จาก npm CLI ลดความซับซ้อนบางส่วนด้วย `falcon add pkg <name>`"
+            "answer": "แพ็กเกจแบ็กเอนด์ติดตั้งจาก mops และ icp-hub แพ็กเกจฟรอนต์เอนด์จาก npm CLI ลดความซับซ้อนบางส่วนด้วย `falcon add pkg [name]`"
           },
           "6": {
             "question": "ICFalcon พร้อมโปรดักชันไหม?",

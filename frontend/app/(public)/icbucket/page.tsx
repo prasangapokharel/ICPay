@@ -10,6 +10,7 @@ import { ComparisonSection } from "@/components/products/icbucket/comparison-sec
 import { PricingSection } from "@/components/products/icbucket/pricing-section"
 import { ApiGuideSection } from "@/components/products/icbucket/api-guide-section"
 import { FaqSection } from "@/components/products/icbucket/faq-section"
+import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
 export const metadata: Metadata = {
   title: "ICBucket - On-Chain Cloud Storage for Web3 | ICPay",
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
     siteName: "ICPay",
     images: [
       {
-        url: "https://icpay.app/images/product/icbuckets/banners/og-image.png",
+        url: pageImageUrl(PAGE_IMAGES.icbucket.hero),
         width: 1200,
         height: 630,
         alt: "ICBucket - On-Chain Cloud Storage",
@@ -58,7 +59,7 @@ export const metadata: Metadata = {
     title: "ICBucket - On-Chain Cloud Storage for Web3",
     description:
       "Store files on-chain with API keys and SDKs. 30-day ICP plans — no servers, no AWS bills.",
-    images: ["https://icpay.app/images/product/icbuckets/banners/twitter-card.png"],
+    images: [pageImageUrl(PAGE_IMAGES.icbucket.hero)],
     creator: "@IcpayOfficial",
   },
   alternates: {

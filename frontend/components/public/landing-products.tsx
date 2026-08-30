@@ -33,15 +33,18 @@ export function LandingProducts() {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-3">
-          {products.map((product) => (
+          {products.map((product) => {
+            const imageLabel = t(`items.${product.id}.title`)
+
+            return (
             <Link key={product.id} href={product.href} className="group block h-full">
               <Card className="flex h-full flex-col gap-0 overflow-hidden border-border/60 bg-card p-0 shadow-sm transition-shadow hover:shadow-md">
                 <div className="relative aspect-[5/3] w-full shrink-0 overflow-hidden bg-muted">
                   <Image
                     src={product.image}
-                    alt=""
+                    alt={imageLabel}
+                    title={imageLabel}
                     fill
-                    unoptimized
                     loading="lazy"
                     sizes="(max-width: 1024px) 100vw, 33vw"
                     className="object-cover object-center"
@@ -60,7 +63,8 @@ export function LandingProducts() {
                 </CardContent>
               </Card>
             </Link>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
