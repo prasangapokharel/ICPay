@@ -1,10 +1,16 @@
-use tauri::{Manager, WebviewUrl};
+use std::sync::atomic::{AtomicU32, Ordering};
+
+use tauri::webview::{NewWindowFeatures, NewWindowResponse};
+use tauri::{Manager, Url, WebviewUrl};
 
 const LOGIN_URL: &str = "https://icpay.app/login";
+
+static POPUP_COUNTER: AtomicU32 = AtomicU32::new(0);
 
 fn host_allowed(host: &str) -> bool {
     host == "icpay.app"
         || host.ends_with(".icpay.app")
+        || host == "www.icpay.app"
         || host.ends_with(".ic0.app")
         || host.ends_with(".icp0.io")
         || host == "id.ai"
@@ -13,6 +19,41 @@ fn host_allowed(host: &str) -> bool {
         || host.ends_with(".identity.ic0.app")
         || host == "localhost"
         || host == "127.0.0.1"
+}
+
+fn navigation_allowed(url: &Url) -> bool {
+    host_allowed(url.host_str().unwrap_or(""))
+}
+
+fn open_auth_popup<R: tauri::Runtime>(
+    app: &tauri::AppHandle<R>,
+    url: Url,
+    features: NewWindowFeatures,
+) -> NewWindowResponse<R> {
+    if !navigation_allowed(&url) {
+        return NewWindowResponse::Deny;
+    }
+
+    let label = format!("ii-auth-{}", POPUP_COUNTER.fetch_add(1, Ordering::Relaxed));
+    let popup_url = WebviewUrl::External(url);
+
+    let builder = tauri::WebviewWindowBuilder::new(app, label, popup_url)
+        .title("Internet Identity")
+        .resizable(true)
+        .center()
+        .window_features(features)
+        .on_navigation(|nav_url| navigation_allowed(nav_url))
+        .on_document_title_changed(|window, title| {
+            let _ = window.set_title(&title);
+        });
+
+    match builder.build() {
+        Ok(window) => NewWindowResponse::Create { window },
+        Err(error) => {
+            eprintln!("ICPay: failed to open auth window: {error}");
+            NewWindowResponse::Deny
+        }
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -25,6 +66,7 @@ pub fn run() {
             }
         }))
         .setup(|app| {
+            let app_handle = app.handle().clone();
             let login = LOGIN_URL
                 .parse()
                 .expect("icpay login url must be valid");
@@ -35,7 +77,8 @@ pub fn run() {
                 .min_inner_size(390.0, 640.0)
                 .resizable(true)
                 .center()
-                .on_navigation(|url| host_allowed(url.host_str().unwrap_or("")))
+                .on_navigation(|url| navigation_allowed(url))
+                .on_new_window(move |url, features| open_auth_popup(&app_handle, url, features))
                 .build()?;
 
             Ok(())
