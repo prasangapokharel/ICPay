@@ -91,3 +91,11 @@ node_modules/
 /pkg
 !backend/pkg/
 !backend/testing/pkg/
+
+# Desktop wallet build outputs (CI copies artifacts here locally)
+downloads/
+
+# Desktop wallet
+desktop/wallet/node_modules/
+desktop/wallet/dist/
+desktop/wallet/src-tauri/target/
