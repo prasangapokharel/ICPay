@@ -1,40 +1,43 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import Link from "next/link"
+import { useMemo, useRef, useState } from "react"
 import useSWR from "swr"
 import { useTranslations } from "next-intl"
-import { buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Spinner } from "@/components/ui/spinner"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useTokenHolding, useTransactions } from "@/hooks/wallet/useWalletData"
+import {
+  useTokenHolding,
+  useTransactions,
+  useRefreshWallet,
+} from "@/hooks/wallet/useWalletData"
 import { useDebounced } from "@/hooks/ui/useDebounced"
 import { formatTokenAmount, parseTokenAmount } from "@/lib/wallet/utils"
-import { DEFAULT_SLIPPAGE_BPS } from "@/lib/trade/fees"
+import { DEFAULT_SLIPPAGE_BPS, minAmountOut } from "@/lib/trade/fees"
 import { cn } from "@/lib/ui/utils"
-import { fetchTradeQuoteChecked } from "@/services/trade/trade"
+import {
+  fetchTradeQuoteChecked,
+  runTrade,
+  warmTradeSession,
+} from "@/services/trade/trade"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
 
 const QUICK_FILLS = [25, 50, 75, 100] as const
 
 function timeAgo(ts: bigint): string {
-  const ms = Number(ts / 1_000_000n)
-  const diffS = Math.floor((Date.now() - ms) / 1000)
-  if (diffS < 60) return `${diffS}s ago`
-  if (diffS < 3600) return `${Math.floor(diffS / 60)}m ago`
-  if (diffS < 86400) return `${Math.floor(diffS / 3600)}h ago`
-  return `${Math.floor(diffS / 86400)}d ago`
+  const diffS = Math.floor((Date.now() - Number(ts / 1_000_000n)) / 1000)
+  if (diffS < 60) return `${diffS}s`
+  if (diffS < 3600) return `${Math.floor(diffS / 60)}m`
+  if (diffS < 86400) return `${Math.floor(diffS / 3600)}h`
+  return `${Math.floor(diffS / 86400)}d`
 }
 
-function SwapHistory({
-  snapshot,
-}: {
-  snapshot: TradePairSnapshot
-}) {
+function SwapHistory({ snapshot }: { snapshot: TradePairSnapshot }) {
   const t = useTranslations("marketTrade")
-  const { items, isLoading } = useTransactions(0, 15)
+  const { items, isLoading } = useTransactions(0, 20)
 
   const swaps = useMemo(
     () =>
@@ -50,39 +53,41 @@ function SwapHistory({
   )
 
   return (
-    <div className="mt-auto border-t border-border/50">
-      <p className="px-4 pb-1 pt-3 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+    <div className="border-t border-border/40 px-3 py-2.5">
+      <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
         {t("recentSwaps")}
       </p>
       {isLoading ? (
-        <div className="space-y-1.5 px-4 pb-3">
-          {[1, 2].map((i) => (
-            <div key={i} className="h-7 animate-pulse rounded bg-muted/40" />
+        <div className="space-y-1.5">
+          {[0, 1].map((i) => (
+            <div key={i} className="h-6 animate-pulse rounded bg-muted/40" />
           ))}
         </div>
       ) : swaps.length === 0 ? (
-        <p className="px-4 pb-3 text-xs text-muted-foreground">{t("noRecentSwaps")}</p>
+        <p className="text-xs text-muted-foreground/60">{t("noRecentSwaps")}</p>
       ) : (
-        <ul className="space-y-0.5 px-4 pb-3">
+        <ul className="space-y-1">
           {swaps.map((tx) => {
             const isBuy = "swapIn" in tx.txType
             const isBase = tx.ledgerId === snapshot.baseLedgerId
-            const symbol = isBase ? snapshot.base.symbol : snapshot.quote.symbol
-            const decimals = isBase ? snapshot.base.decimals : snapshot.quote.decimals
+            const sym = isBase ? snapshot.base.symbol : snapshot.quote.symbol
+            const dec = isBase ? snapshot.base.decimals : snapshot.quote.decimals
             return (
-              <li key={tx.id} className="flex items-center justify-between text-xs">
+              <li key={tx.id} className="grid grid-cols-[auto_1fr_auto] items-center gap-2 text-xs">
                 <span
                   className={cn(
-                    "font-medium",
-                    isBuy ? "text-emerald-500" : "text-red-500"
+                    "w-10 font-semibold",
+                    isBuy ? "text-primary" : "text-destructive"
                   )}
                 >
                   {isBuy ? t("swapBuy") : t("swapSell")}
                 </span>
-                <span className="tabular-nums text-muted-foreground">
-                  {formatTokenAmount(tx.amount, decimals)} {symbol}
+                <span className="truncate tabular-nums text-foreground/80">
+                  {formatTokenAmount(tx.amount, dec)} {sym}
                 </span>
-                <span className="text-[10px] text-muted-foreground/60">{timeAgo(tx.createdAt)}</span>
+                <span className="text-[10px] text-muted-foreground/50">
+                  {timeAgo(tx.createdAt)}
+                </span>
               </li>
             )
           })}
@@ -91,6 +96,8 @@ function SwapHistory({
     </div>
   )
 }
+
+type TradeStatus = "idle" | "trading" | "success" | "error"
 
 export function TradeOrderPanel({
   snapshot,
@@ -101,18 +108,19 @@ export function TradeOrderPanel({
 }) {
   const t = useTranslations("marketTrade")
   const { isAuthenticated, identity } = useAuth()
+  const refresh = useRefreshWallet()
+  const tradeLock = useRef(false)
+
   const [side, setSide] = useState<"buy" | "sell">("buy")
   const [amountText, setAmountText] = useState("")
+  const [status, setStatus] = useState<TradeStatus>("idle")
+  const [tradeError, setTradeError] = useState<string | null>(null)
 
   const tokenIn = side === "buy" ? snapshot?.quote : snapshot?.base
   const tokenOut = side === "buy" ? snapshot?.base : snapshot?.quote
 
   const { token: inHolding } = useTokenHolding(tokenIn?.ledgerId ?? null)
   const walletBalance = isAuthenticated ? (inHolding?.balance ?? null) : null
-  const balanceHuman =
-    walletBalance !== null && tokenIn
-      ? formatTokenAmount(walletBalance, tokenIn.decimals)
-      : null
 
   const amountIn = useMemo(() => {
     if (!tokenIn || !amountText.trim()) return null
@@ -131,21 +139,10 @@ export function TradeOrderPanel({
         tokenIn!.ledgerId,
         tokenOut!.ledgerId,
         debouncedIn!,
-        {
-          skipAllowlistCheck: true,
-          tokenInFee: tokenIn!.fee,
-          tokenOutFee: tokenOut!.fee,
-        }
+        { skipAllowlistCheck: true, tokenInFee: tokenIn!.fee, tokenOutFee: tokenOut!.fee }
       ),
     { revalidateOnFocus: false, dedupingInterval: 5_000 }
   )
-
-  const tradeHref = useMemo(() => {
-    if (!snapshot) return "/trade"
-    const from = side === "buy" ? snapshot.quoteLedgerId : snapshot.baseLedgerId
-    const to = side === "buy" ? snapshot.baseLedgerId : snapshot.quoteLedgerId
-    return `/trade?from=${from}&to=${to}`
-  }, [side, snapshot])
 
   function applyFill(pct: number) {
     if (!walletBalance || !tokenIn) return
@@ -153,8 +150,41 @@ export function TradeOrderPanel({
     setAmountText(formatTokenAmount(raw, tokenIn.decimals))
   }
 
+  async function handleTrade() {
+    if (!snapshot || !tokenIn || !tokenOut || !amountIn || !quote) return
+    if (tradeLock.current) return
+    tradeLock.current = true
+    setStatus("trading")
+    setTradeError(null)
+    void warmTradeSession(identity)
+    try {
+      const amountOutMin = minAmountOut(quote.amountOutRaw ?? quote.amountOut)
+      const result = await runTrade(
+        identity,
+        tokenIn.ledgerId,
+        tokenOut.ledgerId,
+        amountIn,
+        amountOutMin
+      )
+      if ("err" in result) {
+        setStatus("error")
+        setTradeError(result.err)
+      } else {
+        setStatus("success")
+        setAmountText("")
+        refresh()
+        setTimeout(() => setStatus("idle"), 4000)
+      }
+    } catch (e) {
+      setStatus("error")
+      setTradeError(e instanceof Error ? e.message : "Trade failed")
+    } finally {
+      tradeLock.current = false
+    }
+  }
+
   if (loading && !snapshot) {
-    return <div className="h-full min-h-[320px] animate-pulse bg-muted/20" />
+    return <div className="h-full min-h-[340px] animate-pulse rounded-none bg-muted/20" />
   }
 
   if (!snapshot) return null
@@ -162,60 +192,73 @@ export function TradeOrderPanel({
   const paySymbol = tokenIn?.symbol ?? ""
   const receiveSymbol = tokenOut?.symbol ?? ""
   const slippagePct = (Number(DEFAULT_SLIPPAGE_BPS) / 100).toFixed(0)
+  const hasAmount = amountIn && amountIn > 0n
+  const canTrade = isAuthenticated && hasAmount && !!quote && status !== "trading"
+  const isBuy = side === "buy"
 
   return (
-    <div className="flex h-full min-h-[380px] flex-col border-l border-border/60 bg-card/40">
-      {/* Buy / Sell tabs */}
+    <div className="flex h-full flex-col border-l border-border/60 bg-card/30">
       <Tabs
         value={side}
         onValueChange={(v) => {
           setSide(v as "buy" | "sell")
           setAmountText("")
+          setStatus("idle")
+          setTradeError(null)
         }}
         className="flex h-full min-h-0 flex-col"
       >
-        <TabsList className="m-3 mb-0 grid grid-cols-2 rounded-lg bg-muted/40 p-0.5">
-          <TabsTrigger
-            value="buy"
-            className="rounded-md text-xs data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-400 data-[state=active]:shadow-none"
-          >
-            {t("buy")} {snapshot.base.symbol}
-          </TabsTrigger>
-          <TabsTrigger
-            value="sell"
-            className="rounded-md text-xs data-[state=active]:bg-red-500/20 data-[state=active]:text-red-400 data-[state=active]:shadow-none"
-          >
-            {t("sell")} {snapshot.base.symbol}
-          </TabsTrigger>
-        </TabsList>
+        {/* Tab bar */}
+        <div className="px-3 pt-3">
+          <TabsList className="grid w-full grid-cols-2 bg-muted/30 p-0.5">
+            <TabsTrigger
+              value="buy"
+              className="rounded text-xs font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none"
+            >
+              {t("buy")} {snapshot.base.symbol}
+            </TabsTrigger>
+            <TabsTrigger
+              value="sell"
+              className="rounded text-xs font-medium data-[state=active]:bg-destructive data-[state=active]:text-destructive-foreground data-[state=active]:shadow-none"
+            >
+              {t("sell")} {snapshot.base.symbol}
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-3 pb-3 pt-3">
-          {/* Balance row */}
+        {/* Body */}
+        <div className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto px-3 pb-3 pt-2.5">
+          {/* Balance */}
           {isAuthenticated && (
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">{t("balance")}</span>
               <span className="tabular-nums font-medium">
-                {balanceHuman !== null ? `${balanceHuman} ${paySymbol}` : "—"}
+                {walletBalance !== null && tokenIn
+                  ? `${formatTokenAmount(walletBalance, tokenIn.decimals)} ${paySymbol}`
+                  : "—"}
               </span>
             </div>
           )}
 
-          {/* Amount input */}
+          {/* Amount */}
           <div className="relative">
             <Input
-              id="terminal-amount"
               inputMode="decimal"
               placeholder="0.00"
-              className="h-10 bg-background/70 pr-14 text-sm tabular-nums"
+              className="h-10 bg-background/60 pr-14 text-sm tabular-nums"
               value={amountText}
-              onChange={(e) => setAmountText(e.target.value)}
+              onChange={(e) => {
+                setAmountText(e.target.value)
+                setStatus("idle")
+                setTradeError(null)
+              }}
             />
-            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-muted-foreground">
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-muted-foreground">
               {paySymbol}
             </span>
           </div>
 
-          {/* Quick fill */}
+          {/* Quick fills */}
           {isAuthenticated && walletBalance !== null && walletBalance > 0n && (
             <div className="grid grid-cols-4 gap-1">
               {QUICK_FILLS.map((pct) => (
@@ -223,7 +266,7 @@ export function TradeOrderPanel({
                   key={pct}
                   type="button"
                   onClick={() => applyFill(pct)}
-                  className="rounded border border-border/60 bg-muted/30 py-1 text-[10px] font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-foreground"
+                  className="rounded border border-border/50 bg-muted/20 py-1 text-[10px] font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-foreground"
                 >
                   {pct === 100 ? "MAX" : `${pct}%`}
                 </button>
@@ -231,20 +274,22 @@ export function TradeOrderPanel({
             </div>
           )}
 
-          {/* Output */}
-          <div className="rounded-lg border border-border/50 bg-muted/10 px-3 py-2.5">
+          {/* Estimated output */}
+          <div className="rounded-md border border-border/40 bg-muted/10 px-2.5 py-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">{t("youReceive")}</span>
+              <span className="text-[11px] text-muted-foreground">{t("youReceive")}</span>
               {quoting && <Spinner className="size-3 text-muted-foreground" />}
             </div>
-            <div className="mt-1 text-base font-semibold tabular-nums">
-              {quote && tokenOut
-                ? `${formatTokenAmount(quote.amountOut, tokenOut.decimals)} ${receiveSymbol}`
-                : <span className="text-muted-foreground">—</span>}
+            <div className="mt-0.5 text-sm font-semibold tabular-nums">
+              {quote && tokenOut ? (
+                `${formatTokenAmount(quote.amountOut, tokenOut.decimals)} ${receiveSymbol}`
+              ) : (
+                <span className="text-muted-foreground">—</span>
+              )}
             </div>
           </div>
 
-          {/* Fee / slippage */}
+          {/* Fee row */}
           <div className="space-y-1 text-[11px] text-muted-foreground">
             {quote && (
               <div className="flex justify-between">
@@ -260,35 +305,62 @@ export function TradeOrderPanel({
             </div>
           </div>
 
-          {/* CTA */}
-          {isAuthenticated ? (
-            <Link
-              href={tradeHref}
-              className={cn(
-                buttonVariants(),
-                "h-10 w-full rounded-lg text-sm",
-                side === "buy"
-                  ? "bg-emerald-600 hover:bg-emerald-500"
-                  : "bg-red-600 hover:bg-red-500"
-              )}
-            >
-              {t("openWalletTrade")}
-            </Link>
-          ) : (
-            <Link
-              href={`/login?next=${encodeURIComponent(tradeHref)}`}
-              className={cn(buttonVariants({ variant: "outline" }), "h-10 w-full rounded-lg text-sm")}
-            >
-              {t("signInToTrade")}
-            </Link>
+          {/* Status alerts */}
+          {status === "success" && (
+            <Alert className="border-primary/30 bg-primary/10 py-2">
+              <AlertDescription className="text-xs text-primary">
+                {t("tradeSuccess")}
+              </AlertDescription>
+            </Alert>
+          )}
+          {status === "error" && tradeError && (
+            <Alert variant="destructive" className="py-2">
+              <AlertDescription className="text-xs">
+                {tradeError}
+              </AlertDescription>
+            </Alert>
           )}
 
-          <p className="text-center text-[10px] leading-relaxed text-muted-foreground/60">
+          {/* CTA */}
+          {isAuthenticated ? (
+            <Button
+              className={cn(
+                "mt-auto h-10 w-full rounded-lg text-sm font-medium",
+                isBuy
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              )}
+              disabled={!canTrade}
+              onClick={handleTrade}
+            >
+              {status === "trading" ? (
+                <span className="flex items-center gap-2">
+                  <Spinner className="size-3.5" />
+                  {t("trading")}
+                </span>
+              ) : isBuy ? (
+                `${t("buy")} ${snapshot.base.symbol}`
+              ) : (
+                `${t("sell")} ${snapshot.base.symbol}`
+              )}
+            </Button>
+          ) : (
+            <a
+              href={`/login?next=${encodeURIComponent(`/market/trade?base=${snapshot.baseLedgerId}`)}`}
+              className={cn(
+                "mt-auto flex h-10 w-full items-center justify-center rounded-lg border border-border/60 bg-muted/20 text-sm font-medium text-foreground transition-colors hover:bg-muted/40"
+              )}
+            >
+              {t("signInToTrade")}
+            </a>
+          )}
+
+          <p className="text-center text-[10px] text-muted-foreground/50">
             {t("orderDisclaimer")}
           </p>
         </div>
 
-        {/* Swap history — only for authenticated users */}
+        {/* Swap history */}
         {isAuthenticated && <SwapHistory snapshot={snapshot} />}
       </Tabs>
     </div>

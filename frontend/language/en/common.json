@@ -965,8 +965,10 @@
     "orderDisclaimer": "Quotes are indicative. Execution happens in your ICPay wallet.",
     "recentSwaps": "Recent swaps",
     "noRecentSwaps": "No recent swaps for this pair.",
-    "swapBuy": "Bought",
-    "swapSell": "Sold"
+    "swapBuy": "Buy",
+    "swapSell": "Sell",
+    "trading": "Trading…",
+    "tradeSuccess": "Trade completed. Balances updated."
   },
   "trade": {
     "title": "Trade",

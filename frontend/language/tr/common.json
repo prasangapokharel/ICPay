@@ -2140,6 +2140,8 @@
     "recentSwaps": "Recent swaps",
     "noRecentSwaps": "No recent swaps for this pair.",
     "swapBuy": "Bought",
-    "swapSell": "Sold"
+    "swapSell": "Sold",
+    "trading": "Trading…",
+    "tradeSuccess": "Trade completed. Balances updated."
   }
 }
