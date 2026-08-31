@@ -1,0 +1,172 @@
+You want me to fetch that SNS dashboard page and enumerate the API endpoints/objects behind it. Let me look at the actual dashboard page HTML/JS to find which API calls it makes. Let me try fetching it.
+
+This is a Next.js app — the endpoints are in the JS bundles. Let me find the JS bundle that references API calls for this SNS/project page.
+
+The SNS page chunk is the one that drives this route. Let me download it and extract the API endpoint strings.
+
+No hardcoded full URLs in the chunk — endpoints are likely built from path fragments/base constants. Let me search for endpoint path patterns and the API base host.
+
+The endpoints are built dynamically. The dashboard uses Next.js data via `getServerSideProps`/internal fetch with a config base. Let me look at how the chunk builds URLs — search for common path segments like `ledgers`, `canisters`, `accounts`, query keys.
+
+Only `accounts/` appears as a literal. The real data is fetched server-side by Next.js (in `getServerSideProps`), which lives in the server bundle, not the client chunk. The client chunk calls `__NEXT_DATA__` → public fetch endpoints. Let me inspect `__NEXT_DATA__` embedded in the HTML and grep the chunk for `fetch(`, `nextData`, and host concatenation more loosely.
+
+The client chunk has no network calls at all — it's pure render. All data is fetched server-side in Next.js (the dashboard is a Next SSR app, and the SNS page data comes in via `__NEXT_DATA__` from `getServerSideProps`). Let me verify by extracting `__NEXT_DATA__` from the HTML — it will contain the actual API payload already, which tells me exactly which endpoints serve this page. Let me parse it.
+
+`pageProps.serverSideData` holds the data. Let me inspect its keys — this reveals the distinct API result shapes feeding the page.
+
+This is all aggregated server-side. The dashboard's SNS page is a Next.js SSR app that fans out to multiple backend APIs on the server and bundles them into one `serverSideData.apiData`. The client never calls these APIs directly. 
+
+Let me get the full list of `apiData` keys to enumerate every data object feeding this page, then map each to the likely public endpoint (the dashboard uses `dashboard.internetcomputer.org` server-side fetches to the IC ledger/index/governance canisters plus the `icrc-api`/`ledger-api` public endpoints).
+
+I now have the full picture. Let me map these `apiData` fields to the actual public endpoints. The dashboard's server fetches a known set of canisters for an SNS (ledger, governance, index, swap) plus public ReadState/health endpoints, and also mixes in `icrc-api` / `ledger-api` style data.
+
+Let me give you the concrete answer: the **request/response formats** you showed (ledger-api accounts, icrc-api total-supply) plus the **set of endpoints this SNS page fans out to**, each with its response example I can pull live.
+
+Let me fetch a few live to give you real response examples for this ORIGYN SNS (`leu43-...` root, ledger `lkwrt-vyaaa-aaaaq-aadhq-cai`):
+
+I now have concrete responses for every relevant endpoint. Here's the full answer.
+
+## How the SNS dashboard page works
+
+The page `dashboard.internetcomputer.org/sns/<root-canister-id>` is a **Next.js server-rendered app**. The client bundle contains **zero API calls** — all data is fetched server-side and shipped to the browser as one JSON blob under `__NEXT_DATA__.props.pageProps.serverSideData.apiData` (51 aggregated fields). So there is no single "dashboard API" you can hit directly; the dashboard's server fans out internally. But the pieces it aggregates map to **public endpoints** you *can* call directly. Here they are, with live response examples.
+
+---
+
+## 1. Ledger balance (the `ledger-api` call you showed)
+
+```
+GET https://ledger-api.internetcomputer.org/accounts/{account_identifier}
+```
+Response:
+```json
+{
+  "account_identifier": "ab0015f10e8e90230e3a6659eb9ec7df3df1c75a5b8a74d18ac64c8676eeb1ff",
+  "balance": "8799120000",          // e8s, as string
+  "transaction_count": "88",
+  "updated_at": 1716736515,
+  "suspicious": false,
+  "percentage": null,
+  "value_usd": null
+}
+```
+
+## 2. SNS ledger metadata + price/FDV (`icrc-api`)
+
+```
+GET https://icrc-api.internetcomputer.org/api/v2/ledgers/{ledger_canister_id}
+```
+Response: single object (not wrapped in `{data}`), e.g. ORIGYN:
+```json
+{
+  "ledger_canister_id": "lkwrt-vyaaa-aaaaq-aadhq-cai",
+  "network": "mainnet",
+  "token_type": "sns",
+  "sns_root_canister_id": "leu43-oiaaa-aaaaq-aadgq-cai",
+  "token_value": {
+    "price": 0.000840108717732699,
+    "price_change_24h": 8.616064782227028e-06,
+    "volume_24h": 117957.65352423,
+    "volume_7d": 1026679.85688438,
+    "fdv": 8749277.89248764,
+    "price_usd": 0.000840108717732699,
+    "source": "CoinMarketCap-API",
+    "timestamp": 1785921480
+  },
+  "icrc1_metadata": {
+    "icrc1_fee": "200000",
+    "icrc1_name": "ORIGYN",
+    "icrc1_logo": "https://dfinity-dashboard-assets…",
+    "icrc1_symbol": "ORIGYN",
+    "icrc1_decimals": "8",
+    "icrc1_total_supply": "…"
+  },
+  "unique_owners_count": 28745,
+  "enabled": true,
+  "urls": { "website": ["https://www.origyn.com/"] }
+}
+```
+
+## 3. Token list (paginated) — `/api/v2/ledgers`
+
+```
+GET https://icrc-api.internetcomputer.org/api/v2/ledgers?limit=100[&next_cursor=<cursor>]
+```
+Response:
+```json
+{
+  "data": [ { …same object shape as above… }, … up to limit … ],
+  "next_cursor": "73mez-iiaaa-aaaaq-aaasq-cai",
+  "previous_cursor": null
+}
+```
+
+## 4. Total supply (historical series)
+
+```
+GET https://icrc-api.internetcomputer.org/api/v1/ledgers/{ledger}/total-supply
+```
+Response:
+```json
+{ "data": [ [1785924000, "1041445911441123160"] ] }   // [unix_ts, supply_e8s]
+```
+
+## 5. Transaction count
+
+```
+GET https://icrc-api.internetcomputer.org/api/v2/ledgers/{ledger}/transactions/count
+```
+Response:
+```json
+{ "total": 1388798 }
+```
+
+## 6. Transactions list
+
+```
+GET https://icrc-api.internetcomputer.org/api/v1/ledgers/{ledger}/transactions?limit=2
+```
+Response (note: NOT wrapped in `next_cursor` — v1 paths return bare arrays):
+```json
+{
+  "data": [
+    {
+      "index": 1388797,
+      "kind": "transfer",
+      "ledger_canister_id": "lkwrt-…",
+      "amount": "2431692877055",
+      "from_owner": "ttnzy-lyaaa-aaaag-qj2bq-cai",
+      "to_owner": "ehq2s-…",
+      "fee": "200000",
+      "memo": "000000000003d1f2",
+      "timestamp": "1785920788422406218",
+      "token_value": { "price": "0.000840298570281164…", "source": "CoinMarketCap-API", … }
+    },
+    { "index": 1388796, … }
+  ]
+}
+```
+
+---
+
+## Full endpoint list for this SNS page (the `apiData` fields → source)
+
+| apiData field | Example value (ORIGYN) | Mapped public endpoint/canister |
+|---|---|---|
+| `ledger_canister_id` | `lkwrt-vyaaa-aaaaq-aadhq-cai` | ledger canister |
+| `index_canister_id` | `jqkzp-liaaa-aaaaq-aadiq-cai` | index canister |
+| `governance_canister_id` | `lnxxh-yaaaa-aaaaq-aadha-cai` | governance canister |
+| `swap_canister_id` | `jxl73-gqaaa-aaaaq-aadia-cai` | swap canister |
+| `root_canister_id` | `leu43-oiaaa-aaaaq-aadgq-cai` | SNS root canister |
+| `canisters` | object of all above | the canister IDs |
+| `icrc1_metadata` | name/symbol/fee/decimals | `icrc-api …/ledgers/{id}` |
+| `ledger_price`, `ledger_price_24h`, `ledger_fdv`, `ledger_volume_24h` | numbers | same `token_value` from `…/ledgers/{id}` |
+| `total_supply_e8s`, `total_supply_e8s_1d_ago` | strings | `total-supply` + index |
+| `total_account_owners_count`, `total_neuron_holders_count` | ints | index/governance canisters |
+| `icp_treasury_account`, `icp_treasury_balance_e8s` | string | `ledger-api …/accounts/{id}` |
+| `nervous_system_parameters`, `nervous_system_functions`, `swap_lifecycle`, `swap_…_e8s` | objects | governance & swap canisters (Candid `query_`) |
+| `total_proposals_count`, `total_proposals_count_30d` | ints | governance canister |
+| `topics`, `logo`, `name`, `created_at`, `url`, `enabled` | strings | SNS root / registry |
+
+**Bottom line:** If you want to build your own token page in the wallet, the clean public endpoints to use are the **`icrc-api.internetcomputer.org`** `/api/v2/ledgers` family (metadata, price, tx count, txs) plus **`ledger-api.internetcomputer.org/accounts/{id}`** for balance. Everything in that dashboard page's JSON is assembled server-side from those plus direct canister calls — there's no single public "sns page" endpoint to replicate.
+
+Want me to wire these into the token detail (`[ledgerId]`) page so it shows price, 24h change, supply, and tx count from `icrc-api`?

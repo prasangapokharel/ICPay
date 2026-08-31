@@ -14,22 +14,9 @@ frontend/.agents/skills/vercel-react-best-practices
 # .claude/ carries the agent map -- the point of it is that a fresh clone gets
 # the same context. Only the per-machine permission grants stay local.
 .claude/settings.local.json
-# Only the README screenshots and the command reference are public. git will not
-# descend into an excluded directory, so this excludes the contents rather than
-# the directory itself -- otherwise the negations below could never match.
-docs/*
-!docs/demo/
-!docs/command/
-!docs/pkg/
-!docs/sdk/
-!docs/language/
-!docs/workflow.md
-!docs/security/
-!docs/phase/
-!docs/icpay/
-!docs/icFrame/
-!docs/presale/
-# docs/bucket/ stays local (PDF exports, not committed)
+# Local agent prefs only — docs/ is tracked; exclude scratch and vendored deps inside it.
+docs/cursor/
+docs/**/node_modules/
 
 # Per-machine agent prefs (skills under .claude/skills/ are tracked)
 .claude/user-prefs.md
@@ -92,10 +79,5 @@ node_modules/
 !backend/pkg/
 !backend/testing/pkg/
 
-# Desktop wallet build outputs (CI copies artifacts here locally)
-/downloads/
-
-# Desktop wallet
-desktop/wallet/node_modules/
-desktop/wallet/dist/
-desktop/wallet/src-tauri/target/
+# Desktop wallet (local Tauri app — build artifacts and source stay off-repo)
+/desktop/

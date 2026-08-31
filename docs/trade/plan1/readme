@@ -1,0 +1,379 @@
+# ICPay Trade — Plan 1
+
+**Status:** design only (not implemented)  
+**Date:** August 2026  
+**Goal:** Binance-style spot trading UI with a **separate Rust trade canister** that executes faster and cleaner than the current Motoko `SwapService`.
+
+---
+
+## 1. Problem with today’s swap
+
+| Layer | Issue |
+|-------|--------|
+| **Backend** | One Motoko `executeSwap` does **7 sequential ledger/pool updates** inside a single update call (~15–35s). |
+| **Architecture** | Wallet canister mixes custody, transfers, bucket, community, **and** swap in one actor. |
+| **UX** | `/swap` is a simple form — not a trading terminal (no pair board, depth, live book, order history). |
+| **Quotes** | Frontend pool lookup tries fee tiers **sequentially** on first pair. |
+
+Rust does **not** bypass IC consensus (~2–4s per cross-canister write). Speed comes from **fewer hops** and **dedicated state**, not language alone.
+
+---
+
+## 2. What we are building
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Frontend  /trade  (Binance-style terminal)                      │
+│  · pair list · chart · order book panel · buy/sell · history    │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │ queries + updates
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  trade_canister  (NEW — Rust / ic-cdk)                           │
+│  · quotes (query) · market orders · limit order queue            │
+│  · pool cache · ICPSwap executor · trade ledger / history        │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │ controlled calls only
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  icp_wallet_backend  (EXISTING — Motoko)                         │
+│  · custody · subaccounts · deposit/withdraw to trade             │
+│  · NO swap logic after migration                                 │
+└───────────────────────────┬─────────────────────────────────────┘
+                            │
+                            ▼
+                     ICRC ledgers + ICPSwap pools
+```
+
+**Product split**
+
+| Canister | Owns |
+|----------|------|
+| **Wallet (Motoko)** | User subaccounts, balances, send/receive, move funds to/from trade |
+| **Trade (Rust)** | ICPSwap execution, quotes, orders, trade history, pool allowances |
+
+---
+
+## 3. Why Rust + separate canister
+
+| Reason | Detail |
+|--------|--------|
+| **Isolation** | Swap bugs or upgrades do not risk wallet custody code. |
+| **Focused executor** | Trade canister holds **one main account per token** + pre-approved ICPSwap allowances. |
+| **Fewer hops** | User funds sit on trade canister between trades — skip “sub → main → approve” every swap. |
+| **Order queue** | Limit orders + heartbeat matcher fit naturally in Rust (`BTreeMap`, timers). |
+| **Upgrade path** | Trade canister can iterate weekly; wallet stays conservative. |
+
+**Honest limit:** Target **~6–12s per market order** (3–4 IC writes), not sub-second CEX speed.
+
+---
+
+## 4. What to remove from wallet backend
+
+After trade canister is live and stable:
+
+| Remove from Motoko | Replace with |
+|--------------------|--------------|
+| `SwapService.mo` | Trade canister `execute_market` |
+| `SwapStorage.mo` (pending/escrow) | Trade canister escrow tables |
+| `api/v1/Swap.mo` endpoints | Trade canister Candid API |
+| `AddSwapTxTypes` migration path | Trade-specific tx types on trade canister only |
+| Frontend `/swap` + `services/swap/*` | `/trade` + `services/trade/*` |
+
+**Keep on wallet**
+
+- `depositToTrade` / `withdrawFromTrade` (new thin API)
+- All transfer, withdraw, bucket, community logic
+- Treasury principal for **trade fee** settlement (optional)
+
+**Do not delete `/swap` until** trade canister is mainnet-proven and recovery paths exist.
+
+---
+
+## 5. Fast execution path (core idea)
+
+### Today (wallet SwapService) — 7 writes
+
+```
+fee(ICP) → move tokenIn to main → approve → depositFrom → swap → withdraw → payout to user sub
+```
+
+### Plan 1 (trade canister) — 3–4 writes per market order
+
+**One-time setup (per user, per token):**
+
+```
+wallet.transferToTrade(token, amount)   // 1 wallet update
+```
+
+**Repeat trade (funds already on trade canister):**
+
+```
+depositFrom (pull from trade main — allowance already set)
+  → swap
+  → withdraw output to trade main
+  → credit user trade balance (internal ledger — sync, no IC call)
+```
+
+Optional 4th write: `wallet.withdrawFromTrade` when user sends back to wallet.
+
+```
+┌──────────────┐     deposit once      ┌──────────────┐
+│ Wallet sub   │ ───────────────────►  │ Trade balance │
+│ (custody)    │ ◄───────────────────  │ (per user)    │
+└──────────────┘     withdraw            └──────┬───────┘
+                                                │
+                    market order (3 IC writes)  ▼
+                                         ICPSwap pool
+```
+
+**Internal trade balance** = credits in trade canister stable memory (not a separate ledger). Backed 1:1 by tokens on trade canister’s ICRC accounts.
+
+---
+
+## 6. Binance-like features (phased)
+
+### Phase T1 — Market spot (MVP)
+
+- Pair selector (ICP / ckBTC / ckETH / ckUSDC / ckUSDT + SNS)
+- Live quote (query, 1s refresh)
+- Market buy / market sell
+- Order form: amount, slippage %, min received
+- Recent trades list (user)
+- 24h stats panel (volume, last price — from trade canister cache + ICPSwap)
+
+### Phase T2 — Limit orders
+
+- User places limit order (stored in trade canister)
+- Heartbeat (every 2s) checks quote vs limit price
+- Fills via same 3-write market path when price crosses
+- Cancel open order (query + update)
+
+**Not a real CEX order book** — limits are **queued AMM fills**, not peer-to-peer matching.
+
+### Phase T3 — Terminal polish
+
+- TradingView-style chart (external OHLC or self-built from trade history)
+- Depth visualization (synthetic from ICPSwap quote sizes)
+- Favorite pairs, keyboard shortcuts
+- Mobile trade layout
+
+### Explicit non-goals (Plan 1)
+
+| Not in Plan 1 | Why |
+|---------------|-----|
+| Margin / leverage | Different product, risk model |
+| LP positions | Roadmap says swaps only for Phase 5 |
+| Cross-chain | Refused in roadmap |
+| Non-custodial trade mode | Refused in roadmap |
+| Sub-second execution | IC consensus floor |
+| True order book matching | No on-chain CEX on IC; AMM via ICPSwap |
+
+---
+
+## 7. Trade canister — Rust layout
+
+```
+trade/
+├── Cargo.toml
+├── trade_canister.did          # generated
+├── src/
+│   ├── lib.rs                  # canister entry, init, heartbeat
+│   ├── api/
+│   │   ├── mod.rs
+│   │   ├── quote.rs            # query endpoints
+│   │   ├── market.rs           # execute_market
+│   │   ├── limit.rs            # place/cancel/list
+│   │   └── balance.rs          # deposit/withdraw callbacks
+│   ├── domain/
+│   │   ├── order.rs            # Order, OrderStatus, Side
+│   │   ├── pair.rs             # Pair, PoolRef
+│   │   └── balance.rs          # UserBalance ledger
+│   ├── icpswap/
+│   │   ├── factory.rs
+│   │   ├── pool.rs             # quote, swap, deposit_from, withdraw
+│   │   └── types.rs
+│   ├── ledger/
+│   │   └── icrc.rs             # transfer, approve, fee
+│   ├── storage/
+│   │   ├── balances.rs         # stable user balances
+│   │   ├── orders.rs           # open + history
+│   │   └── pools.rs            # pool id cache
+│   └── wallet/
+│       └── gate.rs             # only wallet canister may deposit/withdraw
+└── tests/
+    └── integration/            # pocket-ic or replica tests
+```
+
+**dfx.json addition**
+
+```json
+"icpay_trade": {
+  "type": "rust",
+  "package": "trade_canister",
+  "candid": "trade/trade_canister.did"
+}
+```
+
+---
+
+## 8. Candid API (draft)
+
+### Queries (free, fast — powers UI)
+
+```candid
+type Pair = record { base : text; quote : text };
+
+type Quote = record {
+  amount_in : nat;
+  amount_out : nat;
+  min_out : nat;
+  price : float64;
+  price_impact_bps : nat16;
+  pool_id : text;
+  fee_tier : nat;
+};
+
+type OrderView = record {
+  id : text;
+  pair : Pair;
+  side : variant { buy; sell };
+  kind : variant { market; limit };
+  status : variant { open; filled; cancelled; failed };
+  amount_in : nat;
+  amount_out : opt nat;
+  limit_price : opt float64;
+  created_at : nat64;
+};
+
+get_quote : (token_in : text, token_out : text, amount_in : nat) -> (variant { ok : Quote; err : text }) query;
+get_pairs : () -> (vec Pair) query;
+get_order : (order_id : text) -> (opt OrderView) query;
+list_orders : (principal, nat) -> (vec OrderView) query;  // user, limit
+get_balance : (principal, token : text) -> (nat) query;
+```
+
+### Updates
+
+```candid
+// Called ONLY by wallet canister (caller check)
+credit_from_wallet : (user : principal, token : text, amount : nat, block_index : nat64) -> (variant { ok; err : text });
+debit_to_wallet : (user : principal, token : text, amount : nat) -> (variant { ok : nat64; err : text });
+
+// Called by user
+execute_market : (token_in : text, token_out : text, amount_in : nat, min_out : nat) -> (variant { ok : OrderView; err : text });
+place_limit : (token_in : text, token_out : text, amount_in : nat, limit_price : float64) -> (variant { ok : OrderView; err : text });
+cancel_limit : (order_id : text) -> (variant { ok; err : text });
+```
+
+### Wallet new endpoints (Motoko, thin)
+
+```motoko
+depositToTrade : (ledgerId : Text, amount : Nat) -> async ApiResult<Nat>;
+withdrawFromTrade : (ledgerId : Text, amount : Nat) -> async ApiResult<Nat>;
+```
+
+Wallet: transfer user sub → trade canister account → call `credit_from_wallet`.
+
+---
+
+## 9. Security model
+
+| Rule | Implementation |
+|------|----------------|
+| Only wallet credits user trade balance | `credit_from_wallet` checks `caller == WALLET_CANISTER_ID` |
+| User can only trade own balance | `execute_*` uses `msg_caller()` |
+| Slippage enforced on-chain | `min_out` passed to ICPSwap `swap` |
+| One in-flight market order per user | Mutex map in trade canister |
+| Rate limit | 10 market orders / 60s per principal |
+| Trade fee | 0.05% in quote token or flat 0.05 ICP (TBD — lower than swap’s 0.1 ICP) |
+| Upgrade | Trade canister controller = same ops key; wallet unchanged |
+| Insolvency check | Periodic reconcile: sum(user balances) ≤ on-chain trade main balance |
+
+---
+
+## 10. Frontend `/trade`
+
+```
+frontend/
+├── app/(app)/trade/page.tsx
+├── components/trade/
+│   ├── trade-layout.tsx          # 3-column Binance shell
+│   ├── pair-header.tsx           # price, 24h change
+│   ├── order-book-panel.tsx      # synthetic depth from quotes
+│   ├── chart-panel.tsx           # lightweight-charts or iframe
+│   ├── trade-form.tsx            # buy/sell tabs, market/limit
+│   ├── open-orders.tsx
+│   └── trade-history.tsx
+├── hooks/trade/
+│   ├── useTradeQuote.ts          # SWR 1s refresh, parallel pool resolve
+│   └── useTradeBalance.ts
+└── services/trade/
+    ├── client.ts                 # trade canister actor
+    ├── quote.ts
+    └── orders.ts
+```
+
+**Quote speed (frontend)**
+
+- Parallel `getPool` for all 3 fee tiers (fix from swap)
+- Pool cache in memory + trade canister query cache
+- Debounce 150ms (down from 300ms)
+- Pre-warm pool on pair click
+
+---
+
+## 11. Migration plan
+
+| Step | Work | Risk |
+|------|------|------|
+| **1** | Scaffold `trade/` Rust crate + local dfx deploy | Low |
+| **2** | Implement quote + pool cache (query only) | Low |
+| **3** | Wallet `depositToTrade` / `withdrawFromTrade` | Medium — real funds |
+| **4** | `execute_market` on trade canister, test ckBTC/ICP | Medium |
+| **5** | Ship `/trade` beta behind feature flag | Low |
+| **6** | Limit orders + heartbeat | Medium |
+| **7** | Deprecate `/swap`, remove Motoko SwapService | High — only after 2 weeks clean mainnet |
+
+---
+
+## 12. Success metrics
+
+| Metric | Today (swap) | Target (trade T1) |
+|--------|--------------|-------------------|
+| Market order wall-clock | 15–35s | 6–12s |
+| Quote latency (warm pair) | 1–3s | <500ms |
+| IC writes per repeat trade | 7 | 3 |
+| User steps to 2nd trade | Full swap path | Click buy (balance on trade) |
+
+---
+
+## 13. Risks
+
+1. **Two canisters holding value** — reconciliation and clear UX (“Trading balance” vs “Wallet balance”).
+2. **ICPSwap API changes** — isolate in `icpswap/` module.
+3. **Limit orders may not fill** — AMM price moves; UI must say “queued limit”, not “guaranteed”.
+4. **Rust ops** — team needs `cargo`, wasm32 build in CI; add to `.github/workflows/ci.yml`.
+5. **Roadmap conflict** — Phase 7 (decentralize custody) should be aware trade canister is also custodial.
+
+---
+
+## 14. Open decisions (pick before coding)
+
+1. **Trade fee:** 0.05% vs flat 0.05 ICP vs include in spread?
+2. **Min deposit to trade:** Require moving funds first, or auto-deposit per market order (slower)?
+3. **Subdomain:** `trade.icpay.app` → `/trade` or path only on `icpay.app/trade`?
+4. **Controller:** Same as wallet or separate for faster trade upgrades?
+
+---
+
+## 15. Next action
+
+1. Approve this plan (or mark decisions in §14).
+2. Scaffold `trade/` crate + empty canister deploy on local replica.
+3. Implement `get_quote` query + frontend pair header with live price.
+4. Wire wallet `depositToTrade` → first mainnet test with 0.1 ICP.
+
+---
+
+*Related: `docs/icpay/Transfer-Performance.md` (IC latency rules), `backend/src/services/SwapService.mo` (current flow to replace).*

@@ -1,0 +1,9 @@
+https://raw.githubusercontent.com/sonicdex/icrc-1-public/refs/heads/main/src/token/main.mo
+
+
+https://mops.one/core/docs
+
+
+https://raw.githubusercontent.com/caffeinelabs/motoko/refs/heads/master/.agents/skills/migrating-motoko/SKILL.md
+
+https://raw.githubusercontent.com/caffeinelabs/motoko/refs/heads/master/.agents/skills/migrating-motoko-enhanced/SKILL.md

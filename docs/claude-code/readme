@@ -1,0 +1,473 @@
+# Claude Code — Project Power Guide
+
+Everything you can configure **per-project** in Claude Code: what each file does, where it lives, when it loads, and a working example. Based on the official `.claude` directory reference.
+
+---
+
+## 0. The Big Picture
+
+Claude Code reads config from two places every session:
+
+| Root | Applies to | Commit to git? |
+|---|---|---|
+| `your-project/` (repo root + `.claude/`) | This project only | Yes (mostly) |
+| `~/.claude/` (home dir) | Every project you work in | No — personal |
+
+Project-level settings generally **override** global ones for scalar values (like `model`), and **combine** with global ones for list values (like `permissions.allow`).
+
+If you set `CLAUDE_CONFIG_DIR`, all `~/.claude` paths move under that dir instead.
+
+**Rule of thumb:** most people only ever touch `CLAUDE.md` and `.claude/settings.json`. Everything else below is optional — add it when you actually need it.
+
+---
+
+## 1. `CLAUDE.md` — Project Instructions
+
+**Location:** repo root (or `.claude/CLAUDE.md` if you want the root clean)
+**Committed:** yes
+**Loads:** into context at the start of every session
+
+The single most important file. This is where you tell Claude how your project works: conventions, commands, architecture, gotchas.
+
+```markdown
+# Project conventions
+
+## Commands
+- Build: `npm run build`
+- Test: `npm test`
+- Lint: `npm run lint`
+
+## Stack
+- TypeScript with strict mode
+- React 19, functional components only
+
+## Rules
+- Named exports, never default exports
+- Tests live next to source: `foo.ts` -> `foo.test.ts`
+- All API routes return `{ data, error }` shape
+```
+
+**Tips:**
+- Keep it under ~200 lines. It loads in full every session — bloat wastes context and can reduce how well Claude follows it.
+- If something only matters for specific tasks (not every session), move it into a **skill** or a path-scoped **rule** instead (see below).
+- List the commands you run most (build/test/format) so Claude doesn't have to guess or ask.
+- Run `/memory` inside a session to open and edit `CLAUDE.md` directly.
+- There's also `CLAUDE.local.md` (project root, **not** built-in — you create it and gitignore it yourself) for your own private preferences on this project, loaded alongside `CLAUDE.md`.
+
+---
+
+## 2. `.claude/settings.json` — Permissions, Hooks, Config
+
+**Location:** `.claude/settings.json`
+**Committed:** yes (shared with your team)
+**Loads:** every session; overrides global `~/.claude/settings.json`; overridden by `settings.local.json`, CLI flags, and org-managed settings
+
+Unlike `CLAUDE.md` (advisory — Claude *reads* it), this file is **enforced** whether Claude wants to follow it or not.
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test *)",
+      "Bash(npm run *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit|Write",
+      "hooks": [{
+        "type": "command",
+        "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write"
+      }]
+    }]
+  }
+}
+```
+
+What you can control here:
+
+| Key | Does |
+|---|---|
+| `permissions` | Allow, deny, or prompt-before-use for specific tools/commands. Bash patterns support wildcards: `Bash(npm test *)` matches anything starting with `npm test`. |
+| `hooks` | Run your own scripts at lifecycle events (before/after tool calls, session start/end, etc.) — **guaranteed** to run, unlike CLAUDE.md instructions. |
+| `statusLine` | Customize the status line shown while Claude works. |
+| `model` | Pin a default model for this project. |
+| `env` | Environment variables set in every session. |
+| `outputStyle` | Select a custom system-prompt style from `output-styles/`. |
+
+**Note:** array settings (like `permissions.allow`) merge across all scopes (global + project + local). Scalar settings (like `model`) use the most specific scope that sets them.
+
+### `.claude/settings.local.json` — Your Personal Overrides
+
+**Committed:** no — gitignored automatically the first time Claude Code writes to it
+**Loads:** highest priority of the user-editable settings files
+
+Same schema as `settings.json`. Use it for permissions or defaults *you* want that shouldn't be forced on the whole team.
+
+```json
+{
+  "permissions": {
+    "allow": ["Bash(docker *)"]
+  }
+}
+```
+
+---
+
+## 3. `.claude/rules/` — Topic-Scoped, Path-Gated Instructions
+
+**Location:** `.claude/rules/*.md` (subfolders work too)
+**Committed:** yes
+**Loads:** rules *without* `paths:` frontmatter load at session start (just like CLAUDE.md); rules *with* `paths:` load only when a matching file enters context
+
+This is how you split a bloated `CLAUDE.md` into focused pieces that only load when relevant.
+
+```markdown
+---
+paths:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+---
+
+# Testing Rules
+
+- Use descriptive test names: "should [expected] when [condition]"
+- Mock external dependencies, not internal modules
+- Clean up side effects in afterEach
+```
+
+```markdown
+---
+paths:
+  - "src/api/**/*.ts"
+---
+
+# API Design Rules
+
+- All endpoints must validate input with Zod schemas
+- Return shape: { data: T } | { error: string }
+- Rate limit all public endpoints
+```
+
+**Tip:** when `CLAUDE.md` starts creeping past ~200 lines, this is where the overflow should go. Like CLAUDE.md, rules are guidance — for something *enforced*, use hooks/permissions instead.
+
+---
+
+## 4. `.claude/skills/` — Reusable, Invokable Capabilities (the modern replacement for commands)
+
+**Location:** `.claude/skills/<name>/SKILL.md` (+ any supporting files in that folder)
+**Committed:** yes
+**Loads:** invoked with `/name`, or auto-invoked by Claude when it matches your task to the skill's description
+
+Skills are the current, recommended mechanism — they subsume the older "commands" system (see §5). A skill is a **folder**, not just a file, so you can bundle reference docs, checklists, scripts, or templates alongside the entrypoint.
+
+```
+.claude/skills/security-review/
+├── SKILL.md
+└── checklist.md
+```
+
+`SKILL.md`:
+```markdown
+---
+description: Reviews code changes for security vulnerabilities, authentication gaps, and injection risks
+disable-model-invocation: true
+argument-hint: <branch-or-path>
+---
+
+## Diff to review
+
+!`git diff $ARGUMENTS`
+
+Audit the changes above for:
+
+1. Injection vulnerabilities (SQL, XSS, command)
+2. Authentication and authorization gaps
+3. Hardcoded secrets or credentials
+
+Use checklist.md in this skill directory for the full review checklist.
+
+Report findings with severity ratings and remediation steps.
+```
+
+`checklist.md` (a supporting file Claude reads on demand):
+```markdown
+# Security Review Checklist
+
+## Input Validation
+- [ ] All user input sanitized before DB queries
+- [ ] File upload MIME types validated
+- [ ] Path traversal prevented on file operations
+
+## Authentication
+- [ ] JWT tokens expire after 24 hours
+- [ ] API keys stored in environment variables
+- [ ] Passwords hashed with bcrypt or argon2
+```
+
+### Key frontmatter fields
+
+| Field | Purpose |
+|---|---|
+| `name` | Required. Becomes the slash command (`name: deploy` → `/deploy`). Falls back to folder name if omitted — set it explicitly. |
+| `description` | Required. **The primary trigger** — Claude reads this to decide when to auto-load the skill. Write it to match real user intent, not a marketing summary. |
+| `disable-model-invocation: true` | Only a human can trigger it via `/name` — Claude will never auto-invoke it. Good for destructive/manual-only actions like `/deploy`. |
+| `user-invocable: false` | Opposite — hides it from the `/` menu; only Claude can invoke it automatically. |
+| `allowed-tools` | Restrict which tools the skill can use while active (e.g. read-only skills). |
+| `argument-hint` | Shown in autocomplete as a hint for what to type after the command. |
+| `model` | Pin a specific model for this skill. |
+| `context: fork` | Run as an isolated subagent with its own context window. |
+
+### Other superpowers
+
+- **Arguments:** `/deploy staging` → `$ARGUMENTS` = `"staging"`. Positional access via `$0`, `$1`, etc.
+- **Live shell injection:** a line starting with `!` followed by a backtick command runs it and injects the output into the prompt (needs `Bash` permission), e.g. `` !`git diff --name-only HEAD~1` ``.
+- **Bundled files:** Claude knows the skill's directory path automatically, so mentioning `checklist.md` inside the SKILL.md body lets Claude read it. In shell injection commands use `${CLAUDE_SKILL_DIR}` to reference the skill's own folder.
+- If a skill and a command share a name, **the skill wins**.
+
+---
+
+## 5. `.claude/commands/` — Legacy Single-File Commands
+
+**Location:** `.claude/commands/*.md`
+**Committed:** yes
+**Loads:** invoked with `/name`
+
+> **Custom commands have been merged into skills.** A file at `.claude/commands/deploy.md` and a skill at `.claude/skills/deploy/SKILL.md` both create `/deploy` and behave the same way. Existing `.claude/commands/` files keep working — but for **new** workflows, use `.claude/skills/` instead, since it gives you the same `/name` invocation plus a whole folder for supporting files.
+
+```markdown
+---
+argument-hint: <issue-number>
+---
+
+!`gh issue view $ARGUMENTS`
+
+Investigate and fix the issue above.
+
+1. Trace the bug to its root cause
+2. Implement the fix
+3. Write or update tests
+4. Summarize what you changed and why
+```
+
+---
+
+## 6. `.claude/agents/` — Subagents
+
+**Location:** `.claude/agents/*.md`
+**Committed:** yes
+**Loads:** Claude spawns it automatically for matching tasks, or you `@`-mention it from autocomplete
+
+Each file defines a specialized subagent: its own system prompt, its own tool access, optionally its own model — and critically, **its own fresh context window**, separate from your main conversation. Great for parallel work, isolated review tasks, or keeping noisy exploration out of your main thread.
+
+```markdown
+---
+name: code-reviewer
+description: Reviews code for correctness, security, and maintainability
+tools: Read, Grep, Glob
+---
+
+You are a senior code reviewer. Review for:
+
+1. Correctness: logic errors, edge cases, null handling
+2. Security: injection, auth bypass, data exposure
+3. Maintainability: naming, complexity, duplication
+
+Every finding must include a concrete fix.
+```
+
+**Tips:**
+- Restrict `tools:` per agent (e.g. read-only reviewers that can never edit).
+- The `description` field is what lets Claude decide *when* to delegate to this subagent automatically.
+- Type `@` in the chat and pick an agent from autocomplete to delegate directly, on demand.
+
+### Persistent subagent memory: `.claude/agent-memory/`
+
+Subagents can have their own memory, separate from your main session's auto memory. Only created if the agent's frontmatter sets `memory:`.
+
+```yaml
+memory: project   # -> .claude/agent-memory/<agent-name>/MEMORY.md (committed, shared with team)
+memory: local     # -> .claude/agent-memory-local/ (gitignored, not shared)
+memory: user      # -> ~/.claude/agent-memory/ (cross-project, personal)
+```
+
+The subagent writes and maintains its own `MEMORY.md` — you don't author it. It's loaded into the subagent's system prompt (first 200 lines / 25KB cap) each time it runs.
+
+---
+
+## 7. `.claude/workflows/` — Dynamic Multi-Agent Orchestration
+
+**Location:** `.claude/workflows/*.js`
+**Committed:** yes
+**Loads:** at startup; each file becomes a `/<name>` command
+
+Each `.js` file is a script the runtime executes to spawn and coordinate *multiple* subagents in a structured pipeline. You don't typically hand-write these — Claude writes them, and you save a run from the `/workflows` UI with `s`.
+
+A project workflow takes precedence over a personal one (`~/.claude/workflows/`) with the same name.
+
+---
+
+## 8. `.mcp.json` — Team-Shared External Tools (MCP servers)
+
+**Location:** project **root** (not inside `.claude/`)
+**Committed:** yes
+**Loads:** servers connect at session start; tool schemas load on demand via tool search
+
+This is how you plug Claude Code into external tools/services (databases, APIs, browsers, project management tools, etc.) for the whole team.
+
+```json
+{
+  "mcpServers": {
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_TOKEN": "${NOTION_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+**Tips:**
+- Use `${VAR}` env references for secrets — never hardcode tokens in the committed file.
+- For servers only *you* personally need (not the whole team), run `claude mcp add --scope user` instead — that writes to `~/.claude.json`, not `.mcp.json`.
+- Claude Code loads MCP servers from **both** `.mcp.json` (project, shared) and `~/.claude.json` (personal) — project servers supplement, not replace, your personal ones.
+
+---
+
+## 9. `.worktreeinclude` — Files to Copy into New Git Worktrees
+
+**Location:** project root
+**Committed:** yes
+**Loads:** read when Claude creates a git worktree (via `--worktree`, the `EnterWorktree` tool, or a subagent with `isolation: worktree`)
+
+Worktrees are fresh checkouts — gitignored files like `.env` don't come along automatically. This file (using `.gitignore`-style patterns) lists which gitignored files *should* be copied into every new worktree.
+
+```
+# Local environment
+.env
+.env.local
+
+# API credentials
+config/secrets.json
+```
+
+Note: this is git-only. If you're on a different VCS, configure a `WorktreeCreate` hook and copy files inside the hook script instead.
+
+---
+
+## 10. `.claude/output-styles/` — Project-Shared Response Styles
+
+**Location:** `.claude/output-styles/*.md`
+**Committed:** yes (usually these are personal and live in `~/.claude/output-styles/` instead — put one here only if your whole team shares it, e.g. a "review mode" everyone uses)
+
+Each file defines a chunk appended to the system prompt — by default this also **drops** the built-in software-engineering task instructions, so it's meant for adapting Claude Code beyond normal coding work (teaching mode, review mode, etc.).
+
+```markdown
+---
+description: Explains reasoning and asks you to implement small pieces
+keep-coding-instructions: true
+---
+
+After completing each task, add a brief "Why this approach" note
+explaining the key design decision.
+
+When a change is under 10 lines, ask the user to implement it
+themselves by leaving a TODO(human) marker instead of writing it.
+```
+
+Set `keep-coding-instructions: true` if you want your additions layered *on top of* the defaults rather than replacing them. Select the style via `/config` or the `outputStyle` key in settings — changes take effect next session (system prompt is fixed at startup for caching).
+
+---
+
+## 11. Auto Memory — Claude's Own Notes (mostly global, worth knowing)
+
+**Location:** `~/.claude/projects/<project>/memory/` (global, keyed by repo path — not something you author in the repo itself)
+**Loads:** `MEMORY.md` (first 200 lines / 25KB) loaded at session start; topic files read on demand
+
+On by default. As Claude works in your project, it accumulates its own notes — build quirks, architecture observations, debugging insights — without you writing anything. It's plain markdown, so you can read, edit, or delete it anytime. Toggle with `/memory` or the `autoMemoryEnabled` setting.
+
+---
+
+## 12. Precedence — What Wins When Things Conflict
+
+From lowest to highest priority for `settings.json`-style config:
+
+1. Global `~/.claude/settings.json`
+2. Project `.claude/settings.json`
+3. Project `.claude/settings.local.json`
+4. CLI flags (`--permission-mode`, `--settings`, etc.)
+5. Org-managed `managed-settings.json` (always wins, can't be overridden)
+
+For `CLAUDE.md`: global and project files are **both** loaded into context together (not merged key-by-key) — when instructions actually conflict, project-level wins.
+
+Some environment variables override their equivalent setting too — check the env-vars reference if something isn't behaving as expected.
+
+---
+
+## 13. Quick Reference — "I want to..." → "Edit this"
+
+| You want to… | Edit | Scope |
+|---|---|---|
+| Give Claude project context & conventions | `CLAUDE.md` | project or global |
+| Allow/block specific tool calls | `settings.json` → `permissions` | project or global |
+| Run a script before/after tool calls | `settings.json` → `hooks` | project or global |
+| Set env vars for every session | `settings.json` → `env` | project or global |
+| Keep personal overrides out of git | `settings.local.json` | project only |
+| Add a `/name` prompt or capability | `skills/<name>/SKILL.md` | project or global |
+| Define a specialized subagent | `agents/*.md` | project or global |
+| Orchestrate multiple subagents | `workflows/*.js` | project or global |
+| Connect external tools (MCP) | `.mcp.json` | project only |
+| Change how Claude formats responses | `output-styles/*.md` | project or global |
+| Split CLAUDE.md by topic/path | `rules/*.md` | project or global |
+| Copy secrets into new worktrees | `.worktreeinclude` | project only |
+
+---
+
+## 14. Example: A Fully Powered-Up Project
+
+```
+your-project/
+├── CLAUDE.md                          # conventions, commands, stack
+├── CLAUDE.local.md                    # (gitignored) your own personal notes
+├── .mcp.json                          # shared MCP servers (e.g. GitHub, Notion)
+├── .worktreeinclude                   # .env, secrets copied into new worktrees
+└── .claude/
+    ├── settings.json                  # permissions + hooks, committed
+    ├── settings.local.json            # (gitignored) your personal overrides
+    ├── rules/
+    │   ├── testing.md                 # loads only for *.test.ts files
+    │   └── api-design.md              # loads only for src/api/**
+    ├── skills/
+    │   ├── security-review/
+    │   │   ├── SKILL.md               # /security-review <branch>
+    │   │   └── checklist.md
+    │   └── deploy/
+    │       └── SKILL.md               # /deploy staging
+    ├── agents/
+    │   └── code-reviewer.md           # @code-reviewer, read-only tools
+    ├── agent-memory/
+    │   └── code-reviewer/MEMORY.md    # subagent's own persistent notes
+    ├── workflows/
+    │   └── release-pipeline.js        # /release-pipeline
+    └── output-styles/
+        └── teaching.md                # optional, team-shared style
+```
+
+---
+
+## 15. Debugging Config
+
+If a setting, hook, or file isn't taking effect:
+- Run `/config` to inspect active settings.
+- Check `settings precedence` — a higher-scope file or CLI flag may be silently overriding it.
+- Confirm the file is in the right location (`.claude/` vs project root — several files, like `CLAUDE.md`, `.mcp.json`, and `.worktreeinclude`, live at the project **root**, not inside `.claude/`).
+- For skills/commands not appearing: confirm frontmatter is valid YAML and `name`/`description` are set.
+
+---
+
+*Compiled from Anthropic's official Claude Code documentation (code.claude.com/docs). Field names and behavior can change between releases — if something doesn't behave as documented here, check the current docs for that specific feature.*

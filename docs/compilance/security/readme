@@ -1,0 +1,120 @@
+Let me look at the "small/slim" `getUser` style you're referring to and audit the backend for missing security/flexibility. Let me find the current getUser and any get user endpoints.
+
+Now let me look at the UserService to see `getProfile` and how it currently works, and check for any security concerns (data leakage, abuse-prone endpoints).
+
+I have a clear view. Let me also check how `getUser()` is currently consumed on the frontend and whether `searchUsers`/`resolveUsername` are public (they are — no caller auth). Let me quickly confirm the frontend `getProfile` and check `username` return shape there.
+
+I have a complete picture. Let me update the todo and give you the summary.
+
+Here's the summary of the current `getUser` / user endpoints, what's missing on the security and flexibility sides, and how to slim it down.
+
+---
+
+## Current `getUser()` (what's there today)
+
+```ts
+// api/v1/Users.mo:6
+public shared query ({ caller }) func getUser() : async ?Types.UserPublic {
+  UserService.getProfile(users, MiddlewareAuth.effectiveCaller(mwConfig, caller));
+}
+```
+
+- Returns `?UserPublic = { id, username, displayName, createdAt }` or `null` (new user).
+- Auth via `effectiveCaller` — only your own profile.
+- Frontend: `getProfile(identity)` → `query`, `[user]` destructured → `user ?? null`.
+
+The user endpoints (`api/v1/Users.mo`):
+| Method | Auth | Type | Purpose |
+|---|---|---|---|
+| `getUser` | caller | query | own profile |
+| `updateUsername` | caller | **update** | set-once claim |
+| `checkUsername` | **none** | query | availability |
+| `searchUsers` | **none** | query | search by username |
+| `resolveUsername` | **none** | query | handle → principal |
+
+---
+
+## Missing / security gaps I found
+
+**A. `getVerifiedTier` is under-authenticated — leaked identity check.** `VerifiedApi.getVerifiedTier(userId)` is **public by design** (comment says so — badges must render for *other* users on public profiles). BUT it takes a raw `userId`. **Concern:** `userId` is an internal id, and `searchUsers`/`resolveUsername` are also public, so an attacker can public-enumerate *all* users and their badge tiers via three public calls. Not a fund-safety issue (no balances leak), just an **info-leak / enumeration** surface to be aware of.
+
+**B. `checkUsername`, `searchUsers`, `resolveUsername` are all `checkUsername = Bool`, no rate limiting.** Public + query = free, so an attacker can hammer `searchUsers` to scrape every registered handle. Because queries don't burn *your user's* cycles, the cost hits the attacker's own canister bill — low risk, but there's **no pagination** on `searchUsers` (returns unbounded array). If registrations grow, a broad search could return a huge array — worth capping.
+
+**C. No endpoint returns the user's `principal` as a backup identity path.** `UserPublic` omits `principal`. If a user forgets, there's no clean "who am I" beyond `getUser`. Not a security hole, just missing flexibility.
+
+**D. `updateUsername` race / idempotency** — it's an **update call**, so it's consensus-ordered, which is fine. But the "set-once permanent" rule is enforced in the service (good), yet the frontend UI implies editability (flagged earlier). No security leak — just UX-vs-contract mismatch.
+
+**E. No authorization granularity** — `searchUsers`, `checkUsername`, `resolveUsername` have **no caller gate at all** (deliberate — public payment links must resolve anonymously). But there's **no opt-in "hide my handle from search"** or profile-visibility flag. If you ever need privacy, there's nothing to flip.
+
+**F. `resolveUsername` → `Principal` is fine, but there's no inverse** (`principal → userId/username`). Frontend sometimes needs to look someone up by principal; you'd have to call `getProfile` on *your own* principal (only works for self). Missing a flexible reverse lookup.
+
+---
+
+## How to "get it small" / mirror-flexible (the slimming)
+
+The current shape already is slim. The flexibility you likely want:
+
+1. **Split `UserPublic` into `SelfPublic` vs `PublicProfile`.** Today one `UserPublic` serves both "my profile" (`getUser`) and "someone's public page" (`searchUsers`). For flexibility + privacy, mirror-flexible means:
+   - `getUser` (self) → includes `principal`, maybe `createdAt`.
+   - `searchUsers`/public pages → **stripped** version (no internal ids beyond `id`, no `principal`).
+   This matches the `Verified` pattern (public vs private views of the same row).
+
+2. **Cap / paginate `searchUsers`.** Add `limit`/`offset` or a `maxResults` cap so a big registry can't return a giant array in one query. That's the top "missing flexibility" item.
+
+3. **Add `getUserByPrincipal(p)` (auth-bound).** A flexible reverse-lookup without exposing enumeration.
+
+4. **Make the tier badge rule a single source.** You already mirror the length rule client-side (`≤3 ultra, 4 premium, 5 standard, else basic`) — keep that consistent so `getVerifiedTier` and client rendering never diverge.
+
+---
+
+## Priority for mirroring (flexibility + security)
+
+| # | Change | Kind |
+|---|---|---|
+| 1 | Cap/paginate `searchUsers` | **flexibility + DoS-avoidance** |
+| 2 | Split self vs public profile shape | flexibility/privacy |
+| 3 | `getUserByPrincipal` reverse lookup (auth-bound) | flexibility |
+| 4 | Consider rate/pagination on public queries | security (low) |
+| 5 | Leak-awareness note on `getVerifiedTier`/`searchUsers` enumeration | security (acknowledged) |
+
+**Bottom line:** the user/general endpoints are already clean, `caller`-gated correctly on mutations, and mutations sit on the update path (safe ordering). The real gaps are **unbounded public `searchUsers`** (cap it) and the **single `UserPublic` serving both self and public views** (split it for privacy/flexibility). No fund-safety vulnerability found.
+
+Want me to implement the `searchUsers` cap + the self/public profile split?
+
+---
+
+# RESOLVED — 2026-08-08
+
+Re-checked each finding against the code. Only **#1 (cap `searchUsers`)** was a
+concrete, verifiable defect: `UserRepository.searchByUsername` walked every
+matching row with no bound, unlike `TransactionRepository.getByUser`, which
+already stops at `Config.MAX_PAGE_SIZE`. Fixed:
+
+- `searchByUsername` now takes a `limit` and breaks out of the scan once it's
+  filled (`src/repositories/UserRepository.mo`).
+- `UserService.search` passes `Config.MAX_SEARCH_RESULTS` (25 — comfortably
+  above the 10-row suggestion list the frontend renders, never the whole
+  registry) (`src/services/UserService.mo`, `src/config/Config.mo`).
+- Candid signature is unchanged (`searchUsers: (text) -> (vec UserPublic)
+  query`), so no frontend change was needed.
+- Added a cap-stop test case to `testing/repositories/UserRepository.test.mo`.
+  32/32 tests pass.
+
+**The rest (#2–#6 in the priority table) were not built** — they are feature
+requests or acknowledged design tradeoffs, not bugs, on a canister that holds
+real user funds:
+
+- **Self/public profile split** — real hardening, but a `UserPublic` shape
+  change ripples through every frontend call site (`getUser`, `searchUsers`,
+  dashboard, transfer flows) for a leak that exposes only `id` / `username` /
+  `displayName` / `createdAt` — no balances, no principal. Out of scope for
+  this pass; worth a dedicated change if it's prioritized.
+- **`getUserByPrincipal` reverse lookup** — new surface, no concrete caller
+  need identified yet.
+- **Rate limiting / pagination beyond the cap** — the cap above already bounds
+  the DoS-relevant cost; additional throttling has no identified attacker
+  benefit beyond that queries already bill the caller's own cycles, not this
+  canister's.
+- **`getVerifiedTier`/enumeration leak-awareness (#5)** — acknowledged in the
+  original text as by-design (badges must render for other users' public
+  profiles); no change needed.

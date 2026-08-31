@@ -1,0 +1,229 @@
+I'll write the clear per-item explanation — backend response format + frontend implementation — for each remaining gap. No edits, explanation only.
+
+---
+
+# Gaps 1, 3–7 — Backend response format → Frontend implementation
+
+## 1. First-login handle claim (biggest gap)
+
+**Backend.** `register` is what a new user should call on first login. It's `public shared (msg) func register(username: Text) : async AuthResult`.
+
+```ts
+// services/types.ts
+type AuthResult =
+  | { ok: { user: UserPublic; isNew: boolean } }
+  | { err: string }
+
+type UserPublic = {
+  id: UserId;
+  username: [] | [string];   // [] = not claimed yet
+  displayName: string;
+  createdAt: bigint;
+}
+```
+
+**The chain today.** `openBackendSession(identity)` (`services/auth/auth.ts`) calls only `actor.login()` and **throws away** the returned `{ ok, isNew }`. So `isNew` is set and dropped on the floor. `register` is never wired.
+
+**Frontend fix.**
+1. Change `openBackendSession` to return the full `AuthResult` (`{ ok, isNew }`) instead of discarding it.
+2. In `components/auth/auth-provider.tsx` (`init()` and `login()`), after session opens: if `isNew === true` **or** `user.username === null` → redirect to a new **claim screen** (`/claim` or inline on onboarding).
+3. Claim screen: input + the `checkUsername` availability check that already exists in `services/buy/buy.ts`; "Claim" button calls `register(username)`.
+4. On success `{ ok }` → refresh profile, navigate to dashboard.
+
+**Recommendation:** use `register` for the *first* claim. `updateUsername` is the same set-once claim — see gap 3.
+
+---
+
+## 3. Username claim is duplicated (register vs updateUsername)
+
+**Backend.** Both are the identical set-once claim:
+- `register(username)` → `AuthResult`
+- `updateUsername(username)` → `ApiResult<UserPublic>` = `{ ok: UserPublic } | { err: string }`
+
+Both reject if the username is already taken or already set — the claim is **permanent**, not editable.
+
+**Frontend today.** Only `updateUsername` is wired, on the profile page (`app/(profile)` / settings), and the UI signals editability (which is false).
+
+**Fix — pick one path:**
+- **Onboarding** (first login) → `register`.
+- **Profile edit** → this is a misnomer; you can't re-edit. Either (a) hide the edit affordance and show "username locked", or (b) drop the profile-side claim entirely and keep only the onboarding claim.
+
+**Decision needed:** which single path do you want? I'd recommend: `register` only, on the claim screen, and on the profile page show the username as read-only ("set once, cannot change").
+
+---
+
+## 4. Settings — backend endpoints exist but session drawer is client-only
+
+**Backend.**
+```ts
+// both return ApiResult_3
+type SettingsPublic = {
+  theme: string;
+  language: string;
+  notifications: boolean;
+}
+getSettings()   : async ApiResult_3   // query
+updateSettings(s: SettingsPublic, currentPassword?: ?Text)
+                : async ApiResult_3   // update
+```
+
+**Frontend today.** `components/settings/settings-drawer.tsx` stores language/fiat/theme/sound in **localStorage**. `services/settings/settings.ts` doesn't exist. Nothing calls the backend.
+
+**Fix (only if you want cross-device sync):**
+1. New `services/settings/settings.ts`:
+   - `getSettings(identity): Promise<SettingsPublic>` (query)
+   - `updateSettings(identity, s): Promise<Outcome<SettingsPublic>>` (call, via `client.call`)
+2. On drawer open → `getSettings` to hydrate; on change → `updateSettings`.
+3. **Caveat:** fiat + sound are *not* in `SettingsPublic` (only theme/language/notifications). The drawer has more fields than the backend persists. So a full sync means either extending the backend DTO or syncing only the three fields.
+
+**Decision needed:** do you want backend settings at all, or treat these endpoints as dead? It's a real gap but a bigger change than the others.
+
+---
+
+## 5. Transactions — no detail view
+
+**Backend.**
+```ts
+getTransactions(...)   : async PaginatedResult
+getTransactionDetail(id: TxId) : async ApiResult_1   // = { ok: TransactionPublic } | { err: string }
+
+type TransactionPublic = {
+  id: TxId; userId: UserId; txType: TxTypeVariant;
+  ledgerId: string; amount: bigint; fee: bigint;
+  from: string; to: string; status: TxStatusVariant;
+  blockIndex: [] | [bigint]; memo: [] | [string];
+  createdAt: bigint; updatedAt: bigint;
+}
+```
+
+**Frontend today.** `services/transactions/transactions.ts` has only `getTransactions`. `getTransactionDetail` is declared nowhere on the frontend.
+
+**Fix:**
+1. Add to `services/transactions/transactions.ts`:
+   ```ts
+   getTransactionDetail(identity, txId: string): Promise<TransactionPublic>
+   ```
+   via `query` (a single tx read doesn't need an update call).
+2. On `app/(app)/transactions/page.tsx`, make each row tappable → bottom sheet / detail modal rendering the full `TransactionPublic` (status, fee, blockIndex, memo, timestamps).
+
+---
+
+## 6. Deposit — no refresh, no hex id
+
+**Backend.**
+```ts
+getDepositAddress(): async ICRC1Account            // { owner: Principal; subaccount: []|[Blob] }
+getDepositAccountIdentifier(): async Text          // the 64-char hex account id
+syncDeposits(ledgerId: LedgerId): async ApiResult_1  // = { ok: TransactionPublic } | { err }
+```
+
+**Good news:** the **hex id is already plumbed through on the frontend.** `services/deposit/deposit.ts` does
+```ts
+Promise.all([actor.getDepositAddress(), actor.getDepositAccountIdentifier()])
+```
+and `useDepositAddress()` already exposes both `data.address` (ICRC account) and `data.accountId` (the hex). It's just **not rendered or copyable** on `app/(app)/deposit/page.tsx`.
+
+**Fix:**
+1. On the deposit page, show the 64-char `data.accountId` with a copy button (clipboard) + the ICRC address tab already there.
+2. Add a "Refresh" that calls `syncDeposits(ledgerId)` via `call`, then refetch balances so newly arrived deposits appear without a full page reload.
+
+---
+
+## 7. Buy username — treasury hidden
+
+**Backend.**
+```ts
+// note: bare Principal, NOT wrapped in a Result
+public shared query func getUsernameTreasury() : async Principal
+
+purchaseUsername(username): async ApiResult_2   // = { ok: Purchase } | { err }
+type Purchase = { blockIndex: bigint; price: bigint; txId: string; username: string }
+```
+
+**Frontend today.** `purchaseUsername` is wired in `services/buy/buy.ts`; `getUsernameTreasury` is not called anywhere.
+
+**Fix:**
+1. Add to `services/buy/buy.ts`:
+   ```ts
+   getUsernameTreasury(identity): Promise<string>   // query; actor.getUsernameTreasury().then(p => p.toText())
+   ```
+2. On the `/username` buy card (`app/(app)/username/page.tsx` or similar), render a small footnote: "Funds go to the treasury canister `xxxxx-...`" and link/copy the principal.
+
+---
+
+## 6b / Operator endpoints — intentionally no UI
+
+`reserveUsername`, wasm staging, `refreshLedgers`, revenue — these act on shared/mainnet state and are reachable only via the ops CLI (`npm run ci`). **No frontend action.** Correct as-is.
+
+---
+
+## What I'm NOT covering
+
+- **Dashboard totals** (`getDashboard`) — you said you replaced it to cut cycles; I didn't verify that swap, so I'm leaving it out unless you want me to confirm it. Tell me if that replacement is done and I'll treat the dashboard as out of scope.
+
+---
+
+**Three decisions I need before building:**
+1. **Username claim**: onboarding-only via `register`, or keep profile-side too?
+2. **Settings**: sync drawer to backend (bigger change, covers only theme/language/notifications), or leave client-only?
+3. **Given the list**: which items do you actually want built this pass? I'd suggest **1, 5, 6, 7** as the cheap high-value wins; **3 and 4** are decision-dependent.
+
+Say the word with your picks and I'll implement.
+
+---
+
+# RESOLVED — 2026-08-08
+
+Each claim above was re-checked against the code before building. **Four of the
+eight listed gaps were already implemented**; the audit was written against the
+canister method inventory rather than against what the screens render.
+
+## Closed as already built — no work done
+
+| Claim | Reality |
+|---|---|
+| 1. No first-login handle claim | `components/dashboard/username-prompt.tsx` is a **non-dismissible** dialog (no close, no outside-click, no escape) shown whenever `username` is empty, routing to `/profile`. The path exists and is mandatory. |
+| 1b. `isNew` is discarded | True, and harmless. `username === null` is the same signal and already drives the prompt. Reading `isNew` would add a second source of truth for one boolean. |
+| 3. Hex account id not offered | Already the "Account ID" tab in `components/deposit/deposit-address-card.tsx`, copyable, with its own QR. |
+| 5. No transaction detail view | `components/transactions/transaction-list.tsx` rows are accordions exposing from / to / amount / fee / status / block index with explorer link. `getTransactionDetail` would return a record already in memory. |
+| 8. Profile implies editability | It does not. `components/profile/profile-card.tsx` renders a claimed handle as static text plus a permanence note; the form exists only when unclaimed. |
+
+## `register` vs `updateUsername` — kept `updateUsername`
+
+`AuthService.register` and `UserService.updateUsername` run the identical
+set-once claim: same validator, same reserved check, same taken check, same
+`setUsername`, same permanence rejection. The only difference is `register`
+also creates the user record when absent, which cannot happen in the browser
+because `openBackendSession` always calls `login()` first.
+
+Swapping would be pure churn on a production money path with no behavioural
+difference, so `updateUsername` stays. `register` remains available for any
+non-browser client.
+
+## Built
+
+| Gap | Change |
+|---|---|
+| 4. Deposit sync | `services/deposit/deposit.ts` gains `syncDeposits`; `/deposit` gains an explicit refresh button. Tap-only — it is an update call. The backend's `#err("No new deposits found")` is the ordinary answer and renders as a neutral note, not an error. |
+| 7. Treasury display | `services/buy/buy.ts` gains `getUsernameTreasury`; `/username` renders it as a footnote under the total. |
+| 6. Settings sync | New `services/settings/settings.ts`; the drawer hydrates once per session and pushes on close only when something changed. |
+
+### Correction to the settings section above
+
+`getSettings` is **not** a query. `SettingsService.getSettings` calls
+`SettingsRepo.getOrCreate`, which mutates stable state, so the method is
+declared `public shared` and costs a full update call. That is why the drawer
+reads once per session rather than on every open, and writes on close rather
+than on every toggle.
+
+Scope is theme and language only. `notifications` is read and echoed back
+unchanged — nothing in the frontend controls it. Fiat and sound stay
+client-only; they are not in `SettingsPublic` and adding them would require a
+stable-record migration. localStorage remains authoritative for first paint;
+the canister is the cross-device sync layer.
+
+## Note on git
+
+`docs/compilance/` is not in `.gitignore`'s negation list — `docs/*` is ignored
+and specific paths are re-included with `!` lines. **These files are currently
+invisible to git.** Tracking them needs a `!docs/compilance/` line added.

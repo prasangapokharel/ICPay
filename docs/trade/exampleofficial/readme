@@ -1,0 +1,118 @@
+# On-Chain Swap Example in Rust (ICP)
+
+The knowledge sources include a detailed ICRC-2 swap example, but it is written in **Motoko** (`motoko/icrc2-swap`). There is **no direct Rust equivalent** of the full swap canister in the provided knowledge sources. However, I can explain the architecture and key safety patterns clearly, and point you to the closest Rust resources available.
+
+---
+
+## Architecture
+
+Three canisters are involved: [[ICRC-2 Swap README](https://github.com/dfinity/examples/blob/master/motoko/icrc2-swap/README.md)]
+
+| Canister | Role |
+|---|---|
+| `token_a` | Standard ICRC-1/ICRC-2 ledger |
+| `token_b` | Standard ICRC-1/ICRC-2 ledger |
+| `backend` | Swap canister: accepts deposits, performs 1:1 swaps, processes withdrawals |
+
+---
+
+## Two Critical Safety Patterns
+
+### 1. Debit Before Transfer (Withdraw)
+
+When sending tokens **out** of the canister:
+
+1. **Deduct** the user's internal balance first
+2. **Then** perform the transfer on the token ledger
+
+If reversed, a concurrent/reentering call could withdraw the same tokens twice (reentrancy attack). [[ICRC-2 Swap README](https://github.com/dfinity/examples/blob/master/motoko/icrc2-swap/README.md)]
+
+### 2. Atomic Swap (No `await` Inside Swap Logic)
+
+The swap function must exchange two users' balances **without any `await` calls**. On ICP, an `await` creates a commit point — if the function fails after an `await`, only the changes before it persist, leaving state inconsistent. [[ICRC-2 Swap README](https://github.com/dfinity/examples/blob/master/motoko/icrc2-swap/README.md)]
+
+---
+
+## Rust Skeleton (Based on ICP Rust CDK Patterns)
+
+The knowledge sources do not provide a complete Rust swap canister, but based on the Rust CDK patterns documented, here is a structural skeleton consistent with the safety patterns described:
+
+```rust
+use std::cell::RefCell;
+use std::collections::HashMap;
+use candid::Principal;
+use ic_cdk::call::{Call, CallResult};
+
+// Internal balances for token_a and token_b per user
+thread_local! {
+    static BALANCES_A: RefCell<HashMap<Principal, u64>> = RefCell::new(HashMap::new());
+    static BALANCES_B: RefCell<HashMap<Principal, u64>> = RefCell::new(HashMap::new());
+}
+
+// SAFETY PATTERN 2: No await inside swap — purely synchronous balance swap
+#[ic_cdk::update]
+fn swap(user_a: Principal, user_b: Principal) -> Result<(), String> {
+    let bal_a = BALANCES_A.with(|b| *b.borrow().get(&user_a).unwrap_or(&0));
+    let bal_b = BALANCES_B.with(|b| *b.borrow().get(&user_b).unwrap_or(&0));
+
+    if bal_a == 0 || bal_b == 0 {
+        return Err("InsufficientBalance".to_string());
+    }
+
+    // Atomic: all changes happen synchronously, no await
+    BALANCES_A.with(|b| {
+        let mut map = b.borrow_mut();
+        map.insert(user_a, 0);
+        map.insert(user_b, bal_a);
+    });
+    BALANCES_B.with(|b| {
+        let mut map = b.borrow_mut();
+        map.insert(user_b, 0);
+        map.insert(user_a, bal_b);
+    });
+
+    Ok(())
+}
+
+// SAFETY PATTERN 1: Debit internal balance BEFORE calling the ledger
+#[ic_cdk::update]
+async fn withdraw(token_ledger: Principal, amount: u64) -> Result<(), String> {
+    let caller = ic_cdk::caller();
+
+    // Step 1: Debit first
+    let current = BALANCES_A.with(|b| *b.borrow().get(&caller).unwrap_or(&0));
+    if current < amount {
+        return Err("InsufficientBalance".to_string());
+    }
+    BALANCES_A.with(|b| b.borrow_mut().insert(caller, current - amount));
+
+    // Step 2: Then transfer on the ledger
+    let result: CallResult<(Result<u64, String>,)> =
+        Call::bounded_wait(token_ledger, "icrc1_transfer")
+            .with_arg(&amount)
+            .await;
+
+    match result {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            // Rollback on failure
+            BALANCES_A.with(|b| b.borrow_mut().insert(caller, current));
+            Err(format!("Transfer failed: {:?}", e))
+        }
+    }
+}
+
+ic_cdk::export_candid!();
+```
+
+> **Note:** This is a simplified illustration. A production implementation requires proper ICRC-2 `transfer_from` calls, deposit handling, and full error management.
+
+---
+
+## Related Rust Examples to Study
+
+- **Inter-canister calls** (bounded-wait, unbounded-wait, retries): [[inter-canister-calls](https://github.com/dfinity/examples/blob/master/rust/inter-canister-calls/README.md)]
+- **Parallel calls** (useful for launching both token transfers simultaneously): [[parallel_calls](https://github.com/dfinity/examples/blob/master/rust/parallel_calls/README.md)]
+- **Full Motoko swap reference** (same architecture, different language): [[ICRC-2 Swap README](https://github.com/dfinity/examples/blob/master/motoko/icrc2-swap/README.md)]
+
+For security best practices on inter-canister calls, see the [security guide](https://docs.internetcomputer.org/guides/security/inter-canister-calls).

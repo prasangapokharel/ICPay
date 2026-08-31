@@ -1,0 +1,202 @@
+Yes — based on your **current ICPay Cloud API test**, you already have the basic storage working.
+
+The `downloadFile ❌ Bucket not found` is likely **not a storage problem**. Your CDN `publicUrl` works and raw HTTP returns `200`, so the file exists. The download method is probably resolving the bucket differently than `uploadFile/listFiles/publicUrl`.
+
+### Your current API
+
+| Method             | Status         |
+| ------------------ | -------------- |
+| `uploadFile`       | ✅              |
+| `listFiles`        | ✅              |
+| `publicUrl`        | ✅              |
+| `getPublicFileUrl` | ✅              |
+| `deleteFile`       | ✅              |
+| CDN raw download   | ✅              |
+| `downloadFile`     | ❌ **fix this** |
+
+### What you should add next
+
+For an ICPay Cloud API that feels like Cloudinary, I would give the developer these methods:
+
+| Method             | Priority | Purpose                         |
+| ------------------ | -------: | ------------------------------- |
+| `uploadFile`       |       🔴 | Upload                          |
+| `downloadFile`     |       🔴 | Authenticated/original download |
+| `listFiles`        |       🔴 | Paginated listing               |
+| `getFile`          |       🔴 | Get metadata for one file       |
+| `deleteFile`       |       🔴 | Delete                          |
+| `publicUrl`        |       🔴 | Public CDN URL                  |
+| `getPublicFileUrl` |       🔴 | Same URL helper                 |
+| `updateFile`       |       🟠 | Rename/update metadata          |
+| `moveFile`         |       🟠 | Move between folders            |
+| `searchFiles`      |       🟠 | Search by name/tag              |
+| `getSignedUrl`     |       🟠 | Temporary private access        |
+| `createFolder`     |       🟠 | Folder organization             |
+| `deleteFolder`     |       🟠 | Folder deletion                 |
+| `addTags`          |       🟡 | Tags                            |
+| `setMetadata`      |       🟡 | Custom metadata                 |
+| `getThumbnailUrl`  |       🟡 | Image thumbnail                 |
+| `transformImage`   |       🟡 | resize/crop/WebP/AVIF           |
+| `bulkDelete`       |       🟡 | Delete multiple                 |
+| `webhooks`         |       🟡 | upload/delete events            |
+| `chunkedUpload`    |       🟡 | Large/resumable files           |
+
+Cloudinary itself separates individual CRUD operations from bulk/admin operations, with listing, updating, deleting, renaming, tagging and metadata management available through its APIs. ([Cloudinary][1])
+
+## The most important missing method
+
+I would implement this next:
+
+```text
+downloadFile(fileId)
+```
+
+It should work like:
+
+```text
+fileId
+   ↓
+find file metadata
+   ↓
+find bucket
+   ↓
+verify owner/access
+   ↓
+read stable memory
+   ↓
+return bytes
+```
+
+Your error:
+
+```json
+{
+  "err": "Bucket not found"
+}
+```
+
+means your method is probably doing something like:
+
+```text
+fileId → bucket lookup
+```
+
+with the **wrong bucket identifier/name**, while `publicUrl` is already using the correct bucket path.
+
+### Don't make `downloadFile` depend on `publicUrl`
+
+Keep the two paths separate:
+
+```text
+downloadFile()
+    → authenticated
+    → canister/stable-memory read
+    → bytes
+
+publicUrl()
+    → URL generation only
+    → CDN
+```
+
+That's cleaner and scalable.
+
+---
+
+## I would also add `getFile`
+
+This should return:
+
+```json
+{
+  "id": "file_123",
+  "bucket": "images",
+  "name": "hello.webp",
+  "size": 12345,
+  "content_type": "image/webp",
+  "visibility": "public",
+  "created_at": "...",
+  "updated_at": "...",
+  "url": "https://6vbhm-nqaaa-aaaan-q6muq-cai.raw.icp0.io/..."
+}
+```
+
+Cloudinary's resource API similarly supports retrieving an individual asset by immutable asset ID, independent of its public ID/name/folder. ([Cloudinary][2])
+
+---
+
+## Then private download
+
+This is important for your **private bucket** feature:
+
+```text
+getSignedUrl(fileId, expiresIn)
+```
+
+Example:
+
+```json
+{
+  "url": "https://6vbhm-nqaaa-aaaan-q6muq-cai.raw.icp0.io/...",
+  "expires_at": 1780000000
+}
+```
+
+Cloudinary supports private/authenticated assets and signed/time-limited access for originals. ([Cloudinary][3])
+
+---
+
+## Then image transformation
+
+For ICPay Cloud, I'd make this very simple:
+
+```text
+getImageUrl(fileId, {
+    width,
+    height,
+    quality,
+    format,
+    fit
+})
+```
+
+Example:
+
+```text
+getImageUrl("abc123", {
+    width: 800,
+    format: "webp",
+    quality: 80
+})
+```
+
+Result:
+
+```text
+https://6vbhm-nqaaa-aaaan-q6muq-cai.raw.icp0.io/bucket/file.webp?w=800&q=80
+```
+
+This is where ICPay can start behaving like a lightweight **Cloudinary alternative**, rather than just being an on-chain Dropbox.
+
+### So your immediate order should be
+
+```text
+1. Fix downloadFile       🔴
+2. getFile                🔴
+3. signed/private URL     🔴
+4. update/rename file     🟠
+5. searchFiles            🟠
+6. folders                🟠
+7. image transformations  🟠
+8. thumbnails             🟠
+9. chunked upload         🟡
+10. webhooks              🟡
+```
+
+Don't implement AI, video processing, OCR, etc. yet. Cloudinary has those, but they are **not necessary for ICPay Cloud's first developer API**. Cloudinary's current API surface is much broader, including DAM, AI analysis, backups/versioning and advanced asset management. ([Cloudinary][4])
+
+And **downloadFile should be your immediate bug to fix** because everything else depends on reliable original-file access.
+
+[1]: https://cloudinary.com/documentation/managing_assets?utm_source=chatgpt.com "CRUD Programmatic Asset Management APIs | Documentation"
+[2]: https://cloudinary.com/documentation/list_assets?utm_source=chatgpt.com "List assets | Documentation"
+[3]: https://cloudinary.com/documentation/upload_parameters?utm_source=chatgpt.com "Customizing uploads | Documentation"
+[4]: https://cloudinary.com/documentation/dam_apis?utm_source=chatgpt.com "Assets (DAM) APIs | Documentation"

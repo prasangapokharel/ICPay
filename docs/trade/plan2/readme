@@ -1,0 +1,504 @@
+# ICPay Trade — Plan 2: Swap migration (Motoko → Rust)
+
+**Status:** design only  
+**Date:** August 2026  
+**Decision:** **Yes** — move all swap logic to a Rust `icpay_trade` canister and **delete** Motoko `SwapService`.  
+**Trade canister = swap** (v1). Trading UI + limits come later (plan1 extras).
+
+**Fee:** **0.1%** of swap amount (10 bps) — **not** flat 0.1 ICP.  
+**Speed target:** **official ICPSwap `depositFromAndSwap`** — 1 pool call per trade (not 3).
+
+---
+
+## 0. Fee model — 0.1% (not flat ICP)
+
+| | Today (Motoko) | Trade (new) |
+|---|----------------|-------------|
+| Service fee | **0.1 ICP flat** (`10_000_000` e8s) | **0.1%** of `amount_in` |
+| Config | `SWAP_ICP_SERVICE_FEE_E8S` | `SERVICE_FEE_BPS = 10` |
+| Small swap (1 ICP) | User pays 0.1 ICP (~10%) | User pays 0.001 ICP |
+| Large swap (100 ICP) | User pays 0.1 ICP (~0.1%) | User pays 0.1 ICP (~0.1%) |
+| Break-even | ~100 ICP swap | — |
+
+### How fee is collected (clean + fast)
+
+```rust
+// domain/fees.rs — pure, unit-tested
+pub const SERVICE_FEE_BPS: u64 = 10; // 0.1%
+
+pub fn service_fee(amount_in: u64) -> u64 {
+    amount_in.saturating_mul(SERVICE_FEE_BPS) / 10_000
+}
+
+pub fn swap_amount_after_fee(amount_in: u64) -> u64 {
+    amount_in.saturating_sub(service_fee(amount_in))
+}
+```
+
+**Skim from `token_in`** before pool call — accrue fee on trade main, batch to treasury hourly:
+
+```
+amount_in (user trading balance)
+  → service_fee (0.1%) accrue on trade main (0 IC writes)
+  → depositFromAndSwap(remainder) → output to trade canister
+  → credit user trade balance (internal, 0 IC writes)
+```
+
+| Swap type | Old (flat ICP fee) | New (0.1%) |
+|-----------|-------------------|------------|
+| ICP → ckBTC | Separate ICP transfer to treasury **+** swap | Skim 0.1% from ICP input — **one less hop** when batched |
+| ckBTC → ICP | Needs ICP balance for 0.1 ICP fee | Fee taken from ckBTC input — **no ICP required** |
+
+**Quote must show:** `service_fee`, `amount_in`, `amount_after_fee`, `amount_out`.
+
+**Minimum fee:** `1` unit (1 e8s) floor so dust swaps don’t round to zero.
+
+**Treasury sweep (optional v2.1):** accrue fees on trade main, `heartbeat` transfers to treasury hourly — **0 extra writes per swap**.
+
+---
+
+## 1. Recommendation (short)
+
+| Question | Answer |
+|----------|--------|
+| Write swap in Rust trade canister? | **Yes** |
+| Remove from Motoko wallet? | **Yes**, after parity + mainnet soak |
+| Better than keeping Motoko swap? | **Yes** — isolation, **~5× fewer cycles**, **0.1% fee**, ICPSwap one-step |
+| Touch bucket / transfer / community? | **No** — wallet unchanged except thin fund bridge |
+| One feature or two? | **One** — “swap” is the trade canister; `/swap` redirects to `/trade` |
+
+---
+
+## 2. Before vs after
+
+```
+BEFORE (today)
+  Frontend /swap
+       → icp_wallet_backend (Motoko)
+            SwapService.mo  (920 lines + SwapStorage + api/v1/Swap.mo)
+            + custody + bucket + community + …
+
+AFTER (target)
+  Frontend /trade  (v1: same swap UI, v2: terminal)
+       → icpay_trade (Rust)     ← ALL ICPSwap + swap state
+       → icp_wallet_backend      ← custody ONLY
+            depositToTrade / withdrawFromTrade  (2 thin endpoints)
+```
+
+**Wallet never calls ICPSwap again.**
+
+---
+
+## 3. What we delete from Motoko (checklist)
+
+| File / area | Action |
+|-------------|--------|
+| `src/services/SwapService.mo` | **Delete** |
+| `src/storage/SwapStorage.mo` | **Delete** |
+| `src/api/v1/Swap.mo` | **Delete** |
+| `main.mo` swap wiring + `SwapService.create` | **Remove** |
+| `testing/swap/*.test.mo` | **Move** → `trade/tests/` (PocketIC) |
+| `testing/services/SwapService.test.mo` | **Replace** with Rust unit tests |
+| `Config.mo` `ICPSWAP_*`, `RATE_SWAP` | **Move** to trade canister config |
+| `types.mo` `SwapQuoteResult`, `SwapResult` | **Remove** from wallet; live in trade `.did` |
+| `#swapIn` / `#swapOut` tx types | **Keep** on wallet only if we still mirror one line in tx history (optional); else trade owns history |
+
+**Keep on wallet:** everything else (transfer, withdraw, deposit, bucket, community, username, admin).
+
+---
+
+## 4. Rust trade canister — clean module layout
+
+Single responsibility: **ICPSwap execution + swap/trade state**.
+
+```
+trade/
+├── Cargo.toml
+├── trade_canister.did
+└── src/
+    ├── lib.rs                 # init, post_upgrade, export_candid!, timers
+    ├── config.rs              # factory id, fee tiers, service fee, wallet id
+    ├── types.rs               # ApiResult, Quote, SwapResult, Order (later)
+    │
+    ├── api/                   # thin #[query] / #[update] — no business logic
+    │   ├── quote.rs           # get_swap_quote
+    │   ├── swap.rs            # execute_swap, recover_failed_swap
+    │   └── balance.rs         # (v2) trade balance read
+    │
+    ├── domain/                # pure logic — unit tested, no ic_cdk
+    │   ├── quote.rs           # fee math, min_out, slippage
+    │   ├── swap.rs            # validation, balance checks
+    │   └── fees.rs
+    │
+    ├── storage/               # ic-stable-structures
+    │   ├── pools.rs           # pair → pool id cache
+    │   ├── escrows.rs         # failed swap recovery (replaces SwapStorage)
+    │   ├── balances.rs        # (v2) per-user trade balance
+    │   └── history.rs         # swap tx log for UI
+    │
+    ├── icpswap/               # external actors only
+    │   ├── factory.rs
+    │   └── pool.rs            # quote, deposit_from, swap, withdraw
+    │
+    ├── ledger/
+    │   └── icrc.rs            # transfer, approve, fee
+    │
+    └── wallet/
+        └── gate.rs            # verify caller == WALLET for credit/debit
+```
+
+**Rules (same as `backend/.agents/skills/rust/SKILL.md`):**
+
+- `api/` → delegate only  
+- `domain/` → testable, no `ic_cdk`  
+- Max **~300 lines** per file  
+- Return `ApiResult<T>`, never trap on user input  
+
+---
+
+## 5. Candid API — v1 swap parity
+
+Match current frontend needs first; rename later if needed.
+
+```candid
+type ApiResult = variant { Ok : SwapResult; Err : text };
+
+type SwapQuoteResult = record {
+  amount_out : nat;
+  amount_out_raw : nat;
+  service_fee : nat;
+  amount_after_fee : nat;
+  swap_fee : nat;
+  price_impact : text;
+  pool_id : text;
+};
+
+type SwapResult = record {
+  block_index : nat64;
+  amount_in : nat;
+  amount_out : nat;
+  service_fee : nat;
+  tx_id : text;
+};
+
+// --- queries (free) ---
+get_swap_quote : (token_in : text, token_out : text, amount_in : nat) -> (variant { Ok : SwapQuoteResult; Err : text }) query;
+
+// --- user updates ---
+execute_swap : (token_in : text, token_out : text, amount_in : nat, amount_out_min : nat) -> (ApiResult);
+recover_failed_swap_input : (token_in : text, token_out : text, amount_in : nat) -> (variant { Ok : nat; Err : text });
+
+// --- wallet-only (v1 fund bridge) ---
+credit_from_wallet : (user : principal, token : text, amount : nat, block_index : nat64) -> (variant { ok; err : text });
+debit_to_wallet : (user : principal, token : text, amount : nat) -> (variant { Ok : nat64; Err : text });
+```
+
+**Wallet adds (Motoko, ~50 lines total):**
+
+```motoko
+depositForSwap : (ledgerId : Text, amount : Nat) -> async ApiResult<Nat>;
+// transfer sub → trade canister + credit_from_wallet
+
+withdrawFromTrade : (ledgerId : Text, amount : Nat) -> async ApiResult<Nat>;
+// debit_to_wallet + transfer to user sub
+```
+
+---
+
+## 6. Official ICPSwap integration (clean)
+
+Source: [ICPSwap-Labs/docs](https://github.com/ICPSwap-Labs/docs)
+
+| Canister | Principal | Use |
+|----------|-----------|-----|
+| **SwapFactory** | `4mmnk-kiaaa-aaaag-qbllq-cai` | `getPool` (query) — fee tiers 500 / 3000 / 10000 |
+| **SwapPool** | per pair | `quote` (query), **`depositFromAndSwap`** (update) |
+| **Token ledgers** | ICRC | `icrc2_approve` once per token |
+
+### What Motoko does wrong today
+
+Uses the **3-step** manual flow from older guides:
+
+```
+depositFrom → swap → withdraw   (3 pool updates)
+```
+
+Plus wallet hops + separate ICP fee transfer = **7 writes total**.
+
+### What we use instead (official one-step)
+
+From [Executing DepositFromAndSwap](https://github.com/ICPSwap-Labs/docs/blob/main/02.SwapPool/Swap/04.Executing_DepositFromAndSwap.md):
+
+```candid
+type DepositAndSwapArgs = record {
+  amountIn : text;
+  zeroForOne : bool;
+  amountOutMinimum : text;
+  tokenInFee : nat;
+  tokenOutFee : nat;
+};
+
+depositFromAndSwap : (DepositAndSwapArgs) -> (variant { ok : nat; err : Error });
+```
+
+**One pool update** = deposit + swap + withdraw output **directly to caller** (trade canister).
+
+### Rust pool actor (minimal — only what we need)
+
+```rust
+// icpswap/pool.rs — match deployed ICPSwap v3, nothing extra
+
+#[derive(CandidType)]
+struct DepositAndSwapArgs {
+    amount_in: String,
+    zero_for_one: bool,
+    amount_out_minimum: String,
+    token_in_fee: u64,
+    token_out_fee: u64,
+}
+
+trait SwapPool {
+    async fn quote(&self, args: SwapArgs) -> Result<u64, PoolError>;
+    async fn deposit_from_and_swap(&self, args: DepositAndSwapArgs) -> Result<u64, PoolError>;
+    async fn get_user_unused_balance(&self, user: Principal) -> Result<(u64, u64), PoolError>;
+}
+```
+
+**Do not implement:** mint, liquidity, limit orders on pool until M6.  
+**Quote:** `factory.getPool` (query) → `pool.quote` (query) — both free.
+
+### Token standard labels (must match factory)
+
+| Token | `standard` field |
+|-------|------------------|
+| ICP | `"ICP"` |
+| ckBTC, ckETH, ckUSDC, ckUSDT | `"ICRC2"` |
+| SNS / other ICRC-1 | `"ICRC1"` |
+
+---
+
+## 7. Execution path — optimal (one pool call)
+
+### Why not “instant”?
+
+| Layer | Limit |
+|-------|--------|
+| IC consensus | **~2–4s per update** |
+| Minimum swaps | **1 pool update** with `depositFromAndSwap` |
+| **Hard floor** | **~2–5s** after approve is warm |
+
+### Best path (v1 — ship this)
+
+```
+ONE-TIME per token:
+  depositForSwap(amount)           // wallet → trade main
+  icrc2_approve(pool, allowance)   // once per token/pool
+
+EVERY swap (~2–5s, 1 pool write):
+  execute_swap:
+    fee = 0.1% of amount_in        // accrue on trade main (0 writes)
+  pool.depositFromAndSwap({
+    amountIn, zeroForOne, amountOutMinimum,
+    tokenInFee, tokenOutFee
+  })
+    → output lands on trade canister
+  credit user trading balance      // StableBTreeMap (0 writes)
+```
+
+```
+┌─────────────┐  deposit once   ┌──────────────────┐
+│ Wallet      │ ───────────────► │ Trading balance   │
+│ subaccount  │ ◄─────────────── │ (per-user ledger) │
+└─────────────┘  withdraw       └────────┬─────────┘
+                                           │
+         depositFromAndSwap (1 IC write)   ▼
+                                    ICPSwap pool
+```
+
+### Writes per repeat swap
+
+| Step | IC write? | Cycles (est.) |
+|------|-----------|---------------|
+| Wallet deposit | Once per top-up | ~47M |
+| `icrc2_approve` | Once per token | ~40M |
+| Service fee 0.1% | **No** (accrue) | 0 |
+| **`depositFromAndSwap`** | **Yes** | ~40M |
+| User balance credit | **No** (stable map) | ~0 |
+| Treasury sweep | Hourly timer | amortized |
+
+**Repeat swap (warm approve): ~47M cycles, ~2–5s**  
+**vs Motoko today: ~280M cycles, ~15–35s** → **~6× fewer cycles, ~4× faster**
+
+If approve expired: +40M (~87M total).
+
+### Stuck funds recovery (official)
+
+Query `getUserUnusedBalance(trade_canister_principal)` on pool.  
+If non-zero after failed swap → `withdraw` to trade main → credit user.  
+Port as `recover_failed_swap` — same idea as today’s Motoko escrow.
+
+---
+
+## 8. Frontend migration
+
+| Step | Work |
+|------|------|
+| 1 | `services/trade/client.ts` — actor for `icpay_trade` |
+| 2 | `services/trade/quote.ts` — `get_swap_quote` query |
+| 3 | `services/trade/swap.ts` — `execute_swap`, `recover_failed_swap` |
+| 4 | Point `useSwap` / `SwapForm` at trade canister (or rename hook `useTrade`) |
+| 5 | `/swap` → redirect to `/trade` (or keep `/swap` as alias) |
+| 6 | Delete `services/swap/*` after soak |
+
+Quotes can stay client-side ICPSwap **or** move to trade `get_swap_quote` query (preferred — one source of truth).
+
+---
+
+## 9. Transaction history
+
+| Option | Pros | Cons |
+|--------|------|------|
+| **A. Trade canister only** | Cleanest | Wallet tx list won’t show swaps until UI calls trade |
+| **B. Wallet mirror row** | Dashboard unchanged | Coupling; wallet must trust trade callback |
+
+**Pick A** — frontend `transactions` page merges wallet txs + trade history query.  
+Wallet `#swapIn` / `#swapOut` types deprecated over time.
+
+---
+
+## 10. Migration phases
+
+| Phase | Deliverable | Motoko swap |
+|-------|-------------|-------------|
+| **M0** | `trade/` scaffold, `domain/fees.rs` (0.1% tests), `get_swap_quote` | Keep |
+| **M1** | `depositForSwap` + **`depositFromAndSwap`** execute path | Keep |
+| **M2** | Escrow + `recover_failed_swap`, mainnet test | Keep, feature flag |
+| **M3** | Frontend `/trade` → trade canister, optimistic UI | Keep fallback |
+| **M4** | 2 weeks clean mainnet | **Delete Motoko swap** |
+| **M5** | Treasury batch sweep + quote prefetch polish | — |
+| **M6** | Binance terminal + limit orders (plan1) | — |
+
+**No parity phase** — we don’t copy the slow 7-write Motoko path.
+
+---
+
+## 11. Cycle & memory budget
+
+### Cycles (operator cost)
+
+| Action | Calls | Cycles | Billed to |
+|--------|-------|--------|-----------|
+| `get_swap_quote` | query ×2 (factory + pool) | **~0** | — |
+| `getPool` cache hit | 0 | **0** | — |
+| Repeat `execute_swap` | 1 pool update | **~47M** | trade |
+| + re-approve | +1 ledger | **~87M** | trade |
+| Motoko swap (today) | 7 updates | **~280M** | wallet |
+| Treasury sweep | 1/hour | ~40M | trade |
+
+**At 1,000 swaps/day:** ~47B cycles/day (trade) vs ~280B (wallet swap) — **~6× less**.
+
+**Top-up rule:** keep trade canister above **2T cycles**; alert at 5T.
+
+### Stable memory (minimal design)
+
+Only store what must survive upgrades. **No heap `HashMap` for money.**
+
+| Structure | `MemoryId` | Key | Value | Size estimate |
+|-----------|------------|-----|-------|---------------|
+| `StableCell` config | 0 | — | wallet id, treasury, counters | ~500 B |
+| `StableBTreeMap` pool cache | 1 | `pair_key` (text) | pool_id, token0, fee | ~50 pairs × 120 B ≈ **6 KB** |
+| `StableBTreeMap` balances | 2 | `(principal, token)` | balance u64 | **~100 B × users × tokens** |
+| `StableBTreeMap` allowances | 3 | `(principal, token, pool)` | expiry, amount | sparse, **~150 B × active** |
+| `StableBTreeMap` escrows | 4 | swap attempt key | refund state | only failures, **&lt;1 MB** |
+| `StableLog` history | 5–6 | index + data | last 50 swaps/user | cap **~5 MB** total |
+
+**Projected stable memory**
+
+| Users with trading balance | Stable RAM | Idle burn/day (approx.) |
+|----------------------------|------------|-------------------------|
+| 100 | ~0.5 MB | ~5M cycles |
+| 1,000 | ~3 MB | ~33M cycles |
+| 10,000 | ~25 MB | ~275M cycles |
+
+Formula (IC): ~127,000 cycles/sec/GB → 25 MB ≈ **0.27B cycles/day** idle.  
+Swap traffic dominates long before memory does.
+
+### Wasm module size target
+
+| Item | Target |
+|------|--------|
+| Release `.wasm` (shrunk) | **&lt; 2 MB** |
+| `icpswap/` + `ledger/` | thin Candid stubs only |
+| No heavy deps | no regex, no full serde_json |
+
+### What we do NOT store on-chain
+
+- Full quote history (client + SwapInformationV2 API off-chain)
+- Chart OHLC (HTTP / ICPSwap API)
+- User preferences (frontend localStorage)
+- Duplicate wallet tx rows
+
+---
+
+## 12. Cost summary (user + operator)
+
+| | Motoko swap (today) | Trade (optimal) |
+|---|---------------------|-----------------|
+| **Service fee** | 0.1 ICP flat | **0.1% of amount_in** |
+| **Cycles / repeat swap** | ~250–300M | **~47M** (~**6× less**) |
+| **Time / repeat swap** | 15–35s | **2–5s** (~**4–7× faster**) |
+| **Pool IC writes / repeat** | 3 (+ 4 wallet/ledger) | **1** |
+| **Stable memory (1k users)** | inside wallet actor | **~3 MB** dedicated |
+| **Needs ICP for ckBTC fee** | Yes | **No** |
+
+### Example fees (0.1%)
+
+| Swap size | Service fee |
+|-----------|-------------|
+| 1 ICP | 0.001 ICP |
+| 10 ICP | 0.01 ICP |
+| 100 ICP | 0.1 ICP (same as old flat fee) |
+| 1 ckBTC (~4 ICP) | ~0.004 ICP equivalent in ckBTC |
+
+Quotes: **query on trade canister ≈ 0 cycles**.
+
+---
+
+## 13. Risks and mitigations
+
+| Risk | Mitigation |
+|------|------------|
+| Funds in two canisters | Clear UI: “Wallet” vs “Trading balance” (v2) |
+| Pool internal stuck balance | `getUserUnusedBalance` + `withdraw` recovery |
+| Wallet/trade desync | `credit_from_wallet` only from wallet principal |
+| Rust CI | Add `trade` job: `cargo test` + `wasm32` build |
+| Mainnet deploy | New canister id; wallet gets `TRADE_CANISTER_ID` in config |
+
+---
+
+## 14. What we are NOT doing
+
+- Rewriting bucket, transfer, or community in Rust  
+- Non-custodial swap  
+- Removing ICPSwap (still the AMM)  
+- Big-bang delete of Motoko swap before mainnet soak  
+
+- Manual `depositFrom` + `swap` + `withdraw` (use official **one-step** API)  
+
+---
+
+## 15. Next code step
+
+1. `cargo init trade/` + `dfx.json` entry `icpay_trade`  
+2. `icpswap/pool.rs` — **`depositFromAndSwap` only** (+ `quote`, `getUserUnusedBalance`)  
+3. `domain/fees.rs` — 0.1% skim tests  
+4. `storage/balances.rs` + `storage/pools.rs` — minimal `StableBTreeMap`  
+5. `execute_swap` = approve check → `depositFromAndSwap` → credit balance  
+6. Wallet: `depositForSwap` / `withdrawFromTrade` only  
+
+**Official refs:**  
+- [DepositFromAndSwap](https://github.com/ICPSwap-Labs/docs/blob/main/02.SwapPool/Swap/04.Executing_DepositFromAndSwap.md)  
+- [Getting a Quote](https://github.com/ICPSwap-Labs/docs/blob/main/02.SwapPool/Swap/01.Getting_a_Quote.md)  
+- [Searching a Pool](https://github.com/ICPSwap-Labs/docs/blob/main/01.SwapFactory/01.Searching_a_Pool.md)  
+
+**Skill:** `backend/.agents/skills/rust/SKILL.md`

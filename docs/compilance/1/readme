@@ -1,0 +1,261 @@
+# ICPay — Backend ↔ Frontend compliance map
+
+Backend endpoints that exist on the canister but are NOT implemented in the
+frontend. Status checked: 2026-08-08.
+
+## Quick numbers
+
+- Backend public methods: **43**
+- Wired on the frontend (has a WalletActor call site): **24**
+- Missing on the frontend: **19**
+
+No frontend-declared method is missing from the backend: every method in the
+`WalletActor` interface is backed by a real canister method. All gaps are
+"backend present, frontend absent", never the reverse.
+
+---
+
+## 1. Declared in the WalletActor type, but never called
+
+These have both a backend endpoint and a frontend interface entry
+(`services/wallet.ts`), but no call site anywhere. Wiring is what's missing.
+
+| Method | Backend module | Suggested frontend home |
+|---|---|---|
+| `health` | `api/v1/Health.mo` | `services/client.ts` (query) |
+| `register` | `api/v1/Auth.mo` | `services/auth/auth.ts` — first-time handle claim on login |
+| `getUsernameTreasury` | `api/v1/UsernameSale.mo` | `services/buy/buy.ts` — username purchase page |
+| `syncDeposits` | `api/v1/Deposit.mo` | `services/deposit/deposit.ts` — deposit refresh action |
+| `getTransactionDetail` | `api/v1/Transactions.mo` | `services/transactions/transactions.ts` — tx detail view |
+| `getSettings` | `api/v1/Settings.mo` | new `services/settings/settings.ts` (query) |
+| `updateSettings` | `api/v1/Settings.mo` | new `services/settings/settings.ts` (call) |
+
+Note: `getSettings` / `updateSettings` are declared in the actor type yet no
+settings feature exists on the frontend at all.
+
+---
+
+## 2. Not in the WalletActor type at all
+
+No interface declaration, no caller. These are backend-only. Nearly all are
+operator/admin-gated (via `MiddlewareAuth.effectiveCaller`), not user-facing UI.
+
+| Method | Backend module | Nature |
+|---|---|---|
+| `reserveUsername` | `api/v1/Admin.mo` | Admin — reserved-handle lifecycle |
+| `releaseUsername` | `api/v1/Admin.mo` | Admin — reserved-handle lifecycle |
+| `listReservedUsernames` | `api/v1/Admin.mo` | Admin — reserved-handle lifecycle |
+| `refreshLedgers` | `api/v1/Ledgers.mo` | Operator — ledger registry refresh |
+| `uploadTokenWasmChunk` | `api/v1/Token.mo` | Operator — launch wasm staging |
+| `sealTokenWasm` | `api/v1/Token.mo` | Operator — launch wasm staging |
+| `resetTokenWasm` | `api/v1/Token.mo` | Operator — launch wasm staging |
+| `sweepTokenRevenue` | `api/v1/Token.mo` | Operator — revenue maintenance |
+| `topUpToken` | `api/v1/Token.mo` | Operator — canister top-up |
+| `reserveTokenSymbol` | `api/v1/Token.mo` | Operator — launch bookkeeping |
+| `releaseFailedCanister` | `api/v1/Token.mo` | Operator — cleanup |
+| `registerLaunchedLedgers` | `api/v1/Token.mo` | Operator — launch bookkeeping |
+
+These should be surfaced through the operations CLI / an admin surface, not the
+end-user screens.
+
+---
+
+## 3. The user-facing gaps (what actually matters)
+
+The five that belong in the product UI:
+
+1. **`register`** — first-time handle claim.
+   `openBackendSession()` (`services/auth/auth.ts`) calls only `actor.login()`,
+   which creates the user record with `username = null`. There is no step to
+   claim a username on first login.
+2. **`getSettings` / `updateSettings`** — the settings screen does not exist.
+3. **`getTransactionDetail`** — transaction detail view not implemented.
+4. **`syncDeposits`** — deposit list has no manual refresh action.
+5. **`getUsernameTreasury`** — username purchase page does not display the
+   treasury principal.
+
+---
+
+## 4. Frontend semantic disconnect — username is permanent
+
+The backend treats the username as an immutable, set-once identity:
+
+- `AuthService.register` → rejects with `"Username is permanent and cannot be
+  changed"` once set.
+- `UserService.updateUsername` → identical rule (same validator, same reserve
+  + taken checks, same `setUsername`).
+
+So `register` and `updateUsername` are functionally the same one-shot claim.
+The frontend currently:
+
+- never calls `register` at first login, and
+- exposes `updateUsername` as a changeable profile field, which contradicts the
+  backend's permanent-username model.
+
+Until this is resolved, a first-time user has no onboarding path to claim a
+handle, and a claimed handle cannot be re-claimed or edited as the UI implies.
+
+---
+
+## Reference — backend method inventory
+
+The 43 methods, by module (`backend/src/api/v1/`):
+
+- **Health**: `health`
+- **Auth**: `login`, `register`
+- **Users**: `getUser`, `updateUsername`, `checkUsername`, `searchUsers`,
+  `resolveUsername`
+- **Admin**: `reserveUsername`, `releaseUsername`, `listReservedUsernames`
+- **Dashboard**: `getDashboard`
+- **Deposit**: `getDepositAddress`, `getDepositAccountIdentifier`,
+  `syncDeposits`
+- **Withdraw**: `withdraw`
+- **Ledgers**: `refreshLedgers`, `isLedgerSupported`
+- **Transfer**: `transferByUsername`, `transferByPrincipal`,
+  `transferByAccount`, `transferByAccountId`
+- **UsernameSale**: `getUsernamePrice`, `getUsernameTreasury`, `purchaseUsername`
+- **Token**: `launchToken`, `getToken`, `getTokenById`, `getMyTokens`,
+  `listTokens`, `isSymbolAvailable`, `getLaunchFee`, `uploadTokenWasmChunk`,
+  `sealTokenWasm`, `resetTokenWasm`, `isTokenLaunchReady`, `sweepTokenRevenue`,
+  `topUpToken`, `reserveTokenSymbol`, `releaseFailedCanister`,
+  `registerLaunchedLedgers`
+- **Transactions**: `getTransactions`, `getTransactionDetail`
+- **Settings**: `getSettings`, `updateSettings`
+
+---
+
+# Frontend UI review — what is missing on each page
+
+Second pass (2026-08-08): the same backend that the API map above covers, now
+from the UI side. Backend already RETURNS several fields that no screen renders.
+
+## Dashboard (`/` — app/(app)/page.tsx)
+
+Backend `getDashboard` returns, per users record:
+`user`, `principal`, `depositAddress`, `depositAccountIdentifier`,
+`recentTransactions`, `totalDeposits`, `totalWithdrawals`, `totalTransfers`.
+
+> Backend `DashboardData` type = `services/types.ts:58`.
+
+**Not surfaced anywhere:**
+- `totalDeposits` / `totalWithdrawals` / `totalTransfers` — lifetime totals the
+  backend computes per user per ledger, and no page shows them.
+- `depositAccountIdentifier` — the classic 64-char account id. Only
+  `getDepositAddress` (owner+subaccount) is used on the deposit page; the hex
+  account id is never displayed or copied.
+- `principal` (the user's own principal) — shown on the profile card instead,
+  but the dashboard itself doesn't render identity.
+
+The homepage shows only the live ICP balance (read straight from the ledger),
+the username prompt, Send/Receive, and `recentTransactions` (10 max, hardcoded).
+
+**Where to implement:** add a small stats row (Deposits / Withdrawn / Sent) to
+the dashboard under the BalanceCard, fed from the `useDashboard()` already mounted.
+
+## Auth / first-time login — no handle claim at all
+
+`openBackendSession()` (`services/auth/auth.ts`) calls only `actor.login()`,
+which the backend auto-creates a username-less record for (isNew=true). The
+`AuthResult.isNew` flag is discarded.
+
+- `register` is never called.
+- No onboarding "claim your handle" step exists.
+- The profile page exposes `updateUsername`, but once a handle is set it is
+  permanent on the backend — the UI implies editability.
+
+**Where to implement:** in `components/auth/auth-provider.tsx` (capture `isNew`)
+then redirect first-time users to a claim-handle screen before the dashboard.
+
+## Username claim flow is duplicated / misleading
+
+Two endpoints do the same set-once claim: `register` (AuthService) and
+`updateUsername` (UserService). The UI only wired `updateUsername` into the
+profile page. Decide on the single claim path (recommend `register`).
+
+## Settings — client-only, backend settings unused
+
+`/settings` is a Menu page; the drawer
+(`components/settings/settings-drawer.tsx`) holds language / fiat / theme /
+sound, all persisted locally (next-intl, localStorage, etc.). The backend
+`getSettings` / `updateSettings` exist but are never called.
+
+**Where to implement:** either drop the backend settings endpoints as dead, or
+wire the drawer to persist to the canister via `getSettings`/`updateSettings`.
+Currently the two disagree — settings do not survive across devices.
+
+## Transactions — list only, no detail
+
+`/transactions` renders `getTransactions`. `getTransactionDetail` is declared
+but never called. No tap-through detail view (block index, counterparty, raw
+fields).
+
+**Where to implement:** a detail dialog/sheet on the transactions list, calling
+`getTransactionDetail(txId)`.
+
+## Deposit — address only, no refresh, no hex id
+
+`/deposit` shows the deposit address (owner+subaccount) and QR. `syncDeposits`
+is never called and the classic account-id hex is not offered.
+
+**Where to implement:** a "Refresh" action calling `syncDeposits`, and an option
+to copy the hex `depositAccountIdentifier`.
+
+## Buy username — treasury hidden
+
+`/username` and the icpverse buy flow call `purchaseUsername` / `getUsernamePrice`
+/ `checkUsername`. `getUsernameTreasury` is declared but never called; the
+treasury principal is not shown.
+
+**Where to implement:** a footnote on the buy-name card under the price.
+
+## Operator / admin surface — nothing in the UI
+
+Admin (`reserveUsername` / `releaseUsername` / `listReservedUsernames`),
+`refreshLedgers`, and the token wasm / revenue / topup / symbol methods have no
+UI. These route to the operations CLI (per AGENTS.md), not user screens.
+
+## Summary list (UI work)
+
+| # | Gap | Page | Status |
+|---|---|---|---|
+| 1 | First-login handle claim (`register`, `isNew`) | login / onboarding | **Already built** — `components/dashboard/username-prompt.tsx` is a non-dismissible dialog |
+| 2 | Lifetime totals (deposits/withdrawn/sent) | `/` dashboard | Still open — `app/(app)/page.tsx` under BalanceCard |
+| 3 | Hex account id (`depositAccountIdentifier`) | `/deposit` | **Already built** — the "Account ID" tab in `deposit-address-card.tsx` |
+| 4 | Deposit refresh (`syncDeposits`) | `/deposit` | **Built** — explicit refresh button, tap-only |
+| 5 | Transaction detail (`getTransactionDetail`) | `/transactions` | **Already built** — `transaction-list.tsx` rows are accordions with the full record |
+| 6 | Backend settings (`getSettings`/`updateSettings`) | `/settings` | **Built** — theme + language only; see correction below |
+| 7 | Treasury display (`getUsernameTreasury`) | `/username` | **Built** — footnote under the total |
+| 8 | Username semantics (set-once) | `/profile` | **Already built** — `profile-card.tsx` renders a claimed handle as static text |
+
+Operator-only endpoints intentionally absent from the UI.
+
+---
+
+# RESOLVED — 2026-08-08
+
+Re-verified every claim against the code before building anything. **Gaps 1, 3,
+5, and 8 were already implemented.** This audit was written against the canister
+method inventory — which methods have a frontend call site — rather than against
+what the screens actually render. `username-prompt.tsx`, the Account ID tab in
+`deposit-address-card.tsx`, the row accordions in `transaction-list.tsx`, and
+the read-only claimed state in `profile-card.tsx` all predate this audit.
+
+**`register` vs `updateUsername`** (section 4 above): kept `updateUsername`.
+Both run the identical set-once claim — same validator, same reserved check,
+same taken check, same `setUsername`, same permanence rejection. `register`'s
+only difference, creating the user record when absent, is unreachable from the
+browser because `openBackendSession` always calls `login()` first. Swapping
+would be churn on a production money path with no behavioural change.
+
+**`getSettings` is not a query**, contrary to how it reads above. It calls
+`SettingsRepo.getOrCreate`, which mutates stable state on first read, so it
+costs a full update call just like `updateSettings`. The drawer therefore
+hydrates once per session rather than on every open, and pushes once on close,
+only when theme or language actually changed. `notifications` is read and echoed
+back unchanged; fiat and sound stay client-only, since neither is in
+`SettingsPublic` and adding them would need a stable-record migration.
+
+**`docs/compilance/` is missing from `.gitignore`'s `!` re-include list**, so
+this file and its siblings are currently untracked. Flagged rather than silently
+adding the line.
+

@@ -1,0 +1,195 @@
+## File & Image Upload in Motoko: Complete Example
+
+The knowledge sources provide two relevant official patterns for this: the **FileVault** example (per-user file storage with Internet Identity) and the **programmatic asset upload** approach. Here is the best official Motoko pattern covering upload, list, and delete.
+
+---
+
+### Option 1: Backend Canister Storing Files (Recommended for Per-User Access Control)
+
+This is based on the official **FileVault** example, which stores files per Internet Identity principal. [[FileVault example](https://github.com/dfinity/examples/blob/master/motoko/filevault/README.md)]
+
+```motoko
+import Map "mo:core/Map";
+import List "mo:core/List";
+import Blob "mo:core/Blob";
+import Text "mo:core/Text";
+import Nat "mo:core/Nat";
+import Principal "mo:core/Principal";
+import Time "mo:core/Time";
+
+persistent actor FileStore {
+
+  // File metadata type
+  type FileId = Nat;
+
+  type FileMetadata = {
+    id      : FileId;
+    name    : Text;
+    mimeType: Text;
+    size    : Nat;
+    owner   : Principal;
+    created : Int;
+  };
+
+  // Storage: fileId -> blob (actual file bytes)
+  let fileData = Map.empty<FileId, Blob>();
+
+  // Storage: fileId -> metadata
+  let fileMeta = Map.empty<FileId, FileMetadata>();
+
+  // Per-user index: principal -> list of fileIds
+  let userFiles = Map.empty<Principal, List.List<FileId>>();
+
+  var nextId : Nat = 0;
+
+  // Transient cache — resets on upgrade
+  transient var uploadCount : Nat = 0;
+
+  // --- Upload a file ---
+  public shared (msg) func uploadFile(
+    name     : Text,
+    mimeType : Text,
+    data     : Blob,
+  ) : async FileId {
+    let caller = msg.caller;
+    let id = nextId;
+    nextId += 1;
+
+    let meta : FileMetadata = {
+      id;
+      name;
+      mimeType;
+      size    = data.size();
+      owner   = caller;
+      created = Time.now();
+    };
+
+    Map.add(fileData, Nat.compare, id, data);
+    Map.add(fileMeta, Nat.compare, id, meta);
+
+    // Add to user's file list
+    let existing = switch (Map.get(userFiles, Principal.compare, caller)) {
+      case (?list) list;
+      case null    List.empty<FileId>();
+    };
+    Map.add(userFiles, Principal.compare, caller, List.push(existing, id));
+
+    uploadCount += 1;
+    id
+  };
+
+  // --- List files for the calling user ---
+  public shared query (msg) func listMyFiles() : async [FileMetadata] {
+    let caller = msg.caller;
+    switch (Map.get(userFiles, Principal.compare, caller)) {
+      case null      [];
+      case (?idList) {
+        List.toArray(
+          List.filterMap<FileId, FileMetadata>(
+            idList,
+            func(id) { Map.get(fileMeta, Nat.compare, id) }
+          )
+        )
+      };
+    }
+  };
+
+  // --- Download a file (only owner can access) ---
+  public shared (msg) func getFile(id : FileId) : async ?Blob {
+    switch (Map.get(fileMeta, Nat.compare, id)) {
+      case null       null;
+      case (?meta) {
+        if (meta.owner == msg.caller) {
+          Map.get(fileData, Nat.compare, id)
+        } else {
+          null // access denied
+        }
+      };
+    }
+  };
+
+  // --- Delete a file (only owner can delete) ---
+  public shared (msg) func deleteFile(id : FileId) : async Bool {
+    switch (Map.get(fileMeta, Nat.compare, id)) {
+      case null      false;
+      case (?meta) {
+        if (meta.owner != msg.caller) { return false };
+        Map.delete(fileData, Nat.compare, id);
+        Map.delete(fileMeta, Nat.compare, id);
+        true
+      };
+    }
+  };
+
+  // --- Total file count (admin/debug) ---
+  public query func totalFiles() : async Nat {
+    Map.size(fileMeta)
+  };
+}
+```
+
+**mops.toml:**
+
+```toml
+[package]
+name = "file-store"
+version = "0.1.0"
+
+[dependencies]
+core = "2.0.0"
+
+[toolchain]
+moc = "1.9.0"
+```
+
+---
+
+### Option 2: Asset Canister + Programmatic Upload (Best for Public Files/Images)
+
+For public images served over HTTP (like a photo gallery), use the **asset canister** with `AssetManager` from the JS SDK. Files >1.9 MB are chunked automatically. [[Programmatic uploads](https://docs.internetcomputer.org/guides/frontends/asset-canister/#programmatic-uploads-with-icp-sdkcanisters)]
+
+```typescript
+import { AssetManager } from "@icp-sdk/canisters/assets";
+import { HttpAgent } from "@icp-sdk/core/agent";
+
+const agent = await HttpAgent.create({
+  host: "https://ic0.app",
+  shouldFetchRootKey: false, // never true on mainnet
+});
+
+const assetManager = new AssetManager({
+  canisterId: "your-asset-canister-id",
+  agent,
+});
+
+// Upload image (auto-chunked if >1.9 MB)
+const key = await assetManager.store(fileBuffer, {
+  fileName: "photo.jpg",
+  contentType: "image/jpeg",
+  path: "/uploads",
+});
+
+// List all assets
+const assets = await assetManager.list();
+
+// Delete an asset
+await assetManager.delete("/uploads/old-photo.jpg");
+```
+
+---
+
+### Which to Choose?
+
+| Need | Best approach |
+|---|---|
+| Per-user private files, access control | Backend canister (Option 1) |
+| Public images served via HTTP/browser | Asset canister (Option 2) |
+| Large files (>1.9 MB) | Asset canister (auto-chunked) |
+| Files tied to Internet Identity login | FileVault pattern (Option 1) [[FileVault example](https://github.com/dfinity/examples/blob/master/motoko/filevault/README.md)] |
+
+### Key Rules Applied
+
+- `persistent actor` — all `let`/`var` auto-persisted, no `stable` keyword needed [[Store data durably](https://docs.internetcomputer.org/guides/backends/data-persistence/#store-data-durably)]
+- `Blob` instead of `[Nat8]` — 4x more compact, less GC pressure [[Storage recommendations](https://docs.internetcomputer.org/guides/backends/data-persistence/#storage-recommendations)]
+- `Map` from `mo:core` instead of `HashMap` from `mo:base` — no resize overhead [[Storage recommendations](https://docs.internetcomputer.org/guides/backends/data-persistence/#storage-recommendations)]
+- `transient var` for ephemeral counters that should reset on upgrade

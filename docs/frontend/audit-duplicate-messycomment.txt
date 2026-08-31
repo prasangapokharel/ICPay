@@ -1,0 +1,89 @@
+# ICPay Frontend — Duplicate Logic & Messy Comment Audit
+
+Audit date: 2026-08-02
+Scope: app/, components/ (non-shadcn), hooks/, lib/, services/
+Status: findings only — no changes applied
+
+## 1. Duplicated logic (real offenders)
+
+### parseIcp() — 4 identical copies
+- components/shared/amount-input.tsx:12
+- components/transfer/transfer-form.tsx:40
+- components/withdraw/withdraw-form.tsx:35
+- components/icpverse/tip-drawer.tsx:254
+Fix: extract one helper to lib/wallet-utils.ts and import everywhere.
+
+### E8S / ICP_FEE constants — declared in 4+ files
+- components/shared/amount-input.tsx:9 (E8S unused there)
+- components/transfer/transfer-form.tsx:30
+- components/withdraw/withdraw-form.tsx:15
+- components/icpverse/tip-drawer.tsx:26-28
+- app/(app)/username/page.tsx:23
+Each repeats the "Matches Config.ICP_FEE" comment. wallet-utils.ts already hosts
+shared constants (MEMO_MAX_BYTES); move E8S/ICP_FEE there.
+
+### toPlainIcp() reimplements formatAmount
+- components/shared/amount-input.tsx:20
+Collapse into wallet-utils.formatAmount; drop unused E8S on line 9.
+
+### shorten() vs formatCounterparty() — identical middle-truncation
+- components/transactions/transaction-list.tsx:191
+- components/dashboard/recent-transactions.tsx:120
+Fix: single shared helper.
+
+### isHexAccountId regex — duplicated verbatim
+- app/(app)/transfer/page.tsx:21
+- app/(app)/withdraw/page.tsx:13
+Fix: share from lib/wallet-utils.ts.
+
+### handleCopy clipboard fallback — near line-for-line duplicate
+- app/(app)/deposit/page.tsx:27
+- app/(app)/icpverse/[username]/profile-view.tsx:42
+Fix: one shared copyText() util.
+
+### Row helper (label/value) duplicated
+- components/withdraw/withdraw-form.tsx:138
+- components/transfer/transfer-form.tsx (same pattern)
+
+### TransactionRow vs TransactionItem — ~55-line near-duplicate
+- components/dashboard/recent-transactions.tsx:62
+- components/transactions/transaction-list.tsx
+Consolidation candidate (dicebear avatar, labels, memo badge, +/- amount).
+
+### Truncation variants
+- lib/avatar.ts:11 shortPrincipal() ~= lib/wallet-utils.ts formatPrincipal()
+- app/(app)/icpverse/[username]/profile-view.tsx inlines a 4th variant
+- components/layout/app-header.tsx:32 inlines a 3rd
+
+### formatE8s() / formatAmount()
+- lib/wallet-utils.ts:14,21 — same whole/fraction split; could unify.
+
+## 2. Formatting / whitespace
+
+- services/auth/auth.ts:51 — "authClient      .login({" stray spaces; continuation
+  args indented 8 spaces vs 2 elsewhere.
+- components/auth/auth-provider.tsx:44,47 — whitespace-only blank lines; the
+  getWalletActor(id) + withTimeout(actor.login(), 20_000) block is copy-pasted
+  between init() (45-49) and login() (68-73).
+
+## 3. Verbose comments (mild)
+
+- app/layout.tsx:54 — 4-line comment defending an intentionally empty viewport
+  export; could be trimmed to one line.
+- components/icpverse/tip-drawer.tsx:31 — 3-line comment on canned emoji memo
+  byte cost; borderline.
+
+## 4. Leftover scaffolding (unused)
+
+The following components/ui + hooks files are not imported by any app/page code:
+- components/ui/message.tsx, bubble.tsx, empty.tsx, marker.tsx, attachment.tsx,
+  message-scroller.tsx, direction.tsx, input-group.tsx, item.tsx,
+  button-group.tsx, combobox.tsx, sidebar.tsx
+- hooks/use-mobile.ts (only referenced by unused sidebar.tsx)
+These are leftover chat-feature scaffolding. The stock shadcn files themselves
+are clean; only these unused leftovers look redundant.
+
+## Not flagged
+- No stale/outdated comments found — comments match the code they describe.
+- No commented-out dead code, console.log, TODO/FIXME, or @ts-ignore in audited dirs.
+- No empty placeholder functions (async () => {} defaults in auth-provider context are standard).

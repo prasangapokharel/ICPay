@@ -1,0 +1,55 @@
+Telegram supports rich text formatting natively through desktop shortcuts, mobile context menus, and Markdown syntax (specifically MarkdownV2 for API and bot integration).
+
+**Text Formatting Options & Shortcuts**
+
+| Format Style | Native / MarkdownV2 Syntax | Keyboard Shortcut (Desktop) |
+| --- | --- | --- |
+| **Bold** | `*text*` or `**text**` | `Ctrl` + `B` |
+| **Italic** | `_text_` or `*text*` | `Ctrl` + `I` |
+| **Underline** | `__text__` | `Ctrl` + `U` |
+| **Strikethrough** | `~text~` | `Ctrl` + `Shift` + `X` |
+| **Quote** | `> text` | `Ctrl` + `Shift` + `.` |
+| **Monospace** | ``code`` | `Ctrl` + `Shift` + `M` |
+| **Code Block** | ````language\ncode\n```` | N/A |
+| **Spoiler** | ` |  |
+| **Hyperlink** | `[Link Text](https://example.com)` | `Ctrl` + `K` |
+| **Date / Time** | Dynamic Entity | `Ctrl` + `Shift` + `D` |
+
+---
+
+**Clean Markdown Code Example**
+
+```markdown
+*This is bold text*
+_This is italic text_
+__This is underlined text__
+~This is strikethrough text~
+||This is hidden spoiler text||
+
+> This is a single-line quote block.
+
+`Inline monospace text`
+
+```python
+# Code block with syntax highlighting
+def greet():
+    print("Hello, Telegram!")
+
+```
+
+[Open Telegram Website](https://telegram.org)
+
+```
+
+---
+
+**Supported File & Media Formats**
+
+Beyond text formatting, Telegram allows uploading almost any standard file format as a document or playable media, up to **2 GB** (or **4 GB** for Premium accounts):
+
+* **Images & Stickers:** JPG, PNG, WEBP, TGS (animated stickers), GIF, SVG, HEIC
+* **Audio & Voice:** MP3, FLAC, WAV, OGG, M4A, OPUS
+* **Video & Video Messages:** MP4, MOV, MKV, AVI, WEBM
+* **Documents & Archives:** PDF, DOCX, XLSX, PPTX, TXT, ZIP, RAR, 7Z, TAR
+
+```

@@ -1,0 +1,138 @@
+After creation, the user will see a dedicated **Token Management Dashboard** on the UI. Because the backend deploys a standard `ICRC-1` ledger canister, the user can manage and transfer their newly minted tokens freely without restrictions.
+
+---
+
+### 1. What the User Sees in the UI (Dashboard & Token Section)
+
+Once deployment finishes, the screen shifts to a **Token Control Hub** displaying:
+
+* **Token Info Card:**
+* Name & Symbol (e.g., `Phonism / PHON`)
+* **Canister ID:** A clickable string (e.g., `ryjl3-tyaaa-aaaaa-aaaba-cai`) linked to the IC Dashboard.
+* **Total Supply:** The total minted supply (e.g., `1,000,000 PHON`).
+* **Your Balance:** The total tokens assigned to the creator's wallet principal.
+
+
+* **Liquidity Pool Card (If Auto-Pair was toggled):**
+* Direct link to the **ICPSwap / Sonic** trading pair.
+* Real-time DEX status (Initial Price, Pool ICP, Pool Token Supply).
+
+
+* **Action Buttons:**
+* **Add to Plug Wallet:** A 1-click button using `window.ic.plug.requestImportToken()` to import the canister directly into their browser extension.
+* **Transfer Token:** Opens the free-send transfer modal.
+
+
+
+---
+
+### 2. Free Token Transfer Section (`/tokens`)
+
+The user can send their newly created tokens to **any Principal ID or Account Identifier** freely.
+
+```tsx
+"use client";
+
+import React, { useState } from "react";
+
+export default function TokenTransferModal({ tokenCanisterId, symbol }: { tokenCanisterId: string; symbol: string }) {
+  const [recipientPrincipal, setRecipientPrincipal] = useState("");
+  const [amount, setAmount] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const handleSendTokens = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSending(true);
+
+    try {
+      if (!window.ic?.plug) {
+        alert("Please connect Plug Wallet!");
+        setSending(false);
+        return;
+      }
+
+      // Convert amount to 8 decimals (e8s format)
+      const e8sAmount = BigInt(Math.round(parseFloat(amount) * 100_000_000));
+
+      // Call standard ICRC-1 transfer on the newly created token canister
+      const transferArgs = {
+        to: {
+          owner: recipientPrincipal, // Recipient Principal ID
+          subaccount: [], // Default subaccount
+        },
+        amount: e8sAmount,
+      };
+
+      // Direct inter-canister call via Plug or actor
+      const tokenActor = await window.ic.plug.createActor({
+        canisterId: tokenCanisterId,
+        interfaceFactory: icrc1CandidFactory, // Standard ICRC-1 IDL
+      });
+
+      const result = await tokenActor.icrc1_transfer(transferArgs);
+
+      if ("Ok" in result) {
+        alert(`Successfully sent ${amount} ${symbol} to ${recipientPrincipal}`);
+        setAmount("");
+        setRecipientPrincipal("");
+      } else {
+        alert(`Transfer failed: ${JSON.stringify(result.Err)}`);
+      }
+    } catch (err: any) {
+      alert(err.message || "Transfer error");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl text-white max-w-sm">
+      <h3 className="text-sm font-bold mb-1">Send {symbol} Freely</h3>
+      <p className="text-[11px] text-slate-400 mb-4">Transfer tokens to any ICP Principal ID instantly.</p>
+
+      <form onSubmit={handleSendTokens} className="space-y-3">
+        <div>
+          <label className="text-[10px] text-slate-400">Recipient Principal ID</label>
+          <input
+            type="text"
+            placeholder="aaaaa-aa..."
+            value={recipientPrincipal}
+            onChange={(e) => setRecipientPrincipal(e.target.value)}
+            required
+            className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs focus:outline-none focus:border-amber-400"
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] text-slate-400">Amount</label>
+          <input
+            type="number"
+            placeholder="1000"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            required
+            className="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs focus:outline-none focus:border-amber-400"
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={sending}
+          className="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-all disabled:opacity-50"
+        >
+          {sending ? "Sending..." : `Send ${symbol}`}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+```
+
+---
+
+### How Transferring Works Under the Hood
+
+1. **Standardized Method:** The backend deploys the token adhering to the standard `icrc1_transfer` Candid method.
+2. **Zero Platform Restrictions:** No platform locks or admin permissions are required to move funds. The creator holds the supply in their wallet principal and can transfer, burn, or add liquidity at any point.
+3. **Low Fee:** Every transfer automatically deducts a standard minor transaction fee (typically `10,000` e8s of the token) set inside the deployed canister.

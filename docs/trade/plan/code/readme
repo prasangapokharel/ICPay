@@ -1,0 +1,302 @@
+# ICPay Trade — Final code plan
+
+**Status:** M0 scaffold in `backend/rust/trade/`  
+**Rating:** **8.5 / 10** — strong architecture; M1–M4 required before mainnet  
+**Persistence:** [Orthogonal persistence](https://docs.internetcomputer.org/concepts/orthogonal-persistence/) + **`ic-stable-structures`** for upgrade-safe state (not heap-only)
+
+Related: `docs/trade/plan2/readme` (migration), `backend/.agents/skills/rust/SKILL.md`
+
+---
+
+## 1. Plan rating
+
+| Area | Score | Notes |
+|------|-------|-------|
+| Architecture | 9/10 | Wallet custody / trade execution split is correct |
+| ICPSwap integration | 9/10 | Official `depositFromAndSwap` — not legacy 3-step |
+| Cycle efficiency | 9/10 | ~47M/swap vs ~280M Motoko (~6×) |
+| Memory design | 8/10 | Minimal stable maps; caps on history in M2 |
+| Fee model | 9/10 | 0.1% from `amount_in`; fair vs flat 0.1 ICP |
+| Code scaffold | 7/10 | M0 done; quote composite query + tests in M1 |
+| Security | 7/10 | `wallet/gate.rs` started; audit before mainnet |
+| **Overall** | **8.5/10** | Ship after M1–M3 + mainnet soak |
+
+**−1.5:** quote endpoint stub, no PocketIC yet, treasury accrual/sweep not wired, reconcile job missing.
+
+---
+
+## 2. Repository layout
+
+```
+backend/
+├── dfx.json                          # icpay_trade rust canister entry
+└── rust/trade/
+    ├── Cargo.toml                    # ic-cdk 0.19, candid 0.10, icrc-ledger-types 0.1
+    ├── trade_canister.did            # generated: cargo build + candid-extractor
+    └── src/
+        ├── lib.rs                    # init, post_upgrade, export_candid!
+        ├── config.rs                 # factory, fees, ledger ids
+        ├── types.rs                  # ApiResult, SwapQuoteResult, InitArgs
+        ├── domain/
+        │   ├── fees.rs               # 0.1% + tests ✓
+        │   └── quote.rs              # pure quote math + tests ✓
+        ├── ledger/
+        │   └── icrc.rs               # icrc1_transfer, icrc1_fee (explicit fee)
+        ├── icpswap/
+        │   ├── types.rs              # Candid shapes, token standard
+        │   ├── factory.rs            # getPool (parallel tiers in M1)
+        │   └── pool.rs               # quote, depositFromAndSwap
+        ├── storage/                    # orthogonal persistence via stable memory
+        │   ├── mod.rs                # MemoryManager, CONFIG StableCell
+        │   ├── pools.rs              # pair → pool cache
+        │   └── balances.rs           # (user, token) → trading balance
+        ├── wallet/
+        │   └── gate.rs               # wallet-only + reject anonymous
+        └── api/
+            ├── quote.rs              # get_swap_quote (M1)
+            ├── swap.rs               # execute_swap
+            └── wallet.rs               # credit_from_wallet, debit_to_wallet
+```
+
+**Max ~300 lines per file** — split further if `api/swap.rs` grows.
+
+---
+
+## 3. Orthogonal persistence (official model)
+
+From [ICP orthogonal persistence](https://docs.internetcomputer.org/concepts/orthogonal-persistence/):
+
+| Memory | Survives update call | Survives upgrade |
+|--------|----------------------|------------------|
+| Wasm heap (`Vec`, `HashMap`) | Yes | **No** |
+| **Stable memory** (`StableBTreeMap`, etc.) | Yes | **Yes** |
+
+**ICPay rule:** all balances, pool cache, config → **stable structures only**.  
+Heap allowed for single-call scratch only.
+
+```rust
+// storage/mod.rs — pattern from DFINITY stable-structures guide
+thread_local! {
+    static MEMORY_MANAGER: RefCell<MemoryManager<...>> = ...;
+    static CONFIG: RefCell<StableCell<CanisterConfig, Memory>> = ...;
+}
+```
+
+`MemoryId` constants are **never renumbered** after mainnet (see rust SKILL).
+
+---
+
+## 4. ICPSwap — official flow
+
+| Step | API | Type |
+|------|-----|------|
+| Find pool | `SwapFactory.getPool` | query |
+| Price | `SwapPool.quote` | query |
+| **Execute** | **`SwapPool.depositFromAndSwap`** | **update** |
+| Stuck funds | `getUserUnusedBalance` + `withdraw` | query + update |
+
+Refs:
+- [Executing DepositFromAndSwap](https://github.com/ICPSwap-Labs/docs/blob/main/02.SwapPool/Swap/04.Executing_DepositFromAndSwap.md)
+- [Getting a Quote](https://github.com/ICPSwap-Labs/docs/blob/main/02.SwapPool/Swap/01.Getting_a_Quote.md)
+
+**Token `standard`:** `ICP` | `ICRC2` (chain-key) | `ICRC1` (SNS) — must match factory.
+
+---
+
+## 5. Fee model — 0.1%
+
+```rust
+pub const SERVICE_FEE_BPS: u64 = 10; // 0.1%
+
+pub fn service_fee(amount_in: u64) -> u64 {
+    (amount_in * SERVICE_FEE_BPS / 10_000).max(1)
+}
+```
+
+| Swap | Old (0.1 ICP flat) | New (0.1%) |
+|------|-------------------|------------|
+| 1 ICP | 0.1 ICP | 0.001 ICP |
+| 100 ICP | 0.1 ICP | 0.1 ICP |
+| ckBTC → ICP | needs 0.1 ICP balance | fee from ckBTC input |
+
+**Treasury:** accrue on trade main; hourly `ic-cdk-timers` sweep (M2) — **0 IC writes per swap**.
+
+---
+
+## 6. ICRC transfers (explicit fee)
+
+Per IC docs — always set `fee` or handle `BadFee`:
+
+```rust
+let fee = transfer_fee(ledger).await?;
+transfer(ledger, to, amount, Some(fee)).await?;
+```
+
+`ledger/icrc.rs` uses `Call::bounded_wait` + `icrc-ledger-types::TransferArg`.
+
+Wallet `depositForSwap`: ICRC transfer to trade canister → `credit_from_wallet`.
+
+---
+
+## 7. Cycle budget — 1,000 active traders
+
+Assumptions:
+- 1,000 users with trading balance
+- 3 swaps/user/day average → **3,000 swaps/day**
+- Warm `icrc2_approve` (re-approve 10%/month)
+- Quote via trade canister query (M1 composite)
+
+### Per action (operator cycles)
+
+| Action | Inter-canister updates | Cycles (est.) |
+|--------|------------------------|---------------|
+| `get_swap_quote` | 0 (composite query) | **~0** |
+| `execute_swap` | 1 (`depositFromAndSwap`) | **~47M** |
+| Re-approve | +1 ledger | **~87M** |
+| `depositForSwap` | 1 ledger (wallet) | **~47M** |
+| Treasury sweep | 1/hour | ~40M |
+| Motoko swap (today) | 7 | **~280M** |
+
+### Daily totals (1k users, 3 swaps/day)
+
+| Item | Calculation | Cycles/day |
+|------|-------------|------------|
+| Swaps | 3,000 × 47M | **141B** |
+| Re-approves | 100 × 40M | 4B |
+| Deposits | 200 × 47M | 9.4B |
+| Treasury sweeps | 24 × 40M | 1B |
+| Quotes | 10k × 0 | ~0 |
+| **Trade total** | | **~155B/day** |
+| Motoko equivalent | 3,000 × 280M | **840B/day** |
+| **Savings** | | **~5.4× less** |
+
+### Monthly / runway
+
+| Metric | Trade canister | Motoko (swap in wallet) |
+|--------|----------------|-------------------------|
+| Swap traffic/month | ~4.65T cycles | ~25.2T cycles |
+| Idle memory (~3 MB stable) | ~1B/month | (inside wallet) |
+| **1T balance runway (swap only)** | ~6.5 days at 1k users | ~1.2 days equivalent load on wallet |
+
+**Recommendation:** auto-top-up trade canister at **5T**; alert at **2T**.  
+Keep **≥2T** freezing reserve per `dfx canister status`.
+
+### Per-user cycle cost (operator)
+
+| Users | Swaps/day (3/user) | Trade cycles/day | Per user/day |
+|-------|-------------------|------------------|--------------|
+| 100 | 300 | ~15.5B | ~155M |
+| 1,000 | 3,000 | ~155B | ~155M |
+| 10,000 | 30,000 | ~1.55T | ~155M |
+
+Linear in swap count — design stays healthy at 1k users.
+
+---
+
+## 8. Stable memory — 1,000 users
+
+| Structure | Entries | Bytes (est.) |
+|-----------|---------|--------------|
+| `CONFIG` | 1 | 500 |
+| `POOL_CACHE` | 50 pairs | 6 KB |
+| `BALANCES` | 1k × 3 tokens | **~300 KB** |
+| `ESCROWS` (sparse) | &lt;50 | &lt;50 KB |
+| `HISTORY` (M2, capped) | 50k rows | ~5 MB |
+| **Total stable** | | **~3–6 MB** |
+
+Idle burn: ~127k cycles/sec/GB → **~33M cycles/day** at 3 MB (negligible vs swaps).
+
+Wasm module target: **&lt;2 MB** shrunk.
+
+---
+
+## 9. Endpoints (Candid)
+
+| Method | Who | M0 status |
+|--------|-----|-----------|
+| `health` | query | ✓ |
+| `get_trading_balance` | query | ✓ |
+| `get_swap_quote` | query | stub → M1 |
+| `execute_swap` | user update | ✓ scaffold |
+| `credit_from_wallet` | wallet only | ✓ |
+| `debit_to_wallet` | wallet only | ✓ |
+| `recover_failed_swap` | user | M2 |
+
+---
+
+## 10. Wallet integration (Motoko — thin)
+
+```motoko
+// New — ~50 lines total
+depositForSwap : (ledgerId : Text, amount : Nat) -> async ApiResult<Nat>;
+withdrawFromTrade : (ledgerId : Text, amount : Nat) -> async ApiResult<Nat>;
+```
+
+**Delete after M4:** `SwapService.mo`, `SwapStorage.mo`, `api/v1/Swap.mo`.
+
+---
+
+## 11. Milestones
+
+| Milestone | Deliverable |
+|-----------|-------------|
+| **M0** ✓ | `backend/rust/trade` scaffold, fees tests, dfx entry |
+| **M1** | Composite `get_swap_quote`, parallel `getPool`, PocketIC test |
+| **M2** | Escrow, recover, treasury timer, mainnet test |
+| **M3** | Frontend `services/trade/*`, feature flag |
+| **M4** | Delete Motoko swap, 2-week soak |
+| **M5** | Binance UI (plan1) |
+
+---
+
+## 12. Build & verify
+
+```bash
+rustup target add wasm32-unknown-unknown
+cargo install candid-extractor
+
+cd backend/rust/trade
+cargo test                    # domain/fees, domain/quote
+cargo build --target wasm32-unknown-unknown --release
+
+cd backend
+dfx deploy icpay_trade --network local
+```
+
+CI (add to `.github/workflows/ci.yml`):
+
+```yaml
+- run: cargo test
+  working-directory: backend/rust/trade
+- run: cargo build --target wasm32-unknown-unknown --release
+  working-directory: backend/rust/trade
+```
+
+---
+
+## 13. Security checklist (before mainnet)
+
+- [ ] `credit_from_wallet` — caller == `wallet_canister` only
+- [ ] `reject_anonymous` on all user swaps
+- [ ] `amount_out_min` enforced on `depositFromAndSwap`
+- [ ] Reconcile: `sum(balances) ≤ on-chain ICRC balance per token
+- [ ] Rate limit: 10 swaps / 60s per principal (stable map)
+- [ ] One in-flight swap per user
+- [ ] `getUserUnusedBalance` recovery path tested
+
+---
+
+## 14. Summary
+
+| | Value |
+|---|--------|
+| Path | `backend/rust/trade` |
+| Fee | **0.1%** of `amount_in` |
+| Swap engine | ICPSwap **`depositFromAndSwap`** |
+| Cycles/swap | **~47M** (vs ~280M Motoko) |
+| Time/swap | **~2–5s** (1 pool update) |
+| 1k users / 3 swaps/day | **~155B cycles/day** operator cost |
+| Memory @ 1k users | **~3 MB** stable |
+| Plan rating | **8.5 / 10** |
+
+**Next:** M1 — wire `get_swap_quote` + `cargo test` in CI + PocketIC `execute_swap` integration test.
