@@ -13,9 +13,8 @@ import { BuyIcpayDrawer } from "@/components/icpay/buy-icpay-drawer"
 import { PresaleStatsPanel } from "@/components/icpay/presale-stats-panel"
 import { PresaleGuideDialog } from "@/components/icpay/presale-guide-dialog"
 import { GradientBadge } from "@/components/ui/gradient-badge"
-import { BgImageCard, AMBER_EMBED_BTN } from "@/components/ui/bg-image-card"
+import { PresaleBgCard } from "@/components/icpay/presale-bg-card"
 import { hasSeenPresaleGuide } from "@/lib/icpay/presaleGuide"
-import { cn } from "@/lib/ui/utils"
 import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
 
 export function IcpayPresaleHero({ symbol }: { symbol: string }) {
@@ -40,7 +39,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
 
   return (
     <section className="space-y-4">
-      <BgImageCard minHeight="min-h-[28rem]" contentClassName="space-y-6 px-5 py-7">
+      <PresaleBgCard minHeight="min-h-[28rem]" contentClassName="space-y-6 px-5 py-7">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <span className="relative flex size-13 shrink-0 overflow-hidden rounded-full">
@@ -76,7 +75,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
             <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
               {t("rateInfoTitle")}
             </p>
-            <p className="mt-2 bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 bg-clip-text text-2xl font-bold tracking-tight text-transparent tabular-nums">
+            <p className="mt-2 text-2xl font-bold tracking-tight tabular-nums">
               {t("heroRate")}
             </p>
           </div>
@@ -96,7 +95,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
 
           {identity ? (
             <Button
-              className={cn("w-full font-semibold", AMBER_EMBED_BTN)}
+              className="w-full"
               disabled={!sale?.active}
               onClick={() => setBuyOpen(true)}
             >
@@ -104,14 +103,14 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
             </Button>
           ) : (
             <Button
-              className={cn("w-full font-semibold", AMBER_EMBED_BTN)}
+              className="w-full"
               nativeButton={false}
               render={<Link href="/login" />}
             >
               {t("loginToBuy")}
             </Button>
           )}
-      </BgImageCard>
+      </PresaleBgCard>
 
       <PresaleGuideDialog
         open={guideOpen}

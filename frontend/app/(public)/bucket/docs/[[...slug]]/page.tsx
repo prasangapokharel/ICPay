@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
-import { BucketDocsShell } from "@/components/products/icbucket/bucket-docs-shell"
-import { buildNavGroups } from "@/lib/bucket/docs/nav"
-import { bucketDocSlugs, loadAllDocMeta, loadBucketDoc } from "@/lib/bucket/docs/load"
+import { Suspense } from "react"
+import { bucketDocSlugs, loadBucketDoc } from "@/lib/bucket/docs/load"
+import { BucketDocsContent } from "./bucket-docs-content"
+import { BucketDocsPageFallback } from "./bucket-docs-fallback"
 
 type PageProps = {
   params: Promise<{ slug?: string[] }>
@@ -36,12 +36,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function BucketDocsSlugPage({ params }: PageProps) {
-  const { slug = [] } = await params
-  const doc = await loadBucketDoc(slug)
-  if (!doc) notFound()
-
-  const navGroups = buildNavGroups(loadAllDocMeta())
-
-  return <BucketDocsShell doc={doc} navGroups={navGroups} />
+export default function BucketDocsSlugPage({ params }: PageProps) {
+  return (
+    <Suspense fallback={<BucketDocsPageFallback />}>
+      <BucketDocsContent params={params} />
+    </Suspense>
+  )
 }

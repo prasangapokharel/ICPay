@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { WithdrawForm } from "@/components/withdraw/withdraw-form"
 import { SendSuccess } from "@/components/wallet/send-success"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -41,12 +42,7 @@ export default function WithdrawPage() {
   }
 
   return (
-    <div className="space-y-6 pt-2">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </div>
-
+    <AppPage title={t("title")} description={t("subtitle")}>
       {balance === undefined ? (
         <div className="space-y-4">
           <Skeleton className="h-16 w-full rounded-2xl" />
@@ -57,6 +53,6 @@ export default function WithdrawPage() {
       ) : (
         <WithdrawForm balance={balance} onWithdraw={handleWithdraw} />
       )}
-    </div>
+    </AppPage>
   )
 }

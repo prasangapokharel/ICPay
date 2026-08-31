@@ -3,18 +3,21 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon } from "@hugeicons/core-free-icons"
-import { AppIcon } from "@/components/ui/app-icon"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+  Copy01Icon,
+  Delete02Icon,
+  Download01Icon,
+  LinkSquare02Icon,
+  Tick02Icon,
+} from "@hugeicons/core-free-icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
+import {
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer"
 import { BucketFileDeleteDialog } from "@/components/bucket/bucket-file-delete-dialog"
 import { BucketFilePreviewImage } from "@/components/bucket/bucket-file-thumb"
 import { formatFileSize } from "@/components/bucket/bucket-card"
@@ -24,20 +27,16 @@ import { copyText } from "@/lib/wallet/utils"
 import { useAuth } from "@/components/auth/auth-provider"
 import type { FilePublic } from "@/services/bucket/types"
 
-export function BucketFilePreviewModal({
+export function BucketFilePreviewPane({
   bucketId,
   file,
   canWrite,
-  open,
-  onOpenChange,
   onDelete,
   onDeleted,
 }: {
   bucketId: string
-  file: FilePublic | null
+  file: FilePublic
   canWrite: boolean
-  open: boolean
-  onOpenChange: (open: boolean) => void
   onDelete: (path: string) => Promise<string | null>
   onDeleted?: () => void
 }) {
@@ -50,8 +49,6 @@ export function BucketFilePreviewModal({
   const [downloading, setDownloading] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [downloadError, setDownloadError] = useState<string | null>(null)
-
-  if (!file) return null
 
   const fileName = file.path.split("/").pop() ?? file.path
   const publicRaw = optionalText(file.publicUrl)
@@ -93,87 +90,77 @@ export function BucketFilePreviewModal({
       return
     }
     setDeleteOpen(false)
-    onOpenChange(false)
     onDeleted?.()
   }
 
   return (
-    <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg gap-4 sm:max-w-2xl" showCloseButton>
-        <DialogHeader>
-          <DialogTitle className="truncate pr-8" title={fileName}>
-            {fileName}
-          </DialogTitle>
-          <DialogDescription>
-            {formatFileSize(file.size)} · {file.contentType}
-            {publicUrl ? ` · ${t("public")}` : ` · ${t("private")}`}
-          </DialogDescription>
-        </DialogHeader>
+    <div className="flex h-full min-h-0 flex-col">
+      <DrawerHeader className="border-b pb-4 text-left">
+        <DrawerTitle className="truncate" title={fileName}>
+          {fileName}
+        </DrawerTitle>
+        <DrawerDescription>
+          {formatFileSize(file.size)} · {file.contentType}
+          {publicUrl ? ` · ${t("public")}` : ` · ${t("private")}`}
+        </DrawerDescription>
+      </DrawerHeader>
 
-        <BucketFilePreviewImage bucketId={bucketId} file={file} />
+      <div className="flex min-h-0 flex-1 items-center justify-center px-4 py-3">
+        <BucketFilePreviewImage
+          bucketId={bucketId}
+          file={file}
+          className="h-full max-h-full w-full"
+        />
+      </div>
 
-        {deleteError && (
-          <Alert variant="destructive">
-            <AlertDescription>{deleteError}</AlertDescription>
-          </Alert>
-        )}
-        {downloadError && (
-          <Alert variant="destructive">
-            <AlertDescription>{downloadError}</AlertDescription>
-          </Alert>
-        )}
+      {deleteError && (
+        <Alert variant="destructive" className="mx-4 mb-2">
+          <AlertDescription>{deleteError}</AlertDescription>
+        </Alert>
+      )}
+      {downloadError && (
+        <Alert variant="destructive" className="mx-4 mb-2">
+          <AlertDescription>{downloadError}</AlertDescription>
+        </Alert>
+      )}
 
-        <ButtonGroup className="mx-auto flex-wrap justify-center">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            aria-label={t("download")}
-            disabled={downloading}
-            onClick={handleDownload}
-          >
-            <AppIcon name="download" size={16} />
+      <DrawerFooter className="border-t pt-4">
+        <div className="grid grid-cols-2 gap-2">
+          <Button type="button" variant="outline" size="sm" disabled={downloading} onClick={handleDownload}>
+            <HugeiconsIcon icon={Download01Icon} className="size-4" strokeWidth={1.75} />
+            {t("download")}
           </Button>
-          {publicUrl && (
-            <>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon-lg"
-                className="size-11"
-                aria-label={copied ? tc("copied") : tc("copy")}
-                onClick={handleCopy}
-              >
-                <AppIcon name={copied ? "check" : "copy"} size={24} />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon-sm"
-                aria-label={t("openInNewTab")}
-                onClick={() => window.open(publicUrl, "_blank", "noopener,noreferrer")}
-              >
+          {publicUrl ? (
+            <Button type="button" variant="outline" size="sm" onClick={handleCopy}>
+              <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-4" strokeWidth={1.75} />
+              {copied ? tc("copied") : t("copyUrl")}
+            </Button>
+          ) : null}
+          {publicUrl ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(publicUrl, "_blank", "noopener,noreferrer")}
+            >
               <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" strokeWidth={1.75} />
-              </Button>
-            </>
-          )}
-          {canWrite && (
+              {t("openInNewTab")}
+            </Button>
+          ) : null}
+          {canWrite ? (
             <Button
               type="button"
               variant="destructive"
-              size="icon-lg"
-              className="size-11"
-              aria-label={t("delete")}
+              size="sm"
               disabled={deleting}
               onClick={() => setDeleteOpen(true)}
             >
-              <AppIcon name="delete" size={24} />
+              <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+              {t("delete")}
             </Button>
-          )}
-        </ButtonGroup>
-      </DialogContent>
-      </Dialog>
+          ) : null}
+        </div>
+      </DrawerFooter>
 
       <BucketFileDeleteDialog
         open={deleteOpen}
@@ -182,6 +169,6 @@ export function BucketFilePreviewModal({
         deleting={deleting}
         onConfirm={handleDelete}
       />
-    </>
+    </div>
   )
 }

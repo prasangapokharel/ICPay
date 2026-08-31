@@ -104,8 +104,8 @@ module {
       bucketStore = {
         buckets = migrateBuckets(old.bucketStore.buckets);
         files = migrateFiles(old.bucketStore.files);
-        fileData = old.bucketStore.fileData;
         pathIndex = old.bucketStore.pathIndex;
+        folders = Map.empty<Text, Int>();
         ownerIndex = old.bucketStore.ownerIndex;
         apiKeys = old.bucketStore.apiKeys;
         keyHashIndex = old.bucketStore.keyHashIndex;

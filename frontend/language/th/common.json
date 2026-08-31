@@ -2,6 +2,7 @@
   "nav": {
     "home": "หน้าแรก",
     "icpverse": "ICPverse",
+    "verse": "Verse",
     "send": "ส่ง",
     "bucket": "Bucket",
     "menu": "เมนู",
@@ -41,7 +42,8 @@
     "latestTransactions": "ธุรกรรมล่าสุด",
     "seeMore": "ดูเพิ่มเติม",
     "noTransactions": "ยังไม่มีธุรกรรม",
-    "noTransactionsHint": "ฝาก ICP เพื่อเริ่มต้น"
+    "noTransactionsHint": "ฝาก ICP เพื่อเริ่มต้น",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "รับชื่อผู้ใช้ของคุณ",
@@ -61,7 +63,12 @@
       "activity": "กิจกรรม",
       "more": "เพิ่มเติม",
       "preferences": "การตั้งค่า",
-      "legal": "กฎหมาย"
+      "legal": "กฎหมาย",
+      "tokens": "โทเคน",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "ส่ง",
@@ -75,6 +82,7 @@
       "buyNameBadge": "Premium",
       "profile": "โปรไฟล์",
       "icpverse": "ICPverse",
+      "verse": "Verse",
       "myQr": "QR ของฉัน",
       "history": "ประวัติ",
       "balance": "ยอดคงเหลือ",
@@ -92,7 +100,8 @@
       "analytics": "Analytics",
       "live": "Live",
       "community": "Channels",
-      "communityBadge": "Beta"
+      "communityBadge": "Beta",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "ภาษา สกุลเงิน รูปลักษณ์ และเสียง"
   },
@@ -117,7 +126,7 @@
     "description": "เสียงเมื่อเข้าสู่ระบบและหลังโอนเงิน"
   },
   "login": {
-    "heading": "ICP Wallet",
+    "heading": "ICPay",
     "tagline": "ส่ง รับ และเก็บ ICP ด้วยกระเป๋าเงินที่ปลอดภัยด้วย Internet Identity",
     "connect": "เข้าสู่ระบบ",
     "connecting": "กำลังเข้าสู่ระบบ…",
@@ -365,6 +374,7 @@
     "transfers": "การโอน",
     "noTokens": "ยังไม่มีโทเคน การฝากจะแสดงที่นี่อัตโนมัติ",
     "noTokensFound": "ไม่พบโทเคนที่ตรงกับการค้นหา",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} นอก ICPay",
     "swapCta": "Swap",
     "selfCustodyNotice": "คุณถือเงินนอก ICPay เปิดโทเคนเพื่อย้ายเข้า",
@@ -464,6 +474,7 @@
     "confirmSend": "ยืนยันการส่ง"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "หาเพื่อนของคุณ",
     "searchResults": "ผลการค้นหา",
     "suggested": "แนะนำสำหรับคุณ",
@@ -1080,6 +1091,8 @@
     "formTitle": "สร้าง bucket",
     "formSubtitle": "จ่ายจากยอด ICPay",
     "name": "ชื่อ",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "ตัวพิมพ์เล็ก ตัวเลข ขีด — ใช้ใน URL CDN สาธารณะ",
     "capacity": "ความจุ",
     "visibility": "การมองเห็น",
@@ -1113,10 +1126,15 @@
     "uploadProgress": "{current} จาก {total} — {name}",
     "uploadPreparing": "กำลังเตรียม…",
     "uploading": "กำลังอัปโหลด…",
+    "uploadSuccess": "สำเร็จ",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "รูปแปลงเป็น WebP — เอกสาร แอร์ไคฟ์ เสียง ฟอนต์เท่านั้น ไม่มี HTML, JS หรือสคริปต์ สูงสุด {max} ต่อไฟล์",
     "uploadFailed": "อัปโหลดไม่สำเร็จ — ลองใหม่หรือใช้ไฟล์เล็กลง",
     "delete": "ลบ",
     "deleteFileTitle": "ลบไฟล์?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} จะถูกลบจาก bucket นี้ ย้อนกลับไม่ได้",
     "download": "Download",
     "downloadFailed": "ดาวน์โหลดไม่สำเร็จ",
@@ -1124,6 +1142,13 @@
     "openInNewTab": "เปิดลิงก์",
     "previewFailed": "โหลดตัวอย่างไม่ได้",
     "noFiles": "ยังไม่มีไฟล์",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "ที่เก็บไม่พร้อมชั่วคราว",
     "readOnly": "Read-only — ต่ออายุเพื่ออัปโหลด",
     "invalidFile": "เลือกไฟล์ต่ำกว่า 10 MB",
@@ -1233,7 +1258,12 @@
     "docsCopyCode": "Copy code",
     "prevPage": "Prev",
     "nextPage": "Next",
-    "pageOf": "หน้า {page} จาก {total} · {count} ไฟล์"
+    "pageOf": "หน้า {page} จาก {total} · {count} ไฟล์",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "publicSite": {
     "nav": {

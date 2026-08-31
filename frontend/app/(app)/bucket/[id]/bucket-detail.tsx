@@ -1,26 +1,35 @@
 "use client"
 
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useSWRConfig } from "swr"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowRight01Icon, Folder02Icon, MoreVerticalIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Card, CardContent } from "@/components/ui/card"
-import { BucketBackButton } from "@/components/bucket/bucket-back-button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import {
-  BucketUploadDesktopTrigger,
-  useBucketUploadDesktopOnly,
-} from "@/components/bucket/bucket-upload-desktop-gate"
-import { BucketUsageBar } from "@/components/bucket/bucket-card"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 import { BucketFilesPanel } from "@/components/bucket/bucket-files-panel"
-import { BucketUploadModal } from "@/components/bucket/bucket-upload-modal"
+import { BucketFolderDialog } from "@/components/bucket/bucket-folder-dialog"
+import { BucketUploadControl } from "@/components/bucket/bucket-upload-control"
 import { BucketRenewDrawer } from "@/components/bucket/bucket-renew-drawer"
 import { BucketApiKeysModal } from "@/components/bucket/bucket-api-keys-modal"
-import { BucketPublicCdn } from "@/components/bucket/bucket-public-cdn"
 import {
   useBucketStats,
   useInvalidateBucketCache,
@@ -29,99 +38,83 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import {
   deleteFile,
+  bulkDeleteFiles,
   renewBucket,
   uploadFile,
+  createFolder,
+  deleteFolder,
 } from "@/services/bucket/bucket"
-import {
-  isBucketActive,
-  isPublicVisibility,
-  optionalText,
-} from "@/lib/bucket/bucket"
+import { isBucketActive } from "@/lib/bucket/bucket"
+import { joinObjectPath, nestedPrefix, prefixSegments, apiListFolderPrefix } from "@/lib/bucket/folderPath"
+import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 
 export function BucketDetail() {
   const t = useTranslations("bucket")
+  const tNav = useTranslations("settings.sections")
   const router = useRouter()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
   const invalidateBucketCache = useInvalidateBucketCache()
+  const { mutate } = useSWRConfig()
 
   const bucketId = useRewrittenLastSegment()
-  const { desktopOnly } = useBucketUploadDesktopOnly()
-
   const { stats, isLoading: statsLoading, refresh: refreshStats } = useBucketStats(bucketId || null)
   const [renewOpen, setRenewOpen] = useState(false)
-  const [uploadOpen, setUploadOpen] = useState(false)
   const [apiKeysOpen, setApiKeysOpen] = useState(false)
+  const [prefix, setPrefix] = useState("")
+  const [folderOpen, setFolderOpen] = useState(false)
 
   const active = stats ? isBucketActive(stats.status) : false
   const canWrite = active
+  const crumbs = prefixSegments(prefix)
 
-  const refreshAfterUpload = async () => {
-    await Promise.all([refreshStats(), invalidateBucketCache()])
-  }
+  useEffect(() => {
+    clearLegacyBucketStorage()
+  }, [])
 
-  const back = <BucketBackButton onClick={() => router.push("/bucket")} />
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const headerActions = (
-    <ButtonGroup>
-      {canWrite && (
-        <BucketUploadDesktopTrigger>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => {
-              if (!desktopOnly) setUploadOpen(true)
-            }}
-          >
-            {t("upload")}
-          </Button>
-        </BucketUploadDesktopTrigger>
-      )}
-      <Button variant="ghost" size="sm" nativeButton={false} render={<Link href="/bucket/docs" />}>
-        {t("docs")}
-      </Button>
-    </ButtonGroup>
+  const refreshFolderListing = useCallback(async () => {
+    if (!identity || !bucketId) return
+    const folderPrefix = apiListFolderPrefix(prefix)
+    const principal = identity.getPrincipal().toText()
+    await mutate(
+      (key) =>
+        Array.isArray(key) &&
+        key[0] === "bucket-files" &&
+        key[1] === bucketId &&
+        key[2] === folderPrefix &&
+        key[key.length - 1] === principal
+    )
+    await refreshStats()
+  }, [identity, bucketId, prefix, mutate, refreshStats])
+
+  const scheduleRefreshAfterUpload = useCallback(() => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current)
+    refreshTimerRef.current = setTimeout(() => {
+      refreshTimerRef.current = null
+      void refreshFolderListing()
+    }, 300)
+  }, [refreshFolderListing])
+
+  const handleUpload = useCallback(
+    async (
+      file: File,
+      path: string,
+      contentType: string,
+      onProgress?: (pct: number) => void
+    ) => {
+      const res = await uploadFile(identity, bucketId, path, file, onProgress, contentType)
+      if ("err" in res) return res.err
+      return null
+    },
+    [identity, bucketId]
   )
 
-  if (!bucketId || (statsLoading && !stats)) {
-    return (
-      <div className="space-y-4 pt-2">
-        <div className="flex items-center justify-between gap-2">
-          {back}
-          {headerActions}
-        </div>
-        <Skeleton className="h-24 w-full rounded-2xl" />
-        <Skeleton className="h-40 w-full rounded-2xl" />
-      </div>
-    )
-  }
-
-  if (!stats) {
-    return (
-      <div className="space-y-4 pt-2">
-        <div className="flex items-center justify-between gap-2">
-          {back}
-          {headerActions}
-        </div>
-        <Alert variant="destructive">
-          <AlertDescription>{t("notFound")}</AlertDescription>
-        </Alert>
-      </div>
-    )
-  }
-
-  const handleUpload = async (
-    file: File,
-    path: string,
-    contentType: string,
-    onProgress?: (pct: number) => void
-  ) => {
-    const res = await uploadFile(identity, bucketId, path, file, onProgress, contentType)
-    if ("err" in res) return res.err
-    await refreshAfterUpload()
-    return null
-  }
+  const handleUploadSuccess = useCallback(() => {
+    scheduleRefreshAfterUpload()
+  }, [scheduleRefreshAfterUpload])
 
   const handleDelete = async (path: string) => {
     const res = await deleteFile(identity, bucketId, path)
@@ -129,72 +122,157 @@ export function BucketDetail() {
     return null
   }
 
+  const handleDeletePaths = async (paths: string[]) => {
+    if (paths.length === 0) return null
+    if (paths.length === 1) return handleDelete(paths[0])
+    const res = await bulkDeleteFiles(identity, bucketId, paths)
+    if ("err" in res) return res.err
+    return null
+  }
+
+  const handleDeleteFolders = async (paths: string[]) => {
+    for (const path of paths) {
+      const res = await deleteFolder(identity, bucketId, path)
+      if ("err" in res) return res.err
+    }
+    await invalidateBucketCache()
+    return null
+  }
+
   const handleRenew = async () => {
     const res = await renewBucket(identity, bucketId)
     if ("err" in res) return res.err
     refreshWallet()
-    await refreshAfterUpload()
+    await Promise.all([refreshStats(), invalidateBucketCache()])
     return null
   }
 
-  const publicBaseRaw = optionalText(stats.publicBaseUrl)
-
-  const statusBadge = active ? (
-    stats.isExpiringSoon ? (
-      <Badge variant="secondary">{t("expiringSoon")}</Badge>
-    ) : (
-      <Badge variant="outline">{t("active")}</Badge>
-    )
-  ) : (
-    <Badge variant="destructive">{t("expired")}</Badge>
+  const sep = (
+    <BreadcrumbSeparator>
+      <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" strokeWidth={1.75} />
+    </BreadcrumbSeparator>
   )
 
+  const trail = (
+    <Breadcrumb>
+      <BreadcrumbList className="text-sm">
+        <BreadcrumbItem>
+          <BreadcrumbLink render={<Link href="/bucket" />}>{t("back")}</BreadcrumbLink>
+        </BreadcrumbItem>
+        {sep}
+        <BreadcrumbItem>
+          {crumbs.length === 0 ? (
+            <BreadcrumbPage className="truncate">{stats?.name ?? t("files")}</BreadcrumbPage>
+          ) : (
+            <BreadcrumbLink
+              className="truncate"
+              render={<button type="button" />}
+              onClick={() => setPrefix("")}
+            >
+              {stats?.name ?? t("files")}
+            </BreadcrumbLink>
+          )}
+        </BreadcrumbItem>
+        {crumbs.map((name, i) => {
+          const last = i === crumbs.length - 1
+          return (
+            <span key={`${name}-${i}`} className="contents">
+              {sep}
+              <BreadcrumbItem>
+                {last ? (
+                  <BreadcrumbPage className="truncate">{name}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink
+                    className="truncate"
+                    render={<button type="button" />}
+                    onClick={() => setPrefix(`${crumbs.slice(0, i + 1).join("/")}/`)}
+                  >
+                    {name}
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+            </span>
+          )
+        })}
+      </BreadcrumbList>
+    </Breadcrumb>
+  )
+
+  const headerActions = (
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      {canWrite ? (
+        <>
+          <Button type="button" variant="outline" size="sm" onClick={() => setFolderOpen(true)}>
+            <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
+            {t("createFolder")}
+          </Button>
+          <BucketUploadControl
+            disabled={!canWrite}
+            pathPrefix={prefix}
+            onUpload={handleUpload}
+            onSuccess={handleUploadSuccess}
+          />
+        </>
+      ) : null}
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" size="icon-sm" aria-label={tNav("more")} className="shrink-0" />
+          }
+        >
+          <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {stats ? (
+            <>
+              <DropdownMenuItem onClick={() => setApiKeysOpen(true)}>
+                {t("apiKeysShort")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRenewOpen(true)}>
+                {t("renew")}
+              </DropdownMenuItem>
+            </>
+          ) : null}
+          <DropdownMenuItem onClick={() => router.push("/bucket/docs")}>
+            {t("docs")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+
+  if (!bucketId || (statsLoading && !stats)) {
+    return (
+      <AppPage>
+        <div className="flex items-center justify-between gap-2">
+          {trail}
+          {headerActions}
+        </div>
+        <Skeleton className="h-40 w-full rounded-2xl" />
+      </AppPage>
+    )
+  }
+
+  if (!stats) {
+    return (
+      <AppPage>
+        <div className="flex items-center justify-between gap-2">
+          {trail}
+          {headerActions}
+        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{t("notFound")}</AlertDescription>
+        </Alert>
+      </AppPage>
+    )
+  }
+
   return (
-    <div className="space-y-4 pt-2">
-      <div className="flex items-center justify-between gap-2">
-        {back}
+    <AppPage>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        {trail}
         {headerActions}
       </div>
-
-      <Card size="sm">
-        <CardContent className="space-y-2.5">
-        <div className="space-y-1">
-          <div className="flex items-center justify-between gap-2">
-            <h1 className="min-w-0 truncate text-lg font-bold tracking-tight" title={stats.name}>
-              {stats.name}
-            </h1>
-            <ButtonGroup className="shrink-0">
-              <Button variant="outline" size="sm" onClick={() => setApiKeysOpen(true)}>
-                {t("apiKeysShort")}
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => setRenewOpen(true)}>
-                {t("renew")}
-              </Button>
-            </ButtonGroup>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {statusBadge}
-            <p className="text-xs text-muted-foreground">
-              {isPublicVisibility(stats.visibility) ? t("public") : t("private")}
-              {" · "}
-              {Number(stats.fileCount)} {t("files")}
-              {" · "}
-              {active
-                ? t("daysLeft", { days: String(stats.daysRemaining) })
-                : t("readOnly")}
-            </p>
-          </div>
-        </div>
-
-        <BucketUsageBar
-          used={stats.storageUsed}
-          capacity={stats.capacity}
-          percent={stats.usagePercent}
-        />
-
-        {publicBaseRaw && <BucketPublicCdn publicBaseUrl={publicBaseRaw} />}
-        </CardContent>
-      </Card>
 
       {!canWrite && (
         <Alert>
@@ -205,7 +283,24 @@ export function BucketDetail() {
       <BucketFilesPanel
         bucketId={bucketId}
         canWrite={canWrite}
+        prefix={prefix}
+        onPrefixChange={setPrefix}
         onDelete={handleDelete}
+        onDeletePaths={handleDeletePaths}
+        onDeleteFolders={handleDeleteFolders}
+        onCreateFolder={() => setFolderOpen(true)}
+      />
+
+      <BucketFolderDialog
+        open={folderOpen}
+        onOpenChange={setFolderOpen}
+        onCreate={async (name) => {
+          const path = joinObjectPath(prefix, `${name}/`)
+          const res = await createFolder(identity, bucketId, path)
+          if ("err" in res) throw new Error(res.err)
+          await refreshFolderListing()
+          setPrefix(nestedPrefix(prefix, name))
+        }}
       />
 
       <BucketRenewDrawer
@@ -220,13 +315,6 @@ export function BucketDetail() {
         open={apiKeysOpen}
         onOpenChange={setApiKeysOpen}
       />
-
-      <BucketUploadModal
-        open={uploadOpen}
-        onOpenChange={setUploadOpen}
-        disabled={!canWrite}
-        onUpload={handleUpload}
-      />
-    </div>
+    </AppPage>
   )
 }

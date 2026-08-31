@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/drawer"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { useSnsTokenMeta } from "@/hooks/governance/useGovernance"
+import { useSnsTokenMeta } from "@/hooks/sns/useSnsTokenMeta"
 import type { ProposalRow } from "@/services/governance/governance"
 import { nnsProposalUrl, snsDashboardUrl } from "@/services/governance/governance"
-import { useSnsRegistry } from "@/hooks/governance/useSnsRegistry"
+import { useSnsRegistryRow } from "@/hooks/sns/useSnsRegistryList"
 
 export function ProposalDetailDrawer({
   proposal,
@@ -27,7 +27,7 @@ export function ProposalDetailDrawer({
   const t = useTranslations("governance")
   const ledgerId = proposal?.ledgerId ?? null
   const { meta } = useSnsTokenMeta(proposal?.source === "sns" ? ledgerId : null)
-  const { registry } = useSnsRegistry(proposal?.source === "sns" ? ledgerId : null)
+  const { registry } = useSnsRegistryRow(proposal?.source === "sns" ? ledgerId : null)
 
   if (!proposal) return null
 

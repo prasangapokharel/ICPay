@@ -2,6 +2,7 @@
   "nav": {
     "home": "ホーム",
     "icpverse": "ICPバース",
+    "verse": "Verse",
     "send": "送金",
     "bucket": "クラウド",
     "menu": "メニュー",
@@ -41,7 +42,8 @@
     "latestTransactions": "最新の取引",
     "seeMore": "もっと見る",
     "noTransactions": "取引はまだありません",
-    "noTransactionsHint": "ICP を入金して始めましょう"
+    "noTransactionsHint": "ICP を入金して始めましょう",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "ユーザー名を取得",
@@ -61,7 +63,12 @@
       "activity": "アクティビティ",
       "more": "その他",
       "preferences": "環境設定",
-      "legal": "法的事項"
+      "legal": "法的事項",
+      "tokens": "トークン",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "送金",
@@ -74,6 +81,7 @@
       "buyNameBadge": "プレミアム",
       "profile": "プロフィール",
       "icpverse": "ICPバース",
+      "verse": "Verse",
       "myQr": "マイ QR",
       "history": "履歴",
       "balance": "残高",
@@ -92,7 +100,8 @@
       "community": "チャンネル",
       "communityBadge": "ベータ",
       "presaleBadge": "開催中",
-      "governance": "ガバナンス"
+      "governance": "ガバナンス",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "言語、通貨、表示とサウンド"
   },
@@ -117,7 +126,7 @@
     "description": "サインイン時と送金後にチャイムが鳴ります。"
   },
   "login": {
-    "heading": "ICP ウォレット",
+    "heading": "ICPay",
     "tagline": "Internet Identity で保護されたウォレットで ICP を送受金・保有できます。",
     "connect": "ウォレットを接続",
     "connecting": "接続中…",
@@ -334,6 +343,7 @@
     "transfers": "送金",
     "noTokens": "トークンはまだありません。入金すると自動で表示されます。",
     "noTokensFound": "該当するトークンはありません。",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} 外部",
     "selfCustodyNotice": "ICPay の外に資金があります。トークンを開いて移してください。",
     "swapCta": "スワップ",
@@ -394,6 +404,7 @@
     "confirmSend": "Confirm send"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "友達を探す",
     "searchResults": "検索結果",
     "suggested": "おすすめ",
@@ -769,6 +780,8 @@
     "formTitle": "バケットを作成",
     "formSubtitle": "ICPay残高から支払い",
     "name": "名前",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "小文字・数字・ハイフン — 公開CDN URLに使用",
     "capacity": "容量",
     "visibility": "公開設定",
@@ -802,10 +815,15 @@
     "uploadProgress": "{current} / {total} — {name}",
     "uploadPreparing": "準備中…",
     "uploading": "アップロード中…",
+    "uploadSuccess": "完了",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "写真はWebPに変換 — ドキュメント・アーカイブ・音声・フォントのみ。HTML、JS、スクリプトは不可。1ファイル最大{max}。",
     "uploadFailed": "アップロード失敗 — 再試行するか小さいファイルを使用してください",
     "delete": "削除",
     "deleteFileTitle": "ファイルを削除しますか？",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name}はこのバケットから削除されます。元に戻せません。",
     "download": "ダウンロード",
     "downloadFailed": "ダウンロード失敗",
@@ -813,6 +831,13 @@
     "openInNewTab": "リンクを開く",
     "previewFailed": "プレビューを読み込めませんでした",
     "noFiles": "ファイルがありません",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "ストレージは一時的に利用できません",
     "readOnly": "読み取り専用 — 更新してアップロード",
     "invalidFile": "10 MB未満のファイルを選択してください",
@@ -922,7 +947,12 @@
     "docsCopyCode": "コードをコピー",
     "prevPage": "前へ",
     "nextPage": "次へ",
-    "pageOf": "{page} / {total}ページ · {count}ファイル"
+    "pageOf": "{page} / {total}ページ · {count}ファイル",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "analytics": {
     "title": "Analytics",

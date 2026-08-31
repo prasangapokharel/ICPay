@@ -14,7 +14,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useAuth } from "@/components/auth/auth-provider"
 import { CommunityChannelCard } from "@/components/community/community-channel-card"
 import { CommunityIcon } from "@/components/community/community-icon"
-import { LanguageSwitch } from "@/components/i18n/language-switch"
 import {
   useInvalidateCommunity,
   useMyCommunityChannels,
@@ -107,15 +106,10 @@ export function CommunityExplorer() {
     <Tabs defaultValue="explore" className="flex h-full min-h-0 flex-col gap-0">
       <div className="shrink-0 border-b border-border/60 px-4 py-2 md:py-3">
         <div className="flex items-center justify-between gap-2">
-          <h1 className="truncate text-lg font-semibold tracking-tight">{t("title")}</h1>
-          <div className="flex shrink-0 items-center gap-1.5">
-            <div className="hidden md:block">
-              <LanguageSwitch />
-            </div>
-            <Button size="sm" nativeButton={false} render={<Link href="/channels/new" />}>
-              {t("newChannel")}
-            </Button>
-          </div>
+          <h1 className="truncate text-lg font-semibold tracking-tight md:hidden">{t("title")}</h1>
+          <Button size="sm" className="ml-auto" nativeButton={false} render={<Link href="/channels/new" />}>
+            {t("newChannel")}
+          </Button>
         </div>
         <p className="mt-0.5 hidden truncate text-xs text-muted-foreground md:block">
           {t("subtitle")}
@@ -131,10 +125,10 @@ export function CommunityExplorer() {
             className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-muted-foreground"
           />
           <Input
-            variant="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchChannelsPlaceholder")}
+            className="pl-10"
             aria-label={t("searchChannels")}
             autoComplete="off"
             spellCheck={false}

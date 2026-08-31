@@ -232,6 +232,7 @@ module {
 
   public type FileListPage = {
     items: [FilePublic];
+    folders: [Text];
     total: Nat;
     page: Nat;
     pageSize: Nat;

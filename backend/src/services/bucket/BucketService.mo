@@ -52,6 +52,8 @@ module {
   public let copyFile = Files.copyFile;
   public let listFolder = Files.listFolder;
   public let searchFiles = Files.searchFiles;
+  public let createFolder = Files.createFolder;
+  public let deleteFolder = Files.deleteFolder;
   public let setFileTags = Files.setFileTags;
   public let addFileTags = Files.addFileTags;
   public let removeFileTags = Files.removeFileTags;

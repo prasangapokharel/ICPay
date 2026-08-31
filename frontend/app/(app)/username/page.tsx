@@ -50,7 +50,8 @@ import {
   useLiveBalance,
 } from "@/hooks/wallet/useWalletData"
 import { SendSuccess } from "@/components/wallet/send-success"
-import { AMBER_EMBED_BTN, BgImageCard } from "@/components/ui/bg-image-card"
+import { AppPage } from "@/components/layout/dashboard/app-page"
+import { Card, CardContent } from "@/components/ui/card"
 import { primeSuccessChime } from "@/lib/ui/successChime"
 import { cn } from "@/lib/ui/utils"
 
@@ -118,13 +119,9 @@ export default function UsernamePage() {
   }
 
   return (
-    <div className="space-y-4 pt-2">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </div>
-
-      <BgImageCard contentClassName="space-y-6 px-5 py-7">
+    <AppPage title={t("title")} description={t("subtitle")}>
+      <Card className="border-border/60 shadow-sm">
+        <CardContent className="space-y-6 px-5 py-7">
       <div className="space-y-2">
         <Label htmlFor="buy-username">{t("label")}</Label>
         <div className="relative">
@@ -224,7 +221,7 @@ export default function UsernamePage() {
 
       <Button
         size="lg"
-        className={cn("h-12 w-full rounded-2xl text-base font-semibold", AMBER_EMBED_BTN)}
+        className="h-12 w-full rounded-2xl text-base"
         disabled={!canBuy}
         onClick={handleBuy}
       >
@@ -320,8 +317,9 @@ export default function UsernamePage() {
           {t("brandProtectionLink")}
         </Link>
       </div>
-      </BgImageCard>
-    </div>
+        </CardContent>
+      </Card>
+    </AppPage>
   )
 }
 

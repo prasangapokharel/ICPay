@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl"
 import { Spinner } from "@/components/ui/spinner"
 import { useIcpayStats } from "@/hooks/icpay/useIcpayStats"
 import { IcpayTokenCard } from "@/components/icpay/icpay-token-card"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 
 export default function IcpayTokenPage() {
   const t = useTranslations("icpayToken")
@@ -18,12 +19,8 @@ export default function IcpayTokenPage() {
   }
 
   return (
-    <div className="space-y-6 pt-2">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </div>
+    <AppPage title={t("title")} description={t("subtitle")}>
       <IcpayTokenCard />
-    </div>
+    </AppPage>
   )
 }

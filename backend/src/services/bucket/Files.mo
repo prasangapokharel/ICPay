@@ -180,6 +180,58 @@ module {
     }
   };
 
+  public func createFolder(
+    service: Context.BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Text> {
+    switch (Auth.resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (Limits.allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (Auth.requireBucket(service, bucketId)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { #err("Permission denied") }
+            else if (not Auth.canWrite(bucket)) { #err("Bucket expired") }
+            else { BucketFileService.createFolder(fileCtx(service), bucket, path) }
+          };
+        }
+      };
+    }
+  };
+
+  public func deleteFolder(
+    service: Context.BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : Types.ApiResult<Null> {
+    switch (Auth.resolveWriteAuth(service, caller, bucketId, apiKey, #write)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(auth)) {
+        switch (Limits.allowMutate(service, auth.ratePrincipal)) {
+          case (?msg) { return #err(msg) };
+          case (null) {};
+        };
+        switch (Auth.requireBucket(service, bucketId)) {
+          case (#err(e)) { #err(e) };
+          case (#ok(bucket)) {
+            if (bucket.owner != auth.owner) { #err("Permission denied") }
+            else if (not Auth.canWrite(bucket)) { #err("Bucket expired") }
+            else { BucketFileService.deleteFolder(fileCtx(service), bucket, path) }
+          };
+        }
+      };
+    }
+  };
+
   public func setFileTags(
     service: Context.BucketService,
     caller: Principal,

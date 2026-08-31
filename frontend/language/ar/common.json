@@ -2,6 +2,7 @@
   "nav": {
     "home": "بيت",
     "icpverse": "ICPverse",
+    "verse": "Verse",
     "send": "يرسل",
     "bucket": "دلو",
     "menu": "قائمة طعام",
@@ -41,7 +42,8 @@
     "latestTransactions": "أحدث المعاملات",
     "seeMore": "شاهد المزيد",
     "noTransactions": "لا توجد صفقات كبيرة حتى الآن",
-    "noTransactionsHint": "قم بإيداع برنامج المقارنات الدولية للبدء"
+    "noTransactionsHint": "قم بإيداع برنامج المقارنات الدولية للبدء",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "لأنك باسم المستخدم الخاص بك",
@@ -61,7 +63,12 @@
       "activity": "نشاط",
       "more": "أكثر",
       "preferences": "التفضيلات",
-      "legal": "قانوني"
+      "legal": "قانوني",
+      "tokens": "كتابات",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "يرسل",
@@ -75,6 +82,7 @@
       "buyNameBadge": "Premium",
       "profile": "حساب تعريفي",
       "icpverse": "ICPverse",
+      "verse": "Verse",
       "myQr": "ريال قطري الخاص بي",
       "history": "التاريخ",
       "balance": "عصير",
@@ -92,7 +100,8 @@
       "analytics": "التحليلات",
       "live": "Live",
       "community": "القنوات",
-      "communityBadge": "Beta"
+      "communityBadge": "Beta",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "اللغة التجريبية والمظهر والصوت"
   },
@@ -117,7 +126,7 @@
     "description": "يدق عند تسجيل الدخول وبعد النقل."
   },
   "login": {
-    "heading": "محفظة برنامج المقارنات الدولية",
+    "heading": "ICPay",
     "tagline": "أرسل واستقبل واحتفظ ببرنامج المقارنات الدولية (ICP) باستخدام المحفظة المؤمنة بواسطة هوية الإنترنت الخاصة بك.",
     "connect": "تسجيل الدخول",
     "connecting": "تسجيل الدخول...",
@@ -365,6 +374,7 @@
     "transfers": "تحويلات",
     "noTokens": "لا توجد رموز حتى الآن. نضج الودائع هنا خارجيا.",
     "noTokensFound": "لا توجد رموز مميزة تتطابق مع هذا البحث.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} خارج",
     "swapCta": "تغيير",
     "selfCustodyNotice": "لديك أموال خارج ICPay. الاسم المميز لنقلهم.",
@@ -464,6 +474,7 @@
     "confirmSend": "بالتأكيد"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "هان عن أصدقائك",
     "searchResults": "نتائج البحث",
     "suggested": "آلة لك",
@@ -1080,6 +1091,8 @@
     "formTitle": "إنشاء دلو",
     "formSubtitle": "ادفع من رصيد ICPay الخاص بك",
     "name": "اسم",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "الأقسام الصغيرة والأرقام والواصلات - مستخدمة في عنوان URL العام لـ CDN الخاص بك",
     "capacity": "حالة",
     "visibility": "رؤية",
@@ -1113,10 +1126,15 @@
     "uploadProgress": "{current} من {total} — {name}",
     "uploadPreparing": "جارٍ تحضير…",
     "uploading": "جارٍ التحميل…",
+    "uploadSuccess": "نجاح",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "يتم تحويل الصور إلى WebP — المستندات والمحفوظات والصوت والخطوط فقط. لا يوجد HTML أو JS أو نصوص برمجية. الحد الأقصى {max} لكل ملف.",
     "uploadFailed": "فشل التحميل — حاول مرة أخرى أو استخدم أصغر حجمًا",
     "delete": "يمسح",
     "deleteFileTitle": "هل تريد حذف الملف؟",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "ستتم إزالة {name} من هذه المجموعة. لا يمكن السماء عن هذا.",
     "download": "تحميل",
     "downloadFailed": "فشل التنزيل",
@@ -1124,6 +1142,13 @@
     "openInNewTab": "فتح الرابط",
     "previewFailed": "عذر تحميل المعاينة",
     "noFiles": "لا توجد ملفات حتى الآن",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "خيارات الأسهم غير متاحة",
     "readOnly": "للقراءة فقط - التعديل للتحميل",
     "invalidFile": "اختر ملفًا صغيرًا بحجم 10 PNG",
@@ -1233,7 +1258,12 @@
     "docsCopyCode": "النسخة الرمزية",
     "prevPage": "السابقة",
     "nextPage": "التالي",
-    "pageOf": "صفحة {page} من {total} · {count} الملفات"
+    "pageOf": "صفحة {page} من {total} · {count} الملفات",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "publicSite": {
     "nav": {

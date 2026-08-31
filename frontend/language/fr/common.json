@@ -2,6 +2,7 @@
   "nav": {
     "home": "Accueil",
     "icpverse": "ICPvers",
+    "verse": "Verse",
     "send": "Envoyer",
     "bucket": "Cloud",
     "menu": "Menu",
@@ -41,7 +42,8 @@
     "latestTransactions": "Dernières transactions",
     "seeMore": "Voir plus",
     "noTransactions": "Aucune transaction pour l'instant",
-    "noTransactionsHint": "Déposez des ICP pour commencer"
+    "noTransactionsHint": "Déposez des ICP pour commencer",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "Réservez votre nom d'utilisateur",
@@ -61,7 +63,12 @@
       "activity": "Activité",
       "more": "Plus",
       "preferences": "Préférences",
-      "legal": "Mentions légales"
+      "legal": "Mentions légales",
+      "tokens": "Jetons",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "Envoyer",
@@ -74,6 +81,7 @@
       "buyNameBadge": "Premium",
       "profile": "Profil",
       "icpverse": "ICPvers",
+      "verse": "Verse",
       "myQr": "Mon QR",
       "history": "Historique",
       "balance": "Solde",
@@ -92,7 +100,8 @@
       "community": "Canaux",
       "communityBadge": "Bêta",
       "presaleBadge": "En direct",
-      "governance": "Gouvernance"
+      "governance": "Gouvernance",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "Langue, devise, apparence et son"
   },
@@ -117,7 +126,7 @@
     "description": "Sons à la connexion et après un transfert."
   },
   "login": {
-    "heading": "Portefeuille ICP",
+    "heading": "ICPay",
     "tagline": "Envoyez, recevez et conservez des ICP avec un portefeuille protégé par votre Internet Identity.",
     "connect": "Connecter le portefeuille",
     "connecting": "Connexion…",
@@ -334,6 +343,7 @@
     "transfers": "Transferts",
     "noTokens": "Aucun jeton pour l'instant. Les dépôts apparaissent ici automatiquement.",
     "noTokensFound": "Aucun jeton ne correspond à cette recherche.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} a l'exterieur",
     "selfCustodyNotice": "Vous détenez des fonds hors d'ICPay. Ouvrez le jeton pour les transférer.",
     "swapCta": "Échanger",
@@ -394,6 +404,7 @@
     "confirmSend": "Confirm send"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "Trouvez vos amis",
     "searchResults": "Résultats de recherche",
     "suggested": "Suggestions pour vous",
@@ -769,6 +780,8 @@
     "formTitle": "Créer un bucket",
     "formSubtitle": "Payez depuis votre solde ICPay",
     "name": "Nom",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "Minuscules, chiffres, tirets — utilisé dans votre URL CDN publique",
     "capacity": "Capacité",
     "visibility": "Visibilité",
@@ -802,10 +815,15 @@
     "uploadProgress": "{current} sur {total} — {name}",
     "uploadPreparing": "Préparation…",
     "uploading": "Téléversement…",
+    "uploadSuccess": "Succès",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "Les photos sont converties en WebP — documents, archives, audio et polices uniquement. Pas de HTML, JS ni scripts. Max {max} par fichier.",
     "uploadFailed": "Échec du téléversement — réessayez ou utilisez un fichier plus petit",
     "delete": "Supprimer",
     "deleteFileTitle": "Supprimer le fichier ?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} sera retiré de ce bucket. Action irréversible.",
     "download": "Télécharger",
     "downloadFailed": "Échec du téléchargement",
@@ -813,6 +831,13 @@
     "openInNewTab": "Ouvrir le lien",
     "previewFailed": "Impossible de charger l'aperçu",
     "noFiles": "Aucun fichier pour l'instant",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "Stockage temporairement indisponible",
     "readOnly": "Lecture seule — renouvelez pour téléverser",
     "invalidFile": "Choisissez un fichier de moins de 10 MB",
@@ -922,7 +947,12 @@
     "docsCopyCode": "Copier le code",
     "prevPage": "Préc.",
     "nextPage": "Suiv.",
-    "pageOf": "Page {page} sur {total} · {count} fichiers"
+    "pageOf": "Page {page} sur {total} · {count} fichiers",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "analytics": {
     "title": "Analytics",

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { PublicLayout } from "@/components/public/layout"
 
 export const metadata: Metadata = {
   title: "Sign In",
@@ -8,5 +9,5 @@ export const metadata: Metadata = {
 }
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  return children
+  return <PublicLayout variant="content">{children}</PublicLayout>
 }

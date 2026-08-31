@@ -2,6 +2,7 @@
   "nav": {
     "home": "Start",
     "icpverse": "ICPversum",
+    "verse": "Verse",
     "send": "Senden",
     "bucket": "Cloud",
     "menu": "Menü",
@@ -41,7 +42,8 @@
     "latestTransactions": "Letzte Transaktionen",
     "seeMore": "Mehr anzeigen",
     "noTransactions": "Noch keine Transaktionen",
-    "noTransactionsHint": "Zahle ICP ein, um loszulegen"
+    "noTransactionsHint": "Zahle ICP ein, um loszulegen",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "Sichere dir deinen Benutzernamen",
@@ -61,7 +63,12 @@
       "activity": "Aktivität",
       "more": "Mehr",
       "preferences": "Einstellungen",
-      "legal": "Rechtliches"
+      "legal": "Rechtliches",
+      "tokens": "Token",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "Senden",
@@ -74,6 +81,7 @@
       "buyNameBadge": "Premium",
       "profile": "Profil",
       "icpverse": "ICPversum",
+      "verse": "Verse",
       "myQr": "Mein QR",
       "history": "Verlauf",
       "balance": "Guthaben",
@@ -92,7 +100,8 @@
       "community": "Kanäle",
       "communityBadge": "Test",
       "presaleBadge": "Aktiv",
-      "governance": "Abstimmung"
+      "governance": "Abstimmung",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "Sprache, Währung, Darstellung und Ton"
   },
@@ -117,7 +126,7 @@
     "description": "Töne beim Anmelden und nach einer Überweisung."
   },
   "login": {
-    "heading": "ICP-Wallet",
+    "heading": "ICPay",
     "tagline": "Sende, empfange und verwahre ICP mit einer Wallet, die durch deine Internet Identity geschützt ist.",
     "connect": "Wallet verbinden",
     "connecting": "Verbinden…",
@@ -334,6 +343,7 @@
     "transfers": "Überweisungen",
     "noTokens": "Noch keine Token. Einzahlungen erscheinen hier automatisch.",
     "noTokensFound": "Keine Token passen zu dieser Suche.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} ausserhalb",
     "selfCustodyNotice": "Sie halten Guthaben außerhalb von ICPay. Öffnen Sie den Token, um es zu verschieben.",
     "swapCta": "Tauschen",
@@ -394,6 +404,7 @@
     "confirmSend": "Confirm send"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "Finde deine Freunde",
     "searchResults": "Suchergebnisse",
     "suggested": "Für dich vorgeschlagen",
@@ -769,6 +780,8 @@
     "formTitle": "Bucket erstellen",
     "formSubtitle": "Zahlen Sie aus Ihrem ICPay-Guthaben",
     "name": "Name",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "Kleinbuchstaben, Ziffern, Bindestriche — für Ihre öffentliche CDN-URL",
     "capacity": "Kapazität",
     "visibility": "Sichtbarkeit",
@@ -802,10 +815,15 @@
     "uploadProgress": "{current} von {total} — {name}",
     "uploadPreparing": "Wird vorbereitet…",
     "uploading": "Wird hochgeladen…",
+    "uploadSuccess": "Erfolg",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "Fotos werden in WebP konvertiert — nur Dokumente, Archive, Audio, Schriftarten. Kein HTML, JS oder Skripte. Max. {max} pro Datei.",
     "uploadFailed": "Upload fehlgeschlagen — erneut versuchen oder kleinere Datei verwenden",
     "delete": "Löschen",
     "deleteFileTitle": "Datei löschen?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} wird aus diesem Bucket entfernt. Dies kann nicht rückgängig gemacht werden.",
     "download": "Herunterladen",
     "downloadFailed": "Download fehlgeschlagen",
@@ -813,6 +831,13 @@
     "openInNewTab": "Link öffnen",
     "previewFailed": "Vorschau konnte nicht geladen werden",
     "noFiles": "Noch keine Dateien",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "Speicher vorübergehend nicht verfügbar",
     "readOnly": "Nur Lesen — verlängern zum Hochladen",
     "invalidFile": "Wählen Sie eine Datei unter 10 MB",
@@ -922,7 +947,12 @@
     "docsCopyCode": "Code kopieren",
     "prevPage": "Zurück",
     "nextPage": "Weiter",
-    "pageOf": "Seite {page} von {total} · {count} Dateien"
+    "pageOf": "Seite {page} von {total} · {count} Dateien",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "analytics": {
     "title": "Analytics",

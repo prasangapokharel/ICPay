@@ -6,6 +6,7 @@ import {
   compressRasterToWebp,
 } from "@/lib/bucket/compressImage"
 import { buildUploadPath } from "@/lib/bucket/uploadPath"
+import { joinObjectPath } from "@/lib/bucket/folderPath"
 import { shouldConvertRasterToWebp } from "@/lib/bucket/rasterFormats"
 import { uploadValidationError } from "@/lib/bucket/uploadValidate"
 
@@ -27,7 +28,10 @@ export type PreparedUpload = {
  * Validate → normalize → convert rasters to WebP → verify size → return upload payload.
  * Non-image types (PDF, ZIP, GIF, …) pass through unchanged.
  */
-export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
+export async function prepareUploadFile(
+  file: File,
+  prefix = "",
+): Promise<PreparedUpload> {
   const err = uploadValidationError(file)
   if (err) throw new Error("Invalid file format")
 
@@ -37,7 +41,7 @@ export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
     const compressed = await compressRasterToWebp(normalized)
     return {
       file: compressed.file,
-      path: buildUploadPath(normalized, true),
+      path: joinObjectPath(prefix, buildUploadPath(normalized, true)),
       contentType: "image/webp",
       compression: {
         originalBytes: compressed.originalBytes,
@@ -49,7 +53,7 @@ export async function prepareUploadFile(file: File): Promise<PreparedUpload> {
 
   return {
     file: normalized,
-    path: buildUploadPath(normalized, false),
+    path: joinObjectPath(prefix, buildUploadPath(normalized, false)),
     contentType: guessFileMime(normalized),
   }
 }

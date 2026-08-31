@@ -69,7 +69,9 @@ import Map "mo:core/Map";
 import Time "mo:core/Time";
 import IdentityAttributes "mo:identity-attributes";
 import UserModel "models/User";
+import AddBucketFolders "migrations/AddBucketFolders";
 
+(with migration = AddBucketFolders.migration)
 persistent actor self {
   transient let mwConfig = MiddlewareAuth.prodConfig();
 

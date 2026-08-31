@@ -5,8 +5,6 @@ import Link from "next/link"
 import { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
-import { AMBER_EMBED_BTN } from "@/components/ui/bg-image-card"
-import { cn } from "@/lib/ui/utils"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -272,11 +270,11 @@ export function BuyIcpayDrawer({
 
         <DrawerFooter>
           {!identity ? (
-            <Button className={cn("w-full font-semibold", AMBER_EMBED_BTN)} nativeButton={false} render={<Link href="/login" />}>
+            <Button className="w-full" nativeButton={false} render={<Link href="/login" />}>
               {t("loginToBuy")}
             </Button>
           ) : (
-            <Button className={cn("w-full font-semibold", AMBER_EMBED_BTN)} disabled={!canBuy} onClick={handleBuy}>
+            <Button className="w-full" disabled={!canBuy} onClick={handleBuy}>
               {loading ? (
                 <>
                   <Spinner className="size-4" />

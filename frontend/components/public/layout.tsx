@@ -1,8 +1,15 @@
+import { Suspense } from "react"
 import { PublicFooter } from "@/components/public/footer"
 import { PublicNav } from "@/components/public/nav"
 import { cn } from "@/lib/ui/utils"
 
 export type PublicLayoutVariant = "content" | "wide"
+
+function PublicNavFallback() {
+  return (
+    <header className="sticky top-0 z-50 h-14 border-b border-border/60 bg-background/95 backdrop-blur-md md:h-16" />
+  )
+}
 
 export function PublicLayout({
   children,
@@ -13,7 +20,9 @@ export function PublicLayout({
 }) {
   return (
     <div className="flex min-h-svh flex-col bg-background">
-      <PublicNav />
+      <Suspense fallback={<PublicNavFallback />}>
+        <PublicNav />
+      </Suspense>
       <main
         className={cn(
           "flex-1",

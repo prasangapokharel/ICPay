@@ -110,6 +110,68 @@ export function listFiles(
   })
 }
 
+export function listFolder(
+  identity: Identity | undefined,
+  bucketId: string,
+  folderPrefix: string,
+  page: number,
+  pageSize: number,
+  apiKey?: string
+): Promise<FileListPage> {
+  return query(identity, async (actor) => {
+    const res = (await actor.listFolder(
+      bucketId,
+      folderPrefix,
+      BigInt(page),
+      BigInt(pageSize),
+      apiKey ? [apiKey] : []
+    )) as Outcome<FileListPage>
+    return unwrap(res)
+  })
+}
+
+export function searchFiles(
+  identity: Identity | undefined,
+  bucketId: string,
+  searchQuery: string,
+  page: number,
+  pageSize: number,
+  apiKey?: string
+): Promise<FileListPage> {
+  return query(identity, async (actor) => {
+    const res = (await actor.searchFiles(
+      bucketId,
+      searchQuery,
+      BigInt(page),
+      BigInt(pageSize),
+      apiKey ? [apiKey] : []
+    )) as Outcome<FileListPage>
+    return unwrap(res)
+  })
+}
+
+export function createFolder(
+  identity: Identity | undefined,
+  bucketId: string,
+  path: string,
+  apiKey?: string
+): Promise<Outcome<string>> {
+  return call(identity, "Failed to create folder", (actor) =>
+    actor.createFolder(bucketId, path, apiKey ? [apiKey] : []) as Promise<Outcome<string>>
+  )
+}
+
+export function deleteFolder(
+  identity: Identity | undefined,
+  bucketId: string,
+  path: string,
+  apiKey?: string
+): Promise<Outcome<null>> {
+  return call(identity, "Failed to delete folder", (actor) =>
+    actor.deleteFolder(bucketId, path, apiKey ? [apiKey] : []) as Promise<Outcome<null>>
+  )
+}
+
 export function uploadFile(
   identity: Identity | undefined,
   bucketId: string,
@@ -137,6 +199,27 @@ export function deleteFile(
   return call(identity, "Delete failed", (actor) =>
     actor.deleteFile(bucketId, path, apiKey ? [apiKey] : []) as Promise<Outcome<null>>
   )
+}
+
+const BULK_DELETE_MAX = 20
+
+export async function bulkDeleteFiles(
+  identity: Identity | undefined,
+  bucketId: string,
+  paths: string[],
+  apiKey?: string
+): Promise<Outcome<bigint>> {
+  if (paths.length === 0) return { ok: 0n }
+  let deleted = 0n
+  for (let i = 0; i < paths.length; i += BULK_DELETE_MAX) {
+    const chunk = paths.slice(i, i + BULK_DELETE_MAX)
+    const res = await call(identity, "Delete failed", (actor) =>
+      actor.bulkDeleteFiles(bucketId, chunk, apiKey ? [apiKey] : []) as Promise<Outcome<bigint>>
+    )
+    if ("err" in res) return res
+    deleted += res.ok
+  }
+  return { ok: deleted }
 }
 
 export function downloadFileBlob(

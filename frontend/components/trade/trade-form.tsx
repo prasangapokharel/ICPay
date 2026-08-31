@@ -2,15 +2,15 @@
 
 import { useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { AppIcon } from "@/components/ui/app-icon"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Exchange01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { TradeConfirmDrawer } from "@/components/trade/trade-confirm-drawer"
 import { TradeTokenPicker } from "@/components/trade/trade-token-picker"
-import { TokenLogo } from "@/components/token/token-logo"
-import { TokenFiatHint } from "@/components/token/token-fiat-hint"
+import { TradeAmountField } from "@/components/trade/trade-amount-field"
+import { TradeFeeSummary } from "@/components/trade/trade-fee-summary"
 import { useTradeQuote, useTradeTokens } from "@/hooks/trade/useTrade"
 import { defaultSwapPair } from "@/lib/swap/tokens"
 import {
@@ -20,11 +20,7 @@ import {
   requiredWalletDebit,
   tradeRate,
 } from "@/lib/trade/fees"
-import {
-  formatTokenAmount,
-  parseTokenAmount,
-  toPlainTokenAmount,
-} from "@/lib/wallet/utils"
+import { parseTokenAmount, toPlainTokenAmount, formatTokenAmount } from "@/lib/wallet/utils"
 import type { TokenHolding } from "@/services/tokens"
 import { runTrade, warmTradeSession } from "@/services/trade/trade"
 import type { Identity } from "@icp-sdk/core/agent"
@@ -87,13 +83,8 @@ export function TradeForm({
     }
   }
 
-  const pickOut = (token: TokenHolding) => {
-    setPickedOut(token)
-  }
-
   const amountIn = tokenIn ? parseTokenAmount(amountText, tokenIn.decimals) : null
-  const maxIn =
-    tokenIn === null ? 0n : maxTradeInput(tokenIn.balance, tokenIn.fee)
+  const maxIn = tokenIn === null ? 0n : maxTradeInput(tokenIn.balance, tokenIn.fee)
   const totalDebit =
     amountIn !== null && tokenIn ? requiredWalletDebit(amountIn, tokenIn.fee) : null
 
@@ -196,7 +187,7 @@ export function TradeForm({
 
   if (tokensLoading && tokens.length === 0) {
     return (
-      <div className="flex justify-center py-16">
+      <div className="flex justify-center py-20">
         <Spinner className="size-6 text-muted-foreground" />
       </div>
     )
@@ -210,105 +201,100 @@ export function TradeForm({
     )
   }
 
+  const receiveText =
+    quote && !quoteError && tokenOut
+      ? formatTokenAmount(quote.amountOut, tokenOut.decimals)
+      : quoteLoading
+        ? "…"
+        : "0"
+
   return (
     <>
-      <div className="space-y-3">
-        <TradeAmountCard
-          label={t("youPay")}
-          token={tokenIn}
-          amountText={amountText}
-          fiatAmount={amountIn}
-          onAmountChange={setAmountText}
-          onPickToken={() => setPicker("in")}
-          balance={tokenIn?.balance}
-          maxHint={maxIn}
-          onMax={() => applyPercent(100)}
-          percentages={PERCENTAGES}
-          onPercent={applyPercent}
-        />
+      <div className="mx-auto w-full max-w-md space-y-4">
+        <div className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
+          <TradeAmountField
+            label={t("youPay")}
+            token={tokenIn}
+            amountText={amountText}
+            fiatAmount={amountIn}
+            onAmountChange={setAmountText}
+            onPickToken={() => setPicker("in")}
+            balance={tokenIn?.balance}
+            maxHint={maxIn}
+            onMax={() => applyPercent(100)}
+            percentages={PERCENTAGES}
+            onPercent={applyPercent}
+          />
 
-        <div className="flex justify-center">
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className="size-10 rounded-full border-border/60 bg-gray-800 hover:bg-gray-700"
-            onClick={flip}
-          >
-            <AppIcon name="swap" size={20} />
-            <span className="sr-only">{t("flip")}</span>
-          </Button>
+          <div className="relative border-y border-border/40 py-3">
+            <div className="absolute inset-x-0 top-1/2 z-10 flex -translate-y-1/2 justify-center">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="size-10 rounded-xl border-4 border-card bg-background shadow-sm hover:bg-muted"
+                onClick={flip}
+              >
+                <HugeiconsIcon icon={Exchange01Icon} className="size-5" strokeWidth={2} />
+                <span className="sr-only">{t("flip")}</span>
+              </Button>
+            </div>
+          </div>
+
+          <TradeAmountField
+            label={t("youReceive")}
+            token={tokenOut}
+            readOnly
+            fiatAmount={quote && !quoteError && quote.amountOut > 0n ? quote.amountOut : null}
+            amountText={receiveText}
+            onPickToken={() => setPicker("out")}
+          />
         </div>
 
-        <TradeAmountCard
-          label={t("youReceive")}
-          token={tokenOut}
-          readOnly
-          fiatAmount={quote && !quoteError && quote.amountOut > 0n ? quote.amountOut : null}
-          amountText={
-            quote && !quoteError && tokenOut
-              ? formatTokenAmount(quote.amountOut, tokenOut.decimals)
-              : quoteLoading
-                ? "…"
-                : "0"
-          }
-          onPickToken={() => setPicker("out")}
-        />
-
-        {amountIn !== null && tokenIn && (
-          <div className="rounded-2xl border border-border/60 bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
-            <FeeRow label={t("serviceFee")} value={quote?.serviceFee ?? null} token={tokenIn} />
-            {quote && (
-              <FeeRow label={t("poolFee")} value={quote.swapFee} token={tokenIn} />
-            )}
-            <FeeRow label={t("depositFee")} value={tokenIn.fee} token={tokenIn} />
-            {totalDebit !== null && (
-              <div className="mt-2 flex justify-between border-t border-border/50 pt-2 font-medium text-foreground">
-                <span>{t("totalDebit")}</span>
-                <span className="tabular-nums">
-                  {formatTokenAmount(totalDebit, tokenIn.decimals)} {tokenIn.symbol}
-                </span>
-              </div>
-            )}
-            <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground/80">
-              {t("feeNote")}
-            </p>
-            {rate && tokenOut && (
-              <p className="mt-2 text-[11px]">
-                {t("rate")}: 1 {tokenIn.symbol} ≈ {rate} {tokenOut.symbol}
-              </p>
-            )}
-          </div>
+        {amountIn !== null && tokenIn && tokenOut && amountIn > 0n && (
+          <TradeFeeSummary
+            tokenIn={tokenIn}
+            tokenOut={tokenOut}
+            serviceFee={quote?.serviceFee ?? null}
+            poolFee={quote?.swapFee ?? null}
+            depositFee={tokenIn.fee}
+            totalDebit={totalDebit}
+            rate={rate}
+          />
         )}
 
-        {belowMin && (
-          <Alert variant="destructive">
-            <AlertDescription>{t("amountTooSmall")}</AlertDescription>
-          </Alert>
-        )}
-        {insufficient && (
-          <Alert variant="destructive">
-            <AlertDescription>{t("insufficientBalance")}</AlertDescription>
-          </Alert>
-        )}
-        {quoteMessage && amountIn !== null && amountIn > 0n && (
-          <Alert variant="destructive">
-            <AlertDescription>{quoteMessage}</AlertDescription>
-          </Alert>
-        )}
-        {error && (
-          <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+        <div className="space-y-3">
+          {belowMin && (
+            <Alert variant="destructive">
+              <AlertDescription>{t("amountTooSmall")}</AlertDescription>
+            </Alert>
+          )}
+          {insufficient && (
+            <Alert variant="destructive">
+              <AlertDescription>{t("insufficientBalance")}</AlertDescription>
+            </Alert>
+          )}
+          {quoteMessage && amountIn !== null && amountIn > 0n && (
+            <Alert variant="destructive">
+              <AlertDescription>{quoteMessage}</AlertDescription>
+            </Alert>
+          )}
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-        <Button
-          className="h-11 w-full rounded-xl"
-          disabled={!canReview}
-          onClick={openReview}
-        >
-          {quoteLoading ? t("fetchingQuote") : t("review")}
-        </Button>
+          <Button
+            className="h-12 w-full rounded-full text-base font-semibold"
+            disabled={!canReview}
+            onClick={openReview}
+          >
+            {quoteLoading ? t("fetchingQuote") : t("review")}
+          </Button>
+
+          <p className="text-center text-xs text-muted-foreground">{t("processHint")}</p>
+        </div>
       </div>
 
       <TradeTokenPicker
@@ -324,7 +310,7 @@ export function TradeForm({
         onOpenChange={(o) => setPicker(o ? "out" : null)}
         tokens={tokens.filter((x) => x.ledgerId !== tokenIn?.ledgerId)}
         selectedId={tokenOut?.ledgerId ?? null}
-        onSelect={pickOut}
+        onSelect={(token) => setPickedOut(token)}
         title={t("selectReceive")}
       />
 
@@ -340,116 +326,5 @@ export function TradeForm({
         onConfirm={handleConfirm}
       />
     </>
-  )
-}
-
-function TradeAmountCard({
-  label,
-  token,
-  amountText,
-  fiatAmount,
-  onAmountChange,
-  onPickToken,
-  readOnly,
-  balance,
-  maxHint,
-  onMax,
-  percentages,
-  onPercent,
-}: {
-  label: string
-  token: TokenHolding | null
-  amountText: string
-  fiatAmount?: bigint | null
-  onPickToken: () => void
-  onAmountChange?: (v: string) => void
-  readOnly?: boolean
-  balance?: bigint
-  maxHint?: bigint
-  onMax?: () => void
-  percentages?: readonly number[]
-  onPercent?: (n: number) => void
-}) {
-  const t = useTranslations("trade")
-  return (
-    <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
-      <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <div className="mt-2 flex items-center gap-2">
-        <button
-          type="button"
-          onClick={onPickToken}
-          className="flex shrink-0 items-center gap-2 rounded-full bg-muted/60 py-1.5 pl-1.5 pr-3 text-sm font-semibold"
-        >
-          {token ? <TokenLogo token={token} className="size-7" /> : null}
-          {token?.symbol ?? t("selectToken")}
-        </button>
-        {readOnly ? (
-          <p className="min-w-0 flex-1 truncate text-right text-2xl font-semibold tabular-nums">
-            {amountText}
-          </p>
-        ) : (
-          <Input
-            inputMode="decimal"
-            value={amountText}
-            onChange={(e) => onAmountChange?.(e.target.value)}
-            placeholder="0"
-            className="h-auto border-0 bg-transparent px-0 text-right text-2xl font-semibold shadow-none focus-visible:ring-0"
-          />
-        )}
-      </div>
-      {token && fiatAmount !== null && fiatAmount !== undefined && fiatAmount > 0n && (
-        <div className="mt-1 flex justify-end">
-          <TokenFiatHint ledgerId={token.ledgerId} amount={fiatAmount} decimals={token.decimals} />
-        </div>
-      )}
-      {!readOnly && token && balance !== undefined && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-          <span>
-            {t("balance")}: {formatTokenAmount(balance, token.decimals)}
-          </span>
-          {onMax && maxHint !== undefined && maxHint > 0n && (
-            <button type="button" className="font-medium text-primary" onClick={onMax}>
-              {t("max")}
-            </button>
-          )}
-        </div>
-      )}
-      {!readOnly && percentages && onPercent && (
-        <div className="mt-2 flex gap-2">
-          {percentages.map((p) => (
-            <Button
-              key={p}
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-7 flex-1 text-xs"
-              onClick={() => onPercent(p)}
-            >
-              {p}%
-            </Button>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
-function FeeRow({
-  label,
-  value,
-  token,
-}: {
-  label: string
-  value: bigint | null
-  token: TokenHolding
-}) {
-  if (value === null) return null
-  return (
-    <div className="flex justify-between py-0.5">
-      <span>{label}</span>
-      <span className="tabular-nums">
-        {formatTokenAmount(value, token.decimals)} {token.symbol}
-      </span>
-    </div>
   )
 }

@@ -16,6 +16,7 @@ import BlobStore "../blob/BlobStore";
 import BucketStorage "../storage/BucketStorage";
 import Pagination "../../pkg/pagination/pg";
 import Validate "../../pkg/validate/text";
+import FolderPath "../utils/FolderPath";
 
 module {
   public type FileContext = {
@@ -51,10 +52,18 @@ module {
 
   func paginate(
     files: [Types.FilePublic],
+    folders: [Text],
     page: Nat,
     pageSize: Nat,
   ) : Types.FileListPage {
-    Pagination.slice(files, page, pageSize, Config.BUCKET_FILE_PAGE_SIZE, Config.MAX_PAGE_SIZE)
+    let slice = Pagination.slice(files, page, pageSize, Config.BUCKET_FILE_PAGE_SIZE, Config.MAX_PAGE_SIZE);
+    {
+      items = slice.items;
+      folders;
+      total = slice.total;
+      page = slice.page;
+      pageSize = slice.pageSize;
+    }
   };
 
   public func getFile(
@@ -252,7 +261,10 @@ module {
   ) : Types.ApiResult<Types.FileListPage> {
     let files = BucketRepo.getFilesByBucket(ctx.store, bucket.id);
     let filtered = filterPublic(bucket, files, func(f) { FilePath.hasPrefix(f.path, prefix) });
-    #ok(paginate(filtered, page, pageSize))
+    let filePaths = Array.map<Types.StoredFile, Text>(files, func(f) { f.path });
+    let storedFolders = BucketRepo.listFolderPaths(ctx.store, bucket.id);
+    let folderNames = FolderPath.childFolderNames(filePaths, storedFolders, prefix);
+    #ok(paginate(filtered, folderNames, page, pageSize))
   };
 
   public func searchFiles(
@@ -275,7 +287,44 @@ module {
         or FilePath.containsIgnoreCase(f.contentType, searchQuery)
       },
     );
-    #ok(paginate(filtered, page, pageSize))
+    #ok(paginate(filtered, [], page, pageSize))
+  };
+
+  public func createFolder(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+  ) : Types.ApiResult<Text> {
+    switch (FolderPath.validateFolderPath(path)) {
+      case (?err) { return #err(err) };
+      case (null) {};
+    };
+    let folderPath = FolderPath.normalizeFolderPath(path);
+    if (BucketRepo.getFileByPath(ctx.store, bucket.id, folderPath) != null) {
+      return #err("A file already exists at this path");
+    };
+    if (BucketStorage.hasFolder(ctx.store, bucket.id, folderPath)) {
+      return #err("Folder already exists");
+    };
+    BucketRepo.createFolder(ctx.store, bucket.id, folderPath, Time.now());
+    #ok(folderPath)
+  };
+
+  public func deleteFolder(
+    ctx: FileContext,
+    bucket: Types.Bucket,
+    path: Text,
+  ) : Types.ApiResult<Null> {
+    switch (FolderPath.validateFolderPath(path)) {
+      case (?err) { return #err(err) };
+      case (null) {};
+    };
+    let folderPath = FolderPath.normalizeFolderPath(path);
+    if (not BucketStorage.hasFolder(ctx.store, bucket.id, folderPath)) {
+      return #err("Folder not found");
+    };
+    ignore BucketRepo.deleteFolder(ctx.store, bucket.id, folderPath);
+    #ok(null)
   };
 
   public func setFileTags(

@@ -2,6 +2,7 @@
   "nav": {
     "home": "घर",
     "icpverse": "ICPverse",
+    "verse": "Verse",
     "send": "पठाउनुहोस्",
     "bucket": "बाल्टिन",
     "menu": "मेनु",
@@ -41,7 +42,8 @@
     "latestTransactions": "नवीनतम लेनदेन",
     "seeMore": "धेरै धेरै हेर्नुहोस्",
     "noTransactions": "कुनै लेनदेन छैन",
-    "noTransactionsHint": "सुरु गर्न ICP जम्मा गर्नुहोस्"
+    "noTransactionsHint": "सुरु गर्न ICP जम्मा गर्नुहोस्",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "आफ्नो प्रयोगकर्ता नाम दाबी गर्नुहोस्",
@@ -61,7 +63,12 @@
       "activity": "गतिविधि",
       "more": "थप",
       "preferences": "प्राथमिकताहरू",
-      "legal": "कानूनी"
+      "legal": "कानूनी",
+      "tokens": "कार्डहरू",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "पठाउनुहोस्",
@@ -75,6 +82,7 @@
       "buyNameBadge": "Premium",
       "profile": "प्रोफाइल",
       "icpverse": "ICPverse",
+      "verse": "Verse",
       "myQr": "मेरो QR",
       "history": "इतिहास",
       "balance": "सन्तुलन",
@@ -92,7 +100,8 @@
       "analytics": "विश्लेषण",
       "live": "Live",
       "community": "च्यानलहरू",
-      "communityBadge": "Beta"
+      "communityBadge": "Beta",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "भाषा, मुद्रा, फोर र ध्वनि"
   },
@@ -117,7 +126,7 @@
     "description": "साइन-इन र स्थानान्तरण पछि झंकार।"
   },
   "login": {
-    "heading": "आईसीपी वालेट",
+    "heading": "ICPay",
     "tagline": "आफ्नो व्यक्तिगत मान्यता द्वारा सुरक्षित वालेटको साथ ICP पठाउनुहोस्, प्राप्त गर्नुहोस् र होल्ड गर्नुहोस्।",
     "connect": "साइन इन गर्नुहोस्",
     "connecting": "साइन इन...",
@@ -365,6 +374,7 @@
     "transfers": "स्थानान्तरण",
     "noTokens": "अझै कुनै पनि टिकट छैन। निक्षेपहरू यहाँ स्वचालित रूपमा देखा पर्नुहोस्।",
     "noTokensFound": "कुनै पनि नम्बर खोज्न मेल खान्छ।",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} बाहिर",
     "swapCta": "स्वैप",
     "selfCustodyNotice": "तपाईं ICPay बाहिर कोष राख्नुहुन्छ। इन भित्र सार्न मार्क खोल्नुहोस्।",
@@ -464,6 +474,7 @@
     "confirmSend": "पुष्टि गर्नुहोस्"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "आफ्नो साथी खोज्नुहोस्",
     "searchResults": "खोज परिणामहरू",
     "suggested": "टेपका लागि",
@@ -1080,6 +1091,8 @@
     "formTitle": "बाल्टी निर्माण गर्नुहोस्",
     "formSubtitle": "आफ्नो ICPay ब्यालेन्सबाट खुला गर्नुहोस्",
     "name": "नाम",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "लोअरकेस अक्षरहरू, अंकहरू, हाइफनहरू — सार्वजनिक CDN URL मा प्रयोग गर्नुहोस्",
     "capacity": "क्षमता",
     "visibility": "दृश्यता",
@@ -1113,10 +1126,15 @@
     "uploadProgress": "{current} को {total} — {name}",
     "uploadPreparing": "तयारी गर...",
     "uploading": "अपलोड...",
+    "uploadSuccess": "सफल",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "तस्बिरहरू वेबपी मा रूपान्तरणार्थ — कागजातहरू, अभिलेखहरू, अडियो, फन्टहरू मात्र। कुनै HTML, JS, वा स्क्रिप्टहरू छैनन्। अधिकतम {max} प्रति फाइल।",
     "uploadFailed": "अपलोड असफल — फेरि प्रयास गर्नुहोस् वा छोटो फाइल प्रयोग गर्नुहोस्",
     "delete": "मेट",
     "deleteFileTitle": "फाइल मेट्ने हो?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} यस बाल्टीबाट हटाइनेछ। अन्डू गर्न सिक्नुहोस्।",
     "download": "डाउनलोड गर्नुहोस्",
     "downloadFailed": "असफल भयो",
@@ -1124,6 +1142,13 @@
     "openInNewTab": "खोल",
     "previewFailed": "पूर्वावलोकन लोड गर्न सकिएन",
     "noFiles": "कुनै फाइलहरू छन्",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "भण्डारण अस्थायी रूपमा अनुपलब्ध",
     "readOnly": "मात्र - अपलोड गर्न नवीकरण गर्नुहोस्",
     "invalidFile": "१० एम.बी. मुनिको फाइल छान्नुहोस्",
@@ -1233,7 +1258,12 @@
     "docsCopyCode": "कोड प्रतिलिपि गर्नुहोस्",
     "prevPage": "अघिल्लो",
     "nextPage": "अर्को",
-    "pageOf": "पृष्ठ {page} को {total} · {count} फाइलहरू"
+    "pageOf": "पृष्ठ {page} को {total} · {count} फाइलहरू",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "publicSite": {
     "nav": {

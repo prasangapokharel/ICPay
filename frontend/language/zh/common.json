@@ -2,6 +2,7 @@
   "nav": {
     "home": "首页",
     "icpverse": "ICP 宇宙",
+    "verse": "Verse",
     "send": "发送",
     "bucket": "云存储",
     "menu": "菜单",
@@ -41,7 +42,8 @@
     "latestTransactions": "最新交易",
     "seeMore": "查看更多",
     "noTransactions": "暂无交易",
-    "noTransactionsHint": "充值 ICP 即可开始"
+    "noTransactionsHint": "充值 ICP 即可开始",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "领取您的用户名",
@@ -61,7 +63,12 @@
       "activity": "活动",
       "more": "更多",
       "preferences": "偏好设置",
-      "legal": "法律"
+      "legal": "法律",
+      "tokens": "代币",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "发送",
@@ -74,6 +81,7 @@
       "buyNameBadge": "高级版",
       "profile": "个人资料",
       "icpverse": "ICP 宇宙",
+      "verse": "Verse",
       "myQr": "我的二维码",
       "history": "历史记录",
       "balance": "余额",
@@ -92,7 +100,8 @@
       "community": "频道",
       "communityBadge": "测试版",
       "presaleBadge": "进行中",
-      "governance": "治理"
+      "governance": "治理",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "语言、货币、外观和声音"
   },
@@ -117,7 +126,7 @@
     "description": "登录时和转账后播放提示音。"
   },
   "login": {
-    "heading": "ICP 钱包",
+    "heading": "ICPay",
     "tagline": "使用由 Internet Identity 保护的钱包收发和持有 ICP。",
     "connect": "连接钱包",
     "connecting": "连接中…",
@@ -334,6 +343,7 @@
     "transfers": "转账",
     "noTokens": "暂无代币。充值后会自动显示在这里。",
     "noTokensFound": "没有符合该搜索的代币。",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} 在外",
     "selfCustodyNotice": "您在 ICPay 之外持有资金。打开该代币以转入。",
     "swapCta": "兑换",
@@ -394,6 +404,7 @@
     "confirmSend": "Confirm send"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "查找好友",
     "searchResults": "搜索结果",
     "suggested": "为您推荐",
@@ -769,6 +780,8 @@
     "formTitle": "创建存储桶",
     "formSubtitle": "从 ICPay 余额支付",
     "name": "名称",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "小写字母、数字、连字符 — 用于公开 CDN URL",
     "capacity": "容量",
     "visibility": "可见性",
@@ -802,10 +815,15 @@
     "uploadProgress": "{current} / {total} — {name}",
     "uploadPreparing": "准备中…",
     "uploading": "上传中…",
+    "uploadSuccess": "成功",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "照片将转换为 WebP — 仅支持文档、压缩包、音频、字体。不支持 HTML、JS 或脚本。单文件最大 {max}。",
     "uploadFailed": "上传失败 — 请重试或使用更小的文件",
     "delete": "删除",
     "deleteFileTitle": "删除文件？",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} 将从该存储桶中移除。此操作不可撤销。",
     "download": "下载",
     "downloadFailed": "下载失败",
@@ -813,6 +831,13 @@
     "openInNewTab": "打开链接",
     "previewFailed": "无法加载预览",
     "noFiles": "暂无文件",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "存储暂时不可用",
     "readOnly": "只读 — 续费后可上传",
     "invalidFile": "请选择 10 MB 以下的文件",
@@ -922,7 +947,12 @@
     "docsCopyCode": "复制代码",
     "prevPage": "上一页",
     "nextPage": "下一页",
-    "pageOf": "第 {page} 页，共 {total} 页 · {count} 个文件"
+    "pageOf": "第 {page} 页，共 {total} 页 · {count} 个文件",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "analytics": {
     "title": "Analytics",

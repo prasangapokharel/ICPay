@@ -103,7 +103,7 @@ async function encodeRasterToWebp(file: File): Promise<Blob | null> {
       const blob = await imageCompression(file, {
         maxSizeMB: attempt.maxSizeMB,
         maxWidthOrHeight: COMPRESSION_MAX_EDGE,
-        useWebWorker: false,
+        useWebWorker: true,
         fileType: "image/webp",
         initialQuality: attempt.initialQuality,
       })
