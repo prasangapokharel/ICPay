@@ -261,7 +261,21 @@
       "pending": "대기 중",
       "failed": "실패",
       "cancelled": "취소됨"
-    }
+    },
+    "detailTitle": "거래 세부정보",
+    "rowDate": "날짜",
+    "rowId": "거래 ID",
+    "rowMemo": "메모",
+    "viewExplorer": "익스플로러에서 보기",
+    "notFound": "거래를 찾을 수 없습니다.",
+    "dateToday": "오늘",
+    "dateYesterday": "어제",
+    "amountReceived": "받은 금액",
+    "amountSent": "보낸 금액",
+    "repay": "상환",
+    "sendAgain": "다시 보내기",
+    "rowNetwork": "네트워크",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "사용자 이름 구매",

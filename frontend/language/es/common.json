@@ -261,7 +261,21 @@
       "pending": "Pendiente",
       "failed": "Fallida",
       "cancelled": "Cancelada"
-    }
+    },
+    "detailTitle": "Detalles de la transacción",
+    "rowDate": "Fecha",
+    "rowId": "ID de transacción",
+    "rowMemo": "Nota",
+    "viewExplorer": "Ver en el explorador",
+    "notFound": "Transacción no encontrada.",
+    "dateToday": "Hoy",
+    "dateYesterday": "Ayer",
+    "amountReceived": "Importe recibido",
+    "amountSent": "Importe enviado",
+    "repay": "Reembolsar",
+    "sendAgain": "Enviar de nuevo",
+    "rowNetwork": "Red",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "Comprar un nombre de usuario",

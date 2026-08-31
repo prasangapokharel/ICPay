@@ -261,7 +261,21 @@
       "pending": "Beklemede",
       "failed": "Başarısız",
       "cancelled": "İptal edildi"
-    }
+    },
+    "detailTitle": "İşlem ayrıntıları",
+    "rowDate": "Tarih",
+    "rowId": "İşlem kimliği",
+    "rowMemo": "Not",
+    "viewExplorer": "Explorer'da görüntüle",
+    "notFound": "İşlem bulunamadı.",
+    "dateToday": "Bugün",
+    "dateYesterday": "Dün",
+    "amountReceived": "Alınan tutar",
+    "amountSent": "Gönderilen tutar",
+    "repay": "Geri öde",
+    "sendAgain": "Tekrar gönder",
+    "rowNetwork": "Ağ",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "Kullanıcı adı satın al",

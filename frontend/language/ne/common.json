@@ -261,7 +261,21 @@
       "pending": "विचाराधीन",
       "failed": "सजिलै",
       "cancelled": "रद्द रद्द"
-    }
+    },
+    "detailTitle": "लेनदेन विवरण",
+    "rowDate": "मिति",
+    "rowId": "लेनदेन ID",
+    "rowMemo": "मेमो",
+    "viewExplorer": "एक्सप्लोररमा हेर्नुहोस्",
+    "notFound": "लेनदेन फेला परेन।",
+    "dateToday": "आज",
+    "dateYesterday": "हिजो",
+    "amountReceived": "प्राप्त रकम",
+    "amountSent": "पठाइएको रकम",
+    "repay": "फिर्ता तिर्नुहोस्",
+    "sendAgain": "फेरि पठाउनुहोस्",
+    "rowNetwork": "नेटवर्क",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "प्रयोगकर्ता नाम किन्नुहोस्",

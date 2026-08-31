@@ -18,3 +18,11 @@ export function getTransactions(
     unwrap(await actor.getTransactions(BigInt(page), BigInt(pageSize)))
   )
 }
+
+export function getTransactionDetail(
+  identity: Identity | undefined,
+  txId: string
+): Promise<TransactionPublic> {
+  return query(identity, async (actor) =>
+    unwrap(await actor.getTransactionDetail(txId)))
+}

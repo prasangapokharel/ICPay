@@ -261,7 +261,21 @@
       "pending": "Nakabinbin",
       "failed": "Nabigo",
       "cancelled": "Kinansela"
-    }
+    },
+    "detailTitle": "Mga detalye ng transaksyon",
+    "rowDate": "Petsa",
+    "rowId": "Transaction ID",
+    "rowMemo": "Memo",
+    "viewExplorer": "Tingnan sa explorer",
+    "notFound": "Hindi natagpuan ang transaksyon.",
+    "dateToday": "Ngayon",
+    "dateYesterday": "Kahapon",
+    "amountReceived": "Halagang natanggap",
+    "amountSent": "Halagang ipinadala",
+    "repay": "Bayaran",
+    "sendAgain": "Ipadala muli",
+    "rowNetwork": "Network",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "Bumili ng username",

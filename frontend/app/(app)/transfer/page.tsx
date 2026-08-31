@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { TransferForm } from "@/components/transfer/transfer-form"
 import { SendSuccess } from "@/components/wallet/send-success"
@@ -14,6 +15,8 @@ type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: stri
 
 export default function TransferPage() {
   const t = useTranslations("transfer")
+  const searchParams = useSearchParams()
+  const initialTo = searchParams.get("to") ?? undefined
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
   const balance = useLiveBalance()
@@ -53,7 +56,7 @@ export default function TransferPage() {
 
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
-      <TransferForm onTransfer={handleTransfer} balance={balance} />
+      <TransferForm onTransfer={handleTransfer} balance={balance} initialTo={initialTo} />
     </AppPage>
   )
 }

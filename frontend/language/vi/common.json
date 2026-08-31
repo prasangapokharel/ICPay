@@ -261,7 +261,21 @@
       "pending": "Đang chờ",
       "failed": "Thất bại",
       "cancelled": "Đã hủy"
-    }
+    },
+    "detailTitle": "Chi tiết giao dịch",
+    "rowDate": "Ngày",
+    "rowId": "Mã giao dịch",
+    "rowMemo": "Ghi chú",
+    "viewExplorer": "Xem trên explorer",
+    "notFound": "Không tìm thấy giao dịch.",
+    "dateToday": "Hôm nay",
+    "dateYesterday": "Hôm qua",
+    "amountReceived": "Số tiền nhận",
+    "amountSent": "Số tiền gửi",
+    "repay": "Hoàn trả",
+    "sendAgain": "Gửi lại",
+    "rowNetwork": "Mạng",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "Mua tên người dùng",

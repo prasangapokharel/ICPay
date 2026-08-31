@@ -261,7 +261,21 @@
       "pending": "Ausstehend",
       "failed": "Fehlgeschlagen",
       "cancelled": "Storniert"
-    }
+    },
+    "detailTitle": "Transaktionsdetails",
+    "rowDate": "Datum",
+    "rowId": "Transaktions-ID",
+    "rowMemo": "Notiz",
+    "viewExplorer": "Im Explorer ansehen",
+    "notFound": "Transaktion nicht gefunden.",
+    "dateToday": "Heute",
+    "dateYesterday": "Gestern",
+    "amountReceived": "Erhaltener Betrag",
+    "amountSent": "Gesendeter Betrag",
+    "repay": "Zurückzahlen",
+    "sendAgain": "Erneut senden",
+    "rowNetwork": "Netzwerk",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "Benutzernamen kaufen",

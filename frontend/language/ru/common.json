@@ -261,7 +261,21 @@
       "pending": "В обработке",
       "failed": "Ошибка",
       "cancelled": "Отменено"
-    }
+    },
+    "detailTitle": "Детали транзакции",
+    "rowDate": "Дата",
+    "rowId": "ID транзакции",
+    "rowMemo": "Заметка",
+    "viewExplorer": "Открыть в explorer",
+    "notFound": "Транзакция не найдена.",
+    "dateToday": "Сегодня",
+    "dateYesterday": "Вчера",
+    "amountReceived": "Полученная сумма",
+    "amountSent": "Отправленная сумма",
+    "repay": "Вернуть",
+    "sendAgain": "Отправить снова",
+    "rowNetwork": "Сеть",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "Купить имя пользователя",

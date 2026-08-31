@@ -261,7 +261,21 @@
       "pending": "قدرة الانتظار",
       "failed": "فشل",
       "cancelled": "تم الإلغاء"
-    }
+    },
+    "detailTitle": "تفاصيل المعاملة",
+    "rowDate": "التاريخ",
+    "rowId": "معرّف المعاملة",
+    "rowMemo": "مذكرة",
+    "viewExplorer": "عرض في المستكشف",
+    "notFound": "لم يتم العثور على المعاملة.",
+    "dateToday": "اليوم",
+    "dateYesterday": "أمس",
+    "amountReceived": "المبلغ المستلم",
+    "amountSent": "المبلغ المرسل",
+    "repay": "سداد",
+    "sendAgain": "إرسال مرة أخرى",
+    "rowNetwork": "الشبكة",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "شراء اسم المستخدم",

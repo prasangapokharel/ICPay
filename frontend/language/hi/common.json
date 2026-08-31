@@ -261,7 +261,21 @@
       "pending": "लंबित",
       "failed": "विफल",
       "cancelled": "रद्द"
-    }
+    },
+    "detailTitle": "लेन-देन विवरण",
+    "rowDate": "तारीख",
+    "rowId": "लेन-देन ID",
+    "rowMemo": "मेमो",
+    "viewExplorer": "एक्सप्लोरर में देखें",
+    "notFound": "लेन-देन नहीं मिला।",
+    "dateToday": "आज",
+    "dateYesterday": "कल",
+    "amountReceived": "प्राप्त राशि",
+    "amountSent": "भेजी गई राशि",
+    "repay": "चुकाएँ",
+    "sendAgain": "फिर भेजें",
+    "rowNetwork": "नेटवर्क",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "यूज़रनेम खरीदें",

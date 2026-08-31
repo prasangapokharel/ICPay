@@ -142,17 +142,96 @@ export function formatTime(t: bigint): string {
   })
 }
 
+export function formatDetailTime(t: bigint): string {
+  const date = new Date(Number(t / 1_000_000n))
+  return date.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  })
+}
+
 export function formatTimeIso(t: bigint): string {
   return new Date(Number(t / 1_000_000n)).toISOString()
 }
 
+export function formatClockTime(t: bigint): string {
+  return new Date(Number(t / 1_000_000n)).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  })
+}
+
+function startOfLocalDay(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+}
+
+export function transactionDateKey(t: bigint): string {
+  const date = new Date(Number(t / 1_000_000n))
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
+
+export function formatTransactionDateGroup(
+  t: bigint,
+  labels: { today: string; yesterday: string }
+): string {
+  const date = new Date(Number(t / 1_000_000n))
+  const now = new Date()
+  const txDay = startOfLocalDay(date)
+  const today = startOfLocalDay(now)
+  const yesterday = today - 86_400_000
+
+  if (txDay === today) return labels.today
+  if (txDay === yesterday) return labels.yesterday
+
+  return date.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    ...(date.getFullYear() !== now.getFullYear() ? { year: "numeric" as const } : {}),
+  })
+}
+
+export function groupTransactionsByDate<T extends { createdAt: bigint }>(
+  transactions: T[]
+): { key: string; items: T[] }[] {
+  const groups = new Map<string, T[]>()
+  const order: string[] = []
+
+  for (const tx of transactions) {
+    const key = transactionDateKey(tx.createdAt)
+    if (!groups.has(key)) {
+      groups.set(key, [])
+      order.push(key)
+    }
+    groups.get(key)!.push(tx)
+  }
+
+  return order.map((key) => ({ key, items: groups.get(key)! }))
+}
+
 // Returned as catalog keys, not display text: callers look them up under the
 // transactions.type / transactions.status namespaces.
-export function txTypeLabel(txType: TxTypeVariant): "deposit" | "withdraw" | "transfer" | "fee" {
+export type TxTypeKey = "deposit" | "withdraw" | "transfer" | "fee" | "swapIn" | "swapOut"
+
+export function txTypeKey(txType: TxTypeVariant): TxTypeKey {
   if ("deposit" in txType) return "deposit"
   if ("withdraw" in txType) return "withdraw"
   if ("transfer" in txType) return "transfer"
+  if ("swapIn" in txType) return "swapIn"
+  if ("swapOut" in txType) return "swapOut"
   return "fee"
+}
+
+export function txTypeLabel(txType: TxTypeVariant): TxTypeKey {
+  return txTypeKey(txType)
+}
+
+export function isIncomingTx(txType: TxTypeVariant): boolean {
+  const key = txTypeKey(txType)
+  return key === "deposit" || key === "swapIn"
 }
 
 export function txStatusLabel(status: TxStatusVariant): "completed" | "pending" | "failed" | "cancelled" {

@@ -261,7 +261,21 @@
       "pending": "รอดำเนินการ",
       "failed": "ล้มเหลว",
       "cancelled": "ยกเลิก"
-    }
+    },
+    "detailTitle": "รายละเอียดธุรกรรม",
+    "rowDate": "วันที่",
+    "rowId": "รหัสธุรกรรม",
+    "rowMemo": "บันทึก",
+    "viewExplorer": "ดูใน explorer",
+    "notFound": "ไม่พบธุรกรรม",
+    "dateToday": "วันนี้",
+    "dateYesterday": "เมื่อวาน",
+    "amountReceived": "จำนวนที่ได้รับ",
+    "amountSent": "จำนวนที่ส่ง",
+    "repay": "ชำระคืน",
+    "sendAgain": "ส่งอีกครั้ง",
+    "rowNetwork": "เครือข่าย",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "ซื้อชื่อผู้ใช้",

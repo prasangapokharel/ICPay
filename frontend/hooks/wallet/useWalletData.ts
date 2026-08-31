@@ -18,7 +18,7 @@ import { useWalletLedgerIds } from "@/hooks/wallet/useWalletLedgerIds"
 import { useTokenRegistry } from "@/lib/token/registry"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import type { DashboardData, UserPublic } from "@/services/types"
-import { getTransactions } from "@/services/transactions/transactions"
+import { getTransactions, getTransactionDetail } from "@/services/transactions/transactions"
 import { resolveUsername, searchUsers, getRecipientProfile } from "@/services/profile/profile"
 import { listBookmarks } from "@/services/bookmark/bookmark"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
@@ -220,6 +220,18 @@ export function useTransactions(page = 0, pageSize = 20) {
     isLoading,
     refresh: mutate,
   }
+}
+
+export function useTransactionDetail(txId: string | null) {
+  const { identity } = useAuth()
+
+  const { data, error, isLoading } = useSWR(
+    txId ? keyFor(identity, "transaction", txId) : null,
+    () => getTransactionDetail(identity, txId!),
+    FETCH_ONCE
+  )
+
+  return { tx: data, error, isLoading }
 }
 
 // Only these change when funds move. Matching every key for the principal would
