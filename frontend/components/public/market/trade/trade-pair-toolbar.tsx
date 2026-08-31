@@ -31,7 +31,7 @@ export function TradePairToolbar({
   const pairLabel = `${snapshot.base.symbol} / ${snapshot.quote.symbol}`
 
   return (
-    <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-border/60 bg-card/40 px-4 py-3">
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-b border-border/60 bg-card/40 px-4 py-3 lg:gap-x-8">
       <div className="flex items-center gap-3">
         <TokenAvatar
           symbol={snapshot.base.symbol}

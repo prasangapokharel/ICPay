@@ -75,7 +75,7 @@ export function TradeOrderPanel({
   const receiveSymbol = tokenOut?.symbol ?? ""
 
   return (
-    <div className="flex h-full min-h-0 flex-col border-l border-border/60 bg-card/40">
+    <div className="flex h-full min-h-[280px] flex-col border-l border-border/60 bg-card/40">
       <Tabs
         value={side}
         onValueChange={(v) => setSide(v as "buy" | "sell")}

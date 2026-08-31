@@ -25,8 +25,10 @@ function TerminalFallback() {
 
 export default function MarketTradePage() {
   return (
-    <Suspense fallback={<TerminalFallback />}>
-      <TradeTerminal />
-    </Suspense>
+    <div className="h-[calc(100svh-3.5rem)] overflow-hidden">
+      <Suspense fallback={<TerminalFallback />}>
+        <TradeTerminal />
+      </Suspense>
+    </div>
   )
 }

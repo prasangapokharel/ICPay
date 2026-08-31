@@ -23,12 +23,41 @@ export function changeClass(value: number | null | undefined): string {
   return "text-muted-foreground"
 }
 
+const RANGE_MAX_RATIO = 5
+
+/** ICPSwap occasionally returns bogus 24h highs/lows — clamp around live price. */
+export function sanePriceRange(
+  stats: IcpswapTokenStats | null | undefined
+): { low: number; high: number; price: number } | null {
+  if (!stats || stats.priceUsd <= 0) return null
+
+  const price = stats.priceUsd
+  const floor = price / RANGE_MAX_RATIO
+  const ceiling = price * RANGE_MAX_RATIO
+
+  let low = stats.priceLow24h
+  let high = stats.priceHigh24h
+
+  if (low <= 0 || low < floor || low > ceiling) {
+    low = price * (1 - Math.min(Math.abs(stats.priceChange24h) / 100, 0.05) || 0.02)
+  }
+  if (high <= low || high < floor || high > ceiling) {
+    high = price * (1 + Math.min(Math.abs(stats.priceChange24h) / 100, 0.05) || 0.02)
+  }
+  if (high <= low) {
+    low = price * 0.99
+    high = price * 1.01
+  }
+
+  return { low, high, price }
+}
+
 export function priceInRange(
   stats: IcpswapTokenStats | null | undefined
 ): { position: number; low: number; high: number; price: number } | null {
-  if (!stats) return null
-  const { priceUsd: price, priceLow24h: low, priceHigh24h: high } = stats
-  if (price <= 0 || high <= low) return null
+  const range = sanePriceRange(stats)
+  if (!range) return null
+  const { low, high, price } = range
   const position = Math.min(1, Math.max(0, (price - low) / (high - low)))
   return { position, low, high, price }
 }

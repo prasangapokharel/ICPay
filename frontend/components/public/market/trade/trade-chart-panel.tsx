@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { Line, LineChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Skeleton } from "@/components/ui/skeleton"
-import { formatUsd } from "@/lib/market/format"
+import { formatUsd, sanePriceRange } from "@/lib/market/format"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
 
 const chartConfig = {
@@ -20,58 +20,46 @@ export function TradeChartPanel({
   loading?: boolean
 }) {
   const t = useTranslations("marketTrade")
-  const stats = snapshot?.stats
+  const range = useMemo(() => sanePriceRange(snapshot?.stats), [snapshot?.stats])
 
   const chartData = useMemo(() => {
-    if (!stats || stats.priceUsd <= 0) return []
-    const low = stats.priceLow24h > 0 ? stats.priceLow24h : stats.priceUsd
-    const high = stats.priceHigh24h > low ? stats.priceHigh24h : stats.priceUsd
-    const price = stats.priceUsd
+    if (!range) return []
     return [
-      { label: t("rangeLow"), price: low },
-      { label: t("rangeNow"), price },
-      { label: t("rangeHigh"), price: high },
+      { label: t("rangeLow"), price: range.low },
+      { label: t("rangeNow"), price: range.price },
+      { label: t("rangeHigh"), price: range.high },
     ]
-  }, [stats, t])
+  }, [range, t])
 
   if (loading && !snapshot) {
     return <Skeleton className="m-4 h-full min-h-[220px] rounded-xl" />
   }
 
-  const hasRange =
-    stats &&
-    stats.priceLow24h > 0 &&
-    stats.priceHigh24h > stats.priceLow24h &&
-    stats.priceUsd > 0
-
   return (
-    <div className="flex h-full min-h-[220px] flex-col p-4">
-      <div className="mb-3 flex items-center justify-between gap-2">
+    <div className="flex h-full min-h-[220px] flex-col overflow-hidden p-4">
+      <div className="mb-3 flex shrink-0 items-center justify-between gap-2">
         <p className="text-sm font-medium">{t("chart24h")}</p>
-        {hasRange && (
+        {range && (
           <p className="text-xs text-muted-foreground tabular-nums">
-            {formatUsd(stats.priceLow24h, 4)} — {formatUsd(stats.priceHigh24h, 4)}
+            {formatUsd(range.low, 4)} — {formatUsd(range.high, 4)}
           </p>
         )}
       </div>
 
-      {hasRange ? (
-        <ChartContainer config={chartConfig} className="min-h-[200px] flex-1">
+      {range ? (
+        <ChartContainer config={chartConfig} className="min-h-[180px] w-full flex-1">
           <LineChart data={chartData} margin={{ left: 4, right: 12, top: 12, bottom: 0 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="label" tick={{ fontSize: 10 }} />
             <YAxis
-              domain={[
-                stats.priceLow24h * 0.995,
-                stats.priceHigh24h * 1.005,
-              ]}
+              domain={[range.low * 0.998, range.high * 1.002]}
               tickFormatter={(v) => formatUsd(Number(v), 2)}
-              width={80}
+              width={72}
               tick={{ fontSize: 10 }}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
             <ReferenceLine
-              y={stats.priceUsd}
+              y={range.price}
               stroke="hsl(var(--primary))"
               strokeDasharray="4 4"
               strokeOpacity={0.5}
@@ -81,7 +69,7 @@ export function TradeChartPanel({
               dataKey="price"
               stroke="var(--color-price)"
               strokeWidth={2}
-              dot={{ r: 3, fill: "var(--color-price)" }}
+              dot={{ r: 4, fill: "var(--color-price)" }}
             />
           </LineChart>
         </ChartContainer>
@@ -90,7 +78,7 @@ export function TradeChartPanel({
           {t("noChartData")}
         </div>
       )}
-      <p className="mt-2 text-[11px] text-muted-foreground">{t("chartSourceNote")}</p>
+      <p className="mt-2 shrink-0 text-[11px] text-muted-foreground">{t("chartSourceNote")}</p>
     </div>
   )
 }
