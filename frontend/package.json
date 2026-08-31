@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/stage-desktop-downloads.mjs && next build && node scripts/stage-onchain-shells.mjs",
+    "build": "next build && node scripts/stage-onchain-shells.mjs",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
