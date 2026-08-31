@@ -1,6 +1,5 @@
 "use client"
 
-import { cn } from "@/lib/ui/utils"
 import type { IcpswapTokenStats } from "@/services/market/icpswapStats"
 
 export function formatUsd(value: number | null | undefined, digits = 2): string {
