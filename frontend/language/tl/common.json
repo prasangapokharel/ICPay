@@ -702,7 +702,8 @@
       "supplyTooLarge": "Masyadong malaki ang kabuuang supply",
       "linkScheme": "Ang mga link ay dapat magsimula sa https://",
       "linkTooLong": "Masyadong mahaba ang link"
-    }
+    },
+    "connectWallet": "Ikonekta ang wallet"
   },
   "icpayToken": {
     "title": "ICPAY Token",
@@ -1305,6 +1306,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Production Motoko framework na may global CLI."
+        },
+        "launch": {
+          "title": "Ilunsad ang token",
+          "description": "Gumawa ng ICRC-1 token sa Internet Computer."
         }
       },
       "resources": {

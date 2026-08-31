@@ -632,7 +632,8 @@
       "supplyTooLarge": "Общий выпуск слишком велик",
       "linkScheme": "Ссылки должны начинаться с https://",
       "linkTooLong": "Ссылка слишком длинная"
-    }
+    },
+    "connectWallet": "Подключить кошелёк"
   },
   "icpayToken": {
     "title": "Токен ICPAY",
@@ -1306,6 +1307,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Продакшен-фреймворк Motoko с глобальным CLI."
+        },
+        "launch": {
+          "title": "Запустить токен",
+          "description": "Создайте токен ICRC-1 в Internet Computer."
         }
       },
       "resources": {

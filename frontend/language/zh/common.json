@@ -632,7 +632,8 @@
       "supplyTooLarge": "总供应量过大",
       "linkScheme": "链接必须以 https:// 开头",
       "linkTooLong": "链接过长"
-    }
+    },
+    "connectWallet": "连接钱包"
   },
   "icpayToken": {
     "title": "ICPAY 代币",
@@ -1306,6 +1307,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "生产级 Motoko 框架，配备全局 CLI。"
+        },
+        "launch": {
+          "title": "发行代币",
+          "description": "在 Internet Computer 上创建 ICRC-1 代币。"
         }
       },
       "resources": {

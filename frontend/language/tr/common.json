@@ -702,7 +702,8 @@
       "supplyTooLarge": "Toplam arz çok büyük",
       "linkScheme": "Bağlantılar https:// ile başlamalı",
       "linkTooLong": "Bağlantı çok uzun"
-    }
+    },
+    "connectWallet": "Cüzdanı bağla"
   },
   "icpayToken": {
     "title": "ICPAY Token",
@@ -1305,6 +1306,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Global CLI'lı üretim Motoko framework'ü."
+        },
+        "launch": {
+          "title": "Token başlat",
+          "description": "Internet Computer üzerinde ICRC-1 token oluşturun."
         }
       },
       "resources": {

@@ -702,7 +702,8 @@
       "supplyTooLarge": "Tổng cung quá lớn",
       "linkScheme": "Liên kết phải bắt đầu bằng https://",
       "linkTooLong": "Liên kết quá dài"
-    }
+    },
+    "connectWallet": "Kết nối ví"
   },
   "icpayToken": {
     "title": "Token ICPAY",
@@ -1305,6 +1306,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Framework Motoko sản xuất với CLI toàn cục."
+        },
+        "launch": {
+          "title": "Phát hành token",
+          "description": "Tạo token ICRC-1 trên Internet Computer."
         }
       },
       "resources": {
