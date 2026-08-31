@@ -18,6 +18,7 @@
 
 # production
 /build
+/public/downloads
 
 # misc
 .DS_Store
