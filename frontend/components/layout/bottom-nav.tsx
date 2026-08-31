@@ -73,15 +73,14 @@ function NavTab({
     >
       <span
         className={cn(
-          "flex size-9 shrink-0 items-center justify-center rounded-full",
+          "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
           center
             ? cn(
                 "bg-primary text-primary-foreground ring-1 ring-border/60",
                 active && "ring-primary/40",
               )
             : cn(
-                "bg-gray-800 dark:bg-foreground/10",
-                active && "bg-gray-700 dark:bg-foreground/15",
+                active ? "bg-muted text-foreground" : "text-muted-foreground",
               ),
         )}
       >
