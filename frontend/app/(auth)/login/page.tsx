@@ -6,30 +6,14 @@ import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ShieldKeyIcon,
-  FlashIcon,
-  Key01Icon,
-} from "@hugeicons/core-free-icons"
 import type { OpenIdProvider } from "@icp-sdk/auth/client"
 import { useAuth } from "@/components/auth/auth-provider"
-import { Typewriter } from "@/components/shared/typewriter"
-import { MarketStats } from "@/components/auth/market-stats"
-import { LanguageSwitch } from "@/components/i18n/language-switch"
 import { createAuthClient, resumeRedirectSignIn } from "@/services/auth/auth"
 import { primeLoginChime } from "@/lib/ui/successChime"
-import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
+import { APP_LOGO } from "@/lib/ui/brand-images"
 import { cn } from "@/lib/ui/utils"
-
-const features = [
-  { icon: ShieldKeyIcon, key: "custodial" },
-  { icon: Key01Icon, key: "passwords" },
-  { icon: FlashIcon, key: "instant" },
-] as const
 
 const openIdProviders = [
   { id: "google" as const, src: "/images/auth/google-icon.svg" },
@@ -70,7 +54,7 @@ export default function LoginPage() {
 
   if (isLoading || isAuthenticated) {
     return (
-      <div className="flex min-h-svh items-center justify-center bg-background">
+      <div className="flex min-h-64 items-center justify-center">
         <Spinner className="size-6 text-muted-foreground" />
       </div>
     )
@@ -86,105 +70,76 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-svh justify-center bg-background">
-      <div className="relative flex min-h-svh w-full max-w-md flex-col overflow-hidden bg-background px-5 pb-[max(2rem,env(safe-area-inset-bottom)+1.25rem)] pt-[max(3.5rem,env(safe-area-inset-top)+2.5rem)] shadow-xl sm:my-8 sm:min-h-0 sm:max-h-[calc(100svh-4rem)] sm:rounded-3xl sm:border sm:border-border/50 sm:px-6 sm:pb-[max(2.5rem,env(safe-area-inset-bottom)+1.5rem)] sm:pt-16">
-        <div className="absolute right-4 top-[max(1rem,env(safe-area-inset-top)+0.5rem)] z-10 sm:right-6">
-          <LanguageSwitch />
-        </div>
-        <div className="flex flex-1 flex-col items-center justify-center gap-8 pt-2 text-center sm:gap-10 sm:pt-4">
-          <div className="flex w-full flex-col items-center">
-            <MarketStats />
+    <div className="mx-auto flex w-full max-w-sm flex-col justify-center py-6 md:py-10">
+      <header className="flex flex-col items-center text-center">
+          <h1 className="inline-flex items-center justify-center gap-2.5 text-2xl font-semibold tracking-tight">
             <Image
               src={APP_LOGO}
-              alt={APP_LOGO_ALT}
-              title={APP_LOGO_ALT}
-              width={128}
-              height={128}
+              alt=""
+              aria-hidden
+              width={36}
+              height={36}
               priority
               fetchPriority="high"
-              sizes="(max-width: 640px) 6rem, 8rem"
-              className="mt-3 h-24 w-24 object-contain sm:mt-4 sm:h-32 sm:w-32"
+              sizes="2.25rem"
+              className="h-9 w-9 shrink-0 object-contain"
             />
-            <h1 className="mt-4 text-xl font-bold tracking-tight sm:mt-5 sm:text-2xl">{t("heading")}</h1>
-            <p className="mt-2 min-h-9 text-balance text-sm leading-snug text-muted-foreground sm:min-h-10">
-              <Typewriter text={t("tagline")} />
-            </p>
-          </div>
+            {t("heading")}
+          </h1>
+          <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">{t("tagline")}</p>
+      </header>
 
-          <ul className="w-full space-y-4 text-left sm:space-y-5">
-            {features.map(({ icon, key }) => (
-              <li key={key} className="flex items-start gap-3">
-                <HugeiconsIcon
-                  icon={icon}
-                  className="mt-0.5 size-5 shrink-0 text-primary"
-                  strokeWidth={1.75}
-                />
-                <div>
-                  <p className="text-sm font-sm">{t(`features.${key}Title`)}</p>
-                  <p className="text-xs text-muted-foreground">{t(`features.${key}Body`)}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          <div className="w-full space-y-3">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            <Button size="lg" className="w-full" onClick={() => startLogin()} disabled={connecting}>
-              {connecting ? <Spinner className="size-4" /> : null}
-              {connecting ? t("connecting") : t("connect")}
-            </Button>
-
-            <div className="flex flex-col items-center gap-3 pt-3">
-              <p className="text-xs text-muted-foreground">{t("orContinue")}</p>
-              <ButtonGroup>
-                {openIdProviders.map(({ id, src, iconClassName }) => {
-                  const providerLabel = t(`openId.${id}`)
-
-                  return (
-                  <Button
-                    key={id}
-                    variant="outline"
-                    size="icon"
-                    className="size-11 rounded-xl"
-                    onClick={() => startLogin({ openIdProvider: id })}
-                    disabled={connecting}
-                    aria-label={providerLabel}
-                  >
-                    <Image
-                      src={src}
-                      alt={providerLabel}
-                      title={providerLabel}
-                      width={24}
-                      height={24}
-                      unoptimized
-                      className={cn("size-6 object-contain", iconClassName)}
-                    />
-                  </Button>
-                  )
-                })}
-              </ButtonGroup>
-              <p className="text-center text-xs text-muted-foreground">
-                {t("openIdNote")}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <footer className="mt-6 w-full px-2 pt-2 text-center text-xs leading-relaxed text-muted-foreground sm:mt-8">
+      <p className="mt-8 text-center text-xs leading-relaxed text-muted-foreground">
           {t("legalPrefix")}{" "}
-          <Link href="/terms" className="underline underline-offset-2">
+          <Link href="/terms" className="text-foreground underline underline-offset-2">
             {t("legalTerms")}
           </Link>{" "}
           {t("legalAnd")}{" "}
-          <Link href="/privacy" className="underline underline-offset-2">
+          <Link href="/privacy" className="text-foreground underline underline-offset-2">
             {t("legalPrivacy")}
           </Link>
           .
-        </footer>
+      </p>
+
+      {error ? (
+        <Alert variant="destructive" className="mt-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      ) : null}
+
+      <Button
+          size="lg"
+          className="mt-6 h-11 w-full rounded-full text-base font-medium"
+          onClick={() => startLogin()}
+          disabled={connecting}
+        >
+          {connecting ? <Spinner className="size-4" /> : null}
+          {connecting ? t("connecting") : t("connect")}
+      </Button>
+
+      <div className="mt-6 flex items-center justify-center gap-3">
+          {openIdProviders.map(({ id, src, iconClassName }) => (
+            <Button
+              key={id}
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-11 rounded-full"
+              onClick={() => startLogin({ openIdProvider: id })}
+              disabled={connecting}
+              aria-label={t(`openId.${id}`)}
+            >
+              <Image
+                src={src}
+                alt=""
+                aria-hidden
+                width={20}
+                height={20}
+                unoptimized
+                className={cn("size-5 object-contain", iconClassName)}
+              />
+            </Button>
+          ))}
       </div>
     </div>
   )

@@ -18,35 +18,38 @@ import { cn } from "@/lib/ui/utils"
 
 type RecentTransactionsProps = {
   transactions: TransactionPublic[]
+  embedded?: boolean
 }
 
-export function RecentTransactions({ transactions }: RecentTransactionsProps) {
+export function RecentTransactions({ transactions, embedded }: RecentTransactionsProps) {
   const t = useTranslations("dashboard")
   return (
-    <section className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold">{t("latestTransactions")}</h2>
-        {transactions.length > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs"
-            nativeButton={false}
-            render={<Link href="/transactions" />}
-          >
-            {t("seeMore")}
-          </Button>
-        )}
-      </div>
+    <section className={embedded ? "space-y-0" : "space-y-3"}>
+      {!embedded ? (
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold">{t("latestTransactions")}</h2>
+          {transactions.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs"
+              nativeButton={false}
+              render={<Link href="/transactions" />}
+            >
+              {t("seeMore")}
+            </Button>
+          )}
+        </div>
+      ) : null}
 
       {transactions.length === 0 ? (
-        <div className="rounded-2xl border border-dashed text-center">
+        <div className={cn("rounded-2xl border border-dashed text-center", embedded && "border-0")}>
           <HugeiconsIcon icon={InboxIcon} className="mx-auto size-4 text-muted-foreground/50" />
           <p className="mt-3 text-sm font-medium">{t("noTransactions")}</p>
           <p className="mt-1 text-xs text-muted-foreground">{t("noTransactionsHint")}</p>
         </div>
       ) : (
-        <ul className="divide-y rounded-2xl border">
+        <ul className={cn("divide-y rounded-2xl border", embedded && "rounded-none border-0")}>
           {transactions.map((tx) => (
             <TransactionRow key={tx.id} tx={tx} />
           ))}

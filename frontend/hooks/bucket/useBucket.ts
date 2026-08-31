@@ -13,6 +13,7 @@ import {
   bucketPriceKey,
   bucketPricingTableKey,
   bucketRenewQuoteKey,
+  bucketSearchKey,
   bucketStatsKey,
   isBucketCacheKey,
 } from "@/lib/bucket/cacheKeys"
@@ -29,8 +30,10 @@ import {
   getBucketStats,
   getRenewQuote,
   listBuckets,
-  listFiles,
+  listFolder,
+  searchFiles,
 } from "@/services/bucket/bucket"
+import { apiListFolderPrefix } from "@/lib/bucket/folderPath"
 
 export const BUCKET_QUERY = {
   revalidateOnFocus: false,
@@ -75,12 +78,45 @@ export function useBucketStats(bucketId: string | null) {
   return { stats: data ?? null, error, isLoading: initialLoad, refresh: mutate }
 }
 
-export function useBucketFiles(bucketId: string | null, page: number) {
+export function useBucketFiles(bucketId: string | null, prefix: string, page: number) {
   const { identity } = useAuth()
+  const apiPrefix = apiListFolderPrefix(prefix)
 
   const { data, error, isLoading, mutate } = useSWR(
-    bucketId ? bucketFilesKey(identity, bucketId, page) : null,
-    () => listFiles(identity!, bucketId!, page, FILES_PAGE_SIZE),
+    bucketId ? bucketFilesKey(identity, bucketId, apiPrefix, page) : null,
+    () => listFolder(identity!, bucketId!, apiPrefix, page, FILES_PAGE_SIZE),
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 10_000 }
+  )
+
+  const total = data ? Number(data.total) : 0
+  const pageSize = data ? Number(data.pageSize) : FILES_PAGE_SIZE
+  const totalPages = pageSize > 0 ? Math.max(1, Math.ceil(total / pageSize)) : 1
+  const initialLoad = isLoading && data === undefined
+
+  return {
+    files: data?.items ?? [],
+    folders: data?.folders ?? [],
+    total,
+    page: data ? Number(data.page) : page,
+    pageSize,
+    totalPages,
+    error,
+    isLoading: initialLoad,
+    refresh: mutate,
+  }
+}
+
+export function useBucketSearch(
+  bucketId: string | null,
+  searchQuery: string,
+  page: number
+) {
+  const { identity } = useAuth()
+  const trimmed = searchQuery.trim()
+
+  const { data, error, isLoading, mutate } = useSWR(
+    bucketId && trimmed ? bucketSearchKey(identity, bucketId, trimmed, page) : null,
+    () => searchFiles(identity!, bucketId!, trimmed, page, FILES_PAGE_SIZE),
     { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 10_000 }
   )
 

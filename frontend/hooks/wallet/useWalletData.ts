@@ -13,8 +13,8 @@ import {
   walletKey,
   balancesCacheKey,
 } from "@/lib/wallet/walletCache"
-import { getCachedLedgerIds } from "@/lib/wallet/ledgerIdsCache"
 import { getCustomLedgerIdsSnapshot, getCustomTokenMetaSnapshot } from "@/lib/wallet/customTokens"
+import { useWalletLedgerIds } from "@/hooks/wallet/useWalletLedgerIds"
 import { useTokenRegistry } from "@/lib/token/registry"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import type { DashboardData, UserPublic } from "@/services/types"
@@ -511,8 +511,11 @@ export function useTokenHoldings(customLedgerIds: string[] = []) {
   const principal = identity?.getPrincipal().toText()
   const cachedBalances = useMemo(() => cachedBalanceMap(principal), [principal])
   const seededHoldings = seededHoldingsForLoad(principal, customLedgerIds)
+  const { ledgerIds: registryLedgerIds, isLoading: loadingLedgerIds } = useWalletLedgerIds()
   const balancesKey =
-    custodian && identity ? balancesCacheKey(identity, customLedgerIds) : null
+    custodian && identity && registryLedgerIds
+      ? balancesCacheKey(identity, customLedgerIds)
+      : null
 
   const syncBalanceCaches = (map: Map<string, bigint>) => {
     if (balancesKey) void globalMutate(balancesKey, map, { revalidate: false })
@@ -526,9 +529,8 @@ export function useTokenHoldings(customLedgerIds: string[] = []) {
   const { data: balances, isLoading: loadingBalances, mutate } = useSWR(
     balancesKey,
     async () => {
-      const registryIds = await getCachedLedgerIds(identity)
       const map = await fetchWalletBalances(
-        registryIds,
+        registryLedgerIds!,
         customLedgerIds,
         custodian!,
         custodialSubaccount(identity!.getPrincipal()),
@@ -598,7 +600,7 @@ export function useTokenHoldings(customLedgerIds: string[] = []) {
     }),
     isLoading:
       shown.length === 0 &&
-      loadingBalances &&
+      (loadingBalances || loadingLedgerIds) &&
       !balances &&
       (loadingMetadata || displayIds.length === 0),
     refresh: () => void mutate(),

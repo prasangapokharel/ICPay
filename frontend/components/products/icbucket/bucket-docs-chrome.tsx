@@ -1,10 +1,14 @@
 "use client"
 
+import { Suspense } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
-import { BucketDocsMobileNav } from "@/components/products/icbucket/bucket-docs-sidebar"
+import {
+  BucketDocsMobileNav,
+  BucketDocsMobileNavFallback,
+} from "@/components/products/icbucket/bucket-docs-sidebar"
 import type { BucketDocNavGroup } from "@/lib/bucket/docs/types"
 
 export function BucketDocsChrome({
@@ -43,7 +47,9 @@ export function BucketDocsChrome({
           </div>
         </div>
         <div className="mt-6">
-          <BucketDocsMobileNav groups={navGroups} />
+          <Suspense fallback={<BucketDocsMobileNavFallback groups={navGroups} />}>
+            <BucketDocsMobileNav groups={navGroups} />
+          </Suspense>
         </div>
       </div>
     </div>

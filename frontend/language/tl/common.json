@@ -2,6 +2,7 @@
   "nav": {
     "home": "Bahay",
     "icpverse": "ICPverse",
+    "verse": "Verse",
     "send": "Ipadala",
     "bucket": "balde",
     "menu": "Menu",
@@ -41,7 +42,8 @@
     "latestTransactions": "Pinakabagong mga Transaksyon",
     "seeMore": "Tingnan ang higit pa",
     "noTransactions": "Wala pang transaksyon",
-    "noTransactionsHint": "Magdeposito ng ICP para makapagsimula"
+    "noTransactionsHint": "Magdeposito ng ICP para makapagsimula",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "I-claim ang iyong username",
@@ -61,7 +63,12 @@
       "activity": "Aktibidad",
       "more": "Higit pa",
       "preferences": "Mga Kagustuhan",
-      "legal": "Legal"
+      "legal": "Legal",
+      "tokens": "Mga token",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "Ipadala",
@@ -75,6 +82,7 @@
       "buyNameBadge": "Premium",
       "profile": "Profile",
       "icpverse": "ICPverse",
+      "verse": "Verse",
       "myQr": "Aking QR",
       "history": "Kasaysayan",
       "balance": "Balanse",
@@ -92,7 +100,8 @@
       "analytics": "Analytics",
       "live": "Live",
       "community": "Mga channel",
-      "communityBadge": "Beta"
+      "communityBadge": "Beta",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "Wika, pera, hitsura at tunog"
   },
@@ -117,7 +126,7 @@
     "description": "Mga tunog sa pag-sign in at pagkatapos ng paglipat."
   },
   "login": {
-    "heading": "ICP Wallet",
+    "heading": "ICPay",
     "tagline": "Magpadala, tumanggap at humawak ng ICP gamit ang wallet na sinigurado ng iyong Internet Identity.",
     "connect": "Mag-sign in",
     "connecting": "Nagsa-sign in…",
@@ -365,6 +374,7 @@
     "transfers": "Mga paglilipat",
     "noTokens": "Wala pang token. Awtomatikong lalabas dito ang mga deposito.",
     "noTokensFound": "Walang mga token na tumutugma sa paghahanap na iyon.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} sa labas",
     "swapCta": "Magpalit",
     "selfCustodyNotice": "May hawak kang pondo sa labas ng ICPay. Buksan ang token para ilipat sila.",
@@ -464,6 +474,7 @@
     "confirmSend": "Kumpirmahin ang pagpapadala"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "Hanapin ang iyong mga kaibigan",
     "searchResults": "Mga resulta ng paghahanap",
     "suggested": "Iminungkahi para sa iyo",
@@ -1080,6 +1091,8 @@
     "formTitle": "Lumikha ng balde",
     "formSubtitle": "Magbayad mula sa iyong balanse sa ICPay",
     "name": "Pangalan",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "Mga maliliit na titik, digit, gitling — ginagamit sa iyong pampublikong CDN URL",
     "capacity": "Kapasidad",
     "visibility": "Visibility",
@@ -1113,10 +1126,15 @@
     "uploadProgress": "{current} ng {total} — {name}",
     "uploadPreparing": "Inihahanda…",
     "uploading": "Ina-upload…",
+    "uploadSuccess": "Tagumpay",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "Nagko-convert ang mga larawan sa WebP — mga dokumento, archive, audio, mga font lamang. Walang HTML, JS, o mga script. Max {max} bawat file.",
     "uploadFailed": "Nabigo ang pag-upload — subukang muli o gumamit ng mas maliit na file",
     "delete": "Tanggalin",
     "deleteFileTitle": "Tanggalin ang file?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} ay aalisin sa bucket na ito. Hindi na ito maaaring bawiin.",
     "download": "I-download",
     "downloadFailed": "Nabigo ang pag-download",
@@ -1124,6 +1142,13 @@
     "openInNewTab": "Buksan ang link",
     "previewFailed": "Hindi ma-load ang preview",
     "noFiles": "Wala pang files",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "Pansamantalang hindi available ang storage",
     "readOnly": "Read-only — mag-renew para mag-upload",
     "invalidFile": "Pumili ng file na wala pang 10 MB",
@@ -1233,7 +1258,12 @@
     "docsCopyCode": "Kopyahin ang code",
     "prevPage": "Nakaraan",
     "nextPage": "Susunod",
-    "pageOf": "Pahina {page} ng {total} · {count} file"
+    "pageOf": "Pahina {page} ng {total} · {count} file",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "publicSite": {
     "nav": {

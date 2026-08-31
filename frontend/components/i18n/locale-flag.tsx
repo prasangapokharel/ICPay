@@ -10,6 +10,7 @@ type LocaleFlagProps = {
   label: string
   size?: "sm" | "md"
   className?: string
+  priority?: boolean
 }
 
 const SIZES = {
@@ -17,7 +18,7 @@ const SIZES = {
   md: { width: 18, height: 14 },
 } as const
 
-export function LocaleFlag({ country, label, size = "md", className }: LocaleFlagProps) {
+export function LocaleFlag({ country, label, size = "md", className, priority }: LocaleFlagProps) {
   const { width, height } = SIZES[size]
   const text = `${label} flag`
 
@@ -29,6 +30,8 @@ export function LocaleFlag({ country, label, size = "md", className }: LocaleFla
       width={width}
       height={height}
       unoptimized
+      loading={priority ? "eager" : "lazy"}
+      priority={priority}
       className={cn("shrink-0 rounded-full object-cover", className)}
     />
   )

@@ -6,10 +6,7 @@ import {
   SubAccount,
 } from "@icp-sdk/canisters/ledger/icp"
 import { createAgent } from "@/services/icp"
-
-// The NNS ICP index canister. It mirrors the ledger and answers by query, so
-// reading a public account costs nothing and never touches the ICPay canister.
-const ICP_INDEX_ID = "qhbym-qaaaa-aaaaa-aaafq-cai"
+import { ICP_INDEX_CANISTER_ID } from "@/lib/ic/constants"
 
 export type AccountStats = {
   balance: bigint
@@ -39,7 +36,7 @@ export async function fetchAccountStats(
   const agent = await createAgent(identity)
   const index = IcpIndexCanister.create({
     agent,
-    canisterId: Principal.fromText(ICP_INDEX_ID),
+    canisterId: Principal.fromText(ICP_INDEX_CANISTER_ID),
   })
   const accountIdentifier = resolveAccountId(owner, subaccount)
 

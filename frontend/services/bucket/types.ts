@@ -60,6 +60,7 @@ export type FilePublic = {
 
 export type FileListPage = {
   items: FilePublic[]
+  folders: string[]
   total: bigint
   page: bigint
   pageSize: bigint

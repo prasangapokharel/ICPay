@@ -1,6 +1,10 @@
+import { Suspense } from "react"
 import { BucketDocsChrome } from "@/components/products/icbucket/bucket-docs-chrome"
 import { BucketDocsCopyMenu } from "@/components/products/icbucket/bucket-docs-copy-menu"
-import { BucketDocsNav } from "@/components/products/icbucket/bucket-docs-sidebar"
+import {
+  BucketDocsNav,
+  BucketDocsNavFallback,
+} from "@/components/products/icbucket/bucket-docs-sidebar"
 import { BucketDocsPageToc } from "@/components/products/icbucket/bucket-docs-page-toc"
 import type { BucketDocNavGroup, LoadedBucketDoc } from "@/lib/bucket/docs/types"
 
@@ -18,7 +22,9 @@ export function BucketDocsShell({ doc, navGroups, backHref = "/icbucket" }: Buck
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 md:px-6 md:py-14 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[16rem_minmax(0,1fr)_13rem] xl:gap-14">
         <aside className="hidden lg:block">
           <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-2">
-            <BucketDocsNav groups={navGroups} />
+            <Suspense fallback={<BucketDocsNavFallback groups={navGroups} />}>
+              <BucketDocsNav groups={navGroups} />
+            </Suspense>
           </div>
         </aside>
 

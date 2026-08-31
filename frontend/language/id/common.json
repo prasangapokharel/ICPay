@@ -2,6 +2,7 @@
   "nav": {
     "home": "Rumah",
     "icpverse": "ICPverse",
+    "verse": "Verse",
     "send": "Mengirim",
     "bucket": "Keranjang",
     "menu": "Menu",
@@ -41,7 +42,8 @@
     "latestTransactions": "Transaksi Terbaru",
     "seeMore": "Lihat selengkapnya",
     "noTransactions": "Belum ada transaksi",
-    "noTransactionsHint": "Setor ICP untuk memulai"
+    "noTransactionsHint": "Setor ICP untuk memulai",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "Klaim nama pengguna Anda",
@@ -61,7 +63,12 @@
       "activity": "Aktivitas",
       "more": "Lagi",
       "preferences": "Preferensi",
-      "legal": "Legal"
+      "legal": "Legal",
+      "tokens": "Token",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "Mengirim",
@@ -75,6 +82,7 @@
       "buyNameBadge": "Premium",
       "profile": "Profil",
       "icpverse": "ICPverse",
+      "verse": "Verse",
       "myQr": "QR saya",
       "history": "Sejarah",
       "balance": "Keseimbangan",
@@ -92,7 +100,8 @@
       "analytics": "Analisis",
       "live": "Live",
       "community": "Saluran",
-      "communityBadge": "Beta"
+      "communityBadge": "Beta",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "Bahasa, mata uang, penampilan dan suara"
   },
@@ -117,7 +126,7 @@
     "description": "Lonceng saat masuk dan setelah transfer."
   },
   "login": {
-    "heading": "Dompet ICP",
+    "heading": "ICPay",
     "tagline": "Kirim, terima, dan simpan ICP dengan dompet yang diamankan dengan Identitas Internet Anda.",
     "connect": "Masuk",
     "connecting": "Masuk…",
@@ -365,6 +374,7 @@
     "transfers": "Transfer",
     "noTokens": "Belum ada token. Setoran muncul di sini secara otomatis.",
     "noTokensFound": "Tidak ada token yang cocok dengan pencarian itu.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} di luar",
     "swapCta": "Menukar",
     "selfCustodyNotice": "Anda menyimpan dana di luar ICPay. Buka token untuk memindahkannya.",
@@ -464,6 +474,7 @@
     "confirmSend": "Konfirmasikan pengiriman"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "Temukan temanmu",
     "searchResults": "Hasil pencarian",
     "suggested": "Disarankan untuk Anda",
@@ -1080,6 +1091,8 @@
     "formTitle": "Buat ember",
     "formSubtitle": "Bayar dari saldo ICPay Anda",
     "name": "Nama",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "Huruf kecil, angka, tanda hubung — digunakan di URL CDN publik Anda",
     "capacity": "Kapasitas",
     "visibility": "Visibilitas",
@@ -1113,10 +1126,15 @@
     "uploadProgress": "{current} dari {total} — {name}",
     "uploadPreparing": "Mempersiapkan…",
     "uploading": "Mengunggah…",
+    "uploadSuccess": "Berhasil",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "Foto dikonversi ke WebP — dokumen, arsip, audio, hanya font. Tanpa HTML, JS, atau skrip. Maks {max} per file.",
     "uploadFailed": "Pengunggahan gagal — coba lagi atau gunakan file yang lebih kecil",
     "delete": "Menghapus",
     "deleteFileTitle": "Hapus berkas?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} akan dihapus dari ember ini. Hal ini tidak dapat dibatalkan.",
     "download": "Unduh",
     "downloadFailed": "Pengunduhan gagal",
@@ -1124,6 +1142,13 @@
     "openInNewTab": "Buka tautan",
     "previewFailed": "Tidak dapat memuat pratinjau",
     "noFiles": "Belum ada file",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "Penyimpanan untuk sementara tidak tersedia",
     "readOnly": "Hanya baca — perbarui untuk mengunggah",
     "invalidFile": "Pilih file di bawah 10 MB",
@@ -1233,7 +1258,12 @@
     "docsCopyCode": "Salin kode",
     "prevPage": "Sebelumnya",
     "nextPage": "Berikutnya",
-    "pageOf": "Halaman {page} dari {total} · {count} file"
+    "pageOf": "Halaman {page} dari {total} · {count} file",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "publicSite": {
     "nav": {

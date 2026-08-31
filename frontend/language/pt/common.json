@@ -2,6 +2,7 @@
   "nav": {
     "home": "Início",
     "icpverse": "ICPverso",
+    "verse": "Verse",
     "send": "Enviar",
     "bucket": "Nuvem",
     "menu": "Menu",
@@ -41,7 +42,8 @@
     "latestTransactions": "Últimas transações",
     "seeMore": "Ver mais",
     "noTransactions": "Nenhuma transação ainda",
-    "noTransactionsHint": "Deposite ICP para começar"
+    "noTransactionsHint": "Deposite ICP para começar",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "Garanta seu nome de usuário",
@@ -61,7 +63,12 @@
       "activity": "Atividade",
       "more": "Mais",
       "preferences": "Preferências",
-      "legal": "Jurídico"
+      "legal": "Jurídico",
+      "tokens": "Moedas",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "Enviar",
@@ -74,6 +81,7 @@
       "buyNameBadge": "Premium",
       "profile": "Perfil",
       "icpverse": "ICPverso",
+      "verse": "Verse",
       "myQr": "Meu QR",
       "history": "Histórico",
       "balance": "Saldo",
@@ -92,7 +100,8 @@
       "community": "Canais",
       "communityBadge": "Teste",
       "presaleBadge": "Ao vivo",
-      "governance": "Governança"
+      "governance": "Governança",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "Idioma, moeda, aparência e som"
   },
@@ -117,7 +126,7 @@
     "description": "Sons ao entrar e após uma transferência."
   },
   "login": {
-    "heading": "Carteira ICP",
+    "heading": "ICPay",
     "tagline": "Envie, receba e guarde ICP com uma carteira protegida pela sua Internet Identity.",
     "connect": "Conectar carteira",
     "connecting": "Conectando…",
@@ -334,6 +343,7 @@
     "transfers": "Transferências",
     "noTokens": "Nenhum token ainda. Os depósitos aparecem aqui automaticamente.",
     "noTokensFound": "Nenhum token corresponde a essa pesquisa.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} fora",
     "selfCustodyNotice": "Tem fundos fora do ICPay. Abra o token para os mover.",
     "swapCta": "Trocar",
@@ -394,6 +404,7 @@
     "confirmSend": "Confirm send"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "Encontre seus amigos",
     "searchResults": "Resultados da busca",
     "suggested": "Sugeridos para você",
@@ -769,6 +780,8 @@
     "formTitle": "Criar bucket",
     "formSubtitle": "Pague com seu saldo ICPay",
     "name": "Nome",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "Minúsculas, dígitos, hífens — usado na sua URL pública de CDN",
     "capacity": "Capacidade",
     "visibility": "Visibilidade",
@@ -802,10 +815,15 @@
     "uploadProgress": "{current} de {total} — {name}",
     "uploadPreparing": "Preparando…",
     "uploading": "Enviando…",
+    "uploadSuccess": "Sucesso",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "Fotos são convertidas para WebP — apenas documentos, arquivos, áudio e fontes. Sem HTML, JS ou scripts. Máx. {max} por arquivo.",
     "uploadFailed": "Falha no envio — tente novamente ou use um arquivo menor",
     "delete": "Excluir",
     "deleteFileTitle": "Excluir arquivo?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} será removido deste bucket. Não pode ser desfeito.",
     "download": "Baixar",
     "downloadFailed": "Falha no download",
@@ -813,6 +831,13 @@
     "openInNewTab": "Abrir link",
     "previewFailed": "Não foi possível carregar a visualização",
     "noFiles": "Nenhum arquivo ainda",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "Armazenamento temporariamente indisponível",
     "readOnly": "Somente leitura — renove para enviar",
     "invalidFile": "Escolha um arquivo com menos de 10 MB",
@@ -922,7 +947,12 @@
     "docsCopyCode": "Copiar código",
     "prevPage": "Anterior",
     "nextPage": "Próximo",
-    "pageOf": "Página {page} de {total} · {count} arquivos"
+    "pageOf": "Página {page} de {total} · {count} arquivos",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "analytics": {
     "title": "Analytics",

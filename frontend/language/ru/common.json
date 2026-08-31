@@ -2,6 +2,7 @@
   "nav": {
     "home": "Главная",
     "icpverse": "ICP-вселенная",
+    "verse": "Verse",
     "send": "Отправить",
     "bucket": "Облако",
     "menu": "Меню",
@@ -41,7 +42,8 @@
     "latestTransactions": "Последние операции",
     "seeMore": "Показать ещё",
     "noTransactions": "Операций пока нет",
-    "noTransactionsHint": "Пополните счёт в ICP, чтобы начать"
+    "noTransactionsHint": "Пополните счёт в ICP, чтобы начать",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "Получите имя пользователя",
@@ -61,7 +63,12 @@
       "activity": "Активность",
       "more": "Ещё",
       "preferences": "Настройки",
-      "legal": "Правовая информация"
+      "legal": "Правовая информация",
+      "tokens": "Токены",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "Отправить",
@@ -74,6 +81,7 @@
       "buyNameBadge": "Премиум",
       "profile": "Профиль",
       "icpverse": "ICP-вселенная",
+      "verse": "Verse",
       "myQr": "Мой QR",
       "history": "История",
       "balance": "Баланс",
@@ -92,7 +100,8 @@
       "community": "Каналы",
       "communityBadge": "Бета",
       "presaleBadge": "В эфире",
-      "governance": "Управление"
+      "governance": "Управление",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "Язык, валюта, оформление и звук"
   },
@@ -117,7 +126,7 @@
     "description": "Звуки при входе и после перевода."
   },
   "login": {
-    "heading": "Кошелёк ICP",
+    "heading": "ICPay",
     "tagline": "Отправляйте, получайте и храните ICP в кошельке, защищённом вашей Internet Identity.",
     "connect": "Подключить кошелёк",
     "connecting": "Подключение…",
@@ -334,6 +343,7 @@
     "transfers": "Переводы",
     "noTokens": "Токенов пока нет. Пополнения появятся здесь автоматически.",
     "noTokensFound": "Нет токенов, соответствующих запросу.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} снаружи",
     "selfCustodyNotice": "У вас есть средства вне ICPay. Откройте токен, чтобы перевести их.",
     "swapCta": "Обмен",
@@ -394,6 +404,7 @@
     "confirmSend": "Confirm send"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "Найдите друзей",
     "searchResults": "Результаты поиска",
     "suggested": "Рекомендации для вас",
@@ -769,6 +780,8 @@
     "formTitle": "Создать bucket",
     "formSubtitle": "Оплата с баланса ICPay",
     "name": "Имя",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "Строчные буквы, цифры, дефисы — для публичного CDN URL",
     "capacity": "Ёмкость",
     "visibility": "Видимость",
@@ -802,10 +815,15 @@
     "uploadProgress": "{current} из {total} — {name}",
     "uploadPreparing": "Подготовка…",
     "uploading": "Загрузка…",
+    "uploadSuccess": "Готово",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "Фото конвертируются в WebP — только документы, архивы, аудио, шрифты. Без HTML, JS и скриптов. Макс. {max} на файл.",
     "uploadFailed": "Ошибка загрузки — повторите или используйте файл меньше",
     "delete": "Удалить",
     "deleteFileTitle": "Удалить файл?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} будет удалён из этого bucket. Отменить нельзя.",
     "download": "Скачать",
     "downloadFailed": "Ошибка скачивания",
@@ -813,6 +831,13 @@
     "openInNewTab": "Открыть ссылку",
     "previewFailed": "Не удалось загрузить превью",
     "noFiles": "Пока нет файлов",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "Хранилище временно недоступно",
     "readOnly": "Только чтение — продлите для загрузки",
     "invalidFile": "Выберите файл меньше 10 MB",
@@ -922,7 +947,12 @@
     "docsCopyCode": "Копировать код",
     "prevPage": "Назад",
     "nextPage": "Далее",
-    "pageOf": "Страница {page} из {total} · {count} файлов"
+    "pageOf": "Страница {page} из {total} · {count} файлов",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "analytics": {
     "title": "Analytics",

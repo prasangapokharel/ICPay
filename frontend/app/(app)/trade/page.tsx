@@ -1,14 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useAuth } from "@/components/auth/auth-provider"
 import { TradeForm, type TradeSuccess } from "@/components/trade/trade-form"
 import { TradeSuccessView } from "@/components/trade/trade-success"
 import { useApplyTradeBalances } from "@/hooks/trade/useTrade"
+import { AppPage } from "@/components/layout/dashboard/app-page"
+import { Skeleton } from "@/components/ui/skeleton"
 
-export default function TradePage() {
+function TradePageContent() {
   const t = useTranslations("trade")
   const { identity } = useAuth()
   const applyTradeBalances = useApplyTradeBalances()
@@ -20,24 +22,24 @@ export default function TradePage() {
 
   if (done) {
     return (
-      <TradeSuccessView
-        amountIn={done.amountIn}
-        amountOut={done.amountOut}
-        tokenIn={done.tokenIn}
-        tokenOut={done.tokenOut}
-        beforeIn={done.beforeIn}
-        beforeOut={done.beforeOut}
-        onDone={() => setDone(null)}
-      />
+      <AppPage>
+        <div className="mx-auto w-full max-w-md">
+          <TradeSuccessView
+            amountIn={done.amountIn}
+            amountOut={done.amountOut}
+            tokenIn={done.tokenIn}
+            tokenOut={done.tokenOut}
+            beforeIn={done.beforeIn}
+            beforeOut={done.beforeOut}
+            onDone={() => setDone(null)}
+          />
+        </div>
+      </AppPage>
     )
   }
 
   return (
-    <div className="space-y-6 pt-2">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </div>
+    <AppPage title={t("title")} description={t("subtitle")}>
       <TradeForm
         identity={identity}
         initialTokenIn={from}
@@ -53,6 +55,26 @@ export default function TradePage() {
           setDone(result)
         }}
       />
-    </div>
+    </AppPage>
+  )
+}
+
+function TradePageFallback() {
+  return (
+    <AppPage>
+      <div className="mx-auto w-full max-w-md space-y-4">
+        <Skeleton className="h-44 w-full rounded-3xl" />
+        <Skeleton className="h-28 w-full rounded-2xl" />
+        <Skeleton className="h-12 w-full rounded-full" />
+      </div>
+    </AppPage>
+  )
+}
+
+export default function TradePage() {
+  return (
+    <Suspense fallback={<TradePageFallback />}>
+      <TradePageContent />
+    </Suspense>
   )
 }

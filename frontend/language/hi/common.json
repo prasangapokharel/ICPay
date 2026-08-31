@@ -2,6 +2,7 @@
   "nav": {
     "home": "होम",
     "icpverse": "आईसीपीवर्स",
+    "verse": "Verse",
     "send": "भेजें",
     "bucket": "क्लाउड",
     "menu": "मेन्यू",
@@ -41,7 +42,8 @@
     "latestTransactions": "नवीनतम लेन-देन",
     "seeMore": "और देखें",
     "noTransactions": "अभी तक कोई लेन-देन नहीं",
-    "noTransactionsHint": "शुरू करने के लिए ICP जमा करें"
+    "noTransactionsHint": "शुरू करने के लिए ICP जमा करें",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "अपना यूज़रनेम प्राप्त करें",
@@ -61,7 +63,12 @@
       "activity": "गतिविधि",
       "more": "अधिक",
       "preferences": "प्राथमिकताएँ",
-      "legal": "कानूनी"
+      "legal": "कानूनी",
+      "tokens": "टोकन",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "भेजें",
@@ -74,6 +81,7 @@
       "buyNameBadge": "प्रीमियम",
       "profile": "प्रोफ़ाइल",
       "icpverse": "आईसीपीवर्स",
+      "verse": "Verse",
       "myQr": "मेरा QR",
       "history": "इतिहास",
       "balance": "बैलेंस",
@@ -92,7 +100,8 @@
       "community": "चैनल",
       "communityBadge": "बीटा",
       "presaleBadge": "लाइव",
-      "governance": "शासन"
+      "governance": "शासन",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "भाषा, मुद्रा, दिखावट और ध्वनि"
   },
@@ -117,7 +126,7 @@
     "description": "साइन-इन पर और ट्रांसफ़र के बाद ध्वनि।"
   },
   "login": {
-    "heading": "ICP वॉलेट",
+    "heading": "ICPay",
     "tagline": "अपनी Internet Identity से सुरक्षित वॉलेट के साथ ICP भेजें, प्राप्त करें और रखें।",
     "connect": "वॉलेट कनेक्ट करें",
     "connecting": "कनेक्ट हो रहा है…",
@@ -334,6 +343,7 @@
     "transfers": "ट्रांसफ़र",
     "noTokens": "अभी कोई टोकन नहीं। जमा यहाँ अपने आप दिखेंगे।",
     "noTokensFound": "उस खोज से कोई टोकन मेल नहीं खाता।",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} bahar",
     "selfCustodyNotice": "आपके पास ICPay के बाहर धनराशि है। इसे लाने के लिए टोकन खोलें।",
     "swapCta": "स्वैप",
@@ -394,6 +404,7 @@
     "confirmSend": "Confirm send"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "अपने दोस्त खोजें",
     "searchResults": "खोज परिणाम",
     "suggested": "आपके लिए सुझाव",
@@ -769,6 +780,8 @@
     "formTitle": "बकेट बनाएँ",
     "formSubtitle": "अपने ICPay बैलेंस से भुगतान करें",
     "name": "नाम",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "छोटे अक्षर, अंक, हाइफ़न — आपके सार्वजनिक CDN URL में उपयोग",
     "capacity": "क्षमता",
     "visibility": "दृश्यता",
@@ -802,10 +815,15 @@
     "uploadProgress": "{current} / {total} — {name}",
     "uploadPreparing": "तैयारी हो रही है…",
     "uploading": "अपलोड हो रहा है…",
+    "uploadSuccess": "सफल",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "फ़ोटो WebP में बदलती हैं — केवल दस्तावेज़, आर्काइव, ऑडियो, फ़ॉन्ट। HTML, JS या स्क्रिप्ट नहीं। प्रति फ़ाइल अधिकतम {max}।",
     "uploadFailed": "अपलोड विफल — पुनः प्रयास करें या छोटी फ़ाइल उपयोग करें",
     "delete": "हटाएँ",
     "deleteFileTitle": "फ़ाइल हटाएँ?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} इस बकेट से हटा दी जाएगी। यह पूर्ववत नहीं हो सकता।",
     "download": "डाउनलोड",
     "downloadFailed": "डाउनलोड विफल",
@@ -813,6 +831,13 @@
     "openInNewTab": "लिंक खोलें",
     "previewFailed": "पूर्वावलोकन लोड नहीं हो सका",
     "noFiles": "अभी कोई फ़ाइल नहीं",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "स्टोरेज अस्थायी रूप से अनुपलब्ध",
     "readOnly": "केवल-पढ़ने योग्य — अपलोड के लिए नवीनीकरण करें",
     "invalidFile": "10 MB से छोटी फ़ाइल चुनें",
@@ -922,7 +947,12 @@
     "docsCopyCode": "कोड कॉपी करें",
     "prevPage": "पिछला",
     "nextPage": "अगला",
-    "pageOf": "पृष्ठ {page} / {total} · {count} फ़ाइलें"
+    "pageOf": "पृष्ठ {page} / {total} · {count} फ़ाइलें",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "analytics": {
     "title": "Analytics",

@@ -257,13 +257,9 @@ export function LaunchForm({
             <Button
               key={preset.label}
               type="button"
-              variant="outline"
+              variant={parseSupply(supply) === parseSupply(preset.value) ? "default" : "outline"}
               size="sm"
-              className={cn(
-                "h-7 rounded-lg px-3 text-xs",
-                parseSupply(supply) === parseSupply(preset.value) &&
-                  "bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950"
-              )}
+              className="h-7 rounded-lg px-3 text-xs"
               onClick={() => setSupply(preset.value)}
             >
               {preset.label}
@@ -342,7 +338,7 @@ export function LaunchForm({
 
       <Button
         size="lg"
-        className="w-full bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950 hover:from-amber-200 hover:via-yellow-300 hover:to-amber-500"
+        className="w-full"
         disabled={!canReview}
         onClick={() => setConfirmOpen(true)}
       >
@@ -390,11 +386,7 @@ export function LaunchForm({
           </div>
 
           <DrawerFooter>
-            <Button
-              onClick={handleConfirm}
-              disabled={launching}
-              className="bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950 hover:from-amber-200 hover:via-yellow-300 hover:to-amber-500"
-            >
+            <Button onClick={handleConfirm} disabled={launching}>
               {launching && <Spinner className="size-4" />}
               {launching ? t("launching") : t("confirmLaunch")}
             </Button>

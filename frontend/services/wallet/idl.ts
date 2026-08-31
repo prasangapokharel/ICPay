@@ -313,6 +313,7 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
   const ApiResultFileList = IDL.Variant({
     ok: IDL.Record({
       items: IDL.Vec(FilePublic),
+      folders: IDL.Vec(IDL.Text),
       total: IDL.Nat,
       page: IDL.Nat,
       pageSize: IDL.Nat,
@@ -593,6 +594,16 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
       [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Opt(IDL.Text)],
       [ApiResultFileList],
       ["query"]
+    ),
+    createFolder: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [IDL.Variant({ ok: IDL.Text, err: IDL.Text })],
+      []
+    ),
+    deleteFolder: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [ApiResultUnit],
+      []
     ),
     setFileTags: IDL.Func(
       [IDL.Text, IDL.Text, IDL.Vec(IDL.Text), IDL.Opt(IDL.Text)],

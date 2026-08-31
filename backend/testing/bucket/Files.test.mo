@@ -128,9 +128,31 @@ switch (BucketService.searchFiles(svc, owner, "cdn-assets", "brand", 0, 20, null
 switch (BucketService.listFolder(svc, owner, "cdn-assets", "/img/", 0, 20, null)) {
   case (#ok(page)) {
     assert page.items.size() == 1;
+    assert page.folders.size() == 0;
     Debug.print("PASS [FILES]: listFolder");
   };
   case (#err(e)) { assert false; Debug.print("FAIL [FILES]: listFolder: " # e) };
+};
+
+switch (BucketService.createFolder(svc, owner, "cdn-assets", "/drafts/", null)) {
+  case (#ok(path)) {
+    assert path == "/drafts/";
+    Debug.print("PASS [FILES]: createFolder");
+  };
+  case (#err(e)) { assert false; Debug.print("FAIL [FILES]: createFolder: " # e) };
+};
+
+switch (BucketService.listFolder(svc, owner, "cdn-assets", "/", 0, 20, null)) {
+  case (#ok(page)) {
+    assert page.folders.size() == 2;
+    Debug.print("PASS [FILES]: listFolder includes empty folder");
+  };
+  case (#err(e)) { assert false; Debug.print("FAIL [FILES]: listFolder folders: " # e) };
+};
+
+switch (BucketService.deleteFolder(svc, owner, "cdn-assets", "/drafts/", null)) {
+  case (#ok(_)) { Debug.print("PASS [FILES]: deleteFolder") };
+  case (#err(e)) { assert false; Debug.print("FAIL [FILES]: deleteFolder: " # e) };
 };
 
 switch (await BucketService.copyFile(svc, owner, "cdn-assets", "/img/logo.webp", "/img/logo-copy.webp", null)) {

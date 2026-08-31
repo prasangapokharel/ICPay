@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useBucketPricingTiers } from "@/hooks/bucket/useBucket"
 import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
 import { BUCKET_POPULAR_TIER_GB } from "@/lib/bucket/pricing"
@@ -48,14 +49,12 @@ export function BucketPricingView() {
   })
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 pt-2 pb-8">
-      <BucketBackButton href="/bucket" />
-
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">{t("pricingTitle")}</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{t("pricingSubtitle")}</p>
-      </div>
-
+    <AppPage
+      title={t("pricingTitle")}
+      description={t("pricingSubtitle")}
+      back={<BucketBackButton href="/bucket" />}
+      className="mx-auto max-w-2xl pb-8"
+    >
       <Card size="sm" className="py-0">
         <CardContent className="px-0">
           <Table>
@@ -119,6 +118,6 @@ export function BucketPricingView() {
       <Button size="sm" nativeButton={false} render={<Link href="/bucket" />}>
         {t("createCta")}
       </Button>
-    </div>
+    </AppPage>
   )
 }

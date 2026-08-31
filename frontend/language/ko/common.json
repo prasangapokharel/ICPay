@@ -2,6 +2,7 @@
   "nav": {
     "home": "홈",
     "icpverse": "ICP 유니버스",
+    "verse": "Verse",
     "send": "보내기",
     "bucket": "클라우드",
     "menu": "메뉴",
@@ -41,7 +42,8 @@
     "latestTransactions": "최근 거래",
     "seeMore": "더 보기",
     "noTransactions": "아직 거래가 없습니다",
-    "noTransactionsHint": "ICP를 입금하고 시작하세요"
+    "noTransactionsHint": "ICP를 입금하고 시작하세요",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "사용자 이름 등록",
@@ -61,7 +63,12 @@
       "activity": "활동",
       "more": "더보기",
       "preferences": "환경설정",
-      "legal": "법적 고지"
+      "legal": "법적 고지",
+      "tokens": "토큰",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "보내기",
@@ -75,6 +82,7 @@
       "buyNameBadge": "프리미엄",
       "profile": "프로필",
       "icpverse": "ICP 유니버스",
+      "verse": "Verse",
       "myQr": "내 QR",
       "history": "내역",
       "balance": "잔액",
@@ -92,7 +100,8 @@
       "live": "라이브",
       "community": "채널",
       "communityBadge": "베타",
-      "governance": "거버넌스"
+      "governance": "거버넌스",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "언어, 통화, 화면 및 소리"
   },
@@ -117,7 +126,7 @@
     "description": "로그인할 때와 전송 후에 알림음이 울립니다."
   },
   "login": {
-    "heading": "ICP 지갑",
+    "heading": "ICPay",
     "tagline": "Internet Identity로 보호되는 지갑에서 ICP를 보내고 받고 보관하세요.",
     "connect": "지갑 연결",
     "connecting": "연결 중…",
@@ -334,6 +343,7 @@
     "transfers": "송금",
     "noTokens": "아직 토큰이 없습니다. 입금하면 여기에 자동으로 표시됩니다.",
     "noTokensFound": "검색과 일치하는 토큰이 없습니다.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} 외부",
     "selfCustodyNotice": "ICPay 외부에 자금이 있습니다. 토큰을 열어 옮기세요.",
     "swapCta": "스왑",
@@ -394,6 +404,7 @@
     "confirmSend": "Confirm send"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "친구 찾기",
     "searchResults": "검색 결과",
     "suggested": "추천",
@@ -769,6 +780,8 @@
     "formTitle": "버킷 만들기",
     "formSubtitle": "ICPay 잔액으로 결제",
     "name": "이름",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "소문자, 숫자, 하이픈 — 공개 CDN URL에 사용",
     "capacity": "용량",
     "visibility": "공개 설정",
@@ -802,10 +815,15 @@
     "uploadProgress": "{current} / {total} — {name}",
     "uploadPreparing": "준비 중…",
     "uploading": "업로드 중…",
+    "uploadSuccess": "완료",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "사진은 WebP로 변환 — 문서, 아카이브, 오디오, 폰트만 가능. HTML, JS, 스크립트 불가. 파일당 최대 {max}.",
     "uploadFailed": "업로드 실패 — 다시 시도하거나 더 작은 파일을 사용하세요",
     "delete": "삭제",
     "deleteFileTitle": "파일을 삭제할까요?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name}이(가) 이 버킷에서 제거됩니다. 되돌릴 수 없습니다.",
     "download": "다운로드",
     "downloadFailed": "다운로드 실패",
@@ -813,6 +831,13 @@
     "openInNewTab": "링크 열기",
     "previewFailed": "미리보기를 불러올 수 없습니다",
     "noFiles": "파일이 없습니다",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "스토리지를 일시적으로 사용할 수 없습니다",
     "readOnly": "읽기 전용 — 갱신 후 업로드",
     "invalidFile": "10 MB 미만의 파일을 선택하세요",
@@ -922,7 +947,12 @@
     "docsCopyCode": "코드 복사",
     "prevPage": "이전",
     "nextPage": "다음",
-    "pageOf": "{page} / {total}페이지 · {count}개 파일"
+    "pageOf": "{page} / {total}페이지 · {count}개 파일",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "analytics": {
     "title": "Analytics",

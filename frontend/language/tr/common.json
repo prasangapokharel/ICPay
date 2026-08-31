@@ -2,6 +2,7 @@
   "nav": {
     "home": "Ana sayfa",
     "icpverse": "ICPverse",
+    "verse": "Verse",
     "send": "Gönder",
     "bucket": "Bucket",
     "menu": "Menü",
@@ -41,7 +42,8 @@
     "latestTransactions": "Son işlemler",
     "seeMore": "Daha fazla",
     "noTransactions": "Henüz işlem yok",
-    "noTransactionsHint": "Başlamak için ICP yatırın"
+    "noTransactionsHint": "Başlamak için ICP yatırın",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "Kullanıcı adınızı alın",
@@ -61,7 +63,12 @@
       "activity": "Etkinlik",
       "more": "Daha fazla",
       "preferences": "Tercihler",
-      "legal": "Yasal"
+      "legal": "Yasal",
+      "tokens": "Tokenlar",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "Gönder",
@@ -75,6 +82,7 @@
       "buyNameBadge": "Premium",
       "profile": "Profil",
       "icpverse": "ICPverse",
+      "verse": "Verse",
       "myQr": "QR kodum",
       "history": "Geçmiş",
       "balance": "Bakiye",
@@ -92,7 +100,8 @@
       "analytics": "Analitik",
       "live": "Live",
       "community": "Channels",
-      "communityBadge": "Beta"
+      "communityBadge": "Beta",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "Dil, para birimi, görünüm ve ses"
   },
@@ -117,7 +126,7 @@
     "description": "Giriş yaptığınızda ve transfer sonrasında çalan sesler."
   },
   "login": {
-    "heading": "ICP Wallet",
+    "heading": "ICPay",
     "tagline": "Internet Identity ile güvence altına alınmış bir cüzdanla ICP gönderin, alın ve saklayın.",
     "connect": "Giriş yap",
     "connecting": "Giriş yapılıyor…",
@@ -365,6 +374,7 @@
     "transfers": "Transferler",
     "noTokens": "Henüz token yok. Yatırmalar burada otomatik görünür.",
     "noTokensFound": "Aramayla eşleşen token yok.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} dışarıda",
     "swapCta": "Swap",
     "selfCustodyNotice": "Fonları ICPay dışında tutuyorsunuz. İçeri taşımak için token'ı açın.",
@@ -464,6 +474,7 @@
     "confirmSend": "Gönderimi onayla"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "Arkadaşlarını bul",
     "searchResults": "Arama sonuçları",
     "suggested": "Sizin için önerilen",
@@ -1080,6 +1091,8 @@
     "formTitle": "Bucket oluştur",
     "formSubtitle": "ICPay bakiyenizden ödeyin",
     "name": "Ad",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "Küçük harf, rakam, tire — herkese açık CDN URL'nizde kullanılır",
     "capacity": "Kapasite",
     "visibility": "Görünürlük",
@@ -1113,10 +1126,15 @@
     "uploadProgress": "{total} içinden {current} — {name}",
     "uploadPreparing": "Hazırlanıyor…",
     "uploading": "Yükleniyor…",
+    "uploadSuccess": "Başarılı",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "Fotoğraflar WebP'ye dönüşür — yalnızca belgeler, arşivler, ses ve fontlar. HTML, JS veya betik yok. Dosya başına en fazla {max}.",
     "uploadFailed": "Yükleme başarısız — tekrar deneyin veya daha küçük dosya kullanın",
     "delete": "Sil",
     "deleteFileTitle": "Dosya silinsin mi?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} bu bucket'tan kaldırılacak. Bu geri alınamaz.",
     "download": "Download",
     "downloadFailed": "İndirme başarısız",
@@ -1124,6 +1142,13 @@
     "openInNewTab": "Bağlantıyı aç",
     "previewFailed": "Önizleme yüklenemedi",
     "noFiles": "Henüz dosya yok",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "Depolama geçici olarak kullanılamıyor",
     "readOnly": "Read-only — yüklemek için yenileyin",
     "invalidFile": "10 MB altında bir dosya seçin",
@@ -1233,7 +1258,12 @@
     "docsCopyCode": "Copy code",
     "prevPage": "Prev",
     "nextPage": "Next",
-    "pageOf": "Sayfa {page} / {total} · {count} dosya"
+    "pageOf": "Sayfa {page} / {total} · {count} dosya",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "publicSite": {
     "nav": {

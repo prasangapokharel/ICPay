@@ -7,6 +7,7 @@ import { Search01Icon } from "@hugeicons/core-free-icons"
 import { Input } from "@/components/ui/input"
 import { ServiceTile } from "@/components/settings/service-tile"
 import { SettingsDrawer } from "@/components/settings/settings-drawer"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
 import { prefetchAppRoute, prefetchGovernance } from "@/lib/navigation/prefetchRoute"
 import type { AppIconName } from "@/components/ui/app-icon"
@@ -165,12 +166,7 @@ export default function MenuPage() {
     : sections
 
   return (
-    <div className="space-y-6 pt-2">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </div>
-
+    <AppPage title={t("title")} description={t("subtitle")}>
       <div className="relative">
         <HugeiconsIcon
           icon={Search01Icon}
@@ -219,6 +215,6 @@ export default function MenuPage() {
       )}
 
       <SettingsDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
-    </div>
+    </AppPage>
   )
 }

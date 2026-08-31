@@ -49,7 +49,7 @@ export function TradeSuccessView({
   const received = `${formatTokenAmount(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
 
   return (
-    <div className="flex flex-col items-center pt-6 text-center">
+    <div className="flex flex-col items-center px-1 pt-4 text-center sm:pt-6">
       <div className="animate-in fade-in zoom-in-75 mb-5 flex size-18 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
         <span className="flex size-13 items-center justify-center rounded-full bg-success text-background shadow-sm">
           <HugeiconsIcon icon={Tick02Icon} className="size-8" strokeWidth={3} />
@@ -59,15 +59,19 @@ export function TradeSuccessView({
       <h1 className="text-2xl font-bold tracking-tight">{t("successTitle")}</h1>
       <p className="mt-2 text-sm text-muted-foreground">{t("successBody")}</p>
 
-      <p className="mt-8 text-xs text-muted-foreground">{t("youReceive")}</p>
-      <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums">{received}</p>
-      <p className="mt-3 text-sm text-muted-foreground tabular-nums">
-        {t("youPay")}: {paid}
-      </p>
+      <div className="mt-8 w-full rounded-3xl border border-border/60 bg-card p-5 shadow-sm">
+        <p className="text-xs font-medium text-muted-foreground">{t("youReceive")}</p>
+        <p className="mt-1 text-[clamp(1.75rem,7vw,2.25rem)] font-bold tracking-tight tabular-nums">
+          {received}
+        </p>
+        <p className="mt-3 text-sm text-muted-foreground tabular-nums">
+          {t("youPay")}: {paid}
+        </p>
+      </div>
 
-      <div className="mt-8 w-full border-t border-dashed pt-6 text-left">
+      <div className="mt-6 w-full text-left">
         <p className="text-xs text-muted-foreground">{t("balanceAfter")}</p>
-        <div className="mt-3 space-y-2 rounded-2xl bg-muted/50 p-4">
+        <div className="mt-3 space-y-2 rounded-2xl border border-border/50 bg-muted/30 p-4">
           <BalanceLine
             symbol={tokenIn.symbol}
             decimals={tokenIn.decimals}
@@ -83,7 +87,7 @@ export function TradeSuccessView({
         </div>
       </div>
 
-      <Button className="mt-8 w-full" onClick={onDone}>
+      <Button className="mt-8 h-12 w-full rounded-full text-base font-semibold" onClick={onDone}>
         {tc("done")}
       </Button>
     </div>

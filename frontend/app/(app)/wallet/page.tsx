@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo } from "react"
-import { Card, CardContent } from "@/components/ui/card"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
 import { formatAmount, E8S } from "@/lib/wallet/utils"
@@ -14,6 +13,7 @@ import { ICP_LEDGER_ID } from "@/services/tokens"
 import { ICP_LOGO } from "@/lib/token/icon"
 import { TokenList } from "@/components/wallet/token-list"
 import { Skeleton } from "@/components/ui/skeleton"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 
 export default function WalletPage() {
   const t = useTranslations("wallet")
@@ -32,19 +32,12 @@ export default function WalletPage() {
   )
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </div>
-
-      <div className="relative rounded-3xl bg-primary p-3 text-primary-foreground shadow-lg">
+    <AppPage title={t("title")} description={t("subtitle")}>
+      <div className="relative overflow-hidden rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg sm:p-6">
         <div className="relative z-10 flex justify-end">
           <span className="liquid-glass-primary flex items-center gap-1.5 rounded-full px-3 py-1.5">
             <Image src={ICP_LOGO} alt="ICP" width={16} height={16} className="size-4" />
-            <span className="text-[11px] font-semibold tracking-wide">
-              {t("icpBalance")}
-            </span>
+            <span className="text-[11px] font-semibold tracking-wide">{t("icpBalance")}</span>
           </span>
         </div>
 
@@ -61,11 +54,9 @@ export default function WalletPage() {
           )}
         </div>
 
-        <div className="relative z-10 mt-4 flex items-end justify-between">
+        <div className="relative z-10 mt-4 flex items-end justify-between gap-3">
           <span className="liquid-glass-primary rounded-full px-2.5 py-1 text-sm font-medium tabular-nums">
-            {fiat.formatted === null
-              ? "\u00a0"
-              : `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}`}
+            {fiat.formatted === null ? "\u00a0" : `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}`}
           </span>
           <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary-foreground/40">
             Internet Computer
@@ -73,19 +64,15 @@ export default function WalletPage() {
         </div>
       </div>
 
-      <Card className="bg-background">
-        <CardContent>
-          <TokenList
-            holdings={holdings}
-            isLoading={holdingsLoading}
-            existingLedgerIds={existingLedgerIds}
-            onAddCustom={(ledgerId, meta) => {
-              addCustomId(ledgerId, meta)
-              void refresh()
-            }}
-          />
-        </CardContent>
-      </Card>
-    </div>
+      <TokenList
+        holdings={holdings}
+        isLoading={holdingsLoading}
+        existingLedgerIds={existingLedgerIds}
+        onAddCustom={(ledgerId, meta) => {
+          addCustomId(ledgerId, meta)
+          void refresh()
+        }}
+      />
+    </AppPage>
   )
 }

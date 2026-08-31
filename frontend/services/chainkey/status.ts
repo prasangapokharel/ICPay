@@ -8,7 +8,7 @@ import {
   CKETH_MINTER_ID,
 } from "@/services/chainkey/constants"
 
-const MANAGEMENT_CANISTER_ID = "aaaaa-aa"
+import { IC_MANAGEMENT_CANISTER_ID } from "@/lib/ic/constants"
 
 export type BtcWithdrawalFee = {
   minterFee: bigint
@@ -31,7 +31,7 @@ export async function fetchPendingBtcSats(
   const agent = await createAgent(identity)
   const bitcoin = BitcoinCanister.create({
     agent,
-    canisterId: Principal.fromText(MANAGEMENT_CANISTER_ID),
+    canisterId: Principal.fromText(IC_MANAGEMENT_CANISTER_ID),
   })
   return bitcoin.getBalanceQuery({
     address: btcAddress,

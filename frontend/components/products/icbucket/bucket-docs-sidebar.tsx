@@ -23,15 +23,16 @@ function NavLink({ slug, title, active }: { slug: string; title: string; active:
   )
 }
 
-export function BucketDocsNav({
+function BucketDocsNavTree({
   groups,
+  pathname,
   className,
 }: {
   groups: BucketDocNavGroup[]
+  pathname: string | null
   className?: string
 }) {
   const t = useTranslations("bucket")
-  const pathname = usePathname()
 
   return (
     <nav className={cn("space-y-6", className)} aria-label="Documentation">
@@ -68,9 +69,34 @@ export function BucketDocsNav({
   )
 }
 
-export function BucketDocsMobileNav({ groups }: { groups: BucketDocNavGroup[] }) {
-  const pathname = usePathname()
+export function BucketDocsNavFallback({
+  groups,
+  className,
+}: {
+  groups: BucketDocNavGroup[]
+  className?: string
+}) {
+  return <BucketDocsNavTree groups={groups} pathname={null} className={className} />
+}
 
+export function BucketDocsNav({
+  groups,
+  className,
+}: {
+  groups: BucketDocNavGroup[]
+  className?: string
+}) {
+  const pathname = usePathname()
+  return <BucketDocsNavTree groups={groups} pathname={pathname} className={className} />
+}
+
+function BucketDocsMobileChips({
+  groups,
+  pathname,
+}: {
+  groups: BucketDocNavGroup[]
+  pathname: string | null
+}) {
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden">
       <Link
@@ -102,4 +128,13 @@ export function BucketDocsMobileNav({ groups }: { groups: BucketDocNavGroup[] })
       )}
     </div>
   )
+}
+
+export function BucketDocsMobileNavFallback({ groups }: { groups: BucketDocNavGroup[] }) {
+  return <BucketDocsMobileChips groups={groups} pathname={null} />
+}
+
+export function BucketDocsMobileNav({ groups }: { groups: BucketDocNavGroup[] }) {
+  const pathname = usePathname()
+  return <BucketDocsMobileChips groups={groups} pathname={pathname} />
 }

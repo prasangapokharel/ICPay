@@ -2,6 +2,7 @@
   "nav": {
     "home": "Trang chủ",
     "icpverse": "ICPverse",
+    "verse": "Verse",
     "send": "Gửi",
     "bucket": "Cloud",
     "menu": "Menu",
@@ -41,7 +42,8 @@
     "latestTransactions": "Giao dịch gần đây",
     "seeMore": "Xem thêm",
     "noTransactions": "Chưa có giao dịch",
-    "noTransactionsHint": "Nạp ICP để bắt đầu"
+    "noTransactionsHint": "Nạp ICP để bắt đầu",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "Đăng ký tên người dùng",
@@ -61,7 +63,12 @@
       "activity": "Hoạt động",
       "more": "Thêm",
       "preferences": "Tùy chọn",
-      "legal": "Pháp lý"
+      "legal": "Pháp lý",
+      "tokens": "Token",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services"
     },
     "items": {
       "send": "Gửi",
@@ -75,6 +82,7 @@
       "buyNameBadge": "Premium",
       "profile": "Hồ sơ",
       "icpverse": "ICPverse",
+      "verse": "Verse",
       "myQr": "QR của tôi",
       "history": "Lịch sử",
       "balance": "Số dư",
@@ -92,7 +100,8 @@
       "analytics": "Phân tích",
       "live": "Live",
       "community": "Kênh",
-      "communityBadge": "Beta"
+      "communityBadge": "Beta",
+      "bucketBadge": "50% off"
     },
     "preferencesDescription": "Ngôn ngữ, tiền tệ, giao diện và âm thanh"
   },
@@ -117,7 +126,7 @@
     "description": "Chuông khi đăng nhập và sau khi chuyển tiền."
   },
   "login": {
-    "heading": "Ví ICP",
+    "heading": "ICPay",
     "tagline": "Gửi, nhận và giữ ICP với ví được bảo vệ bằng Internet Identity.",
     "connect": "Đăng nhập",
     "connecting": "Đang đăng nhập…",
@@ -365,6 +374,7 @@
     "transfers": "Chuyển khoản",
     "noTokens": "Chưa có token. Khoản nạp hiện ở đây tự động.",
     "noTokensFound": "Không có token phù hợp.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} bên ngoài",
     "swapCta": "Hoán đổi",
     "selfCustodyNotice": "Bạn giữ tiền ngoài ICPay. Mở token để chuyển vào.",
@@ -464,6 +474,7 @@
     "confirmSend": "Xác nhận gửi"
   },
   "icpverse": {
+    "verse": "Verse",
     "searchPlaceholder": "Tìm bạn bè",
     "searchResults": "Kết quả tìm kiếm",
     "suggested": "Gợi ý cho bạn",
@@ -1080,6 +1091,8 @@
     "formTitle": "Tạo bucket",
     "formSubtitle": "Thanh toán từ số dư ICPay",
     "name": "Tên",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "Chữ thường, số, gạch ngang — dùng trong URL CDN công khai",
     "capacity": "Dung lượng",
     "visibility": "Hiển thị",
@@ -1113,10 +1126,15 @@
     "uploadProgress": "{current} / {total} — {name}",
     "uploadPreparing": "Đang chuẩn bị…",
     "uploading": "Đang tải lên…",
+    "uploadSuccess": "Thành công",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "Ảnh chuyển sang WebP — chỉ tài liệu, lưu trữ, âm thanh, font. Không HTML, JS hay script. Tối đa {max} mỗi file.",
     "uploadFailed": "Tải lên thất bại — thử lại hoặc dùng file nhỏ hơn",
     "delete": "Xóa",
     "deleteFileTitle": "Xóa file?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} sẽ bị xóa khỏi bucket này. Không thể hoàn tác.",
     "download": "Tải xuống",
     "downloadFailed": "Tải xuống thất bại",
@@ -1124,6 +1142,13 @@
     "openInNewTab": "Mở liên kết",
     "previewFailed": "Không tải được xem trước",
     "noFiles": "Chưa có file",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "Lưu trữ tạm thời không khả dụng",
     "readOnly": "Chỉ đọc — gia hạn để tải lên",
     "invalidFile": "Chọn file dưới 10 MB",
@@ -1233,7 +1258,12 @@
     "docsCopyCode": "Sao chép mã",
     "prevPage": "Trước",
     "nextPage": "Sau",
-    "pageOf": "Trang {page} / {total} · {count} file"
+    "pageOf": "Trang {page} / {total} · {count} file",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "publicSite": {
     "nav": {
