@@ -5,7 +5,7 @@ import { isSwapToken } from "@/lib/swap/tokens"
 import { isLedgerSupported } from "@/services/tokens"
 import { getTradeActor } from "@/services/trade/actor"
 import { fetchTradeQuote, type TradeQuoteFees } from "@/services/trade/quote"
-import type { TradeDepositResult, TradeQuoteResult, TradeResult, CandidTradeResult } from "@/services/trade/types"
+import type { TradeDepositResult, TradeQuoteResult, TradeResult } from "@/services/trade/types"
 
 export type TradeQuoteOpts = TradeQuoteFees & {
   skipAllowlistCheck?: boolean
@@ -13,10 +13,10 @@ export type TradeQuoteOpts = TradeQuoteFees & {
 
 export { fetchTradeQuote }
 
-/** Preload wallet + trade actors while the user reviews the confirm drawer. */
+/** Preload wallet actor while the user reviews the confirm drawer. */
 export async function warmTradeSession(identity: Identity | undefined): Promise<void> {
   if (!identity) return
-  await Promise.all([getWalletActor(identity), getTradeActor(identity)])
+  await getWalletActor(identity)
 }
 
 export async function getTradingBalance(
@@ -50,41 +50,23 @@ export async function withdrawFromTrade(
   })
 }
 
-function parseTradeSwapResult(result: CandidTradeResult): Outcome<TradeResult> {
-  if ("Err" in result) return { err: result.Err }
-  if ("err" in result) return { err: result.err }
-  const raw = "Ok" in result ? result.Ok : result.ok
+function toTradeResult(ok: {
+  blockIndex: bigint
+  amountIn: bigint
+  amountOut: bigint
+  icpServiceFee: bigint
+  txId: string
+}): TradeResult {
   return {
-    ok: {
-      blockIndex: raw.block_index,
-      amountIn: raw.amount_in,
-      amountOut: raw.amount_out,
-      serviceFee: raw.service_fee,
-      txId: raw.tx_id,
-    },
+    blockIndex: ok.blockIndex,
+    amountIn: ok.amountIn,
+    amountOut: ok.amountOut,
+    serviceFee: ok.icpServiceFee,
+    txId: ok.txId,
   }
 }
 
-export async function executeTradeSwap(
-  identity: Identity | undefined,
-  tokenIn: string,
-  tokenOut: string,
-  amountIn: bigint,
-  amountOutMin: bigint
-): Promise<Outcome<TradeResult>> {
-  if (!identity) return { err: "Not authenticated" }
-  try {
-    const actor = await getTradeActor(identity)
-    const result = await actor.execute_swap(tokenIn, tokenOut, amountIn, amountOutMin)
-    const parsed = parseTradeSwapResult(result)
-    if ("err" in parsed) return parsed
-    return parsed
-  } catch (e) {
-    console.error(e)
-    return { err: "Trade failed" }
-  }
-}
-
+/** One wallet update: fund (top-up only if needed) → swap. Output stays on trade balance. */
 export async function runTrade(
   identity: Identity | undefined,
   tokenIn: string,
@@ -92,28 +74,13 @@ export async function runTrade(
   amountIn: bigint,
   amountOutMin: bigint
 ): Promise<Outcome<TradeResult>> {
-  const deposit = await depositForTrade(identity, tokenIn, amountIn)
-  if ("err" in deposit) return deposit
-
-  const swap = await executeTradeSwap(identity, tokenIn, tokenOut, amountIn, amountOutMin)
-  if ("err" in swap) {
-    const refund = await withdrawFromTrade(identity, tokenIn, amountIn)
-    if ("err" in refund) {
-      return {
-        err: `${swap.err}. Your ${tokenIn} is in trade balance — contact support or retry withdraw.`,
-      }
+  return call<TradeResult>(identity, "Trade failed", async (actor) => {
+    const r = await actor.executeTrade(tokenIn, tokenOut, amountIn, amountOutMin)
+    if ("ok" in r && r.ok !== undefined) {
+      return { ok: toTradeResult(r.ok) }
     }
-    return swap
-  }
-
-  const withdraw = await withdrawFromTrade(identity, tokenOut, swap.ok.amountOut)
-  if ("err" in withdraw) {
-    return {
-      err: `Swap succeeded but withdraw failed: ${withdraw.err}. Check your trade balance.`,
-    }
-  }
-
-  return swap
+    return { err: "err" in r ? (r.err ?? "Trade failed") : "Trade failed" }
+  })
 }
 
 export async function fetchTradeQuoteChecked(

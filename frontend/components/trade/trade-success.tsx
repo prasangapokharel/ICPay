@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Tick02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
-import { requiredWalletDebit } from "@/lib/trade/fees"
+import { projectedBalancesAfterTrade } from "@/lib/trade/fees"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { playSuccessChime } from "@/lib/ui/successChime"
 import type { TokenHolding } from "@/services/tokens"
@@ -37,13 +37,10 @@ export function TradeSuccessView({
     playSuccessChime()
   }, [])
 
-  const { afterIn, afterOut } = useMemo(() => {
-    const tokenDebit = requiredWalletDebit(amountIn, tokenIn.fee)
-    return {
-      afterIn: beforeIn > tokenDebit ? beforeIn - tokenDebit : 0n,
-      afterOut: beforeOut + amountOut,
-    }
-  }, [amountIn, amountOut, beforeIn, beforeOut, tokenIn.fee])
+  const { afterIn, afterOut } = useMemo(
+    () => projectedBalancesAfterTrade(beforeIn, beforeOut, amountIn, amountOut),
+    [amountIn, amountOut, beforeIn, beforeOut]
+  )
 
   const paid = `${formatTokenAmount(amountIn, tokenIn.decimals)} ${tokenIn.symbol}`
   const received = `${formatTokenAmount(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`

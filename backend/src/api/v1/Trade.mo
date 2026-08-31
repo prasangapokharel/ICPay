@@ -10,4 +10,20 @@ mixin (trade: TradeService.TradeService, mwConfig: MiddlewareAuth.Config) {
   public shared ({ caller }) func withdrawFromTrade(ledgerId: Text, amount: Nat) : async Types.ApiResult<{ blockIndex: Nat64 }> {
     await TradeService.withdrawFromTrade(trade, MiddlewareAuth.effectiveCaller(mwConfig, caller), ledgerId, amount);
   };
+
+  public shared ({ caller }) func executeTrade(
+    tokenIn: Text,
+    tokenOut: Text,
+    amountIn: Nat,
+    amountOutMin: Nat,
+  ) : async Types.ApiResult<Types.SwapResult> {
+    await TradeService.executeTrade(
+      trade,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      tokenIn,
+      tokenOut,
+      amountIn,
+      amountOutMin,
+    );
+  };
 };

@@ -26,6 +26,7 @@ service : (InitArgs) -> {
   credit_from_wallet : (principal, text, nat, nat64) -> (Result);
   debit_to_wallet : (principal, text, nat, Account) -> (Result_1);
   execute_swap : (text, text, nat, nat) -> (ApiResult);
+  execute_swap_for_user : (principal, text, text, nat, nat) -> (ApiResult);
   // M1: wire to factory + pool quote. Slippage default is exposed for clients until then.
   get_swap_quote : (text, text, nat) -> (ApiResult_1) query;
   get_trading_balance : (principal, text) -> (nat) query;

@@ -218,6 +218,16 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
 
   const ApiResultTradeDeposit = IDL.Variant({ ok: TradeDepositResult, err: IDL.Text })
 
+  const SwapResult = IDL.Record({
+    blockIndex: IDL.Nat64,
+    amountIn: IDL.Nat,
+    amountOut: IDL.Nat,
+    icpServiceFee: IDL.Nat,
+    txId: IDL.Text,
+  })
+
+  const ApiResultSwap = IDL.Variant({ ok: SwapResult, err: IDL.Text })
+
   const BucketVisibility = IDL.Variant({
     Public: IDL.Null,
     Private: IDL.Null,
@@ -647,6 +657,11 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     deleteBucket: IDL.Func([IDL.Text], [ApiResultUnit], []),
     depositForTrade: IDL.Func([IDL.Text, IDL.Nat], [ApiResultTradeDeposit], []),
     withdrawFromTrade: IDL.Func([IDL.Text, IDL.Nat], [ApiResultTradeDeposit], []),
+    executeTrade: IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat, IDL.Nat],
+      [ApiResultSwap],
+      []
+    ),
     createLiveRoom: IDL.Func(
       [IDL.Text, LiveVisibility, IDL.Opt(IDL.Text)],
       [ApiResultLiveCreate],

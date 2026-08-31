@@ -55,3 +55,37 @@ switch (await TradeService.depositForTrade(trade, caller, "bad-ledger", 1_000_00
   };
   case (#ok(_)) { assert(false) };
 };
+
+switch (
+  await TradeService.executeTrade(
+    trade,
+    caller,
+    "ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "ryjl3-tyaaa-aaaaa-aaaba-cai",
+    1_000_000,
+    1,
+  )
+) {
+  case (#err(msg)) {
+    assert(Text.contains(msg, #text "differ"));
+    Debug.print("PASS: executeTrade rejects same token pair");
+  };
+  case (#ok(_)) { assert(false) };
+};
+
+switch (
+  await TradeService.executeTrade(
+    trade,
+    caller,
+    "ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "bad-ledger",
+    1_000_000,
+    1,
+  )
+) {
+  case (#err(msg)) {
+    assert(Text.contains(msg, #text "Unsupported"));
+    Debug.print("PASS: executeTrade rejects unsupported output ledger");
+  };
+  case (#ok(_)) { assert(false) };
+};

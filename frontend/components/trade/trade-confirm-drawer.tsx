@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/drawer"
 import { Spinner } from "@/components/ui/spinner"
 import { createAgent } from "@/services/icp"
-import { requiredWalletDebit } from "@/lib/trade/fees"
+import { projectedBalancesAfterTrade } from "@/lib/trade/fees"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import type { TokenHolding } from "@/services/tokens"
 import type { Identity } from "@icp-sdk/core/agent"
@@ -45,10 +45,7 @@ export function TradeConfirmDrawer({
 
   const balancePreview = useMemo(() => {
     if (!tokenIn || !tokenOut || amountIn === null || amountOut === null) return null
-    const tokenDebit = requiredWalletDebit(amountIn, tokenIn.fee)
-    const afterIn = tokenIn.balance > tokenDebit ? tokenIn.balance - tokenDebit : 0n
-    const afterOut = tokenOut.balance + amountOut
-    return { afterIn, afterOut }
+    return projectedBalancesAfterTrade(tokenIn.balance, tokenOut.balance, amountIn, amountOut)
   }, [tokenIn, tokenOut, amountIn, amountOut])
 
   useEffect(() => {

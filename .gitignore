@@ -81,3 +81,6 @@ node_modules/
 
 # Desktop wallet (local Tauri app — build artifacts and source stay off-repo)
 /desktop/
+
+# Desktop wallet build outputs (CI copies artifacts here locally)
+/downloads/

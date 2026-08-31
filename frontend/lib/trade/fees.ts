@@ -43,3 +43,16 @@ export function tradeRate(amountIn: bigint, amountOut: bigint): string | null {
   const frac = (scaled % 1_000_000n).toString().padStart(6, "0").replace(/0+$/, "")
   return frac ? `${whole}.${frac}` : whole.toString()
 }
+
+/** Merged wallet + trade balance after a swap (output stays on trade balance). */
+export function projectedBalancesAfterTrade(
+  beforeIn: bigint,
+  beforeOut: bigint,
+  amountIn: bigint,
+  amountOut: bigint
+) {
+  return {
+    afterIn: beforeIn > amountIn ? beforeIn - amountIn : 0n,
+    afterOut: beforeOut + amountOut,
+  }
+}

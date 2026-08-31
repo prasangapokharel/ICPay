@@ -1,6 +1,7 @@
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
 import Int "mo:core/Int";
+import Nat "mo:core/Nat";
 import Nat64 "mo:core/Nat64";
 import Types "../types";
 import Config "../config/Config";
@@ -57,15 +58,91 @@ module {
     { owner = Principal.fromText(Config.TRADE_CANISTER_ID); subaccount = null };
   };
 
-  public func depositForTrade(
+  func toSwapResult(remote: TradeClient.SwapResultRemote) : Types.SwapResult {
+    {
+      blockIndex = remote.block_index;
+      amountIn = remote.amount_in;
+      amountOut = remote.amount_out;
+      icpServiceFee = remote.service_fee;
+      txId = remote.tx_id;
+    };
+  };
+
+  func ensureTradingBalance(
+    service: TradeService,
+    caller: Principal,
+    ledgerId: Text,
+    amount: Nat,
+  ) : async Types.ApiResult<()> {
+    let trade = TradeClient.connect(Config.TRADE_CANISTER_ID);
+    let balance = await trade.get_trading_balance(caller, ledgerId);
+    if (balance >= amount) {
+      return #ok(());
+    };
+    let topUp = Nat.sub(amount, balance);
+    switch (await transferAndCredit(service, caller, ledgerId, topUp)) {
+      case (#err(e)) { #err(e) };
+      case (#ok(_)) { #ok(()) };
+    };
+  };
+
+  public func executeTrade(
+    service: TradeService,
+    caller: Principal,
+    tokenIn: Text,
+    tokenOut: Text,
+    amountIn: Nat,
+    amountOutMin: Nat,
+  ) : async Types.ApiResult<Types.SwapResult> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_TRANSFER, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_TRANSFER));
+    };
+    if (tokenIn == tokenOut) {
+      return #err("token_in and token_out must differ");
+    };
+    switch (validateLedger(service, tokenIn, amountIn)) {
+      case (?err) { return #err(err) };
+      case (null) {};
+    };
+    if (not LedgerService.isAllowed(service.ledger, tokenOut)) {
+      return #err("Unsupported token ledger: " # tokenOut);
+    };
+    switch (resolveUser(service, caller)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok(_)) {};
+    };
+
+    switch (await ensureTradingBalance(service, caller, tokenIn, amountIn)) {
+      case (#err(e)) { return #err(e) };
+      case (#ok()) {};
+    };
+
+    let trade = TradeClient.connect(Config.TRADE_CANISTER_ID);
+    switch (
+      await trade.execute_swap_for_user(caller, tokenIn, tokenOut, amountIn, amountOutMin)
+    ) {
+      case (#Err(e)) {
+        switch (await withdrawFromTradeUnchecked(service, caller, tokenIn, amountIn)) {
+          case (#ok(_)) { #err(e) };
+          case (#err(refundErr)) {
+            #err(e # ". Refund failed: " # refundErr);
+          };
+        };
+      };
+      case (#Ok(remote)) {
+        // Output stays on the trade canister balance — skips one ICRC withdraw (~4s).
+        // Wallet + trade UI merge trade balance with custodial balance for display.
+        #ok(toSwapResult(remote));
+      };
+    };
+  };
+
+  func transferAndCredit(
     service: TradeService,
     caller: Principal,
     ledgerId: Text,
     amount: Nat,
   ) : async Types.ApiResult<{ blockIndex: Nat64 }> {
-    if (not RateLimitService.allow(service.limits, caller, Config.RATE_TRANSFER, Time.now())) {
-      return #err(RateLimitService.message(Config.RATE_TRANSFER));
-    };
     switch (validateLedger(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -141,7 +218,7 @@ module {
     };
   };
 
-  public func withdrawFromTrade(
+  public func depositForTrade(
     service: TradeService,
     caller: Principal,
     ledgerId: Text,
@@ -150,6 +227,15 @@ module {
     if (not RateLimitService.allow(service.limits, caller, Config.RATE_TRANSFER, Time.now())) {
       return #err(RateLimitService.message(Config.RATE_TRANSFER));
     };
+    await transferAndCredit(service, caller, ledgerId, amount);
+  };
+
+  func withdrawFromTradeUnchecked(
+    service: TradeService,
+    caller: Principal,
+    ledgerId: Text,
+    amount: Nat,
+  ) : async Types.ApiResult<{ blockIndex: Nat64 }> {
     switch (validateLedger(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
@@ -189,5 +275,17 @@ module {
         };
       };
     };
+  };
+
+  public func withdrawFromTrade(
+    service: TradeService,
+    caller: Principal,
+    ledgerId: Text,
+    amount: Nat,
+  ) : async Types.ApiResult<{ blockIndex: Nat64 }> {
+    if (not RateLimitService.allow(service.limits, caller, Config.RATE_TRANSFER, Time.now())) {
+      return #err(RateLimitService.message(Config.RATE_TRANSFER));
+    };
+    await withdrawFromTradeUnchecked(service, caller, ledgerId, amount);
   };
 };
