@@ -1401,7 +1401,11 @@
         "browseChannels": "Kanäle durchsuchen",
         "signIn": "Anmelden",
         "aboutIcPay": "Über ICPay",
-        "imageAlt": "ICPay Wallet auf dem Smartphone"
+        "imageAlt": "ICPay Wallet auf dem Smartphone",
+        "imageAltDesktop": "ICPay Wallet auf dem Desktop",
+        "previewMobile": "Mobil",
+        "previewDesktop": "Desktop",
+        "previewTabsLabel": "App-Vorschau"
       },
       "cta": {
         "signedInTitle": "Du bist angemeldet",

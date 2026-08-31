@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { Spinner } from "@/components/ui/spinner"
 import { sanitizeFolderName } from "@/lib/bucket/folderPath"
 
 export function BucketFolderDialog({
@@ -21,26 +22,36 @@ export function BucketFolderDialog({
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onCreate: (name: string) => void | Promise<void>
+  onCreate: (name: string) => Promise<void>
 }) {
   const t = useTranslations("bucket")
+  const tCommon = useTranslations("common")
   const [name, setName] = useState("")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const safe = sanitizeFolderName(name)
 
+  const reset = () => {
+    setName("")
+    setError(null)
+    setBusy(false)
+  }
+
+  const close = () => {
+    if (busy) return
+    reset()
+    onOpenChange(false)
+  }
+
   return (
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        if (!next) {
-          setName("")
-          setError(null)
-        }
-        onOpenChange(next)
+        if (next) onOpenChange(true)
+        else close()
       }}
     >
-      <DialogContent className="max-w-sm" showCloseButton>
+      <DialogContent className="gap-4 sm:max-w-sm" showCloseButton={!busy}>
         <DialogHeader>
           <DialogTitle>{t("createFolder")}</DialogTitle>
           <DialogDescription>{t("folderHint")}</DialogDescription>
@@ -54,7 +65,7 @@ export function BucketFolderDialog({
             setError(null)
             try {
               await onCreate(safe)
-              setName("")
+              reset()
               onOpenChange(false)
             } catch (e) {
               setError(e instanceof Error ? e.message : t("uploadFailed"))
@@ -63,20 +74,27 @@ export function BucketFolderDialog({
             }
           }}
         >
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={t("folderName")}
-          autoComplete="off"
-          spellCheck={false}
-          autoFocus
-        />
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
-        <DialogFooter>
-          <Button type="submit" disabled={!safe || busy}>
-            {t("createFolder")}
-          </Button>
-        </DialogFooter>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={t("folderName")}
+            autoComplete="off"
+            spellCheck={false}
+            autoFocus
+            disabled={busy}
+          />
+          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button type="button" variant="outline" disabled={busy} onClick={close}>
+              {tCommon("cancel")}
+            </Button>
+            <Button type="submit" disabled={!safe || busy} className="min-w-[7.5rem]">
+              <span className="inline-flex items-center justify-center gap-2">
+                {busy ? <Spinner className="size-4" /> : null}
+                {t("createFolder")}
+              </span>
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

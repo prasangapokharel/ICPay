@@ -1400,7 +1400,11 @@
         "browseChannels": "Duyệt kênh",
         "signIn": "Đăng nhập",
         "aboutIcPay": "Về ICPay",
-        "imageAlt": "Ví ICPay trên di động"
+        "imageAlt": "Ví ICPay trên di động",
+        "imageAltDesktop": "Ví ICPay trên máy tính",
+        "previewMobile": "Di động",
+        "previewDesktop": "Máy tính",
+        "previewTabsLabel": "Xem trước ứng dụng"
       },
       "cta": {
         "signedInTitle": "Bạn đã đăng nhập",

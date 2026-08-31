@@ -1401,7 +1401,11 @@
         "browseChannels": "チャンネルを見る",
         "signIn": "サインイン",
         "aboutIcPay": "ICPay について",
-        "imageAlt": "モバイル版 ICPay ウォレット"
+        "imageAlt": "モバイル版 ICPay ウォレット",
+        "imageAltDesktop": "デスクトップのICPayウォレット",
+        "previewMobile": "モバイル",
+        "previewDesktop": "デスクトップ",
+        "previewTabsLabel": "アプリプレビュー"
       },
       "cta": {
         "signedInTitle": "サインイン済みです",

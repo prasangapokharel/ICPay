@@ -1401,7 +1401,11 @@
         "browseChannels": "Explorar canales",
         "signIn": "Iniciar sesión",
         "aboutIcPay": "Acerca de ICPay",
-        "imageAlt": "Monedero ICPay en móvil"
+        "imageAlt": "Monedero ICPay en móvil",
+        "imageAltDesktop": "Cartera ICPay en escritorio",
+        "previewMobile": "Móvil",
+        "previewDesktop": "Escritorio",
+        "previewTabsLabel": "Vista previa de la app"
       },
       "cta": {
         "signedInTitle": "Has iniciado sesión",

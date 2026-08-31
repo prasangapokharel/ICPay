@@ -9,6 +9,7 @@ export function pageImageUrl(path: string): string {
 export const PAGE_IMAGES = {
   landing: {
     heroPhone: page("landing/hero-phone.png"),
+    heroDesktop: page("landing/desktop.png"),
     laptopMockup: page("landing/laptop-mockup.png"),
     paymentFlow: page("landing/payment-flow.webp"),
   },

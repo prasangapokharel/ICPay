@@ -1401,7 +1401,11 @@
         "browseChannels": "浏览频道",
         "signIn": "登录",
         "aboutIcPay": "关于 ICPay",
-        "imageAlt": "移动端 ICPay 钱包"
+        "imageAlt": "移动端 ICPay 钱包",
+        "imageAltDesktop": "桌面版 ICPay 钱包",
+        "previewMobile": "移动端",
+        "previewDesktop": "桌面端",
+        "previewTabsLabel": "应用预览"
       },
       "cta": {
         "signedInTitle": "您已登录",

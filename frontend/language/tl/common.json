@@ -1400,7 +1400,11 @@
         "browseChannels": "Mag-browse ng channels",
         "signIn": "Mag-sign In",
         "aboutIcPay": "Tungkol sa ICPay",
-        "imageAlt": "ICPay wallet sa mobile"
+        "imageAlt": "ICPay wallet sa mobile",
+        "imageAltDesktop": "ICPay wallet sa desktop",
+        "previewMobile": "Mobile",
+        "previewDesktop": "Desktop",
+        "previewTabsLabel": "Preview ng app"
       },
       "cta": {
         "signedInTitle": "Naka-sign in ka na",

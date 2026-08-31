@@ -1401,7 +1401,11 @@
         "browseChannels": "Просмотреть каналы",
         "signIn": "Войти",
         "aboutIcPay": "Об ICPay",
-        "imageAlt": "Кошелёк ICPay на мобильном устройстве"
+        "imageAlt": "Кошелёк ICPay на мобильном устройстве",
+        "imageAltDesktop": "Кошелёк ICPay на компьютере",
+        "previewMobile": "Мобильный",
+        "previewDesktop": "Десктоп",
+        "previewTabsLabel": "Предпросмотр приложения"
       },
       "cta": {
         "signedInTitle": "Вы вошли в систему",

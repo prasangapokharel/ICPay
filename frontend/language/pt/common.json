@@ -1401,7 +1401,11 @@
         "browseChannels": "Explorar canais",
         "signIn": "Entrar",
         "aboutIcPay": "Sobre o ICPay",
-        "imageAlt": "Carteira ICPay no celular"
+        "imageAlt": "Carteira ICPay no celular",
+        "imageAltDesktop": "Carteira ICPay no desktop",
+        "previewMobile": "Mobile",
+        "previewDesktop": "Desktop",
+        "previewTabsLabel": "Pré-visualização do app"
       },
       "cta": {
         "signedInTitle": "Você está conectado",

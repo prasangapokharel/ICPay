@@ -26,7 +26,7 @@ export function ServiceTile({
       <span className="relative">
         <span
           className={cn(
-            "flex size-10 items-center justify-center overflow-hidden rounded-2xl bg-gray-800 shadow-sm",
+            "flex size-10 items-center justify-center overflow-hidden rounded-2xl bg-gray-800 text-white shadow-sm",
             "transition-colors hover:bg-gray-700"
           )}
         >

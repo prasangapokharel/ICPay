@@ -1400,7 +1400,11 @@
         "browseChannels": "Kanallara göz at",
         "signIn": "Giriş Yap",
         "aboutIcPay": "ICPay Hakkında",
-        "imageAlt": "Mobilde ICPay cüzdanı"
+        "imageAlt": "Mobilde ICPay cüzdanı",
+        "imageAltDesktop": "Masaüstünde ICPay cüzdanı",
+        "previewMobile": "Mobil",
+        "previewDesktop": "Masaüstü",
+        "previewTabsLabel": "Uygulama önizlemesi"
       },
       "cta": {
         "signedInTitle": "Giriş yaptınız",
