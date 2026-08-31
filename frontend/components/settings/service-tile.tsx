@@ -4,7 +4,6 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { AppIcon, type AppIconName } from "@/components/ui/app-icon"
 import { GradientBadge } from "@/components/ui/gradient-badge"
-import { cn } from "@/lib/ui/utils"
 
 export function ServiceTile({
   href,
@@ -24,13 +23,8 @@ export function ServiceTile({
   const tile = (
     <>
       <span className="relative">
-        <span
-          className={cn(
-            "flex size-10 items-center justify-center overflow-hidden rounded-2xl bg-gray-800 text-white shadow-sm",
-            "transition-colors hover:bg-gray-700"
-          )}
-        >
-          <AppIcon name={icon} size={24} />
+        <span className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground">
+          <AppIcon name={icon} size={20} />
         </span>
         {badge ? (
           <GradientBadge className="absolute -right-2 -top-2 z-10" size="sm">
