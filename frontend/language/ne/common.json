@@ -1400,7 +1400,11 @@
         "browseChannels": "च्यानलहरू ब्राउज गर्नुहोस्",
         "signIn": "साइन इन",
         "aboutIcPay": "ICPay को बारेमा",
-        "imageAlt": "मोबाइलमा ICPay वालेट"
+        "imageAlt": "मोबाइलमा ICPay वालेट",
+        "imageAltDesktop": "डेस्कटपमा ICPay वालेट",
+        "previewMobile": "मोबाइल",
+        "previewDesktop": "डेस्कटप",
+        "previewTabsLabel": "एप पूर्वावलोकन"
       },
       "cta": {
         "signedInTitle": "तपाईं साइन इन हुनुहुन्छ",

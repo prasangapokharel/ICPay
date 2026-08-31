@@ -1400,7 +1400,11 @@
         "browseChannels": "تصفح القنوات",
         "signIn": "تسجيل الدخول",
         "aboutIcPay": "حول ICPay",
-        "imageAlt": "محفظة ICPay على الجوال"
+        "imageAlt": "محفظة ICPay على الجوال",
+        "imageAltDesktop": "محفظة ICPay على سطح المكتب",
+        "previewMobile": "الجوال",
+        "previewDesktop": "سطح المكتب",
+        "previewTabsLabel": "معاينة التطبيق"
       },
       "cta": {
         "signedInTitle": "أنت مسجّل الدخول",

@@ -1400,7 +1400,11 @@
         "browseChannels": "เรียกดูช่อง",
         "signIn": "เข้าสู่ระบบ",
         "aboutIcPay": "เกี่ยวกับ ICPay",
-        "imageAlt": "กระเป๋าเงิน ICPay บนมือถือ"
+        "imageAlt": "กระเป๋าเงิน ICPay บนมือถือ",
+        "imageAltDesktop": "กระเป๋า ICPay บนเดสก์ท็อป",
+        "previewMobile": "มือถือ",
+        "previewDesktop": "เดสก์ท็อป",
+        "previewTabsLabel": "ตัวอย่างแอป"
       },
       "cta": {
         "signedInTitle": "คุณเข้าสู่ระบบแล้ว",

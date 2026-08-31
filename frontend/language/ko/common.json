@@ -1401,7 +1401,11 @@
         "browseChannels": "채널 둘러보기",
         "signIn": "로그인",
         "aboutIcPay": "ICPay 소개",
-        "imageAlt": "모바일 ICPay 지갑"
+        "imageAlt": "모바일 ICPay 지갑",
+        "imageAltDesktop": "데스크톱의 ICPay 지갑",
+        "previewMobile": "모바일",
+        "previewDesktop": "데스크톱",
+        "previewTabsLabel": "앱 미리보기"
       },
       "cta": {
         "signedInTitle": "로그인되었습니다",

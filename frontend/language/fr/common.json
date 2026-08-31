@@ -1401,7 +1401,11 @@
         "browseChannels": "Parcourir les canaux",
         "signIn": "Se connecter",
         "aboutIcPay": "À propos d'ICPay",
-        "imageAlt": "Portefeuille ICPay sur mobile"
+        "imageAlt": "Portefeuille ICPay sur mobile",
+        "imageAltDesktop": "Portefeuille ICPay sur ordinateur",
+        "previewMobile": "Mobile",
+        "previewDesktop": "Bureau",
+        "previewTabsLabel": "Aperçu de l'application"
       },
       "cta": {
         "signedInTitle": "Vous êtes connecté",

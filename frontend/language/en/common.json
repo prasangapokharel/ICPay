@@ -1436,7 +1436,11 @@
         "browseChannels": "Browse channels",
         "signIn": "Sign In",
         "aboutIcPay": "About ICPay",
-        "imageAlt": "ICPay wallet on mobile"
+        "imageAlt": "ICPay wallet on mobile",
+        "imageAltDesktop": "ICPay wallet on desktop",
+        "previewMobile": "Mobile",
+        "previewDesktop": "Desktop",
+        "previewTabsLabel": "App preview"
       },
       "cta": {
         "signedInTitle": "You are signed in",

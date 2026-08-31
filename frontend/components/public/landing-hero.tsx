@@ -1,13 +1,11 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { useAuth } from "@/components/auth/auth-provider"
-import { Typewriter } from "@/components/shared/typewriter"
 import { Button } from "@/components/ui/button"
 import { HeroSignOptions } from "@/components/public/hero-sign-options"
-import { LANDING_MEDIA } from "@/lib/public/landing-media"
+import { LandingHeroPreview } from "@/components/public/landing-hero-preview"
 
 export function LandingHero() {
   const t = useTranslations("publicSite.landing.hero")
@@ -23,8 +21,8 @@ export function LandingHero() {
           <h1 className="max-w-xl text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
             {t("title")}
           </h1>
-          <p className="max-w-lg min-h-24 text-base leading-relaxed text-muted-foreground md:min-h-28 md:text-lg">
-            <Typewriter text={t("tagline")} speed={28} />
+          <p className="max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">
+            {t("tagline")}
           </p>
           <div className="flex flex-wrap gap-3">
             {!isLoading && isAuthenticated ? (
@@ -72,17 +70,8 @@ export function LandingHero() {
           <HeroSignOptions />
         </div>
 
-        <div className="relative mx-auto w-full max-w-xs sm:max-w-sm lg:max-w-md">
-          <Image
-            src={LANDING_MEDIA.heroMockup}
-            alt={t("imageAlt")}
-            title={t("imageAlt")}
-            width={800}
-            height={1280}
-            priority
-            className="w-full"
-            style={{ height: "auto" }}
-          />
+        <div className="w-full lg:max-w-none">
+          <LandingHeroPreview />
         </div>
       </div>
     </section>

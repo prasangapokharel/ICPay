@@ -16,6 +16,7 @@ const ICBUCKET_VIDEO_RAW =
 
 export const LANDING_MEDIA = {
   heroMockup: PAGE_IMAGES.landing.heroPhone,
+  heroDesktop: PAGE_IMAGES.landing.heroDesktop,
   laptopMockup: PAGE_IMAGES.landing.laptopMockup,
   bucketMockup: PAGE_IMAGES.icbucket.heroPhone,
   paymentFlow: PAGE_IMAGES.landing.paymentFlow,

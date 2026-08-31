@@ -1400,7 +1400,11 @@
         "browseChannels": "Jelajahi saluran",
         "signIn": "Masuk",
         "aboutIcPay": "Tentang ICPay",
-        "imageAlt": "Dompet ICPay di ponsel"
+        "imageAlt": "Dompet ICPay di ponsel",
+        "imageAltDesktop": "Dompet ICPay di desktop",
+        "previewMobile": "Mobile",
+        "previewDesktop": "Desktop",
+        "previewTabsLabel": "Pratinjau aplikasi"
       },
       "cta": {
         "signedInTitle": "Anda sudah masuk",

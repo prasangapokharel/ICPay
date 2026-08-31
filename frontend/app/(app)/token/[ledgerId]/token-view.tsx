@@ -1,10 +1,15 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  ArrowDown01Icon,
+  ArrowUp01Icon,
+  Exchange01Icon,
+} from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -25,11 +30,11 @@ import { TokenStandardsBadge } from "@/components/token/token-standards-badge"
 import { BtcWithdrawalList } from "@/components/chainkey/btc-withdrawal-list"
 import { CKBTC_LEDGER_ID } from "@/services/chainkey/constants"
 
-const ACTION_ICONS = {
-  send: "/images/dashboard/icons8-circled-up-right-48.png",
-  deposit: "/images/dashboard/icons8-circled-down-left-48.png",
-  swap: "/images/dashboard/icons8-dividends-48.png",
-} as const
+const TOKEN_ACTIONS = [
+  { key: "send" as const, icon: ArrowUp01Icon, action: "button" as const },
+  { key: "deposit" as const, icon: ArrowDown01Icon, action: "link" as const, href: (id: string) => `/token/${id}/deposit` },
+  { key: "swap" as const, icon: Exchange01Icon, action: "link" as const, href: (id: string) => `/trade?from=${id}`, swapOnly: true },
+]
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
@@ -111,56 +116,42 @@ export function TokenView() {
         </div>
 
         <div className="mt-5 flex justify-center gap-10">
-          <button
-            type="button"
-            aria-label={t("send")}
-            onClick={() => setSendOpen(true)}
-            className="transition-transform active:scale-95"
-          >
-            <span className="flex size-11 items-center justify-center rounded-full bg-gray-800">
-              <Image
-                src={ACTION_ICONS.send}
-                alt=""
-                width={20}
-                height={20}
-                className="size-5 object-contain"
-              />
-            </span>
-          </button>
-          <Link
-            href={`/token/${token.ledgerId}/deposit`}
-            prefetch
-            aria-label={t("deposit")}
-            className="transition-transform active:scale-95"
-          >
-            <span className="flex size-11 items-center justify-center rounded-full bg-gray-800">
-              <Image
-                src={ACTION_ICONS.deposit}
-                alt=""
-                width={20}
-                height={20}
-                className="size-5 object-contain"
-              />
-            </span>
-          </Link>
-          {isSwapToken(token.ledgerId) && (
-            <Link
-              href={`/trade?from=${token.ledgerId}`}
-              prefetch
-              aria-label={t("swap")}
-              className="transition-transform active:scale-95"
-            >
-              <span className="flex size-11 items-center justify-center rounded-full bg-gray-800">
-                <Image
-                  src={ACTION_ICONS.swap}
-                  alt=""
-                  width={20}
-                  height={20}
-                  className="size-5 object-contain"
-                />
+          {TOKEN_ACTIONS.map((item) => {
+            if (item.swapOnly && !isSwapToken(token.ledgerId)) return null
+
+            const icon = (
+              <span className="flex size-11 items-center justify-center rounded-full bg-gray-800 text-foreground">
+                <HugeiconsIcon icon={item.icon} className="size-5" strokeWidth={1.75} />
               </span>
-            </Link>
-          )}
+            )
+
+            if (item.key === "send") {
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  aria-label={t("send")}
+                  onClick={() => setSendOpen(true)}
+                  className="transition-transform active:scale-95"
+                >
+                  {icon}
+                </button>
+              )
+            }
+
+            const href = item.href!(token.ledgerId)
+            return (
+              <Link
+                key={item.key}
+                href={href}
+                prefetch
+                aria-label={t(item.key)}
+                className="transition-transform active:scale-95"
+              >
+                {icon}
+              </Link>
+            )
+          })}
         </div>
       </div>
 

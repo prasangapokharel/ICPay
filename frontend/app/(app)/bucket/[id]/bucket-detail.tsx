@@ -116,6 +116,17 @@ export function BucketDetail() {
     scheduleRefreshAfterUpload()
   }, [scheduleRefreshAfterUpload])
 
+  const handleCreateFolder = useCallback(
+    async (name: string) => {
+      const path = joinObjectPath(prefix, `${name}/`)
+      const res = await createFolder(identity, bucketId, path)
+      if ("err" in res) throw new Error(res.err)
+      setPrefix(nestedPrefix(prefix, name))
+      void refreshFolderListing()
+    },
+    [identity, bucketId, prefix, refreshFolderListing]
+  )
+
   const handleDelete = async (path: string) => {
     const res = await deleteFile(identity, bucketId, path)
     if ("err" in res) return res.err
@@ -294,13 +305,7 @@ export function BucketDetail() {
       <BucketFolderDialog
         open={folderOpen}
         onOpenChange={setFolderOpen}
-        onCreate={async (name) => {
-          const path = joinObjectPath(prefix, `${name}/`)
-          const res = await createFolder(identity, bucketId, path)
-          if ("err" in res) throw new Error(res.err)
-          await refreshFolderListing()
-          setPrefix(nestedPrefix(prefix, name))
-        }}
+        onCreate={handleCreateFolder}
       />
 
       <BucketRenewDrawer
