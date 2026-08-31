@@ -68,6 +68,10 @@
       "destination": "/bucket/id"
     },
     {
+      "source": "/transactions/:id",
+      "destination": "/transactions/id"
+    },
+    {
       "source": "/live/:id",
       "destination": "/live/id"
     },

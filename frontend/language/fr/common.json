@@ -261,7 +261,21 @@
       "pending": "En attente",
       "failed": "Échouée",
       "cancelled": "Annulée"
-    }
+    },
+    "detailTitle": "Détails de la transaction",
+    "rowDate": "Date",
+    "rowId": "ID de transaction",
+    "rowMemo": "Mémo",
+    "viewExplorer": "Voir dans l'explorateur",
+    "notFound": "Transaction introuvable.",
+    "dateToday": "Aujourd'hui",
+    "dateYesterday": "Hier",
+    "amountReceived": "Montant reçu",
+    "amountSent": "Montant envoyé",
+    "repay": "Rembourser",
+    "sendAgain": "Renvoyer",
+    "rowNetwork": "Réseau",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "Acheter un nom d'utilisateur",

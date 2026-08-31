@@ -261,7 +261,21 @@
       "pending": "Tertunda",
       "failed": "Gagal",
       "cancelled": "Dibatalkan"
-    }
+    },
+    "detailTitle": "Detail transaksi",
+    "rowDate": "Tanggal",
+    "rowId": "ID transaksi",
+    "rowMemo": "Memo",
+    "viewExplorer": "Lihat di explorer",
+    "notFound": "Transaksi tidak ditemukan.",
+    "dateToday": "Hari ini",
+    "dateYesterday": "Kemarin",
+    "amountReceived": "Jumlah diterima",
+    "amountSent": "Jumlah dikirim",
+    "repay": "Bayar kembali",
+    "sendAgain": "Kirim lagi",
+    "rowNetwork": "Jaringan",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "Beli nama pengguna",

@@ -82,9 +82,22 @@ function isValidFor(mode: TransferMode, v: string): boolean {
   return t.length >= USERNAME_MIN_LENGTH
 }
 
+function detectInitialMode(value: string): TransferMode {
+  const trimmed = value.trim().replace(/^@/, "")
+  if (!trimmed) return "username"
+  if (isHexAccountId(trimmed)) return "account"
+  try {
+    Principal.fromText(trimmed)
+    return "principal"
+  } catch {
+    return "username"
+  }
+}
+
 export function TransferForm({
   onTransfer,
   balance,
+  initialTo,
 }: {
   onTransfer: (
     mode: TransferMode,
@@ -94,11 +107,14 @@ export function TransferForm({
     subaccount?: Uint8Array
   ) => Promise<string | null>
   balance?: bigint
+  initialTo?: string
 }) {
   const t = useTranslations("transfer")
   const tc = useTranslations("common")
-  const [mode, setMode] = useState<TransferMode>("username")
-  const [to, setTo] = useState("")
+  const [mode, setMode] = useState<TransferMode>(() =>
+    initialTo ? detectInitialMode(initialTo) : "username"
+  )
+  const [to, setTo] = useState(() => initialTo?.replace(/^@/, "") ?? "")
   const [amount, setAmount] = useState("")
   const [memo, setMemo] = useState("")
   const [error, setError] = useState<string | null>(null)

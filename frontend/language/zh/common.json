@@ -261,7 +261,21 @@
       "pending": "处理中",
       "failed": "已失败",
       "cancelled": "已取消"
-    }
+    },
+    "detailTitle": "交易详情",
+    "rowDate": "日期",
+    "rowId": "交易 ID",
+    "rowMemo": "备注",
+    "viewExplorer": "在浏览器中查看",
+    "notFound": "未找到交易。",
+    "dateToday": "今天",
+    "dateYesterday": "昨天",
+    "amountReceived": "收到金额",
+    "amountSent": "发出金额",
+    "repay": "还款",
+    "sendAgain": "再次发送",
+    "rowNetwork": "网络",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "购买用户名",

@@ -261,7 +261,21 @@
       "pending": "保留中",
       "failed": "失敗",
       "cancelled": "キャンセル済み"
-    }
+    },
+    "detailTitle": "取引の詳細",
+    "rowDate": "日付",
+    "rowId": "取引ID",
+    "rowMemo": "メモ",
+    "viewExplorer": "エクスプローラーで表示",
+    "notFound": "取引が見つかりません。",
+    "dateToday": "今日",
+    "dateYesterday": "昨日",
+    "amountReceived": "受取金額",
+    "amountSent": "送金金額",
+    "repay": "返済",
+    "sendAgain": "再送金",
+    "rowNetwork": "ネットワーク",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "ユーザー名を購入",
