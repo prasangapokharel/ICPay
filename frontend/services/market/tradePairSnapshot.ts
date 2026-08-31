@@ -6,13 +6,14 @@ import {
 } from "@/services/tokens"
 import { icrcTransferFee } from "@/services/ledger/icrc"
 import { quoteIcpswapPool, resolveIcpswapPool, type IcpswapPoolRef } from "@/lib/swap/icpswap"
-import { TERMINAL_EXTRA_BASES, TERMINAL_QUOTE_LEDGER_ID } from "@/lib/market/tradePairs"
+import { TERMINAL_QUOTE_LEDGER_ID } from "@/lib/market/tradePairs"
 import { fetchIcpswapTokenStats, type IcpswapTokenStats } from "@/services/market/icpswapStats"
 import {
   fetchIcrcLedgerFacts,
   isSupplyFixed,
   type IcrcLedgerFacts,
 } from "@/services/market/icrcLedgerFacts"
+import { fetchSnsRegistryList } from "@/services/sns/registry"
 
 export type TerminalPairRow = {
   baseLedgerId: string
@@ -38,10 +39,15 @@ export type TradePairSnapshot = {
 
 const UNIT_IN = 100_000_000n
 
-function baseLedgerIds(): string[] {
+async function resolveBaseLedgerIds(): Promise<string[]> {
+  const [snsList] = await Promise.all([fetchSnsRegistryList()])
   const seen = new Set<string>()
   const out: string[] = []
-  for (const id of [...PINNED_LEDGER_IDS, ...TERMINAL_EXTRA_BASES]) {
+  const candidates = [
+    ...PINNED_LEDGER_IDS,
+    ...snsList.map((r) => r.ledgerId),
+  ]
+  for (const id of candidates) {
     if (id === ICP_LEDGER_ID || id === ICPAY_LEDGER_ID) continue
     if (!seen.has(id)) {
       seen.add(id)
@@ -53,7 +59,7 @@ function baseLedgerIds(): string[] {
 
 export async function fetchTerminalPairs(): Promise<TerminalPairRow[]> {
   const agent = await createAgent(undefined)
-  const ids = baseLedgerIds()
+  const ids = await resolveBaseLedgerIds()
 
   const rows = await Promise.all(
     ids.map(async (baseLedgerId): Promise<TerminalPairRow | null> => {

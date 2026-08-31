@@ -957,11 +957,16 @@
     "buy": "Buy",
     "sell": "Sell",
     "amount": "Amount ({symbol})",
+    "balance": "Balance",
     "youReceive": "Estimated receive",
     "slippage": "Slippage tolerance",
     "openWalletTrade": "Trade in wallet",
     "signInToTrade": "Sign in to trade",
-    "orderDisclaimer": "Quotes are indicative. Execution happens in your ICPay wallet."
+    "orderDisclaimer": "Quotes are indicative. Execution happens in your ICPay wallet.",
+    "recentSwaps": "Recent swaps",
+    "noRecentSwaps": "No recent swaps for this pair.",
+    "swapBuy": "Bought",
+    "swapSell": "Sold"
   },
   "trade": {
     "title": "Trade",
