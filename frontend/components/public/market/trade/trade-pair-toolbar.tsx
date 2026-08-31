@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
-import { PairTokenIcon } from "@/components/public/market/trade/trade-market-watchlist"
+import { TokenAvatar } from "@/components/public/market/trade/token-avatar"
+import { cn } from "@/lib/ui/utils"
 import { changeClass, formatPct, formatUsd } from "@/lib/market/format"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
 
@@ -17,10 +18,9 @@ export function TradePairToolbar({
 
   if (loading && !snapshot) {
     return (
-      <div className="flex flex-wrap items-center gap-4 border-b border-border/60 bg-card/30 px-4 py-3">
-        <Skeleton className="h-8 w-40" />
-        <Skeleton className="h-6 w-24" />
-        <Skeleton className="h-6 w-20" />
+      <div className="flex flex-wrap items-center gap-4 border-b border-border/60 bg-card/40 px-4 py-3">
+        <Skeleton className="h-10 w-48" />
+        <Skeleton className="h-8 w-24" />
       </div>
     )
   }
@@ -28,37 +28,41 @@ export function TradePairToolbar({
   if (!snapshot) return null
 
   const stats = snapshot.stats
-  const pairLabel = `${snapshot.baseSymbol} / ${snapshot.quoteSymbol}`
+  const pairLabel = `${snapshot.base.symbol} / ${snapshot.quote.symbol}`
 
   return (
-    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-border/60 bg-card/30 px-4 py-3">
+    <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-border/60 bg-card/40 px-4 py-3">
       <div className="flex items-center gap-3">
-        <PairTokenIcon symbol={snapshot.baseSymbol} />
+        <TokenAvatar
+          symbol={snapshot.base.symbol}
+          logoUrl={snapshot.base.logoUrl}
+          className="size-10"
+        />
         <div>
-          <h1 className="text-lg font-bold tracking-tight">{pairLabel}</h1>
-          <p className="text-xs text-muted-foreground">{t("icpswapVenue")}</p>
+          <h1 className="text-xl font-bold tracking-tight">{pairLabel}</h1>
+          <p className="text-xs text-muted-foreground">{snapshot.base.name}</p>
         </div>
       </div>
 
-      <Stat label={t("price")} value={formatUsd(stats?.priceUsd, 6)} large />
-      <Stat
+      <Metric label={t("priceUsd")} value={formatUsd(stats?.priceUsd, 6)} large />
+      {snapshot.priceInIcp !== null && (
+        <Metric
+          label={t("priceIcp")}
+          value={`${snapshot.priceInIcp.toPrecision(6)} ${snapshot.quote.symbol}`}
+        />
+      )}
+      <Metric
         label={t("change24h")}
         value={formatPct(stats?.priceChange24h)}
         valueClass={changeClass(stats?.priceChange24h)}
       />
-      <Stat label={t("volume24h")} value={formatUsd(stats?.volume24hUsd)} />
-      <Stat label={t("tvl")} value={formatUsd(stats?.tvlUsd)} />
-      {snapshot.spotRate !== null && (
-        <Stat
-          label={t("spotRate")}
-          value={`${snapshot.spotRate.toPrecision(4)} ${snapshot.quoteSymbol}`}
-        />
-      )}
+      <Metric label={t("volume24h")} value={formatUsd(stats?.volume24hUsd)} />
+      <Metric label={t("tvl")} value={formatUsd(stats?.tvlUsd)} />
     </div>
   )
 }
 
-function Stat({
+function Metric({
   label,
   value,
   large,
@@ -71,8 +75,16 @@ function Stat({
 }) {
   return (
     <div>
-      <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className={large ? "text-xl font-semibold tabular-nums" : `text-sm font-medium tabular-nums ${valueClass ?? ""}`}>
+      <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </p>
+      <p
+        className={
+          large
+            ? "text-2xl font-semibold tabular-nums"
+            : cn("text-sm font-medium tabular-nums", valueClass)
+        }
+      >
         {value}
       </p>
     </div>

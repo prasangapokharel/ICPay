@@ -55,7 +55,7 @@ export function TradeTerminal() {
   }
 
   return (
-    <div className="flex min-h-[calc(100svh-4rem)] flex-col">
+    <div className="flex min-h-[calc(100svh-3.5rem)] flex-col bg-background">
       <TradePairToolbar snapshot={snapshot} loading={pairLoading} />
 
       <ResizablePanelGroup orientation="horizontal" className="min-h-0 flex-1">

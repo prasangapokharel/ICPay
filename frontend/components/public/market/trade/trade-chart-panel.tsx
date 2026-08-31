@@ -2,14 +2,14 @@
 
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Line, LineChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Skeleton } from "@/components/ui/skeleton"
-import { formatUsd, priceInRange } from "@/lib/market/format"
+import { formatUsd } from "@/lib/market/format"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
 
 const chartConfig = {
-  price: { label: "Price", color: "hsl(var(--primary))" },
+  price: { label: "USD", color: "hsl(var(--primary))" },
 }
 
 export function TradeChartPanel({
@@ -20,62 +20,77 @@ export function TradeChartPanel({
   loading?: boolean
 }) {
   const t = useTranslations("marketTrade")
-  const range = priceInRange(snapshot?.stats)
+  const stats = snapshot?.stats
 
   const chartData = useMemo(() => {
-    if (!range) return []
-    const steps = 24
-    const { low, high, price } = range
-    return Array.from({ length: steps }, (_, i) => {
-      const t = i / (steps - 1)
-      const wave = Math.sin(t * Math.PI * 2) * 0.08
-      const value = low + (high - low) * (t + wave * (1 - t))
-      return { idx: i, price: i === steps - 1 ? price : value }
-    })
-  }, [range])
+    if (!stats || stats.priceUsd <= 0) return []
+    const low = stats.priceLow24h > 0 ? stats.priceLow24h : stats.priceUsd
+    const high = stats.priceHigh24h > low ? stats.priceHigh24h : stats.priceUsd
+    const price = stats.priceUsd
+    return [
+      { label: t("rangeLow"), price: low },
+      { label: t("rangeNow"), price },
+      { label: t("rangeHigh"), price: high },
+    ]
+  }, [stats, t])
 
   if (loading && !snapshot) {
     return <Skeleton className="m-4 h-full min-h-[220px] rounded-xl" />
   }
 
+  const hasRange =
+    stats &&
+    stats.priceLow24h > 0 &&
+    stats.priceHigh24h > stats.priceLow24h &&
+    stats.priceUsd > 0
+
   return (
     <div className="flex h-full min-h-[220px] flex-col p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="text-sm font-medium">{t("chart24h")}</p>
-        {range && (
+        {hasRange && (
           <p className="text-xs text-muted-foreground tabular-nums">
-            {formatUsd(range.low, 4)} — {formatUsd(range.high, 4)}
+            {formatUsd(stats.priceLow24h, 4)} — {formatUsd(stats.priceHigh24h, 4)}
           </p>
         )}
       </div>
 
-      {chartData.length > 0 ? (
+      {hasRange ? (
         <ChartContainer config={chartConfig} className="min-h-[200px] flex-1">
-          <AreaChart data={chartData} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
+          <LineChart data={chartData} margin={{ left: 4, right: 12, top: 12, bottom: 0 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis dataKey="idx" hide />
+            <XAxis dataKey="label" tick={{ fontSize: 10 }} />
             <YAxis
-              domain={["dataMin", "dataMax"]}
-              tickFormatter={(v) => formatUsd(Number(v), 4)}
-              width={72}
+              domain={[
+                stats.priceLow24h * 0.995,
+                stats.priceHigh24h * 1.005,
+              ]}
+              tickFormatter={(v) => formatUsd(Number(v), 2)}
+              width={80}
               tick={{ fontSize: 10 }}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Area
+            <ReferenceLine
+              y={stats.priceUsd}
+              stroke="hsl(var(--primary))"
+              strokeDasharray="4 4"
+              strokeOpacity={0.5}
+            />
+            <Line
               type="monotone"
               dataKey="price"
               stroke="var(--color-price)"
-              fill="var(--color-price)"
-              fillOpacity={0.15}
               strokeWidth={2}
+              dot={{ r: 3, fill: "var(--color-price)" }}
             />
-          </AreaChart>
+          </LineChart>
         </ChartContainer>
       ) : (
         <div className="flex flex-1 items-center justify-center rounded-xl border border-dashed border-border/60 text-sm text-muted-foreground">
           {t("noChartData")}
         </div>
       )}
+      <p className="mt-2 text-[11px] text-muted-foreground">{t("chartSourceNote")}</p>
     </div>
   )
 }

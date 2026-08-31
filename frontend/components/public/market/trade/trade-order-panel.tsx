@@ -2,15 +2,19 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
+import useSWR from "swr"
 import { useTranslations } from "next-intl"
 import { buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/components/auth/auth-provider"
+import { useDebounced } from "@/hooks/ui/useDebounced"
 import { formatTokenAmount, parseTokenAmount } from "@/lib/wallet/utils"
 import { DEFAULT_SLIPPAGE_BPS } from "@/lib/trade/fees"
 import { cn } from "@/lib/ui/utils"
+import { fetchTradeQuoteChecked } from "@/services/trade/trade"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
 
 export function TradeOrderPanel({
@@ -21,22 +25,38 @@ export function TradeOrderPanel({
   loading?: boolean
 }) {
   const t = useTranslations("marketTrade")
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, identity } = useAuth()
   const [side, setSide] = useState<"buy" | "sell">("buy")
   const [amountText, setAmountText] = useState("")
 
-  const amountIn = useMemo(() => {
-    if (!snapshot || !amountText.trim()) return null
-    const decimals = side === "buy" ? snapshot.quoteDecimals : snapshot.baseDecimals
-    return parseTokenAmount(amountText, decimals)
-  }, [amountText, side, snapshot])
+  const tokenIn = side === "buy" ? snapshot?.quote : snapshot?.base
+  const tokenOut = side === "buy" ? snapshot?.base : snapshot?.quote
 
-  const estimatedOut = useMemo(() => {
-    if (!snapshot || amountIn === null || amountIn <= 0n || !snapshot.sampleQuoteOut) return null
-    if (snapshot.sampleAmountIn <= 0n) return null
-    const scaled = (amountIn * snapshot.sampleQuoteOut) / snapshot.sampleAmountIn
-    return scaled > 0n ? scaled : null
-  }, [amountIn, snapshot])
+  const amountIn = useMemo(() => {
+    if (!tokenIn || !amountText.trim()) return null
+    return parseTokenAmount(amountText, tokenIn.decimals)
+  }, [amountText, tokenIn])
+
+  const debouncedIn = useDebounced(amountIn, 400)
+
+  const { data: quote, isLoading: quoting } = useSWR(
+    snapshot && tokenIn && tokenOut && debouncedIn && debouncedIn > 0n
+      ? ["terminal-quote", side, snapshot.baseLedgerId, debouncedIn.toString()]
+      : null,
+    () =>
+      fetchTradeQuoteChecked(
+        identity,
+        tokenIn!.ledgerId,
+        tokenOut!.ledgerId,
+        debouncedIn!,
+        {
+          skipAllowlistCheck: true,
+          tokenInFee: tokenIn!.fee,
+          tokenOutFee: tokenOut!.fee,
+        }
+      ),
+    { revalidateOnFocus: false, dedupingInterval: 5_000 }
+  )
 
   const tradeHref = useMemo(() => {
     if (!snapshot) return "/trade"
@@ -46,23 +66,22 @@ export function TradeOrderPanel({
   }, [side, snapshot])
 
   if (loading && !snapshot) {
-    return <div className="h-full min-h-[320px] animate-pulse bg-muted/30" />
+    return <div className="h-full min-h-[320px] animate-pulse bg-muted/20" />
   }
 
   if (!snapshot) return null
 
-  const paySymbol = side === "buy" ? snapshot.quoteSymbol : snapshot.baseSymbol
-  const receiveSymbol = side === "buy" ? snapshot.baseSymbol : snapshot.quoteSymbol
-  const receiveDecimals = side === "buy" ? snapshot.baseDecimals : snapshot.quoteDecimals
+  const paySymbol = tokenIn?.symbol ?? ""
+  const receiveSymbol = tokenOut?.symbol ?? ""
 
   return (
-    <div className="flex h-full min-h-0 flex-col border-l border-border/60 bg-card/50">
+    <div className="flex h-full min-h-0 flex-col border-l border-border/60 bg-card/40">
       <Tabs
         value={side}
         onValueChange={(v) => setSide(v as "buy" | "sell")}
         className="flex h-full flex-col"
       >
-        <TabsList className="m-3 grid w-auto grid-cols-2">
+        <TabsList className="m-3 grid w-auto grid-cols-2 bg-muted/40">
           <TabsTrigger value="buy" className="data-[state=active]:bg-emerald-500/15">
             {t("buy")}
           </TabsTrigger>
@@ -78,6 +97,7 @@ export function TradeOrderPanel({
               id="terminal-amount"
               inputMode="decimal"
               placeholder="0"
+              className="h-11 bg-background/60"
               value={amountText}
               onChange={(e) => setAmountText(e.target.value)}
             />
@@ -85,12 +105,21 @@ export function TradeOrderPanel({
 
           <div className="rounded-xl border border-border/60 bg-muted/20 p-3 text-sm">
             <p className="text-muted-foreground">{t("youReceive")}</p>
-            <p className="mt-1 text-lg font-semibold tabular-nums">
-              {estimatedOut !== null
-                ? `${formatTokenAmount(estimatedOut, receiveDecimals)} ${receiveSymbol}`
-                : "—"}
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">
+            <div className="mt-1 flex items-center gap-2">
+              {quoting && <Spinner className="size-4 text-muted-foreground" />}
+              <p className="text-lg font-semibold tabular-nums">
+                {quote && tokenOut
+                  ? `${formatTokenAmount(quote.amountOut, tokenOut.decimals)} ${receiveSymbol}`
+                  : "—"}
+              </p>
+            </div>
+            {quote && (
+              <p className="mt-2 text-xs text-muted-foreground tabular-nums">
+                {t("poolFee")}: {formatTokenAmount(quote.swapFee, tokenIn?.decimals ?? 8)}{" "}
+                {paySymbol}
+              </p>
+            )}
+            <p className="mt-1 text-xs text-muted-foreground">
               {t("slippage")}: {(Number(DEFAULT_SLIPPAGE_BPS) / 100).toFixed(0)}%
             </p>
           </div>
@@ -111,7 +140,9 @@ export function TradeOrderPanel({
             </Link>
           )}
 
-          <p className="text-center text-[11px] text-muted-foreground">{t("orderDisclaimer")}</p>
+          <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+            {t("orderDisclaimer")}
+          </p>
         </TabsContent>
       </Tabs>
     </div>

@@ -4,12 +4,11 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Badge } from "@/components/ui/badge"
+import { TokenAvatar } from "@/components/public/market/trade/token-avatar"
 import { cn } from "@/lib/ui/utils"
 import { changeClass, formatPct, formatUsd } from "@/lib/market/format"
-import type { TerminalPairSeed } from "@/lib/market/tradePairs"
-import type { IcpswapTokenStats } from "@/services/market/icpswapStats"
-
-type WatchRow = TerminalPairSeed & { stats: IcpswapTokenStats | null }
+import type { TerminalPairRow } from "@/services/market/tradePairSnapshot"
 
 export function TradeMarketWatchlist({
   rows,
@@ -17,7 +16,7 @@ export function TradeMarketWatchlist({
   onSelect,
   loading,
 }: {
-  rows: WatchRow[]
+  rows: TerminalPairRow[]
   activeBaseId: string
   onSelect: (baseLedgerId: string) => void
   loading?: boolean
@@ -28,27 +27,30 @@ export function TradeMarketWatchlist({
   const filtered = rows.filter((row) => {
     const q = query.trim().toLowerCase()
     if (!q) return true
-    return row.symbol.toLowerCase().includes(q) || row.name.toLowerCase().includes(q)
+    return (
+      row.base.symbol.toLowerCase().includes(q) ||
+      row.base.name.toLowerCase().includes(q)
+    )
   })
 
   return (
-    <div className="flex h-full min-h-0 flex-col border-r border-border/60 bg-card/40">
-      <div className="border-b border-border/60 p-3">
+    <div className="flex h-full min-h-0 flex-col border-r border-border/60 bg-card/30">
+      <div className="border-b border-border/60 px-3 py-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {t("markets")}
         </p>
         <Input
-          className="mt-2 h-9"
+          className="mt-2 h-9 bg-background/60"
           placeholder={t("searchPairs")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
       <ScrollArea className="flex-1">
-        <ul className="p-1">
+        <ul className="p-1.5">
           {loading && rows.length === 0
             ? Array.from({ length: 6 }).map((_, i) => (
-                <li key={i} className="m-1 h-12 animate-pulse rounded-lg bg-muted/60" />
+                <li key={i} className="m-1 h-14 animate-pulse rounded-lg bg-muted/50" />
               ))
             : filtered.map((row) => (
                 <li key={row.baseLedgerId}>
@@ -56,19 +58,34 @@ export function TradeMarketWatchlist({
                     type="button"
                     onClick={() => onSelect(row.baseLedgerId)}
                     className={cn(
-                      "flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
+                      "flex w-full items-center gap-2.5 rounded-lg px-2 py-2.5 text-left text-sm transition-colors",
                       row.baseLedgerId === activeBaseId
-                        ? "bg-primary/10 text-foreground"
-                        : "hover:bg-muted/60"
+                        ? "bg-primary/10 ring-1 ring-primary/20"
+                        : "hover:bg-muted/50"
                     )}
                   >
-                    <span className="min-w-0">
-                      <span className="block font-semibold">{row.symbol}</span>
+                    <TokenAvatar symbol={row.base.symbol} logoUrl={row.base.logoUrl} />
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5">
+                        <span className="font-semibold">{row.base.symbol}</span>
+                        {!row.hasPool && (
+                          <Badge variant="outline" className="h-4 px-1 text-[9px]">
+                            {t("noPool")}
+                          </Badge>
+                        )}
+                      </span>
                       <span className="block truncate text-xs text-muted-foreground">/ ICP</span>
                     </span>
                     <span className="shrink-0 text-right">
-                      <span className="block tabular-nums">{formatUsd(row.stats?.priceUsd, 4)}</span>
-                      <span className={cn("block text-xs tabular-nums", changeClass(row.stats?.priceChange24h))}>
+                      <span className="block text-xs tabular-nums">
+                        {formatUsd(row.stats?.priceUsd, 4)}
+                      </span>
+                      <span
+                        className={cn(
+                          "block text-[11px] tabular-nums",
+                          changeClass(row.stats?.priceChange24h)
+                        )}
+                      >
                         {formatPct(row.stats?.priceChange24h)}
                       </span>
                     </span>
@@ -78,14 +95,5 @@ export function TradeMarketWatchlist({
         </ul>
       </ScrollArea>
     </div>
-  )
-}
-
-export function PairTokenIcon({ symbol }: { symbol: string }) {
-  const letter = symbol.slice(0, 1).toUpperCase()
-  return (
-    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold">
-      {letter}
-    </span>
   )
 }
