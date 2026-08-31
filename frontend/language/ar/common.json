@@ -702,7 +702,8 @@
       "supplyTooLarge": "إجمالي العرض إلى حد كبير",
       "linkScheme": "الروابط يجب أن تبدأ ب https://",
       "linkTooLong": "الارتباط طويل جدًا"
-    }
+    },
+    "connectWallet": "ربط المحفظة"
   },
   "icpayToken": {
     "title": "رمز ICPAY",
@@ -1305,6 +1306,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "إطار Motoko للإنتاج مع CLI عالمي."
+        },
+        "launch": {
+          "title": "إطلاق رمز",
+          "description": "أنشئ رمز ICRC-1 على Internet Computer."
         }
       },
       "resources": {

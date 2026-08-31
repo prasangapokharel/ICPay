@@ -702,7 +702,8 @@
       "supplyTooLarge": "อุปทานรวมใหญ่เกินไป",
       "linkScheme": "ลิงก์ต้องขึ้นต้นด้วย https://",
       "linkTooLong": "ลิงก์ยาวเกินไป"
-    }
+    },
+    "connectWallet": "เชื่อมต่อกระเป๋าเงิน"
   },
   "icpayToken": {
     "title": "ICPAY Token",
@@ -1305,6 +1306,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "เฟรมเวิร์ก Motoko สำหรับโปรดักชันพร้อม CLI สากล"
+        },
+        "launch": {
+          "title": "เปิดตัวโทเค็น",
+          "description": "สร้างโทเค็น ICRC-1 บน Internet Computer"
         }
       },
       "resources": {

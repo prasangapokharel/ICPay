@@ -669,6 +669,7 @@
     "networkFee": "Network fee",
     "insufficient": "You need {total} ICP in your wallet to launch.",
     "notReady": "Token creation is unavailable right now. No launch can be paid for until it is back.",
+    "connectWallet": "Connect wallet",
     "review": "Review launch",
     "confirmTitle": "Launch this token?",
     "confirmBody": "The fee is charged before the ledger canister is created, and nothing about a launch can be undone.",
@@ -1333,6 +1334,10 @@
         "wallet": {
           "title": "ICPay Wallet",
           "description": "Send ICP by username with Internet Identity sign-in."
+        },
+        "launch": {
+          "title": "Launch Token",
+          "description": "Create an ICRC-1 token on the Internet Computer."
         },
         "icbucket": {
           "title": "ICBucket",

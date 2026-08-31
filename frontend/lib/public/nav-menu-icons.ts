@@ -21,6 +21,7 @@ export const NAV_MENU_ICONS: Record<string, IconSvgElement> = {
   "/charity": FavouriteIcon,
   "/blog": News01Icon,
   "/login": Wallet01Icon,
+  "/token/create": Rocket01Icon,
   "/icbucket": CloudIcon,
   "/icfalcon": Rocket01Icon,
   "/products/icFalcon/commands": TerminalIcon,

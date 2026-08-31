@@ -632,7 +632,8 @@
       "supplyTooLarge": "総供給量が大きすぎます",
       "linkScheme": "リンクは https:// で始まる必要があります",
       "linkTooLong": "リンクが長すぎます"
-    }
+    },
+    "connectWallet": "ウォレットを接続"
   },
   "icpayToken": {
     "title": "ICPAY トークン",
@@ -1306,6 +1307,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "グローバル CLI 付きの本番向け Motoko フレームワーク。"
+        },
+        "launch": {
+          "title": "トークンをローンチ",
+          "description": "Internet Computer上でICRC-1トークンを作成。"
         }
       },
       "resources": {

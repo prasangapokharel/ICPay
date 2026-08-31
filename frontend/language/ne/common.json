@@ -702,7 +702,8 @@
       "supplyTooLarge": "कुल आपूर्ति धेरै धेरै छ",
       "linkScheme": "आवश्यकताहरू https://बाट सुरु गर्नु आवश्यक छ",
       "linkTooLong": "धेरै लामो छ"
-    }
+    },
+    "connectWallet": "वालेट जोड्नुहोस्"
   },
   "icpayToken": {
     "title": "आईसीपीवाय बैंक",
@@ -1305,6 +1306,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "ग्लोबल CLI सहित प्रोडक्शन Motoko फ्रेमवर्क।"
+        },
+        "launch": {
+          "title": "टोकन लन्च गर्नुहोस्",
+          "description": "Internet Computer मा ICRC-1 टोकन सिर्जना गर्नुहोस्।"
         }
       },
       "resources": {

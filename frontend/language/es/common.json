@@ -632,7 +632,8 @@
       "supplyTooLarge": "El suministro total es demasiado grande",
       "linkScheme": "Los enlaces deben empezar por https://",
       "linkTooLong": "Enlace demasiado largo"
-    }
+    },
+    "connectWallet": "Conectar billetera"
   },
   "icpayToken": {
     "title": "Token ICPAY",
@@ -1306,6 +1307,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Framework Motoko de producción con una CLI global."
+        },
+        "launch": {
+          "title": "Lanzar token",
+          "description": "Crea un token ICRC-1 en Internet Computer."
         }
       },
       "resources": {

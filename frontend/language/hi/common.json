@@ -632,7 +632,8 @@
       "supplyTooLarge": "कुल आपूर्ति बहुत बड़ी है",
       "linkScheme": "लिंक https:// से शुरू होने चाहिए",
       "linkTooLong": "लिंक बहुत लंबा है"
-    }
+    },
+    "connectWallet": "वॉलेट कनेक्ट करें"
   },
   "icpayToken": {
     "title": "ICPAY टोकन",
@@ -1306,6 +1307,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "ग्लोबल CLI के साथ प्रोडक्शन Motoko फ्रेमवर्क।"
+        },
+        "launch": {
+          "title": "टोकन लॉन्च करें",
+          "description": "Internet Computer पर ICRC-1 टोकन बनाएं।"
         }
       },
       "resources": {

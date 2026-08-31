@@ -632,7 +632,8 @@
       "supplyTooLarge": "총 발행량이 너무 큽니다",
       "linkScheme": "링크는 https:// 로 시작해야 합니다",
       "linkTooLong": "링크가 너무 깁니다"
-    }
+    },
+    "connectWallet": "지갑 연결"
   },
   "icpayToken": {
     "title": "ICPAY 토큰",
@@ -1306,6 +1307,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "글로벌 CLI가 포함된 프로덕션 Motoko 프레임워크."
+        },
+        "launch": {
+          "title": "토큰 출시",
+          "description": "Internet Computer에서 ICRC-1 토큰을 만드세요."
         }
       },
       "resources": {
