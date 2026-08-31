@@ -86,7 +86,9 @@ export function LandingDownloads() {
                         size="sm"
                         nativeButton={false}
                         className="shrink-0"
-                        render={<a href={meta.href} download />}
+                        render={
+                          <a href={meta.href} target="_blank" rel="noopener noreferrer" />
+                        }
                       >
                         {t("download")}
                       </Button>
@@ -122,7 +124,13 @@ export function LandingDownloads() {
                   variant="outline"
                   nativeButton={false}
                   className="shrink-0"
-                  render={<a href={DESKTOP_DOWNLOADS.linuxDeb} download />}
+                  render={
+                    <a
+                      href={DESKTOP_DOWNLOADS.linuxDeb}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  }
                 >
                   {t("download")}
                 </Button>
