@@ -16,7 +16,15 @@ import { useDebounced } from "@/hooks/ui/useDebounced"
 import { useApplyTradeBalances, useTradeTokens, useTradingBalance, tradeBalanceKey } from "@/hooks/trade/useTrade"
 import { useRefreshWallet, useTokenHolding } from "@/hooks/wallet/useWalletData"
 import { parseTokenAmount, toPlainTokenAmount } from "@/lib/wallet/utils"
-import { tradeOrderBlock } from "@/lib/market/tradeOrderBlock"
+import { tradeOrderAlert, tradeOrderBlock, tradeImpactAlert, canSubmitTrade, canOpenTransfer } from "@/lib/market/tradeOrderBlock"
+import { classifyTradeQuoteError, classifyTradeExecError, shouldRetryTradeQuote } from "@/lib/market/tradeQuoteError"
+import {
+  estimatePriceImpactPct,
+  isTradeTokenSafe,
+  priceImpactBand,
+  shouldQuoteTrade,
+} from "@/lib/market/tradePreflight"
+import { isSwapBlocked } from "@/lib/swap/config"
 import { showWalletLine, tradeCta } from "@/lib/market/tradeAuthUi"
 import { formatUsd } from "@/lib/market/format"
 import { cn } from "@/lib/ui/utils"
@@ -36,7 +44,6 @@ import {
   patchTradeFill,
   setTradeFillNotice,
 } from "@/lib/market/tradeFillStore"
-import { TradeSwapHistory } from "./trade-swap-history"
 import { TradeOrderQuote } from "./trade-order-quote"
 import { TradeAvailableAssets } from "./trade-available-assets"
 
@@ -91,6 +98,7 @@ export function TradeOrderPanel({
   const [amountText, setAmountText] = useState("")
   const [status, setStatus] = useState<TradeStatus>("idle")
   const [tradeError, setTradeError] = useState<string | null>(null)
+  const [impactConfirmed, setImpactConfirmed] = useState(false)
 
   const tokenIn = side === "buy" ? snapshot?.quote : snapshot?.base
   const tokenOut = side === "buy" ? snapshot?.base : snapshot?.quote
@@ -101,11 +109,40 @@ export function TradeOrderPanel({
   const amountIn = amountText.trim() && tokenIn
     ? parseTokenAmount(amountText, tokenIn.decimals)
     : null
-  const debouncedIn = useDebounced(amountIn, 200)
+  const debouncedIn = useDebounced(amountIn, 400)
+  const tokenBlocked = Boolean(
+    tokenIn &&
+      tokenOut &&
+      (isSwapBlocked(tokenIn.ledgerId) ||
+        isSwapBlocked(tokenOut.ledgerId) ||
+        !isTradeTokenSafe(tokenIn) ||
+        !isTradeTokenSafe(tokenOut))
+  )
+  const hasPool = Boolean(snapshot?.pool)
 
-  const { data: quote, isLoading: quoting } = useSWR(
-    snapshot && tokenIn && tokenOut && debouncedIn && debouncedIn > 0n
-      ? ["terminal-quote", side, snapshot.baseLedgerId, debouncedIn.toString()]
+  const payUsdNow = (() => {
+    if (!amountIn || !tokenIn || !snapshot) return null
+    if (side === "buy") return tokenAmountUsd(amountIn, tokenIn.decimals, icpPrice?.usd ?? 0)
+    const tokenUsd =
+      snapshot.stats?.priceUsd && snapshot.stats.priceUsd > 0
+        ? snapshot.stats.priceUsd
+        : snapshot.priceInIcp && icpPrice?.usd
+          ? snapshot.priceInIcp * icpPrice.usd
+          : 0
+    return tokenAmountUsd(amountIn, tokenIn.decimals, tokenUsd)
+  })()
+  const impactPct = estimatePriceImpactPct(payUsdNow, snapshot?.stats?.tvlUsd ?? null)
+  const impactBand = priceImpactBand(impactPct)
+  const canQuote = shouldQuoteTrade({
+    hasPool,
+    blocked: tokenBlocked,
+    amountIn: debouncedIn,
+    impactBand,
+  })
+
+  const { data: quote, error: quoteErr, isLoading: quoting } = useSWR(
+    canQuote
+      ? ["terminal-quote", side, snapshot!.baseLedgerId, debouncedIn!.toString()]
       : null,
     () =>
       fetchTradeQuoteChecked(
@@ -115,45 +152,47 @@ export function TradeOrderPanel({
         debouncedIn!,
         { skipAllowlistCheck: true, tokenInFee: tokenIn!.fee, tokenOutFee: tokenOut!.fee }
       ),
-    { revalidateOnFocus: false, dedupingInterval: 15_000 }
-  )
-
-  function payTokenUsd(): number | null {
-    if (!amountIn || !tokenIn || !snapshot) return null
-    if (side === "buy") {
-      return tokenAmountUsd(amountIn, tokenIn.decimals, icpPrice?.usd ?? 0)
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 15_000,
+      shouldRetryOnError: shouldRetryTradeQuote,
+      errorRetryCount: 1,
     }
-    const tokenUsd =
-      snapshot.stats?.priceUsd && snapshot.stats.priceUsd > 0
-        ? snapshot.stats.priceUsd
-        : snapshot.priceInIcp && icpPrice?.usd
-          ? snapshot.priceInIcp * icpPrice.usd
-          : 0
-    return tokenAmountUsd(amountIn, tokenIn.decimals, tokenUsd)
-  }
+  )
+  const quoteError = quoteErr ? classifyTradeQuoteError(quoteErr) : null
 
   function applyFill(pct: number) {
     if (!tradingBal || !tokenIn) return
     const maxIn = maxTradeInput(tradingBal, tokenIn.fee)
     const raw = (maxIn * BigInt(pct)) / 100n
+    setImpactConfirmed(false)
     setAmountText(toPlainTokenAmount(raw, tokenIn.decimals))
   }
 
-  async function handleTrade() {
-    if (!snapshot || !tokenIn || !tokenOut || !amountIn || !quote) return
+  async function handleTrade(now: number) {
+    if (!snapshot?.pool || !tokenIn || !tokenOut || !amountIn || !quote) return
+    if (isSwapBlocked(tokenIn.ledgerId) || isSwapBlocked(tokenOut.ledgerId)) {
+      setStatus("error")
+      setTradeError(t("cannotTrade"))
+      return
+    }
+    if (impactBand === "block") {
+      setStatus("error")
+      setTradeError(t("insufficientLiquidity"))
+      return
+    }
     const currentTradingBal = tradingBal
     if (currentTradingBal == null || amountIn > maxTradeInput(currentTradingBal, tokenIn.fee)) {
       setStatus("error")
       setTradeError(t("insufficientForFees"))
       return
     }
-    const payUsd = payTokenUsd()
+    const payUsd = payUsdNow
     if (!meetsMinTradeUsd(payUsd)) {
       setStatus("error")
       setTradeError(t("minTradeUsd", { usd: MIN_TRADE_USD }))
       return
     }
-    const now = Date.now()
     if (now - lastClick.current < 600) return
     lastClick.current = now
 
@@ -204,7 +243,7 @@ export function TradeOrderPanel({
           symbol: snapshot.base.symbol,
           amount: fillAmount,
           decimals: snapshot.base.decimals,
-          at: Date.now(),
+          at: now,
         })
         setStatus("error")
         setTradeError(result.err)
@@ -228,7 +267,7 @@ export function TradeOrderPanel({
         symbol: snapshot.base.symbol,
         amount: side === "buy" ? result.ok.amountOut : result.ok.amountIn,
         decimals: snapshot.base.decimals,
-        at: Date.now(),
+        at: now,
       })
     } catch (e) {
       applyBalances({
@@ -245,53 +284,50 @@ export function TradeOrderPanel({
         symbol: snapshot.base.symbol,
         amount: fillAmount,
         decimals: snapshot.base.decimals,
-        at: Date.now(),
+        at: now,
       })
       setStatus("error")
-      const errorMsg = e instanceof Error ? e.message : "Trade failed"
-      const userMsg = errorMsg.toLowerCase().includes("slippage")
-        ? t("slippageExceeded")
-        : errorMsg.toLowerCase().includes("liquidity")
-          ? t("insufficientLiquidity")
-          : errorMsg.toLowerCase().includes("timeout") || errorMsg.toLowerCase().includes("timed out")
-            ? t("tradeTimeout")
-            : errorMsg
-      setTradeError(userMsg)
+      const kind = classifyTradeExecError(e)
+      setTradeError(
+        kind === "slippage"
+          ? t("slippageExceeded")
+          : kind === "liquidity"
+            ? t("insufficientLiquidity")
+            : kind === "timeout"
+              ? t("tradeTimeout")
+              : e instanceof Error
+                ? e.message
+                : "Trade failed"
+      )
     }
   }
 
   if (loading && !snapshot) {
     return (
-      <div className="flex h-full min-h-0 flex-col overflow-y-auto pb-2">
-        <Card size="sm" className="m-1 gap-3 p-4">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden pb-1">
+        <Card size="sm" className="m-1 shrink-0 gap-3 p-4">
           <Skeleton className="h-8 w-full rounded-lg" />
           <Skeleton className="h-16 w-full rounded-lg" />
           <Skeleton className="h-9 w-full rounded-md" />
         </Card>
-        <Card size="sm" className="m-1 mb-1 flex min-h-[180px] flex-col overflow-hidden py-0">
-          <div className="shrink-0 border-b px-4 py-3">
-            <Skeleton className="h-3 w-24" />
-          </div>
-          <div className="space-y-2 px-4 py-3">
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-7 w-full rounded-md" />
-            ))}
-          </div>
-        </Card>
-        {isAuthenticated ? availableAssets : null}
+        {isAuthenticated ? (
+          <div className="flex min-h-0 flex-1 flex-col">{availableAssets}</div>
+        ) : null}
       </div>
     )
   }
 
   if (!snapshot) {
-    return isAuthenticated ? availableAssets : null
+    return isAuthenticated ? (
+      <div className="flex h-full min-h-0 flex-col">{availableAssets}</div>
+    ) : null
   }
 
   const paySymbol = tokenIn?.symbol ?? ""
   const receiveSymbol = tokenOut?.symbol ?? ""
   const hasAmount = Boolean(amountIn && amountIn > 0n)
   const maxIn = tradingBal !== null && tokenIn ? maxTradeInput(tradingBal, tokenIn.fee) : 0n
-  const payUsd = payTokenUsd()
+  const payUsd = payUsdNow
   const aboveMinUsd = meetsMinTradeUsd(payUsd)
   const block = tradeOrderBlock({
     tradingBal: tradingBal ?? 0n,
@@ -299,7 +335,16 @@ export function TradeOrderPanel({
     maxIn,
     aboveMinUsd,
     hasQuote: !!quote,
+    blocked: tokenBlocked,
+    hasPool,
+    quoting,
+    quoteError,
+    impactBand,
   })
+  const guard =
+    tradeOrderAlert(block, MIN_TRADE_USD, quoteError) ??
+    (canSubmitTrade(block) ? tradeImpactAlert(impactBand, impactPct) : null)
+  const needsImpactConfirm = impactBand === "confirm" && !impactConfirmed
   const isBuy = side === "buy"
   const cta = tradeCta(authLoading, isAuthenticated)
 
@@ -313,6 +358,7 @@ export function TradeOrderPanel({
             setAmountText("")
             setStatus("idle")
             setTradeError(null)
+            setImpactConfirmed(false)
           }}
           className="flex min-h-0 flex-col"
         >
@@ -383,6 +429,7 @@ export function TradeOrderPanel({
                     setAmountText(e.target.value)
                     setStatus("idle")
                     setTradeError(null)
+                    setImpactConfirmed(false)
                   }}
                 />
                 <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-muted-foreground">
@@ -414,7 +461,7 @@ export function TradeOrderPanel({
               </div>
             )}
 
-            {hasAmount && tokenIn && tokenOut ? (
+            {hasAmount && tokenIn && tokenOut && canQuote ? (
               <TradeOrderQuote
                 quote={quote}
                 quoting={quoting}
@@ -425,15 +472,21 @@ export function TradeOrderPanel({
               />
             ) : null}
 
-            {status === "error" && tradeError ? (
+            {guard ? (
+              <Alert variant={guard.destructive ? "destructive" : "default"} className="py-2">
+                <AlertDescription className="text-xs">
+                  {guard.values && "pct" in guard.values
+                    ? t(guard.key as "highPriceImpact", guard.values)
+                    : guard.values && "usd" in guard.values
+                      ? t("minTradeUsd", guard.values)
+                      : t(guard.key as "cannotTrade")}
+                </AlertDescription>
+              </Alert>
+            ) : status === "error" && tradeError ? (
               <Alert variant="destructive" className="py-2">
                 <AlertDescription className="text-xs">{tradeError}</AlertDescription>
               </Alert>
             ) : null}
-
-            {block === "insufficient" && (
-              <p className="text-[11px] text-destructive">{t("notEnough")}</p>
-            )}
 
             {cta === "wait" ? (
               <Skeleton className="h-10 w-full rounded-md" />
@@ -461,17 +514,23 @@ export function TradeOrderPanel({
                     ? "bg-emerald-500 hover:bg-emerald-500/90"
                     : "bg-rose-500 hover:bg-rose-500/90"
                 )}
-                disabled={block !== "ok" && block !== "need_transfer"}
+                disabled={!canOpenTransfer(block) && !canSubmitTrade(block)}
                 onClick={() => {
-                  if (block === "need_transfer") {
+                  if (canOpenTransfer(block)) {
                     onOpenWalletTrade()
                     return
                   }
-                  void handleTrade()
+                  if (needsImpactConfirm) {
+                    setImpactConfirmed(true)
+                    return
+                  }
+                  void handleTrade(Date.now())
                 }}
               >
-                {block === "need_transfer" ? (
+                {block === "need_transfer" || block === "insufficient" ? (
                   t("notEnough")
+                ) : needsImpactConfirm ? (
+                  t("confirmImpact")
                 ) : isBuy ? (
                   `${t("buy")} ${snapshot.base.symbol}`
                 ) : (
@@ -487,13 +546,9 @@ export function TradeOrderPanel({
         </Tabs>
       </Card>
 
-      {isAuthenticated && (
-        <div className="flex min-h-0 flex-1 flex-col">
-          <TradeSwapHistory snapshot={snapshot} />
-        </div>
-      )}
-
-      {isAuthenticated ? availableAssets : null}
+      {isAuthenticated ? (
+        <div className="flex min-h-0 flex-1 flex-col">{availableAssets}</div>
+      ) : null}
     </div>
   )
 }

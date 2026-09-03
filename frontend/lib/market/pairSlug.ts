@@ -21,12 +21,13 @@ export function tradePairPath(symbol: string, quoteSymbol = QUOTE): string {
 export function tradePairHref(
   symbol: string,
   ledgerId: string,
-  listed: { symbol: string; ledgerId: string }[]
+  listed: { symbol: string; ledgerId: string }[],
+  forceBase = false
 ): string {
   const path = tradePairPath(symbol)
   const slug = pairSlug(symbol)
   const clashes = listed.filter((row) => pairSlug(row.symbol) === slug)
-  if (clashes.length > 1) return `${path}?base=${encodeURIComponent(ledgerId)}`
+  if (forceBase || clashes.length > 1) return `${path}?base=${encodeURIComponent(ledgerId)}`
   return path
 }
 

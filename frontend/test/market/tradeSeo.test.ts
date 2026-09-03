@@ -24,6 +24,7 @@ const listed = [
   { symbol: "CHAT", ledgerId: "c" },
 ]
 assert(tradePairHref("CHAT", "c", listed) === "/market/trade/CHAT_ICP", "unique href")
+assert(tradePairHref("CHAT", "c", listed, true).includes("base=c"), "force base")
 assert(tradePairHref("ICS", "b", listed).includes("base=b"), "clash query")
 assert(ledgerForPairSlug("CHAT_ICP", listed) === "c", "resolve")
 assert(ledgerForPairSlug("ICS_ICP", listed, "b") === "b", "prefer")

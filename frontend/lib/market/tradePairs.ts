@@ -10,6 +10,10 @@ export function isTerminalPairBase(ledgerId: string): boolean {
   return ledgerId !== ICP_LEDGER_ID && ledgerId !== ICPAY_LEDGER_ID
 }
 
+export function canSelectTradeBase(ledgerId: string): boolean {
+  return ledgerId !== TERMINAL_QUOTE_LEDGER_ID
+}
+
 export function defaultTerminalBase(): string {
   // ckBTC — highest ICP-denominated volume on ICPSwap
   return "mxzaz-hqaaa-aaaar-qaada-cai"

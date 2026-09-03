@@ -1,0 +1,149 @@
+# ICPay Pre-Trade Validation — Block Bad Swaps Before They Hit the Pool
+
+> Goal: by the time the user taps **Buy**, you already know whether it can succeed. Four gates, cheapest-first, each one able to short-circuit the flow with a specific disabled-button reason instead of a late on-chain "insufficient liquidity" failure.
+
+---
+
+## The 4 gates, in order
+
+```
+Gate 1: Pool exists?           → REST, official, cheap
+Gate 2: Token itself is safe?  → REST, official, cheap
+Gate 3: Enough liquidity for this trade size (price impact)?  → REST, cheap
+Gate 4: Live quote (the only 100%-authoritative check)         → canister call, do this last, right before enabling the button
+```
+
+Run 1–3 the moment a pair is opened (like your ICPAY/ICP screenshot). Run 4 continuously while the amount field is being typed, debounced — it's the one that actually confirms the trade will go through, everything before it is a cheap pre-filter to avoid firing on-chain calls for obviously-bad pairs.
+
+---
+
+## Gate 1 — Does a pool exist for this pair?
+
+```bash
+GET https://api.icpswap.com/info/pool/all
+```
+Filter client/server-side for `token0Id`/`token1Id` matching your pair. If nothing matches → this is exactly your screenshot's **"Pool canister: cbbnj-jqaaa-aaaar-qca3q-cai"** field, except when it's empty, show **"No pool for this pair"** and disable Buy immediately — no further calls needed.
+
+Cross-check via the canister directly (same data, useful as a fallback if the REST cache is stale):
+```
+NodeIndex.getAllPools() → query call
+returns vec<PublicPoolOverView> { pool: text (canister id), token0Id, token1Id, liquidity, totalVolumeUSD, ... }
+```
+
+Per-token pool list (useful when you already know the token but not the pool):
+```
+TokenStorage.getPoolsForToken(token_canister_id) → query call
+returns vec<PoolInfo> { pool, token0Id, token1Id, fee, token0Price, token1Price, ... }
+```
+
+---
+
+## Gate 2 — Is the token itself safe to list/trade?
+
+Cheap official checks, run once per token (cache the result):
+
+```bash
+# Confirm it's actually a ledger canister, not some other canister type
+GET https://ic-api.internetcomputer.org/api/v4/canisters/{canister_id}
+
+# Confirm ICRC metadata resolves cleanly (decimals, symbol, fee all present — a malformed/fake ledger will fail here)
+GET https://icrc-api.internetcomputer.org/api/v2/ledgers/{canister_id}
+
+# Anti-rug screen: reject if one wallet holds too much supply
+GET https://icrc-api.internetcomputer.org/api/v2/ledgers/{canister_id}/holders?sort_by=-balance&limit=1
+# top holder balance / total_supply > your threshold (e.g. 90%) → flag or block
+```
+The `/api/v2/ledgers` list endpoint also accepts `max_top_holder_percentage` server-side if you're filtering a whole list rather than one token:
+```bash
+GET https://icrc-api.internetcomputer.org/api/v2/ledgers?max_top_holder_percentage=90&has_transactions=true
+```
+Anything that fails to resolve here = **"blocked token"** in your Buy button state, before you even look at the pool.
+
+---
+
+## Gate 3 — Is there enough liquidity for *this trade size*? (price-impact pre-check)
+
+This is the gate your screenshot's thin pool ($74.70 TVL on ICPAY/ICP) needs most — a user typing in 50 ICP against a $74 pool should be blocked before they even see a quote button light up.
+
+```bash
+GET https://api.icpswap.com/info/pool/{poolId}
+```
+or the canister-level equivalent:
+```
+NodeIndex fields per pool: liquidity, sqrtPrice, token0Price, token1Price, totalVolumeUSD
+```
+
+Compute a rough price-impact estimate client-side:
+```
+estimated_impact_pct ≈ (trade_size_usd / pool_tvl_usd) × 100   // crude AMM approximation, good enough for a pre-filter
+```
+Thresholds to encode as button states:
+```
+impact < 1%    → Buy enabled, no warning
+1% – 5%        → Buy enabled, show "high price impact" warning
+5% – 15%       → Buy enabled but require a confirm-tap ("You may lose X% to slippage")
+> 15%          → Buy disabled, "Insufficient liquidity for this size" — matches your requirement exactly
+```
+This is an estimate, not the real AMM math (ICPSwap uses concentrated-liquidity/Uniswap-v3-style pricing via `sqrtPriceX96` and `tick`, not a flat constant-product curve) — it's meant purely to avoid firing Gate 4 for trades that are obviously too large, not to replace the real quote.
+
+---
+
+## Gate 4 — Live quote (the only check that's actually authoritative)
+
+This is a **canister call**, not REST — call it directly from your backend or via agent-js/agent-go against the pool canister, debounced on every amount-field keystroke (e.g. 400ms after typing stops):
+
+```
+SwapPool.quote(args: { zeroForOne: bool, amountIn: text, amountOutMinimum: text }) → query call
+returns Result<amountOut, Error>
+```
+Error variants worth mapping directly to UI states:
+```
+InsufficientFunds       → "Pool doesn't have enough liquidity" — this is the exact failure you're trying to catch before submit
+CommonError              → generic — show "Quote failed, try a smaller amount"
+UnsupportedToken         → shouldn't happen if Gate 2 passed, but handle defensively
+```
+Only enable the actual **Buy ICPAY** button once a fresh, successful `quote()` result exists for the current amount. If the amount changes, re-disable until the next quote resolves — this fully closes the gap between "looked fine a few seconds ago" and "fails on submit."
+
+---
+
+## Endpoint summary table
+
+| Gate | Check | Endpoint | Type | Cache? |
+|---|---|---|---|---|
+| 1 | Pool exists for pair | `GET /info/pool/all` (ICPSwap) or `NodeIndex.getAllPools()` | REST / query call | Yes, poll every 30–60s |
+| 1 | Pools for a specific token | `TokenStorage.getPoolsForToken(id)` | query call | Yes |
+| 2 | Canister is a real ledger | `GET /api/v4/canisters/{id}` (IC dashboard) | REST | Yes, per-token, long TTL |
+| 2 | ICRC metadata resolves | `GET /api/v2/ledgers/{id}` (ICRC API) | REST | Yes, long TTL |
+| 2 | Top-holder concentration | `GET /api/v2/ledgers/{id}/holders?sort_by=-balance&limit=1` | REST | Yes, hourly |
+| 3 | Pool TVL / price for impact estimate | `GET /info/pool/{poolId}` (ICPSwap) | REST | Yes, poll every 30–60s |
+| 4 | **Live executable quote** | `SwapPool.quote(...)` | **query call, no cache** | Never — always fresh |
+
+---
+
+## Suggested backend endpoint
+
+Wrap gates 1–3 into a single pre-flight call your frontend hits the moment a pair page opens (matches your screenshot's initial load, before the user types an amount):
+
+```
+GET /api/v1/trade/preflight?token_in=<id>&token_out=<id>
+
+{
+  "pool_exists": true,
+  "pool_id": "cbbnj-jqaaa-aaaar-qca3q-cai",
+  "pool_tvl_usd": 74.70,
+  "token_in_safe": true,
+  "token_out_safe": true,
+  "top_holder_pct": 34.2,
+  "max_recommended_trade_usd": 3.74,     // e.g. 5% of TVL, your own threshold
+  "button_state": "enabled_with_warning" // "disabled_no_pool" | "disabled_blocked_token" | "enabled" | "enabled_with_warning" | "disabled_insufficient_liquidity"
+}
+```
+
+Gate 4 (`quote()`) stays a separate, uncached, on-demand call tied to the amount field — it's the last line of defense and the only one that can't be pre-computed, since it depends on the exact amount the user types.
+
+---
+
+## What this doesn't (and can't) catch
+
+- **Slippage between quote and execution** — even a fresh Gate-4 quote can go stale if another swap lands in the pool between your quote call and the user's confirm tap. That's what `amountOutMinimum` in the actual `swap()` call is for — always pass a minimum-out with reasonable slippage tolerance (e.g. quote result × 0.99), don't rely on the pre-flight gates alone to guarantee execution.
+- **Canister downtime** — a pool canister can be temporarily unreachable; treat a `quote()` timeout as "try again," not "no liquidity."

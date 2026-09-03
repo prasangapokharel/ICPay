@@ -1,15 +1,13 @@
 "use client"
 
-import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUpDownIcon } from "@hugeicons/core-free-icons"
-import { Button } from "@/components/ui/button"
+import { InformationCircleIcon } from "@hugeicons/core-free-icons"
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Spinner } from "@/components/ui/spinner"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { DEFAULT_SLIPPAGE_BPS } from "@/lib/trade/fees"
@@ -31,44 +29,41 @@ export function TradeOrderQuote({
   outDecimals: number
 }) {
   const t = useTranslations("marketTrade")
-  const [open, setOpen] = useState(false)
   const slippagePct = (Number(DEFAULT_SLIPPAGE_BPS) / 100).toFixed(0)
   const receive = quote
     ? `${formatTokenAmount(quote.amountOut, outDecimals)} ${receiveSymbol}`
     : "—"
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
-      <div className="flex items-center justify-between gap-2">
-        <div className="min-w-0">
-          <p className="text-[11px] text-muted-foreground">{t("youReceive")}</p>
-          <p className="truncate text-sm font-semibold tabular-nums">
-            {quoting ? <Spinner className="size-3" /> : receive}
-          </p>
-        </div>
-        <CollapsibleTrigger
-          render={
-            <Button variant="ghost" size="icon" className="size-8 shrink-0">
-              <HugeiconsIcon icon={ArrowUpDownIcon} className="size-4" strokeWidth={2} />
-              <span className="sr-only">{t("youReceive")}</span>
-            </Button>
-          }
-        />
+    <div className="flex items-center justify-between gap-2">
+      <div className="min-w-0">
+        <p className="text-[11px] text-muted-foreground">{t("youReceive")}</p>
+        <p className="truncate text-sm font-semibold tabular-nums">
+          {quoting ? <Spinner className="size-3" /> : receive}
+        </p>
       </div>
-      <CollapsibleContent className="flex flex-col gap-2">
-        {quote ? (
-          <div className="flex items-center justify-between rounded-md border px-3 py-2 text-[11px]">
-            <span className="text-muted-foreground">{t("poolFee")}</span>
-            <span className="tabular-nums font-medium">
-              {formatTokenAmount(quote.swapFee, payDecimals)} {paySymbol}
-            </span>
+      <Popover>
+        <PopoverTrigger
+          aria-label={t("youReceive")}
+          className="inline-flex size-7 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <HugeiconsIcon icon={InformationCircleIcon} className="size-4" strokeWidth={1.75} />
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-56 gap-2 p-3">
+          {quote ? (
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="text-muted-foreground">{t("poolFee")}</span>
+              <span className="tabular-nums font-medium">
+                {formatTokenAmount(quote.swapFee, payDecimals)} {paySymbol}
+              </span>
+            </div>
+          ) : null}
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-muted-foreground">{t("slippage")}</span>
+            <span className="font-medium">{slippagePct}%</span>
           </div>
-        ) : null}
-        <div className="flex items-center justify-between rounded-md border px-3 py-2 text-[11px]">
-          <span className="text-muted-foreground">{t("slippage")}</span>
-          <span className="font-medium">{slippagePct}%</span>
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
+        </PopoverContent>
+      </Popover>
+    </div>
   )
 }

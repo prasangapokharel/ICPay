@@ -25,6 +25,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDataTransferHorizontalIcon } from "@hugeicons/core-free-icons"
 import { useTransactions } from "@/hooks/wallet/useWalletData"
 import { useTradeFills } from "@/hooks/market/useTradeFills"
+import { TradeInfoHint } from "@/components/public/market/trade/trade-info-hint"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { swapHashHref, swapHashLabel, truncateHash } from "@/lib/market/swapHash"
 import { mergeRecentSwaps } from "@/lib/market/recentSwaps"
@@ -43,7 +44,7 @@ function timeAgoMs(ms: number): string {
 export function TradeSwapHistory({
   snapshot,
 }: {
-  snapshot: TradePairSnapshot
+  snapshot: TradePairSnapshot | undefined
 }) {
   const t = useTranslations("marketTrade")
   const { items, isLoading } = useTransactions(0, 80)
@@ -51,29 +52,34 @@ export function TradeSwapHistory({
 
   const swaps = useMemo(
     () =>
-      mergeRecentSwaps(localFills, items, snapshot).map((row) => ({
-        ...row,
-        ago: timeAgoMs(row.at),
-      })),
+      snapshot
+        ? mergeRecentSwaps(localFills, items, snapshot).map((row) => ({
+            ...row,
+            ago: timeAgoMs(row.at),
+          }))
+        : [],
     [items, localFills, snapshot]
   )
 
   return (
-    <Card size="sm" className="m-1 mb-1 flex min-h-0 flex-1 flex-col overflow-hidden py-0">
-      <CardHeader className="shrink-0 border-b px-4 py-3">
-        <CardTitle className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          {t("recentSwaps")}
-        </CardTitle>
+    <Card size="sm" className="m-1 mb-1 flex min-h-[220px] flex-1 flex-col overflow-hidden py-0">
+      <CardHeader className="shrink-0 border-b px-3 py-2">
+        <div className="flex items-center gap-1">
+          <CardTitle className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {t("recentSwaps")}
+          </CardTitle>
+          <TradeInfoHint label={t("recentSwaps")} text={t("recentSwapsHint")} />
+        </div>
       </CardHeader>
       <CardContent className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-0 pb-1">
-        {isLoading && swaps.length === 0 ? (
-          <div className="space-y-2 px-4 py-3">
+        {!snapshot || (isLoading && swaps.length === 0) ? (
+          <div className="space-y-1.5 px-3 py-2">
             {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-7 w-full rounded-md" />
+              <Skeleton key={i} className="h-6 w-full rounded-md" />
             ))}
           </div>
         ) : swaps.length === 0 ? (
-          <Empty className="border-0 py-8">
+          <Empty className="border-0 py-6">
             <EmptyHeader>
               <EmptyMedia variant="icon">
                 <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} className="size-5" strokeWidth={2} />
@@ -86,11 +92,11 @@ export function TradeSwapHistory({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="h-10 w-16 px-4 text-[10px]">{t("colSide")}</TableHead>
-                <TableHead className="h-10 w-36 px-4 text-[10px]">{t("colAmount")}</TableHead>
-                <TableHead className="h-10 w-24 px-3 text-[10px]">{t("colHash")}</TableHead>
-                <TableHead className="h-10 w-20 px-4 text-[10px]">{t("colStatus")}</TableHead>
-                <TableHead className="h-10 w-16 px-4 text-right text-[10px]">{t("colTime")}</TableHead>
+                <TableHead>{t("colSide")}</TableHead>
+                <TableHead>{t("colAmount")}</TableHead>
+                <TableHead>{t("colHash")}</TableHead>
+                <TableHead>{t("colStatus")}</TableHead>
+                <TableHead className="text-right">{t("colTime")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -98,22 +104,22 @@ export function TradeSwapHistory({
                 <TableRow key={row.id}>
                   <TableCell
                     className={cn(
-                      "px-4 py-3.5 text-xs font-medium",
+                      "font-medium",
                       row.isBuy ? "text-emerald-500" : "text-rose-500"
                     )}
                   >
                     {row.isBuy ? t("swapBuy") : t("swapSell")}
                   </TableCell>
-                  <TableCell className="px-4 py-3.5 text-xs tabular-nums">
+                  <TableCell className="tabular-nums">
                     {formatTokenAmount(row.amount, row.decimals)} {row.symbol}
                   </TableCell>
-                  <TableCell className="px-3 py-3.5">
+                  <TableCell>
                     <SwapHashCell id={row.id} blockIndex={row.blockIndex} />
                   </TableCell>
-                  <TableCell className="px-4 py-3.5 text-[10px]">
+                  <TableCell>
                     <FillStatusCell status={row.status} filling={t("fillFilling")} filled={t("fillFilled")} failed={t("fillFailed")} />
                   </TableCell>
-                  <TableCell className="px-4 py-3.5 text-right text-[10px] text-muted-foreground">
+                  <TableCell className="text-right text-muted-foreground">
                     {row.ago}
                   </TableCell>
                 </TableRow>
@@ -130,12 +136,12 @@ function SwapHashCell({ id, blockIndex }: { id: string; blockIndex: bigint | nul
   const label = swapHashLabel(id, blockIndex)
   const href = swapHashHref(id, blockIndex)
   if (!label) {
-    return <span className="text-[10px] text-muted-foreground">—</span>
+    return <span className="text-muted-foreground">—</span>
   }
   const text = truncateHash(label)
   if (!href) {
     return (
-      <span className="font-mono text-[10px] text-foreground" title={label}>
+      <span className="font-mono text-foreground" title={label}>
         {text}
       </span>
     )
@@ -145,7 +151,7 @@ function SwapHashCell({ id, blockIndex }: { id: string; blockIndex: bigint | nul
     <a
       href={href}
       title={label}
-      className="font-mono text-[10px] text-primary hover:underline"
+      className="font-mono text-primary hover:underline"
       {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
     >
       {text}
@@ -166,7 +172,7 @@ function FillStatusCell({
 }) {
   if (status === "filling") {
     return (
-      <Badge variant="outline" className="h-5 gap-1 font-normal">
+      <Badge variant="outline" className="gap-1 font-normal">
         <Spinner data-icon="inline-start" className="size-3" />
         {filling}
       </Badge>
@@ -174,13 +180,13 @@ function FillStatusCell({
   }
   if (status === "failed") {
     return (
-      <Badge variant="destructive" className="h-5 font-normal">
+      <Badge variant="destructive" className="font-normal">
         {failed}
       </Badge>
     )
   }
   return (
-    <Badge variant="secondary" className="h-5 font-normal text-emerald-600 dark:text-emerald-400">
+    <Badge variant="secondary" className="font-normal text-emerald-600 dark:text-emerald-400">
       {filled}
     </Badge>
   )

@@ -16,19 +16,30 @@ import { useTokenPools } from "@/hooks/market/useTokenPools"
 import { isSupplyFixed } from "@/services/market/icrcLedgerFacts"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
 
-export function TradeInfoTabs({ snapshot }: { snapshot: TradePairSnapshot | undefined }) {
+export type TradeInfoSection = "pool" | "token" | "pair"
+
+export function TradeInfoTabs({
+  snapshot,
+  section,
+  bare,
+}: {
+  snapshot: TradePairSnapshot | undefined
+  section?: TradeInfoSection
+  bare?: boolean
+}) {
   const t = useTranslations("marketTrade")
-  const [tab, setTab] = useState("pool")
+  const [tab, setTab] = useState<TradeInfoSection>("pool")
+  const active = section ?? tab
   const { data: extras } = useLedgerExtras(
-    snapshot && tab === "token" ? snapshot.baseLedgerId : null
+    snapshot && active === "token" ? snapshot.baseLedgerId : null
   )
   const { pools, isLoading: poolsLoading } = useTokenPools(
-    snapshot && tab === "pool" ? snapshot.baseLedgerId : null
+    snapshot && active === "pool" ? snapshot.baseLedgerId : null
   )
 
   if (!snapshot) {
-    return (
-      <Card size="sm" className="m-1 h-full gap-3 p-4">
+    const skeleton = (
+      <div className="flex h-full flex-col gap-3 p-4">
         <Skeleton className="h-8 w-48 rounded-lg" />
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="flex justify-between">
@@ -36,24 +47,33 @@ export function TradeInfoTabs({ snapshot }: { snapshot: TradePairSnapshot | unde
             <Skeleton className="h-3.5 w-32" />
           </div>
         ))}
+      </div>
+    )
+    if (bare) return skeleton
+    return (
+      <Card size="sm" className="m-1 h-full gap-3 p-4">
+        {skeleton}
       </Card>
     )
   }
 
   const mainPool = pools.find((p) => p.poolId === snapshot.pool?.poolId) ?? pools[0]
 
-  return (
-    <Card size="sm" className="m-1 h-full min-h-0 gap-0 overflow-hidden py-0">
+  const body = (
       <Tabs
-        value={tab}
-        onValueChange={setTab}
+        value={active}
+        onValueChange={(v) => {
+          if (!section) setTab(v as TradeInfoSection)
+        }}
         className="flex h-full min-h-0 flex-col pb-4 pt-1"
       >
+      {section ? null : (
       <TabsList variant="line" className="w-full justify-start border-b px-4">
         <TabsTrigger value="pool">{t("tabPool")}</TabsTrigger>
         <TabsTrigger value="token">{t("tabToken")}</TabsTrigger>
         <TabsTrigger value="pair">{t("tabPair")}</TabsTrigger>
       </TabsList>
+      )}
 
       <TabsContent value="pool" className="mt-3 min-h-0 flex-1 space-y-2.5 overflow-y-auto px-4 pb-3 text-sm">
         {poolsLoading ? (
@@ -216,6 +236,12 @@ export function TradeInfoTabs({ snapshot }: { snapshot: TradePairSnapshot | unde
         <InfoRow label={t("ledgerSource")} value={t("ledgerSourceOnChain")} />
       </TabsContent>
       </Tabs>
+  )
+
+  if (bare) return body
+  return (
+    <Card size="sm" className="m-1 h-full min-h-0 gap-0 overflow-hidden py-0">
+      {body}
     </Card>
   )
 }

@@ -17,6 +17,7 @@ import { cn } from "@/lib/ui/utils"
 import { changeClass, formatPct, formatUsd } from "@/lib/market/format"
 import { marketPageCount, sortDefaultsForChangeFilter } from "@/lib/market/overview"
 import { takeWatchlistRows, WATCHLIST_PAGE_SIZE } from "@/lib/market/watchlistPage"
+import { pinWatchlistRows } from "@/lib/market/customWatchlist"
 import { MarketPager } from "@/components/public/market/market-pager"
 import { Separator } from "@/components/ui/separator"
 import { CustomTokenSearch } from "@/components/public/market/custom-token-search"
@@ -32,6 +33,7 @@ export function TradeMarketWatchlist({
   onSelect,
   onAddCustomToken,
   loading,
+  pinnedIds,
 }: {
   rows: TerminalPairRow[]
   activeBaseId: string
@@ -39,6 +41,7 @@ export function TradeMarketWatchlist({
   onSelect: (baseLedgerId: string) => void
   onAddCustomToken?: (row: TerminalPairRow) => void
   loading?: boolean
+  pinnedIds?: Iterable<string>
 }) {
   const t = useTranslations("marketTrade")
   const [query, setQuery] = useState("")
@@ -89,8 +92,8 @@ export function TradeMarketWatchlist({
       }
       return dir * (pairVolume(a) - pairVolume(b))
     })
-    return next
-  }, [rows, query, changeFilter, sortKey, sortAsc])
+    return pinWatchlistRows(next, pinnedIds ?? [])
+  }, [rows, query, changeFilter, sortKey, sortAsc, pinnedIds])
 
   const pageCount = marketPageCount(visible.length, WATCHLIST_PAGE_SIZE)
   const safePage = Math.min(page, pageCount)

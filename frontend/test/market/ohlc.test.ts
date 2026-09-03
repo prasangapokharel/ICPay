@@ -1,4 +1,11 @@
-import { parseIcpswapChartBody, ohlcYPad, toChartRows, ohlcWindowQuery } from "../../lib/market/ohlc"
+import {
+  parseIcpswapChartBody,
+  ohlcYPad,
+  toChartRows,
+  ohlcWindowQuery,
+  ohlcTickIsTime,
+  CHART_INTERVALS,
+} from "../../lib/market/ohlc"
 
 function assert(cond: boolean, msg: string) {
   if (!cond) throw new Error(msg)
@@ -44,6 +51,9 @@ const [lo, hi] = ohlcYPad(bars)
 assert(lo < 1 && hi > 5, "pad around high/low")
 const rows = toChartRows(bars)
 assert(rows[0].price === 3 && rows[0].up === true, "chart row close")
-assert(ohlcWindowQuery("24h").level === "h1" && ohlcWindowQuery("24h").limit === 48, "24h")
-assert(ohlcWindowQuery("7d").level === "d1" && ohlcWindowQuery("7d").limit === 90, "7d")
+assert(ohlcWindowQuery("1h").level === "h1" && ohlcWindowQuery("1h").limit === 48, "1h")
+assert(ohlcWindowQuery("1d").level === "d1" && ohlcWindowQuery("1d").limit === 90, "1d")
+assert(ohlcWindowQuery("1w").level === "d1" && ohlcWindowQuery("1w").limit === 180, "1w")
+assert(ohlcTickIsTime("1h") && !ohlcTickIsTime("1d") && !ohlcTickIsTime("1w"), "tick")
+assert(CHART_INTERVALS.join(",") === "1h,1d,1w", "intervals")
 console.log("ohlc ok", bars.length)
