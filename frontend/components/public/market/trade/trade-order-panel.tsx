@@ -453,7 +453,7 @@ export function TradeOrderPanel({
                     key={pct}
                     type="button"
                     onClick={() => applyFill(pct)}
-                    className="rounded border border-border/50 bg-muted/20 py-1 text-[10px] font-medium text-muted-foreground transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-foreground"
+                    className="rounded border border-border bg-muted/40 py-1 text-[10px] font-medium text-foreground/80 transition-colors hover:border-primary hover:bg-primary/20 hover:text-foreground"
                   >
                     {pct === 100 ? t("max") : `${pct}%`}
                   </button>

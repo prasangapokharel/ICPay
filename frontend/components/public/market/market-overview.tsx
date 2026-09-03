@@ -30,6 +30,7 @@ import { MarketPager } from "./market-pager"
 import { MarketTokenTable } from "./market-token-table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { BackToTop } from "@/components/ui/back-to-top"
 
 export function MarketOverview() {
   const t = useTranslations("marketOverview")
@@ -196,6 +197,8 @@ export function MarketOverview() {
           />
         </div>
       </section>
+
+      <BackToTop />
     </div>
   )
 }

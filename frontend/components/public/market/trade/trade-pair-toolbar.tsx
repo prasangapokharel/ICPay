@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
 import { TokenAvatar } from "@/components/public/market/trade/token-avatar"
+import { InfoTooltip } from "@/components/ui/info-tooltip"
 import { cn } from "@/lib/ui/utils"
 import { changeClass, formatPct, formatUsd, priceLayers, sanePriceRange } from "@/lib/market/format"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
@@ -102,13 +103,14 @@ export function TradePairToolbar({
           <Metric label={t("rangeLow")} value={priceLayers(range.low).main} />
         </>
       )}
-      <Metric label={t("volume24h")} value={formatUsd(stats?.volume24hUsd)} />
-      {snapshot.fdv && <Metric label={t("fdv")} value={formatUsd(snapshot.fdv)} />}
+      <Metric label={t("volume24h")} value={formatUsd(stats?.volume24hUsd)} tooltip="Total trading volume in USD over the last 24 hours" />
+      {snapshot.fdv && <Metric label={t("fdv")} value={formatUsd(snapshot.fdv)} tooltip="Fully Diluted Valuation - market cap if max supply was in circulation" />}
       {snapshot.holders !== undefined && (
         <Metric
           label={t("holders")}
           value={snapshot.holders.toLocaleString()}
           detail={snapshot.holdersChange24h !== undefined ? formatPct((snapshot.holdersChange24h / (snapshot.holders || 1)) * 100) : undefined}
+          tooltip="Number of unique wallet addresses holding this token"
         />
       )}
     </Card>
@@ -121,17 +123,20 @@ function Metric({
   detail,
   large,
   valueClass,
+  tooltip,
 }: {
   label: string
   value: string
   detail?: string
   large?: boolean
   valueClass?: string
+  tooltip?: string
 }) {
   return (
     <div className="min-w-0">
-      <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+      <p className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
         {label}
+        {tooltip && <InfoTooltip content={tooltip} />}
       </p>
       <p
         className={cn(

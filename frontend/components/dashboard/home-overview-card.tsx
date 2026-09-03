@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -30,9 +29,8 @@ export function HomeOverviewCard({
   onToggleHidden,
   user,
 }: HomeOverviewCardProps) {
-  const t = useTranslations("dashboard")
   const tWallet = useTranslations("wallet")
-  const tCommon = useTranslations("common")
+  const t = useTranslations("dashboard")
   const username = user.username?.[0]
   const socialLinks = user.socialLinks?.[0] ?? []
   const usdValue = price ? (Number(balanceE8s) / E8S) * price.usd : null
@@ -68,14 +66,6 @@ export function HomeOverviewCard({
           <p className="mt-1.5 text-base font-medium tabular-nums text-foreground/80">
             {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
           </p>
-        </div>
-        <div className="flex gap-2">
-          <Button nativeButton={false} render={<Link href="/deposit" />}>
-            {tCommon("receive")}
-          </Button>
-          <Button variant="outline" nativeButton={false} render={<Link href="/transfer" />}>
-            {tCommon("send")}
-          </Button>
         </div>
       </CardContent>
     </Card>

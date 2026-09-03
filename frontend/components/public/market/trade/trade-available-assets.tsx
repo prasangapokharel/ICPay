@@ -108,7 +108,7 @@ export function TradeAvailableAssets({
                       <div className="text-xs font-medium">
                         {formatTokenAmount(row.balance, row.decimals, 4)}
                       </div>
-                      <div className="text-[10px] text-muted-foreground">
+                      <div className="text-[10px] text-muted-foreground/90">
                         {row.valueUsd != null ? formatUsd(row.valueUsd, 2) : "—"}
                       </div>
                     </TableCell>
@@ -127,9 +127,9 @@ export function TradeAvailableAssets({
                       <div
                         className={cn(
                           "text-[10px]",
-                          up && "text-emerald-500/80",
-                          down && "text-destructive/80",
-                          !up && !down && "text-muted-foreground"
+                          up && "text-emerald-500/90",
+                          down && "text-destructive/90",
+                          !up && !down && "text-muted-foreground/90"
                         )}
                       >
                         {formatPct(row.change24h)}

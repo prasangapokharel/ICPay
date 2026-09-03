@@ -5,6 +5,6 @@ export type PublicWalletMenuLink = {
 
 export const PUBLIC_WALLET_MENU_LINKS: PublicWalletMenuLink[] = [
   { href: "/deposit", labelKey: "deposit" },
-  { href: "/withdraw", labelKey: "transfer" },
-  { href: "/transfer", labelKey: "withdraw" },
+  { href: "/transfer", labelKey: "transfer" },
+  { href: "/withdraw", labelKey: "withdraw" },
 ]

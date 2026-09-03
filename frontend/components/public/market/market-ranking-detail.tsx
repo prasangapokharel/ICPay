@@ -17,6 +17,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { TokenAvatar } from "@/components/public/market/trade/token-avatar"
 import { MarketPager } from "@/components/public/market/market-pager"
+import { BackToTop } from "@/components/ui/back-to-top"
+import { InfoTooltip } from "@/components/ui/info-tooltip"
 import { useTerminalWatchlist } from "@/hooks/market/useTradeTerminal"
 import { changeClass, formatPct, formatUsd, priceLayers } from "@/lib/market/format"
 import {
@@ -138,24 +140,42 @@ export function MarketRankingDetail({ type }: { type: RankingType }) {
                     sortAsc={sortAsc}
                     onClick={() => onSort("price")}
                   />
-                  <SortHead
-                    label={t("colChange")}
-                    active={sortKey === "change"}
-                    sortAsc={sortAsc}
-                    onClick={() => onSort("change")}
-                  />
-                  <SortHead
-                    label={t("colVolume")}
-                    active={sortKey === "volume"}
-                    sortAsc={sortAsc}
-                    onClick={() => onSort("volume")}
-                  />
-                  <SortHead
-                    label={t("colTvl")}
-                    active={sortKey === "tvl"}
-                    sortAsc={sortAsc}
-                    onClick={() => onSort("tvl")}
-                  />
+                  <TableHead>
+                    <button
+                      type="button"
+                      onClick={() => onSort("change")}
+                      className={sortKey === "change" ? "font-semibold text-foreground" : "text-muted-foreground"}
+                    >
+                      {t("colChange")}
+                      {sortKey === "change" ? (sortAsc ? " ↑" : " ↓") : ""}
+                    </button>
+                    {" "}
+                    <InfoTooltip content="Percentage change in token price over the last 24 hours" />
+                  </TableHead>
+                  <TableHead>
+                    <button
+                      type="button"
+                      onClick={() => onSort("volume")}
+                      className={sortKey === "volume" ? "font-semibold text-foreground" : "text-muted-foreground"}
+                    >
+                      {t("colVolume")}
+                      {sortKey === "volume" ? (sortAsc ? " ↑" : " ↓") : ""}
+                    </button>
+                    {" "}
+                    <InfoTooltip content="Total trading volume in USD over the last 24 hours" />
+                  </TableHead>
+                  <TableHead>
+                    <button
+                      type="button"
+                      onClick={() => onSort("tvl")}
+                      className={sortKey === "tvl" ? "font-semibold text-foreground" : "text-muted-foreground"}
+                    >
+                      {t("colTvl")}
+                      {sortKey === "tvl" ? (sortAsc ? " ↑" : " ↓") : ""}
+                    </button>
+                    {" "}
+                    <InfoTooltip content="Total Value Locked - the total value of assets in the liquidity pool" />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -215,6 +235,8 @@ export function MarketRankingDetail({ type }: { type: RankingType }) {
         prevLabel={t("prev")}
         nextLabel={t("next")}
       />
+
+      <BackToTop />
     </div>
   )
 }

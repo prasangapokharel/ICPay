@@ -61,7 +61,7 @@ export function DashboardActions() {
           {actions.map((item) => (
             <Button
               key={item.href}
-              variant="outline"
+              variant={item.href === "/trade" ? "default" : "outline"}
               className="h-10 justify-start gap-2 rounded-xl px-3"
               nativeButton={false}
               render={<Link href={item.href} />}

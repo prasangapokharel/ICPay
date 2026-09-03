@@ -119,7 +119,7 @@ export function TradeSwapHistory({
                   <TableCell>
                     <FillStatusCell status={row.status} filling={t("fillFilling")} filled={t("fillFilled")} failed={t("fillFailed")} />
                   </TableCell>
-                  <TableCell className="text-right text-muted-foreground">
+                  <TableCell className="text-right text-muted-foreground/90">
                     {row.ago}
                   </TableCell>
                 </TableRow>
@@ -136,12 +136,12 @@ function SwapHashCell({ id, blockIndex }: { id: string; blockIndex: bigint | nul
   const label = swapHashLabel(id, blockIndex)
   const href = swapHashHref(id, blockIndex)
   if (!label) {
-    return <span className="text-muted-foreground">—</span>
+    return <span className="text-muted-foreground/90">—</span>
   }
   const text = truncateHash(label)
   if (!href) {
     return (
-      <span className="font-mono text-foreground" title={label}>
+      <span className="font-mono text-foreground/90" title={label}>
         {text}
       </span>
     )
