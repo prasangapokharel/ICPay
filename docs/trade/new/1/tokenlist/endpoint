@@ -1,0 +1,81 @@
+# API Endpoints for Listing Tokens on ICP
+
+For your trading platform's market list, here are the relevant endpoints to discover token canisters launched on ICP:
+
+---
+
+## 1. ICRC API — List All ICRC Ledgers (tokens)
+
+This is your **primary endpoint** for listing token canisters (ckBTC, SNS tokens, etc.):
+
+```bash
+# List all ICRC ledgers (v2, cursor pagination)
+curl -s "https://icrc-api.internetcomputer.org/api/v2/ledgers?limit=10"
+
+# Next page using cursor
+curl -s "https://icrc-api.internetcomputer.org/api/v2/ledgers?limit=10&after=<next_cursor>"
+
+# Get a specific ledger by canister ID (e.g. ckBTC)
+curl -s "https://icrc-api.internetcomputer.org/api/v2/ledgers/mxzaz-hqaaa-aaaar-qaada-cai"
+```
+
+> **Note:** ICRC API covers ICRC-standard tokens (ckBTC, SNS tokens, TestICP, etc.) but **not mainnet ICP itself**. [[ICRC API docs](https://skills.internetcomputer.org/skills/ic-dashboard/#ic-dashboard-apis)]
+
+---
+
+## 2. SNS API — List SNS Tokens
+
+For tokens launched via the SNS (Service Nervous System) launchpad:
+
+```bash
+# List all SNSes (each has its own token)
+curl -s "https://sns-api.internetcomputer.org/api/v2/snses?limit=10"
+
+# List proposals for a specific SNS
+curl -s "https://sns-api.internetcomputer.org/api/v2/snses/<ROOT_CANISTER_ID>/proposals?limit=5"
+```
+
+[[SNS API](https://skills.internetcomputer.org/skills/ic-dashboard/#implementation)]
+
+---
+
+## 3. Ledger API — Mainnet ICP Token
+
+For the native **ICP token** specifically:
+
+```bash
+# List ICP accounts
+curl -s "https://ledger-api.internetcomputer.org/v2/accounts?limit=10"
+
+# List ICP transactions
+curl -s "https://ledger-api.internetcomputer.org/v2/transactions?limit=10"
+
+# Total ICP supply
+curl -s "https://ledger-api.internetcomputer.org/supply/total/latest"
+```
+
+[[Ledger API](https://skills.internetcomputer.org/skills/ic-dashboard/#implementation)]
+
+---
+
+## 4. All API Base URLs Summary
+
+| API | Base URL | Docs/Swagger |
+|-----|----------|--------------|
+| IC API | `https://ic-api.internetcomputer.org` | `/api/v3/swagger` |
+| ICRC API | `https://icrc-api.internetcomputer.org` | `/docs` |
+| SNS API | `https://sns-api.internetcomputer.org` | `/docs` |
+| Ledger API (ICP) | `https://ledger-api.internetcomputer.org` | `/swagger-ui/` |
+| Metrics API | `https://metrics-api.internetcomputer.org` | `/api/v1/docs` |
+
+[[API reference](https://docs.internetcomputer.org/references/ic-dashboard-api/)]
+
+---
+
+## Key Notes for Your Trading Platform
+
+- **Use v2+ endpoints** — they support cursor-based pagination (`after`, `before`, `limit`) with `next_cursor` / `previous_cursor` in responses.
+- **ICRC API** = best for listing all token ledgers on ICP.
+- **SNS API** = best for tokens launched via SNS launchpad.
+- **Ledger API** = use exclusively for native ICP token data.
+- No authentication or canister deployment needed — all are public read-only REST APIs. [[IC Dashboard APIs](https://skills.internetcomputer.org/skills/ic-dashboard/#ic-dashboard-apis)]

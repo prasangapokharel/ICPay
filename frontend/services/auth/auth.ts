@@ -83,8 +83,8 @@ async function signInWithAttributes(
   try {
     const attributes = await startAttributeRequest(authClient, options?.openIdProvider)
     await finishAttributeVerification(identity, attributes)
-  } catch (e) {
-    console.warn("II attribute verification skipped:", e)
+  } catch {
+    // Optional II attributes — login still succeeds without them.
   }
 
   return identity

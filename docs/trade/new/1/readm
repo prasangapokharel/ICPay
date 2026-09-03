@@ -1,0 +1,145 @@
+Yes. If **ICPay is ICP-focused**, I would **not design the product around “pairs” as the primary concept**.
+
+The core object should be **ICP assets/tokens**, with ICP as the settlement/base asset.
+
+ICP itself and fungible ICP assets follow the ICRC model; ICRC-1 provides the common token interface, while ICRC-2 adds approvals/transfer-from. ([ICP Developer Docs][1])
+
+### Clean ICPay structure
+
+```text
+Markets
+├── Overview
+├── Tokens
+│   ├── Trending
+│   ├── New
+│   ├── Gainers
+│   ├── Losers
+│   └── Most Active
+├── Launches
+└── Watchlist
+```
+
+Then your market screen:
+
+```text
+ckUSDC
+
+$1.00
+0.4044 ICP
+
+24h       -0.25%
+24h High  $1.00
+24h Low   $0.9949
+Volume    $185.78K
+TVL       $301.19K
+```
+
+The chart is simply:
+
+```text
+Price
+24h | 7d | 30d
+```
+
+And trading:
+
+```text
+Buy ckUSDC
+Sell ckUSDC
+
+Amount
+[             ]
+
+25%  50%  75%  MAX
+
+[ Buy ckUSDC ]
+```
+
+### What I would change in your current UI
+
+Instead of:
+
+> **Markets → pairs**
+
+make it:
+
+> **Markets → tokens/assets**
+
+The left sidebar could become:
+
+```text
+MARKETS
+
+Search tokens
+
+All
+Trending
+New
+Gainers
+Losers
+
+ICP       $...
+ckUSDC    $...
+ckETH     $...
+DKP       $...
+TOKO      $...
+DEAD      $...
+ALICE     $...
+CHAT      $...
+```
+
+Clicking a token opens its **ICP market**, rather than forcing the user to think about pair terminology.
+
+For example:
+
+```text
+ckUSDC
+ckUSDC / ICP
+```
+
+The pair still exists technically, but **don't make it the product's mental model**.
+
+### Most important: New
+
+Your discovery page should be:
+
+```text
+NEW ON ICP
+
+New Tokens
+────────────────────────────
+
+TOKEN    PRICE    LIQUIDITY   AGE   VOLUME
+
+ABC      $0.002   $18K         4m    $32K
+XYZ      $0.018   $42K         18m   $91K
+...
+```
+
+Then:
+
+```text
+TRENDING ON ICP
+```
+
+```text
+TOKEN     PRICE     24H       VOLUME
+PIKO      $0.021    +42%      $93K
+CHAT      $0.084    +20%      $41K
+...
+```
+
+This makes ICPay feel like:
+
+> **“The market terminal for ICP assets.”**
+
+rather than:
+
+> “Another DEX pair browser.”
+
+And because ICP's ledger/index architecture is standardized around canisters and ICRC assets, you can build the backend around **token/ledger canister IDs** rather than hard-coding pair concepts. ([ICP Developer Docs][2])
+
+**I think this is the cleaner direction for ICPay.** Your current trading screen can stay almost exactly as it is; the main improvement is changing the **information architecture and discovery layer** around ICP tokens.
+
+[1]: https://docs.internetcomputer.org/references/digital-asset-standards/?utm_source=chatgpt.com "Digital asset standards | ICP Developer Docs"
+[2]: https://docs.internetcomputer.org/references/system-canisters/?utm_source=chatgpt.com "System canisters"

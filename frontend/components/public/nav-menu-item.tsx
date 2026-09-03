@@ -18,7 +18,7 @@ export function NavMenuItemContent({
     <div className="flex items-start gap-3">
       <HugeiconsIcon
         icon={icon}
-        className="mt-0.5 size-5 shrink-0 text-primary"
+        className="mt-0.5 size-5 shrink-0 text-muted-foreground"
         strokeWidth={1.75}
       />
       <div className="min-w-0 flex flex-col gap-1">

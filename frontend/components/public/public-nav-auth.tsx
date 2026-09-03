@@ -5,12 +5,36 @@ import { useMemo } from "react"
 import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  ArrowDataTransferHorizontalIcon,
+  ArrowDown01Icon,
+  ArrowUp01Icon,
+} from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { PUBLIC_WALLET_MENU_LINKS } from "@/lib/public/nav-wallet-menu"
+
+const MENU_ICONS = {
+  deposit: ArrowDown01Icon,
+  transfer: ArrowDataTransferHorizontalIcon,
+  withdraw: ArrowUp01Icon,
+} as const
 
 export function PublicNavAuth() {
-  const t = useTranslations("publicSite.nav")
+  const tNav = useTranslations("publicSite.nav")
+  const tDeposit = useTranslations("deposit")
+  const tWithdraw = useTranslations("withdraw")
+  const tTxType = useTranslations("transactions.type")
   const { identity, isAuthenticated, isLoading } = useAuth()
   const principal = identity?.getPrincipal().toText() ?? ""
 
@@ -19,35 +43,49 @@ export function PublicNavAuth() {
     [principal]
   )
 
+  const labels = {
+    deposit: tDeposit("title"),
+    transfer: tWithdraw("title"),
+    withdraw: tTxType("withdraw"),
+  } as const
+
   if (isLoading) {
     return <div className="size-9 shrink-0 animate-pulse rounded-full bg-muted" aria-hidden />
   }
 
   if (isAuthenticated) {
     return (
-      <div className="flex items-center gap-2">
-        <Button
-          size="sm"
-          variant="outline"
-          nativeButton={false}
-          render={<Link href="/home" />}
-          className="hidden rounded-full px-4 sm:inline-flex"
-        >
-          {t("wallet")}
-        </Button>
-        <Link
-          href="/home"
-          aria-label={t("openWallet")}
-          className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="size-9 rounded-full p-0"
+              aria-label={tNav("openWallet")}
+            />
+          }
         >
           <Avatar className="size-9">
-            {avatarUri && <AvatarImage src={avatarUri} alt={t("openWallet")} />}
+            {avatarUri ? <AvatarImage src={avatarUri} alt="" /> : null}
             <AvatarFallback className="bg-muted text-xs font-medium">
               {principal.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-        </Link>
-      </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="min-w-44" sideOffset={8}>
+          <DropdownMenuGroup>
+            {PUBLIC_WALLET_MENU_LINKS.map((item) => (
+              <DropdownMenuItem key={item.href} render={<Link href={item.href} />}>
+                <HugeiconsIcon icon={MENU_ICONS[item.labelKey]} className="size-4" strokeWidth={1.75} />
+                {labels[item.labelKey]}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem render={<Link href="/home" />}>{tNav("wallet")}</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     )
   }
 
@@ -58,7 +96,7 @@ export function PublicNavAuth() {
       render={<Link href="/login" />}
       className="rounded-full px-4"
     >
-      {t("signIn")}
+      {tNav("signIn")}
     </Button>
   )
 }

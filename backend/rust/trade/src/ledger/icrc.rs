@@ -54,12 +54,13 @@ pub async fn transfer_fee(ledger: Principal) -> Result<u64, String> {
 }
 
 /// ICPSwap `depositFromAndSwap` pulls input tokens via ICRC-2 transfer_from.
+/// Returns the approve ledger block index when available.
 pub async fn approve_spender(
     ledger: Principal,
     spender: Principal,
     amount: u64,
     fee: u64,
-) -> Result<(), String> {
+) -> Result<u64, String> {
     let args = ApproveArgs {
         from_subaccount: None,
         spender: Account {
@@ -82,8 +83,10 @@ pub async fn approve_spender(
         .map_err(|e| format!("icrc2_approve decode failed: {e:?}"))?;
 
     match result {
-        Ok(_) => Ok(()),
-        Err(ApproveError::Duplicate { .. }) => Ok(()),
+        Ok(block) => Ok(block.0.try_into().unwrap_or(0)),
+        Err(ApproveError::Duplicate { duplicate_of }) => {
+            Ok(duplicate_of.0.try_into().unwrap_or(0))
+        }
         Err(e) => Err(format!("icrc2_approve error: {e}")),
     }
 }

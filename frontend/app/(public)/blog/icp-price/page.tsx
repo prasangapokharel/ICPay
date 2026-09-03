@@ -32,7 +32,7 @@ export default function IcpPricePage() {
         <p className="text-[11px] text-muted-foreground">August 11, 2026 · 5 min read</p>
       </header>
 
-      {/* Live market data fetched client-side from icptokens.net */}
+      {/* Live market data from icrc-api.internetcomputer.org */}
       <IcpLiveData />
 
       <section className="space-y-3">
@@ -105,7 +105,7 @@ export default function IcpPricePage() {
       <section className="space-y-3">
         <h2 className="text-base font-semibold tracking-tight">How to watch ICP prices</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          The chart above is live data from icptokens.net, re-seeded on every visit. Inside
+          The chart above is live data from the official ICRC ledger API, refreshed on every visit. Inside
           ICPay the balance is read straight from the ICP ledger on-chain — the same ICRC-1
           ledger the price is booked against, so the balance you see is exactly what the
           network says, plus or minus the transfer fee.

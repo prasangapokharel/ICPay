@@ -3,8 +3,8 @@ import {
   Analytics01Icon,
   Clock01Icon,
   CloudIcon,
+  DashboardCircleIcon,
   Globe02Icon,
-  Home01Icon,
   JusticeScale01Icon,
   Message01Icon,
   Rocket01Icon,
@@ -40,7 +40,7 @@ export const SIDEBAR_FOOTER: SidebarNavItem[] = [
 export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
   {
     sectionKey: "overview",
-    items: [{ href: "/home", labelKey: "nav.home", icon: Home01Icon }],
+    items: [{ href: "/home", labelKey: "nav.home", icon: DashboardCircleIcon }],
   },
   {
     sectionKey: "assets",

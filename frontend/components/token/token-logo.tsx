@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import type { TokenHolding } from "@/services/tokens"
 import { useTokenRegistry } from "@/lib/token/registry"
 import { resolveTokenIcon } from "@/lib/token/icon"
@@ -29,13 +28,14 @@ export function TokenLogo({ token, className = "size-9" }: TokenLogoProps) {
   }
 
   return (
-    <Image
-      src={src}
-      alt=""
-      width={56}
-      height={56}
-      unoptimized
-      className={cn("shrink-0 rounded-full object-contain", className)}
-    />
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted",
+        className
+      )}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt="" className="size-full object-contain p-[7%]" />
+    </span>
   )
 }

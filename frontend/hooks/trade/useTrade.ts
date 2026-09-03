@@ -5,8 +5,16 @@ import type { Identity } from "@icp-sdk/core/agent"
 import useSWR, { useSWRConfig } from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDebounced } from "@/hooks/ui/useDebounced"
-import { useTokenHoldings, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useTokenHolding, useTokenHoldings, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { filterSwapTokens, sortSwapTokens } from "@/lib/swap/tokens"
+import { mergeSpendable } from "@/lib/market/spendable"
+import {
+  nextTradeBalanceAfterInternal,
+  walletDeltaAfterInternal,
+  withLedgerBalance,
+} from "@/lib/trade/fees"
+import { patchHoldings } from "@/lib/wallet/holdingsCache"
+import { walletKey } from "@/lib/wallet/walletCache"
 import { fetchTradeQuoteChecked, getTradingBalance, type TradeQuoteOpts } from "@/services/trade/trade"
 
 const keyFor = (identity: Identity | undefined, ...parts: string[]) =>
@@ -46,7 +54,7 @@ export function useTradeTokens() {
     return sortSwapTokens(merged)
   }, [swapHoldings, tradeBalances])
 
-  return { tokens, isLoading: holdingsLoading || tradeLoading }
+  return { tokens, swapHoldings, tradeBalances: tradeBalances ?? new Map(), isLoading: holdingsLoading || tradeLoading }
 }
 
 export function useTradeQuote(
@@ -116,6 +124,18 @@ export function useApplyTradeBalances() {
       { revalidate: false }
     )
 
+    const tradeInKey = tradeBalanceKey(identity, update.tokenInId)
+    if (tradeInKey) {
+      mutate(
+        tradeInKey,
+        (bal: bigint | undefined) => {
+          const cur = bal ?? 0n
+          return cur > update.amountIn ? cur - update.amountIn : 0n
+        },
+        { revalidate: false }
+      )
+    }
+
     const tradeOutKey = tradeBalanceKey(identity, update.tokenOutId)
     if (tradeOutKey) {
       mutate(tradeOutKey, (bal: bigint | undefined) => (bal ?? 0n) + update.amountOut, {
@@ -125,4 +145,95 @@ export function useApplyTradeBalances() {
 
     void refreshWallet()
   }
+}
+
+export type InternalTransferUpdate = {
+  ledgerId: string
+  amount: bigint
+  toWallet: boolean
+  ledgerFee: bigint
+  tradeBefore: bigint
+  walletBefore: bigint
+}
+
+export function useApplyInternalTransfer() {
+  const { identity } = useAuth()
+  const { mutate } = useSWRConfig()
+  const refreshWallet = useRefreshWallet()
+
+  return (update: InternalTransferUpdate) => {
+    if (!identity) return
+    const principal = identity.getPrincipal().toText()
+    const nextTrade = nextTradeBalanceAfterInternal(
+      update.tradeBefore,
+      update.amount,
+      update.toWallet
+    )
+    const walletDelta = walletDeltaAfterInternal(
+      update.amount,
+      update.ledgerFee,
+      update.toWallet
+    )
+
+    const tradeKey = tradeBalanceKey(identity, update.ledgerId)
+    if (tradeKey) {
+      mutate(tradeKey, nextTrade, { revalidate: false })
+    }
+
+    mutate(
+      (key) =>
+        Array.isArray(key) &&
+        key[0] === "trade-balances" &&
+        key[key.length - 1] === principal,
+      (map: Map<string, bigint> | undefined) =>
+        withLedgerBalance(map, update.ledgerId, nextTrade),
+      { revalidate: false }
+    )
+
+    const balanceKey = walletKey(identity, "token-balance", update.ledgerId)
+    if (balanceKey) {
+      mutate(
+        balanceKey,
+        (bal: bigint | undefined) => (bal ?? update.walletBefore) + walletDelta,
+        { revalidate: false }
+      )
+    }
+
+    mutate(
+      (key) =>
+        Array.isArray(key) &&
+        key[0] === "token-balances" &&
+        key[key.length - 1] === principal,
+      (map: Map<string, bigint> | undefined) => {
+        if (!map) return map
+        const next = new Map(map)
+        next.set(update.ledgerId, (next.get(update.ledgerId) ?? update.walletBefore) + walletDelta)
+        return next
+      },
+      { revalidate: false }
+    )
+
+    patchHoldings(principal, [{ ledgerId: update.ledgerId, delta: walletDelta }])
+    refreshWallet()
+  }
+}
+
+export function useTradingBalance(ledgerId: string | null) {
+  const { isAuthenticated, identity } = useAuth()
+  const { data: tradeBal } = useSWR(
+    identity && ledgerId ? tradeBalanceKey(identity, ledgerId) : null,
+    () => getTradingBalance(identity, ledgerId!),
+    { revalidateOnFocus: false, dedupingInterval: 8_000 }
+  )
+  if (!isAuthenticated || !ledgerId) return null
+  if (tradeBal === undefined) return null
+  return tradeBal
+}
+
+export function useSpendableBalance(ledgerId: string | null) {
+  const { isAuthenticated } = useAuth()
+  const { token } = useTokenHolding(ledgerId)
+  const tradeBal = useTradingBalance(ledgerId)
+  if (!isAuthenticated || !ledgerId) return null
+  return mergeSpendable(token?.balance, tradeBal)
 }

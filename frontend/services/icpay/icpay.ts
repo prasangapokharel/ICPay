@@ -6,9 +6,7 @@ import { icrcLedger } from "@/services/ledger/icrc"
 export { ICPAY_LEDGER_ID }
 
 // Market data comes from ICPSwap, the only venue ICPAY trades on, so its pool is
-// the price. It is the one source that answers with CORS open to any origin --
-// icptokens.net has no Access-Control-Allow-Origin, and under output "export"
-// there is no server to proxy a request through.
+// the price. ICPSwap answers with CORS open under static export.
 const STATS_URL = `https://api.icpswap.com/token/${ICPAY_LEDGER_ID}`
 
 export const ICPAY_SWAP_URL = `https://app.icpswap.com/swap?input=${ICP_LEDGER_ID}&output=${ICPAY_LEDGER_ID}`

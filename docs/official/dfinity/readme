@@ -1,0 +1,46 @@
+The Internet Computer provides public, read-only REST APIs for querying network state and data. You can explore them using the following Swagger/Docs interfaces and OpenAPI specifications [[IC Dashboard APIs](https://skills.internetcomputer.org/skills/ic-dashboard/#ic-dashboard-apis); [References](https://docs.internetcomputer.org/references/ic-dashboard-api/)]:
+
+### Swagger UI & Documentation Links
+
+- **IC API** (Canisters, subnets, NNS neurons/proposals, metrics):
+  - **Swagger UI:** [https://ic-api.internetcomputer.org/api/v3/swagger](https://ic-api.internetcomputer.org/api/v3/swagger)
+  - **OpenAPI Spec:** `https://ic-api.internetcomputer.org/api/v3/openapi.json`
+
+- **Ledger API** (Mainnet ICP token supply, accounts, transactions):
+  - **Swagger UI:** [https://ledger-api.internetcomputer.org/swagger-ui/](https://ledger-api.internetcomputer.org/swagger-ui/)
+  - **OpenAPI Spec:** `https://ledger-api.internetcomputer.org/openapi.json`
+
+- **Metrics API** (Time-series metrics, cycle burn rates, conversion rates):
+  - **Interactive Docs:** [https://metrics-api.internetcomputer.org/api/v1/docs](https://metrics-api.internetcomputer.org/api/v1/docs)
+  - **OpenAPI Spec:** `https://metrics-api.internetcomputer.org/api/v1/openapi.json`
+
+- **ICRC API** (ckBTC, testicp, and other ICRC ledgers — not mainnet ICP):
+  - **Interactive Docs:** [https://icrc-api.internetcomputer.org/docs](https://icrc-api.internetcomputer.org/docs)
+  - **OpenAPI Spec:** `https://icrc-api.internetcomputer.org/openapi.json`
+
+- **SNS API** (SNS lists, proposals, neurons):
+  - **Interactive Docs:** [https://sns-api.internetcomputer.org/docs](https://sns-api.internetcomputer.org/docs)
+  - **OpenAPI Spec:** `https://sns-api.internetcomputer.org/openapi.json`
+
+---
+
+### Downloading OpenAPI Specs
+
+To download the OpenAPI JSON specifications for code generation or tooling [[Implementation](https://skills.internetcomputer.org/skills/ic-dashboard/#implementation)]:
+
+```bash
+# IC API
+curl -s "https://ic-api.internetcomputer.org/api/v3/openapi.json" -o ic-api-v3.json
+
+# Ledger API (Mainnet ICP)
+curl -s "https://ledger-api.internetcomputer.org/openapi.json" -o ledger-api.json
+
+# Metrics API
+curl -s "https://metrics-api.internetcomputer.org/api/v1/openapi.json" -o metrics-api-v1.json
+
+# ICRC API
+curl -s "https://icrc-api.internetcomputer.org/openapi.json" -o icrc-api.json
+
+# SNS API
+curl -s "https://sns-api.internetcomputer.org/openapi.json" -o sns-api.json
+```

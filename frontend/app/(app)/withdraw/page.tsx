@@ -1,58 +1,46 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense } from "react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { WithdrawForm } from "@/components/withdraw/withdraw-form"
-import { SendSuccess } from "@/components/wallet/send-success"
-import { AppPage } from "@/components/layout/dashboard/app-page"
-import { useAuth } from "@/components/auth/auth-provider"
-import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Clock01Icon } from "@hugeicons/core-free-icons"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { withdraw } from "@/services/withdraw/withdraw"
-
-type Sent = { amount: bigint; recipient: string; blockIndex: bigint }
+import { AppPage } from "@/components/layout/dashboard/app-page"
+import { InternalTransferForm } from "@/components/withdraw/internal-transfer-form"
 
 export default function WithdrawPage() {
   const t = useTranslations("withdraw")
-  const { identity } = useAuth()
-  const balance = useLiveBalance()
-  const refreshWallet = useRefreshWallet()
-  const [sent, setSent] = useState<Sent | null>(null)
-
-  const handleWithdraw = async (amount: bigint, destination: string): Promise<string | null> => {
-    const result = await withdraw(identity, amount, destination)
-    if ("err" in result) return result.err
-
-    // Refetch rather than subtracting locally, so the displayed balance
-    // reflects the fee the ledger actually charged.
-    refreshWallet()
-    setSent({ amount, recipient: destination, blockIndex: result.ok.blockIndex })
-    return null
-  }
-
-  if (sent) {
-    return (
-      <SendSuccess
-        amount={sent.amount}
-        recipient={sent.recipient}
-        blockIndex={sent.blockIndex}
-        onDone={() => setSent(null)}
-      />
-    )
-  }
 
   return (
-    <AppPage title={t("title")} description={t("subtitle")}>
-      {balance === undefined ? (
-        <div className="space-y-4">
-          <Skeleton className="h-16 w-full rounded-2xl" />
-          <Skeleton className="h-14 w-full rounded-xl" />
-          <Skeleton className="h-10 w-full rounded-xl" />
-          <Skeleton className="h-20 w-full rounded-2xl" />
-        </div>
-      ) : (
-        <WithdrawForm balance={balance} onWithdraw={handleWithdraw} />
-      )}
+    <AppPage
+      title={t("title")}
+      description={t("subtitle")}
+      className="mx-auto w-full max-w-lg"
+      actions={
+        <Button
+          variant="ghost"
+          size="icon"
+          nativeButton={false}
+          render={<Link href="/transactions" />}
+          aria-label={t("history")}
+        >
+          <HugeiconsIcon icon={Clock01Icon} className="size-5" strokeWidth={1.75} />
+        </Button>
+      }
+    >
+      <Suspense
+        fallback={
+          <div className="space-y-3">
+            <Skeleton className="h-28 w-full rounded-2xl" />
+            <Skeleton className="h-16 w-full rounded-2xl" />
+            <Skeleton className="h-24 w-full rounded-2xl" />
+          </div>
+        }
+      >
+        <InternalTransferForm />
+      </Suspense>
     </AppPage>
   )
 }

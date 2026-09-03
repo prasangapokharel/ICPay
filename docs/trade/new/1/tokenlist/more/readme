@@ -1,0 +1,215 @@
+# ICPay — Token & Pool Data: Endpoint Map
+
+> Purpose: every public, official, no-auth REST endpoint you need to populate the **Markets list**, **token header**, **price chart**, **pool tab** ("No pool" box), and **recent swaps** panel shown in the trading UI screenshot — plus exactly which UI element each endpoint feeds.
+>
+> None of these require a canister deploy, a wallet, or an API key. They're read-only REST calls your Go backend calls, normalizes, and re-serves under your own `/api/v1/markets/*` contract (see §6).
+
+---
+
+## 0. The gap in your current sources
+
+Your two existing docs (`ic-api-endpoints.md`, `ledger-endpoint.md`) cover **network/ledger data**, not **DEX market data**. Neither one can answer "what pools exist for MOTOKO/ICP" or "what's this pool's TVL" — which is exactly the info your UI is missing (see the *"No pool"* box in the Pool tab of your screenshot). That data lives on **ICPSwap's Info API**, added below as §3. Everything else in this file is a consolidation of what you already had, remapped to your actual screen.
+
+---
+
+## 1. Base URLs — all sources
+
+| Source | Base URL | Docs |
+|---|---|---|
+| ICPSwap Info API (**pools, TVL, token price/chart**) | `https://api.icpswap.com/info` | github.com/ICPSwap-Labs/docs |
+| ICRC Ledger Index (**token discovery**) | `https://icrc-api.internetcomputer.org` | `/docs` |
+| SNS API (**SNS-launched tokens**) | `https://sns-api.internetcomputer.org` | `/docs` |
+| IC Public Dashboard API (**canister discovery, ICP/USD**) | `https://ic-api.internetcomputer.org` | `/api/v3/openapi.json` |
+| ICP Ledger API (**native ICP txns/accounts/supply**) | `https://ledger-api.internetcomputer.org` | `/swagger-ui/` |
+
+---
+
+## 2. Token discovery — "what tokens exist"
+
+Feeds the **left-hand MARKETS list** (OGY, ckUSDC, ckBTC, PANDA, …) and the ticker strip at the top.
+
+### 2a. ICRC ledger index (primary token list)
+```bash
+curl -s "https://icrc-api.internetcomputer.org/api/v2/ledgers?limit=50"
+curl -s "https://icrc-api.internetcomputer.org/api/v2/ledgers?limit=50&after=<cursor>"
+curl -s "https://icrc-api.internetcomputer.org/api/v2/ledgers/mxzaz-hqaaa-aaaar-qaada-cai"   # by canister id
+```
+Returns ledger canister id, symbol, name, decimals for every indexed ICRC token. This is your seed list of "which canister IDs are tokens."
+
+### 2b. SNS-launched tokens
+```bash
+curl -s "https://sns-api.internetcomputer.org/api/v2/snses?limit=50"
+```
+Use to tag a token as SNS-governed and pull its root/governance/swap canister ids.
+
+### 2c. Cross-check canister type via IC dashboard (optional, for legitimacy filtering)
+```bash
+curl -s "https://ic-api.internetcomputer.org/api/v4/canisters?language=motoko&canister_type=ledger"
+```
+`canister_type` values include `ledger`, `swap`, `index`, `minter`, `root`, `governance`. Useful to confirm a canister is actually a ledger before you list it — a `ledger`-typed canister is *not* automatically a tradable token; verify via its own `icrc1_metadata()` call.
+
+**Do not** rely on the ICRC or IC dashboard APIs for price, volume, or TVL — they don't have it. That's §3.
+
+---
+
+## 3. Pool & market data — fills your "No pool" box ★ the piece you're missing
+
+Base: `https://api.icpswap.com/info`
+
+### 3a. All pools (Pool tab)
+```bash
+curl -s "https://api.icpswap.com/info/pool/all"
+```
+Per pool: pool canister id, token0/token1, fee tier, TVL (USD), volume 24h, price. **This is literally your "Pool canister" field** — map `poolId` directly into the box currently showing "No pool."
+
+### 3b. Single pool OHLC / chart (24h price range + volume bars)
+```bash
+curl -s "https://api.icpswap.com/info/pool/p2gzi-iyaaa-aaaag-qneta-cai/chart/d1?page=1&limit=100"
+```
+`level` = `d1` (daily) / `h1` (hourly) / `m1` (minute). This directly feeds the line chart and the green/red volume bars in your screenshot — you're already rendering something like this from another source; this replaces it with an official candle feed.
+
+### 3c. All tokens (price, 24h change, 24h high/low, volume) — Markets list rows
+```bash
+curl -s "https://api.icpswap.com/info/token/all"
+```
+Per token: symbol, price (USD and ICP-denominated), 24h % change, 24h volume, TVL. This is your **entire MARKETS sidebar** in one call — price, 24h change, 24h volume columns all come from here.
+
+### 3d. Token chart (USD PRICE / ICP PRICE / 24H HIGH / 24H LOW header)
+```bash
+curl -s "https://api.icpswap.com/info/token/ryjl3-tyaaa-aaaaa-aaaba-cai/chart/d1?page=1&limit=30"
+```
+
+### 3e. Recent swap / transaction feed — "RECENT SWAPS" panel
+```bash
+curl -s "https://api.icpswap.com/info/transaction/find?poolId=<pool_canister_id>&page=1&limit=20&actionTypes=Swap,AddLiquidity,DecreaseLiquidity,Claim"
+```
+Returns side (buy/sell), amount, tx hash, timestamp, principal — maps 1:1 to your Side / Amount / Hash / Status / Time columns. Hash values you're currently truncating (`38100381`, `38100564`, …) can link out to a block explorer using this same hash.
+
+### 3f. Limit orders (if/when you add limit-order UI)
+```bash
+curl -s "https://api.icpswap.com/info/record/limitOrder/list?poolId=<pool_id>&page=1&limit=20"
+```
+
+### 3g. Transfer-position history (LP position moves)
+```bash
+curl -s "https://api.icpswap.com/info/record/transferPosition/list?poolIds=<pool_id1>,<pool_id2>&page=1&limit=20"
+```
+
+### 3h. Reference exchange rate (ICP/USD, USDC/USD, USDT/USD, XDR/USD)
+```bash
+curl -s "https://api.icpswap.com/info/exchange/rate/icp-usd"
+```
+Cheap cross-check against the IC dashboard's own ICP/USD rate (§4b) — good for a sanity-check / fallback pair.
+
+### 3i. Protocol-wide stats (optional "platform stats" panel)
+```bash
+curl -s "https://api.icpswap.com/info/global/protocol"
+curl -s "https://api.icpswap.com/info/global/protocol/d1?page=1&limit=30"
+```
+Cumulative volume, 24h volume/fees/tx count, total TVL, pair count, user count.
+
+**Response envelope for all of §3:**
+```json
+{ "code": 200, "message": null, "data": { } }
+```
+All numeric fields are decimal strings — parse with a decimal library, never float, to avoid precision loss on-chain amounts vs. what you display.
+
+---
+
+## 4. ICP-specific and network-level data
+
+### 4a. Native ICP ledger (not an ICRC ledger — separate system)
+```bash
+curl -s "https://ledger-api.internetcomputer.org/v2/accounts?limit=20"
+curl -s "https://ledger-api.internetcomputer.org/v2/transactions?limit=20&sort_by=-created_at"
+curl -s "https://ledger-api.internetcomputer.org/supply/total/latest"
+curl -s "https://ledger-api.internetcomputer.org/supply/circulating/latest"
+```
+Use for the ICP side of every `/ICP` pair — ICP account balances, ICP supply figures, ICP-denominated transaction history. Prefer `/v2/*` (cursor pagination); `/accounts` and `/transactions` (no `/v2/`) are deprecated.
+
+### 4b. ICP/USD reference rate (top header, portfolio valuation, USD conversion for any token priced only in ICP)
+```bash
+curl -s "https://ic-api.internetcomputer.org/api/v3/icp-usd-rate"
+```
+
+### 4c. Canister metadata / name resolution (hover cards, "verified" badges)
+```bash
+curl -s "https://ic-api.internetcomputer.org/api/v3/canisters/{canister_id}"
+curl -s "https://ic-api.internetcomputer.org/api/v3/canisters/{canister_id}/name"
+curl -s "https://ic-api.internetcomputer.org/api/v3/canisters-names?canister_ids=aaaaa-aa&canister_ids=..."
+```
+
+---
+
+## 5. Endpoint → UI element map
+
+| UI element (from your screenshot) | Endpoint | Field(s) |
+|---|---|---|
+| MARKETS sidebar rows (name, 24h volume, 24h change) | `GET /info/token/all` | `symbol`, `volumeUSD24H`, `priceChange24H` |
+| Ticker strip (top, scrolling prices) | `GET /info/token/all` | `priceUSD`, `priceChange24H` |
+| USD PRICE / ICP PRICE header | `GET /info/token/{id}/chart/d1` + `/info/token/all` | `priceUSD`, `priceICP` |
+| 24H CHANGE / 24H HIGH / 24H LOW | `GET /info/token/all` | `priceChange24H`, `high24H`, `low24H` |
+| TVL (top header) | `GET /info/pool/all` (sum by token) or `/info/global/protocol` | `tvlUSD` |
+| 24h price range chart | `GET /info/pool/{poolId}/chart/d1` | OHLC series |
+| Volume bars under chart | `GET /info/pool/{poolId}/chart/h1` | `volumeUSD` per bucket |
+| **Pool tab → "Pool canister" (currently "No pool")** | `GET /info/pool/all` filtered by token pair | `poolId` |
+| Token tab | ICRC ledger lookup + `GET /info/token/{id}/chart/d1` | metadata + chart |
+| Pair tab | `GET /info/pool/all` filtered by token0/token1 | pool list for the pair |
+| RECENT SWAPS table | `GET /info/transaction/find?poolId=...` | side, amount, hash, status, time |
+| Buy/Sell balance & quote | on-chain canister call (`getQuote` on the swap pool canister) — **not a REST endpoint**, call the pool canister directly via agent-js/agent-go | — |
+| MARKETS search / new listings | `GET /api/v2/ledgers` (ICRC) ∪ `GET /info/token/all` (has-a-pool filter) | union of both |
+
+---
+
+## 6. Recommended internal contract (don't expose upstreams directly to Next.js)
+
+```
+GET /api/v1/markets/tokens                 → merges §2 (ICRC discovery) + §3c (price/volume/TVL)
+GET /api/v1/markets/tokens/new              → ICRC ledgers with no §3c match yet (pre-pool, pre-price)
+GET /api/v1/markets/tokens/trending         → §3c sorted by volumeUSD24H
+GET /api/v1/markets/tokens/{canister_id}    → §3c + §3d chart + §2 metadata
+
+GET /api/v1/markets/pools                   → §3a
+GET /api/v1/markets/pools/{pool_id}         → §3a single + §3b chart
+GET /api/v1/markets/pools/{pool_id}/swaps   → §3e
+
+GET /api/v1/markets/pairs/{token0}/{token1} → §3a filtered — powers your Pair tab
+
+GET /api/v1/markets/icp/accounts/{id}       → §4a
+GET /api/v1/markets/icp/rate                → §4b (with §3h as fallback/cross-check)
+```
+
+Pipeline:
+```
+ICRC API ─┐
+SNS API ──┼──► Token Registry ──┐
+IC Dashboard ─┘                 │
+                                 ▼
+ICPSwap Info API (pools/price/TVL/swaps) ──► Market Store ──► Postgres ──► cache ──► /api/v1 ──► Next.js
+                                 ▲
+ICP Ledger API (native ICP only)┘
+```
+
+Go package layout:
+```
+internal/
+├── icapi/        // IC dashboard client
+├── icrc/         // ICRC ledger index client
+├── icpswap/      // ICPSwap info API client — pools, tokens, swaps, TVL
+├── ledgerapi/     // native ICP ledger client
+├── token/         // discovery + registry, merges icrc + icpswap
+├── market/        // pools, pairs, service layer
+└── http/api/v1/
+```
+
+---
+
+## 7. What's still missing after all five sources
+
+Even combined, these five APIs do **not** give you:
+
+- Liquidity/pools from DEXes other than ICPSwap (KongSwap, ICDex, Sonic) — if you want cross-DEX aggregation, those need separate integrations, each with their own API or canister calls.
+- Wallet balances for a connected user — that's a direct ICRC `icrc1_balance_of` canister call from your backend or frontend agent, not a REST endpoint.
+- Swap execution/quotes — done by calling the pool canister's `getQuote` / `swap` methods directly (agent-js or agent-go), not REST.
+
+Everything else needed to replace placeholder/"No pool" data in the screenshot is covered above.

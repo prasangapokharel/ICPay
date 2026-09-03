@@ -28,6 +28,14 @@ export async function call<T>(
     ) {
       return { err: msg }
     }
+    // Legacy agent path: v4 sync returned "processing" after the call already
+    // ran. PreferAsyncUpdates should prevent this; keep a clear label if not.
+    if (
+      msg.includes('Unexpected request status in v4 sync response: "processing"') ||
+      msg.includes("UnexpectedV4StatusErrorCode")
+    ) {
+      return { err: "Trade is still confirming. Refresh balances in a moment." }
+    }
     return { err: fallback }
   }
 }

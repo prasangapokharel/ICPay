@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { AppIcon } from "@/components/ui/app-icon"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { avatarUriFor } from "@/lib/profile/avatar"
 import { cn } from "@/lib/ui/utils"
 import type { IcpPrice } from "@/lib/market/icpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
@@ -47,7 +49,13 @@ export function BalanceCard({
         </span>
 
         {username && (
-          <span className="flex min-w-0 items-center gap-1 font-mono text-sm font-medium tracking-tight text-primary-foreground/80">
+          <span className="flex min-w-0 items-center gap-2 font-mono text-sm font-medium tracking-tight text-primary-foreground/80">
+            <Avatar className="size-7 ring-1 ring-primary-foreground/20">
+              <AvatarImage src={avatarUriFor(username)} alt="" />
+              <AvatarFallback className="bg-primary-foreground/10 text-[10px] uppercase">
+                {username.slice(0, 2)}
+              </AvatarFallback>
+            </Avatar>
             <span className="truncate">{username}</span>
             <PremiumBadge name={username} className="size-3.5" />
           </span>

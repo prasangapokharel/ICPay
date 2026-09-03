@@ -5,7 +5,7 @@ import useSWR from "swr"
 // The NNS dashboard's public token index. It returns metadata and a USD quote
 // for every ledger on the IC in one request, which replaces one icrc1_metadata
 // call per ledger and is the only source of a price for anything but ICP.
-const REGISTRY_URL = "https://icrc-api.internetcomputer.org/api/v2/ledgers?limit=100"
+const REGISTRY_URL = "https://icrc-api.internetcomputer.org/api/v1/ledgers?limit=100"
 
 export type TokenMarket = {
   ledgerId: string

@@ -33,7 +33,8 @@
     "total": "Kabuuan",
     "done": "Tapos na",
     "share": "Ibahagi",
-    "noToken": "Walang katugmang token"
+    "noToken": "Walang katugmang token",
+    "notFound": "Not found"
   },
   "dashboard": {
     "loadFailed": "Nabigong i-load ang iyong wallet",
@@ -234,7 +235,20 @@
     "networkFee": "Bayad sa network",
     "totalDeducted": "Kabuuang ibinawas",
     "sending": "Ipinapadala…",
-    "submit": "Bawiin ang ICP"
+    "submit": "Bawiin ang ICP",
+    "trading": "Trading",
+    "wallet": "Wallet",
+    "coin": "Coin",
+    "history": "History",
+    "success": "Transfer complete",
+    "from": "From",
+    "to": "To",
+    "flip": "Flip direction",
+    "empty": "No transferable balance",
+    "amount": "Amount",
+    "available": "Available",
+    "min": "Min",
+    "confirm": "Confirm"
   },
   "transactions": {
     "title": "Mga transaksyon",
@@ -401,7 +415,25 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "totalValue": "Total value",
+    "estimatedValue": "Estimated value",
+    "deposit": "Deposit",
+    "withdraw": "Withdraw",
+    "moreActions": "More actions",
+    "transfer": "Transfer",
+    "trade": "Trade",
+    "history": "History",
+    "myAssets": "My assets",
+    "assetView": "Asset",
+    "accountView": "Account",
+    "hideSmall": "Hide small balances",
+    "asset": "Asset",
+    "amount": "Amount",
+    "value": "Value",
+    "price": "Price",
+    "action": "Action",
+    "uid": "UID"
   },
   "token": {
     "back": "wallet",
@@ -908,7 +940,8 @@
     "afterLabel": "pagkatapos",
     "recoverFunds": "Mabawi ang mga pondo",
     "recovering": "Binabawi...",
-    "recoverSuccess": "Ibinalik ang mga pondo sa iyong wallet. Maaari kang magpalit muli."
+    "recoverSuccess": "Ibinalik ang mga pondo sa iyong wallet. Maaari kang magpalit muli.",
+    "feeNote": "Service and pool fees come from the amount you pay. Total adds one deposit transfer fee."
   },
   "live": {
     "title": "Live",
@@ -1292,7 +1325,8 @@
       "sectionLegal": "Legal",
       "primary": {
         "blog": "Blog",
-        "charity": "Kawanggawa"
+        "charity": "Kawanggawa",
+        "markets": "Mga Merkado"
       },
       "products": {
         "wallet": {
@@ -1310,6 +1344,10 @@
         "launch": {
           "title": "Ilunsad ang token",
           "description": "Gumawa ng ICRC-1 token sa Internet Computer."
+        },
+        "markets": {
+          "title": "Mga Merkado",
+          "description": "Mag-trade ng ICP tokens na may live na presyo at ranking."
         }
       },
       "resources": {
@@ -1378,7 +1416,8 @@
       "products": {
         "icfalcon": "ICFalcon",
         "icbucket": "ICBucket",
-        "wallet": "ICPay Wallet"
+        "wallet": "ICPay Wallet",
+        "markets": "Mga Merkado"
       },
       "resources": {
         "falconCli": "Falcon CLI",
@@ -1423,7 +1462,8 @@
         "imageAltDesktop": "ICPay wallet sa desktop",
         "previewMobile": "Mobile",
         "previewDesktop": "Desktop",
-        "previewTabsLabel": "Preview ng app"
+        "previewTabsLabel": "Preview ng app",
+        "browseMarkets": "Browse markets"
       },
       "cta": {
         "signedInTitle": "Naka-sign in ka na",
@@ -1432,7 +1472,8 @@
         "readyBody": "Mag-sign in sa Internet Identity, kumuha ng handle, at magsimulang magpadala sa ilang segundo. Walang seed phrase. Walang browser extension na kailangan.",
         "openWallet": "Buksan ang wallet",
         "browseChannels": "Mag-browse ng channels",
-        "signIn": "Mag-sign In"
+        "signIn": "Mag-sign In",
+        "browseMarkets": "Browse markets"
       },
       "features": {
         "eyebrow": "Platform",
@@ -2142,6 +2183,127 @@
     "swapBuy": "Bought",
     "swapSell": "Sold",
     "trading": "Trading…",
-    "tradeSuccess": "Trade completed. Balances updated."
+    "tradeSuccess": "Trade completed. Balances updated.",
+    "mainWallet": "Main wallet",
+    "tradingAccount": "Trading",
+    "transfer": "Transfer",
+    "amountLabel": "Amount",
+    "signIn": "Sign in",
+    "fillFilled": "Filled",
+    "fillFailed": "Failed",
+    "fillFilling": "Filling",
+    "holders": "Holders",
+    "notEnough": "Not enough balance",
+    "addToken": "Add token",
+    "addCustomToken": "Add custom token",
+    "addCustomTokenDesc": "Enter a canister ID to add a custom token",
+    "canisterId": "Canister ID",
+    "fee": "Fee",
+    "cancel": "Cancel",
+    "addToWatchlist": "Add to watchlist",
+    "range24h": "24h",
+    "range7d": "7d",
+    "transferSuccess": "Transfer complete",
+    "transferHint": "Move funds between your main wallet and trading balance.",
+    "from": "From",
+    "to": "To",
+    "positionsEmpty": "No positions",
+    "colCoin": "Coin",
+    "colAvailable": "Available",
+    "colPnl": "PnL",
+    "tokenPriceLine": "{name} price",
+    "fdv": "FDV",
+    "poolPair": "Pool pair",
+    "fees24h": "24h fees",
+    "morePools": "More pools",
+    "tokenType": "Token type",
+    "circulatingSupply": "Circulating supply",
+    "maxSupply": "Max supply",
+    "transactions7d": "7d transactions",
+    "website": "Website",
+    "twitter": "Twitter",
+    "explorer": "Explorer",
+    "openCanister": "Open canister",
+    "insufficientForFees": "Balance is too low to cover network fees.",
+    "minTradeUsd": "Minimum trade is about ${usd}.",
+    "slippageExceeded": "Price moved past your slippage. Try again.",
+    "insufficientLiquidity": "Not enough pool liquidity for this size.",
+    "tradeTimeout": "Trade timed out. Check balances and retry.",
+    "total": "Total",
+    "max": "Max",
+    "colSide": "Side",
+    "colAmount": "Amount",
+    "colHash": "Hash",
+    "colStatus": "Status",
+    "colTime": "Time",
+    "filterAll": "All",
+    "filterGainers": "Gainers",
+    "filterLosers": "Losers",
+    "colName": "Name"
+  },
+  "marketOverview": {
+    "title": "Market Overview",
+    "subtitle": "All tokens trading on Internet Computer",
+    "totalVolume24h": "24h Volume",
+    "totalVolume24hDesc": "Total trading volume across all tokens",
+    "totalTvl": "Total TVL",
+    "totalTvlDesc": "Total value locked in all pools",
+    "avgChange24h": "Avg 24h Change",
+    "avgChange24hDesc": "Average price change across all tokens",
+    "totalTokens": "Total Tokens",
+    "totalTokensDesc": "Number of tradable tokens",
+    "totalHolders": "Total Holders",
+    "totalHoldersDesc": "Unique holders across all tokens",
+    "totalTx7d": "7d Transactions",
+    "totalTx7dDesc": "Total transactions in the last 7 days",
+    "colToken": "Token",
+    "colName": "Name",
+    "colPrice": "Price",
+    "colChange": "24h Change",
+    "colVolume": "24h Volume",
+    "colTvl": "TVL",
+    "colActions": "Actions",
+    "loading": "Loading market data...",
+    "error": "Failed to load market data",
+    "retry": "Retry",
+    "noData": "No market data available",
+    "searchPlaceholder": "Search tokens...",
+    "search": "Search",
+    "filterAll": "All",
+    "filterGainers": "Gainers",
+    "filterLosers": "Losers",
+    "sortBy": "Sort by",
+    "viewDetails": "View Details",
+    "trade": "Trade",
+    "positionsEmpty": "No positions",
+    "range24h": "24h",
+    "range7d": "7d",
+    "poolPair": "Pool Pair",
+    "fees24h": "24h Fees",
+    "morePools": "More pools",
+    "tokenType": "Token Type",
+    "circulatingSupply": "Circulating Supply",
+    "maxSupply": "Max Supply",
+    "transactions7d": "7d Transactions",
+    "addCustomToken": "Add Custom Token",
+    "addCustomTokenDesc": "Enter a canister ID to add a custom token",
+    "canisterId": "Canister ID",
+    "fee": "Fee",
+    "cancel": "Cancel",
+    "addToWatchlist": "Add to Watchlist",
+    "trending": "Trending",
+    "newListing": "New Listing",
+    "topGainer": "Top Gainer",
+    "topVolume": "Top Volume",
+    "popular": "Popular",
+    "gainer": "Gainer",
+    "loser": "Loser",
+    "more": "More",
+    "tableTitle": "All Tokens",
+    "tableHint": "Real-time data from ICRC API and ICPSwap",
+    "prev": "Previous",
+    "next": "Next",
+    "tabOverview": "Overview",
+    "tabTradingData": "Trading Data"
   }
 }

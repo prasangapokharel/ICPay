@@ -1,4 +1,5 @@
 import Principal "mo:core/Principal";
+import Text "mo:core/Text";
 import Config "../config/Config";
 import Error "mo:core/Error";
 import LedgerTypes "../ledger/Types";
@@ -85,6 +86,9 @@ module {
   // custodian calls one, probe the standard methods so a random canister id
   // cannot be pointed at a forged interface.
   public func isValidIcrcLedger(ledgerId: Text): async Bool {
+    // Canister principals end in "-cai". Reject garbage before actor(id) traps.
+    if (ledgerId.size() < 5 or ledgerId.size() > 128) { return false };
+    if (not Text.endsWith(ledgerId, #text "-cai")) { return false };
     try {
       let svc = ledger(ledgerId);
       let standards = await svc.icrc1_supported_standards();

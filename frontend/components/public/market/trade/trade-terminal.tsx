@@ -1,7 +1,7 @@
 "use client"
 
-import { useCallback, useMemo } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
 import {
   ResizableHandle,
   ResizablePanel,
@@ -9,11 +9,18 @@ import {
 } from "@/components/ui/resizable"
 import { TradeMarketWatchlist } from "@/components/public/market/trade/trade-market-watchlist"
 import { TradePairToolbar } from "@/components/public/market/trade/trade-pair-toolbar"
+import { TradePairMarquee } from "@/components/public/market/trade/trade-pair-marquee"
 import { TradeChartPanel } from "@/components/public/market/trade/trade-chart-panel"
 import { TradeInfoTabs } from "@/components/public/market/trade/trade-info-tabs"
 import { TradeOrderPanel } from "@/components/public/market/trade/trade-order-panel"
+import { TradeWalletDialog } from "@/components/public/market/trade/trade-wallet-dialog"
+import { TradeFillAlert } from "@/components/public/market/trade/trade-fill-alert"
+import { ErrorBoundary } from "@/components/shared/error-boundary"
 import { useTerminalWatchlist, useTradePairSnapshot } from "@/hooks/market/useTradeTerminal"
-import { defaultTerminalBase, isTerminalPairBase } from "@/lib/market/tradePairs"
+import { isTerminalPairBase } from "@/lib/market/tradePairs"
+import { ledgerForPairSlug, tradePairHref } from "@/lib/market/pairSlug"
+import { TradeSeoHead } from "@/components/public/market/trade/trade-seo-head"
+import type { TerminalPairRow } from "@/services/market/tradePairSnapshot"
 import { useIsTradeDesktop } from "@/hooks/market/useTradeLayout"
 
 function TradeStackedLayout({
@@ -23,6 +30,8 @@ function TradeStackedLayout({
   listLoading,
   activeBase,
   onSelect,
+  onAddCustomToken,
+  onOpenWalletTrade,
 }: {
   snapshot: ReturnType<typeof useTradePairSnapshot>["snapshot"]
   pairLoading: boolean
@@ -30,47 +39,127 @@ function TradeStackedLayout({
   listLoading: boolean
   activeBase: string
   onSelect: (id: string) => void
+  onAddCustomToken: (row: TerminalPairRow) => void
+  onOpenWalletTrade: () => void
 }) {
   return (
-    <div className="flex flex-col gap-0">
+    <div className="flex flex-col gap-2 p-2 pb-8">
       <TradeMarketWatchlist
         rows={rows}
         activeBaseId={activeBase}
+        activeLogoUrl={snapshot?.base.logoUrl}
         onSelect={onSelect}
+        onAddCustomToken={onAddCustomToken}
         loading={listLoading}
       />
       <TradeChartPanel snapshot={snapshot} loading={pairLoading} />
-      <div className="grid gap-0 lg:grid-cols-2">
+      <div className="grid gap-2 lg:grid-cols-2">
         <TradeInfoTabs snapshot={snapshot} />
-        <TradeOrderPanel snapshot={snapshot} loading={pairLoading} />
+        <TradeOrderPanel
+          snapshot={snapshot}
+          loading={pairLoading}
+          rows={rows}
+          activeBaseId={activeBase}
+          listLoading={listLoading}
+          onSelectPair={onSelect}
+          onOpenWalletTrade={onOpenWalletTrade}
+        />
       </div>
     </div>
   )
 }
 
 export function TradeTerminal() {
-  const router = useRouter()
-  const params = useSearchParams()
-  const isTradeDesktop = useIsTradeDesktop()
+  return (
+    <ErrorBoundary title="Trade terminal failed to load">
+      <TradeTerminalInner />
+    </ErrorBoundary>
+  )
+}
 
+function TradeTerminalInner() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const params = useSearchParams()
+  const routeParams = useParams()
+  const isTradeDesktop = useIsTradeDesktop()
+  const [transferOpen, setTransferOpen] = useState(false)
+
+  const { rows, isLoading: listLoading } = useTerminalWatchlist()
+  const [customTokens, setCustomTokens] = useState<TerminalPairRow[]>([])
+  const allRows = useMemo(() => [...rows, ...customTokens], [rows, customTokens])
+  const listed = useMemo(
+    () => allRows.map((row) => ({ symbol: row.base.symbol, ledgerId: row.baseLedgerId })),
+    [allRows]
+  )
+
+  const pairParam = typeof routeParams.pair === "string" ? routeParams.pair : ""
   const baseFromUrl = params.get("base")
+  const fromSlug = pairParam ? ledgerForPairSlug(pairParam, listed, baseFromUrl) : null
+
   const activeBase = useMemo(() => {
     if (baseFromUrl && isTerminalPairBase(baseFromUrl)) return baseFromUrl
-    return defaultTerminalBase()
-  }, [baseFromUrl])
+    if (fromSlug) return fromSlug
+    return allRows[0]?.baseLedgerId ?? ""
+  }, [baseFromUrl, fromSlug, allRows])
 
   const selectPair = useCallback(
     (baseLedgerId: string) => {
-      router.replace(`/market/trade?base=${baseLedgerId}`, { scroll: false })
+      const row = allRows.find((item) => item.baseLedgerId === baseLedgerId)
+      const href = row
+        ? tradePairHref(row.base.symbol, row.baseLedgerId, listed)
+        : `/market/trade?base=${baseLedgerId}`
+      router.replace(href, { scroll: false })
     },
-    [router]
+    [router, allRows, listed]
   )
 
-  const { rows, isLoading: listLoading } = useTerminalWatchlist()
-  const { snapshot, isLoading: pairLoading } = useTradePairSnapshot(activeBase)
+  const handleAddCustomToken = useCallback((row: TerminalPairRow) => {
+    setCustomTokens((prev) => {
+      const exists = prev.some((t) => t.baseLedgerId === row.baseLedgerId)
+      if (exists) return prev
+      return [row, ...prev]
+    })
+    selectPair(row.baseLedgerId)
+  }, [selectPair])
+
+  const cachedStats = allRows.find((r) => r.baseLedgerId === activeBase)?.stats ?? null
+  const { snapshot, isLoading: pairLoading } = useTradePairSnapshot(
+    activeBase || null,
+    cachedStats
+  )
+
+  useEffect(() => {
+    if (!snapshot || listed.length === 0) return
+    const href = tradePairHref(snapshot.base.symbol, snapshot.baseLedgerId, listed)
+    const current = baseFromUrl
+      ? `${pathname}?base=${encodeURIComponent(baseFromUrl)}`
+      : pathname
+    if (current === href) return
+    router.replace(href, { scroll: false })
+  }, [snapshot, listed, pathname, baseFromUrl, router])
+
+  const openWalletFromOrder = useCallback(() => {
+    if (!snapshot) return
+    setTransferOpen(true)
+  }, [snapshot])
 
   return (
-    <div className="flex h-[calc(100svh-3.5rem)] min-h-[32rem] flex-col overflow-hidden bg-background">
+    <div className="flex h-[calc(100svh-3.5rem)] min-h-[32rem] flex-col overflow-hidden bg-background pb-2">
+      {snapshot ? (
+        <TradeSeoHead
+          symbol={snapshot.base.symbol}
+          quoteSymbol={snapshot.quote.symbol}
+          name={snapshot.base.name}
+          priceUsd={snapshot.stats?.priceUsd}
+        />
+      ) : null}
+      <TradePairMarquee
+        rows={rows}
+        quoteSymbol={snapshot?.quote.symbol ?? "ICP"}
+        loading={listLoading}
+        onSelect={selectPair}
+      />
       <TradePairToolbar snapshot={snapshot} loading={pairLoading} />
 
       {isTradeDesktop ? (
@@ -83,12 +172,14 @@ export function TradeTerminal() {
             defaultSize="17%"
             minSize="14%"
             maxSize="26%"
-            className="h-full overflow-hidden"
+            className="h-full overflow-hidden p-2"
           >
             <TradeMarketWatchlist
-              rows={rows}
+              rows={allRows}
               activeBaseId={activeBase}
+              activeLogoUrl={snapshot?.base.logoUrl}
               onSelect={selectPair}
+              onAddCustomToken={handleAddCustomToken}
               loading={listLoading}
             />
           </ResizablePanel>
@@ -99,9 +190,9 @@ export function TradeTerminal() {
             id="terminal-center"
             defaultSize="58%"
             minSize="38%"
-            className="h-full overflow-hidden"
+            className="h-full overflow-hidden p-2"
           >
-            <ResizablePanelGroup orientation="vertical" className="h-full">
+            <ResizablePanelGroup orientation="vertical" className="h-full gap-2">
               <ResizablePanel
                 id="terminal-chart"
                 defaultSize="58%"
@@ -129,9 +220,17 @@ export function TradeTerminal() {
             defaultSize="25%"
             minSize="22%"
             maxSize="34%"
-            className="h-full overflow-hidden"
+            className="h-full overflow-hidden p-2"
           >
-            <TradeOrderPanel snapshot={snapshot} loading={pairLoading} />
+            <TradeOrderPanel
+              snapshot={snapshot}
+              loading={pairLoading}
+              rows={allRows}
+              activeBaseId={activeBase}
+              listLoading={listLoading}
+              onSelectPair={selectPair}
+              onOpenWalletTrade={openWalletFromOrder}
+            />
           </ResizablePanel>
         </ResizablePanelGroup>
       ) : (
@@ -139,13 +238,22 @@ export function TradeTerminal() {
           <TradeStackedLayout
             snapshot={snapshot}
             pairLoading={pairLoading}
-            rows={rows}
+            rows={allRows}
             listLoading={listLoading}
             activeBase={activeBase}
             onSelect={selectPair}
+            onAddCustomToken={handleAddCustomToken}
+            onOpenWalletTrade={openWalletFromOrder}
           />
         </div>
       )}
+
+      <TradeFillAlert />
+      <TradeWalletDialog
+        open={transferOpen}
+        onOpenChange={setTransferOpen}
+        snapshot={snapshot ?? null}
+      />
     </div>
   )
 }

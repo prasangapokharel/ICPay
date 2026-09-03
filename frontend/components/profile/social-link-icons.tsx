@@ -15,10 +15,18 @@ const ICONS = {
 }
 
 // Shows social link icons (with href) for public profiles — no editing.
-export function SocialLinkIcons({ links }: { links: SocialLink[] }) {
+export function SocialLinkIcons({
+  links,
+  size = "md",
+}: {
+  links: SocialLink[]
+  size?: "sm" | "md"
+}) {
   if (!links.length) return null
+  const box = size === "sm" ? "size-7" : "size-8"
+  const icon = size === "sm" ? "size-3.5" : "size-4"
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-1.5">
       {links.map((l) => {
         const key = platformKey(l.platform)
         return (
@@ -28,9 +36,9 @@ export function SocialLinkIcons({ links }: { links: SocialLink[] }) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={key}
-            className="flex size-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className={`flex ${box} items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-accent hover:text-foreground`}
           >
-            <HugeiconsIcon icon={ICONS[key]} className="size-4" />
+            <HugeiconsIcon icon={ICONS[key]} className={icon} />
           </a>
         )
       })}

@@ -1,7 +1,11 @@
 "use client"
 
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowDataTransferHorizontalIcon } from "@hugeicons/core-free-icons"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { HeaderUserMenu } from "@/components/layout/dashboard/header-user-menu"
@@ -19,6 +23,15 @@ export function AppSiteHeader() {
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mx-1 h-4 data-vertical:self-auto" />
         <h1 className="flex-1 truncate text-sm font-normal">{title}</h1>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5"
+          render={<Link href="/market/trade" />}
+        >
+          <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} className="size-4" strokeWidth={2} />
+          Trade
+        </Button>
         <div className="flex shrink-0 items-center rounded-full border border-border/70 bg-muted/40 p-0.5">
           <ThemeToggle />
           <Separator orientation="vertical" className="mx-0.5 h-5 data-vertical:self-auto" />

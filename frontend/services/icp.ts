@@ -1,4 +1,10 @@
-import { HttpAgent, type Identity } from "@icp-sdk/core/agent"
+import {
+  HttpAgent,
+  type Identity,
+  type UpdateOptions,
+  type PollingOptions,
+} from "@icp-sdk/core/agent"
+import type { Principal } from "@icp-sdk/core/principal"
 
 const LOCAL_IC_HOST = "http://127.0.0.1:4943"
 const IC_HOST = "https://icp0.io"
@@ -29,11 +35,32 @@ export function getHost(): string {
 let cachedAgent: HttpAgent | null = null
 let cachedFor: Identity | null = null
 
+/**
+ * Long updates (executeTrade) often finish after the /api/v4 sync window.
+ * Gateways then return certificate status "processing"; @icp-sdk/core throws
+ * UnexpectedV4StatusErrorCode instead of polling — while the canister still
+ * completes. Prefer async submit + poll so the client waits for replied.
+ */
+export function preferAsyncUpdates(agent: HttpAgent): HttpAgent {
+  const original = agent.update.bind(agent)
+  agent.update = (
+    canisterId: Principal | string,
+    fields: UpdateOptions,
+    pollingOptions?: PollingOptions
+  ) =>
+    original(
+      canisterId,
+      { ...fields, callSync: fields.callSync ?? false },
+      pollingOptions
+    )
+  return agent
+}
+
 export async function createAgent(identity?: Identity): Promise<HttpAgent> {
   if (cachedAgent && cachedFor === (identity ?? null)) return cachedAgent
 
   const host = getHost()
-  const agent = HttpAgent.createSync({ identity, host })
+  const agent = preferAsyncUpdates(HttpAgent.createSync({ identity, host }))
   if (getIsLocal()) {
     await agent.fetchRootKey()
   }

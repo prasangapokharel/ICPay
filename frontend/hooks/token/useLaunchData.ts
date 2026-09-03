@@ -4,6 +4,7 @@ import useSWR from "swr"
 import useSWRImmutable from "swr/immutable"
 import type { Identity } from "@icp-sdk/core/agent"
 import { useAuth } from "@/components/auth/auth-provider"
+import { usePageVisible } from "@/hooks/live/usePageVisible"
 import type { TokenPublic } from "@/services/types"
 import {
   isSymbolAvailable,
@@ -93,6 +94,7 @@ export function useMyTokens(limit = 50) {
 // the detail page would read "creating" until a manual reload.
 export function useToken(id: string | null) {
   const { identity } = useAuth()
+  const pageVisible = usePageVisible()
 
   const { data, error, isLoading, mutate } = useSWR(
     id ? keyFor(identity, "token", id) : null,
@@ -100,7 +102,8 @@ export function useToken(id: string | null) {
     {
       ...QUERY,
       keepPreviousData: true,
-      refreshInterval: (token) => (token && "pending" in token.status ? 5_000 : 0),
+      refreshInterval: (token) =>
+        pageVisible && token && "pending" in token.status ? 5_000 : 0,
     }
   )
 

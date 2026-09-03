@@ -36,6 +36,8 @@ const PUBLIC = [
   "/privacy",
   "/transparency",
   "/login",
+  "/market",
+  "/market/trade",
   "/blog",
   "/channels",
   ...CHARITY_PUBLIC,

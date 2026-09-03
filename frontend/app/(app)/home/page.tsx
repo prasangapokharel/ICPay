@@ -67,7 +67,7 @@ export default function DashboardPage() {
             price={price}
             hidden={hidden}
             onToggleHidden={() => setHidden((v) => !v)}
-            username={username}
+            user={data.user}
           />
           <HomeHoldingsCard />
         </div>

@@ -3,6 +3,7 @@ import {
   BookOpen02Icon,
   CloudIcon,
   FavouriteIcon,
+  ChartIncreaseIcon,
   File01Icon,
   InformationCircleIcon,
   MessageQuestionIcon,
@@ -19,6 +20,7 @@ import {
 
 export const NAV_MENU_ICONS: Record<string, IconSvgElement> = {
   "/charity": FavouriteIcon,
+  "/market": ChartIncreaseIcon,
   "/blog": News01Icon,
   "/login": Wallet01Icon,
   "/token/create": Rocket01Icon,

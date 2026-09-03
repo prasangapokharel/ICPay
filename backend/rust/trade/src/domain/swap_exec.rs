@@ -73,10 +73,13 @@ pub async fn execute_swap_for(
     }
 
     let allowance = icrc2_allowance_amount(swap_amount, fee_in);
-    if let Err(e) = approve_spender(token_in_id, pool.pool_id, allowance, fee_in).await {
-        balances::credit(user, &token_in, amount_in_u64);
-        return ApiResult::err(e);
-    }
+    let approve_block = match approve_spender(token_in_id, pool.pool_id, allowance, fee_in).await {
+        Ok(block) => block,
+        Err(e) => {
+            balances::credit(user, &token_in, amount_in_u64);
+            return ApiResult::err(e);
+        }
+    };
 
     let gross_out = match deposit_from_and_swap(
         pool.pool_id,
@@ -112,11 +115,12 @@ pub async fn execute_swap_for(
 
     balances::credit(user, &token_out, net_out);
 
+    let tx_ns = ic_cdk::api::time();
     ApiResult::ok(SwapResult {
-        block_index: 0,
+        block_index: approve_block,
         amount_in: Nat::from(amount_in_u64),
         amount_out: Nat::from(net_out),
         service_fee: Nat::from(svc),
-        tx_id: format!("trade-{}", ic_cdk::api::time()),
+        tx_id: format!("trade-{tx_ns}"),
     })
 }

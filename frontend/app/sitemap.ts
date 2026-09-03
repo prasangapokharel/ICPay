@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next"
 import { BLOG_POSTS } from "@/services/blog/blog"
 import { CHARITY_CAMPAIGNS } from "@/lib/public/charity/campaigns"
+import { fetchIcpswapTokenAll } from "@/services/market/icpswapStats"
+import { uniquePairSlugs } from "@/lib/market/tradeSeo"
 import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
@@ -37,6 +39,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ]
 
+  let marketPairEntries: MetadataRoute.Sitemap = []
+  try {
+    const listed = await fetchIcpswapTokenAll()
+    marketPairEntries = uniquePairSlugs(listed)
+      .slice(0, 250)
+      .map((pair) => ({
+        url: `${siteUrl}/market/trade/${pair}`,
+        changeFrequency: "hourly" as const,
+        priority: 0.7,
+      }))
+  } catch {
+    marketPairEntries = []
+  }
+
   return [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.8 },
@@ -48,10 +64,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/terms`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${siteUrl}/transparency`, changeFrequency: "monthly", priority: 0.3 },
-    { url: `${siteUrl}/blog`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${siteUrl}/market`, changeFrequency: "hourly", priority: 0.9 },
+    { url: `${siteUrl}/market/trade`, changeFrequency: "hourly", priority: 0.85 },
     ...charityEntries,
     { url: `${siteUrl}/channels`, changeFrequency: "weekly", priority: 0.65 },
     ...blogEntries,
     ...channelEntries,
+    ...marketPairEntries,
   ]
 }

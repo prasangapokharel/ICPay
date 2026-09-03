@@ -4,12 +4,13 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { TradeTerminal } from "@/components/public/market/trade/trade-terminal"
 
 export const metadata: Metadata = {
-  title: "ICP Market Terminal — Live ICPSwap Pairs | ICPay",
+  title: { absolute: "ICP Market Terminal — ICPSwap Spot Pairs | ICPay" },
   description:
-    "Advanced ICP trading terminal with live ICPSwap prices, pool stats, and wallet swap execution on the Internet Computer.",
+    "Trade SNS and ICRC tokens versus ICP on ICPSwap. Live prices, pool stats, and Internet Identity execution on ICPay.",
+  alternates: { canonical: "https://icpay.app/market/trade" },
   openGraph: {
     title: "ICP Market Terminal | ICPay",
-    description: "Live ICPSwap pair data and trading on ICPay.",
+    description: "Live ICPSwap spot pairs on ICPay.",
     url: "https://icpay.app/market/trade",
   },
 }

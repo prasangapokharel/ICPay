@@ -57,8 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           await openBackendSession(id)
           setIdentity(id)
-        } catch (e) {
-          console.warn("Stored delegation rejected, signing out:", e)
+        } catch {
           await discardRejectedSession()
         }
       } catch (e) {

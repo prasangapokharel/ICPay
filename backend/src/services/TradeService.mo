@@ -40,11 +40,20 @@ module {
     limits: RateLimitStorage.RateLimitMap;
   };
 
-  func validateLedger(service: TradeService, ledgerId: Text, amount: Nat): ?Text {
-    if (not LedgerService.isAllowed(service.ledger, ledgerId)) {
-      return ?("Unsupported token ledger: " # ledgerId);
+  func ensureLedger(service: TradeService, ledgerId: Text): async ?Text {
+    if (LedgerService.isAllowed(service.ledger, ledgerId)) { return null };
+    if (await LedgerService.isValidIcrcLedger(ledgerId)) {
+      ignore LedgerService.registerLedger(service.ledger, ledgerId);
+      return null;
     };
-    AmountValidator.validate(amount);
+    ?("Unsupported token ledger: " # ledgerId);
+  };
+
+  func validateLedger(service: TradeService, ledgerId: Text, amount: Nat): async ?Text {
+    switch (await ensureLedger(service, ledgerId)) {
+      case (?err) { ?err };
+      case (null) { AmountValidator.validate(amount) };
+    };
   };
 
   func resolveUser(service: TradeService, caller: Principal): Types.ApiResult<Types.User> {
@@ -100,16 +109,17 @@ module {
     if (tokenIn == tokenOut) {
       return #err("token_in and token_out must differ");
     };
-    switch (validateLedger(service, tokenIn, amountIn)) {
+    switch (await validateLedger(service, tokenIn, amountIn)) {
       case (?err) { return #err(err) };
       case (null) {};
     };
-    if (not LedgerService.isAllowed(service.ledger, tokenOut)) {
-      return #err("Unsupported token ledger: " # tokenOut);
+    switch (await ensureLedger(service, tokenOut)) {
+      case (?err) { return #err(err) };
+      case (null) {};
     };
-    switch (resolveUser(service, caller)) {
+    let user = switch (resolveUser(service, caller)) {
       case (#err(e)) { return #err(e) };
-      case (#ok(_)) {};
+      case (#ok(u)) { u };
     };
 
     switch (await ensureTradingBalance(service, caller, tokenIn, amountIn)) {
@@ -130,11 +140,51 @@ module {
         };
       };
       case (#Ok(remote)) {
-        // Output stays on the trade canister balance — skips one ICRC withdraw (~4s).
-        // Wallet + trade UI merge trade balance with custodial balance for display.
+        recordSwapFills(service, user.id, tokenIn, tokenOut, remote);
         #ok(toSwapResult(remote));
       };
     };
+  };
+
+  func recordSwapFills(
+    service: TradeService,
+    userId: Types.UserId,
+    tokenIn: Text,
+    tokenOut: Text,
+    remote: TradeClient.SwapResultRemote,
+  ) {
+    let now = Time.now();
+    let venue = Config.TRADE_CANISTER_ID;
+    let outTx = TxRepo.create(
+      service.txs,
+      service.byUser,
+      service.nextId(),
+      userId,
+      #swapOut,
+      tokenIn,
+      remote.amount_in,
+      0,
+      venue,
+      venue,
+      ?remote.tx_id,
+      now,
+    );
+    TxModel.complete(outTx, remote.block_index, now);
+    let inTx = TxRepo.create(
+      service.txs,
+      service.byUser,
+      service.nextId(),
+      userId,
+      #swapIn,
+      tokenOut,
+      remote.amount_out,
+      0,
+      venue,
+      venue,
+      ?remote.tx_id,
+      now,
+    );
+    TxModel.complete(inTx, remote.block_index, now);
   };
 
   func transferAndCredit(
@@ -143,7 +193,7 @@ module {
     ledgerId: Text,
     amount: Nat,
   ) : async Types.ApiResult<{ blockIndex: Nat64 }> {
-    switch (validateLedger(service, ledgerId, amount)) {
+    switch (await validateLedger(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
     };
@@ -236,7 +286,7 @@ module {
     ledgerId: Text,
     amount: Nat,
   ) : async Types.ApiResult<{ blockIndex: Nat64 }> {
-    switch (validateLedger(service, ledgerId, amount)) {
+    switch (await validateLedger(service, ledgerId, amount)) {
       case (?err) { return #err(err) };
       case (null) {};
     };

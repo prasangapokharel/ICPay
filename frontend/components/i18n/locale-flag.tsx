@@ -31,6 +31,7 @@ export function LocaleFlag({ country, label, size = "md", className, priority }:
       height={height}
       unoptimized
       loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
       priority={priority}
       className={cn("shrink-0 rounded-full object-cover", className)}
     />

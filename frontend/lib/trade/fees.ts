@@ -31,6 +31,43 @@ export function maxTradeInput(balance: bigint, ledgerFee: bigint): bigint {
   return room > 0n ? room : 0n
 }
 
+export function internalTransferMax(
+  toWallet: boolean,
+  tradeBalance: bigint,
+  walletBalance: bigint,
+  ledgerFee: bigint
+): bigint {
+  if (toWallet) return tradeBalance > 0n ? tradeBalance : 0n
+  return maxTradeInput(walletBalance, ledgerFee)
+}
+
+export function nextTradeBalanceAfterInternal(
+  tradeBalance: bigint,
+  amount: bigint,
+  toWallet: boolean
+): bigint {
+  if (toWallet) return tradeBalance > amount ? tradeBalance - amount : 0n
+  return tradeBalance + amount
+}
+
+export function walletDeltaAfterInternal(
+  amount: bigint,
+  ledgerFee: bigint,
+  toWallet: boolean
+): bigint {
+  return toWallet ? amount : -(amount + ledgerFee)
+}
+
+export function withLedgerBalance(
+  map: Map<string, bigint> | undefined,
+  ledgerId: string,
+  next: bigint
+): Map<string, bigint> {
+  const out = new Map(map ?? [])
+  out.set(ledgerId, next)
+  return out
+}
+
 export function minAmountOut(amountOut: bigint, slippageBps: bigint = DEFAULT_SLIPPAGE_BPS): bigint {
   if (amountOut === 0n) return 0n
   return (amountOut * (10_000n - slippageBps)) / 10_000n

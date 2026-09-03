@@ -18,7 +18,6 @@ import {
   joinObjectPath,
   listFolderEntries,
   nestedPrefix,
-  normalizePrefix,
   pathsUnderFolder,
 } from "@/lib/bucket/folderPath"
 import type { FileListPage, FilePublic } from "@/services/bucket/types"
@@ -83,7 +82,7 @@ export function BucketFilesPanel({
   const search = useBucketSearch(searching ? bucketId : null, debouncedQuery, page)
   const active = searching ? search : browse
   const { files, total, totalPages, isLoading, refresh: refreshFiles } = active
-  const apiFolders = searching ? [] : browse.folders
+  const apiFolders = useMemo(() => (searching ? [] : browse.folders), [searching, browse.folders])
   const { refresh: refreshStats } = useBucketStats(bucketId)
 
   useEffect(() => {
@@ -91,13 +90,20 @@ export function BucketFilesPanel({
     return () => window.clearTimeout(timer)
   }, [query])
 
-  useEffect(() => {
-    setPage(0)
-  }, [prefix, debouncedQuery])
+  // Derived state: reset page and selection when filter changes, selection when page changes.
+  const [prevPrefix, setPrevPrefix] = useState(prefix)
+  const [prevDebouncedQuery, setPrevDebouncedQuery] = useState(debouncedQuery)
+  const [prevPage, setPrevPage] = useState(page)
 
-  useEffect(() => {
+  if (prevPrefix !== prefix || prevDebouncedQuery !== debouncedQuery) {
+    setPrevPrefix(prefix)
+    setPrevDebouncedQuery(debouncedQuery)
+    setPage(0)
     setSelected(new Set())
-  }, [prefix, page, debouncedQuery])
+  } else if (prevPage !== page) {
+    setPrevPage(page)
+    setSelected(new Set())
+  }
 
   const entries = useMemo(() => {
     if (searching) {

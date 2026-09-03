@@ -29,7 +29,7 @@ export default function WhatIsIcpPage() {
         <p className="text-[11px] text-muted-foreground">August 9, 2026 · 6 min read</p>
       </header>
 
-      {/* Live market data fetched client-side from icptokens.net */}
+      {/* Live market data from icrc-api.internetcomputer.org */}
       <IcpLiveData />
 
       <section className="space-y-3">

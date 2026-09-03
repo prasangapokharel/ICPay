@@ -31,7 +31,7 @@ export function LanguageSwitch({ variant = "icon" }: { variant?: "icon" | "row" 
             <span className="min-w-0 flex-1 truncate text-left">{active.label}</span>
           </>
         ) : (
-          <LocaleFlag country={active.country} label={active.label} size="sm" />
+          <LocaleFlag country={active.country} label={active.label} size="sm" priority />
         )}
       </SelectPrimitive.Trigger>
       <SelectContent align={variant === "row" ? "start" : "end"} side={variant === "row" ? "top" : "bottom"}>

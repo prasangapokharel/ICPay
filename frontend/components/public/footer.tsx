@@ -70,7 +70,7 @@ export function PublicFooter() {
 
   return (
     <footer className="border-t border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-14 md:px-6 md:py-16">
+      <div className="w-full px-4 py-14 md:px-6 md:py-16">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-stretch lg:gap-0">
           <aside className="flex shrink-0 flex-col lg:w-44 lg:border-r lg:border-dotted lg:border-border/50 lg:pr-10 xl:w-48">
             <div>

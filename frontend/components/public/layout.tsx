@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { PublicFooter } from "@/components/public/footer"
+import { PublicFooterGate } from "@/components/public/footer-gate"
 import { PublicNav } from "@/components/public/nav"
 import { cn } from "@/lib/ui/utils"
 
@@ -33,7 +33,7 @@ export function PublicLayout({
       >
         {children}
       </main>
-      <PublicFooter />
+      <PublicFooterGate />
     </div>
   )
 }
