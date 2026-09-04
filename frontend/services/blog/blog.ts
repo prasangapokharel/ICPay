@@ -32,6 +32,15 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "how-to-top-up-icp-cycles",
+    title: "How to Top Up ICP Cycles: Canister Cycles Guide (2026)",
+    description:
+      "How to top up ICP cycles — convert ICP to canister cycles via the CMC, step-by-step with ICPay, fees, and how to keep canisters from freezing.",
+    publishedAt: "2026-09-04",
+    readingMinutes: 12,
+    category: "How-to",
+  },
+  {
     slug: "instant-crypto-payments-icpay",
     title: "Instant Crypto Payments with ICPay: Send ICP in Seconds, Not Minutes",
     description:

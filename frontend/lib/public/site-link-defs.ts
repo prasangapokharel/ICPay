@@ -15,6 +15,7 @@ export const PUBLIC_PRIMARY_LINK_DEFS: SiteLinkDef[] = [{ id: "blog", href: "/bl
 export const PUBLIC_PRODUCT_MENU_DEFS: NavMenuItemDef[] = [
   { id: "wallet", href: "/login" },
   { id: "launch", href: "/token/create" },
+  { id: "topup", href: "/topup" },
   { id: "icbucket", href: "/icbucket" },
   { id: "icfalcon", href: "/icfalcon" },
 ]
@@ -40,6 +41,7 @@ export const PUBLIC_LEGAL_MENU_DEFS: NavMenuItemDef[] = [
 export const PUBLIC_PRODUCT_LINK_DEFS: SiteLinkDef[] = [
   { id: "icfalcon", href: "/icfalcon" },
   { id: "icbucket", href: "/icbucket" },
+  { id: "topup", href: "/topup" },
   { id: "wallet", href: "/login" },
 ]
 

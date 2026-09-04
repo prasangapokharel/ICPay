@@ -3,7 +3,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import { getNavMenuIcon } from "@/lib/public/nav-menu-icons"
 import { charityCampaignShellClass, isCharityCampaignPath } from "@/lib/public/charity/shell"
@@ -69,7 +68,9 @@ function NavDropdown({
 }) {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger>{label}</NavigationMenuTrigger>
+      <NavigationMenuTrigger className="bg-transparent px-3 font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground data-open:bg-transparent data-popup-open:bg-transparent">
+        {label}
+      </NavigationMenuTrigger>
       <NavigationMenuContent>
         <ul
           className={cn(
@@ -121,33 +122,26 @@ export function PublicNav() {
               height={36}
               className="size-9 rounded-lg object-cover"
               priority
+              loading="eager"
             />
-            <span className="text-xl font-bold tracking-tight text-primary md:text-2xl">ICPay</span>
+            <span className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
+              ICPay
+            </span>
           </Link>
 
           <NavigationMenu className="hidden max-w-none lg:flex" align="start">
             <NavigationMenuList className="flex-wrap justify-start gap-0.5">
               {primaryLinks.map((link) => {
                 const active = isActive(pathname, link.href)
-                const icon = getNavMenuIcon(link.href)
                 return (
                   <NavigationMenuItem key={link.href}>
                     <NavigationMenuLink
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        "gap-2",
-                        active && "bg-primary/10 text-primary hover:bg-primary/10"
+                        "bg-transparent px-3 font-normal shadow-none hover:bg-transparent hover:text-foreground",
+                        active ? "text-foreground" : "text-muted-foreground"
                       )}
-                      render={
-                        <Link href={link.href} className="inline-flex items-center gap-2">
-                          <HugeiconsIcon
-                            icon={icon}
-                            className="size-4 text-primary"
-                            strokeWidth={1.75}
-                          />
-                          {link.label}
-                        </Link>
-                      }
+                      render={<Link href={link.href}>{link.label}</Link>}
                     />
                   </NavigationMenuItem>
                 )
