@@ -92,6 +92,7 @@ export function PublicNav() {
   const {
     primaryLinks,
     productMenu,
+    canisterMenu,
     resourceMenu,
     legalMenu,
     sectionLabels,
@@ -149,6 +150,7 @@ export function PublicNav() {
 
               <NavDropdown label={sectionLabels.products} items={productMenu} />
               <NavDropdown label={sectionLabels.resources} items={resourceMenu} columns={2} />
+              <NavDropdown label={sectionLabels.canisters} items={canisterMenu} />
               <NavDropdown label={sectionLabels.more} items={legalMenu} columns={2} />
             </NavigationMenuList>
           </NavigationMenu>

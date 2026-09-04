@@ -47,6 +47,7 @@ export function PublicNavMobile() {
   const {
     primaryLinks,
     productMenu,
+    canisterMenu,
     resourceMenu,
     legalMenu,
     sectionLabels,
@@ -95,6 +96,7 @@ export function PublicNavMobile() {
 
             <MobileNavSection title={sectionLabels.products} items={productMenu} onNavigate={close} />
             <MobileNavSection title={sectionLabels.resources} items={resourceMenu} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.canisters} items={canisterMenu} onNavigate={close} />
             <MobileNavSection title={sectionLabels.more} items={legalMenu} onNavigate={close} />
           </div>
         </DrawerContent>

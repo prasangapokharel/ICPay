@@ -325,6 +325,22 @@ export default function HowToTopUpIcpCyclesPage() {
         <ul className="space-y-1.5 pl-4 text-sm text-muted-foreground">
           <li className="list-disc">
             <Link
+              href="/blog/how-to-create-icp-canister"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              How to create an ICP canister
+            </Link>
+          </li>
+          <li className="list-disc">
+            <Link
+              href="/blog/how-to-mint-cycles-ledger"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              How to mint cycles to the cycles ledger
+            </Link>
+          </li>
+          <li className="list-disc">
+            <Link
               href="/blog/icp-cycles-explained"
               className="underline underline-offset-2 hover:text-foreground"
             >

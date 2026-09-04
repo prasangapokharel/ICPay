@@ -2,12 +2,13 @@
 
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/ui/utils"
+import { Spinner } from "@/components/ui/spinner"
 import type { TopUpFlowStep } from "@/services/cycles/topUp"
 
 const FLOW_STEPS: TopUpFlowStep[] = ["send", "mint", "done"]
 const STEP_KEYS = ["stepSend", "stepMint", "stepDone"] as const
 
-type StepState = "complete" | "active" | "upcoming" | "failed"
+type StepState = "complete" | "active" | "processing" | "upcoming" | "failed"
 
 function resolveState(
   index: number,
@@ -19,7 +20,7 @@ function resolveState(
   if (failed && index === idx) return "failed"
   if (flowStep === "done") return "complete"
   if (index < idx) return "complete"
-  if (index === idx) return "active"
+  if (index === idx) return "processing"
   return "upcoming"
 }
 
@@ -61,21 +62,25 @@ export function CyclesTopUpStepper({
                   className={cn(
                     "flex size-8 shrink-0 items-center justify-center rounded-full border-2 bg-background transition-colors",
                     state === "complete" && "border-primary bg-primary",
-                    state === "active" && "border-primary",
+                    (state === "active" || state === "processing") && "border-primary",
                     state === "upcoming" && "border-muted-foreground/30",
                     state === "failed" && "border-destructive bg-destructive/10"
                   )}
                 >
-                  <span
-                    aria-hidden
-                    className={cn(
-                      "size-2 rounded-full",
-                      state === "complete" && "bg-primary-foreground",
-                      state === "active" && "bg-primary",
-                      state === "upcoming" && "bg-muted-foreground/35",
-                      state === "failed" && "bg-destructive"
-                    )}
-                  />
+                  {state === "processing" ? (
+                    <Spinner className="size-3.5 text-primary" />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "size-2 rounded-full",
+                        state === "complete" && "bg-primary-foreground",
+                        state === "active" && "bg-primary",
+                        state === "upcoming" && "bg-muted-foreground/35",
+                        state === "failed" && "bg-destructive"
+                      )}
+                    />
+                  )}
                 </span>
                 <span
                   aria-hidden
@@ -94,7 +99,10 @@ export function CyclesTopUpStepper({
                   "mt-0.5 max-w-full truncate px-0.5 text-xs font-semibold leading-tight sm:text-sm",
                   state === "failed" && "text-destructive",
                   state === "upcoming" && "text-muted-foreground",
-                  (state === "active" || state === "complete") && "text-foreground"
+                  (state === "active" ||
+                    state === "processing" ||
+                    state === "complete") &&
+                    "text-foreground"
                 )}
               >
                 {t(key)}

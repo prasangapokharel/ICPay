@@ -32,6 +32,42 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "how-to-create-icp-canister",
+    title: "How to Create an ICP Canister with CMC (No dfx) | ICPay",
+    description:
+      "Create an Internet Computer canister with ICP via the CMC — controllers, subnets, and step-by-step with ICPay. No dfx required.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 8,
+    category: "How-to",
+  },
+  {
+    slug: "how-to-manage-icp-canister",
+    title: "How to Manage an ICP Canister: Status, Start & Stop | ICPay",
+    description:
+      "Live canister_status, start/stop, and logs when your Internet Identity is a controller — browser guide with ICPay.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 7,
+    category: "How-to",
+  },
+  {
+    slug: "how-to-mint-cycles-ledger",
+    title: "How to Mint Cycles to the Cycles Ledger | ICPay",
+    description:
+      "Mint ICP into cycles on the cycles ledger with notify_mint_cycles, then withdraw to any canister — ICPay cycles wallet guide.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 8,
+    category: "How-to",
+  },
+  {
+    slug: "how-to-snapshot-icp-canister",
+    title: "How to Snapshot an ICP Canister: Take, Load & Delete | ICPay",
+    description:
+      "Take, list, load, and delete Internet Computer canister snapshots when you are a controller — browser guide with ICPay.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 7,
+    category: "How-to",
+  },
+  {
     slug: "how-to-top-up-icp-cycles",
     title: "How to Top Up ICP Cycles: Canister Cycles Guide (2026)",
     description:

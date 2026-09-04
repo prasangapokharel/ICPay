@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl"
 import {
   PUBLIC_COMMUNITY_LINK_DEFS,
+  PUBLIC_CANISTER_MENU_DEFS,
   PUBLIC_LEGAL_MENU_DEFS,
   PUBLIC_PRIMARY_LINK_DEFS,
   PUBLIC_PRODUCT_LINK_DEFS,
@@ -61,6 +62,7 @@ export function usePublicSiteLinks() {
   return {
     primaryLinks: mapNavLabels(PUBLIC_PRIMARY_LINK_DEFS, "primary"),
     productMenu: mapMenuItems(PUBLIC_PRODUCT_MENU_DEFS, "products"),
+    canisterMenu: mapMenuItems(PUBLIC_CANISTER_MENU_DEFS, "canisters"),
     resourceMenu: mapMenuItems(PUBLIC_RESOURCE_MENU_DEFS, "resources"),
     legalMenu: mapMenuItems(PUBLIC_LEGAL_MENU_DEFS, "legal"),
     productLinks: mapFooterLabels(PUBLIC_PRODUCT_LINK_DEFS, "products"),
@@ -84,6 +86,7 @@ export function usePublicSiteLinks() {
     ],
     sectionLabels: {
       products: tNav("sectionProducts"),
+      canisters: tNav("sectionCanisters"),
       resources: tNav("sectionResources"),
       more: tNav("sectionMore"),
     },

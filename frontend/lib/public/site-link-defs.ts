@@ -15,9 +15,17 @@ export const PUBLIC_PRIMARY_LINK_DEFS: SiteLinkDef[] = [{ id: "blog", href: "/bl
 export const PUBLIC_PRODUCT_MENU_DEFS: NavMenuItemDef[] = [
   { id: "wallet", href: "/login" },
   { id: "launch", href: "/token/create" },
-  { id: "topup", href: "/topup" },
   { id: "icbucket", href: "/icbucket" },
   { id: "icfalcon", href: "/icfalcon" },
+]
+
+export const PUBLIC_CANISTER_MENU_DEFS: NavMenuItemDef[] = [
+  { id: "hub", href: "/canister" },
+  { id: "manage", href: "/canister/manage" },
+  { id: "create", href: "/canister/create" },
+  { id: "cycles", href: "/canister/cycles" },
+  { id: "topup", href: "/topup" },
+  { id: "snapshots", href: "/canister/snapshots" },
 ]
 
 export const PUBLIC_RESOURCE_MENU_DEFS: NavMenuItemDef[] = [
@@ -41,6 +49,7 @@ export const PUBLIC_LEGAL_MENU_DEFS: NavMenuItemDef[] = [
 export const PUBLIC_PRODUCT_LINK_DEFS: SiteLinkDef[] = [
   { id: "icfalcon", href: "/icfalcon" },
   { id: "icbucket", href: "/icbucket" },
+  { id: "canister", href: "/canister" },
   { id: "topup", href: "/topup" },
   { id: "wallet", href: "/login" },
 ]
