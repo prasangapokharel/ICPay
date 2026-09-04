@@ -47,7 +47,7 @@ export const metadata: Metadata = {
 export default function PublicTopUpPage() {
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-10 md:px-6 md:py-14">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 md:px-6 md:py-14">
         <CyclesTopUpCard />
 
         <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
