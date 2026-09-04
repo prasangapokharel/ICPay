@@ -5,7 +5,7 @@ import { LandingFaq } from "@/components/public/landing-faq"
 import { LandingFeatures } from "@/components/public/landing-features"
 import { LandingHero } from "@/components/public/landing-hero"
 import { LandingHowItWorks } from "@/components/public/landing-how-it-works"
-import { LandingHowToPay } from "@/components/public/landing-how-to-pay"
+// import { LandingHowToPay } from "@/components/public/landing-how-to-pay"
 import { LandingProducts } from "@/components/public/landing-products"
 import { LandingTrust } from "@/components/public/landing-trust"
 import { LANDING_MEDIA } from "@/lib/public/landing-media"
@@ -38,7 +38,7 @@ export default function LandingPage() {
       <LandingFeatures />
       <LandingProducts />
       <LandingHowItWorks />
-      <LandingHowToPay />
+      {/* <LandingHowToPay /> */}
       <LandingTrust />
       <LandingDownloads />
       <LandingFaq />

@@ -15,6 +15,7 @@ import {
   TerminalIcon,
   ViewIcon,
   Wallet01Icon,
+  ZapIcon,
 } from "@hugeicons/core-free-icons"
 
 export const NAV_MENU_ICONS: Record<string, IconSvgElement> = {
@@ -22,6 +23,7 @@ export const NAV_MENU_ICONS: Record<string, IconSvgElement> = {
   "/blog": News01Icon,
   "/login": Wallet01Icon,
   "/token/create": Rocket01Icon,
+  "/topup": ZapIcon,
   "/icbucket": CloudIcon,
   "/icfalcon": Rocket01Icon,
   "/products/icFalcon/commands": TerminalIcon,

@@ -10,6 +10,7 @@ import { AutoLocale } from "@/components/i18n/auto-locale"
 import { FiatProvider } from "@/components/fiat/fiat-provider"
 import { cn } from "@/lib/ui/utils"
 import { SiteAnalytics } from "@/components/analytics/site-analytics"
+import { Toaster } from "@/components/ui/sonner"
 import { SITE_VERIFICATION } from "@/lib/public/site-verification"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
@@ -132,6 +133,7 @@ export default function RootLayout({
             </FiatProvider>
           </LocaleProvider>
         </ThemeProvider>
+        <Toaster />
         <SiteAnalytics />
         <Analytics />
       </body>

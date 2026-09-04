@@ -4,10 +4,8 @@ import Link from "next/link"
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 import { MenuIcon } from "lucide-react"
-import { HugeiconsIcon } from "@hugeicons/react"
 import type { NavMenuItem } from "@/lib/public/site-links"
 import { cn } from "@/lib/ui/utils"
-import { getNavMenuIcon } from "@/lib/public/nav-menu-icons"
 import { NavMenuLinkRow } from "@/components/public/nav-menu-item"
 import { usePublicSiteLinks } from "@/hooks/i18n/use-public-site-links"
 import { Button } from "@/components/ui/button"
@@ -84,18 +82,13 @@ export function PublicNavMobile() {
                   href={link.href}
                   onClick={close}
                   className={cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-muted",
+                    "rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted",
                     pathname === link.href || pathname.startsWith(`${link.href}/`)
-                      ? "bg-primary/10 text-primary"
-                      : "text-foreground"
+                      ? "bg-muted text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  <HugeiconsIcon
-                    icon={getNavMenuIcon(link.href)}
-                    className="size-5 text-primary"
-                    strokeWidth={1.75}
-                  />
-                  <span className="text-sm font-medium">{link.label}</span>
+                  {link.label}
                 </Link>
               ))}
             </div>

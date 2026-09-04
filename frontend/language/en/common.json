@@ -1339,6 +1339,10 @@
           "title": "Launch Token",
           "description": "Create an ICRC-1 token on the Internet Computer."
         },
+        "topup": {
+          "title": "Top up cycles",
+          "description": "Convert ICP to cycles for any canister via the CMC."
+        },
         "icbucket": {
           "title": "ICBucket",
           "description": "On-chain storage with API keys, SDKs, and ICP plans."
@@ -1416,6 +1420,7 @@
       "products": {
         "icfalcon": "ICFalcon",
         "icbucket": "ICBucket",
+        "topup": "Top up cycles",
         "wallet": "ICPay Wallet"
       },
       "resources": {
@@ -2077,5 +2082,49 @@
         }
       }
     }
+  },
+  "cyclesTopUp": {
+    "eyebrow": "Cycles",
+    "title": "Top up a canister",
+    "subtitle": "Pay with your ICPay wallet. We send ICP to your Internet Identity when needed, then mint cycles via the official CMC.",
+    "formTitle": "Top up",
+    "formHint": "Paste a canister ID and amount. Connected steps: send from wallet → mint via CMC → done.",
+    "canisterId": "Canister ID",
+    "canisterPlaceholder": "aaaaa-aa…",
+    "canisterOk": "Canister found on the Internet Computer.",
+    "canisterNotFound": "Canister not found on the IC index. Check the ID.",
+    "amount": "Amount (ICP)",
+    "estimate": "Estimated cycles",
+    "estimateSource": "Estimate from CMC ICP→XDR conversion rate (official).",
+    "rateLine": "1 ICP ≈ {xdr} XDR ≈ {cycles} cycles",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "topUp": "Top up from wallet",
+    "toppingUp": "Topping up…",
+    "sending": "Sending from wallet…",
+    "minting": "Minting cycles…",
+    "stepSend": "Send from wallet",
+    "stepMint": "Mint cycles",
+    "stepDone": "Done",
+    "flowHintSend": "Will send {amount} ICP from your wallet to cover this top-up, then mint.",
+    "flowHintMintOnly": "Your II principal already has enough ICP — minting only.",
+    "successTitle": "Cycles sent",
+    "success": "Minted {cycles} cycles into the canister.",
+    "successWithdrew": "ICP was moved from your ICPay wallet first.",
+    "successHint": "Cycles were deposited. Open the dashboard to confirm status (balance is controller-only on most canisters).",
+    "viewOnDashboard": "View canister on IC dashboard",
+    "amountPaid": "Amount",
+    "failed": "Top-up failed",
+    "blockIndex": "Block index",
+    "invalidCanister": "Enter a valid canister principal",
+    "invalidAmount": "Enter a valid ICP amount",
+    "minAmount": "Minimum is 0.01 ICP",
+    "maxAmount": "Maximum is 50 ICP per call",
+    "insufficient": "Insufficient ICP in your ICPay wallet (amount + fees)",
+    "disclaimer": "Anyone can top up any canister — you do not need to be a controller. Uses the official ICP ledger and Cycles Minting Canister.",
+    "rateBadge": "1 ICP ≈ {xdr} XDR",
+    "cyclesUnit": "cycles",
+    "copyFailed": "Could not copy canister ID",
+    "stepLabel": "Step {n}"
   }
 }
