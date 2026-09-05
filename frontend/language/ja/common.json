@@ -2227,7 +2227,7 @@
     "failed": "Create failed",
     "toastSuccess": "Canister created",
     "invalidAmount": "Enter a valid ICP amount",
-    "minAmount": "Minimum is 0.1 ICP",
+    "minAmount": "Minimum is 0.5 ICP",
     "maxAmount": "Maximum is 50 ICP per call",
     "insufficient": "Insufficient ICP in your ICPay wallet (amount + fees)",
     "metaFailed": "Could not load CMC rate or balance. Retry.",

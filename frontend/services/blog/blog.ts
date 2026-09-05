@@ -35,9 +35,9 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: "how-to-create-icp-canister",
     title: "How to Create an ICP Canister with CMC (No dfx) | ICPay",
     description:
-      "Create an Internet Computer canister with ICP via the CMC — controllers, subnets, and step-by-step with ICPay. No dfx required.",
+      "What an ICP canister is, the 500B cycle creation fee, 0.5 ICP minimum, and step-by-step CMC create on ICPay — no dfx.",
     publishedAt: "2026-09-05",
-    readingMinutes: 8,
+    readingMinutes: 10,
     category: "How-to",
   },
   {

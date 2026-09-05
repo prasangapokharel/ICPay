@@ -28,7 +28,11 @@ import {
 /** NNS CMC memo for notify_create_canister ("CREA" little-endian). */
 export const CREATE_CANISTER_MEMO = 0x41455243n
 
-export const MIN_CREATE_E8S = 10_000_000n // 0.1 ICP
+/** CMC creation fee (cycles deducted from the deposited ICP→cycles). */
+export const CREATE_CANISTER_FEE_CYCLES = 500_000_000_000n
+
+/** Floor ICP so estimated cycles clear the 500B creation fee at typical CMC rates. */
+export const MIN_CREATE_E8S = 50_000_000n // 0.5 ICP
 export const MAX_CREATE_E8S = 5_000_000_000n // 50 ICP
 
 export {
@@ -126,7 +130,7 @@ export async function createCanister(
   options: CreateCanisterOptions
 ): Promise<CreateCanisterResult> {
   const { amountE8s } = options
-  if (amountE8s < MIN_CREATE_E8S) throw new Error("Minimum create amount is 0.1 ICP")
+  if (amountE8s < MIN_CREATE_E8S) throw new Error("Minimum create amount is 0.5 ICP")
   if (amountE8s > MAX_CREATE_E8S) throw new Error("Maximum create amount is 50 ICP per call")
 
   const controller = identity.getPrincipal()
@@ -178,7 +182,7 @@ export async function createCanisterFromWallet(
   onStep?: (step: CreateCanisterFlowStep) => void
 ): Promise<CreateCanisterResult> {
   const { amountE8s } = options
-  if (amountE8s < MIN_CREATE_E8S) throw new Error("Minimum create amount is 0.1 ICP")
+  if (amountE8s < MIN_CREATE_E8S) throw new Error("Minimum create amount is 0.5 ICP")
   if (amountE8s > MAX_CREATE_E8S) throw new Error("Maximum create amount is 50 ICP per call")
 
   const { withdraw } = await import("@/services/withdraw/withdraw")
