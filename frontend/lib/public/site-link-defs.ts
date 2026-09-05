@@ -20,7 +20,8 @@ export const PUBLIC_PRODUCT_MENU_DEFS: NavMenuItemDef[] = [
 ]
 
 export const PUBLIC_CANISTER_MENU_DEFS: NavMenuItemDef[] = [
-  { id: "hub", href: "/canister" },
+  { id: "mine", href: "/canister" },
+  { id: "tools", href: "/canister/tools" },
   { id: "manage", href: "/canister/manage" },
   { id: "create", href: "/canister/create" },
   { id: "cycles", href: "/canister/cycles" },

@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -33,7 +34,8 @@ import {
 export function SnapshotsCard() {
   const t = useTranslations("canisterSnapshots")
   const { identity, isAuthenticated, isLoading, login } = useAuth()
-  const [canisterId, setCanisterId] = useState("")
+  const searchParams = useSearchParams()
+  const [canisterId, setCanisterId] = useState(() => searchParams.get("id")?.trim() ?? "")
   const [connecting, setConnecting] = useState(false)
   const [busy, setBusy] = useState(false)
   const [rows, setRows] = useState<SnapshotView[] | null>(null)

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -33,7 +34,8 @@ import {
 export function ManageCanisterCard() {
   const t = useTranslations("canisterManage")
   const { identity, isAuthenticated, isLoading, login } = useAuth()
-  const [canisterId, setCanisterId] = useState("")
+  const searchParams = useSearchParams()
+  const [canisterId, setCanisterId] = useState(() => searchParams.get("id")?.trim() ?? "")
   const [connecting, setConnecting] = useState(false)
   const [busy, setBusy] = useState<"start" | "stop" | "logs" | null>(null)
   const [logs, setLogs] = useState<{ idx: string; at: string; text: string }[] | null>(null)

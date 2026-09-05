@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -43,10 +44,11 @@ import {
 export function CyclesTopUpCard() {
   const t = useTranslations("cyclesTopUp")
   const { identity, isAuthenticated, isLoading, login } = useAuth()
+  const searchParams = useSearchParams()
   const walletBalance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
   const [connecting, setConnecting] = useState(false)
-  const [canisterId, setCanisterId] = useState("")
+  const [canisterId, setCanisterId] = useState(() => searchParams.get("canister")?.trim() ?? "")
   const [amountText, setAmountText] = useState("")
   const [rate, setRate] = useState<bigint | null>(null)
   const [iiBalance, setIiBalance] = useState<bigint | null>(null)

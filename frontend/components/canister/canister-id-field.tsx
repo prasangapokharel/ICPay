@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/ui/utils"
-import { listSavedCanisters, shortCanisterId } from "@/lib/canister/savedCanisters"
+import { listSavedCanisterEntries, shortCanisterId } from "@/lib/canister/savedCanisters"
 
 export function CanisterIdField({
   id,
@@ -29,7 +29,7 @@ export function CanisterIdField({
 }) {
   const t = useTranslations("canisterIdField")
   const [open, setOpen] = useState(false)
-  const saved = principal ? listSavedCanisters(principal) : []
+  const saved = principal ? listSavedCanisterEntries(principal) : []
 
   return (
     <div className="space-y-2">
@@ -67,24 +67,24 @@ export function CanisterIdField({
                 {t("yours")}
               </p>
               <ul className="max-h-56 overflow-y-auto">
-                {saved.map((cid) => (
-                  <li key={cid}>
+                {saved.map((entry) => (
+                  <li key={entry.id}>
                     <button
                       type="button"
                       className={cn(
                         "flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left hover:bg-muted",
-                        value.trim() === cid && "bg-muted"
+                        value.trim() === entry.id && "bg-muted"
                       )}
                       onClick={() => {
-                        onChange(cid)
+                        onChange(entry.id)
                         setOpen(false)
                       }}
                     >
-                      <span className="font-mono text-xs text-foreground">
-                        {shortCanisterId(cid)}
+                      <span className="truncate text-xs font-medium text-foreground">
+                        {entry.name || shortCanisterId(entry.id)}
                       </span>
                       <span className="w-full truncate font-mono text-[10px] text-muted-foreground">
-                        {cid}
+                        {entry.id}
                       </span>
                     </button>
                   </li>
