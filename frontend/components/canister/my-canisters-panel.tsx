@@ -324,12 +324,22 @@ export function MyCanistersPanel() {
               />
             </div>
           </div>
-          <DialogFooter className="gap-2 sm:justify-end">
-            <Button type="button" variant="outline" onClick={() => setLinkOpen(false)}>
-              {t("linkCancel")}
-            </Button>
-            <Button type="button" disabled={!draftValid} onClick={onConfirmLink}>
+          <DialogFooter className="flex-col gap-2 sm:flex-col sm:justify-stretch">
+            <Button
+              type="button"
+              className="w-full"
+              disabled={!draftValid}
+              onClick={onConfirmLink}
+            >
               {t("linkConfirm")}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => setLinkOpen(false)}
+            >
+              {t("linkCancel")}
             </Button>
           </DialogFooter>
         </DialogContent>

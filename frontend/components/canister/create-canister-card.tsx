@@ -37,6 +37,7 @@ import {
   formatCreateCanisterError,
   MAX_CREATE_E8S,
   MIN_CREATE_E8S,
+  CREATE_CANISTER_FEE_CYCLES,
   walletCostForTopUp,
   walletShortfall,
   type CreateCanisterFlowStep,
@@ -115,9 +116,11 @@ export function CreateCanisterCard() {
           ? t("minAmount")
           : amountE8s > MAX_CREATE_E8S
             ? t("maxAmount")
-            : walletBalance != null && walletCost > walletBalance
-              ? t("insufficient")
-              : null
+            : estimatedCycles != null && estimatedCycles < CREATE_CANISTER_FEE_CYCLES
+              ? t("minAmount")
+              : walletBalance != null && walletCost > walletBalance
+                ? t("insufficient")
+                : null
 
   useEffect(() => {
     if (!isAuthenticated || !identity) {
@@ -274,9 +277,11 @@ export function CreateCanisterCard() {
                   <Input
                     id="create-icp-amount"
                     inputMode="decimal"
+                    min={0.5}
+                    step="any"
                     value={amountText}
                     onChange={(e) => setAmountText(e.target.value)}
-                    placeholder="0.00"
+                    placeholder="0.50"
                     disabled={!hydrated || isLoading || submitting}
                   />
                 </div>

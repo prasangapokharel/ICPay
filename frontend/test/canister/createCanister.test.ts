@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import { Principal } from "@icp-sdk/core/principal"
 import {
+  CREATE_CANISTER_FEE_CYCLES,
   CREATE_CANISTER_MEMO,
   MIN_CREATE_E8S,
   buildCreateSettings,
@@ -16,7 +17,8 @@ import {
 } from "@/services/canister/subnetLocations"
 
 assert.equal(CREATE_CANISTER_MEMO, 0x41455243n)
-assert.equal(MIN_CREATE_E8S, 10_000_000n)
+assert.equal(CREATE_CANISTER_FEE_CYCLES, 500_000_000_000n)
+assert.equal(MIN_CREATE_E8S, 50_000_000n)
 
 const controller = Principal.fromText("aaaaa-aa")
 const account = cmcCreateAccount(controller)
