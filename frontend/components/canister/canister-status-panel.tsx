@@ -19,10 +19,12 @@ function statusVariant(
 export function CanisterStatusPanel({
   state,
   compact,
+  hideCyclesHero,
   className,
 }: {
   state: CanisterStatusState
   compact?: boolean
+  hideCyclesHero?: boolean
   className?: string
 }) {
   const t = useTranslations("canisterStatus")
@@ -90,18 +92,25 @@ export function CanisterStatusPanel({
 
   return (
     <div className={cn("space-y-3", className)}>
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge variant={statusVariant(data.runStatus)}>
-          {t(`run.${data.runStatus}`)}
-        </Badge>
-        {data.isController && <Badge variant="secondary">{t("youControl")}</Badge>}
-      </div>
-      <div className="rounded-xl border border-border/60 bg-muted/20 px-3 py-3">
-        <p className="text-xs text-muted-foreground">{t("cycles")}</p>
-        <p className="mt-1 text-2xl font-semibold tracking-tight tabular-nums">
-          {data.cyclesLabel}
-        </p>
-      </div>
+      {!hideCyclesHero && (
+        <>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant={statusVariant(data.runStatus)}>
+              {t(`run.${data.runStatus}`)}
+            </Badge>
+            {data.isController && <Badge variant="secondary">{t("youControl")}</Badge>}
+          </div>
+          <div className="rounded-xl border border-border/60 bg-muted/20 px-3 py-3">
+            <p className="text-xs text-muted-foreground">{t("cycles")}</p>
+            <p className="mt-1 text-2xl font-semibold tracking-tight tabular-nums">
+              {data.cyclesLabel}
+            </p>
+          </div>
+        </>
+      )}
+      {hideCyclesHero && (
+        <p className="text-xs font-medium text-muted-foreground">{t("liveMetrics")}</p>
+      )}
       <dl className="space-y-2.5">
         {rows.map((row) => (
           <div key={row.label} className="flex items-start justify-between gap-3">

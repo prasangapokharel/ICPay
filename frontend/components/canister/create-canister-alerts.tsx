@@ -3,7 +3,6 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, LinkSquare02Icon, Tick02Icon, ZapIcon } from "@hugeicons/core-free-icons"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -42,10 +41,9 @@ export function CreateCanisterAlerts({
     try {
       await navigator.clipboard.writeText(id)
       setCopied(true)
-      toast.success(tc("copied"))
       window.setTimeout(() => setCopied(false), 1500)
     } catch {
-      toast.error(t("copyFailed"))
+      /* ignore */
     }
   }
 
@@ -140,9 +138,18 @@ export function CreateCanisterAlerts({
                   variant="secondary"
                   className="w-full flex-1 gap-1.5"
                   nativeButton={false}
-                  render={<Link href="/topup" />}
+                  render={<Link href="/canister" />}
                 >
                   <HugeiconsIcon icon={ZapIcon} className="size-3.5" />
+                  {t("viewMine")}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full flex-1 gap-1.5"
+                  nativeButton={false}
+                  render={<Link href="/topup" />}
+                >
                   {t("topUpNext")}
                 </Button>
               </>

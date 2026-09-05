@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import Link from "next/link"
 import { ManageCanisterCard } from "@/components/canister/manage-canister-card"
 
@@ -30,7 +31,9 @@ export default function ManageCanisterPage() {
   return (
     <section className="border-b border-border/60 bg-background">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-10 md:px-6 md:py-14">
-        <ManageCanisterCard />
+        <Suspense fallback={null}>
+          <ManageCanisterCard />
+        </Suspense>
         <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
           <h2 className="text-base font-semibold tracking-tight text-foreground">
             Manage canisters you control

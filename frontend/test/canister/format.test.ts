@@ -1,5 +1,6 @@
 import assert from "node:assert/strict"
 import {
+  cyclesToTInput,
   formatBytes,
   formatModuleHash,
   parseCyclesT,
@@ -27,6 +28,9 @@ assert.equal(parseCyclesT("1"), 1_000_000_000_000n)
 assert.equal(parseCyclesT("1.5"), 1_500_000_000_000n)
 assert.equal(parseCyclesT(""), null)
 assert.equal(parseCyclesT("x"), null)
+
+assert.equal(cyclesToTInput(186_790_000_000n), "0.18679")
+assert.equal(parseCyclesT(cyclesToTInput(186_790_000_000n)!), 186_790_000_000n)
 
 assert.equal(MINT_CYCLES_MEMO, 0x544e494dn)
 assert.equal(CREATE_CANISTER_MEMO, 0x41455243n)

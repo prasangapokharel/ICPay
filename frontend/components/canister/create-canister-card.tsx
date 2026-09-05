@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { InformationCircleIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
@@ -176,14 +175,12 @@ export function CreateCanisterCard() {
         withdrew: result.withdrewFromWallet,
       })
       rememberCanister(identity.getPrincipal().toText(), result.canisterId)
-      toast.success(t("toastSuccess"))
       void refreshWallet()
       const bal = await fetchPrincipalIcpBalance(identity)
       setIiBalance(bal)
     } catch (e) {
       setFlowFailed(true)
       setError(formatCreateCanisterError(e))
-      toast.error(t("failed"))
     } finally {
       setSubmitting(false)
     }

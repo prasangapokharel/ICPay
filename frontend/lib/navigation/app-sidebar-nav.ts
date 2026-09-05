@@ -3,6 +3,7 @@ import {
   Analytics01Icon,
   Clock01Icon,
   CloudIcon,
+  DashboardSquare01Icon,
   Globe02Icon,
   Home01Icon,
   JusticeScale01Icon,
@@ -67,6 +68,11 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
     items: [
       { href: "/bucket", labelKey: "settings.items.bucket", icon: CloudIcon, badgeKey: "settings.items.bucketBadge", badgeType: "gradient" },
       {
+        href: "/canister",
+        labelKey: "settings.items.canisters",
+        icon: DashboardSquare01Icon,
+      },
+      {
         href: "/username",
         labelKey: "settings.items.buyName",
         icon: UserIcon,
@@ -121,6 +127,7 @@ export function resolveAppPageTitle(
   if (pathname === "/blog" || pathname.startsWith("/blog/")) {
     return translate("settings.items.blog")
   }
+  if (pathname.startsWith("/canister")) return translate("settings.items.canisters")
   if (pathname.startsWith("/settings")) return translate("settings.items.settings")
 
   return "ICPay"

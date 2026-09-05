@@ -99,7 +99,8 @@
       "communityBadge": "Бета",
       "presaleBadge": "В эфире",
       "governance": "Управление",
-      "bucketBadge": "50% off"
+      "bucketBadge": "50% off",
+      "canisters": "Canisters"
     },
     "preferencesDescription": "Язык, валюта, оформление и звук"
   },
@@ -1376,10 +1377,6 @@
           "title": "Top up cycles",
           "description": "Convert ICP to cycles for any canister via the CMC."
         },
-        "hub": {
-          "title": "Canister hub",
-          "description": "All canister tools in one place — create, manage, cycles, snapshots."
-        },
         "cycles": {
           "title": "Cycles wallet",
           "description": "Mint cycles to the ledger, then withdraw to any canister."
@@ -1387,6 +1384,14 @@
         "snapshots": {
           "title": "Snapshots",
           "description": "Take, list, load, and delete canister snapshots."
+        },
+        "mine": {
+          "title": "My canisters",
+          "description": "See every canister you created or saved — status and quick actions."
+        },
+        "tools": {
+          "title": "Canister tools",
+          "description": "Create, manage, mint cycles, top up, and snapshots from one hub."
         }
       }
     },
@@ -2235,7 +2240,8 @@
     "subnetMore": "More subnets",
     "subnetLoadEmpty": "No subnets available right now.",
     "previewTitle": "Preview",
-    "previewRate": "CMC rate"
+    "previewRate": "CMC rate",
+    "viewMine": "My canisters"
   },
   "canisterStatus": {
     "idle": "Enter a canister ID and sign in to load live status.",
@@ -2261,7 +2267,8 @@
       "stopped": "Stopped"
     },
     "deniedBody": "Your Internet Identity cannot read this canister. Paste one you control, or create a new canister first.",
-    "createLink": "Create a canister"
+    "createLink": "Create a canister",
+    "liveMetrics": "Live metrics"
   },
   "canisterManage": {
     "eyebrow": "Canisters",
@@ -2328,9 +2335,17 @@
     "maxAmount": "Maximum is 50 ICP per call",
     "insufficient": "Insufficient ICP in your ICPay wallet (amount + fees)",
     "insufficientCycles": "Insufficient cycles on the ledger",
-    "toastMinted": "Minted {cycles} cycles",
-    "toastWithdrawn": "Withdrew {cycles} cycles",
-    "disclaimer": "Uses the official ICP ledger, CMC (notify_mint_cycles), and cycles ledger. No ICPay backend mint path."
+    "disclaimer": "Uses the official ICP ledger, CMC (notify_mint_cycles), and cycles ledger. No ICPay backend mint path.",
+    "availableCycles": "Available {pretty} · {tAmount} T",
+    "max": "Max",
+    "successMintTitle": "Cycles minted",
+    "successWithdrawTitle": "Cycles withdrawn",
+    "successMintHint": "Cycles are on your cycles ledger. Withdraw into any canister when ready.",
+    "successWithdrawHint": "Cycles were deposited into this canister.",
+    "cyclesUnit": "cycles",
+    "withdrawNext": "Withdraw to a canister",
+    "viewMine": "My canisters",
+    "viewOnDashboard": "IC dashboard"
   },
   "canisterSnapshots": {
     "eyebrow": "Canisters",
@@ -2365,5 +2380,62 @@
     "choose": "Mine",
     "yours": "Your canisters",
     "emptyHint": "Create a canister first — it will show up here to pick later."
+  },
+  "myCanisters": {
+    "title": "My canisters",
+    "subtitle": "Canisters you created or saved with this Internet Identity. Pick one for live status and actions.",
+    "create": "Create canister",
+    "yourPrincipal": "Your Internet Identity (controller)",
+    "principalHint": "Copy this to use as a backup controller on another account’s create form.",
+    "copyPrincipal": "Copy principal",
+    "addPlaceholder": "Paste a canister ID to track…",
+    "listTitle": "Mine",
+    "listHint": "Saved in this browser for your II.",
+    "empty": "No canisters yet. Create one or paste an ID you control.",
+    "detailTitle": "Details",
+    "detailEmpty": "Select a canister to see status and actions.",
+    "manage": "Manage",
+    "topUp": "Top up",
+    "snapshots": "Snapshots",
+    "cycles": "Cycles wallet",
+    "copyId": "Copy ID",
+    "dashboard": "IC dashboard",
+    "remove": "Remove",
+    "backupHint": "Status and manage require you to be a controller. Top up works for any canister.",
+    "allTools": "All public tools",
+    "invalidId": "Enter a valid canister ID",
+    "count": "{count}",
+    "metaName": "Name",
+    "metaType": "Type",
+    "metaSubnet": "Subnet",
+    "metaControllers": "Controllers",
+    "menuActions": "Actions",
+    "menuBackup": "Backup",
+    "menuCreate": "Create",
+    "createWithBackup": "Create with backup controller",
+    "link": "Link canister",
+    "loading": "Loading…",
+    "linkTitle": "Link a canister",
+    "linkHint": "Save a canister ID locally with an optional name so Mine and Mine pickers stay easy.",
+    "linkId": "Canister ID",
+    "linkName": "Name (optional)",
+    "linkNamePlaceholder": "e.g. Production wallet",
+    "linkCancel": "Cancel",
+    "linkConfirm": "Confirm link",
+    "linkSuccessTitle": "Canister linked",
+    "linkSuccessBody": "Saved to Mine in this browser.",
+    "linkSuccessNamed": "Saved as “{name}”.",
+    "menuGroupActions": "Actions",
+    "menuGroupReference": "Reference",
+    "rowDenied": "Not controller",
+    "metaLanguage": "Language",
+    "metaUpdated": "Index updated",
+    "metaSubnetId": "Subnet ID",
+    "metaSubnetType": "Subnet type",
+    "metaSubnetNodes": "Nodes up",
+    "metaSubnetCanisters": "Subnet canisters",
+    "metaUpgrades": "Recent upgrades",
+    "cyclesSource": "Live cycles from canister_status (controller only).",
+    "publicApiHint": "Cycle balance is not public on the IC index or ICRC API — only controllers can read it. Anyone can still"
   }
 }

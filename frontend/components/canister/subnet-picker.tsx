@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/collapsible"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Skeleton } from "@/components/ui/skeleton"
+import { SubnetCountryFlags } from "@/components/canister/subnet-country-flags"
 import { cn } from "@/lib/ui/utils"
 import { fetchDefaultSubnets } from "@/services/canister/createCanister"
 import {
@@ -22,27 +23,6 @@ import {
 } from "@/services/canister/subnetLocations"
 
 export const SUBNET_DEFAULT = "default"
-
-function CountryFlags({ countries, max = 5 }: { countries: string[]; max?: number }) {
-  const shown = countries.slice(0, max)
-  const rest = countries.length - shown.length
-  return (
-    <span className="inline-flex flex-wrap items-center gap-1">
-      {shown.map((code) => (
-        <LocaleFlag
-          key={code}
-          country={flagCountryCode(code)}
-          label={code}
-          size="sm"
-          className="rounded-[2px]"
-        />
-      ))}
-      {rest > 0 && (
-        <span className="text-[10px] font-medium text-muted-foreground">+{rest}</span>
-      )}
-    </span>
-  )
-}
 
 function TriggerLabel({
   value,
@@ -58,7 +38,7 @@ function TriggerLabel({
   }
   return (
     <span className="flex min-w-0 items-center gap-2">
-      <CountryFlags countries={selected.countries} max={4} />
+      <SubnetCountryFlags countries={selected.countries} max={4} />
       <span className="truncate font-mono text-xs text-muted-foreground">
         {shortSubnetId(selected.id)}
       </span>
@@ -185,7 +165,7 @@ export function SubnetPicker({
                     >
                       <span className="min-w-0 flex-1 space-y-1">
                         {subnet.countries.length > 0 ? (
-                          <CountryFlags countries={subnet.countries} />
+                          <SubnetCountryFlags countries={subnet.countries} />
                         ) : (
                           <span className="text-xs text-muted-foreground">
                             {t("subnetCountriesUnknown")}

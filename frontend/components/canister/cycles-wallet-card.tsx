@@ -1,21 +1,25 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { LinkSquare02Icon, ZapIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { CyclesFlowPreview } from "@/components/cycles/cycles-flow-preview"
 import { AmountInput } from "@/components/shared/amount-input"
 import { CanisterIdField } from "@/components/canister/canister-id-field"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { formatAmount, parseIcp } from "@/lib/wallet/utils"
-import { parseCyclesT } from "@/lib/canister/format"
+import { cyclesToTInput, parseCyclesT } from "@/lib/canister/format"
 import { rememberCanister } from "@/lib/canister/savedCanisters"
 import {
   estimateCyclesFromE8s,
@@ -35,6 +39,10 @@ import {
 } from "@/services/canister/cyclesWallet"
 import { maxTopUpAmount, parseCanisterId } from "@/services/cycles/topUp"
 
+type CyclesOk =
+  | { kind: "mint"; cycles: string }
+  | { kind: "withdraw"; cycles: string; canister: string }
+
 export function CyclesWalletCard() {
   const t = useTranslations("canisterCycles")
   const { identity, isAuthenticated, isLoading, login } = useAuth()
@@ -52,6 +60,7 @@ export function CyclesWalletCard() {
   const [loadingMeta, setLoadingMeta] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [flowStep, setFlowStep] = useState<MintFlowStep | null>(null)
+  const [lastOk, setLastOk] = useState<CyclesOk | null>(null)
 
   const amountE8s = useMemo(() => parseIcp(amountText), [amountText])
   const withdrawCycles = useMemo(() => parseCyclesT(withdrawText), [withdrawText])
@@ -62,6 +71,7 @@ export function CyclesWalletCard() {
     walletBalance != null ? maxTopUpAmount(walletBalance, iiBal, fee) : 0n
   const estimated =
     amountE8s != null && rate != null ? estimateCyclesFromE8s(amountE8s, rate) : null
+  const availableT = cyclesBal != null ? cyclesToTInput(cyclesBal) : null
 
   useEffect(() => {
     let cancelled = false
@@ -141,11 +151,11 @@ export function CyclesWalletCard() {
     setFlowStep(shortfall > 0n ? "send" : "mint")
     try {
       const result = await mintCyclesFromWallet(identity, amountE8s, setFlowStep)
-      toast.success(t("toastMinted", { cycles: formatCycles(result.minted) }))
       refreshWallet()
       setCyclesBal(result.balance)
       setIiBalance(await fetchPrincipalIcpBalance(identity))
       setAmountText("")
+      setLastOk({ kind: "mint", cycles: formatCycles(result.minted) })
     } catch (e) {
       toast.error(formatMintError(e))
     } finally {
@@ -160,9 +170,13 @@ export function CyclesWalletCard() {
     try {
       const result = await withdrawCyclesToCanister(identity, canisterId, withdrawCycles)
       rememberCanister(identity.getPrincipal().toText(), result.canisterId)
-      toast.success(t("toastWithdrawn", { cycles: formatCycles(result.amount) }))
       setCyclesBal(await fetchCyclesLedgerBalance(identity))
       setWithdrawText("")
+      setLastOk({
+        kind: "withdraw",
+        cycles: formatCycles(result.amount),
+        canister: result.canisterId,
+      })
     } catch (e) {
       toast.error(formatMintError(e))
     } finally {
@@ -261,14 +275,39 @@ export function CyclesWalletCard() {
                   disabled={submitting}
                 />
                 <div className="space-y-2">
-                  <Label htmlFor="withdraw-cycles">{t("cyclesAmount")}</Label>
-                  <Input
-                    id="withdraw-cycles"
-                    inputMode="decimal"
-                    value={withdrawText}
-                    onChange={(e) => setWithdrawText(e.target.value)}
-                    placeholder="0.00"
-                  />
+                  <div className="flex items-end justify-between gap-2">
+                    <Label htmlFor="withdraw-cycles">{t("cyclesAmount")}</Label>
+                    {cyclesBal != null && (
+                      <p className="text-[11px] tabular-nums text-muted-foreground">
+                        {t("availableCycles", {
+                          pretty: formatCycles(cyclesBal),
+                          tAmount: availableT ?? "0",
+                        })}
+                      </p>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <Input
+                      id="withdraw-cycles"
+                      inputMode="decimal"
+                      value={withdrawText}
+                      onChange={(e) => setWithdrawText(e.target.value)}
+                      placeholder={availableT && availableT !== "0" ? availableT : "0.00"}
+                      className="pr-16"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="xs"
+                      className="absolute top-1/2 right-1.5 -translate-y-1/2 text-primary"
+                      disabled={cyclesBal == null || cyclesBal <= 0n}
+                      onClick={() => {
+                        if (cyclesBal != null) setWithdrawText(cyclesToTInput(cyclesBal))
+                      }}
+                    >
+                      {t("max")}
+                    </Button>
+                  </div>
                   <p className="text-xs text-muted-foreground">{t("cyclesHint")}</p>
                 </div>
                 {withdrawError && <p className="text-xs text-destructive">{withdrawError}</p>}
@@ -329,6 +368,74 @@ export function CyclesWalletCard() {
           )}
         </div>
       </div>
+
+      <CanisterSuccessDialog
+        open={lastOk != null}
+        onClose={() => setLastOk(null)}
+        title={lastOk?.kind === "withdraw" ? t("successWithdrawTitle") : t("successMintTitle")}
+        highlight={
+          lastOk ? (
+            <p className="mt-1 mb-2 text-3xl font-bold tracking-tight tabular-nums text-foreground">
+              {lastOk.cycles}{" "}
+              <span className="text-lg font-semibold text-muted-foreground">
+                {t("cyclesUnit")}
+              </span>
+            </p>
+          ) : null
+        }
+        monoId={lastOk?.kind === "withdraw" ? lastOk.canister : null}
+        detail={
+          lastOk?.kind === "mint" ? (
+            <p className="text-xs text-muted-foreground">{t("successMintHint")}</p>
+          ) : lastOk?.kind === "withdraw" ? (
+            <p className="text-xs text-muted-foreground">{t("successWithdrawHint")}</p>
+          ) : null
+        }
+        actions={
+          lastOk?.kind === "withdraw" ? (
+            <>
+              <Button
+                type="button"
+                variant="secondary"
+                className="w-full flex-1 gap-1.5"
+                nativeButton={false}
+                render={<Link href="/canister" />}
+              >
+                <HugeiconsIcon icon={ZapIcon} className="size-3.5" />
+                {t("viewMine")}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full flex-1 gap-1.5"
+                nativeButton={false}
+                render={
+                  <a
+                    href={`https://dashboard.internetcomputer.org/canister/${lastOk.canister}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  />
+                }
+              >
+                <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" />
+                {t("viewOnDashboard")}
+              </Button>
+            </>
+          ) : (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full flex-1"
+              onClick={() => {
+                setLastOk(null)
+                setTab("withdraw")
+              }}
+            >
+              {t("withdrawNext")}
+            </Button>
+          )
+        }
+      />
     </div>
   )
 }
