@@ -257,9 +257,7 @@ export function MyCanistersPanel() {
                 meta={meta}
                 status={status}
                 onCopyId={() => void navigator.clipboard.writeText(selected)}
-                onCopyPrincipal={() => {
-                  if (principal) void navigator.clipboard.writeText(principal)
-                }}
+                onRefresh={() => status.refresh()}
                 onRemove={() => onRemove(selected)}
               />
             )}

@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import useSWR from "swr"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -9,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CanisterStatusPanel } from "@/components/canister/canister-status-panel"
-import { MyCanisterActions } from "@/components/canister/my-canister-actions"
+import { MyCanisterControls } from "@/components/canister/my-canister-controls"
 import { SubnetCountryFlags } from "@/components/canister/subnet-country-flags"
 import type { CanisterStatusState } from "@/hooks/canister/useCanisterStatus"
 import type { ControlledCanister } from "@/services/canister/controlledCanisters"
@@ -53,7 +52,7 @@ export function MyCanisterDetails({
   meta,
   status,
   onCopyId,
-  onCopyPrincipal,
+  onRefresh,
   onRemove,
 }: {
   canisterId: string
@@ -61,7 +60,7 @@ export function MyCanisterDetails({
   meta: ControlledCanister | null
   status: CanisterStatusState
   onCopyId: () => void
-  onCopyPrincipal: () => void
+  onRefresh: () => void
   onRemove: () => void
 }) {
   const t = useTranslations("myCanisters")
@@ -131,6 +130,14 @@ export function MyCanisterDetails({
       </div>
 
       {cyclesHero}
+
+      <MyCanisterControls
+        canisterId={canisterId}
+        status={status}
+        onRefresh={onRefresh}
+        onCopyId={onCopyId}
+        onRemove={onRemove}
+      />
 
       {(meta || displayName) && (
         <dl className="space-y-2.5 rounded-xl border border-border/60 bg-muted/20 px-3 py-3">
@@ -230,19 +237,7 @@ export function MyCanisterDetails({
         </div>
       ) : null}
 
-      <MyCanisterActions
-        canisterId={canisterId}
-        onCopyId={onCopyId}
-        onCopyPrincipal={onCopyPrincipal}
-        onRemove={onRemove}
-      />
       <p className="text-xs text-muted-foreground">{t("backupHint")}</p>
-      <p className="text-[11px] text-muted-foreground">
-        {t("publicApiHint")}{" "}
-        <Link href="/topup" className="underline underline-offset-2 hover:text-foreground">
-          {t("topUp")}
-        </Link>
-      </p>
     </div>
   )
 }
