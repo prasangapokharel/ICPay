@@ -1,10 +1,15 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
+
+const SLUG = "how-to-snapshot-icp-canister"
+const TITLE = "How to Snapshot an ICP Canister: Take, Load & Delete | ICPay"
+const DESCRIPTION =
+  "Take, list, load, and delete Internet Computer canister snapshots when your Internet Identity is a controller. Browser guide with ICPay — no dfx required."
 
 export const metadata: Metadata = {
-  title: "How to Snapshot an ICP Canister: Take, Load & Delete | ICPay",
-  description:
-    "Take, list, load, and delete Internet Computer canister snapshots when your Internet Identity is a controller. Browser guide with ICPay — no dfx required.",
+  title: TITLE,
+  description: DESCRIPTION,
   keywords: [
     "canister snapshot",
     "take_canister_snapshot",
@@ -14,19 +19,37 @@ export const metadata: Metadata = {
     "ICPay snapshots",
     "canister controller snapshot",
   ],
-  alternates: { canonical: "/blog/how-to-snapshot-icp-canister" },
+  alternates: { canonical: blogCanonical(SLUG) },
   openGraph: {
     title: "How to Snapshot an ICP Canister — ICPay Blog",
-    description:
-      "Controller-only snapshots: take, list, load, and delete from the browser with Internet Identity.",
+    description: DESCRIPTION,
+    url: blogCanonical(SLUG),
+    siteName: "ICPay",
     type: "article",
     publishedTime: "2026-09-05T00:00:00Z",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 }
+
+const jsonLd = blogArticleJsonLd({
+  slug: SLUG,
+  title: TITLE,
+  description: DESCRIPTION,
+  publishedAt: "2026-09-05",
+  readingMinutes: 7,
+})
 
 export default function HowToSnapshotIcpCanisterPage() {
   return (
     <article className="space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-widest text-primary">How-to</p>
         <h1 className="text-2xl font-bold leading-snug tracking-tight">

@@ -1,10 +1,15 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
+
+const SLUG = "how-to-top-up-icp-cycles"
+const TITLE = "How to Top Up ICP Cycles: Canister Cycles Guide (2026)"
+const DESCRIPTION =
+  "How to top up ICP cycles on the Internet Computer — convert ICP to canister cycles via the CMC, why balances matter, step-by-step with ICPay, fees, and mistakes to avoid."
 
 export const metadata: Metadata = {
-  title: "How to Top Up ICP Cycles: Canister Cycles Guide (2026)",
-  description:
-    "How to top up ICP cycles on the Internet Computer — convert ICP to canister cycles via the CMC, why balances matter, step-by-step with ICPay, fees, and mistakes to avoid.",
+  title: TITLE,
+  description: DESCRIPTION,
   keywords: [
     "how to top up ICP cycles",
     "top up canister cycles",
@@ -17,19 +22,37 @@ export const metadata: Metadata = {
     "mint cycles ICP",
     "ICPay top up",
   ],
-  alternates: { canonical: "/blog/how-to-top-up-icp-cycles" },
+  alternates: { canonical: blogCanonical(SLUG) },
   openGraph: {
     title: "How to Top Up ICP Cycles — ICPay Blog",
-    description:
-      "A practical guide to topping up Internet Computer canister cycles with ICP: CMC rate, wallet flow, and how to keep canisters alive.",
+    description: DESCRIPTION,
+    url: blogCanonical(SLUG),
+    siteName: "ICPay",
     type: "article",
     publishedTime: "2026-09-04T00:00:00Z",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 }
+
+const jsonLd = blogArticleJsonLd({
+  slug: SLUG,
+  title: TITLE,
+  description: DESCRIPTION,
+  publishedAt: "2026-09-04",
+  readingMinutes: 12,
+})
 
 export default function HowToTopUpIcpCyclesPage() {
   return (
     <article className="space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-widest text-primary">How-to</p>
         <h1 className="text-2xl font-bold leading-snug tracking-tight">

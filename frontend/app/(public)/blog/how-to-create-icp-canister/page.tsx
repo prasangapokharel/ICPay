@@ -1,10 +1,15 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
+
+const SLUG = "how-to-create-icp-canister"
+const TITLE = "How to Create an ICP Canister with CMC (No dfx) | ICPay"
+const DESCRIPTION =
+  "What an ICP canister is, the 500B cycle creation fee, 0.5 ICP minimum, controllers, subnets, and how to create one via CMC on ICPay — no dfx required."
 
 export const metadata: Metadata = {
-  title: "How to Create an ICP Canister with CMC (No dfx) | ICPay",
-  description:
-    "What an ICP canister is, the 500B cycle creation fee, minimum ICP, controllers, subnets, and how to create one via CMC on ICPay — no dfx required.",
+  title: TITLE,
+  description: DESCRIPTION,
   keywords: [
     "create ICP canister",
     "how to create canister ICP",
@@ -13,23 +18,41 @@ export const metadata: Metadata = {
     "Internet Computer create canister",
     "canister without dfx",
     "ICPay create canister",
-    "canister creation fee cycles",
+    "canister creation fee 500 billion cycles",
+    "minimum ICP create canister",
     "subnet picker ICP",
-    "canister controller Internet Identity",
   ],
-  alternates: { canonical: "/blog/how-to-create-icp-canister" },
+  alternates: { canonical: blogCanonical(SLUG) },
   openGraph: {
     title: "How to Create an ICP Canister — ICPay Blog",
-    description:
-      "Spin up a new Internet Computer canister from your browser: pay ICP, clear the CMC creation fee, pick a subnet, set controllers.",
+    description: DESCRIPTION,
+    url: blogCanonical(SLUG),
+    siteName: "ICPay",
     type: "article",
     publishedTime: "2026-09-05T00:00:00Z",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 }
+
+const jsonLd = blogArticleJsonLd({
+  slug: SLUG,
+  title: TITLE,
+  description: DESCRIPTION,
+  publishedAt: "2026-09-05",
+  readingMinutes: 10,
+})
 
 export default function HowToCreateIcpCanisterPage() {
   return (
     <article className="space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-widest text-primary">How-to</p>
         <h1 className="text-2xl font-bold leading-snug tracking-tight">
@@ -225,6 +248,22 @@ export default function HowToCreateIcpCanisterPage() {
       <section className="space-y-3">
         <h2 className="text-base font-semibold tracking-tight">Related reading</h2>
         <ul className="space-y-1.5 pl-4 text-sm text-muted-foreground">
+          <li className="list-disc">
+            <Link
+              href="/blog/what-is-cycles-minting-canister"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              What is the Cycles Minting Canister
+            </Link>
+          </li>
+          <li className="list-disc">
+            <Link
+              href="/blog/icp-canister-controllers-explained"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              Canister controllers explained
+            </Link>
+          </li>
           <li className="list-disc">
             <Link
               href="/blog/how-to-top-up-icp-cycles"

@@ -62,14 +62,14 @@ export function CanisterSuccessDialog({
         }
       }}
     >
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader className="items-center text-center sm:items-center sm:text-center">
+      <DialogContent className="gap-5 p-5 sm:max-w-md sm:p-6" closeButtonSize="icon-lg">
+        <DialogHeader className="items-center pr-10 text-center sm:items-center sm:text-center">
           <div className="animate-in fade-in zoom-in-75 mb-1 flex size-16 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
             <span className="flex size-11 items-center justify-center rounded-full bg-success text-background shadow-sm">
               <HugeiconsIcon icon={Tick02Icon} className="size-7" strokeWidth={3} />
             </span>
           </div>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle className="text-lg">{title}</DialogTitle>
           {description ? (
             <DialogDescription>{description}</DialogDescription>
           ) : (
@@ -104,9 +104,15 @@ export function CanisterSuccessDialog({
           </div>
         )}
 
-        <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-stretch">
+        <DialogFooter className="flex-col gap-2 sm:flex-col sm:justify-stretch">
           {actions}
-          <Button type="button" variant="default" className="w-full flex-1" onClick={onClose}>
+          <Button
+            type="button"
+            size="lg"
+            variant="default"
+            className="w-full"
+            onClick={onClose}
+          >
             {tc("close")}
           </Button>
         </DialogFooter>
