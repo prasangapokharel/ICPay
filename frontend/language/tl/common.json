@@ -67,7 +67,8 @@
       "community": "Community",
       "overview": "Overview",
       "assets": "Assets",
-      "services": "Services"
+      "services": "Services",
+      "canisters": "Canisters"
     },
     "items": {
       "send": "Ipadala",
@@ -100,7 +101,8 @@
       "community": "Mga channel",
       "communityBadge": "Beta",
       "bucketBadge": "50% off",
-      "canisters": "Canisters"
+      "canisters": "Canisters",
+      "canisterTopup": "Top up"
     },
     "preferencesDescription": "Wika, pera, hitsura at tunog"
   },
@@ -2397,7 +2399,6 @@
     "manage": "Manage",
     "topUp": "Top up",
     "snapshots": "Snapshots",
-    "cycles": "Cycles wallet",
     "copyId": "Copy ID",
     "dashboard": "IC dashboard",
     "remove": "Remove",
@@ -2410,8 +2411,6 @@
     "metaSubnet": "Subnet",
     "metaControllers": "Controllers",
     "menuActions": "Actions",
-    "menuBackup": "Backup",
-    "menuCreate": "Create",
     "createWithBackup": "Create with backup controller",
     "link": "Link canister",
     "loading": "Loading…",
@@ -2425,8 +2424,6 @@
     "linkSuccessTitle": "Canister linked",
     "linkSuccessBody": "Saved to Mine in this browser.",
     "linkSuccessNamed": "Saved as “{name}”.",
-    "menuGroupActions": "Actions",
-    "menuGroupReference": "Reference",
     "rowDenied": "Not controller",
     "metaLanguage": "Language",
     "metaUpdated": "Index updated",
@@ -2436,6 +2433,20 @@
     "metaSubnetCanisters": "Subnet canisters",
     "metaUpgrades": "Recent upgrades",
     "cyclesSource": "Live cycles from canister_status (controller only).",
-    "publicApiHint": "Cycle balance is not public on the IC index or ICRC API — only controllers can read it. Anyone can still"
+    "publicApiHint": "Cycle balance is not public on the IC index or ICRC API — only controllers can read it. Anyone can still",
+    "more": "More",
+    "start": "Start",
+    "stop": "Stop",
+    "starting": "Starting…",
+    "stopping": "Stopping…",
+    "stopConfirmTitle": "Stop this canister?",
+    "stopConfirmBody": "Stopping pauses execution until you start it again. Controllers only.",
+    "topUpTitle": "Top up cycles",
+    "topUpHint": "Send ICP from your wallet via CMC into this canister’s cycles balance.",
+    "topUpEstimate": "≈ {cycles} cycles",
+    "topUpCancel": "Cancel",
+    "topUpConfirm": "Confirm top up",
+    "topUpEstimateLabel": "Estimated cycles",
+    "topUpEstimateHint": "Gross estimate from CMC ICP→XDR rate."
   }
 }
