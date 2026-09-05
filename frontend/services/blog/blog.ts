@@ -32,6 +32,33 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "what-is-cycles-minting-canister",
+    title: "What Is the Cycles Minting Canister (CMC)? | ICPay",
+    description:
+      "How the CMC converts ICP to cycles, creates canisters, and tops them up — notify_create_canister, notify_top_up, and ICPay.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 9,
+    category: "Explainers",
+  },
+  {
+    slug: "icp-canister-controllers-explained",
+    title: "ICP Canister Controllers Explained | ICPay",
+    description:
+      "Who can manage an ICP canister — status, start/stop, snapshots — and how Internet Identity becomes controller on create.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 8,
+    category: "Explainers",
+  },
+  {
+    slug: "canister-out-of-cycles-fix",
+    title: "Canister Out of Cycles: What Happens & How to Fix It | ICPay",
+    description:
+      "What happens when an ICP canister runs out of cycles and how to top up via CMC on ICPay before it freezes.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 8,
+    category: "How-to",
+  },
+  {
     slug: "how-to-create-icp-canister",
     title: "How to Create an ICP Canister with CMC (No dfx) | ICPay",
     description:

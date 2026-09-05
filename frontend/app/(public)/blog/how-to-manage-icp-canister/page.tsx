@@ -1,10 +1,15 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
+
+const SLUG = "how-to-manage-icp-canister"
+const TITLE = "How to Manage an ICP Canister: Status, Start & Stop | ICPay"
+const DESCRIPTION =
+  "Manage Internet Computer canisters from the browser — live canister_status, start/stop, and logs when your Internet Identity is a controller. Step-by-step with ICPay."
 
 export const metadata: Metadata = {
-  title: "How to Manage an ICP Canister: Status, Start & Stop | ICPay",
-  description:
-    "Manage Internet Computer canisters from the browser — live canister_status, start/stop, and logs when your Internet Identity is a controller. Step-by-step with ICPay.",
+  title: TITLE,
+  description: DESCRIPTION,
   keywords: [
     "manage ICP canister",
     "canister_status",
@@ -15,19 +20,37 @@ export const metadata: Metadata = {
     "IC management canister",
     "ICPay manage canister",
   ],
-  alternates: { canonical: "/blog/how-to-manage-icp-canister" },
+  alternates: { canonical: blogCanonical(SLUG) },
   openGraph: {
     title: "How to Manage an ICP Canister — ICPay Blog",
-    description:
-      "Live status, start/stop, and logs for canisters you control — no backend, Internet Identity only.",
+    description: DESCRIPTION,
+    url: blogCanonical(SLUG),
+    siteName: "ICPay",
     type: "article",
     publishedTime: "2026-09-05T00:00:00Z",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 }
+
+const jsonLd = blogArticleJsonLd({
+  slug: SLUG,
+  title: TITLE,
+  description: DESCRIPTION,
+  publishedAt: "2026-09-05",
+  readingMinutes: 7,
+})
 
 export default function HowToManageIcpCanisterPage() {
   return (
     <article className="space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-widest text-primary">How-to</p>
         <h1 className="text-2xl font-bold leading-snug tracking-tight">
@@ -110,6 +133,11 @@ export default function HowToManageIcpCanisterPage() {
       <section className="space-y-3">
         <h2 className="text-base font-semibold tracking-tight">Related reading</h2>
         <ul className="space-y-1.5 pl-4 text-sm text-muted-foreground">
+          <li className="list-disc">
+            <Link href="/blog/icp-canister-controllers-explained" className="underline underline-offset-2 hover:text-foreground">
+              ICP canister controllers explained
+            </Link>
+          </li>
           <li className="list-disc">
             <Link href="/blog/how-to-create-icp-canister" className="underline underline-offset-2 hover:text-foreground">
               How to create an ICP canister

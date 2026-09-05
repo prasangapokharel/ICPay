@@ -149,17 +149,19 @@ export function MyCanisterTopupDialog({
           if (!submitting) onOpenChange(next)
         }}
       >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={FuelIcon} className="size-4 text-primary" />
+        <DialogContent className="gap-5 p-5 sm:max-w-md sm:p-6" closeButtonSize="icon-lg">
+          <DialogHeader className="pr-10">
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <HugeiconsIcon icon={FuelIcon} className="size-5 text-primary" />
               {t("topUpTitle")}
             </DialogTitle>
-            <DialogDescription>{t("topUpHint")}</DialogDescription>
+            <DialogDescription className="text-sm leading-relaxed">
+              {t("topUpHint")}
+            </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-3">
-            <p className="break-all font-mono text-[11px] text-muted-foreground">{canisterId}</p>
+          <div className="space-y-4">
+            <p className="break-all font-mono text-xs text-muted-foreground">{canisterId}</p>
             <AmountInput
               id="mine-topup-amount"
               label={tt("amount")}
@@ -167,33 +169,28 @@ export function MyCanisterTopupDialog({
               onChange={setAmountText}
               balance={walletBalance}
               maxE8s={maxSpend}
+              size="xl"
             />
             {amountError ? (
-              <p className="text-xs text-destructive">{amountError}</p>
+              <p className="text-sm text-destructive">{amountError}</p>
             ) : estimated != null ? (
-              <div className="rounded-xl border border-border/60 bg-muted/25 px-3 py-3">
-                <p className="text-xs font-medium text-muted-foreground">
+              <div className="rounded-2xl border border-border/60 bg-muted/25 px-4 py-4">
+                <p className="text-sm font-medium text-muted-foreground">
                   {t("topUpEstimateLabel")}
                 </p>
-                <p className="mt-1 text-3xl font-semibold tracking-tight tabular-nums text-foreground">
+                <p className="mt-1 text-3xl font-semibold tracking-tight tabular-nums text-foreground sm:text-4xl">
                   ≈ {formatCycles(estimated)}
                 </p>
-                <p className="mt-1 text-[11px] text-muted-foreground">{t("topUpEstimateHint")}</p>
+                <p className="mt-1.5 text-xs text-muted-foreground">{t("topUpEstimateHint")}</p>
               </div>
             ) : null}
           </div>
 
-          <DialogFooter className="gap-2 sm:justify-end">
+          <DialogFooter className="flex-col gap-2 sm:flex-col sm:justify-stretch">
             <Button
               type="button"
-              variant="outline"
-              disabled={submitting}
-              onClick={() => onOpenChange(false)}
-            >
-              {t("topUpCancel")}
-            </Button>
-            <Button
-              type="button"
+              size="lg"
+              className="w-full"
               disabled={
                 !isAuthenticated ||
                 submitting ||
@@ -207,6 +204,16 @@ export function MyCanisterTopupDialog({
                   ? tt("sending")
                   : tt("toppingUp")
                 : t("topUpConfirm")}
+            </Button>
+            <Button
+              type="button"
+              size="lg"
+              variant="outline"
+              className="w-full"
+              disabled={submitting}
+              onClick={() => onOpenChange(false)}
+            >
+              {t("topUpCancel")}
             </Button>
           </DialogFooter>
         </DialogContent>

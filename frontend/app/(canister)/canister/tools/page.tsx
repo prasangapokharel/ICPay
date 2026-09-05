@@ -44,6 +44,14 @@ export default function CanisterHubPage() {
             </li>
             <li className="list-disc">
               <Link
+                href="/blog/how-to-top-up-icp-cycles"
+                className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
+              >
+                How to top up ICP cycles
+              </Link>
+            </li>
+            <li className="list-disc">
+              <Link
                 href="/blog/how-to-manage-icp-canister"
                 className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
               >
@@ -68,10 +76,26 @@ export default function CanisterHubPage() {
             </li>
             <li className="list-disc">
               <Link
-                href="/blog/how-to-top-up-icp-cycles"
+                href="/blog/what-is-cycles-minting-canister"
                 className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
               >
-                How to top up ICP cycles
+                What is the Cycles Minting Canister
+              </Link>
+            </li>
+            <li className="list-disc">
+              <Link
+                href="/blog/icp-canister-controllers-explained"
+                className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
+              >
+                Canister controllers explained
+              </Link>
+            </li>
+            <li className="list-disc">
+              <Link
+                href="/blog/canister-out-of-cycles-fix"
+                className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
+              >
+                Canister out of cycles — how to fix
               </Link>
             </li>
           </ul>

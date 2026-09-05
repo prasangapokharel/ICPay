@@ -7,7 +7,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 export const metadata: Metadata = {
   title: "Create Canister — ICP via CMC | ICPay",
   description:
-    "Create a new Internet Computer canister with ICP. Pay from your ICPay wallet, mint via the official CMC, pick a subnet, and set controllers.",
+    "Create a new Internet Computer canister with ICP (minimum 0.5 ICP). Pay from your ICPay wallet via the official CMC — covers the 500B cycle creation fee, pick subnet, set controllers.",
   keywords: [
     "create canister ICP",
     "notify_create_canister",
@@ -15,11 +15,13 @@ export const metadata: Metadata = {
     "Internet Computer create canister",
     "ICPay create canister",
     "canister without dfx",
+    "500 billion cycles creation fee",
   ],
   alternates: { canonical: `${siteUrl}/canister/create` },
   openGraph: {
     title: "Create Canister — ICPay",
-    description: "Create an ICP canister via the official Cycles Minting Canister.",
+    description:
+      "Create an ICP canister via CMC. Minimum 0.5 ICP so you clear the 500B cycle creation fee.",
     url: `${siteUrl}/canister/create`,
     siteName: "ICPay",
     type: "website",
@@ -40,7 +42,9 @@ export default function CreateCanisterPage() {
             <code className="rounded bg-muted px-1 py-0.5 text-xs text-foreground">
               notify_create_canister
             </code>
-            ) from your browser. Your Internet Identity is the controller.
+            ) from your browser. Your Internet Identity is the controller. Minimum{" "}
+            <strong className="text-foreground">0.5 ICP</strong> so estimated cycles clear the{" "}
+            <strong className="text-foreground">500B</strong> creation fee.
           </p>
           <p>
             Guide:{" "}

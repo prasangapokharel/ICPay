@@ -1,10 +1,15 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
+
+const SLUG = "how-to-mint-cycles-ledger"
+const TITLE = "How to Mint Cycles to the Cycles Ledger | ICPay"
+const DESCRIPTION =
+  "Mint ICP into cycles on the cycles ledger with notify_mint_cycles, then withdraw to any canister. Browser flow with Internet Identity — ICPay cycles wallet guide."
 
 export const metadata: Metadata = {
-  title: "How to Mint Cycles to the Cycles Ledger | ICPay",
-  description:
-    "Mint ICP into cycles on the cycles ledger with notify_mint_cycles, then withdraw to any canister. Browser flow with Internet Identity — ICPay cycles wallet guide.",
+  title: TITLE,
+  description: DESCRIPTION,
   keywords: [
     "cycles ledger",
     "notify_mint_cycles",
@@ -15,19 +20,37 @@ export const metadata: Metadata = {
     "ICPay cycles wallet",
     "hold cycles without canister",
   ],
-  alternates: { canonical: "/blog/how-to-mint-cycles-ledger" },
+  alternates: { canonical: blogCanonical(SLUG) },
   openGraph: {
     title: "How to Mint Cycles to the Cycles Ledger — ICPay Blog",
-    description:
-      "Convert ICP to cycles on the ledger, hold them, then withdraw into canisters when needed.",
+    description: DESCRIPTION,
+    url: blogCanonical(SLUG),
+    siteName: "ICPay",
     type: "article",
     publishedTime: "2026-09-05T00:00:00Z",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 }
+
+const jsonLd = blogArticleJsonLd({
+  slug: SLUG,
+  title: TITLE,
+  description: DESCRIPTION,
+  publishedAt: "2026-09-05",
+  readingMinutes: 8,
+})
 
 export default function HowToMintCyclesLedgerPage() {
   return (
     <article className="space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-widest text-primary">How-to</p>
         <h1 className="text-2xl font-bold leading-snug tracking-tight">
