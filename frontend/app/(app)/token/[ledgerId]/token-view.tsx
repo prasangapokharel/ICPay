@@ -120,7 +120,7 @@ export function TokenView() {
             if (item.swapOnly && !isSwapToken(token.ledgerId)) return null
 
             const icon = (
-              <span className="flex size-11 items-center justify-center rounded-full bg-gray-800 text-foreground">
+              <span className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground">
                 <HugeiconsIcon icon={item.icon} className="size-5" strokeWidth={1.75} />
               </span>
             )
