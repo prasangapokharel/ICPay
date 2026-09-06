@@ -5,14 +5,22 @@ import { useMemo } from "react"
 import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { InboxIcon, Message01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
-import { InboxIcon, Message01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import type { TransactionPublic } from "@/services/types"
-import { formatTokenAmount, formatTime, getTxStatusVariant, isIncomingTx, shortenCounterparty, txStatusLabel, txTypeKey } from "@/lib/wallet/utils"
+import {
+  formatTokenAmount,
+  formatTime,
+  getTxStatusVariant,
+  isIncomingTx,
+  shortenCounterparty,
+  txStatusLabel,
+  txTypeKey,
+} from "@/lib/wallet/utils"
 import { useLedgerSymbol } from "@/hooks/wallet/useWalletData"
 import { cn } from "@/lib/ui/utils"
 
@@ -23,37 +31,40 @@ type RecentTransactionsProps = {
 
 export function RecentTransactions({ transactions, embedded }: RecentTransactionsProps) {
   const t = useTranslations("dashboard")
+  const hasTransactions = transactions.length > 0
+
   return (
     <section className={embedded ? "space-y-0" : "space-y-3"}>
-      {!embedded ? (
+      {!embedded && (
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold">{t("latestTransactions")}</h2>
-          {transactions.length > 0 && (
+          {hasTransactions && (
             <Button
               variant="ghost"
               size="sm"
-              className="text-xs"
+              className="gap-1 text-xs"
               nativeButton={false}
               render={<Link href="/transactions" />}
             >
               {t("seeMore")}
+              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" strokeWidth={1.75} />
             </Button>
           )}
         </div>
-      ) : null}
+      )}
 
-      {transactions.length === 0 ? (
-        <div className={cn("rounded-2xl border border-dashed text-center", embedded && "border-0")}>
-          <HugeiconsIcon icon={InboxIcon} className="mx-auto size-4 text-muted-foreground/50" />
-          <p className="mt-3 text-sm font-medium">{t("noTransactions")}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{t("noTransactionsHint")}</p>
-        </div>
-      ) : (
+      {hasTransactions ? (
         <ul className={cn("divide-y rounded-2xl border", embedded && "rounded-none border-0")}>
           {transactions.map((tx) => (
             <TransactionRow key={tx.id} tx={tx} />
           ))}
         </ul>
+      ) : (
+        <div className={cn("rounded-2xl border border-dashed px-6 py-10 text-center", embedded && "border-0")}>
+          <HugeiconsIcon icon={InboxIcon} className="mx-auto size-5 text-muted-foreground/50" />
+          <p className="mt-3 text-sm font-medium">{t("noTransactions")}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{t("noTransactionsHint")}</p>
+        </div>
       )}
     </section>
   )
@@ -61,26 +72,25 @@ export function RecentTransactions({ transactions, embedded }: RecentTransaction
 
 function TransactionRow({ tx }: { tx: TransactionPublic }) {
   const t = useTranslations("transactions")
-  const type = txTypeKey(tx.txType)
+  const { symbol, decimals } = useLedgerSymbol(tx.ledgerId)
+
   const incoming = isIncomingTx(tx.txType)
   const status = txStatusLabel(tx.status)
   const counterparty = incoming ? tx.from : tx.to
+  const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
   const memo = tx.memo?.[0]
-  const { symbol, decimals } = useLedgerSymbol(tx.ledgerId)
 
   const avatarUri = useMemo(
     () => createAvatar(adventurer, { seed: counterparty }).toDataUri(),
     [counterparty]
   )
 
-  const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
-
   return (
     <li>
       <Link
         href={`/transactions/${encodeURIComponent(tx.id)}`}
         prefetch
-        className="flex items-center gap-3 px-4 py-2 transition-colors hover:bg-muted/40 active:bg-muted/60"
+        className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/40 active:bg-muted/60"
       >
         <Avatar className="size-10 shrink-0">
           <AvatarImage src={avatarUri} alt="" />
@@ -90,17 +100,17 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
         </Avatar>
 
         <div className="min-w-0 flex-1">
-          <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !handle && "font-mono text-sm tracking-tight")}>
+          <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !handle && "font-mono tracking-tight")}>
             {handle ?? shortenCounterparty(counterparty)}
             <PremiumBadge name={handle} className="size-3.5" />
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground/80">
-            <span>{t(`type.${type}`)}</span> · {formatTime(tx.createdAt)}
+            {t(`type.${txTypeKey(tx.txType)}`)} · {formatTime(tx.createdAt)}
           </p>
           {memo && (
             <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
               <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0" />
-              <span className="truncate rounded-full bg-muted px-2.5 py-0.5 text-xs">{memo}</span>
+              <span className="truncate rounded-full bg-muted px-2.5 py-0.5">{memo}</span>
             </p>
           )}
         </div>
@@ -109,7 +119,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
           <div className="text-right">
             <p
               className={cn(
-                "text-sm font-semibold font-mono tabular-nums",
+                "font-mono text-sm font-semibold tabular-nums",
                 incoming ? "text-success" : "text-foreground",
               )}
             >
@@ -122,10 +132,9 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
               </Badge>
             )}
           </div>
-          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground/60" strokeWidth={1.75} />
         </div>
       </Link>
     </li>
   )
 }
-

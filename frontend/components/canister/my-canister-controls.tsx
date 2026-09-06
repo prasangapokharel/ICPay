@@ -9,9 +9,11 @@ import {
   Camera01Icon,
   Copy01Icon,
   Delete02Icon,
+  Exchange01Icon,
   FuelIcon,
   LinkSquare02Icon,
   PlayIcon,
+  SentIcon,
   StopIcon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
@@ -34,6 +36,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
+import { MyCanisterTransferDialog } from "@/components/canister/my-canister-transfer-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
   formatManageError,
@@ -62,6 +65,7 @@ export function MyCanisterControls({
   const [busy, setBusy] = useState<"start" | "stop" | null>(null)
   const [stopOpen, setStopOpen] = useState(false)
   const [topupOpen, setTopupOpen] = useState(false)
+  const [transferOpen, setTransferOpen] = useState(false)
 
   const canControl = status.kind === "ok" && status.data.isController
   const running = status.kind === "ok" && status.data.runStatus === "running"
@@ -118,6 +122,17 @@ export function MyCanisterControls({
         >
           <HugeiconsIcon icon={FuelIcon} className="size-3.5" />
           {t("topUp")}
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="gap-1.5"
+          disabled={busy != null}
+          onClick={() => setTransferOpen(true)}
+        >
+          <HugeiconsIcon icon={SentIcon} className="size-3.5" />
+          {t("transfer")}
         </Button>
 
         <DropdownMenu>
@@ -180,6 +195,12 @@ export function MyCanisterControls({
         open={topupOpen}
         onOpenChange={setTopupOpen}
         canisterId={canisterId}
+        onDone={onRefresh}
+      />
+      <MyCanisterTransferDialog
+        open={transferOpen}
+        onOpenChange={setTransferOpen}
+        fromCanisterId={canisterId}
         onDone={onRefresh}
       />
     </>
