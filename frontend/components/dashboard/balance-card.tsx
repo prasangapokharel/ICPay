@@ -3,7 +3,8 @@
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
-import { AppIcon } from "@/components/ui/app-icon"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { EyeIcon, ViewOffIcon } from "@hugeicons/core-free-icons"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { cn } from "@/lib/ui/utils"
 import type { IcpPrice } from "@/lib/market/icpPrice"
@@ -65,26 +66,38 @@ export function BalanceCard({
             onClick={onToggleHidden}
             className="text-primary-foreground/60 hover:bg-primary-foreground/15 hover:text-primary-foreground"
           >
-            <AppIcon name="hide" size={22} className={cn(hidden && "opacity-70")} />
+            <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-5" strokeWidth={1.75} />
           </Button>
         </div>
 
         {/* Fiat value */}
-        <div className="relative z-10 mt-1 flex items-center gap-2">
+        <div className="relative z-10 mt-1 flex items-center justify-between gap-2">
           <span className="liquid-glass-primary inline-block rounded-full px-2.5 py-1 text-sm font-medium tabular-nums">
             {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
           </span>
-          {!hidden && price && price.change24h !== 0 && (
-            <span
-              className={cn(
-                "text-xs font-semibold tabular-nums",
-                price.change24h > 0 ? "text-green-400" : "text-red-400"
-              )}
-            >
-              {price.change24h > 0 ? "+" : ""}
-              {price.change24h.toFixed(2)}%
-            </span>
-          )}
+          <div className="flex items-center gap-1.5">
+            {!hidden && price && (
+              <span className="text-xs font-medium tabular-nums text-primary-foreground/70">
+                1 ICP = {price.usd.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 4,
+                })}
+              </span>
+            )}
+            {!hidden && price && price.change24h !== 0 && (
+              <span
+                className={cn(
+                  "text-xs font-semibold tabular-nums",
+                  price.change24h > 0 ? "text-green-400" : "text-red-400"
+                )}
+              >
+                {price.change24h > 0 ? "+" : ""}
+                {price.change24h.toFixed(2)}%
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

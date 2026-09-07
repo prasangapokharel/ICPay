@@ -61,21 +61,33 @@ export function HomeOverviewCard({
             {hidden ? "•• •••• ••••" : balance}
             <span className="ml-2 text-lg font-medium text-muted-foreground">ICP</span>
           </p>
-          <div className="mt-1.5 flex items-center gap-2">
+          <div className="mt-1.5 flex items-center justify-between gap-2">
             <p className="text-base font-medium tabular-nums text-foreground/80">
               {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
             </p>
-            {!hidden && price && price.change24h !== 0 && (
-              <span
-                className={cn(
-                  "text-sm font-semibold tabular-nums",
-                  price.change24h > 0 ? "text-green-600" : "text-red-600"
-                )}
-              >
-                {price.change24h > 0 ? "+" : ""}
-                {price.change24h.toFixed(2)}%
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {!hidden && price && (
+                <span className="text-sm font-medium tabular-nums text-muted-foreground">
+                  1 ICP = {price.usd.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 4,
+                  })}
+                </span>
+              )}
+              {!hidden && price && price.change24h !== 0 && (
+                <span
+                  className={cn(
+                    "text-sm font-semibold tabular-nums",
+                    price.change24h > 0 ? "text-green-600" : "text-red-600"
+                  )}
+                >
+                  {price.change24h > 0 ? "+" : ""}
+                  {price.change24h.toFixed(2)}%
+                </span>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex gap-2">
