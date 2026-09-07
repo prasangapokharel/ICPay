@@ -8,8 +8,8 @@ const PRICE_KEY = "icp-price"
 
 export function useIcpPrice(
   opts?: { refreshInterval?: number }
-): { price: IcpPrice | null; loading: boolean } {
-  const { data, isLoading } = useSWR<IcpPrice | null>(
+): { price: IcpPrice | null; loading: boolean; refresh: () => Promise<void> } {
+  const { data, isLoading, mutate } = useSWR<IcpPrice | null>(
     PRICE_KEY,
     () => fetchIcpPrice(),
     {
@@ -23,5 +23,9 @@ export function useIcpPrice(
     }
   )
 
-  return { price: data ?? null, loading: isLoading }
+  const refresh = async () => {
+    await mutate()
+  }
+
+  return { price: data ?? null, loading: isLoading, refresh }
 }

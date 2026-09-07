@@ -15,11 +15,14 @@ export function CommunityWorkspace({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const isDesktop = useIsDesktop()
   const onList = pathname === "/channels"
+  const hideExplorer = pathname === "/channels/new" || pathname.startsWith("/channels/join/")
 
   return (
     <TooltipProvider delay={200}>
       <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-        {isDesktop ? (
+        {hideExplorer ? (
+          <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">{children}</div>
+        ) : isDesktop ? (
           <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0 w-full flex-1">
             <ResizablePanel
               id="community-explorer"

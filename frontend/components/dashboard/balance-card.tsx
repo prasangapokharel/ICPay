@@ -19,6 +19,7 @@ type BalanceCardProps = {
   price: IcpPrice | null
   hidden: boolean
   onToggleHidden: () => void
+  onRefreshPrice: () => Promise<void>
   username?: string
 }
 
@@ -28,6 +29,7 @@ export function BalanceCard({
   price,
   hidden,
   onToggleHidden,
+  onRefreshPrice,
   username,
 }: BalanceCardProps) {
   const t = useTranslations("dashboard")
@@ -56,9 +58,13 @@ export function BalanceCard({
 
         {/* Balance */}
         <div className="relative z-10 mt-6 flex items-baseline gap-2">
-          <span className="text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums">
+          <button
+            type="button"
+            onClick={() => void onRefreshPrice()}
+            className="cursor-pointer text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums transition-opacity hover:opacity-80 active:opacity-60"
+          >
             {hidden ? "•• •••• ••••" : <FormattedBalance value={balance} />}
-          </span>
+          </button>
           <Button
             variant="ghost"
             size="icon-xs"
