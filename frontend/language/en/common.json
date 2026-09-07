@@ -252,6 +252,7 @@
     "rowNetworkFee": "Network fee",
     "rowStatus": "Status",
     "rowBlock": "Block",
+    "back": "Back",
     "detailTitle": "Transaction details",
     "rowDate": "Date",
     "rowId": "Transaction ID",
@@ -2272,7 +2273,18 @@
     "linkSuccessTitle": "Canister linked",
     "linkSuccessBody": "Saved to Mine in this browser.",
     "linkSuccessNamed": "Saved as “{name}”.",
-    "invalidId": "Enter a valid canister ID"
+    "invalidId": "Enter a valid canister ID",
+    "addController": "Add controller",
+    "addControllerTitle": "Add controller",
+    "addControllerHint": "Grants another principal full control of this canister via update_settings. Controllers is a full-replacement list — the current list is fetched and kept, this principal is only appended.",
+    "addControllerLabel": "Principal ID",
+    "addControllerPlaceholder": "aaaaa-aa…",
+    "addControllerFullListHint": "Existing controllers stay in place. This adds one more.",
+    "addControllerConfirm": "Add controller",
+    "addControllerSubmitting": "Adding…",
+    "addControllerSuccessTitle": "Controller added",
+    "addControllerSuccessBody": "This principal can now manage the canister.",
+    "invalidPrincipal": "Enter a valid principal ID"
   },
   "canisterIdField": {
     "label": "Canister ID",
