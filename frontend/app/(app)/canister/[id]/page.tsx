@@ -6,7 +6,8 @@ import useSWR from "swr"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { MyCanisterDetails } from "@/components/canister/my-canister-details"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { MyCanisterDetailsV2 } from "@/components/canister/my-canister-details-v2"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useCanisterStatus } from "@/hooks/canister/useCanisterStatus"
@@ -55,24 +56,17 @@ export default function CanisterDetailPage() {
       }
     >
       <div className="mx-auto max-w-4xl">
-        <Card>
-          <CardHeader>
-            <CardTitle>{localName || meta?.name || shortCanisterId(canisterId)}</CardTitle>
-            <CardDescription className="font-mono text-xs">{canisterId}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {canisterId ? (
-              <MyCanisterDetails
-                canisterId={canisterId}
-                localName={localName}
-                meta={meta}
-                status={status}
-                onCopyId={() => void navigator.clipboard.writeText(canisterId)}
-                onRefresh={() => status.refresh()}
-              />
-            ) : null}
-          </CardContent>
-        </Card>
+        <TooltipProvider>
+          {canisterId ? (
+            <MyCanisterDetailsV2
+              canisterId={canisterId}
+              localName={localName}
+              meta={meta}
+              status={status}
+              onRefresh={() => status.refresh()}
+            />
+          ) : null}
+        </TooltipProvider>
       </div>
     </AppPage>
   )
