@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { FuelIcon, ViewIcon } from "@hugeicons/core-free-icons"
@@ -53,7 +54,6 @@ export function MyCanisterRow({
   selected,
   status,
   statusLoading,
-  onSelect,
   onTopUp,
 }: {
   id: string
@@ -63,7 +63,6 @@ export function MyCanisterRow({
   selected: boolean
   status?: MineRowStatus
   statusLoading?: boolean
-  onSelect: () => void
   onTopUp: () => void
 }) {
   const t = useTranslations("myCanisters")
@@ -71,11 +70,7 @@ export function MyCanisterRow({
 
   return (
     <>
-      <TableRow
-        data-state={selected ? "selected" : undefined}
-        className="cursor-pointer"
-        onClick={onSelect}
-      >
+      <TableRow data-state={selected ? "selected" : undefined}>
         <TableCell>
           <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
@@ -127,9 +122,24 @@ export function MyCanisterRow({
             {status?.kind === "ok" ? status.data.cyclesLabel : "—"}
           </span>
         </TableCell>
-        <TableCell className="w-0" onClick={(e) => e.stopPropagation()}>
+        <TableCell className="w-0">
           <ButtonGroup>
-            <RowIconAction icon={ViewIcon} label={t("view")} onClick={onSelect} />
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    nativeButton={false}
+                    variant="outline"
+                    size="icon-sm"
+                    render={<Link href={`/canister/${id}`} />}
+                    aria-label={t("view")}
+                  >
+                    <HugeiconsIcon icon={ViewIcon} className="size-4" strokeWidth={1.75} />
+                  </Button>
+                }
+              />
+              <TooltipContent side="top">{t("view")}</TooltipContent>
+            </Tooltip>
             <RowIconAction icon={FuelIcon} label={t("topUp")} onClick={onTopUp} />
           </ButtonGroup>
         </TableCell>
