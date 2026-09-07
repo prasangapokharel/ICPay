@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import useSWR from "swr"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -18,6 +17,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Dialog,
   DialogContent,
@@ -27,24 +27,18 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
-import { MyCanisterDetails } from "@/components/canister/my-canister-details"
 import { MyCanisterRow } from "@/components/canister/my-canister-row"
+import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useCanisterStatus } from "@/hooks/canister/useCanisterStatus"
 import { useMineCanisters } from "@/hooks/canister/useMineCanisters"
 import { useMineStatusMap } from "@/hooks/canister/useMineStatusMap"
 import { useSavedCanisterEntries } from "@/hooks/canister/useSavedCanisters"
 import {
   displayCanisterLabel,
-  forgetCanister,
   rememberCanister,
-  shortCanisterId,
 } from "@/lib/canister/savedCanisters"
-import {
-  fetchCanisterIndexMeta,
-  subnetLabel,
-} from "@/services/canister/controlledCanisters"
+import { subnetLabel } from "@/services/canister/controlledCanisters"
 import { shortSubnetId } from "@/services/canister/subnetLocations"
 import { parseCanisterId } from "@/services/cycles/topUp"
 import { cn } from "@/lib/ui/utils"
@@ -85,34 +79,17 @@ export function MyCanistersPanel() {
   const mine = useMineCanisters(principal)
   const entries = useSavedCanisterEntries(principal)
   const nameById = useMemo(() => new Map(entries.map((e) => [e.id, e.name])), [entries])
-  const [picked, setPicked] = useState<string | null>(null)
+  const [topUpTarget, setTopUpTarget] = useState<string | null>(null)
   const [draftId, setDraftId] = useState("")
   const [draftName, setDraftName] = useState("")
   const [linkOpen, setLinkOpen] = useState(false)
   const [linkedOk, setLinkedOk] = useState<{ id: string; name: string } | null>(null)
 
-  const selected =
-    picked && mine.ids.includes(picked) ? picked : mine.ids.length > 0 ? mine.ids[0]! : ""
-
-  const status = useCanisterStatus(
-    identity,
-    selected,
-    Boolean(isAuthenticated && selected)
-  )
   const previews = useMineStatusMap(
     identity,
     mine.ids,
     Boolean(isAuthenticated && mine.ids.length > 0)
   )
-
-  const networkMeta = selected ? mine.metaById.get(selected) : undefined
-  const { data: indexMeta } = useSWR(
-    selected ? (["canister-index-meta", selected] as const) : null,
-    ([, id]) => fetchCanisterIndexMeta(id),
-    { revalidateOnFocus: false, dedupingInterval: 120_000 }
-  )
-  const meta = indexMeta ?? networkMeta ?? null
-  const localName = selected ? nameById.get(selected) ?? "" : ""
 
   const parsedDraft = useMemo(() => tryParseCanisterId(draftId), [draftId])
   const draftTouched = draftId.trim().length > 0
@@ -128,17 +105,10 @@ export function MyCanistersPanel() {
     if (!principal || !parsedDraft) return
     const name = draftName.trim()
     rememberCanister(principal, parsedDraft, name)
-    setPicked(parsedDraft)
     setDraftId("")
     setDraftName("")
     setLinkOpen(false)
     setLinkedOk({ id: parsedDraft, name })
-  }
-
-  const onRemove = (id: string) => {
-    if (!principal) return
-    forgetCanister(principal, id)
-    if (picked === id) setPicked(null)
   }
 
   return (
@@ -187,79 +157,66 @@ export function MyCanistersPanel() {
             </div>
             <CardDescription>{t("listHint")}</CardDescription>
           </CardHeader>
-          <CardContent className="p-2">
+          <CardContent className="p-0">
             {mine.isLoading ? (
-              <EmptyBlock message={t("loading")} />
+              <div className="p-2">
+                <EmptyBlock message={t("loading")} />
+              </div>
             ) : mine.ids.length === 0 ? (
-              <EmptyBlock
-                message={t("empty")}
-                actions={
-                  <div className="flex flex-wrap justify-center gap-2">
-                    <Button type="button" variant="outline" onClick={openLink}>
-                      {t("link")}
-                    </Button>
-                    <Button nativeButton={false} render={<Link href="/canister/create" />}>
-                      {t("create")}
-                    </Button>
-                  </div>
-                }
-              />
+              <div className="p-2">
+                <EmptyBlock
+                  message={t("empty")}
+                  actions={
+                    <div className="flex flex-wrap justify-center gap-2">
+                      <Button type="button" variant="outline" onClick={openLink}>
+                        {t("link")}
+                      </Button>
+                      <Button nativeButton={false} render={<Link href="/canister/create" />}>
+                        {t("create")}
+                      </Button>
+                    </div>
+                  }
+                />
+              </div>
             ) : (
-              <ul className="space-y-1">
-                {mine.ids.map((id) => {
-                  const row = mine.metaById.get(id)
-                  const savedName = nameById.get(id) ?? ""
-                  const label =
-                    savedName || row?.name || displayCanisterLabel({ id, name: "" })
-                  const hasFlags = Boolean(row?.countries.length)
-                  const place = row
-                    ? hasFlags
-                      ? row.nodeCount > 0
-                        ? `${row.nodeCount} nodes`
-                        : ""
-                      : subnetLabel(row) || shortSubnetId(row.subnetId)
-                    : ""
-                  return (
-                    <MyCanisterRow
-                      key={id}
-                      id={id}
-                      label={label}
-                      place={place}
-                      countries={row?.countries}
-                      selected={selected === id}
-                      status={previews.map[id]}
-                      statusLoading={previews.isLoading}
-                      onSelect={() => setPicked(id)}
-                    />
-                  )
-                })}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="min-w-0 flex-1 gap-0 self-start lg:sticky lg:top-20">
-          <CardHeader className="border-b pb-3">
-            <CardTitle className="text-base">{t("detailTitle")}</CardTitle>
-            <CardDescription>
-              {selected
-                ? localName || meta?.name || shortCanisterId(selected)
-                : t("detailEmpty")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className={cn("pt-4", !selected && "pb-2")}>
-            {!selected ? (
-              <EmptyBlock message={t("detailEmpty")} />
-            ) : (
-              <MyCanisterDetails
-                canisterId={selected}
-                localName={localName}
-                meta={meta}
-                status={status}
-                onCopyId={() => void navigator.clipboard.writeText(selected)}
-                onRefresh={() => status.refresh()}
-                onRemove={() => onRemove(selected)}
-              />
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("listTitle")}</TableHead>
+                    <TableHead className="text-right">Cycles</TableHead>
+                    <TableHead className="w-[140px] text-right">{t("menuActions")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mine.ids.map((id) => {
+                    const row = mine.metaById.get(id)
+                    const savedName = nameById.get(id) ?? ""
+                    const label =
+                      savedName || row?.name || displayCanisterLabel({ id, name: "" })
+                    const hasFlags = Boolean(row?.countries.length)
+                    const place = row
+                      ? hasFlags
+                        ? row.nodeCount > 0
+                          ? `${row.nodeCount} nodes`
+                          : ""
+                        : subnetLabel(row) || shortSubnetId(row.subnetId)
+                      : ""
+                    return (
+                      <MyCanisterRow
+                        key={id}
+                        id={id}
+                        label={label}
+                        place={place}
+                        countries={row?.countries}
+                        selected={false}
+                        status={previews.map[id]}
+                        statusLoading={previews.isLoading}
+                        onTopUp={() => setTopUpTarget(id)}
+                      />
+                    )
+                  })}
+                </TableBody>
+              </Table>
             )}
           </CardContent>
         </Card>
@@ -356,6 +313,20 @@ export function MyCanistersPanel() {
         }
         monoId={linkedOk?.id}
       />
+
+      {topUpTarget && (
+        <MyCanisterTopupDialog
+          open={true}
+          onOpenChange={(open) => {
+            if (!open) setTopUpTarget(null)
+          }}
+          canisterId={topUpTarget}
+          onDone={() => {
+            setTopUpTarget(null)
+            previews.refresh()
+          }}
+        />
+      )}
     </AppPage>
   )
 }

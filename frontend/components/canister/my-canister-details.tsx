@@ -53,7 +53,6 @@ export function MyCanisterDetails({
   status,
   onCopyId,
   onRefresh,
-  onRemove,
 }: {
   canisterId: string
   localName: string
@@ -61,7 +60,6 @@ export function MyCanisterDetails({
   status: CanisterStatusState
   onCopyId: () => void
   onRefresh: () => void
-  onRemove: () => void
 }) {
   const t = useTranslations("myCanisters")
   const ts = useTranslations("canisterStatus")
@@ -136,7 +134,6 @@ export function MyCanisterDetails({
         status={status}
         onRefresh={onRefresh}
         onCopyId={onCopyId}
-        onRemove={onRemove}
       />
 
       {(meta || displayName) && (

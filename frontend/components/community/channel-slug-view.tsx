@@ -11,9 +11,11 @@ import type { CommunityChannelSnapshot } from "@/lib/community/snapshot"
 export function ChannelSlugView({
   slug,
   channel,
+  avatarBytes,
 }: {
   slug: string
   channel: CommunityChannelSnapshot | null
+  avatarBytes?: Uint8Array
 }) {
   const { isAuthenticated, isLoading } = useAuth()
 
@@ -35,5 +37,5 @@ export function ChannelSlugView({
     )
   }
 
-  return <ChannelPublicLanding slug={slug} channel={channel} />
+  return <ChannelPublicLanding slug={slug} channel={channel} avatarBytes={avatarBytes} />
 }

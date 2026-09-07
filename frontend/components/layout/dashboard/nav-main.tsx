@@ -99,7 +99,7 @@ function NavRow({
         onMouseEnter={onWarm}
         onFocus={onWarm}
       >
-        <NavIcon icon={item.icon} />
+        <NavIcon icon={item.icon} className="text-primary" />
         <span className="min-w-0 flex-1 truncate">{label}</span>
         {item.badgeKey ? (
           <GradientBadge size="sm">{t(item.badgeKey as never)}</GradientBadge>

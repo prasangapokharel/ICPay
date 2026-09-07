@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { FuelIcon } from "@hugeicons/core-free-icons"
+import { FuelStationIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -152,7 +152,7 @@ export function MyCanisterTopupDialog({
         <DialogContent className="gap-5 p-5 sm:max-w-md sm:p-6" closeButtonSize="icon-lg">
           <DialogHeader className="pr-10">
             <DialogTitle className="flex items-center gap-2 text-lg">
-              <HugeiconsIcon icon={FuelIcon} className="size-5 text-primary" />
+              <HugeiconsIcon icon={FuelStationIcon} className="size-5 text-primary" />
               {t("topUpTitle")}
             </DialogTitle>
             <DialogDescription className="text-sm leading-relaxed">
