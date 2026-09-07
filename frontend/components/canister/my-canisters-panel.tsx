@@ -111,10 +111,6 @@ export function MyCanistersPanel() {
     setLinkedOk({ id: parsedDraft, name })
   }
 
-  const selectRow = (id: string) => {
-    window.location.href = `/canister/${id}`
-  }
-
   return (
     <AppPage
       title={t("title")}

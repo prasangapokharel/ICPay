@@ -6,45 +6,12 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { FuelStationIcon, ViewIcon } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { SubnetCountryFlags } from "@/components/canister/subnet-country-flags"
 import type { MineRowStatus } from "@/hooks/canister/useMineStatusMap"
 import { cn } from "@/lib/ui/utils"
-
-function RowIconAction({
-  icon,
-  label,
-  onClick,
-  disabled,
-}: {
-  icon: Parameters<typeof HugeiconsIcon>[0]["icon"]
-  label: string
-  onClick: (e: React.MouseEvent) => void
-  disabled?: boolean
-}) {
-  return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            disabled={disabled}
-            onClick={onClick}
-            aria-label={label}
-          >
-            <HugeiconsIcon icon={icon} className="size-4" strokeWidth={1.75} />
-          </Button>
-        }
-      />
-      <TooltipContent side="top">{label}</TooltipContent>
-    </Tooltip>
-  )
-}
 
 export function MyCanisterRow({
   id,
