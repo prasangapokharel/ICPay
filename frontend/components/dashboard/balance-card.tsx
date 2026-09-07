@@ -3,7 +3,8 @@
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
-import { AppIcon } from "@/components/ui/app-icon"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { EyeIcon, ViewOffIcon } from "@hugeicons/core-free-icons"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { cn } from "@/lib/ui/utils"
 import type { IcpPrice } from "@/lib/market/icpPrice"
@@ -65,7 +66,7 @@ export function BalanceCard({
             onClick={onToggleHidden}
             className="text-primary-foreground/60 hover:bg-primary-foreground/15 hover:text-primary-foreground"
           >
-            <AppIcon name="hide" size={22} className={cn(hidden && "opacity-70")} />
+            <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-5" strokeWidth={1.75} />
           </Button>
         </div>
 
