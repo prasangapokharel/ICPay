@@ -74,17 +74,29 @@ export function BalanceCard({
           <span className="liquid-glass-primary inline-block rounded-full px-2.5 py-1 text-sm font-medium tabular-nums">
             {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
           </span>
-          {!hidden && price && price.change24h !== 0 && (
-            <span
-              className={cn(
-                "text-xs font-semibold tabular-nums",
-                price.change24h > 0 ? "text-green-400" : "text-red-400"
-              )}
-            >
-              {price.change24h > 0 ? "+" : ""}
-              {price.change24h.toFixed(2)}%
-            </span>
-          )}
+          <div className="flex items-center gap-1.5">
+            {!hidden && price && (
+              <span className="text-xs font-medium tabular-nums text-primary-foreground/70">
+                1 ICP = {price.usd.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 4,
+                })}
+              </span>
+            )}
+            {!hidden && price && price.change24h !== 0 && (
+              <span
+                className={cn(
+                  "text-xs font-semibold tabular-nums",
+                  price.change24h > 0 ? "text-green-400" : "text-red-400"
+                )}
+              >
+                {price.change24h > 0 ? "+" : ""}
+                {price.change24h.toFixed(2)}%
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
