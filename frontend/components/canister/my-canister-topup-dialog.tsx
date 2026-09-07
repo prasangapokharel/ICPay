@@ -7,17 +7,19 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { FuelStationIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer"
 import { AmountInput } from "@/components/shared/amount-input"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useIsMobile } from "@/hooks/ui/useMobile"
 import { formatAmount, parseIcp } from "@/lib/wallet/utils"
 import { rememberCanister } from "@/lib/canister/savedCanisters"
 import {
@@ -52,6 +54,7 @@ export function MyCanisterTopupDialog({
   const { identity, isAuthenticated } = useAuth()
   const walletBalance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
+  const isMobile = useIsMobile()
   const [amountText, setAmountText] = useState("")
   const [rate, setRate] = useState<bigint | null>(null)
   const [iiBalance, setIiBalance] = useState<bigint | null>(null)
@@ -143,24 +146,23 @@ export function MyCanisterTopupDialog({
 
   return (
     <>
-      <Dialog
+      <Drawer
         open={open && success == null}
         onOpenChange={(next) => {
           if (!submitting) onOpenChange(next)
         }}
+        showSwipeHandle
       >
-        <DialogContent className="gap-5 p-5 sm:max-w-md sm:p-6" closeButtonSize="icon-lg">
-          <DialogHeader className="pr-10">
-            <DialogTitle className="flex items-center gap-2 text-lg">
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle className="flex items-center gap-2">
               <HugeiconsIcon icon={FuelStationIcon} className="size-5 text-primary" />
               {t("topUpTitle")}
-            </DialogTitle>
-            <DialogDescription className="text-sm leading-relaxed">
-              {t("topUpHint")}
-            </DialogDescription>
-          </DialogHeader>
+            </DrawerTitle>
+            <DrawerDescription>{t("topUpHint")}</DrawerDescription>
+          </DrawerHeader>
 
-          <div className="space-y-4">
+          <div className="space-y-4 px-4">
             <p className="break-all font-mono text-xs text-muted-foreground">{canisterId}</p>
             <AmountInput
               id="mine-topup-amount"
@@ -186,10 +188,9 @@ export function MyCanisterTopupDialog({
             ) : null}
           </div>
 
-          <DialogFooter className="flex-col gap-2 sm:flex-col sm:justify-stretch">
+          <DrawerFooter className="mt-3">
             <Button
               type="button"
-              size="lg"
               className="w-full"
               disabled={
                 !isAuthenticated ||
@@ -205,19 +206,10 @@ export function MyCanisterTopupDialog({
                   : tt("toppingUp")
                 : t("topUpConfirm")}
             </Button>
-            <Button
-              type="button"
-              size="lg"
-              variant="outline"
-              className="w-full"
-              disabled={submitting}
-              onClick={() => onOpenChange(false)}
-            >
-              {t("topUpCancel")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DrawerClose render={<Button variant="outline" disabled={submitting}>{t("topUpCancel")}</Button>} />
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
 
       <CanisterSuccessDialog
         open={success != null}
