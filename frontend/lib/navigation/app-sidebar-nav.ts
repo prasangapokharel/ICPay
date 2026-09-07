@@ -3,15 +3,17 @@ import {
   Analytics01Icon,
   Clock01Icon,
   CloudIcon,
+  Coins01Icon,
+  CrownIcon,
   DashboardSquare01Icon,
+  Download01Icon,
   Globe02Icon,
   Home01Icon,
   JusticeScale01Icon,
   Message01Icon,
   Rocket01Icon,
+  SentIcon,
   ShoppingBag01Icon,
-  UserIcon,
-  Wallet01Icon,
 } from "@hugeicons/core-free-icons"
 import { APP_NAV_ITEMS, isAppNavActive } from "@/lib/navigation/app-nav-items"
 
@@ -24,11 +26,23 @@ export type SidebarNavItem = {
 }
 
 export type SidebarNavSection = {
-  sectionKey: "overview" | "assets" | "community" | "services" | "activity"
+  sectionKey: "overview" | "payments" | "assets" | "services" | "community" | "insights"
   items: SidebarNavItem[]
 }
 
 export const SIDEBAR_FOOTER: SidebarNavItem[] = [
+  {
+    href: "/governance",
+    labelKey: "settings.items.governance",
+    icon: JusticeScale01Icon,
+  },
+  {
+    href: "/username",
+    labelKey: "settings.items.buyPremium",
+    icon: CrownIcon,
+    badgeKey: "settings.items.buyNameBadge",
+    badgeType: "gradient",
+  },
   {
     href: "/icpay/presale",
     labelKey: "settings.items.icpayToken",
@@ -44,10 +58,29 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
     items: [{ href: "/home", labelKey: "nav.home", icon: Home01Icon }],
   },
   {
+    sectionKey: "payments",
+    items: [
+      { href: "/transfer", labelKey: "common.send", icon: SentIcon },
+      { href: "/deposit", labelKey: "common.receive", icon: Download01Icon },
+      { href: "/transactions", labelKey: "settings.items.history", icon: Clock01Icon },
+    ],
+  },
+  {
     sectionKey: "assets",
     items: [
-      { href: "/wallet", labelKey: "settings.items.tokens", icon: Wallet01Icon },
+      { href: "/wallet", labelKey: "settings.items.tokens", icon: Coins01Icon },
       { href: "/launch", labelKey: "settings.items.launch", icon: Rocket01Icon },
+    ],
+  },
+  {
+    sectionKey: "services",
+    items: [
+      { href: "/bucket", labelKey: "settings.items.bucket", icon: CloudIcon, badgeKey: "settings.items.bucketBadge", badgeType: "gradient" },
+      {
+        href: "/canister",
+        labelKey: "settings.items.canisters",
+        icon: DashboardSquare01Icon,
+      },
     ],
   },
   {
@@ -64,29 +97,9 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
     ],
   },
   {
-    sectionKey: "services",
-    items: [
-      { href: "/bucket", labelKey: "settings.items.bucket", icon: CloudIcon, badgeKey: "settings.items.bucketBadge", badgeType: "gradient" },
-      {
-        href: "/canister",
-        labelKey: "settings.items.canisters",
-        icon: DashboardSquare01Icon,
-      },
-      {
-        href: "/username",
-        labelKey: "settings.items.buyName",
-        icon: UserIcon,
-        badgeKey: "settings.items.buyNameBadge",
-        badgeType: "gradient",
-      },
-    ],
-  },
-  {
-    sectionKey: "activity",
+    sectionKey: "insights",
     items: [
       { href: "/analytics", labelKey: "settings.items.analytics", icon: Analytics01Icon },
-      { href: "/governance", labelKey: "settings.items.governance", icon: JusticeScale01Icon },
-      { href: "/transactions", labelKey: "settings.items.history", icon: Clock01Icon },
     ],
   },
 ]

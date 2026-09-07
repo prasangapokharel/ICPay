@@ -64,6 +64,8 @@
       "more": "Higit pa",
       "preferences": "Mga Kagustuhan",
       "legal": "Legal",
+      "payments": "Payments",
+      "insights": "Insights",
       "community": "Community",
       "overview": "Overview",
       "assets": "Assets",
@@ -100,6 +102,7 @@
       "live": "Live",
       "community": "Mga channel",
       "communityBadge": "Beta",
+      "buyPremium": "Buy Premium",
       "bucketBadge": "50% off",
       "canisters": "Canisters",
       "canisterTopup": "Top up"
