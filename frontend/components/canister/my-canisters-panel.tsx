@@ -254,10 +254,6 @@ export function MyCanistersPanel() {
                         statusLoading={previews.isLoading}
                         onSelect={() => selectRow(id)}
                         onTopUp={() => setTopUpTarget(id)}
-                        onChanged={() => {
-                          status.refresh()
-                          previews.refresh()
-                        }}
                       />
                     )
                   })}

@@ -1,31 +1,16 @@
 "use client"
 
-import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { FuelIcon, PlayIcon, StopIcon, ViewIcon } from "@hugeicons/core-free-icons"
+import { FuelIcon, ViewIcon } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { SubnetCountryFlags } from "@/components/canister/subnet-country-flags"
-import { useAuth } from "@/components/auth/auth-provider"
 import type { MineRowStatus } from "@/hooks/canister/useMineStatusMap"
-import { formatManageError, startCanister, stopCanister } from "@/services/canister/management"
-import { rememberCanister } from "@/lib/canister/savedCanisters"
 import { cn } from "@/lib/ui/utils"
 
 function RowIconAction({
@@ -70,7 +55,6 @@ export function MyCanisterRow({
   statusLoading,
   onSelect,
   onTopUp,
-  onChanged,
 }: {
   id: string
   label: string
@@ -81,33 +65,9 @@ export function MyCanisterRow({
   statusLoading?: boolean
   onSelect: () => void
   onTopUp: () => void
-  onChanged: () => void
 }) {
   const t = useTranslations("myCanisters")
   const ts = useTranslations("canisterStatus")
-  const { identity } = useAuth()
-  const [busy, setBusy] = useState<"start" | "stop" | null>(null)
-  const [stopOpen, setStopOpen] = useState(false)
-
-  const canControl = status?.kind === "ok" && status.data.isController
-  const running = status?.kind === "ok" && status.data.runStatus === "running"
-  const stopped = status?.kind === "ok" && status.data.runStatus === "stopped"
-
-  const run = async (action: "start" | "stop") => {
-    if (!identity) return
-    setBusy(action)
-    try {
-      if (action === "start") await startCanister(identity, id)
-      else await stopCanister(identity, id)
-      rememberCanister(identity.getPrincipal().toText(), id)
-      onChanged()
-    } catch (e) {
-      toast.error(formatManageError(e))
-    } finally {
-      setBusy(null)
-      setStopOpen(false)
-    }
-  }
 
   return (
     <>
@@ -170,41 +130,10 @@ export function MyCanisterRow({
         <TableCell className="w-0" onClick={(e) => e.stopPropagation()}>
           <ButtonGroup>
             <RowIconAction icon={ViewIcon} label={t("view")} onClick={onSelect} />
-            <RowIconAction
-              icon={FuelIcon}
-              label={t("topUp")}
-              onClick={onTopUp}
-            />
-            <RowIconAction
-              icon={PlayIcon}
-              label={busy === "start" ? t("starting") : t("start")}
-              disabled={!canControl || running || busy != null}
-              onClick={() => void run("start")}
-            />
-            <RowIconAction
-              icon={StopIcon}
-              label={t("stop")}
-              disabled={!canControl || stopped || busy != null}
-              onClick={() => setStopOpen(true)}
-            />
+            <RowIconAction icon={FuelIcon} label={t("topUp")} onClick={onTopUp} />
           </ButtonGroup>
         </TableCell>
       </TableRow>
-
-      <AlertDialog open={stopOpen} onOpenChange={setStopOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("stopConfirmTitle")}</AlertDialogTitle>
-            <AlertDialogDescription>{t("stopConfirmBody")}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("topUpCancel")}</AlertDialogCancel>
-            <AlertDialogAction disabled={busy === "stop"} onClick={() => void run("stop")}>
-              {busy === "stop" ? t("stopping") : t("stop")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   )
 }
