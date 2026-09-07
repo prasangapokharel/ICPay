@@ -80,6 +80,7 @@ export function MyCanistersPanel() {
   const entries = useSavedCanisterEntries(principal)
   const nameById = useMemo(() => new Map(entries.map((e) => [e.id, e.name])), [entries])
   const [topUpTarget, setTopUpTarget] = useState<string | null>(null)
+  const [topUpOpen, setTopUpOpen] = useState(false)
   const [draftId, setDraftId] = useState("")
   const [draftName, setDraftName] = useState("")
   const [linkOpen, setLinkOpen] = useState(false)
@@ -211,7 +212,10 @@ export function MyCanistersPanel() {
                         selected={false}
                         status={previews.map[id]}
                         statusLoading={previews.isLoading}
-                        onTopUp={() => setTopUpTarget(id)}
+                        onTopUp={() => {
+                          setTopUpTarget(id)
+                          setTopUpOpen(true)
+                        }}
                       />
                     )
                   })}
@@ -316,13 +320,13 @@ export function MyCanistersPanel() {
 
       {topUpTarget && (
         <MyCanisterTopupDialog
-          open={true}
+          open={topUpOpen}
           onOpenChange={(open) => {
+            setTopUpOpen(open)
             if (!open) setTopUpTarget(null)
           }}
           canisterId={topUpTarget}
           onDone={() => {
-            setTopUpTarget(null)
             previews.refresh()
           }}
         />

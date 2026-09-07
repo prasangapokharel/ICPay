@@ -8,13 +8,14 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { SentIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CanisterIdField } from "@/components/canister/canister-id-field"
@@ -120,24 +121,23 @@ export function MyCanisterTransferDialog({
 
   return (
     <>
-      <Dialog
+      <Drawer
         open={open && success == null}
         onOpenChange={(next) => {
           if (!submitting) onOpenChange(next)
         }}
+        showSwipeHandle
       >
-        <DialogContent className="gap-5 p-5 sm:max-w-md sm:p-6" closeButtonSize="icon-lg">
-          <DialogHeader className="pr-10">
-            <DialogTitle className="flex items-center gap-2 text-lg">
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle className="flex items-center gap-2">
               <HugeiconsIcon icon={SentIcon} className="size-5 text-primary" />
               {t("transferTitle")}
-            </DialogTitle>
-            <DialogDescription className="text-sm leading-relaxed">
-              {t("transferHint")}
-            </DialogDescription>
-          </DialogHeader>
+            </DrawerTitle>
+            <DrawerDescription>{t("transferHint")}</DrawerDescription>
+          </DrawerHeader>
 
-          <div className="space-y-4">
+          <div className="space-y-4 px-4">
             <p className="text-xs text-muted-foreground">
               {t("transferFromContext")}:{" "}
               <span className="break-all font-mono text-foreground/80">{fromCanisterId}</span>
@@ -206,10 +206,9 @@ export function MyCanisterTransferDialog({
             </div>
           </div>
 
-          <DialogFooter className="flex-col gap-2 sm:flex-col sm:justify-stretch">
+          <DrawerFooter className="mt-3">
             <Button
               type="button"
-              size="lg"
               className="w-full"
               disabled={
                 !isAuthenticated ||
@@ -224,19 +223,10 @@ export function MyCanisterTransferDialog({
             >
               {submitting ? t("transferring") : t("transferConfirm")}
             </Button>
-            <Button
-              type="button"
-              size="lg"
-              variant="outline"
-              className="w-full"
-              disabled={submitting}
-              onClick={() => onOpenChange(false)}
-            >
-              {t("transferCancel")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DrawerClose render={<Button variant="outline" disabled={submitting}>{t("transferCancel")}</Button>} />
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
 
       <CanisterSuccessDialog
         open={success != null}
