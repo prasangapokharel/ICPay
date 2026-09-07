@@ -5,7 +5,6 @@ import {
   CloudIcon,
   Coins01Icon,
   CrownIcon,
-  DashboardSquare01Icon,
   Download01Icon,
   Globe02Icon,
   Home01Icon,
@@ -14,6 +13,7 @@ import {
   Rocket01Icon,
   SentIcon,
   ShoppingBag01Icon,
+  ThreeDViewIcon,
 } from "@hugeicons/core-free-icons"
 import { APP_NAV_ITEMS, isAppNavActive } from "@/lib/navigation/app-nav-items"
 
@@ -79,7 +79,7 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
       {
         href: "/canister",
         labelKey: "settings.items.canisters",
-        icon: DashboardSquare01Icon,
+        icon: ThreeDViewIcon,
       },
     ],
   },
