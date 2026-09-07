@@ -2193,8 +2193,8 @@
   "myCanisters": {
     "title": "My canisters",
     "subtitle": "Canisters you control, plus ones you link with an ID and optional name. Status and actions stay here.",
-    "create": "Create canister",
-    "link": "Link canister",
+    "create": "Create",
+    "link": "Link",
     "loading": "Loading…",
     "yourPrincipal": "Your Internet Identity (controller)",
     "principalHint": "Copy this into Extra controllers on another account’s create form for backup access.",

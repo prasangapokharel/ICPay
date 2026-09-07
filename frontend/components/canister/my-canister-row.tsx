@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { FuelIcon, ViewIcon } from "@hugeicons/core-free-icons"
+import { FuelStationIcon, ViewIcon } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -150,7 +150,7 @@ export function MyCanisterRow({
                     onClick={onTopUp}
                     aria-label={t("topUp")}
                   >
-                    <HugeiconsIcon icon={FuelIcon} className="size-4" strokeWidth={1.75} />
+                    <HugeiconsIcon icon={FuelStationIcon} className="size-4" strokeWidth={1.75} />
                   </Button>
                 }
               />

@@ -2389,7 +2389,7 @@
   "myCanisters": {
     "title": "My canisters",
     "subtitle": "Canisters you created or saved with this Internet Identity. Pick one for live status and actions.",
-    "create": "Create canister",
+    "create": "Create",
     "yourPrincipal": "Your Internet Identity (controller)",
     "principalHint": "Copy this to use as a backup controller on another account’s create form.",
     "copyPrincipal": "Copy principal",
@@ -2416,7 +2416,7 @@
     "menuActions": "Actions",
     "view": "ดู",
     "createWithBackup": "Create with backup controller",
-    "link": "Link canister",
+    "link": "Link",
     "loading": "Loading…",
     "linkTitle": "Link a canister",
     "linkHint": "Save a canister ID locally with an optional name so Mine and Mine pickers stay easy.",

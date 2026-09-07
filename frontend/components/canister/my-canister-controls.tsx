@@ -8,7 +8,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Camera01Icon,
   Copy01Icon,
-  FuelIcon,
+  FuelStationIcon,
   LinkSquare02Icon,
   PlayIcon,
   SentIcon,
@@ -115,7 +115,7 @@ export function MyCanisterControls({
           disabled={busy != null}
           onClick={() => setTopupOpen(true)}
         >
-          <HugeiconsIcon icon={FuelIcon} className="size-3.5" />
+          <HugeiconsIcon icon={FuelStationIcon} className="size-3.5" />
           {t("topUp")}
         </Button>
         <Button
