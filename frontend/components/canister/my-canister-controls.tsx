@@ -16,6 +16,7 @@ import {
   SentIcon,
   Settings02Icon,
   StopIcon,
+  UserAdd01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import {
@@ -37,6 +38,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
 import { MyCanisterTransferDialog } from "@/components/canister/my-canister-transfer-dialog"
+import { MyCanisterAddControllerDialog } from "@/components/canister/my-canister-add-controller-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
   formatManageError,
@@ -65,6 +67,7 @@ export function MyCanisterControls({
   const [stopOpen, setStopOpen] = useState(false)
   const [topupOpen, setTopupOpen] = useState(false)
   const [transferOpen, setTransferOpen] = useState(false)
+  const [addControllerOpen, setAddControllerOpen] = useState(false)
 
   const canControl = status.kind === "ok" && status.data.isController
   const running = status.kind === "ok" && status.data.runStatus === "running"
@@ -166,6 +169,12 @@ export function MyCanisterControls({
                 <HugeiconsIcon icon={FuelStationIcon} className="mr-2 size-4" />
                 {t("topUpHistory")}
               </DropdownMenuItem>
+              {canControl && (
+                <DropdownMenuItem onClick={() => setAddControllerOpen(true)}>
+                  <HugeiconsIcon icon={UserAdd01Icon} className="mr-2 size-4" />
+                  {t("addController")}
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem render={<Link href={`/canister/${id}/settings`} />}>
                 <HugeiconsIcon icon={Settings02Icon} className="mr-2 size-4" />
                 {t("settings")}
@@ -210,6 +219,12 @@ export function MyCanisterControls({
         open={transferOpen}
         onOpenChange={setTransferOpen}
         fromCanisterId={canisterId}
+        onDone={onRefresh}
+      />
+      <MyCanisterAddControllerDialog
+        open={addControllerOpen}
+        onOpenChange={setAddControllerOpen}
+        canisterId={canisterId}
         onDone={onRefresh}
       />
     </>

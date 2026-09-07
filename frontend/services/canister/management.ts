@@ -126,6 +126,24 @@ export function formatManageError(err: unknown): string {
   return clean.length > 140 ? `${clean.slice(0, 140)}…` : clean
 }
 
+export async function addController(
+  identity: Identity,
+  canisterIdText: string,
+  newControllerText: string
+): Promise<string[]> {
+  const canisterId = parseCanisterId(canisterIdText)
+  const newController = Principal.fromText(newControllerText.trim())
+  const mgmt = await management(identity)
+  const raw = await mgmt.canisterStatus({ canisterId, certified: false })
+  const current = raw.settings.controllers.map((p) => p.toText())
+  if (current.includes(newController.toText())) {
+    return current
+  }
+  const controllers = [...current, newController.toText()]
+  await mgmt.updateSettings({ canisterId, settings: { controllers } })
+  return controllers
+}
+
 export async function startCanister(identity: Identity, canisterIdText: string): Promise<void> {
   const mgmt = await management(identity)
   await mgmt.startCanister(parseCanisterId(canisterIdText))
