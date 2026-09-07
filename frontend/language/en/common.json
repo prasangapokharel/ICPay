@@ -2217,6 +2217,7 @@
     "cyclesSource": "Live cycles from canister_status (controller only).",
     "publicApiHint": "Cycle balance is not public on the IC index or ICRC API — only controllers can read it. Anyone can still",
     "menuActions": "Actions",
+    "view": "View",
     "more": "More",
     "createWithBackup": "Create with backup controller",
     "manage": "Manage",

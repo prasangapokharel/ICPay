@@ -16,8 +16,16 @@ import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Dialog,
   DialogContent,
@@ -29,15 +37,16 @@ import {
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { MyCanisterDetails } from "@/components/canister/my-canister-details"
 import { MyCanisterRow } from "@/components/canister/my-canister-row"
+import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
+import { useIsMobile } from "@/hooks/ui/useMobile"
 import { useCanisterStatus } from "@/hooks/canister/useCanisterStatus"
 import { useMineCanisters } from "@/hooks/canister/useMineCanisters"
 import { useMineStatusMap } from "@/hooks/canister/useMineStatusMap"
 import { useSavedCanisterEntries } from "@/hooks/canister/useSavedCanisters"
 import {
   displayCanisterLabel,
-  forgetCanister,
   rememberCanister,
   shortCanisterId,
 } from "@/lib/canister/savedCanisters"
@@ -81,11 +90,14 @@ function EmptyBlock({
 export function MyCanistersPanel() {
   const t = useTranslations("myCanisters")
   const { identity, isAuthenticated } = useAuth()
+  const isMobile = useIsMobile()
   const principal = identity?.getPrincipal().toText() ?? null
   const mine = useMineCanisters(principal)
   const entries = useSavedCanisterEntries(principal)
   const nameById = useMemo(() => new Map(entries.map((e) => [e.id, e.name])), [entries])
   const [picked, setPicked] = useState<string | null>(null)
+  const [detailOpen, setDetailOpen] = useState(false)
+  const [topUpTarget, setTopUpTarget] = useState<string | null>(null)
   const [draftId, setDraftId] = useState("")
   const [draftName, setDraftName] = useState("")
   const [linkOpen, setLinkOpen] = useState(false)
@@ -135,10 +147,9 @@ export function MyCanistersPanel() {
     setLinkedOk({ id: parsedDraft, name })
   }
 
-  const onRemove = (id: string) => {
-    if (!principal) return
-    forgetCanister(principal, id)
-    if (picked === id) setPicked(null)
+  const selectRow = (id: string) => {
+    setPicked(id)
+    if (isMobile) setDetailOpen(true)
   }
 
   return (
@@ -187,82 +198,101 @@ export function MyCanistersPanel() {
             </div>
             <CardDescription>{t("listHint")}</CardDescription>
           </CardHeader>
-          <CardContent className="p-2">
+          <CardContent className="p-0">
             {mine.isLoading ? (
-              <EmptyBlock message={t("loading")} />
+              <div className="p-2">
+                <EmptyBlock message={t("loading")} />
+              </div>
             ) : mine.ids.length === 0 ? (
-              <EmptyBlock
-                message={t("empty")}
-                actions={
-                  <div className="flex flex-wrap justify-center gap-2">
-                    <Button type="button" variant="outline" onClick={openLink}>
-                      {t("link")}
-                    </Button>
-                    <Button nativeButton={false} render={<Link href="/canister/create" />}>
-                      {t("create")}
-                    </Button>
-                  </div>
-                }
-              />
+              <div className="p-2">
+                <EmptyBlock
+                  message={t("empty")}
+                  actions={
+                    <div className="flex flex-wrap justify-center gap-2">
+                      <Button type="button" variant="outline" onClick={openLink}>
+                        {t("link")}
+                      </Button>
+                      <Button nativeButton={false} render={<Link href="/canister/create" />}>
+                        {t("create")}
+                      </Button>
+                    </div>
+                  }
+                />
+              </div>
             ) : (
-              <ul className="space-y-1">
-                {mine.ids.map((id) => {
-                  const row = mine.metaById.get(id)
-                  const savedName = nameById.get(id) ?? ""
-                  const label =
-                    savedName || row?.name || displayCanisterLabel({ id, name: "" })
-                  const hasFlags = Boolean(row?.countries.length)
-                  const place = row
-                    ? hasFlags
-                      ? row.nodeCount > 0
-                        ? `${row.nodeCount} nodes`
-                        : ""
-                      : subnetLabel(row) || shortSubnetId(row.subnetId)
-                    : ""
-                  return (
-                    <MyCanisterRow
-                      key={id}
-                      id={id}
-                      label={label}
-                      place={place}
-                      countries={row?.countries}
-                      selected={selected === id}
-                      status={previews.map[id]}
-                      statusLoading={previews.isLoading}
-                      onSelect={() => setPicked(id)}
-                    />
-                  )
-                })}
-              </ul>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("listTitle")}</TableHead>
+                    <TableHead className="text-right">{t("cyclesSource")}</TableHead>
+                    <TableHead className="w-[140px] text-right">{t("menuActions")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mine.ids.map((id) => {
+                    const row = mine.metaById.get(id)
+                    const savedName = nameById.get(id) ?? ""
+                    const label =
+                      savedName || row?.name || displayCanisterLabel({ id, name: "" })
+                    const hasFlags = Boolean(row?.countries.length)
+                    const place = row
+                      ? hasFlags
+                        ? row.nodeCount > 0
+                          ? `${row.nodeCount} nodes`
+                          : ""
+                        : subnetLabel(row) || shortSubnetId(row.subnetId)
+                      : ""
+                    return (
+                      <MyCanisterRow
+                        key={id}
+                        id={id}
+                        label={label}
+                        place={place}
+                        countries={row?.countries}
+                        selected={selected === id}
+                        status={previews.map[id]}
+                        statusLoading={previews.isLoading}
+                        onSelect={() => selectRow(id)}
+                        onTopUp={() => setTopUpTarget(id)}
+                        onChanged={() => {
+                          status.refresh()
+                          previews.refresh()
+                        }}
+                      />
+                    )
+                  })}
+                </TableBody>
+              </Table>
             )}
           </CardContent>
         </Card>
 
-        <Card className="min-w-0 flex-1 gap-0 self-start lg:sticky lg:top-20">
-          <CardHeader className="border-b pb-3">
-            <CardTitle className="text-base">{t("detailTitle")}</CardTitle>
-            <CardDescription>
-              {selected
-                ? localName || meta?.name || shortCanisterId(selected)
-                : t("detailEmpty")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className={cn("pt-4", !selected && "pb-2")}>
-            {!selected ? (
-              <EmptyBlock message={t("detailEmpty")} />
-            ) : (
-              <MyCanisterDetails
-                canisterId={selected}
-                localName={localName}
-                meta={meta}
-                status={status}
-                onCopyId={() => void navigator.clipboard.writeText(selected)}
-                onRefresh={() => status.refresh()}
-                onRemove={() => onRemove(selected)}
-              />
-            )}
-          </CardContent>
-        </Card>
+{!isMobile && (
+          <Card className="min-w-0 flex-1 gap-0 self-start lg:sticky lg:top-20">
+            <CardHeader className="border-b pb-3">
+              <CardTitle className="text-base">{t("detailTitle")}</CardTitle>
+              <CardDescription>
+                {selected
+                  ? localName || meta?.name || shortCanisterId(selected)
+                  : t("detailEmpty")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className={cn("pt-4", !selected && "pb-2")}>
+              {!selected ? (
+                <EmptyBlock message={t("detailEmpty")} />
+              ) : (
+                <MyCanisterDetails
+                  canisterId={selected}
+                  localName={localName}
+                  meta={meta}
+                  status={status}
+                  onCopyId={() => void navigator.clipboard.writeText(selected)}
+                  onRefresh={() => status.refresh()}
+                />
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <Dialog
@@ -356,6 +386,48 @@ export function MyCanistersPanel() {
         }
         monoId={linkedOk?.id}
       />
+
+      <Drawer open={detailOpen} onOpenChange={setDetailOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>{t("detailTitle")}</DrawerTitle>
+            <DrawerDescription>
+              {selected
+                ? localName || meta?.name || shortCanisterId(selected)
+                : t("detailEmpty")}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4 pb-8">
+            {selected ? (
+              <MyCanisterDetails
+                canisterId={selected}
+                localName={localName}
+                meta={meta}
+                status={status}
+                onCopyId={() => void navigator.clipboard.writeText(selected)}
+                onRefresh={() => status.refresh()}
+              />
+            ) : (
+              <EmptyBlock message={t("detailEmpty")} />
+            )}
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {topUpTarget && (
+        <MyCanisterTopupDialog
+          open={true}
+          onOpenChange={(open) => {
+            if (!open) setTopUpTarget(null)
+          }}
+          canisterId={topUpTarget}
+          onDone={() => {
+            setTopUpTarget(null)
+            status.refresh()
+            previews.refresh()
+          }}
+        />
+      )}
     </AppPage>
   )
 }

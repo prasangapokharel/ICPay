@@ -2411,6 +2411,7 @@
     "metaSubnet": "Subnet",
     "metaControllers": "Controllers",
     "menuActions": "Actions",
+    "view": "Görüntüle",
     "createWithBackup": "Create with backup controller",
     "link": "Link canister",
     "loading": "Loading…",

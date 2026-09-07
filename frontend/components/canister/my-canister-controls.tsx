@@ -8,8 +8,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Camera01Icon,
   Copy01Icon,
-  Delete02Icon,
-  Exchange01Icon,
   FuelIcon,
   LinkSquare02Icon,
   PlayIcon,
@@ -32,7 +30,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
@@ -52,13 +49,11 @@ export function MyCanisterControls({
   status,
   onRefresh,
   onCopyId,
-  onRemove,
 }: {
   canisterId: string
   status: CanisterStatusState
   onRefresh: () => void
   onCopyId: () => void
-  onRemove: () => void
 }) {
   const t = useTranslations("myCanisters")
   const { identity } = useAuth()
@@ -164,11 +159,6 @@ export function MyCanisterControls({
                 {t("dashboard")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={onRemove}>
-              <HugeiconsIcon icon={Delete02Icon} className="size-4" />
-              {t("remove")}
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

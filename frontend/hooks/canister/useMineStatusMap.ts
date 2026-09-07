@@ -26,7 +26,7 @@ export function useMineStatusMap(
       ? (["mine-status-map", identity.getPrincipal().toText(), capped.join("|")] as const)
       : null
 
-  const { data, isLoading } = useSWR(
+  const { data, isLoading, mutate } = useSWR(
     key,
     async ([, , joined]) => {
       const list = joined.split("|").filter(Boolean)
@@ -52,5 +52,5 @@ export function useMineStatusMap(
     }
   )
 
-  return { map: data ?? {}, isLoading }
+  return { map: data ?? {}, isLoading, refresh: () => mutate() }
 }
