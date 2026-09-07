@@ -70,7 +70,7 @@ export function BalanceCard({
         </div>
 
         {/* Fiat value */}
-        <div className="relative z-10 mt-1 flex items-center gap-2">
+        <div className="relative z-10 mt-1 flex items-center justify-between gap-2">
           <span className="liquid-glass-primary inline-block rounded-full px-2.5 py-1 text-sm font-medium tabular-nums">
             {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
           </span>

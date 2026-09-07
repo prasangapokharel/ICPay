@@ -61,7 +61,7 @@ export function HomeOverviewCard({
             {hidden ? "•• •••• ••••" : balance}
             <span className="ml-2 text-lg font-medium text-muted-foreground">ICP</span>
           </p>
-          <div className="mt-1.5 flex items-center gap-2">
+          <div className="mt-1.5 flex items-center justify-between gap-2">
             <p className="text-base font-medium tabular-nums text-foreground/80">
               {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
             </p>
