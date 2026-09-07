@@ -122,14 +122,14 @@ export function MyCanisterRow({
             {status?.kind === "ok" ? status.data.cyclesLabel : "—"}
           </span>
         </TableCell>
-        <TableCell className="w-0">
-          <ButtonGroup>
+        <TableCell className="w-[100px] text-right align-middle">
+          <div className="flex items-center justify-end gap-1">
             <Tooltip>
               <TooltipTrigger
                 render={
                   <Button
                     nativeButton={false}
-                    variant="outline"
+                    variant="ghost"
                     size="icon-sm"
                     render={<Link href={`/canister/${id}`} />}
                     aria-label={t("view")}
@@ -140,8 +140,23 @@ export function MyCanisterRow({
               />
               <TooltipContent side="top">{t("view")}</TooltipContent>
             </Tooltip>
-            <RowIconAction icon={FuelIcon} label={t("topUp")} onClick={onTopUp} />
-          </ButtonGroup>
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={onTopUp}
+                    aria-label={t("topUp")}
+                  >
+                    <HugeiconsIcon icon={FuelIcon} className="size-4" strokeWidth={1.75} />
+                  </Button>
+                }
+              />
+              <TooltipContent side="top">{t("topUp")}</TooltipContent>
+            </Tooltip>
+          </div>
         </TableCell>
       </TableRow>
     </>

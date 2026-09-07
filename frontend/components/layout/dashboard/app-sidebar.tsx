@@ -27,29 +27,38 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<Link href="/home" />}
             >
-              <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-                <Image
-                  src={APP_LOGO}
-                  alt={APP_LOGO_ALT}
-                  width={32}
-                  height={32}
-                  priority
-                  className="size-8 object-cover"
-                />
-              </span>
+              <SidebarBrandMark />
               <span className="text-sm font-semibold">ICPay</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent className="gap-0 pt-1">
         <DashboardNavMain />
       </SidebarContent>
+
       <SidebarFooter className="gap-1 border-t border-sidebar-border/60 p-2">
         <DashboardNavFooter />
         <LanguageSwitch variant="row" />
         <p className="px-2.5 pt-1 text-[11px] text-muted-foreground">ICPay</p>
       </SidebarFooter>
     </Sidebar>
+  )
+}
+
+/** App logo mark shown at the top of the sidebar, next to the "ICPay" wordmark. */
+function SidebarBrandMark() {
+  return (
+    <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+      <Image
+        src={APP_LOGO}
+        alt={APP_LOGO_ALT}
+        width={32}
+        height={32}
+        priority
+        className="size-8 object-cover"
+      />
+    </span>
   )
 }
