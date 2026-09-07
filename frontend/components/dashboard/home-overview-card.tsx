@@ -19,6 +19,7 @@ type HomeOverviewCardProps = {
   price: IcpPrice | null
   hidden: boolean
   onToggleHidden: () => void
+  onRefreshPrice: () => Promise<void>
   username?: string
 }
 
@@ -28,6 +29,7 @@ export function HomeOverviewCard({
   price,
   hidden,
   onToggleHidden,
+  onRefreshPrice,
   username,
 }: HomeOverviewCardProps) {
   const t = useTranslations("dashboard")
@@ -57,10 +59,14 @@ export function HomeOverviewCard({
       </CardHeader>
       <CardContent className="space-y-4 pt-6">
         <div>
-          <p className="text-4xl font-semibold tracking-tight tabular-nums">
+          <button
+            type="button"
+            onClick={() => void onRefreshPrice()}
+            className="cursor-pointer text-4xl font-semibold tracking-tight tabular-nums transition-opacity hover:opacity-80 active:opacity-60"
+          >
             {hidden ? "•• •••• ••••" : balance}
             <span className="ml-2 text-lg font-medium text-muted-foreground">ICP</span>
-          </p>
+          </button>
           <div className="mt-1.5 flex items-center justify-between gap-2">
             <p className="text-base font-medium tabular-nums text-foreground/80">
               {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
