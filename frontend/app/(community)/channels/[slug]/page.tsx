@@ -4,7 +4,7 @@ import {
   channelMetadata,
   isChannelIndexable,
 } from "@/lib/community/seo"
-import { getCachedPublicChannelSnapshot } from "@/lib/community/publicCache"
+import { getCachedPublicChannelSnapshot, getCachedPublicChannelAvatar } from "@/lib/community/publicCache"
 import { ChannelSlugView } from "@/components/community/channel-slug-view"
 
 export const instant = false
@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ChannelPublicPage({ params }: PageProps) {
   const { slug } = await params
   const channel = slug === "slug" ? null : await getCachedPublicChannelSnapshot(slug)
+  const avatarBytes = slug === "slug" ? undefined : await getCachedPublicChannelAvatar(slug)
   const jsonLd =
     channel && isChannelIndexable(channel) ? channelJsonLd(slug, channel) : null
 
@@ -38,7 +39,7 @@ export default async function ChannelPublicPage({ params }: PageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       ) : null}
-      <ChannelSlugView slug={slug} channel={channel} />
+      <ChannelSlugView slug={slug} channel={channel} avatarBytes={avatarBytes} />
     </>
   )
 }

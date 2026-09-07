@@ -18,9 +18,11 @@ import Image from "next/image"
 export function ChannelPublicLanding({
   slug,
   channel,
+  avatarBytes,
 }: {
   slug: string
   channel: CommunityChannelSnapshot | null
+  avatarBytes?: Uint8Array
 }) {
   const t = useTranslations("community")
 
@@ -64,6 +66,7 @@ export function ChannelPublicLanding({
               seed={channel.slug}
               name={channel.name}
               slug={channel.slug}
+              previewBytes={avatarBytes}
               className="size-20 shadow-sm ring-4 ring-background sm:size-24"
               pixelSize={160}
             />
