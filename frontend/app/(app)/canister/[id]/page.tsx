@@ -1,10 +1,11 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import useSWR from "swr"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { MyCanisterDetails } from "@/components/canister/my-canister-details"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -15,6 +16,7 @@ import { fetchCanisterIndexMeta } from "@/services/canister/controlledCanisters"
 
 export default function CanisterDetailPage() {
   const t = useTranslations("myCanisters")
+  const router = useRouter()
   const { identity, isAuthenticated } = useAuth()
   const params = useParams()
   const canisterId = params.id as string
@@ -40,6 +42,17 @@ export default function CanisterDetailPage() {
     <AppPage
       title={localName || meta?.name || shortCanisterId(canisterId)}
       description={t("detailTitle")}
+      back={
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => router.push("/canister")}
+          className="h-8 px-2 text-sm font-normal"
+        >
+          {t("back")}
+        </Button>
+      }
     >
       <div className="mx-auto max-w-4xl">
         <Card>

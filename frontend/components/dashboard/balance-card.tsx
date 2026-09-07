@@ -70,10 +70,21 @@ export function BalanceCard({
         </div>
 
         {/* Fiat value */}
-        <div className="relative z-10 mt-1">
+        <div className="relative z-10 mt-1 flex items-center gap-2">
           <span className="liquid-glass-primary inline-block rounded-full px-2.5 py-1 text-sm font-medium tabular-nums">
             {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
           </span>
+          {!hidden && price && price.change24h !== 0 && (
+            <span
+              className={cn(
+                "text-xs font-semibold tabular-nums",
+                price.change24h > 0 ? "text-green-400" : "text-red-400"
+              )}
+            >
+              {price.change24h > 0 ? "+" : ""}
+              {price.change24h.toFixed(2)}%
+            </span>
+          )}
         </div>
       </div>
     </div>

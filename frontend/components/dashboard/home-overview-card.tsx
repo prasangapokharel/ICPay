@@ -9,6 +9,7 @@ import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { PremiumBadge } from "@/components/verifed/premium-badge"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ViewOffIcon, ViewIcon } from "@hugeicons/core-free-icons"
+import { cn } from "@/lib/ui/utils"
 
 const E8S = 100_000_000
 
@@ -60,9 +61,22 @@ export function HomeOverviewCard({
             {hidden ? "•• •••• ••••" : balance}
             <span className="ml-2 text-lg font-medium text-muted-foreground">ICP</span>
           </p>
-          <p className="mt-1.5 text-base font-medium tabular-nums text-foreground/80">
-            {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
-          </p>
+          <div className="mt-1.5 flex items-center gap-2">
+            <p className="text-base font-medium tabular-nums text-foreground/80">
+              {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
+            </p>
+            {!hidden && price && price.change24h !== 0 && (
+              <span
+                className={cn(
+                  "text-sm font-semibold tabular-nums",
+                  price.change24h > 0 ? "text-green-600" : "text-red-600"
+                )}
+              >
+                {price.change24h > 0 ? "+" : ""}
+                {price.change24h.toFixed(2)}%
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex gap-2">
           <Button nativeButton={false} render={<Link href="/deposit" />}>
