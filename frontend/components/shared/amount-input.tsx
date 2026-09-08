@@ -11,8 +11,6 @@ import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 
 const PERCENTAGES = [25, 50, 75, 100]
 
-// Not formatAmount: that adds thousands separators and caps at 4 decimals, both
-// of which parseIcp rejects when the value is read back out of the field.
 function toPlainIcp(e8s: bigint): string {
   const whole = e8s / 100_000_000n
   const fraction = (e8s % 100_000_000n).toString().padStart(8, "0").replace(/0+$/, "")
@@ -40,11 +38,9 @@ export function AmountInput({
   const { price } = useIcpPrice()
   const parsed = parseIcp(value)
   const usd = parsed !== null && price ? (Number(parsed) / Number(E8S)) * price.usd : null
-  // The quote follows the currency picked in settings. This read "≈ … USD"
-  // regardless of that choice, so a user on NPR saw a number they could not act
-  // on -- and one that silently disagreed with the balance card above it.
   const fiat = useFiatValue(usd)
   const max = maxE8s ?? 0n
+  const canFill = max > 0n
 
   const setAmount = (e8s: bigint) => onChange(toPlainIcp(e8s))
 
@@ -72,38 +68,38 @@ export function AmountInput({
           onChange={(e) => onChange(e.target.value)}
           className="pr-16"
         />
-        {max > 0n && (
-          <Button
-            variant="ghost"
-            size="xs"
-            onClick={() => setAmount(max)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted font-semibold text-primary hover:bg-muted/70"
-          >
-            {t("max")}
-          </Button>
-        )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="xs"
+          disabled={!canFill}
+          onClick={() => setAmount(max)}
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-muted font-semibold text-primary hover:bg-muted/70 disabled:opacity-40"
+        >
+          {t("max")}
+        </Button>
       </div>
 
-      {max > 0n && (
-        <div className="flex gap-1.5">
-          {PERCENTAGES.map((pct) => (
-            <Button
-              key={pct}
-              variant="outline"
-              size="xs"
-              onClick={() => setAmount((max * BigInt(pct)) / 100n)}
-              className={cn(
-                "h-7 flex-1 bg-background text-muted-foreground hover:bg-accent hover:text-foreground",
-                pct === 100 && "font-semibold text-primary"
-              )}
-            >
-              {pct}%
-            </Button>
-          ))}
-        </div>
-      )}
+      <div className="flex gap-1.5">
+        {PERCENTAGES.map((pct) => (
+          <Button
+            key={pct}
+            type="button"
+            variant="outline"
+            size="xs"
+            disabled={!canFill}
+            onClick={() => setAmount((max * BigInt(pct)) / 100n)}
+            className={cn(
+              "h-7 flex-1 bg-background text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-40",
+              pct === 100 && "font-semibold text-primary"
+            )}
+          >
+            {pct}%
+          </Button>
+        ))}
+      </div>
 
-      <p className="text-xs text-muted-foreground tabular-nums">
+      <p className="text-xs tabular-nums text-muted-foreground">
         {fiat.formatted === null
           ? "\u00a0"
           : `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}`}

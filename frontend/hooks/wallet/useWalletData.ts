@@ -1,22 +1,24 @@
 "use client"
 
-import { useEffect } from "react"
-import useSWR, { unstable_serialize, useSWRConfig } from "swr"
+import { useEffect, useMemo } from "react"
+import useSWR, { useSWRConfig } from "swr"
 import useSWRImmutable from "swr/immutable"
 import { Principal } from "@icp-sdk/core/principal"
 import { useAuth } from "@/components/auth/auth-provider"
-import { readHoldings, writeHoldings, patchHoldings } from "@/lib/wallet/holdingsCache"
+import { readHoldings, writeHoldings, patchHoldings, cachedBalanceMap } from "@/lib/wallet/holdingsCache"
 import {
   loadDashboard,
   resolveDeposit,
   resolveProfile,
   walletKey,
+  balancesCacheKey,
 } from "@/lib/wallet/walletCache"
-import { getCachedLedgerIds } from "@/lib/wallet/ledgerIdsCache"
+import { getCustomLedgerIdsSnapshot, getCustomTokenMetaSnapshot } from "@/lib/wallet/customTokens"
+import { useWalletLedgerIds } from "@/hooks/wallet/useWalletLedgerIds"
 import { useTokenRegistry } from "@/lib/token/registry"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import type { DashboardData, UserPublic } from "@/services/types"
-import { getTransactions } from "@/services/transactions/transactions"
+import { getTransactions, getTransactionDetail } from "@/services/transactions/transactions"
 import { resolveUsername, searchUsers, getRecipientProfile } from "@/services/profile/profile"
 import { listBookmarks } from "@/services/bookmark/bookmark"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
@@ -29,14 +31,37 @@ import {
   custodialSubaccount,
   ICP_LEDGER_ID,
   PINNED_LEDGER_IDS,
+  ICPAY_LEDGER_ID,
   metadataFromRegistry,
-  metadataLedgerIds,
-  visibleMetadataLedgerIds,
+  mergeWalletLedgerIds,
+  canMoveToCustody,
   type TokenHolding,
 } from "@/services/tokens"
-import { fetchTokenBalancesTiered } from "@/lib/wallet/balanceSweep"
+import { fetchWalletBalances } from "@/lib/wallet/balanceSweep"
 
 const keyFor = walletKey
+
+function fallbackWalletLedgerIds(
+  customLedgerIds: string[],
+  seeded?: TokenHolding[]
+): string[] {
+  return mergeWalletLedgerIds(
+    seeded?.map((h) => h.ledgerId) ?? [],
+    customLedgerIds
+  )
+}
+
+// Used only while the full SNS sweep is in flight on a cold load.
+function seededHoldingsForLoad(
+  principal: string | undefined,
+  customLedgerIds: string[]
+): TokenHolding[] | undefined {
+  if (!principal) return undefined
+  const saved = readHoldings(principal)
+  if (!saved?.length) return undefined
+  const allowed = new Set(fallbackWalletLedgerIds(customLedgerIds, saved))
+  return saved.filter((h) => allowed.has(h.ledgerId))
+}
 
 // getDashboard is a query, but a heavy one — it walks the ledger, so it is
 // fetched once and refreshed on explicit action rather than on focus or
@@ -84,17 +109,21 @@ function useCustodian(): Principal | undefined {
 function useLedgerBalance(ledgerId: string | null) {
   const { identity } = useAuth()
   const custodian = useCustodian()
-  const { cache } = useSWRConfig()
+  const { cache, mutate } = useSWRConfig()
+  const principal = identity?.getPrincipal().toText()
+  const cachedBalance =
+    principal && ledgerId ? cachedBalanceMap(principal).get(ledgerId) : undefined
 
   const { data, isLoading } = useSWR(
     ledgerId && custodian && identity ? keyFor(identity, "token-balance", ledgerId) : null,
     async () => {
-      const balancesKey = keyFor(identity!, "token-balances")
-      if (balancesKey) {
-        const cached = cache.get(unstable_serialize(balancesKey))?.data as
-          | Map<string, bigint>
-          | undefined
-        if (cached?.has(ledgerId!)) return cached.get(ledgerId!)!
+      if (principal && ledgerId) {
+        for (const serialized of cache.keys()) {
+          if (typeof serialized !== "string") continue
+          if (!serialized.includes("token-balances") || !serialized.includes(principal)) continue
+          const row = cache.get(serialized)?.data as Map<string, bigint> | undefined
+          if (row?.has(ledgerId)) return row.get(ledgerId)!
+        }
       }
 
       const balances = await fetchBalances(
@@ -103,12 +132,20 @@ function useLedgerBalance(ledgerId: string | null) {
         custodialSubaccount(identity!.getPrincipal()),
         identity
       )
-      return balances.get(ledgerId!) ?? 0n
+      const balance = balances.get(ledgerId!) ?? 0n
+      if (identity && ledgerId) {
+        const tokenKey = keyFor(identity, "token-balance", ledgerId)
+        if (tokenKey) void mutate(tokenKey, balance, { revalidate: false })
+      }
+      return balance
     },
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
-  return { balance: data, isLoading }
+  return {
+    balance: data ?? cachedBalance,
+    isLoading: isLoading && data === undefined && cachedBalance === undefined,
+  }
 }
 
 // undefined until the ledger answers, which callers render as a skeleton.
@@ -140,6 +177,20 @@ export function useSelfCustodyBalance(ledgerId: string | null) {
   return data
 }
 
+export function useLedgerSupported(ledgerId: string | null) {
+  const { identity } = useAuth()
+  const principal = identity?.getPrincipal().toText()
+  const customKey = principal ? getCustomLedgerIdsSnapshot(principal).join(",") : ""
+
+  const { data, isLoading } = useSWR(
+    ledgerId && identity ? keyFor(identity, "ledger-supported", ledgerId, customKey) : null,
+    () => canMoveToCustody(identity, ledgerId!),
+    { revalidateOnFocus: false, dedupingInterval: 300_000 }
+  )
+
+  return { supported: data, isLoading }
+}
+
 export function useDepositAddress() {
   const { identity } = useAuth()
 
@@ -169,6 +220,18 @@ export function useTransactions(page = 0, pageSize = 20) {
     isLoading,
     refresh: mutate,
   }
+}
+
+export function useTransactionDetail(txId: string | null) {
+  const { identity } = useAuth()
+
+  const { data, error, isLoading } = useSWR(
+    txId ? keyFor(identity, "transaction", txId) : null,
+    () => getTransactionDetail(identity, txId!),
+    FETCH_ONCE
+  )
+
+  return { tx: data, error, isLoading }
 }
 
 // Only these change when funds move. Matching every key for the principal would
@@ -235,10 +298,18 @@ export function useApplySwapBalances() {
       return next
     }
 
-    const balancesKey = keyFor(identity, "token-balances")
+    const balancesKey = balancesCacheKey(identity, [])
     if (balancesKey) {
       mutate(balancesKey, patchBalanceMap, { revalidate: false })
     }
+    mutate(
+      (key) =>
+        Array.isArray(key) &&
+        key[0] === "token-balances" &&
+        key[key.length - 1] === principal,
+      patchBalanceMap,
+      { revalidate: false }
+    )
 
     const inKey = keyFor(identity, "token-balance", update.tokenInId)
     const outKey = keyFor(identity, "token-balance", update.tokenOutId)
@@ -444,44 +515,58 @@ function dedupeById(users: UserPublic[]): UserPublic[] {
 // Read straight from each ICRC-1 ledger, never through the wallet canister:
 // icrc1_balance_of is a query, so the sweep costs no cycles and adds no backend
 // load.
-export function useTokenHoldings() {
+export function useTokenHoldings(customLedgerIds: string[] = []) {
   const { identity } = useAuth()
   const custodian = useCustodian()
   const registry = useTokenRegistry()
   const { mutate: globalMutate } = useSWRConfig()
   const principal = identity?.getPrincipal().toText()
-  const balancesKey = custodian && identity ? keyFor(identity, "token-balances") : null
+  const cachedBalances = useMemo(() => cachedBalanceMap(principal), [principal])
+  const seededHoldings = seededHoldingsForLoad(principal, customLedgerIds)
+  const { ledgerIds: registryLedgerIds, isLoading: loadingLedgerIds } = useWalletLedgerIds()
+  const balancesKey =
+    custodian && identity && registryLedgerIds
+      ? balancesCacheKey(identity, customLedgerIds)
+      : null
 
-  const { data: balances, isLoading: loadingBalances } = useSWR(
+  const syncBalanceCaches = (map: Map<string, bigint>) => {
+    if (balancesKey) void globalMutate(balancesKey, map, { revalidate: false })
+    if (!identity) return
+    for (const [id, balance] of map) {
+      const tokenKey = keyFor(identity, "token-balance", id)
+      if (tokenKey) void globalMutate(tokenKey, balance, { revalidate: false })
+    }
+  }
+
+  const { data: balances, isLoading: loadingBalances, mutate } = useSWR(
     balancesKey,
     async () => {
-      const ledgerIds = await getCachedLedgerIds(identity)
-      const owner = custodian!
-      const subaccount = custodialSubaccount(identity!.getPrincipal())
-      return fetchTokenBalancesTiered(
-        ledgerIds,
-        owner,
-        subaccount,
-        identity,
-        principal!,
-        (merged) => {
-          if (balancesKey) void globalMutate(balancesKey, merged, { revalidate: false })
-        }
+      const map = await fetchWalletBalances(
+        registryLedgerIds!,
+        customLedgerIds,
+        custodian!,
+        custodialSubaccount(identity!.getPrincipal()),
+        identity
       )
+      syncBalanceCaches(map)
+      return map
     },
     { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
   )
 
-  const displayIds = balances ? metadataLedgerIds(balances) : []
-  const metadataIds = balances ? visibleMetadataLedgerIds(balances) : []
+  const displayIds = balances ? [...balances.keys()].sort() : []
+
+  const customMeta = principal ? getCustomTokenMetaSnapshot(principal) : new Map()
   const { data: metadata, isLoading: loadingMetadata } = useSWRImmutable(
-    registry && metadataIds.length ? (["token-metadata", metadataIds.join(",")] as const) : null,
+    displayIds.length ? (["token-metadata", displayIds.join(",")] as const) : null,
     async () => {
       const entries = await Promise.all(
-        metadataIds.map(async (id) => {
-          const fromRegistry = metadataFromRegistry(id, registry!)
+        displayIds.map(async (id) => {
+          const cached = customMeta.get(id)
+          if (cached) return [id, cached] as const
+          const fromRegistry = registry ? metadataFromRegistry(id, registry) : null
           if (fromRegistry) return [id, fromRegistry] as const
-          const meta = await fetchTokenMetadata(id, identity, registry!)
+          const meta = await fetchTokenMetadata(id, identity, registry ?? undefined)
           return meta ? ([id, meta] as const) : null
         })
       )
@@ -492,21 +577,22 @@ export function useTokenHoldings() {
   const holdings: TokenHolding[] = displayIds.flatMap((ledgerId) => {
     const meta =
       metadata?.get(ledgerId) ??
-      (registry ? metadataFromRegistry(ledgerId, registry) : null)
+      customMeta.get(ledgerId) ??
+      (registry ? metadataFromRegistry(ledgerId, registry) : null) ??
+      seededHoldings?.find((h) => h.ledgerId === ledgerId)
     if (!meta) return []
-    return [{ ...meta, balance: balances!.get(ledgerId)! }]
+    const balance = balances?.has(ledgerId)
+      ? balances.get(ledgerId)!
+      : (cachedBalances.get(ledgerId) ?? 0n)
+    return [{ ...meta, balance }]
   })
 
   useEffect(() => {
-    if (principal && holdings.length > 0) writeHoldings(principal, holdings)
-    // Serialised because the array identity changes every render; only a real
-    // change in the numbers should rewrite the cache.
-  }, [principal, holdings.map((h) => `${h.ledgerId}:${h.balance}`).join(",")]) // eslint-disable-line react-hooks/exhaustive-deps
+    if (!principal || !balances || holdings.length === 0) return
+    writeHoldings(principal, holdings)
+  }, [principal, balances, holdings.map((h) => `${h.ledgerId}:${h.balance}`).join(",")]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // A reload has an empty SWR cache, so the real list takes a ledger sweep to
-  // arrive and the wallet reads as empty until it does. The last known holdings
-  // stand in for that window rather than a skeleton.
-  const seeded = holdings.length === 0 && principal ? readHoldings(principal) : undefined
+  const seeded = holdings.length === 0 && seededHoldings?.length ? seededHoldings : undefined
   const shown = seeded ?? holdings
 
   return {
@@ -517,6 +603,8 @@ export function useTokenHoldings() {
     holdings: shown.slice().sort((a, b) => {
       if (a.ledgerId === ICP_LEDGER_ID) return -1
       if (b.ledgerId === ICP_LEDGER_ID) return 1
+      if (a.ledgerId === ICPAY_LEDGER_ID) return -1
+      if (b.ledgerId === ICPAY_LEDGER_ID) return 1
       if (a.balance > 0n !== b.balance > 0n) return a.balance > 0n ? -1 : 1
       const pinnedA = PINNED_LEDGER_IDS.includes(a.ledgerId)
       if (pinnedA !== PINNED_LEDGER_IDS.includes(b.ledgerId)) return pinnedA ? -1 : 1
@@ -524,12 +612,10 @@ export function useTokenHoldings() {
     }),
     isLoading:
       shown.length === 0 &&
-      (loadingBalances ||
-        (displayIds.length > 0 &&
-          !registry &&
-          metadataIds.length > 0 &&
-          loadingMetadata &&
-          !metadata)),
+      (loadingBalances || loadingLedgerIds) &&
+      !balances &&
+      (loadingMetadata || displayIds.length === 0),
+    refresh: () => void mutate(),
   }
 }
 

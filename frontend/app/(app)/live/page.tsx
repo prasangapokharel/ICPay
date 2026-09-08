@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { GradientBadge } from "@/components/ui/gradient-badge"
 import { Spinner } from "@/components/ui/spinner"
 import { LiveGuideInfo } from "@/components/live/live-guide-info"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { liveRoomKey } from "@/hooks/live/useLiveRoom"
 import { canCreateLiveRoom } from "@/lib/live/access"
@@ -43,16 +44,12 @@ export default function LivePage() {
   }, [identity, mutate])
 
   return (
-    <div className="space-y-6 pt-2">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-1 items-start gap-2">
-          <div className="min-w-0">
-            <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
-            <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-          </div>
-          <LiveGuideInfo />
-        </div>
-        {canCreate ? (
+    <AppPage
+      title={t("title")}
+      description={t("subtitle")}
+      accessory={<LiveGuideInfo />}
+      actions={
+        canCreate ? (
           <Button nativeButton={false} render={<Link href="/live/new" />} className="shrink-0">
             {t("newRoom")}
           </Button>
@@ -60,9 +57,9 @@ export default function LivePage() {
           <Button disabled className="shrink-0">
             {t("newRoom")}
           </Button>
-        )}
-      </div>
-
+        )
+      }
+    >
       {!canCreate && (
         <p className="text-sm text-muted-foreground">
           {t("createLockedHint")}{" "}
@@ -119,6 +116,6 @@ export default function LivePage() {
           })}
         </ul>
       )}
-    </div>
+    </AppPage>
   )
 }

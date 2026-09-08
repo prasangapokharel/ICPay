@@ -1,15 +1,13 @@
 "use client"
 
 import { Select as SelectPrimitive } from "@base-ui/react/select"
-import ReactCountryFlag from "react-country-flag"
 import { LOCALES } from "@/language/config"
 import { useLocale } from "@/components/i18n/locale-provider"
-import {
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select"
+import { LocaleFlag } from "@/components/i18n/locale-flag"
+import { SelectContent, SelectItem } from "@/components/ui/select"
+import { cn } from "@/lib/ui/utils"
 
-export function LanguageSwitch() {
+export function LanguageSwitch({ variant = "icon" }: { variant?: "icon" | "row" }) {
   const { locale, setLocale } = useLocale()
   const active = LOCALES.find((l) => l.code === locale) ?? LOCALES[0]
 
@@ -20,31 +18,30 @@ export function LanguageSwitch() {
     >
       <SelectPrimitive.Trigger
         aria-label={active.label}
-        className="flex size-9 items-center justify-center rounded-full border bg-background transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-accent active:scale-95"
+        className={cn(
+          "flex items-center outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
+          variant === "icon"
+            ? "size-8 justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground active:scale-95 sm:size-9"
+            : "h-8 w-full gap-2.5 rounded-lg px-2.5 text-[13px] text-foreground hover:bg-muted",
+        )}
       >
-        <Flag country={active.country} />
+        {variant === "row" ? (
+          <>
+            <LocaleFlag country={active.country} label={active.label} size="sm" priority />
+            <span className="min-w-0 flex-1 truncate text-left">{active.label}</span>
+          </>
+        ) : (
+          <LocaleFlag country={active.country} label={active.label} size="sm" priority />
+        )}
       </SelectPrimitive.Trigger>
-      <SelectContent align="end">
+      <SelectContent align={variant === "row" ? "start" : "end"} side={variant === "row" ? "top" : "bottom"}>
         {LOCALES.map((l) => (
           <SelectItem key={l.code} value={l.code}>
-            <Flag country={l.country} />
+            <LocaleFlag country={l.country} label={l.label} />
             {l.label}
           </SelectItem>
         ))}
       </SelectContent>
     </SelectPrimitive.Root>
-  )
-}
-
-// svg mode rather than the emoji default: Windows ships no colour flag glyphs,
-// so the emoji path renders as two letter boxes there.
-function Flag({ country }: { country: string }) {
-  return (
-    <ReactCountryFlag
-      svg
-      countryCode={country}
-      aria-hidden
-      style={{ width: "1.15rem", height: "1.15rem", borderRadius: "9999px", objectFit: "cover" }}
-    />
   )
 }

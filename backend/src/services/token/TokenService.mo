@@ -26,6 +26,9 @@ module {
   public let getById = Query.getById;
   public let listByUser = Query.listByUser;
   public let listActive = Query.listActive;
+  public let isCustodiedLedger = Query.isCustodiedLedger;
+  public let ensureCustodiedLedger = Query.ensureCustodiedLedger;
+  public let ensureCustodiedLedgerAsync = Query.ensureCustodiedLedgerAsync;
   public let registerLaunchedLedgers = Query.registerLaunchedLedgers;
   public let isSymbolAvailable = Query.isSymbolAvailable;
 

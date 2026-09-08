@@ -46,6 +46,8 @@ module {
   public let copyFile = Bucket.copyFile;
   public let listFolder = Bucket.listFolder;
   public let searchFiles = Bucket.searchFiles;
+  public let createFolder = Bucket.createFolder;
+  public let deleteFolder = Bucket.deleteFolder;
   public let setFileTags = Bucket.setFileTags;
   public let addFileTags = Bucket.addFileTags;
   public let removeFileTags = Bucket.removeFileTags;

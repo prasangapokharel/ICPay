@@ -1,0 +1,18 @@
+---
+title: File list pagination
+description: Files load 20 per page from the canister to keep queries fast.
+group: API reference
+order: 10
+eyebrow: API reference
+---
+
+`listFiles` and `listFolder` return **20 files per page**. Pass an increasing offset to walk the full list:
+
+```typescript
+let offset = 0
+const pageSize = 20
+const page = await listFiles(identity, bucketId, offset, pageSize, apiKey)
+offset += pageSize
+```
+
+Use `searchFiles` with the same offset pattern for filtered results.

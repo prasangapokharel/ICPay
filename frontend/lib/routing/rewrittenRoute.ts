@@ -17,6 +17,31 @@ function tokenLedgerIdFromPath(path: string): string {
   return ledgerId === "token" ? "" : ledgerId
 }
 
+function channelSlugFromPath(path: string): string {
+  const segments = path.split("/").filter(Boolean)
+  const idx = segments.indexOf("channels")
+  if (idx < 0 || idx + 1 >= segments.length) return ""
+  const slug = decodeURIComponent(segments[idx + 1])
+  if (slug === "join" || slug === "new") return ""
+  return slug
+}
+
+function channelMessageIdFromPath(path: string): string {
+  const segments = path.split("/").filter(Boolean)
+  const idx = segments.indexOf("channels")
+  if (idx < 0 || idx + 2 >= segments.length) return ""
+  const raw = decodeURIComponent(segments[idx + 2])
+  return /^\d+$/.test(raw) ? raw : ""
+}
+
+function getBrowserChannelSlug(): string {
+  return channelSlugFromPath(window.location.pathname)
+}
+
+function getBrowserChannelMessageId(): string {
+  return channelMessageIdFromPath(window.location.pathname)
+}
+
 function getBrowserLastSegment(): string {
   return lastSegment(window.location.pathname)
 }
@@ -48,6 +73,20 @@ export function useTokenLedgerId(): string {
     getBrowserTokenLedgerId,
     () => "",
   )
+}
+
+export function useChannelSlug(): string {
+  const pathname = usePathname()
+  void pathname
+
+  return useSyncExternalStore(subscribe, getBrowserChannelSlug, () => "")
+}
+
+export function useChannelMessageId(): string {
+  const pathname = usePathname()
+  void pathname
+
+  return useSyncExternalStore(subscribe, getBrowserChannelMessageId, () => "")
 }
 
 function subscribe(onStoreChange: () => void) {

@@ -1,5 +1,6 @@
 import Principal "mo:core/Principal";
 import Config "../config/Config";
+import Error "mo:core/Error";
 import LedgerTypes "../ledger/Types";
 import LedgerClient "../ledger/LedgerClient";
 import SnsWasm "../ledger/SnsWasm";
@@ -78,6 +79,26 @@ module {
 
   public func getSymbol(ledgerId: Text): async Text {
     await ledger(ledgerId).icrc1_symbol();
+  };
+
+  // User-added ICRC ledgers are not SNS-listed or ICPay-launched. Before the
+  // custodian calls one, probe the standard methods so a random canister id
+  // cannot be pointed at a forged interface.
+  public func isValidIcrcLedger(ledgerId: Text): async Bool {
+    try {
+      let svc = ledger(ledgerId);
+      let standards = await svc.icrc1_supported_standards();
+      var hasIcrc1 = false;
+      for (s in standards.vals()) {
+        if (s.name == "ICRC-1") { hasIcrc1 := true };
+      };
+      if (not hasIcrc1) { return false };
+      let symbol = await svc.icrc1_symbol();
+      let decimals = await svc.icrc1_decimals();
+      symbol.size() > 0 and symbol.size() <= 32 and decimals <= 18
+    } catch (_) {
+      false
+    };
   };
 
   // Refreshes the spendable-ledger allowlist from SNS-W. Additive on purpose: a

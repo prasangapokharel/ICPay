@@ -44,6 +44,7 @@ export function IcpayTokenCard() {
           width={56}
           height={56}
           unoptimized
+          priority
           className="size-14 shrink-0 rounded-full object-contain"
         />
         <div>

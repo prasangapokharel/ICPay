@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { TransactionList } from "@/components/transactions/transaction-list"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useTransactions } from "@/hooks/wallet/useWalletData"
 
@@ -14,11 +15,7 @@ export default function TransactionsPage() {
   const { items, total, isLoading } = useTransactions(page, PAGE_SIZE)
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </div>
+    <AppPage title={t("title")} description={t("subtitle")}>
       {isLoading && items.length === 0 ? (
         <div className="space-y-3">
           <Skeleton className="h-16 w-full rounded-2xl" />
@@ -34,6 +31,6 @@ export default function TransactionsPage() {
           onPageChange={setPage}
         />
       )}
-    </div>
+    </AppPage>
   )
 }

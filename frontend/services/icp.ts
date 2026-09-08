@@ -4,6 +4,7 @@ const LOCAL_IC_HOST = "http://127.0.0.1:4943"
 const IC_HOST = "https://icp0.io"
 const LOCAL_CANISTER_ID = "u6s2n-gx777-77774-qaaba-cai"
 const MAINNET_CANISTER_ID = "6vbhm-nqaaa-aaaan-q6muq-cai"
+const MAINNET_TRADE_CANISTER_ID = "gomfy-saaaa-aaaan-q6onq-cai"
 const LOCAL_II_CANISTER_ID = "rdmx6-jaaaa-aaaaa-aaadq-cai"
 
 // Replica choice is all-or-nothing. A delegation from mainnet Internet Identity
@@ -52,6 +53,9 @@ export function clearAgentCache(): void {
 export const WALLET_CANISTER_ID = getIsLocal()
   ? LOCAL_CANISTER_ID
   : process.env.NEXT_PUBLIC_WALLET_CANISTER_ID ?? MAINNET_CANISTER_ID
+
+export const TRADE_CANISTER_ID =
+  process.env.NEXT_PUBLIC_TRADE_CANISTER_ID ?? MAINNET_TRADE_CANISTER_ID
 
 export function getIdentityProvider(): string {
   if (getIsLocal()) return withAuthorizePath(`http://${LOCAL_II_CANISTER_ID}.localhost:4943`)

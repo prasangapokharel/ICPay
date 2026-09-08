@@ -27,8 +27,8 @@ module {
       bucketStore = {
         buckets = old.bucketStore.buckets;
         files = old.bucketStore.files;
-        fileData = old.bucketStore.fileData;
         pathIndex = old.bucketStore.pathIndex;
+        folders = Map.empty<Text, Int>();
         ownerIndex = old.bucketStore.ownerIndex;
         apiKeys = Map.empty<Text, Types.ApiKey>();
         keyHashIndex = Map.empty<Text, Text>();

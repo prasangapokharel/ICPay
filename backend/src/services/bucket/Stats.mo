@@ -102,6 +102,13 @@ module {
     page: Nat,
     pageSize: Nat,
   ) : Types.FileListPage {
-    Pagination.slice(files, page, pageSize, Config.BUCKET_FILE_PAGE_SIZE, Config.MAX_PAGE_SIZE)
+    let slice = Pagination.slice(files, page, pageSize, Config.BUCKET_FILE_PAGE_SIZE, Config.MAX_PAGE_SIZE);
+    {
+      items = slice.items;
+      folders = [];
+      total = slice.total;
+      page = slice.page;
+      pageSize = slice.pageSize;
+    }
   };
 };

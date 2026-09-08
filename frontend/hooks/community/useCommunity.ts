@@ -67,43 +67,53 @@ export function useInvalidateCommunityLists(slug?: string) {
 }
 
 export function usePublicCommunityChannels() {
-  const { identity } = useAuth()
+  const { identity, isLoading: authLoading } = useAuth()
   const { data, error, isLoading, mutate } = useSWR(
     communityPublicListKey(identity),
     () => listPublicCommunityChannels(identity),
     QUERY_OPTS
   )
-  return { channels: data ?? [], error, isLoading, refresh: mutate }
+  return { channels: data ?? [], error, isLoading: isLoading || authLoading, refresh: mutate }
 }
 
 export function useMyCommunityChannels() {
-  const { identity } = useAuth()
+  const { identity, isLoading: authLoading } = useAuth()
   const { data, error, isLoading, mutate } = useSWR(
     communityMineKey(identity),
     () => listMyCommunityChannels(identity),
     QUERY_OPTS
   )
-  return { channels: data ?? [], error, isLoading, refresh: mutate }
+  return { channels: data ?? [], error, isLoading: isLoading || authLoading, refresh: mutate }
 }
 
 export function useCommunityChannel(slug: string) {
-  const { identity } = useAuth()
+  const { identity, isLoading: authLoading } = useAuth()
   const { data, error, isLoading, mutate } = useSWR(
     communityChannelKey(identity, slug),
     () => getCommunityChannel(identity, slug),
     QUERY_OPTS
   )
-  return { channel: data, error, isLoading, refresh: mutate }
+  return { channel: data, error, isLoading: isLoading || authLoading, refresh: mutate }
+}
+
+export function useCommunityChannelLookup(slug: string | null) {
+  const { identity } = useAuth()
+  const { data, error, isLoading } = useSWR(
+    slug ? (["community-channel-lookup", slug, identity?.getPrincipal().toText()] as const) : null,
+    () => getCommunityChannel(identity, slug!),
+    QUERY_OPTS
+  )
+  return { channel: data ?? null, error, isLoading }
 }
 
 export function useCommunityMessages(slug: string, enabled: boolean) {
-  const { identity } = useAuth()
+  const { identity, isLoading: authLoading } = useAuth()
   const { data, error, isLoading, mutate } = useSWR(
     enabled ? communityMessagesKey(identity, slug) : null,
     () => listCommunityMessages(identity, slug, 0n, 50),
     QUERY_OPTS
   )
-  return { messages: data ?? [], error, isLoading, refresh: mutate }
+  return { messages: data ?? [], error, isLoading: isLoading || authLoading, refresh: mutate }
 }
 
 export function useCommunityMembership(slug: string) {

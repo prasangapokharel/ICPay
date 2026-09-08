@@ -4,7 +4,6 @@ import TxStorage "storage/TransactionStorage";
 import SettingsStorage "storage/SettingsStorage";
 import LedgerStorage "storage/LedgerStorage";
 import TokenStorage "storage/TokenStorage";
-import SwapStorage "storage/SwapStorage";
 import BucketStorage "storage/BucketStorage";
 import UserRepo "repositories/UserRepository";
 import TxRepo "repositories/TransactionRepository";
@@ -29,7 +28,6 @@ import BookmarkService "services/BookmarkService";
 import LiveService "services/LiveService";
 import IcCommunityService "services/IcCommunityService";
 import SocialLinkService "services/SocialLinkService";
-import SwapService "services/SwapService";
 import BucketService "services/BucketService";
 import BlobStore "blob/BlobStore";
 import RemoteBlobStore "blob/RemoteBlobStore";
@@ -52,13 +50,14 @@ import SettingsApi "api/v1/Settings";
 import BookmarkApi "api/v1/Bookmark";
 import SocialLinkApi "api/v1/SocialLink";
 import VerifiedApi "api/v1/Verified";
-import SwapApi "api/v1/Swap";
 import BucketApi "api/v1/Bucket";
 import AnalyticsService "services/AnalyticsService";
 import AnalyticsApi "api/v1/Analytics";
 import LiveApi "api/v1/Live";
 import IcCommunityApi "api/v1/IcCommunity";
 import CloudHttpApi "api/v1/CloudHttp";
+import TradeApi "api/v1/Trade";
+import TradeService "services/TradeService";
 import MiddlewareAuth "middleware/Auth";
 import Principal "mo:core/Principal";
 import Int "mo:core/Int";
@@ -70,7 +69,9 @@ import Map "mo:core/Map";
 import Time "mo:core/Time";
 import IdentityAttributes "mo:identity-attributes";
 import UserModel "models/User";
+import AddBucketFolders "migrations/AddBucketFolders";
 
+(with migration = AddBucketFolders.migration)
 persistent actor self {
   transient let mwConfig = MiddlewareAuth.prodConfig();
 
@@ -115,7 +116,6 @@ persistent actor self {
   let purchaseUsernameLimits = RateLimitStorage.createRateLimitMap();
   let buyIcpayLimits = RateLimitStorage.createRateLimitMap();
   let launchTokenLimits = RateLimitStorage.createRateLimitMap();
-  let swapLimits = RateLimitStorage.createRateLimitMap();
   let bucketCreateLimits = RateLimitStorage.createRateLimitMap();
   let bucketUploadLimits = RateLimitStorage.createRateLimitMap();
   let bucketRenewLimits = RateLimitStorage.createRateLimitMap();
@@ -144,12 +144,6 @@ persistent actor self {
   // New stable maps — no migration; empty on first upgrade after deploy.
   let communityReactionVotes = IcCommunityStorage.createReactionVoteMap();
   let communityReactionCounts = IcCommunityStorage.createReactionCountMap();
-
-  // Pending swaps survive upgrades: a failed withdraw must not vanish on deploy.
-  let pendingSwaps = SwapStorage.createPendingMap();
-  // Failed swap escrows survive upgrades so recovery stays tied to a real attempt.
-  let failedSwapEscrows = SwapStorage.createEscrowMap();
-  SwapStorage.reindexEscrowKeys(failedSwapEscrows);
 
   // ICPay Cloud — metadata on backend; file bytes on the blob store canister.
   let bucketStore = BucketStorage.empty();
@@ -242,9 +236,9 @@ persistent actor self {
     tokens, tokensByLedger, tokensByUser, reservedSymbols, tokenWasm,
     transferService, ledger, users, Principal.fromActor(self), nextUid, launchTokenLimits,
   );
-  transient let swapService = SwapService.create(users, transactions, transactionsByUser, ledger, pendingSwaps, failedSwapEscrows, nextUid, swapLimits);
   transient let bucketUploadSessions = BucketService.createUploadSessionStore();
   transient let analyticsService = AnalyticsService.create(users, transactionsByUser, transferService);
+  transient let tradeService = TradeService.create(users, transactions, transactionsByUser, ledger, nextUid, transferLimits);
   transient let bucketService = BucketService.create(
     users, bucketStore, bucketNameIndex, blobs, remoteBlobActor, transferService, nextUid,
     bucketCreateLimits, bucketUploadLimits, bucketRenewLimits, bucketManageLimits, bucketApiKeyLimits,
@@ -254,6 +248,7 @@ persistent actor self {
   // Chain-key symbols are compiled in, so seeding them costs no calls and runs
   // on every start rather than needing a migration. Reserving is idempotent.
   TokenService.seedReservedSymbols(tokenService, ["ICP", "CKBTC", "CKETH", "CKUSDC", "CKUSDT"]);
+  ignore TokenService.registerLaunchedLedgers(tokenService);
 
   // Timers do not survive an upgrade, so this is armed at actor scope: it runs on
   // fresh install and again after every deploy, where a postupgrade-only hook
@@ -274,10 +269,11 @@ persistent actor self {
   include UsersApi(userService, mwConfig);
   include AdminApi(adminService, mwConfig);
   include DashboardApi(dashboardService, mwConfig);
-  include DepositApi(depositService, mwConfig);
+  include DepositApi(depositService, tokenService, mwConfig);
   include WithdrawApi(withdrawService, mwConfig);
-  include LedgersApi(ledger, mwConfig);
+  include LedgersApi(ledger, tokenService, mwConfig);
   include TransferApi(transferService, mwConfig);
+  include TradeApi(tradeService, mwConfig);
   include UsernameSaleApi(usernameSaleService, mwConfig);
   include SaleApi(saleService, mwConfig);
   include TokenApi(tokenService, mwConfig);
@@ -286,7 +282,6 @@ persistent actor self {
   include BookmarkApi(bookmarkService, mwConfig);
   include SocialLinkApi(socialLinkService, mwConfig);
   include VerifiedApi(userService);
-  include SwapApi(swapService, mwConfig);
   include BucketApi(bucketService, mwConfig);
   include AnalyticsApi(analyticsService, mwConfig);
   include LiveApi(liveService, mwConfig);

@@ -27,8 +27,9 @@ import {
 } from "@/components/ui/drawer"
 import {
   Tooltip,
-  TooltipTrigger,
   TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { LogoPicker } from "@/components/launch/logo-picker"
 import { useDebounced } from "@/hooks/ui/useDebounced"
@@ -69,11 +70,20 @@ const SUPPLY_PRESETS = [
 
 export function LaunchForm({
   onLaunch,
+  isAuthenticated = true,
+  onConnect,
+  authLoading = false,
+  connecting = false,
 }: {
   onLaunch: (input: LaunchInput) => Promise<string | null>
+  isAuthenticated?: boolean
+  onConnect?: () => void
+  authLoading?: boolean
+  connecting?: boolean
 }) {
   const t = useTranslations("launch")
   const tc = useTranslations("common")
+  const tl = useTranslations("login")
 
   const [name, setName] = useState("")
   const [symbol, setSymbol] = useState("")
@@ -124,6 +134,9 @@ export function LaunchForm({
   const canReview =
     complete && symbolSettled && available === true && !insufficient && ready !== false
 
+  const needsConnect = !isAuthenticated && !!onConnect
+  const canSubmit = needsConnect ? !authLoading && !connecting : canReview
+
   const handleConfirm = async () => {
     const totalSupply = parseSupply(supply)
     if (!totalSupply) return
@@ -151,7 +164,8 @@ export function LaunchForm({
   }
 
   return (
-    <div className="space-y-4">
+    <TooltipProvider delay={200}>
+    <div className="flex flex-col gap-5">
       {ready === false && (
         <Alert variant="destructive">
           <HugeiconsIcon icon={Alert02Icon} className="size-4" />
@@ -159,10 +173,10 @@ export function LaunchForm({
         </Alert>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <LogoPicker value={logo} onChange={setLogo} disabled={launching} />
 
-        <div className="min-w-0 flex-1 space-y-3">
+        <div className="flex min-w-0 flex-1 flex-col gap-4">
           <Field
             id="token-name"
             label={t("nameLabel")}
@@ -257,13 +271,9 @@ export function LaunchForm({
             <Button
               key={preset.label}
               type="button"
-              variant="outline"
+              variant={parseSupply(supply) === parseSupply(preset.value) ? "default" : "outline"}
               size="sm"
-              className={cn(
-                "h-7 rounded-lg px-3 text-xs",
-                parseSupply(supply) === parseSupply(preset.value) &&
-                  "bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950"
-              )}
+              className="h-7 rounded-lg px-3 text-xs"
               onClick={() => setSupply(preset.value)}
             >
               {preset.label}
@@ -275,12 +285,16 @@ export function LaunchForm({
       <Collapsible open={socialsOpen} onOpenChange={setSocialsOpen}>
         <CollapsibleTrigger
           render={
-            <Button variant="ghost" size="sm" className="h-auto px-0 text-xs text-muted-foreground">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex h-10 w-full items-center justify-between rounded-xl border border-border/60 bg-muted/20 px-3.5 text-sm font-medium text-foreground hover:bg-muted/40"
+            >
               {t("socialsToggle")}
             </Button>
           }
         />
-        <CollapsibleContent className="space-y-3 pt-3">
+        <CollapsibleContent className="flex flex-col gap-4 pt-4">
           {SOCIAL_FIELDS.map((field, i) => (
             <Field
               key={field.key}
@@ -305,24 +319,27 @@ export function LaunchForm({
 
       {/* One statement rather than a choice. The launch is irreversible and the
           only outcome ICPay will list for sending, so it is stated, not asked. */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-muted/20 px-3.5 py-3">
         <p className="text-sm font-medium">{t("immutableTitle")}</p>
         <Tooltip>
           <TooltipTrigger
-            render={
-              <HugeiconsIcon
-                icon={InformationCircleIcon}
-                className="size-4 shrink-0 cursor-help text-muted-foreground"
-              />
-            }
-          />
-          <TooltipContent side="right" className="max-w-64 text-[11px] leading-relaxed">
+            type="button"
+            aria-label={t("immutableTitle")}
+            className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <HugeiconsIcon icon={InformationCircleIcon} className="size-4" strokeWidth={1.75} />
+          </TooltipTrigger>
+          <TooltipContent
+            side="top"
+            align="start"
+            className="max-w-72 p-3 text-left text-[11px] leading-relaxed"
+          >
             {t("immutableBody")}
           </TooltipContent>
         </Tooltip>
       </div>
 
-      <div className="space-y-2 rounded-2xl bg-muted/40 p-3.5">
+      <div className="flex flex-col gap-2 rounded-xl border border-border/60 bg-muted/20 p-4">
         <Row label={t("creationFee")} value={launchFee === undefined ? "—" : `${formatAmount(launchFee)} ICP`} />
         <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} muted />
         <div className="border-t pt-2">
@@ -342,13 +359,18 @@ export function LaunchForm({
 
       <Button
         size="lg"
-        className="w-full bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950 hover:from-amber-200 hover:via-yellow-300 hover:to-amber-500"
-        disabled={!canReview}
-        onClick={() => setConfirmOpen(true)}
+        className="w-full"
+        disabled={!canSubmit}
+        onClick={() => (needsConnect ? onConnect?.() : setConfirmOpen(true))}
       >
-        {insufficient && total !== undefined
-          ? t("insufficient", { total: formatAmount(total) })
-          : t("review")}
+        {(authLoading || connecting) && <Spinner className="size-4" />}
+        {needsConnect
+          ? connecting
+            ? tl("connecting")
+            : t("connectWallet")
+          : insufficient && total !== undefined
+            ? t("insufficient", { total: formatAmount(total) })
+            : t("review")}
       </Button>
 
       {/* The confirm step is not ceremony: the fee is charged before the ledger
@@ -390,11 +412,7 @@ export function LaunchForm({
           </div>
 
           <DrawerFooter>
-            <Button
-              onClick={handleConfirm}
-              disabled={launching}
-              className="bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 text-amber-950 hover:from-amber-200 hover:via-yellow-300 hover:to-amber-500"
-            >
+            <Button onClick={handleConfirm} disabled={launching}>
               {launching && <Spinner className="size-4" />}
               {launching ? t("launching") : t("confirmLaunch")}
             </Button>
@@ -403,6 +421,7 @@ export function LaunchForm({
         </DrawerContent>
       </Drawer>
     </div>
+    </TooltipProvider>
   )
 }
 

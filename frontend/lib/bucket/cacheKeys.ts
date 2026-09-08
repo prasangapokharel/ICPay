@@ -9,9 +9,25 @@ export function bucketStatsKey(identity: Identity | undefined, bucketId: string)
   return identity ? (["bucket-stats", bucketId, identity.getPrincipal().toText()] as const) : null
 }
 
-export function bucketFilesKey(identity: Identity | undefined, bucketId: string, page: number) {
+export function bucketFilesKey(
+  identity: Identity | undefined,
+  bucketId: string,
+  folderPrefix: string,
+  page: number
+) {
   return identity
-    ? (["bucket-files", bucketId, String(page), identity.getPrincipal().toText()] as const)
+    ? (["bucket-files", bucketId, folderPrefix, String(page), identity.getPrincipal().toText()] as const)
+    : null
+}
+
+export function bucketSearchKey(
+  identity: Identity | undefined,
+  bucketId: string,
+  query: string,
+  page: number
+) {
+  return identity
+    ? (["bucket-search", bucketId, query, String(page), identity.getPrincipal().toText()] as const)
     : null
 }
 
@@ -61,6 +77,7 @@ export function isBucketCacheKey(key: unknown, identity: Identity | undefined): 
     head === "bucket-list" ||
     head === "bucket-stats" ||
     head === "bucket-files" ||
+    head === "bucket-search" ||
     head === "bucket-renew-quote" ||
     head === "bucket-cycle-status" ||
     head === "bucket-file-preview" ||

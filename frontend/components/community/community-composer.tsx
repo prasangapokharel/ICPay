@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useLayoutEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import { CommunityIcon } from "@/components/community/community-icon"
 import { Button } from "@/components/ui/button"
@@ -36,6 +36,14 @@ export function CommunityComposer({
   const [error, setError] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const canSend = !!text.trim()
+
+  useLayoutEffect(() => {
+    const el = textareaRef.current
+    if (!el) return
+    el.style.height = "auto"
+    const max = Math.min(window.innerHeight * 0.45, 360)
+    el.style.height = `${Math.min(el.scrollHeight, max)}px`
+  }, [text])
 
   const applyEdit = (edit: ReturnType<typeof wrapMarkers>) => {
     const el = textareaRef.current
@@ -162,7 +170,7 @@ export function CommunityComposer({
                 maxLength={2000}
                 rows={1}
                 className={cn(
-                  "field-sizing-content min-h-[42px] max-h-28 min-w-0 flex-1 resize-none rounded-2xl border border-border/40 bg-background/45 px-4 py-2.5 text-sm outline-none backdrop-blur-sm",
+                  "min-h-[42px] max-h-[min(45vh,360px)] min-w-0 flex-1 resize-none overflow-y-auto rounded-2xl border border-border/40 bg-background/45 px-4 py-2.5 text-sm outline-none backdrop-blur-sm",
                   "placeholder:text-muted-foreground focus-visible:border-border/60 focus-visible:ring-2 focus-visible:ring-ring/20"
                 )}
               />

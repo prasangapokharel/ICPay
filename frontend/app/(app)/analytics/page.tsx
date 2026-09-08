@@ -11,6 +11,7 @@ import { useAnalytics } from "@/hooks/analytics/useAnalytics"
 import { AnalyticsSummaryGrid } from "@/components/analytics/analytics-summary-grid"
 import { AnalyticsTable } from "@/components/analytics/analytics-table"
 import { AnalyticsLocked } from "@/components/analytics/analytics-locked"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import { hasAnalyticsAccess, hasFreeAnalyticsExport } from "@/lib/analytics/access"
 import { buildAnalyticsCsv, downloadAnalyticsCsv, ledgerSymbolFallback } from "@/lib/analytics/csv"
 import { exportUserAnalytics } from "@/services/analytics/analytics"
@@ -67,16 +68,14 @@ export default function AnalyticsPage() {
 
   if (!allowed) {
     return (
-      <div className="space-y-6">
-        <Header subtitle={t("subtitle")} title={t("title")} />
+      <AppPage title={t("title")} description={t("subtitle")}>
         <AnalyticsLocked />
-      </div>
+      </AppPage>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <Header subtitle={t("subtitle")} title={t("title")} />
+    <AppPage title={t("title")} description={t("subtitle")}>
 
       {isLoading && !data ? (
         <div className="flex justify-center py-16">
@@ -112,15 +111,6 @@ export default function AnalyticsPage() {
           <AnalyticsTable rows={data.rows} />
         </>
       ) : null}
-    </div>
-  )
-}
-
-function Header({ title, subtitle }: { title: string; subtitle: string }) {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-      <p className="text-sm text-muted-foreground">{subtitle}</p>
-    </div>
+    </AppPage>
   )
 }

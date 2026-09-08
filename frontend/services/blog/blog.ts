@@ -17,7 +17,92 @@ export function sortedBlogPosts(): BlogPost[] {
   return [...BLOG_POSTS].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 }
 
+export function blogCategories(): string[] {
+  const categories = new Set<string>()
+  for (const post of BLOG_POSTS) {
+    if (post.category) categories.add(post.category)
+  }
+  return Array.from(categories).sort((a, b) => a.localeCompare(b))
+}
+
+export function filterBlogPostsByCategory(posts: BlogPost[], category: string): BlogPost[] {
+  if (category === "all") return posts
+  return posts.filter((post) => post.category === category)
+}
+
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: "what-is-cycles-minting-canister",
+    title: "What Is the Cycles Minting Canister (CMC)? | ICPay",
+    description:
+      "How the CMC converts ICP to cycles, creates canisters, and tops them up — notify_create_canister, notify_top_up, and ICPay.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 9,
+    category: "Explainers",
+  },
+  {
+    slug: "icp-canister-controllers-explained",
+    title: "ICP Canister Controllers Explained | ICPay",
+    description:
+      "Who can manage an ICP canister — status, start/stop, snapshots — and how Internet Identity becomes controller on create.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 8,
+    category: "Explainers",
+  },
+  {
+    slug: "canister-out-of-cycles-fix",
+    title: "Canister Out of Cycles: What Happens & How to Fix It | ICPay",
+    description:
+      "What happens when an ICP canister runs out of cycles and how to top up via CMC on ICPay before it freezes.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 8,
+    category: "How-to",
+  },
+  {
+    slug: "how-to-create-icp-canister",
+    title: "How to Create an ICP Canister with CMC (No dfx) | ICPay",
+    description:
+      "What an ICP canister is, the 500B cycle creation fee, 0.5 ICP minimum, and step-by-step CMC create on ICPay — no dfx.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 10,
+    category: "How-to",
+  },
+  {
+    slug: "how-to-manage-icp-canister",
+    title: "How to Manage an ICP Canister: Status, Start & Stop | ICPay",
+    description:
+      "Live canister_status, start/stop, and logs when your Internet Identity is a controller — browser guide with ICPay.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 7,
+    category: "How-to",
+  },
+  {
+    slug: "how-to-mint-cycles-ledger",
+    title: "How to Mint Cycles to the Cycles Ledger | ICPay",
+    description:
+      "Mint ICP into cycles on the cycles ledger with notify_mint_cycles, then withdraw to any canister — ICPay cycles wallet guide.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 8,
+    category: "How-to",
+  },
+  {
+    slug: "how-to-snapshot-icp-canister",
+    title: "How to Snapshot an ICP Canister: Take, Load & Delete | ICPay",
+    description:
+      "Take, list, load, and delete Internet Computer canister snapshots when you are a controller — browser guide with ICPay.",
+    publishedAt: "2026-09-05",
+    readingMinutes: 7,
+    category: "How-to",
+  },
+  {
+    slug: "how-to-top-up-icp-cycles",
+    title: "How to Top Up ICP Cycles: Canister Cycles Guide (2026)",
+    description:
+      "How to top up ICP cycles — convert ICP to canister cycles via the CMC, step-by-step with ICPay, fees, and how to keep canisters from freezing.",
+    publishedAt: "2026-09-04",
+    readingMinutes: 12,
+    category: "How-to",
+  },
   {
     slug: "instant-crypto-payments-icpay",
     title: "Instant Crypto Payments with ICPay: Send ICP in Seconds, Not Minutes",

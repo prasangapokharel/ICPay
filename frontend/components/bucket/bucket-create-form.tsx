@@ -131,7 +131,7 @@ export function BucketCreateForm({
         </RadioGroup>
       </div>
 
-      <div className="rounded-2xl bg-muted/40 p-4">
+      <div className="rounded-2xl border border-dashed border-primary/20 bg-primary/5 px-4 py-3">
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">{t("price")}</span>
           {priceLoading || price === null ? (

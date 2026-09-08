@@ -27,6 +27,7 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
   const path = href.split("?")[0]
 
   switch (path) {
+    case "/home":
     case "/":
       preload(walletKey(identity, "dashboard")!, () => loadDashboard(identity))
       preload(walletKey(identity, "token-balance", ICP_LEDGER_ID)!, async () => {

@@ -177,6 +177,18 @@ module {
     BucketStorage.relocateFilePath(store, fileId, newPath)
   };
 
+  public func createFolder(store: BucketStorage.BucketStore, bucketId: BucketId, path: Text, createdAt: Int) {
+    BucketStorage.putFolder(store, bucketId, path, createdAt);
+  };
+
+  public func deleteFolder(store: BucketStorage.BucketStore, bucketId: BucketId, path: Text) : Bool {
+    BucketStorage.removeFolder(store, bucketId, path)
+  };
+
+  public func listFolderPaths(store: BucketStorage.BucketStore, bucketId: BucketId) : [Text] {
+    BucketStorage.listFolderPaths(store, bucketId)
+  };
+
   public func purgeBucket(
     store: BucketStorage.BucketStore,
     blobs: BlobStore.Service,

@@ -57,7 +57,7 @@ export function CommunityNavRail() {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <RailButton href="/" label={tNav("home")} active={pathname === "/"}>
+      <RailButton href="/home" label={tNav("home")} active={pathname === "/home"}>
         <CommunityIcon name="home" size={20} />
       </RailButton>
       <RailButton

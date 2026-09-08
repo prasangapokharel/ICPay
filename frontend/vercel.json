@@ -68,16 +68,24 @@
       "destination": "/bucket/id"
     },
     {
+      "source": "/transactions/:id",
+      "destination": "/transactions/id"
+    },
+    {
       "source": "/live/:id",
       "destination": "/live/id"
     },
     {
       "source": "/channels/join/:slug",
-      "destination": "/channels/join/slug"
+      "destination": "/channels/join/:slug"
+    },
+    {
+      "source": "/channels/:slug/:messageId",
+      "destination": "/channels/:slug/:messageId"
     },
     {
       "source": "/channels/:slug",
-      "destination": "/channels/slug"
+      "destination": "/channels/:slug"
     },
     {
       "source": "/:username([A-Za-z0-9_]{1,8})",

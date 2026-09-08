@@ -17,6 +17,11 @@ export function CommunityMemberBar({
   onTip,
   onSelectMessage,
   onWallpaper = false,
+  isJoined = true,
+  onJoin,
+  joinBusy = false,
+  joinLabel,
+  joinErr,
 }: {
   messages: CommunityMessagePublic[]
   ownerUsername?: string
@@ -25,11 +30,17 @@ export function CommunityMemberBar({
   onTip?: (amount: bigint, memo?: string) => Promise<string | null>
   onSelectMessage: (messageId: bigint) => void
   onWallpaper?: boolean
+  isJoined?: boolean
+  onJoin?: () => void
+  joinBusy?: boolean
+  joinLabel?: string
+  joinErr?: string | null
 }) {
   const t = useTranslations("community")
   const [searchOpen, setSearchOpen] = useState(false)
   const [tipOpen, setTipOpen] = useState(false)
-  const canTip = Boolean(ownerUsername && onTip)
+  const canTip = isJoined && Boolean(ownerUsername && onTip)
+  const canSearch = isJoined || messages.length > 0
 
   return (
     <>
@@ -54,22 +65,45 @@ export function CommunityMemberBar({
           <CommunityIcon name="gift" size={20} />
         </Button>
 
-        <div
-          className={cn(
-            "flex h-11 min-w-0 flex-1 items-center justify-center rounded-full border border-border/50 px-4 text-sm font-medium text-foreground shadow-sm",
-            onWallpaper ? "bg-background/90 backdrop-blur-md" : "bg-muted/60"
-          )}
-        >
-          {t("joined")}
-        </div>
+        {isJoined ? (
+          <div
+            className={cn(
+              "flex h-11 min-w-0 flex-1 items-center justify-center rounded-full border border-border/50 px-4 text-sm font-medium text-foreground shadow-sm",
+              onWallpaper ? "bg-background/90 backdrop-blur-md" : "bg-muted/60"
+            )}
+          >
+            {t("joined")}
+          </div>
+        ) : (
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <Button
+              type="button"
+              disabled={joinBusy || !onJoin}
+              onClick={onJoin}
+              className={cn(
+                "h-11 w-full rounded-full border border-transparent px-4 text-sm font-semibold shadow-sm",
+                onWallpaper && "backdrop-blur-md"
+              )}
+            >
+              {joinBusy ? t("joining") : (joinLabel ?? t("join"))}
+            </Button>
+            {joinErr ? (
+              <p className="px-1 text-center text-xs text-destructive">{joinErr}</p>
+            ) : null}
+          </div>
+        )}
 
         <Button
           type="button"
           variant="ghost"
           size="icon"
           aria-label={t("searchMessages")}
+          disabled={!canSearch}
           onClick={() => setSearchOpen(true)}
-          className="size-11 shrink-0 rounded-full border border-border/50 bg-background/90 shadow-sm backdrop-blur-md"
+          className={cn(
+            "size-11 shrink-0 rounded-full border border-border/50 bg-background/90 shadow-sm backdrop-blur-md",
+            !canSearch && "opacity-40"
+          )}
         >
           <CommunityIcon name="search" size={20} />
         </Button>

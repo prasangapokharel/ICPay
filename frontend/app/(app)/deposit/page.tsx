@@ -4,6 +4,7 @@ import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
 import { useTranslations } from "next-intl"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useDepositAddress } from "@/hooks/wallet/useWalletData"
 import { useAuth } from "@/components/auth/auth-provider"
 import { ICP_LEDGER_ID } from "@/services/tokens"
@@ -23,12 +24,7 @@ export default function DepositPage() {
   const accountId = data?.accountId ?? ""
 
   return (
-    <div className="space-y-6 pt-2">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </div>
-
+    <AppPage title={t("title")} description={t("subtitle")}>
       {isLoading ? (
         <div className="space-y-4">
           <Skeleton className="h-10 w-full rounded-xl" />
@@ -52,6 +48,6 @@ export default function DepositPage() {
           />
         </>
       )}
-    </div>
+    </AppPage>
   )
 }

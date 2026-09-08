@@ -1,4 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+"use client"
+
+import { useTranslations } from "next-intl"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   AlertCircleIcon,
@@ -9,116 +19,98 @@ import {
   ShieldIcon,
 } from "@hugeicons/core-free-icons"
 
-export function ProblemSolution() {
-  const problems = [
-    {
-      icon: MoneyBag02Icon,
-      title: "Expensive Monthly Bills",
-      description:
-        "AWS S3, Google Cloud Storage, Azure Blob charge monthly. Costs compound over years. A 10GB project costs $240+ over 5 years.",
-    },
-    {
-      icon: DatabaseIcon,
-      title: "Centralized Control",
-      description:
-        "Your files live on someone else's servers. They can suspend your account, raise prices, or shut down services without notice.",
-    },
-    {
-      icon: AlertCircleIcon,
-      title: "Complex Setup",
-      description:
-        "Setting up S3 requires AWS account, IAM roles, bucket policies, CORS config. Just to upload a file.",
-    },
-    {
-      icon: CloudIcon,
-      title: "Vendor Lock-in",
-      description:
-        "Each provider has different APIs. Moving from S3 to Azure means rewriting code. No portability.",
-    },
-  ]
+const ROW_IDS = ["0", "1", "2", "3"] as const
 
-  const solutions = [
-    {
-      icon: MoneyBag02Icon,
-      title: "Simple 30-Day Plans",
-      description:
-        "Pay from your ICPay balance in ICP — from 0.5 ICP for 1 GB per 30 days. No credit card. Renew anytime and stack unused time.",
-    },
-    {
-      icon: ShieldIcon,
-      title: "Decentralized & Censorship-Resistant",
-      description:
-        "Files stored across Internet Computer replicas. No single point of failure. No one can delete your data except you.",
-    },
-    {
-      icon: CheckmarkCircle02Icon,
-      title: "S3-Compatible API",
-      description:
-        "Drop-in replacement for S3. Familiar methods: createBucket, uploadFile, downloadFile. Migrate existing code in minutes.",
-    },
-    {
-      icon: CloudIcon,
-      title: "On-Chain Verifiability",
-      description:
-        "Every file upload is traceable on-chain. Content-addressable via canister URLs. Immutable and auditable.",
-    },
-  ]
+const ROW_ICONS = [
+  {
+    problem: MoneyBag02Icon,
+    solution: MoneyBag02Icon,
+  },
+  {
+    problem: DatabaseIcon,
+    solution: ShieldIcon,
+  },
+  {
+    problem: AlertCircleIcon,
+    solution: CheckmarkCircle02Icon,
+  },
+  {
+    problem: CloudIcon,
+    solution: CloudIcon,
+  },
+] as const
+
+function TopicCell({
+  icon,
+  title,
+  description,
+  tone,
+}: {
+  icon: typeof MoneyBag02Icon
+  title: string
+  description: string
+  tone: "problem" | "solution"
+}) {
+  const iconClass = tone === "problem" ? "text-destructive" : "text-primary"
 
   return (
-    <section className="bg-muted/30 py-16 md:py-24">
+    <div className="flex gap-3 py-1">
+      <HugeiconsIcon icon={icon} className={`mt-0.5 size-5 shrink-0 ${iconClass}`} />
+      <div className="min-w-0 space-y-1">
+        <p className="font-medium leading-snug">{title}</p>
+        <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
+      </div>
+    </div>
+  )
+}
+
+export function ProblemSolution() {
+  const t = useTranslations("publicSite.icbucket.problemSolution")
+
+  return (
+    <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-12 lg:grid-cols-2">
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <h2 className="text-3xl font-bold tracking-tight">The Problem</h2>
-                <p className="text-lg text-muted-foreground">
-                  Traditional cloud storage is expensive, centralized, and complex.
-                </p>
-              </div>
-              <div className="space-y-4">
-                {problems.map((problem, index) => (
-                  <Card key={index} className="border-destructive/20 bg-destructive/5">
-                    <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-3">
-                      <div className="rounded-lg bg-destructive/10 p-2">
-                        <HugeiconsIcon
-                          icon={problem.icon}
-                          className="size-5 text-destructive"
-                        />
-                      </div>
-                      <CardTitle className="text-base">{problem.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">{problem.description}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+          <div className="mb-10 space-y-3 text-center md:mb-12">
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
+          </div>
 
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <h2 className="text-3xl font-bold tracking-tight">The Solution</h2>
-                <p className="text-lg text-muted-foreground">
-                  ICBucket: On-chain storage with 30-day ICP plans and an S3-style API.
-                </p>
-              </div>
-              <div className="space-y-4">
-                {solutions.map((solution, index) => (
-                  <Card key={index} className="border-primary/20 bg-primary/5">
-                    <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-3">
-                      <div className="rounded-lg bg-primary/10 p-2">
-                        <HugeiconsIcon icon={solution.icon} className="size-5 text-primary" />
-                      </div>
-                      <CardTitle className="text-base">{solution.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground">{solution.description}</p>
-                    </CardContent>
-                  </Card>
+          <div className="overflow-x-auto rounded-lg border bg-card">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                  <TableHead className="w-1/2 px-4 py-4 text-base font-semibold">
+                    {t("problemColumn")}
+                  </TableHead>
+                  <TableHead className="w-1/2 border-l px-4 py-4 text-base font-semibold">
+                    {t("solutionColumn")}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {ROW_IDS.map((id, index) => (
+                  <TableRow key={id} className="align-top">
+                    <TableCell className="whitespace-normal px-4 py-5">
+                      <TopicCell
+                        icon={ROW_ICONS[index].problem}
+                        title={t(`rows.${id}.problemTitle`)}
+                        description={t(`rows.${id}.problemDescription`)}
+                        tone="problem"
+                      />
+                    </TableCell>
+                    <TableCell className="whitespace-normal border-l px-4 py-5">
+                      <TopicCell
+                        icon={ROW_ICONS[index].solution}
+                        title={t(`rows.${id}.solutionTitle`)}
+                        description={t(`rows.${id}.solutionDescription`)}
+                        tone="solution"
+                      />
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </div>
-            </div>
+              </TableBody>
+            </Table>
           </div>
         </div>
       </div>

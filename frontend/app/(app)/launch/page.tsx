@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LaunchForm } from "@/components/launch/launch-form"
 import { TokenCard } from "@/components/launch/token-card"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useMyTokens } from "@/hooks/token/useLaunchData"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
@@ -33,31 +34,22 @@ export default function LaunchPage() {
 
   if (showForm) {
     return (
-      <div className="space-y-6 pt-2">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight">{t("formTitle")}</h1>
-          <p className="text-sm text-muted-foreground">{t("formSubtitle")}</p>
-        </div>
+      <AppPage title={t("formTitle")} description={t("formSubtitle")}>
         <LaunchForm onLaunch={handleLaunch} />
-      </div>
+      </AppPage>
     )
   }
 
   return (
-    <div className="space-y-6 pt-2">
-      <div>
-        <h1 className="text-xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-      </div>
-
+    <AppPage title={t("title")} description={t("subtitle")}>
       <button
         type="button"
         onClick={() => setShowForm(true)}
-        className="flex w-full items-center gap-3 rounded-2xl border border-dashed bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 p-4 text-left transition-colors hover:bg-muted/40"
+        className="flex w-full items-center gap-3 rounded-2xl border border-dashed bg-muted/40 p-4 text-left transition-colors hover:bg-muted"
       >
         <span className="min-w-0">
-          <span className="block text-sm font-bold text-amber-950">{t("createCta")}</span>
-          <span className="block text-xs font-medium text-amber-900/70">{t("createCtaBody")}</span>
+          <span className="block text-sm font-semibold">{t("createCta")}</span>
+          <span className="block text-xs text-muted-foreground">{t("createCtaBody")}</span>
         </span>
       </button>
 
@@ -80,6 +72,6 @@ export default function LaunchPage() {
           </div>
         )}
       </div>
-    </div>
+    </AppPage>
   )
 }

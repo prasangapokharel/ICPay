@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ProposalList } from "@/components/governance/proposal-list"
+import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useGovernanceFeed } from "@/hooks/governance/useGovernance"
 import {
   filterProposals,
@@ -23,17 +24,15 @@ export default function GovernancePage() {
   const filteredSns = filterProposals(sns, filter)
 
   return (
-    <div className="space-y-6 pt-2">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
-        </div>
+    <AppPage
+      title={t("title")}
+      description={t("subtitle")}
+      actions={
         <Button type="button" size="sm" variant="outline" onClick={() => void refresh()}>
           {t("refresh")}
         </Button>
-      </div>
-
+      }
+    >
       <p className="text-xs text-muted-foreground">{t("readOnlyNote")}</p>
 
       <div className="flex flex-wrap gap-2">
@@ -67,6 +66,6 @@ export default function GovernancePage() {
           <ProposalList key={`governance-sns-${filter}`} rows={filteredSns} loading={loading} />
         </TabsContent>
       </Tabs>
-    </div>
+    </AppPage>
   )
 }

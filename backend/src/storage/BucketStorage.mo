@@ -5,6 +5,7 @@ import Principal "mo:core/Principal";
 import Blob "mo:core/Blob";
 import Text "mo:core/Text";
 import Types "../types";
+import FolderPath "../utils/FolderPath";
 
 /// Bucket stable store — file metadata only; bytes live on the blob store canister.
 module {
@@ -17,6 +18,7 @@ module {
     buckets: Map.Map<BucketId, Bucket>;
     files: Map.Map<FileId, StoredFile>;
     pathIndex: Map.Map<Text, FileId>;
+    folders: Map.Map<Text, Int>;
     ownerIndex: Map.Map<Principal, [BucketId]>;
     apiKeys: Map.Map<Text, Types.ApiKey>;
     keyHashIndex: Map.Map<Text, Text>;
@@ -30,6 +32,7 @@ module {
       buckets = Map.empty<BucketId, Bucket>();
       files = Map.empty<FileId, StoredFile>();
       pathIndex = Map.empty<Text, FileId>();
+      folders = Map.empty<Text, Int>();
       ownerIndex = Map.empty<Principal, [BucketId]>();
       apiKeys = Map.empty<Text, Types.ApiKey>();
       keyHashIndex = Map.empty<Text, Text>();
@@ -130,6 +133,7 @@ module {
   public func putFile(store: BucketStore, file: StoredFile) {
     store.files.add(file.id, file);
     store.pathIndex.add(pathKey(file.bucketId, file.path), file.id);
+    pruneMaterializedFolders(store, file.bucketId, file.path);
   };
 
   public func getFile(store: BucketStore, id: FileId) : ?StoredFile {
@@ -200,6 +204,16 @@ module {
     for (id in fileIds.vals()) {
       ignore deleteFile(store, id);
     };
+    let folderPrefix = bucketId # ":";
+    var staleFolders : [Text] = [];
+    for ((key, _) in store.folders.entries()) {
+      if (Text.startsWith(key, #text folderPrefix)) {
+        staleFolders := Array.concat(staleFolders, [key]);
+      };
+    };
+    for (key in staleFolders.vals()) {
+      store.folders.remove(key);
+    };
     switch (store.bucketKeyIndex.get(bucketId)) {
       case (null) {};
       case (?keyIds) {
@@ -214,6 +228,66 @@ module {
         };
         store.bucketKeyIndex.remove(bucketId);
       };
+    };
+  };
+
+  public func putFolder(store: BucketStore, bucketId: BucketId, path: Text, createdAt: Int) {
+    store.folders.add(pathKey(bucketId, path), createdAt);
+  };
+
+  public func removeFolder(store: BucketStore, bucketId: BucketId, path: Text) : Bool {
+    let key = pathKey(bucketId, path);
+    switch (store.folders.get(key)) {
+      case (null) false;
+      case (?_) {
+        store.folders.remove(key);
+        true
+      };
+    }
+  };
+
+  public func hasFolder(store: BucketStore, bucketId: BucketId, path: Text) : Bool {
+    switch (store.folders.get(pathKey(bucketId, path))) {
+      case (null) false;
+      case (?_) true;
+    }
+  };
+
+  public func listFolderPaths(store: BucketStore, bucketId: BucketId) : [Text] {
+    let marker = bucketId # ":";
+    var out : [Text] = [];
+    for ((key, _) in store.folders.entries()) {
+      if (Text.startsWith(key, #text marker)) {
+        let iter = Text.split(key, #text marker);
+        ignore iter.next();
+        switch (iter.next()) {
+          case (?path) { out := Array.concat(out, [path]) };
+          case (null) {};
+        };
+      };
+    };
+    out
+  };
+
+  public func pruneMaterializedFolders(store: BucketStore, bucketId: BucketId, filePath: Text) {
+    let marker = bucketId # ":";
+    var stale : [Text] = [];
+    for ((key, _) in store.folders.entries()) {
+      if (Text.startsWith(key, #text marker)) {
+        let iter = Text.split(key, #text marker);
+        ignore iter.next();
+        switch (iter.next()) {
+          case (?folderPath) {
+            if (FolderPath.folderCoversFile(folderPath, filePath)) {
+              stale := Array.concat(stale, [key]);
+            };
+          };
+          case (null) {};
+        };
+      };
+    };
+    for (key in stale.vals()) {
+      store.folders.remove(key);
     };
   };
 

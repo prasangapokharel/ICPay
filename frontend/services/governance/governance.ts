@@ -1,11 +1,10 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
 import { NnsGovernanceCanister } from "@icp-sdk/canisters/nns"
-import { initSnsWrapper } from "@icp-sdk/canisters/sns"
 import { createAgent } from "@/services/icp"
-import { fetchSnsRegistryList, findSnsRegistryRow } from "@/services/sns/registry"
-
-const NNS_GOVERNANCE_ID = "rrkah-fqaaa-aaaaa-aaaaq-cai"
+import { NNS_GOVERNANCE_CANISTER_ID } from "@/lib/ic/constants"
+import type { SnsProposalRow } from "@/services/sns/proposals"
+import { fetchSnsProposalsForHoldings, snsDashboardUrl } from "@/services/sns/proposals"
 
 export type ProposalRow = {
   id: bigint
@@ -14,6 +13,29 @@ export type ProposalRow = {
   status: string
   source: "nns" | "sns"
   ledgerId?: string
+}
+
+export type ProposalFilter = "all" | "open" | "executed" | "rejected"
+
+export { snsDashboardUrl }
+
+export function filterProposals(rows: ProposalRow[], filter: ProposalFilter): ProposalRow[] {
+  if (filter === "all") return rows
+  return rows.filter((row) => proposalMatchesFilter(row, filter))
+}
+
+function proposalMatchesFilter(row: ProposalRow, filter: ProposalFilter): boolean {
+  const s = row.status.toLowerCase()
+  switch (filter) {
+    case "open":
+      return s.includes("open") || s === "adopted"
+    case "executed":
+      return s.includes("execut") || s === "executed"
+    case "rejected":
+      return s.includes("reject") || s.includes("fail") || s === "failed"
+    default:
+      return true
+  }
 }
 
 function proposalStatusLabel(status: unknown): string {
@@ -25,55 +47,8 @@ function proposalStatusLabel(status: unknown): string {
   return String(status)
 }
 
-export type ProposalFilter = "all" | "open" | "executed" | "rejected"
-
-export type SnsRegistryEntry = {
-  ledgerId: string
-  rootCanisterId?: string
-  swapCanisterId?: string
-  governanceCanisterId?: string
-}
-
-export function filterProposals(rows: ProposalRow[], filter: ProposalFilter): ProposalRow[] {
-  if (filter === "all") return rows
-  return rows.filter((row) => proposalMatchesFilter(row, filter))
-}
-
-function proposalMatchesFilter(row: ProposalRow, filter: ProposalFilter): boolean {
-  const s = row.status.toLowerCase()
-  switch (filter) {
-    case "open":
-      return s.includes("open") || s === "adopted" || s === "open"
-    case "executed":
-      return s.includes("execut") || s === "executed"
-    case "rejected":
-      return s.includes("reject") || s.includes("fail") || s === "rejected"
-    default:
-      return true
-  }
-}
-
-export async function fetchSnsRegistryEntry(
-  identity: Identity | undefined,
-  ledgerId: string
-): Promise<SnsRegistryEntry | null> {
-  const rows = await fetchSnsRegistryList(identity)
-  const hit = findSnsRegistryRow(rows, ledgerId)
-  if (!hit) return null
-  return {
-    ledgerId: hit.ledgerId,
-    rootCanisterId: hit.rootCanisterId,
-    swapCanisterId: hit.swapCanisterId,
-    governanceCanisterId: hit.governanceCanisterId,
-  }
-}
-
 export function nnsProposalUrl(id: bigint): string {
   return `https://dashboard.internetcomputer.org/proposal/${id.toString()}`
-}
-
-export function snsDashboardUrl(rootCanisterId: string): string {
-  return `https://dashboard.internetcomputer.org/sns/${rootCanisterId}`
 }
 
 export async function fetchOpenNnsProposals(
@@ -83,7 +58,7 @@ export async function fetchOpenNnsProposals(
   const agent = await createAgent(identity)
   const governance = NnsGovernanceCanister.create({
     agent,
-    canisterId: Principal.fromText(NNS_GOVERNANCE_ID),
+    canisterId: Principal.fromText(NNS_GOVERNANCE_CANISTER_ID),
   })
 
   const page = await governance.listProposals({
@@ -107,73 +82,21 @@ export async function fetchOpenNnsProposals(
   }))
 }
 
-async function snsRootForLedger(
-  identity: Identity | undefined,
-  ledgerId: string
-): Promise<Principal | null> {
-  const rows = await fetchSnsRegistryList(identity)
-  const hit = findSnsRegistryRow(rows, ledgerId)
-  return hit?.rootCanisterId ? Principal.fromText(hit.rootCanisterId) : null
+function toProposalRows(rows: SnsProposalRow[]): ProposalRow[] {
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    summary: row.summary,
+    status: row.status,
+    source: "sns" as const,
+    ledgerId: row.ledgerId,
+  }))
 }
 
-export async function fetchSnsMeta(
-  identity: Identity | undefined,
-  ledgerId: string
-): Promise<{ title: string; description: string; url?: string } | null> {
-  const root = await snsRootForLedger(identity, ledgerId)
-  if (!root) return null
-
-  const agent = await createAgent(identity)
-  const sns = await initSnsWrapper({
-    certified: false,
-    agent,
-    rootOptions: { canisterId: root },
-  })
-  const [meta] = await sns.metadata({ certified: false })
-  const title = meta.name[0] ?? ""
-  const description = meta.description[0] ?? ""
-  const url = meta.url[0]
-  if (!title && !description) return null
-  return { title, description, url }
-}
-
-export async function fetchSnsProposalsForLedger(
-  identity: Identity | undefined,
-  ledgerId: string,
-  limit = 15
-): Promise<ProposalRow[]> {
-  const root = await snsRootForLedger(identity, ledgerId)
-  if (!root) return []
-
-  const agent = await createAgent(identity)
-  const sns = await initSnsWrapper({
-    certified: false,
-    agent,
-    rootOptions: { canisterId: root },
-  })
-
-  const page = await sns.listProposals({ limit, includeStatus: [] })
-
-  return page.proposals.map((p) => {
-    const proposal = p.proposal[0]
-    return {
-      id: p.id[0]?.id ?? 0n,
-      title: proposal?.title ?? `Proposal ${p.id[0]?.id ?? ""}`,
-      summary: proposal?.summary ?? "",
-      status: p.executed_timestamp_seconds > 0n ? "executed" : "open",
-      source: "sns" as const,
-      ledgerId,
-    }
-  })
-}
-
-export async function fetchSnsProposalsForHoldings(
+export async function fetchSnsProposalsForHoldingsAsRows(
   identity: Identity | undefined,
   ledgerIds: string[]
 ): Promise<ProposalRow[]> {
-  const snsLedgers = ledgerIds.slice(0, 5)
-  const pages = await Promise.all(
-    snsLedgers.map((id) => fetchSnsProposalsForLedger(identity, id, 15))
-  )
-  return pages.flat().sort((a, b) => Number(b.id - a.id))
+  const rows = await fetchSnsProposalsForHoldings(identity, ledgerIds)
+  return toProposalRows(rows)
 }

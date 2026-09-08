@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/context-menu"
 import { Message, MessageContent, MessageFooter } from "@/components/ui/message"
 import { Spinner } from "@/components/ui/spinner"
+import { channelMessageUrl } from "@/lib/community/messageLink"
 import { formatMessageTime } from "@/lib/community/format"
 import { myReactionCode, type ReactionCode } from "@/lib/community/reactions"
 import type { PendingMessage } from "@/lib/community/pendingMessage"
@@ -60,8 +61,10 @@ export function PendingBroadcastMessage({ pending }: { pending: PendingMessage }
 
 export function BroadcastMessage({
   message,
+  channelSlug,
   pinned = false,
   delivered = false,
+  highlighted = false,
   isOwner = false,
   canReact = false,
   canForward = false,
@@ -71,8 +74,10 @@ export function BroadcastMessage({
   onForward,
 }: {
   message: CommunityMessagePublic
+  channelSlug: string
   pinned?: boolean
   delivered?: boolean
+  highlighted?: boolean
   isOwner?: boolean
   canReact?: boolean
   canForward?: boolean
@@ -109,6 +114,10 @@ export function BroadcastMessage({
     await navigator.clipboard.writeText(message.text)
   }
 
+  const copyMessageLink = async () => {
+    await navigator.clipboard.writeText(channelMessageUrl(channelSlug, message.id))
+  }
+
   const handleDelete = () => {
     if (!onDelete || deleting) return
     setDeleting(true)
@@ -123,12 +132,17 @@ export function BroadcastMessage({
     <Bubble
       variant="muted"
       className={cn(
-        "max-w-[min(100%,22rem)]",
+        "max-w-[min(100%,22rem)] transition-shadow duration-500",
         canInteract && "cursor-context-menu",
         deleting && "pointer-events-none scale-[0.98] opacity-40"
       )}
     >
-      <BubbleContent>
+      <BubbleContent
+        className={cn(
+          highlighted &&
+            "border-transparent shadow-[0_10px_28px_-8px_rgba(15,23,42,0.28)] dark:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.55)]"
+        )}
+      >
         <CommunityMessageContent text={message.text} />
       </BubbleContent>
       {canReact && hasReactions && (
@@ -176,6 +190,10 @@ export function BroadcastMessage({
                 <ContextMenuItem onClick={() => void copyMessageText()}>
                   <CommunityIcon name="copy" size={16} />
                   {t("copyText")}
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => void copyMessageLink()}>
+                  <CommunityIcon name="share" size={16} />
+                  {t("copyMessageLink")}
                 </ContextMenuItem>
                 {canForward && onForward && (
                   <ContextMenuItem onClick={onForward}>

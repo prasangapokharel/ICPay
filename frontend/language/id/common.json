@@ -2,6 +2,7 @@
   "nav": {
     "home": "Rumah",
     "icpverse": "ICPverse",
+    "verse": "Verse",
     "send": "Mengirim",
     "bucket": "Keranjang",
     "menu": "Menu",
@@ -41,7 +42,8 @@
     "latestTransactions": "Transaksi Terbaru",
     "seeMore": "Lihat selengkapnya",
     "noTransactions": "Belum ada transaksi",
-    "noTransactionsHint": "Setor ICP untuk memulai"
+    "noTransactionsHint": "Setor ICP untuk memulai",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "Klaim nama pengguna Anda",
@@ -61,7 +63,14 @@
       "activity": "Aktivitas",
       "more": "Lagi",
       "preferences": "Preferensi",
-      "legal": "Legal"
+      "legal": "Legal",
+      "payments": "Payments",
+      "insights": "Insights",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services",
+      "canisters": "Canisters"
     },
     "items": {
       "send": "Mengirim",
@@ -92,7 +101,11 @@
       "analytics": "Analisis",
       "live": "Live",
       "community": "Saluran",
-      "communityBadge": "Beta"
+      "communityBadge": "Beta",
+      "buyPremium": "Buy Premium",
+      "bucketBadge": "50% off",
+      "canisters": "Canisters",
+      "canisterTopup": "Top up"
     },
     "preferencesDescription": "Bahasa, mata uang, penampilan dan suara"
   },
@@ -117,7 +130,7 @@
     "description": "Lonceng saat masuk dan setelah transfer."
   },
   "login": {
-    "heading": "Dompet ICP",
+    "heading": "ICPay",
     "tagline": "Kirim, terima, dan simpan ICP dengan dompet yang diamankan dengan Identitas Internet Anda.",
     "connect": "Masuk",
     "connecting": "Masuk…",
@@ -252,7 +265,22 @@
       "pending": "Tertunda",
       "failed": "Gagal",
       "cancelled": "Dibatalkan"
-    }
+    },
+    "back": "Back",
+    "detailTitle": "Detail transaksi",
+    "rowDate": "Tanggal",
+    "rowId": "ID transaksi",
+    "rowMemo": "Memo",
+    "viewExplorer": "Lihat di explorer",
+    "notFound": "Transaksi tidak ditemukan.",
+    "dateToday": "Hari ini",
+    "dateYesterday": "Kemarin",
+    "amountReceived": "Jumlah diterima",
+    "amountSent": "Jumlah dikirim",
+    "repay": "Bayar kembali",
+    "sendAgain": "Kirim lagi",
+    "rowNetwork": "Jaringan",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "Beli nama pengguna",
@@ -365,9 +393,20 @@
     "transfers": "Transfer",
     "noTokens": "Belum ada token. Setoran muncul di sini secara otomatis.",
     "noTokensFound": "Tidak ada token yang cocok dengan pencarian itu.",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} di luar",
     "swapCta": "Menukar",
-    "selfCustodyNotice": "Anda menyimpan dana di luar ICPay. Buka token untuk memindahkannya."
+    "selfCustodyNotice": "Anda menyimpan dana di luar ICPay. Buka token untuk memindahkannya.",
+    "addToken": "Add token",
+    "addTokenTitle": "Add custom token",
+    "addTokenHint": "Paste an ICRC ledger canister ID. It is saved on this device only.",
+    "addTokenLabel": "Ledger canister",
+    "addTokenPlaceholder": "e.g. ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "addTokenInvalid": "Enter a valid canister ID.",
+    "addTokenExists": "This token is already in your list.",
+    "addTokenNotFound": "Could not load token metadata from this canister.",
+    "addTokenAction": "Add token",
+    "customToken": "Custom token"
   },
   "token": {
     "back": "Dompet",
@@ -394,7 +433,8 @@
     "historyTitle": "Sejarah on-chain",
     "snsLink": "Lihat SNS",
     "snsDashboard": "Dasbor SNS",
-    "snsSwap": "pertukaran SNS"
+    "snsSwap": "pertukaran SNS",
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
   },
   "tokenHistory": {
     "empty": "Belum ada transaksi yang diindeks.",
@@ -666,7 +706,8 @@
       "supplyTooLarge": "Total pasokan terlalu besar",
       "linkScheme": "Tautan harus diawali dengan https://",
       "linkTooLong": "Tautan terlalu panjang"
-    }
+    },
+    "connectWallet": "Hubungkan dompet"
   },
   "icpayToken": {
     "title": "Token ICPAY",
@@ -934,6 +975,11 @@
     "subtitle": "Komunitas siaran — baca gratis, posting sebagai pencipta",
     "newChannel": "Baru",
     "explore": "Mengeksplorasi",
+    "searchChannels": "Search channels",
+    "searchChannelsPlaceholder": "Name or @username",
+    "searchChannelsEmpty": "No channels match that search.",
+    "searchChannelsHint": "Try the exact @username or paste a channel link.",
+    "channelNotFound": "Channel not found",
     "mine": "Saluran saya",
     "empty": "Belum ada saluran",
     "emptyHint": "Buat satu atau jelajahi saluran publik.",
@@ -983,6 +1029,7 @@
     "copyChannelLink": "Salin tautan saluran",
     "copyInviteLink": "Salin tautan undangan",
     "copyText": "Salin teks",
+    "copyMessageLink": "Copy message link",
     "forward": "Maju",
     "forwardTo": "Teruskan ke…",
     "forwardSearch": "Mencari",
@@ -1003,6 +1050,12 @@
     "sendAria": "Kirim siaran",
     "backAria": "Kembali ke saluran",
     "channelInfo": "Informasi saluran",
+    "markdownGuide": "Guide",
+    "markdownGuideTitle": "Posting guide",
+    "markdownGuideDescription": "Telegram-style markdown for broadcast posts. Copy the example and edit it.",
+    "markdownGuideSyntax": "Formatting",
+    "markdownGuideExample": "Example template",
+    "markdownGuideCopy": "Copy example",
     "sort": "Menyortir",
     "sortNewest": "Terbaru",
     "sortMembers": "Anggota terbanyak",
@@ -1057,6 +1110,8 @@
     "formTitle": "Buat ember",
     "formSubtitle": "Bayar dari saldo ICPay Anda",
     "name": "Nama",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "Huruf kecil, angka, tanda hubung — digunakan di URL CDN publik Anda",
     "capacity": "Kapasitas",
     "visibility": "Visibilitas",
@@ -1090,10 +1145,15 @@
     "uploadProgress": "{current} dari {total} — {name}",
     "uploadPreparing": "Mempersiapkan…",
     "uploading": "Mengunggah…",
+    "uploadSuccess": "Berhasil",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "Foto dikonversi ke WebP — dokumen, arsip, audio, hanya font. Tanpa HTML, JS, atau skrip. Maks {max} per file.",
     "uploadFailed": "Pengunggahan gagal — coba lagi atau gunakan file yang lebih kecil",
     "delete": "Menghapus",
     "deleteFileTitle": "Hapus berkas?",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name} akan dihapus dari ember ini. Hal ini tidak dapat dibatalkan.",
     "download": "Unduh",
     "downloadFailed": "Pengunduhan gagal",
@@ -1101,6 +1161,13 @@
     "openInNewTab": "Buka tautan",
     "previewFailed": "Tidak dapat memuat pratinjau",
     "noFiles": "Belum ada file",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "Penyimpanan untuk sementara tidak tersedia",
     "readOnly": "Hanya baca — perbarui untuk mengunggah",
     "invalidFile": "Pilih file di bawah 10 MB",
@@ -1142,6 +1209,16 @@
     "docsTitle": "Panduan ICPay Cloud",
     "docsSubtitle": "Penyimpanan file terenkripsi secara on-chain",
     "docsStorageTitle": "Apa yang Anda dapatkan",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "Bucket dibayar setiap bulan dari saldo ICPay Anda. File tetap terenkripsi saat disimpan di tabung.",
     "docsImagesOnly": "Gambar, dokumen, kode, arsip, audio, dan font (lihat Harga untuk daftar lengkap).",
     "docsWebpNote": "Format asli hingga 10 MB. File besar dipotong secara otomatis (batas masuknya IC adalah 2 MiB per panggilan).",
@@ -1200,6 +1277,1209 @@
     "docsCopyCode": "Salin kode",
     "prevPage": "Sebelumnya",
     "nextPage": "Berikutnya",
-    "pageOf": "Halaman {page} dari {total} · {count} file"
+    "pageOf": "Halaman {page} dari {total} · {count} file",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "Menu",
+      "signIn": "Masuk",
+      "wallet": "Dompet",
+      "openWallet": "Buka dompet",
+      "openMenu": "Buka menu",
+      "sectionProducts": "Produk",
+      "sectionResources": "Sumber Daya",
+      "sectionLegal": "Legal",
+      "primary": {
+        "blog": "Blog",
+        "charity": "Amal"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay Wallet",
+          "description": "Kirim ICP dengan username melalui masuk Internet Identity."
+        },
+        "launch": {
+          "title": "Luncurkan Token",
+          "description": "Buat token ICRC-1 di Internet Computer."
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "Penyimpanan on-chain dengan API key, SDK, dan paket ICP."
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "Framework Motoko produksi dengan CLI global."
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "Perintah dan alur kerja untuk proyek ICFalcon."
+        },
+        "icpHubPackages": {
+          "title": "Paket ICP-Hub",
+          "description": "Paket terkurasi untuk pengembangan Internet Computer."
+        },
+        "icbucketDocs": {
+          "title": "Dokumentasi ICBucket",
+          "description": "Referensi API dan panduan integrasi penyimpanan."
+        },
+        "blog": {
+          "title": "Blog",
+          "description": "Panduan, tutorial, dan artikel ekosistem ICP."
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "Tentang",
+          "description": "Apa itu ICPay dan cara kerja pembayaran username."
+        },
+        "faq": {
+          "title": "FAQ",
+          "description": "Jawaban pertanyaan umum tentang dompet dan produk."
+        },
+        "roadmap": {
+          "title": "Roadmap",
+          "description": "Yang sudah dirilis, selanjutnya, dan yang tidak akan kami bangun."
+        },
+        "brands": {
+          "title": "Merek",
+          "description": "Kebijakan merek dagang dan penggunaan brand."
+        },
+        "terms": {
+          "title": "Ketentuan",
+          "description": "Ketentuan layanan penggunaan ICPay."
+        },
+        "privacy": {
+          "title": "Privasi",
+          "description": "Cara kami menangani data dan informasi akun."
+        },
+        "transparency": {
+          "title": "Transparansi",
+          "description": "Model kustodi, biaya, dan operasi on-chain."
+        },
+        "charity": {
+          "title": "Amal",
+          "description": "Kode QR bantuan bencana resmi pemerintah."
+        }
+      },
+      "sectionMore": "Lainnya",
+      "sectionCanisters": "Canisters",
+      "canisters": {
+        "manage": {
+          "title": "Canister management",
+          "description": "Create canisters and top up cycles from one place."
+        },
+        "create": {
+          "title": "Create canister",
+          "description": "Pay ICP and get a new canister ID via the official CMC."
+        },
+        "topup": {
+          "title": "Top up cycles",
+          "description": "Convert ICP to cycles for any canister via the CMC."
+        },
+        "cycles": {
+          "title": "Cycles wallet",
+          "description": "Mint cycles to the ledger, then withdraw to any canister."
+        },
+        "snapshots": {
+          "title": "Snapshots",
+          "description": "Take, list, load, and delete canister snapshots."
+        },
+        "mine": {
+          "title": "My canisters",
+          "description": "See every canister you created or saved — status and quick actions."
+        },
+        "tools": {
+          "title": "Canister tools",
+          "description": "Create, manage, mint cycles, top up, and snapshots from one hub."
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "Produk",
+      "sectionResources": "Sumber Daya",
+      "sectionLegal": "Legal",
+      "sectionCommunity": "Komunitas",
+      "copyright": "© 2026 ICPay. Hak cipta dilindungi.",
+      "blog": "Blog",
+      "channels": "Saluran",
+      "wallet": "Dompet",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "canister": "Canisters",
+        "topup": "Top up cycles",
+        "wallet": "ICPay Wallet"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "Paket ICP-Hub",
+        "icbucketDocs": "Dokumentasi ICBucket",
+        "blog": "Blog"
+      },
+      "legal": {
+        "about": "Tentang",
+        "faq": "FAQ",
+        "roadmap": "Roadmap",
+        "brands": "Merek",
+        "terms": "Ketentuan",
+        "privacy": "Privasi",
+        "transparency": "Transparansi",
+        "charity": "Amal"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore",
+      "charity": "Amal"
+    },
+    "heroSignOptions": {
+      "label": "Opsi masuk melalui Internet Identity",
+      "ariaLabel": "Masuk Google, Apple, dan Microsoft melalui Internet Identity"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Dompet Internet Computer",
+        "title": "Kirim ICP dengan username, bukan alamat 63 karakter",
+        "tagline": "ICPay adalah dompet kustodi open-source di Internet Computer. Klaim handle, terima pembayaran dari siapa saja, dan jelajahi saluran, penyimpanan on-chain, serta alat Motoko dari satu ekosistem.",
+        "openWallet": "Buka dompet",
+        "browseChannels": "Jelajahi saluran",
+        "signIn": "Masuk",
+        "aboutIcPay": "Tentang ICPay",
+        "imageAlt": "Dompet ICPay di ponsel",
+        "imageAltDesktop": "Dompet ICPay di desktop",
+        "previewMobile": "Mobile",
+        "previewDesktop": "Desktop",
+        "previewTabsLabel": "Pratinjau aplikasi"
+      },
+      "cta": {
+        "signedInTitle": "Anda sudah masuk",
+        "signedInBody": "Buka dompet untuk mengirim ICP, cek saldo, atau jelajahi saluran dan token.",
+        "readyTitle": "Siap transfer ICP dengan username?",
+        "readyBody": "Masuk dengan Internet Identity, klaim handle Anda, dan mulai kirim dalam hitungan detik. Tanpa seed phrase. Tanpa ekstensi browser.",
+        "openWallet": "Buka dompet",
+        "browseChannels": "Jelajahi saluran",
+        "signIn": "Masuk"
+      },
+      "features": {
+        "eyebrow": "Platform",
+        "title": "Dibuat untuk pengguna sehari-hari dan pengembang ICP",
+        "subtitle": "ICPay lebih dari dompet. Ini pintu masuk ke pembayaran, komunitas, penyimpanan, dan pengembangan canister di Internet Computer.",
+        "items": {
+          "0": {
+            "title": "Pembayaran username",
+            "body": "Klaim handle dan bagikan icpay.app/yourname. Pengirim tidak perlu akun atau principal 63 karakter."
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "Masuk dengan passkey atau akun tertaut. Tanpa seed phrase dan tanpa ekstensi browser."
+          },
+          "2": {
+            "title": "Saluran",
+            "body": "Komunitas siaran ala Telegram dengan penemuan publik, undangan privat, dan posting markdown."
+          },
+          "3": {
+            "title": "Penyimpanan ICBucket",
+            "body": "Penyimpanan file on-chain dengan API key dan SDK. Bayar ICP dengan paket 30 hari sederhana, bukan tagihan kartu."
+          },
+          "4": {
+            "title": "Framework ICFalcon",
+            "body": "Kerangka Motoko produksi dengan layering terpaksa, tes, dan CLI global untuk aplikasi Internet Computer."
+          },
+          "5": {
+            "title": "Kustodi transparan",
+            "body": "Dana di subakun per pengguna pada ledger ICP resmi. Backend open source dan hanya upgrade di mainnet."
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "FAQ",
+        "title": "Pertanyaan umum",
+        "subtitle": "Jawaban cepat tentang dompet, model kustodi, dan sisa stack ICPay.",
+        "items": {
+          "0": {
+            "question": "Apa itu ICPay?",
+            "answer": "ICPay adalah dompet kustodi Internet Computer. Masuk dengan Internet Identity, klaim username, dan kirim atau terima ICP dengan handle itu, bukan menyalin alamat principal panjang."
+          },
+          "1": {
+            "question": "Apakah saya perlu seed phrase?",
+            "answer": "Tidak. Autentikasi ditangani Internet Identity. Setujui akses dengan passkey atau penyedia identitas tertaut — tanpa mnemonic di kertas."
+          },
+          "2": {
+            "question": "Apakah ICPay self-custodial?",
+            "answer": "ICPay bersifat kustodi: saldo Anda di subakun per pengguna yang dikendalikan canister ICPay, dan hanya principal Anda yang bisa mengotorisasi transfer. Kode backend open source dan di-deploy di mainnet."
+          },
+          "3": {
+            "question": "Apa lagi selain dompet?",
+            "answer": "Ekosistem yang sama mencakup Saluran publik, penyimpanan on-chain ICBucket, dan ICFalcon — framework Motoko untuk membangun dan deploy canister dengan CLI terstruktur."
+          },
+          "4": {
+            "question": "Bagaimana cara kerja Saluran?",
+            "answer": "Saluran adalah komunitas siaran. Pemilik memposting pembaruan dengan markdown ala Telegram. Saluran publik bisa ditemukan di Explore; saluran privat diakses lewat username atau tautan undangan."
+          },
+          "5": {
+            "question": "Di mana saya bisa baca lebih lanjut?",
+            "answer": "Kunjungi halaman Tentang, FAQ, dan Transparansi untuk detail produk, atau jelajahi blog untuk panduan Internet Computer dan sumber daya pengembang."
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "Cara kerja",
+        "title": "Seberapa sulit menggunakannya?",
+        "subtitle": "Tidak terlalu. Enam langkah dari masuk Internet Identity hingga mengirim ICP dengan username — tanpa ekstensi browser dan tanpa mnemonic.",
+        "stepLabel": "Langkah {step}",
+        "steps": {
+          "0": {
+            "title": "Masuk dengan Internet Identity",
+            "body": "Gunakan passkey atau akun tertaut. Tanpa buku kata sandi dan tanpa seed phrase yang hilang."
+          },
+          "1": {
+            "title": "Klaim @username Anda",
+            "body": "Pilih handle sekali. Orang membayar Anda di icpay.app/yourname, bukan principal 63 karakter."
+          },
+          "2": {
+            "title": "Bagikan tautan atau alamat Anda",
+            "body": "Kirim halaman username atau alamat deposit kepada siapa pun yang perlu membayar Anda dalam ICP."
+          },
+          "3": {
+            "title": "Kirim dengan @username",
+            "body": "Transfer ICP dalam hitungan detik. Ketik handle, konfirmasi jumlah, dan ledger mencatatnya on-chain."
+          },
+          "4": {
+            "title": "Lacak setiap transfer",
+            "body": "Saldo dan riwayat terikat ke ledger ICP resmi. Buka transaksi apa pun di block explorer."
+          },
+          "5": {
+            "title": "Gunakan stack lengkap",
+            "body": "Saluran untuk komunitas, ICBucket untuk file on-chain, dan ICFalcon untuk pengembangan Motoko — ekosistem yang sama."
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "Cara membayar",
+        "title": "Kirim dengan username atau pindai untuk bayar",
+        "subtitle": "Ketik @username untuk mengirim ICP, atau buka kode QR profil untuk menerima. Dompet sama, dua jalur — keduanya diselesaikan di ledger Internet Computer.",
+        "imageAlt": "Alur pembayaran ICPay: kirim ICP dengan username di kiri, pindai QR untuk bayar di kanan"
+      },
+      "products": {
+        "eyebrow": "Ekosistem",
+        "title": "Semua yang dibangun di atas ICPay",
+        "subtitle": "Dompet, penyimpanan, dan alat canister dalam satu stack — untuk builder dan pengguna sehari-hari di Internet Computer.",
+        "items": {
+          "wallet": {
+            "title": "ICPay Wallet",
+            "description": "Kirim, terima, dan simpan ICP dengan handle username dan Internet Identity.",
+            "cta": "Buka dompet"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "Penyimpanan cloud on-chain dengan API key, SDK, dan paket ICP 30 hari.",
+            "cta": "Jelajahi penyimpanan"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "Framework Motoko produksi dengan arsitektur berlapis dan CLI global.",
+            "cta": "Bangun di ICP"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "Bukti sosial",
+        "title": "Bisakah saya mempercayainya?",
+        "subtitle": "ICPay bersifat kustodi dan belum diaudit — kami katakan dengan jelas. Yang bisa Anda verifikasi hari ini: kode open source, canister mainnet, dan kebijakan transparansi yang dipublikasikan.",
+        "visit": "Kunjungi →",
+        "readMore": "Baca selengkapnya →",
+        "items": {
+          "github": {
+            "label": "Open source di GitHub",
+            "description": "Motoko backend dan frontend Next.js bersifat publik. Periksa pergerakan dana, auth, dan jalur upgrade sendiri."
+          },
+          "backendCanister": {
+            "label": "Canister backend mainnet",
+            "description": "Logika dompet berjalan di {canisterId} pada mainnet Internet Computer."
+          },
+          "transparency": {
+            "label": "Halaman transparansi",
+            "description": "Model kustodi, biaya, dan apa yang operator bisa dan tidak bisa lakukan — dengan alamat on-chain untuk diverifikasi."
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "Pembaruan produk, peluncuran, dan berita ekosistem Internet Computer dari @IcpayOfficial."
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "Pembaruan perusahaan dan posting tim dari halaman LinkedIn resmi ICPay."
+          },
+          "frontendCanister": {
+            "label": "Frontend on-chain",
+            "description": "Aset statis dan asal derivasi II disajikan dari {canisterId}."
+          }
+        }
+      },
+      "downloads": {
+        "eyebrow": "Download",
+        "title": "Pay on the go. Anywhere, anytime.",
+        "subtitle": "Install the ICPay desktop app and open your wallet in one click. Sign in with Internet Identity — no browser extension required.",
+        "imageAlt": "ICPay desktop wallet on laptop",
+        "comingSoon": "Coming soon",
+        "download": "Download",
+        "debTitle": "Linux (.deb)",
+        "debBody": "Debian and Ubuntu package.",
+        "platforms": {
+          "windows": {
+            "title": "Windows",
+            "body": "Installer for Windows 10 and later."
+          },
+          "linux": {
+            "title": "Linux",
+            "body": "Fedora RPM for Linux desktops."
+          },
+          "macos": {
+            "title": "macOS",
+            "body": "Native Mac app is on the way."
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "Penyimpanan cloud on-chain",
+        "title": "ICBucket",
+        "tagline": "Simpan file on-chain dengan API kompatibel S3. Tanpa server, tanpa tagihan AWS — paket 30 hari sederhana dibayar ICP dari saldo ICPay Anda.",
+        "tryIcBucket": "Coba ICBucket",
+        "github": "GitHub",
+        "packages": "Paket",
+        "imageAlt": "ICBucket di ponsel"
+      },
+      "install": {
+        "title": "Instalasi",
+        "subtitle": "SDK untuk Node.js, Python, Rust, dan Go. Instal dari npm, PyPI, crates.io, atau modul Go.",
+        "copyLabel": "Salin ke clipboard",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "Panduan integrasi",
+        "title": "Bagaimana Mengintegrasikan ICBucket?",
+        "subtitle": "Buat bucket, unggah file dengan SDK, dan sajikan aset publik lewat HTTPS — semua dari saldo ICPay dengan API kompatibel S3.",
+        "videoAriaLabel": "Cara mengintegrasikan ICBucket"
+      },
+      "problemSolution": {
+        "title": "Masalah & Solusi",
+        "subtitle": "Penyimpanan cloud tradisional mahal, terpusat, dan rumit. ICBucket memperbaikinya dengan penyimpanan on-chain, paket ICP 30 hari, dan API ala S3.",
+        "problemColumn": "Masalah",
+        "solutionColumn": "Solusi",
+        "rows": {
+          "0": {
+            "problemTitle": "Tagihan Bulanan Mahal",
+            "problemDescription": "AWS S3, Google Cloud Storage, dan Azure Blob menagih bulanan. Biaya menumpuk — proyek 10 GB bisa melebihi $240 dalam lima tahun.",
+            "solutionTitle": "Paket 30 Hari Sederhana",
+            "solutionDescription": "Bayar dari saldo ICPay dalam ICP — mulai 0,5 ICP untuk 1 GB per 30 hari. Tanpa kartu kredit. Perpanjang kapan saja dan waktu yang tidak terpakai menumpuk."
+          },
+          "1": {
+            "problemTitle": "Kontrol Terpusat",
+            "problemDescription": "File Anda ada di server orang lain. Penyedia bisa menangguhkan akun, menaikkan harga, atau menutup layanan tanpa pemberitahuan.",
+            "solutionTitle": "Desentralisasi & Tahan Sensor",
+            "solutionDescription": "File disimpan di replika Internet Computer. Tanpa titik kegagalan tunggal — hanya Anda yang bisa menghapus data."
+          },
+          "2": {
+            "problemTitle": "Setup Rumit",
+            "problemDescription": "Setup S3 memerlukan akun AWS, peran IAM, kebijakan bucket, dan konfigurasi CORS — hanya untuk mengunggah file.",
+            "solutionTitle": "API Kompatibel S3",
+            "solutionDescription": "Pengganti langsung S3 dengan metode familiar: createBucket, uploadFile, downloadFile. Migrasi kode yang ada dalam hitungan menit."
+          },
+          "3": {
+            "problemTitle": "Ketergantungan Vendor",
+            "problemDescription": "Setiap penyedia memakai API berbeda. Pindah dari S3 ke Azure berarti menulis ulang kode — tanpa portabilitas nyata.",
+            "solutionTitle": "Verifikasi On-Chain",
+            "solutionDescription": "Setiap unggahan dapat dilacak on-chain. Content-addressable lewat URL canister — tidak berubah dan dapat diaudit."
+          }
+        }
+      },
+      "pricing": {
+        "title": "Ekonomi Penyimpanan",
+        "subtitle": "Bayar di muka dalam ICP dari saldo ICPay — tanpa kartu kredit, tanpa tagihan bulanan mengejutkan. Setiap tingkat adalah paket 30 hari; perpanjang kapan saja dan waktu yang tidak terpakai menumpuk.",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "Memuat harga ICP langsung…",
+        "priceHint": "Estimasi USD dari CoinGecko · 1 ICP ≈ {price}",
+        "mostPopular": "Paling Populer",
+        "per30Days": "per 30 hari",
+        "capacity": "Kapasitas {capacityGb} GB",
+        "getStarted": "Mulai",
+        "footer": "Harga langsung dari canister: biaya siklus penyimpanan IC plus margin 20%, dibulatkan ke langkah 0,5 ICP. Coret menunjukkan harga daftar sebelumnya. Tingkat hingga 500 GB tersedia di aplikasi.",
+        "footerCheckoutIcp": " Checkout selalu dalam ICP.",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "Kapasitas terpesan 1 GB",
+              "1": "Bucket publik & privat",
+              "2": "Autentikasi API key",
+              "3": "Unggahan terpotong",
+              "4": "URL CDN global",
+              "5": "Terenkripsi saat disimpan",
+              "6": "Perpanjang kapan saja — waktu menumpuk"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "Kapasitas terpesan 5 GB",
+              "1": "Beberapa API key",
+              "2": "Metadata & tag file",
+              "3": "Pencarian & daftar folder",
+              "4": "Salin / pindah / hapus massal",
+              "5": "SDK TypeScript, Python & Go",
+              "6": "Perpanjang kapan saja — waktu menumpuk"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "Kapasitas terpesan 10 GB",
+              "1": "Beberapa bucket",
+              "2": "API key tim",
+              "3": "Operasi massal",
+              "4": "Jejak audit on-chain",
+              "5": "Pengiriman file HTTPS",
+              "6": "Perpanjang kapan saja — waktu menumpuk"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "Kapasitas terpesan 50 GB",
+              "1": "Semua fitur Business",
+              "2": "Unggahan throughput lebih tinggi",
+              "3": "Beban kerja produksi",
+              "4": "Hosting aset dApp & NFT",
+              "5": "Aset situs statis",
+              "6": "Perpanjang kapan saja — waktu menumpuk"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "Terbaru dari ICPay",
+        "subtitle": "Ikuti perjalanan kami membangun penyimpanan on-chain untuk Internet Computer"
+      },
+      "features": {
+        "title": "Semua yang Anda Butuhkan untuk Penyimpanan On-Chain",
+        "subtitle": "ICBucket menyediakan fitur penyimpanan cloud kelas enterprise tanpa kompleksitas enterprise atau tagihan bulanan.",
+        "items": {
+          "0": {
+            "title": "Tingkat Kapasitas Fleksibel",
+            "description": "Pilih dari 1GB hingga 100GB. Mulai kecil, skala sesuai kebutuhan. Perpanjang kapan saja untuk memperpanjang durasi penyimpanan."
+          },
+          "1": {
+            "title": "Unggahan Terpotong",
+            "description": "Unggah file besar dalam potongan (hingga 2MB per potongan). Unggahan paralel untuk transfer lebih cepat. Lanjutkan saat koneksi putus."
+          },
+          "2": {
+            "title": "Manajemen API Key",
+            "description": "Buat beberapa API key per bucket dengan izin granular (baca/tulis/hapus). Cabut dan regenerasi kapan saja."
+          },
+          "3": {
+            "title": "Bucket Publik & Privat",
+            "description": "Bucket publik menyajikan file lewat HTTPS. Bucket privat memerlukan auth. Cocok untuk situs statis dan cadangan aman."
+          },
+          "4": {
+            "title": "API Kompatibel S3",
+            "description": "Pengganti langsung AWS S3. Metode familiar: createBucket, uploadFile, listFiles. Migrasi kode yang ada dalam hitungan menit."
+          },
+          "5": {
+            "title": "Keamanan On-Chain",
+            "description": "File disimpan di replika IC. Kontrol akses tingkat canister. Tanpa pelanggaran server, tanpa kebocoran data."
+          },
+          "6": {
+            "title": "Metadata & Pencarian File",
+            "description": "Tag file, tambahkan metadata kustom. Cari berdasarkan nama, tag, atau awalan. Daftar folder, filter berdasarkan tanggal atau ukuran."
+          },
+          "7": {
+            "title": "Pengiriman Konten Cepat",
+            "description": "File disajikan langsung dari canister IC. Tanpa setup CDN. Distribusi global lewat boundary node IC."
+          }
+        }
+      },
+      "architecture": {
+        "title": "Cara Kerja Penyimpanan",
+        "subtitle": "File berada di dalam canister dompet ICPay di Internet Computer — bukan di VM cloud tradisional. Aplikasi Anda berbicara ke canister; subnet menyimpan data terenkripsi.",
+        "canisterId": "ID Canister · {canisterId}",
+        "diagramAriaLabel": "Diagram arsitektur ICBucket",
+        "writePath": "Jalur tulis",
+        "readPath": "Jalur baca",
+        "uploadSteps": {
+          "0": "Buat bucket sekali (bayar ICP untuk kapasitas).",
+          "1": "beginFileUpload → kirim potongan 2 MB → completeFileUpload.",
+          "2": "Canister mengenkripsi setiap file dan menulis ke memori stabil."
+        },
+        "readSteps": {
+          "0": "File privat: pembaruan downloadFile bertanda tangan dari aplikasi Anda.",
+          "1": "File publik: HTTPS GET biasa pada URL gateway canister.",
+          "2": "Tanpa bucket AWS, tanpa server penyimpanan terpisah — satu canister on-chain."
+        }
+      },
+      "comparison": {
+        "title": "Perbandingan ICBucket",
+        "subtitle": "ICBucket vs. penyedia penyimpanan cloud tradisional. Lihat apa yang membedakan kami.",
+        "featureColumn": "Fitur",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "Paket ICP 30 Hari",
+          "1": "Bayar dengan ICP (tanpa kartu kredit)",
+          "2": "Desentralisasi",
+          "3": "Tahan Sensor",
+          "4": "Verifikasi On-Chain",
+          "5": "Tanpa Risiko Penangguhan Akun",
+          "6": "API Kompatibel S3",
+          "7": "URL HTTPS Publik",
+          "8": "Auth API Key",
+          "9": "Unggahan Terpotong"
+        }
+      },
+      "apiGuide": {
+        "title": "Referensi SDK & API",
+        "subtitle": "API kompatibel S3 dengan SDK untuk Node.js, Python, Rust, dan Go. Pengganti langsung AWS S3.",
+        "codeExamples": "Contoh Kode",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "Instalasi",
+        "createInit": "Buat & Inisialisasi",
+        "uploadFiles": "Unggah File",
+        "downloadAccess": "Unduh & Akses",
+        "fileManagement": "Manajemen File",
+        "apiKeyTitle": "Manajemen API Key",
+        "apiKeyIntro": "Buat beberapa API key per bucket dengan izin granular:",
+        "permRead": "read",
+        "permReadDesc": "Unduh file",
+        "permWrite": "write",
+        "permWriteDesc": "Unggah file",
+        "permDelete": "delete",
+        "permDeleteDesc": "Hapus file",
+        "apiKeyFooter": "Cabut dan regenerasi key kapan saja lewat UI web.",
+        "rateLimitsTitle": "Batas Laju",
+        "rateLimitsIntro": "Batas penggunaan wajar untuk stabilitas canister:",
+        "rateLimitUpload": "Unggah: 100 permintaan/menit per API key",
+        "rateLimitDownload": "Unduh: 1000 permintaan/menit (file publik)",
+        "rateLimitList": "Daftar/Cari: 50 permintaan/menit",
+        "rateLimitChunk": "Ukuran potongan: Maks 2MB per potongan",
+        "rateLimitsFooter": "Hubungi kami untuk batas lebih tinggi atau paket enterprise."
+      },
+      "faq": {
+        "title": "Pertanyaan yang Sering Diajukan",
+        "subtitle": "Semua yang perlu Anda ketahui tentang ICBucket. Tidak menemukan jawaban? Hubungi kami.",
+        "items": {
+          "0": {
+            "question": "Apa bedanya ICBucket dengan AWS S3?",
+            "answer": "ICBucket adalah penyimpanan desentralisasi di Internet Computer. Anda membayar ICP setiap 30 hari dari saldo ICPay (mis. 2,5 ICP untuk 5 GB) alih-alih tagihan AWS kartu kredit. File ada on-chain di replika IC. API key dan SDK memudahkan migrasi."
+          },
+          "1": {
+            "question": "Bagaimana cara kerja penagihan?",
+            "answer": "Setiap bucket adalah paket 30 hari dibayar di muka ICP dari saldo ICPay. Saat habis, bucket hanya-baca hingga diperpanjang. Perpanjangan menambah 30 hari — waktu yang tidak terpakai menumpuk. Harga dikutip langsung dari canister (biaya siklus + margin)."
+          },
+          "2": {
+            "question": "Bisakah ICBucket untuk aplikasi produksi?",
+            "answer": "Ya. ICBucket siap produksi dengan 33 tes lulus, unggahan terpotong, auth API key, dan pemantauan siklus. Sudah dipakai untuk metadata NFT, aset dApp, dan situs statis. Namun ini penyimpanan kustodi di IC — pahami trade-off sebelum deploy data kritis."
+          },
+          "3": {
+            "question": "Jenis file apa yang didukung?",
+            "answer": "Semua jenis file: gambar, video, PDF, JSON, HTML, CSS, JS, dll. Tipe konten dipertahankan. Bucket publik menyajikan file dengan MIME type yang benar untuk akses langsung di browser (mis. URL gambar berfungsi)."
+          },
+          "4": {
+            "question": "Bagaimana migrasi dari S3 ke ICBucket?",
+            "answer": "Instal icpay-bucket SDK, buat bucket, buat API key. Ganti panggilan AWS SDK dengan panggilan ICBucket SDK (API hampir identik). Unduh dari S3, unggah ke ICBucket. Perbarui URL di aplikasi. Kebanyakan migrasi <1 jam untuk proyek kecil."
+          },
+          "5": {
+            "question": "Bagaimana jika canister kehabisan siklus?",
+            "answer": "Canister ICBucket dipantau dan diisi ulang otomatis dari pendapatan bucket. Jika siklus sangat rendah, kami memberi tahu pemilik bucket untuk memperpanjang. Dalam kasus terburuk (canister dihapus), file hilang — sangat jarang dengan manajemen siklus yang baik."
+          },
+          "6": {
+            "question": "Bisakah ICBucket untuk metadata NFT?",
+            "answer": "Ya, kasus penggunaan sempurna. Unggah metadata.json dan file gambar. Dapatkan URL on-chain tidak berubah (https://6vbhm-...-cai.icp0.io/bucket/nft-1.json). Tanpa gateway IPFS, tanpa tautan rusak. Bucket publik menyajikan file seketika."
+          },
+          "7": {
+            "question": "Apakah ada batas ukuran file?",
+            "answer": "Unggahan tunggal dibatasi 2MB per permintaan (batas ukuran panggilan IC). Untuk file lebih besar, gunakan unggahan terpotong — bagi menjadi potongan 2MB di sisi klien. SDK menanganinya otomatis. Diuji hingga file 500MB."
+          },
+          "8": {
+            "question": "Bisakah menghapus file?",
+            "answer": "Ya, pemilik bucket bisa menghapus lewat UI web atau API. File yang dihapus langsung dihapus dari canister. Kuota penyimpanan dibebaskan. Hapus massal didukung."
+          },
+          "9": {
+            "question": "Bagaimana membuat bucket publik?",
+            "answer": "Atur visibility: 'public' saat membuat bucket. Bucket publik menyajikan file lewat HTTPS tanpa auth. Siapa pun dengan URL bisa mengakses. Cocok untuk situs statis, aset publik, dan metadata NFT."
+          },
+          "10": {
+            "question": "Bisakah hosting situs statis di ICBucket?",
+            "answer": "Ya. Unggah HTML, CSS, JS, gambar ke bucket publik. Akses lewat URL canister (https://6vbhm-...-cai.icp0.io/bucket/index.html). Atur tipe konten dengan benar. Belum ada auto-serve index.html — tentukan path lengkap di URL."
+          },
+          "11": {
+            "question": "Apa bedanya ICBucket dan IPFS?",
+            "answer": "ICBucket menyimpan file di canister IC dengan API kompatibel S3. IPFS content-addressed dan peer-to-peer. ICBucket tanpa ketergantungan gateway, akses instan, API lebih sederhana. IPFS lebih desentralisasi tapi akses lebih lambat/tidak terduga. Pilih sesuai kebutuhan."
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "Framework ICFalcon",
+        "title": "ICFalcon",
+        "subtitle": "Framework Motoko Siap Produksi untuk Internet Computer",
+        "features": "Arsitektur berlapis terpaksa · Frontend Next.js · CLI global · Auth Internet Identity",
+        "installLabel": "Instal dengan satu perintah",
+        "copyCommand": "Salin perintah",
+        "installHint": "Menginstal dependensi, deploy lokal, dan memulai dev server di localhost:3000",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "Paket"
+      },
+      "problemSolution": {
+        "title": "Dibuat untuk menyelesaikan masalah nyata",
+        "subtitle": "ICFalcon menghilangkan titik gesekan umum dalam pengembangan ICP",
+        "problemHeading": "Masalah",
+        "solutionHeading": "Solusi",
+        "problems": {
+          "0": {
+            "title": "Tidak ada arsitektur standar",
+            "description": "Kebanyakan proyek Motoko dimulai dari nol tanpa panduan jelas tentang layering, pengujian, atau pola deploy. Tim menciptakan ulang struktur setiap kali."
+          },
+          "1": {
+            "title": "Alat tersebar",
+            "description": "Membangun aplikasi ICP berarti mengelola dfx, mops, npm, dan skrip kustom. Tanpa CLI terpadu untuk scaffolding, build, atau deploy di berbagai lingkungan."
+          },
+          "2": {
+            "title": "Kompleksitas integrasi frontend-backend",
+            "description": "Menghubungkan frontend Next.js ke canister Motoko memerlukan pembuatan actor manual, manajemen identitas, dan konfigurasi lingkungan."
+          },
+          "3": {
+            "title": "Template awal terbatas",
+            "description": "Template yang ada terlalu minimal atau terlalu opinionated. Tidak ada jalan tengah untuk aplikasi dunia nyata."
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "Layering siap produksi",
+            "description": "Arsitektur empat lapisan (api → service → repository → storage) dipaksakan sejak hari pertama. Setiap modul mengikuti pola yang sama — onboarding dan pemeliharaan dapat diprediksi."
+          },
+          "1": {
+            "title": "CLI global falcon",
+            "description": "Satu perintah untuk scaffolding modul, menginstal paket, build, tes, dan deploy. Berjalan mulus di lokal dan mainnet dengan konfirmasi interaktif."
+          },
+          "2": {
+            "title": "Stack terintegrasi",
+            "description": "Backend Motoko dengan mo:core, frontend Next.js dengan shadcn/ui, auth Internet Identity, dan ekspor statis. Semua terhubung out of the box."
+          },
+          "3": {
+            "title": "Ekosistem Hub",
+            "description": "Instal paket teruji dari icp-hub dengan `falcon add pkg [name]`. Integrasi ledger, penyimpanan file, pembatasan laju, dan lainnya — plug and play."
+          }
+        }
+      },
+      "article": {
+        "title": "Apa itu ICFalcon?",
+        "subtitle": "Framework yang memberi struktur, alat, dan kecepatan untuk membangun aplikasi Internet Computer",
+        "frameworkTitle": "Framework, bukan boilerplate",
+        "frameworkP1": "ICFalcon adalah titik awal opinionated untuk aplikasi Motoko. Memaksakan arsitektur backend empat lapisan (api → service → repository → storage), dipasangkan dengan frontend Next.js modern, dan menyediakan CLI global untuk scaffolding, build, dan deploy.",
+        "frameworkP2": "Berbeda dari template minimal, ICFalcon memberi pola yang dapat diskalakan — sama seperti di aplikasi produksi seperti ICPay. Manajemen memori stabil, panduan migrasi, integrasi Internet Identity, dan harness pengujian sejak hari pertama.",
+        "layeringTitle": "Arsitektur backend berlapis",
+        "layeringP1": "Backend mengikuti pemisahan perhatian yang ketat. Modul API menangani HTTP dan validasi. Layanan berisi logika bisnis. Repositori mengabstraksi akses data. Penyimpanan mengelola memori stabil.",
+        "layeringP2": "Layering ini dipaksakan oleh konvensi dan didokumentasikan di repo. Saat Anda scaffolding modul dengan falcon m:f Product, keempat lapisan dibuat, dihubungkan ke main.mo, dan file layanan frontend yang cocok dibuat. Tanpa tebak-tebakan, tanpa kabel manual.",
+        "frontendTitle": "Integrasi frontend",
+        "frontendP1": "Frontend adalah Next.js dengan komponen shadcn/ui dan autentikasi Internet Identity. Mengekspor ke file statis (output: \"export\") agar bisa di-host di asset canister atau host konvensional seperti Vercel.",
+        "frontendP2": "Konfigurasi agent, derivasi identitas, dan ID canister sudah terhubung. Canister backend menyajikan file .did yang diambil otomatis oleh frontend. Tanpa pembuatan actor manual atau juggling lingkungan.",
+        "cliTitle": "CLI falcon",
+        "cliP1": "Setiap operasi melalui satu perintah global. Inisialisasi proyek (falcon s:init). Scaffolding modul (falcon m:f Name). Jalankan tes (falcon b:test --local). Deploy (falcon b:deploy, meminta konfirmasi).",
+        "cliP2": "CLI membungkus dfx, mops, dan npm, serta menambahkan scaffolding untuk modul, endpoint API, dan layanan frontend. Menargetkan lokal atau mainnet dengan flag --local, default mainnet untuk keamanan. Perintah didokumentasikan di ops/docs/commands.md.",
+        "hubTitle": "Paket Hub",
+        "hubP1": "ICFalcon terintegrasi dengan icp-hub, koleksi paket Motoko plug-and-play. Instal integrasi ledger, penyimpanan file, pembatasan laju, atau pola umum lain dengan falcon add pkg [name]. Setiap paket mengikuti struktur empat lapisan dan menyertakan tes.",
+        "hubP2": "Paket diberi versi dan diuji secara independen. Hub bersifat open source — Anda bisa berkontribusi atau fork untuk kebutuhan kustom.",
+        "audienceTitle": "Untuk siapa?",
+        "audienceP1": "ICFalcon untuk pengembang yang ingin mengirim aplikasi ICP siap produksi tanpa menciptakan ulang struktur. Jika Anda membangun canister yang membutuhkan memori stabil, backend berlapis, auth Internet Identity, dan frontend modern, ICFalcon membawa Anda lebih cepat.",
+        "audienceP2": "Bukan template minimal. Ini opinionated. Layering dipaksakan, CLI adalah antarmuka utama, dan stack adalah Motoko + Next.js. Jika Anda butuh stack itu dan titik awal yang jelas, ICFalcon adalah jawabannya.",
+        "stackTitle": "Ringkasan stack",
+        "stackBackend": "Backend:",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "Frontend:",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "Alat:",
+        "stackToolingValue": "falcon CLI · scaffold modul · paket icp-hub"
+      },
+      "faq": {
+        "title": "Pertanyaan yang Sering Diajukan",
+        "subtitle": "Pertanyaan umum tentang ICFalcon dan cara menggunakannya",
+        "items": {
+          "0": {
+            "question": "Apa itu ICFalcon?",
+            "answer": "ICFalcon adalah framework Motoko open source untuk membangun aplikasi Internet Computer. Menyediakan arsitektur backend siap produksi, frontend Next.js, dan CLI global untuk scaffolding, build, dan deploy."
+          },
+          "1": {
+            "question": "Apakah saya perlu tahu Motoko?",
+            "answer": "Ya. ICFalcon adalah framework Motoko, jadi familiaritas dengan bahasa diperlukan. Namun arsitektur berlapis dan perintah scaffolding mengurangi boilerplate yang harus ditulis manual."
+          },
+          "2": {
+            "question": "Apa bedanya ICFalcon dengan dfx new?",
+            "answer": "dfx new memberi titik awal minimal. ICFalcon memberi struktur siap produksi dengan layering terpaksa, manajemen memori stabil, integrasi Internet Identity, dan CLI untuk scaffolding modul. Opinionated by design."
+          },
+          "3": {
+            "question": "Bisakah ICFalcon dengan canister yang ada?",
+            "answer": "ICFalcon dirancang sebagai titik awal, bukan alat migrasi. Anda bisa mengadopsi bagian arsitektur (pola layering, perintah CLI) tetapi integrasi penuh memerlukan kerja manual."
+          },
+          "4": {
+            "question": "Apa itu CLI falcon?",
+            "answer": "CLI falcon adalah perintah global yang membungkus dfx, mops, dan npm. Menangani inisialisasi proyek, scaffolding modul, pengujian, build, dan deploy. Menargetkan lokal atau mainnet dengan flag --local."
+          },
+          "5": {
+            "question": "Dari mana saya menginstal paket?",
+            "answer": "Paket backend diinstal dari mops dan icp-hub. Paket frontend dari npm. CLI menyederhanakan sebagian dengan `falcon add pkg [name]`."
+          },
+          "6": {
+            "question": "Apakah ICFalcon siap produksi?",
+            "answer": "Arsitekturnya siap produksi dan digunakan di aplikasi live seperti ICPay. Namun ICFalcon adalah framework, bukan produk SaaS. Anda memiliki canister dan bertanggung jawab atas pengujian, deploy, dan pemeliharaan."
+          },
+          "7": {
+            "question": "Apakah ICFalcon mendukung canister Rust?",
+            "answer": "Tidak. ICFalcon adalah framework Motoko. Untuk Rust, gunakan starter lain atau bangun dari awal."
+          },
+          "8": {
+            "question": "Bagaimana deploy ke mainnet?",
+            "answer": "Jalankan `falcon b:deploy` (tanpa --local). CLI akan meminta konfirmasi sebelum deploy ke mainnet. Mode upgrade adalah default; mode reinstall tidak pernah digunakan untuk menghindari kehilangan data."
+          },
+          "9": {
+            "question": "Bisakah menyesuaikan layering?",
+            "answer": "Arsitektur empat lapisan (api → service → repository → storage) dipaksakan oleh konvensi dan scaffold CLI. Anda bisa menyimpang, tetapi kehilangan manfaat struktur konsisten dan scaffolding otomatis."
+          },
+          "10": {
+            "question": "Bagaimana berkontribusi ke ICFalcon?",
+            "answer": "Fork repositori, buat cabang fitur, dan buka pull request. Ikuti pola di AGENTS.md dan jalankan `falcon b:test --local` serta `falcon p:check --local` sebelum mengirim. Untuk paket hub, kontribusi ke icp-hub secara terpisah."
+          },
+          "11": {
+            "question": "Apakah ICFalcon gratis?",
+            "answer": "Ya. ICFalcon bersifat open source. Kode sumber disediakan apa adanya untuk digunakan dan dimodifikasi. Paket hub dilisensikan per entri di icp-hub."
+          }
+        }
+      }
+    }
+  },
+  "trade": {
+    "title": "Trade",
+    "subtitle": "Swap tokens via ICPSwap",
+    "youPay": "You pay",
+    "youReceive": "You receive",
+    "balance": "Balance",
+    "flip": "Flip tokens",
+    "review": "Review",
+    "confirmTitle": "Confirm trade",
+    "confirmBody": "Review the details below before trading.",
+    "confirmTrade": "Confirm trade",
+    "trading": "Trading…",
+    "slippage": "Slippage",
+    "serviceFee": "Service fee (0.1%)",
+    "poolFee": "Pool fee",
+    "depositFee": "Deposit transfer fee",
+    "rate": "Rate",
+    "successTitle": "Trade complete",
+    "successBody": "Tokens have arrived in your wallet.",
+    "insufficientBalance": "Not enough balance for this trade (includes transfer fee).",
+    "amountTooSmall": "Amount too small after service and transfer fees. Try a larger trade.",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for trading.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "needTwoTokens": "You need at least two supported tokens to trade.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "feeNote": "Service and pool fees come from the amount you pay. Total adds one deposit transfer fee.",
+    "fetchingQuote": "Fetching quote…",
+    "processHint": "On-chain trades usually take 15–30 seconds.",
+    "stepDeposit": "Funding trade balance",
+    "stepExecute": "Executing on ICPSwap",
+    "stepDeliver": "Delivering to your wallet",
+    "balanceAfter": "Wallet balance",
+    "afterLabel": "after"
+  },
+  "cyclesTopUp": {
+    "eyebrow": "Cycles",
+    "title": "Top up a canister",
+    "subtitle": "Pay with your ICPay wallet. We send ICP to your Internet Identity when needed, then mint cycles via the official CMC.",
+    "formTitle": "Top up",
+    "formHint": "Paste a canister ID and amount. Connected steps: send from wallet → mint via CMC → done.",
+    "canisterId": "Canister ID",
+    "canisterPlaceholder": "aaaaa-aa…",
+    "canisterOk": "Canister found on the Internet Computer.",
+    "canisterNotFound": "Canister not found on the IC index. Check the ID.",
+    "amount": "Amount (ICP)",
+    "estimate": "Estimated cycles",
+    "estimateSource": "Estimate from CMC ICP→XDR conversion rate (official).",
+    "rateLine": "1 ICP ≈ {xdr} XDR ≈ {cycles} cycles",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "topUp": "Top up from wallet",
+    "toppingUp": "Topping up…",
+    "sending": "Sending from wallet…",
+    "minting": "Minting cycles…",
+    "stepSend": "Send from wallet",
+    "stepMint": "Mint cycles",
+    "stepDone": "Done",
+    "flowHintSend": "Will send {amount} ICP from your wallet to cover this top-up, then mint.",
+    "flowHintMintOnly": "Your II principal already has enough ICP — minting only.",
+    "successTitle": "Cycles sent",
+    "success": "Minted {cycles} cycles into the canister.",
+    "successWithdrew": "ICP was moved from your ICPay wallet first.",
+    "successHint": "Cycles were deposited. Open the dashboard to confirm status (balance is controller-only on most canisters).",
+    "viewOnDashboard": "View canister on IC dashboard",
+    "amountPaid": "Amount",
+    "failed": "Top-up failed",
+    "blockIndex": "Block index",
+    "invalidCanister": "Enter a valid canister principal",
+    "invalidAmount": "Enter a valid ICP amount",
+    "minAmount": "Minimum is 0.01 ICP",
+    "maxAmount": "Maximum is 50 ICP per call",
+    "insufficient": "Insufficient ICP in your ICPay wallet (amount + fees)",
+    "disclaimer": "Anyone can top up any canister — you do not need to be a controller. Uses the official ICP ledger and Cycles Minting Canister.",
+    "rateBadge": "1 ICP ≈ {xdr} XDR",
+    "cyclesUnit": "cycles",
+    "copyFailed": "Could not copy canister ID",
+    "stepLabel": "Step {n}",
+    "previewTitle": "Preview",
+    "previewRate": "CMC rate",
+    "previewStatus": "Status",
+    "previewReady": "Ready",
+    "previewLiveCycles": "Live cycles",
+    "previewNoController": "Not a controller",
+    "previewLoadingStatus": "Loading status…",
+    "liveStatusTitle": "Live canister status",
+    "runStatus": {
+      "running": "Running",
+      "stopping": "Stopping",
+      "stopped": "Stopped"
+    }
+  },
+  "canisterHub": {
+    "eyebrow": "Canisters",
+    "title": "Create and fuel canisters",
+    "subtitle": "Spin up a new Internet Computer canister or top up cycles — paid from your ICPay wallet through the official CMC. No dfx required.",
+    "createTitle": "Create canister",
+    "createDescription": "Pay ICP, get a new canister ID. You are the controller via Internet Identity.",
+    "topupTitle": "Top up cycles",
+    "topupDescription": "Convert ICP to cycles for any canister ID. Controllers optional.",
+    "note": "Frontend-only tools call the official CMC and ICP ledger. ICPay wallet withdraw is only used when your II principal needs ICP.",
+    "manageTitle": "Manage canister",
+    "manageDescription": "Live status, start/stop, and logs when your Internet Identity is a controller.",
+    "cyclesTitle": "Cycles wallet",
+    "cyclesDescription": "Mint ICP → cycles on the cycles ledger, then withdraw to any canister.",
+    "snapshotsTitle": "Snapshots",
+    "snapshotsDescription": "Take, list, load, and delete snapshots for canisters you control."
+  },
+  "canisterCreate": {
+    "eyebrow": "Canisters",
+    "title": "Create a canister",
+    "subtitle": "Pay with your ICPay wallet. We fund your Internet Identity when needed, then create via the official Cycles Minting Canister.",
+    "formTitle": "Create",
+    "formHint": "Steps: send from wallet → create via CMC → done. Leftover ICP becomes initial cycles.",
+    "controller": "Controller",
+    "controllerTip": "CMC requires the caller (your Internet Identity) as controller. Extra principals can be added below.",
+    "extraControllers": "Extra controllers",
+    "extraControllersTip": "Optional. Comma-separated principals that will also control the canister.",
+    "extraControllersPlaceholder": "principal-1, principal-2",
+    "subnet": "Subnet",
+    "subnetTip": "Default lets CMC pick a subnet. Open the menu to choose another — details load only when opened.",
+    "subnetDefault": "Default (CMC picks)",
+    "amount": "Amount (ICP)",
+    "estimate": "Estimated cycles from ICP",
+    "estimateSource": "Gross estimate from CMC ICP→XDR rate. Creation fee is deducted from this; remainder stays as cycles.",
+    "rateBadge": "1 ICP ≈ {xdr} XDR",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "create": "Create from wallet",
+    "creating": "Creating…",
+    "sending": "Sending from wallet…",
+    "stepSend": "Send from wallet",
+    "stepCreate": "Create via CMC",
+    "stepDone": "Done",
+    "stepLabel": "Step {n}",
+    "flowHintSend": "Will send {amount} ICP from your wallet to cover create, then notify CMC.",
+    "flowHintCreateOnly": "Your II principal already has enough ICP — create only.",
+    "successTitle": "Canister created",
+    "success": "Created canister {canister}.",
+    "successWithdrew": "ICP was moved from your ICPay wallet first.",
+    "successHint": "You are the controller. Install code with dfx or your tooling, and top up cycles when the balance runs low.",
+    "viewOnDashboard": "View on IC dashboard",
+    "topUpNext": "Top up cycles",
+    "amountPaid": "Amount",
+    "blockIndex": "Block index",
+    "failed": "Create failed",
+    "toastSuccess": "Canister created",
+    "invalidAmount": "Enter a valid ICP amount",
+    "minAmount": "Minimum is 0.5 ICP",
+    "maxAmount": "Maximum is 50 ICP per call",
+    "insufficient": "Insufficient ICP in your ICPay wallet (amount + fees)",
+    "metaFailed": "Could not load CMC rate or balance. Retry.",
+    "disclaimer": "Uses the official ICP ledger and Cycles Minting Canister (notify_create_canister). No ICPay backend mint path.",
+    "copyFailed": "Could not copy canister ID",
+    "subnetCountriesUnknown": "Location unknown",
+    "subnetDefaultHint": "Random authorized application subnet",
+    "subnetToggleDetails": "Show subnet details",
+    "subnetIdLabel": "Subnet ID",
+    "subnetCountriesLabel": "Node countries",
+    "subnetNodesLabel": "{nodes} replica nodes · {countries} countries",
+    "subnetMore": "More subnets",
+    "subnetLoadEmpty": "No subnets available right now.",
+    "previewTitle": "Preview",
+    "previewRate": "CMC rate",
+    "viewMine": "My canisters"
+  },
+  "canisterStatus": {
+    "idle": "Enter a canister ID and sign in to load live status.",
+    "deniedTitle": "Controller required",
+    "errorTitle": "Could not load status",
+    "cycles": "Cycles",
+    "reserved": "Reserved cycles",
+    "memory": "Memory",
+    "wasmMemory": "Wasm memory",
+    "stableMemory": "Stable memory",
+    "idleBurn": "Idle burn",
+    "version": "Version",
+    "moduleHash": "Module hash",
+    "freezing": "Freezing threshold",
+    "compute": "Compute allocation",
+    "memoryAlloc": "Memory allocation",
+    "snapshotsSize": "Snapshots size",
+    "controllers": "Controllers",
+    "youControl": "You control",
+    "run": {
+      "running": "Running",
+      "stopping": "Stopping",
+      "stopped": "Stopped"
+    },
+    "deniedBody": "Your Internet Identity cannot read this canister. Paste one you control, or create a new canister first.",
+    "createLink": "Create a canister",
+    "liveMetrics": "Live metrics"
+  },
+  "canisterManage": {
+    "eyebrow": "Canisters",
+    "title": "Manage a canister",
+    "subtitle": "Live canister_status when your Internet Identity is a controller. Start, stop, and fetch logs — no backend.",
+    "formTitle": "Actions",
+    "formHint": "Paste a canister ID you control. Status loads automatically after sign-in.",
+    "canisterId": "Canister ID",
+    "canisterPlaceholder": "aaaaa-aa…",
+    "invalidCanister": "Enter a valid canister principal",
+    "canisterNotFound": "Canister not found on the IC index.",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "start": "Start",
+    "starting": "Starting…",
+    "stop": "Stop",
+    "stopping": "Stopping…",
+    "stopConfirmTitle": "Stop this canister?",
+    "stopConfirmBody": "The canister will stop serving calls until you start it again.",
+    "cancel": "Cancel",
+    "fetchLogs": "Fetch logs",
+    "loadingLogs": "Loading logs…",
+    "logsEmpty": "No log records returned.",
+    "topUpLink": "Top up",
+    "toastStarted": "Canister started",
+    "toastStopped": "Canister stopped",
+    "previewTitle": "Preview",
+    "previewAccess": "Access",
+    "previewController": "Controller",
+    "previewDenied": "Not a controller",
+    "loading": "Loading…",
+    "statusTitle": "Live status",
+    "disclaimer": "Calls the IC management canister (aaaaa-aa) from your browser with Internet Identity. You must be a controller."
+  },
+  "canisterCycles": {
+    "eyebrow": "Cycles",
+    "title": "Cycles wallet",
+    "subtitle": "Mint cycles onto the cycles ledger with ICP, then withdraw to any canister. Official CMC notify_mint_cycles.",
+    "formTitle": "Mint or withdraw",
+    "formHint": "Mint deposits cycles to your II on the cycles ledger. Withdraw sends ledger cycles into a canister.",
+    "tabMint": "Mint",
+    "tabWithdraw": "Withdraw",
+    "amount": "Amount (ICP)",
+    "canisterId": "Canister ID",
+    "canisterPlaceholder": "aaaaa-aa…",
+    "cyclesAmount": "Amount (T cycles)",
+    "cyclesHint": "Enter trillion cycles, e.g. 1.5 for 1.5T cycles.",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "mint": "Mint from wallet",
+    "minting": "Minting…",
+    "sending": "Sending from wallet…",
+    "withdraw": "Withdraw to canister",
+    "withdrawing": "Withdrawing…",
+    "ledgerBalance": "Cycles ledger balance",
+    "estimate": "Estimated mint",
+    "previewTitle": "Preview",
+    "previewRate": "CMC rate",
+    "rateBadge": "1 ICP ≈ {xdr} XDR",
+    "invalidAmount": "Enter a valid ICP amount",
+    "invalidCanister": "Enter a valid canister principal",
+    "invalidCycles": "Enter a valid cycles amount in T",
+    "minAmount": "Minimum is 0.01 ICP",
+    "maxAmount": "Maximum is 50 ICP per call",
+    "insufficient": "Insufficient ICP in your ICPay wallet (amount + fees)",
+    "insufficientCycles": "Insufficient cycles on the ledger",
+    "disclaimer": "Uses the official ICP ledger, CMC (notify_mint_cycles), and cycles ledger. No ICPay backend mint path.",
+    "availableCycles": "Available {pretty} · {tAmount} T",
+    "max": "Max",
+    "successMintTitle": "Cycles minted",
+    "successWithdrawTitle": "Cycles withdrawn",
+    "successMintHint": "Cycles are on your cycles ledger. Withdraw into any canister when ready.",
+    "successWithdrawHint": "Cycles were deposited into this canister.",
+    "cyclesUnit": "cycles",
+    "withdrawNext": "Withdraw to a canister",
+    "viewMine": "My canisters",
+    "viewOnDashboard": "IC dashboard"
+  },
+  "canisterSnapshots": {
+    "eyebrow": "Canisters",
+    "title": "Canister snapshots",
+    "subtitle": "Take and manage snapshots when your Internet Identity is a controller.",
+    "formTitle": "Snapshots",
+    "formHint": "List existing snapshots, take a new one, or load/delete. Load replaces canister state.",
+    "canisterId": "Canister ID",
+    "canisterPlaceholder": "aaaaa-aa…",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "list": "List snapshots",
+    "loading": "Loading…",
+    "take": "Take snapshot",
+    "empty": "No snapshots yet.",
+    "load": "Load",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "loadTitle": "Load this snapshot?",
+    "loadBody": "Loading replaces the canister’s current state with the snapshot. This cannot be undone.",
+    "deleteTitle": "Delete this snapshot?",
+    "deleteBody": "The snapshot will be permanently removed.",
+    "toastTaken": "Snapshot created",
+    "toastLoaded": "Snapshot loaded",
+    "toastDeleted": "Snapshot deleted",
+    "statusTitle": "Live status",
+    "disclaimer": "Snapshot APIs require your Internet Identity to be a controller. Frontend-only via the IC management canister."
+  },
+  "canisterIdField": {
+    "label": "Canister ID",
+    "placeholder": "aaaaa-aa…",
+    "choose": "Mine",
+    "yours": "Your canisters",
+    "emptyHint": "Create a canister first — it will show up here to pick later."
+  },
+  "myCanisters": {
+    "title": "My canisters",
+    "subtitle": "Canisters you created or saved with this Internet Identity. Pick one for live status and actions.",
+    "create": "Create",
+    "yourPrincipal": "Your Internet Identity (controller)",
+    "principalHint": "Copy this to use as a backup controller on another account’s create form.",
+    "copyPrincipal": "Copy principal",
+    "addPlaceholder": "Paste a canister ID to track…",
+    "listTitle": "Mine",
+    "listHint": "Saved in this browser for your II.",
+    "empty": "No canisters yet. Create one or paste an ID you control.",
+    "back": "Back",
+    "detailTitle": "Details",
+    "detailEmpty": "Select a canister to see status and actions.",
+    "manage": "Manage",
+    "topUp": "Top up",
+    "snapshots": "Snapshots",
+    "copyId": "Copy ID",
+    "copied": "Copied",
+    "topUpHistory": "Top-up history",
+    "settings": "Settings",
+    "running": "Running",
+    "dashboard": "IC dashboard",
+    "remove": "Remove",
+    "backupHint": "Status and manage require you to be a controller. Top up works for any canister.",
+    "allTools": "All public tools",
+    "invalidId": "Enter a valid canister ID",
+    "count": "{count}",
+    "metaName": "Name",
+    "metaType": "Type",
+    "metaSubnet": "Subnet",
+    "metaControllers": "Controllers",
+    "menuActions": "Actions",
+    "view": "Lihat",
+    "createWithBackup": "Create with backup controller",
+    "link": "Link",
+    "loading": "Loading…",
+    "linkTitle": "Link a canister",
+    "linkHint": "Save a canister ID locally with an optional name so Mine and Mine pickers stay easy.",
+    "linkId": "Canister ID",
+    "linkName": "Name (optional)",
+    "linkNamePlaceholder": "e.g. Production wallet",
+    "linkCancel": "Cancel",
+    "linkConfirm": "Confirm link",
+    "linkSuccessTitle": "Canister linked",
+    "linkSuccessBody": "Saved to Mine in this browser.",
+    "linkSuccessNamed": "Saved as “{name}”.",
+    "rowDenied": "Not controller",
+    "metaLanguage": "Language",
+    "metaUpdated": "Index updated",
+    "metaSubnetId": "Subnet ID",
+    "metaSubnetType": "Subnet type",
+    "metaSubnetNodes": "Nodes up",
+    "metaSubnetCanisters": "Subnet canisters",
+    "metaUpgrades": "Recent upgrades",
+    "cyclesSource": "Live cycles from canister_status (controller only).",
+    "publicApiHint": "Cycle balance is not public on the IC index or ICRC API — only controllers can read it. Anyone can still",
+    "more": "More",
+    "start": "Start",
+    "stop": "Stop",
+    "starting": "Starting…",
+    "stopping": "Stopping…",
+    "stopConfirmTitle": "Stop this canister?",
+    "stopConfirmBody": "Stopping pauses execution until you start it again. Controllers only.",
+    "topUpTitle": "Top up cycles",
+    "topUpHint": "Send ICP from your wallet via CMC into this canister’s cycles balance.",
+    "topUpEstimate": "≈ {cycles} cycles",
+    "topUpCancel": "Cancel",
+    "topUpConfirm": "Confirm top up",
+    "transfer": "Transfer",
+    "transferTitle": "Transfer cycles",
+    "transferHint": "Sends from your cycles ledger to another canister via the official Cycles Ledger withdraw. Controllers cannot pull cycles out of a canister’s own balance.",
+    "transferFromContext": "Opened from",
+    "transferAmount": "Amount (T cycles)",
+    "transferConfirm": "Confirm transfer",
+    "transferCancel": "Cancel",
+    "transferring": "Transferring…",
+    "transferSuccessTitle": "Cycles transferred",
+    "transferSuccessBody": "Deposited to the destination canister from your cycles ledger.",
+    "transferLedgerEmpty": "Your cycles ledger is empty.",
+    "transferMintLink": "Mint cycles first",
+    "topUpEstimateLabel": "Estimated cycles",
+    "topUpEstimateHint": "Gross estimate from CMC ICP→XDR rate.",
+    "addController": "Add controller",
+    "addControllerTitle": "Add controller",
+    "addControllerHint": "Grants another principal full control of this canister via update_settings. Controllers is a full-replacement list — the current list is fetched and kept, this principal is only appended.",
+    "addControllerLabel": "Principal ID",
+    "addControllerPlaceholder": "aaaaa-aa…",
+    "addControllerFullListHint": "Existing controllers stay in place. This adds one more.",
+    "addControllerConfirm": "Add controller",
+    "addControllerSubmitting": "Adding…",
+    "addControllerSuccessTitle": "Controller added",
+    "addControllerSuccessBody": "This principal can now manage the canister.",
+    "invalidPrincipal": "Enter a valid principal ID"
   }
 }

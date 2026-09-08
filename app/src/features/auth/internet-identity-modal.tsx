@@ -5,12 +5,12 @@ import type { Ed25519KeyIdentity } from '@icp-sdk/core/identity'
 import type { Identity } from '@icp-sdk/core/agent'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
-import { buildAuthBridgeUrl, identityFromCallback, II_CALLBACK } from '@/services/auth/ii-native'
+import { buildAuthBridgeUrl, identityFromCallback, II_CALLBACK, type AuthBridgeOptions } from '@/services/auth/ii-native'
 
 type Props = {
   open: boolean
   session: Ed25519KeyIdentity | null
-  provider?: string
+  options?: AuthBridgeOptions
   onClose: () => void
   onSuccess: (identity: Identity) => void
   onError: (message: string) => void
@@ -19,14 +19,14 @@ type Props = {
 export function InternetIdentityModal({
   open,
   session,
-  provider,
+  options,
   onClose,
   onSuccess,
   onError,
 }: Props) {
   const uri = useMemo(
-    () => (session ? buildAuthBridgeUrl(session, provider) : 'about:blank'),
-    [open, session, provider],
+    () => (session ? buildAuthBridgeUrl(session, options) : 'about:blank'),
+    [open, session, options],
   )
 
   const intercept = async (url: string) => {
@@ -50,7 +50,7 @@ export function InternetIdentityModal({
               <Button
                 variant="ghost"
                 size="sm"
-                onPress={() => void Linking.openURL(buildAuthBridgeUrl(session, provider))}
+                onPress={() => void Linking.openURL(buildAuthBridgeUrl(session, options))}
               >
                 Browser
               </Button>

@@ -24,8 +24,7 @@ import type {
   ApiResult_19,
   ApiResult_20,
   ApiResult_21,
-  SwapQuoteResult,
-  SwapResult,
+  TradeDepositResult,
 } from "@/services/types"
 
 export interface WalletActor {
@@ -104,6 +103,7 @@ export interface WalletActor {
     uploadId: string,
     apiKey: [] | [string]
   ) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
+  cancelUpload: (uploadId: string) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
   downloadFile: (
     bucketId: string,
     path: string,
@@ -115,12 +115,41 @@ export interface WalletActor {
     path: string,
     apiKey: [] | [string]
   ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
+  bulkDeleteFiles: (
+    bucketId: string,
+    paths: string[],
+    apiKey: [] | [string]
+  ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
   listFiles: (
     bucketId: string,
     page: bigint,
     pageSize: bigint,
     apiKey: [] | [string]
   ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  listFolder: (
+    bucketId: string,
+    prefix: string,
+    page: bigint,
+    pageSize: bigint,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  searchFiles: (
+    bucketId: string,
+    searchQuery: string,
+    page: bigint,
+    pageSize: bigint,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  createFolder: (
+    bucketId: string,
+    path: string,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
+  deleteFolder: (
+    bucketId: string,
+    path: string,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
   renewBucket: (bucketId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getBucketCycleStatus: () => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   createApiKey: (
@@ -149,22 +178,14 @@ export interface WalletActor {
     bucketId: string,
     keyId: string
   ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
-  getSwapQuote: (
-    tokenIn: string,
-    tokenOut: string,
-    amountIn: bigint
-  ) => Promise<{ ok: SwapQuoteResult; err?: never } | { err: string; ok?: never }>
-  executeSwap: (
-    tokenIn: string,
-    tokenOut: string,
-    amountIn: bigint,
-    amountOutMin: bigint
-  ) => Promise<{ ok: SwapResult; err?: never } | { err: string; ok?: never }>
-  recoverFailedSwapInput: (
-    tokenIn: string,
-    tokenOut: string,
-    amountIn: bigint
-  ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  depositForTrade: (
+    ledgerId: string,
+    amount: bigint
+  ) => Promise<{ ok: TradeDepositResult; err?: never } | { err: string; ok?: never }>
+  withdrawFromTrade: (
+    ledgerId: string,
+    amount: bigint
+  ) => Promise<{ ok: TradeDepositResult; err?: never } | { err: string; ok?: never }>
   createLiveRoom: (
     title: string,
     visibility: { open: null } | { inviteOnly: null },

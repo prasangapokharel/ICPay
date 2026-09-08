@@ -2,6 +2,7 @@
   "nav": {
     "home": "ホーム",
     "icpverse": "ICPバース",
+    "verse": "Verse",
     "send": "送金",
     "bucket": "クラウド",
     "menu": "メニュー",
@@ -41,7 +42,8 @@
     "latestTransactions": "最新の取引",
     "seeMore": "もっと見る",
     "noTransactions": "取引はまだありません",
-    "noTransactionsHint": "ICP を入金して始めましょう"
+    "noTransactionsHint": "ICP を入金して始めましょう",
+    "quickActions": "Quick Actions"
   },
   "username": {
     "promptTitle": "ユーザー名を取得",
@@ -61,7 +63,14 @@
       "activity": "アクティビティ",
       "more": "その他",
       "preferences": "環境設定",
-      "legal": "法的事項"
+      "legal": "法的事項",
+      "payments": "Payments",
+      "insights": "Insights",
+      "community": "Community",
+      "overview": "Overview",
+      "assets": "Assets",
+      "services": "Services",
+      "canisters": "Canisters"
     },
     "items": {
       "send": "送金",
@@ -91,8 +100,12 @@
       "live": "ライブ",
       "community": "チャンネル",
       "communityBadge": "ベータ",
+      "buyPremium": "Buy Premium",
       "presaleBadge": "開催中",
-      "governance": "ガバナンス"
+      "governance": "ガバナンス",
+      "bucketBadge": "50% off",
+      "canisters": "Canisters",
+      "canisterTopup": "Top up"
     },
     "preferencesDescription": "言語、通貨、表示とサウンド"
   },
@@ -117,7 +130,7 @@
     "description": "サインイン時と送金後にチャイムが鳴ります。"
   },
   "login": {
-    "heading": "ICP ウォレット",
+    "heading": "ICPay",
     "tagline": "Internet Identity で保護されたウォレットで ICP を送受金・保有できます。",
     "connect": "ウォレットを接続",
     "connecting": "接続中…",
@@ -252,7 +265,22 @@
       "pending": "保留中",
       "failed": "失敗",
       "cancelled": "キャンセル済み"
-    }
+    },
+    "back": "Back",
+    "detailTitle": "取引の詳細",
+    "rowDate": "日付",
+    "rowId": "取引ID",
+    "rowMemo": "メモ",
+    "viewExplorer": "エクスプローラーで表示",
+    "notFound": "取引が見つかりません。",
+    "dateToday": "今日",
+    "dateYesterday": "昨日",
+    "amountReceived": "受取金額",
+    "amountSent": "送金金額",
+    "repay": "返済",
+    "sendAgain": "再送金",
+    "rowNetwork": "ネットワーク",
+    "networkIcp": "Internet Computer"
   },
   "buyUsername": {
     "title": "ユーザー名を購入",
@@ -334,9 +362,20 @@
     "transfers": "送金",
     "noTokens": "トークンはまだありません。入金すると自動で表示されます。",
     "noTokensFound": "該当するトークンはありません。",
+    "hideZeroBalances": "Hide zero balances",
     "outsideAmount": "+{amount} 外部",
     "selfCustodyNotice": "ICPay の外に資金があります。トークンを開いて移してください。",
-    "swapCta": "スワップ"
+    "swapCta": "スワップ",
+    "addToken": "Add token",
+    "addTokenTitle": "Add custom token",
+    "addTokenHint": "Paste an ICRC ledger canister ID. It is saved on this device only.",
+    "addTokenLabel": "Ledger canister",
+    "addTokenPlaceholder": "e.g. ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "addTokenInvalid": "Enter a valid canister ID.",
+    "addTokenExists": "This token is already in your list.",
+    "addTokenNotFound": "Could not load token metadata from this canister.",
+    "addTokenAction": "Add token",
+    "customToken": "Custom token"
   },
   "token": {
     "back": "ウォレット",
@@ -363,7 +402,8 @@
     "historyTitle": "On-chain history",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
-    "snsSwap": "SNS swap"
+    "snsSwap": "SNS swap",
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
   },
   "sendToken": {
     "title": "{symbol} を送金",
@@ -596,7 +636,8 @@
       "supplyTooLarge": "総供給量が大きすぎます",
       "linkScheme": "リンクは https:// で始まる必要があります",
       "linkTooLong": "リンクが長すぎます"
-    }
+    },
+    "connectWallet": "ウォレットを接続"
   },
   "icpayToken": {
     "title": "ICPAY トークン",
@@ -757,6 +798,8 @@
     "formTitle": "バケットを作成",
     "formSubtitle": "ICPay残高から支払い",
     "name": "名前",
+    "fileSize": "Size",
+    "mimeType": "Type",
     "nameHint": "小文字・数字・ハイフン — 公開CDN URLに使用",
     "capacity": "容量",
     "visibility": "公開設定",
@@ -790,10 +833,15 @@
     "uploadProgress": "{current} / {total} — {name}",
     "uploadPreparing": "準備中…",
     "uploading": "アップロード中…",
+    "uploadSuccess": "完了",
+    "uploadedCount": "{count} uploaded",
     "uploadHint": "写真はWebPに変換 — ドキュメント・アーカイブ・音声・フォントのみ。HTML、JS、スクリプトは不可。1ファイル最大{max}。",
     "uploadFailed": "アップロード失敗 — 再試行するか小さいファイルを使用してください",
     "delete": "削除",
     "deleteFileTitle": "ファイルを削除しますか？",
+    "selectedCount": "{count} selected",
+    "deleteSelectedTitle": "Delete selected?",
+    "deleteSelectedBody": "{count} items will be removed from this bucket. This cannot be undone.",
     "deleteFileBody": "{name}はこのバケットから削除されます。元に戻せません。",
     "download": "ダウンロード",
     "downloadFailed": "ダウンロード失敗",
@@ -801,6 +849,13 @@
     "openInNewTab": "リンクを開く",
     "previewFailed": "プレビューを読み込めませんでした",
     "noFiles": "ファイルがありません",
+    "refresh": "Refresh",
+    "filterFiles": "Filter files",
+    "sortBy": "Sort",
+    "sortName": "Name",
+    "sortSize": "Size",
+    "sortType": "Type",
+    "noFilterMatch": "No matching files",
     "serviceUnavailable": "ストレージは一時的に利用できません",
     "readOnly": "読み取り専用 — 更新してアップロード",
     "invalidFile": "10 MB未満のファイルを選択してください",
@@ -842,6 +897,16 @@
     "docsTitle": "ICPay Cloudガイド",
     "docsSubtitle": "オンチェーン暗号化ファイルストレージ",
     "docsStorageTitle": "提供内容",
+    "docsQuickstartTitle": "Quickstart",
+    "docsQuickstartBody": "Install the official SDK, create a bucket in ICPay, then upload your first file in under two minutes.",
+    "docsQuickstartInstall": "Install",
+    "docsQuickstartNext": "Create a bucket in the app to get your bucket ID and API key, then upload:",
+    "docsSdkTypescriptTitle": "TypeScript SDK",
+    "docsSdkTypescriptBody": "Install, client setup, and upload for icpay-bucket v1.2+.",
+    "docsSdkTypescriptInstallNote": "Requires Node.js 18+.",
+    "docsSdkPythonTitle": "Python SDK",
+    "docsSdkPythonBody": "Install icpay-bucket and connect with your bucket API key.",
+    "docsSdkClientTitle": "Client",
     "docsStorageBody": "バケットはICPay残高から月額課金されます。ファイルはcanister上で保存時暗号化されます。",
     "docsImagesOnly": "画像、ドキュメント、コード、アーカイブ、音声、フォント（完全なリストはPricingを参照）。",
     "docsWebpNote": "ネイティブ形式は最大10 MB。大きなファイルは自動チャンク分割（IC ingress制限は1回2 MiB）。",
@@ -900,7 +965,12 @@
     "docsCopyCode": "コードをコピー",
     "prevPage": "前へ",
     "nextPage": "次へ",
-    "pageOf": "{page} / {total}ページ · {count}ファイル"
+    "pageOf": "{page} / {total}ページ · {count}ファイル",
+    "createFolder": "Create folder",
+    "folder": "Folder",
+    "folderName": "Folder name",
+    "folderHint": "Uploads go into this folder as a path prefix. The API has no empty-folder type.",
+    "selectFile": "Select a file to preview"
   },
   "analytics": {
     "title": "Analytics",
@@ -1051,6 +1121,11 @@
     "subtitle": "Broadcast communities — read free, post as creator",
     "newChannel": "New",
     "explore": "Explore",
+    "searchChannels": "Search channels",
+    "searchChannelsPlaceholder": "Name or @username",
+    "searchChannelsEmpty": "No channels match that search.",
+    "searchChannelsHint": "Try the exact @username or paste a channel link.",
+    "channelNotFound": "Channel not found",
     "mine": "My channels",
     "empty": "No channels yet",
     "emptyHint": "Create one or explore public channels.",
@@ -1100,6 +1175,7 @@
     "copyChannelLink": "Copy channel link",
     "copyInviteLink": "Copy invite link",
     "copyText": "Copy text",
+    "copyMessageLink": "Copy message link",
     "forward": "Forward",
     "forwardTo": "Forward to…",
     "forwardSearch": "Search",
@@ -1120,6 +1196,12 @@
     "sendAria": "Send broadcast",
     "backAria": "Back to channels",
     "channelInfo": "Channel info",
+    "markdownGuide": "Guide",
+    "markdownGuideTitle": "Posting guide",
+    "markdownGuideDescription": "Telegram-style markdown for broadcast posts. Copy the example and edit it.",
+    "markdownGuideSyntax": "Formatting",
+    "markdownGuideExample": "Example template",
+    "markdownGuideCopy": "Copy example",
     "sort": "Sort",
     "sortNewest": "Newest",
     "sortMembers": "Most members",
@@ -1201,5 +1283,1203 @@
       "rejected": "Rejected"
     },
     "snsProjectLink": "View SNS project"
+  },
+  "publicSite": {
+    "nav": {
+      "menu": "メニュー",
+      "signIn": "サインイン",
+      "wallet": "ウォレット",
+      "openWallet": "ウォレットを開く",
+      "openMenu": "メニューを開く",
+      "sectionProducts": "プロダクト",
+      "sectionResources": "リソース",
+      "sectionLegal": "法的情報",
+      "primary": {
+        "blog": "ブログ",
+        "charity": "チャリティ"
+      },
+      "products": {
+        "wallet": {
+          "title": "ICPay ウォレット",
+          "description": "Internet Identity でサインインし、ユーザー名で ICP を送金。"
+        },
+        "launch": {
+          "title": "トークンをローンチ",
+          "description": "Internet Computer上でICRC-1トークンを作成。"
+        },
+        "icbucket": {
+          "title": "ICBucket",
+          "description": "API キー、SDK、ICP プランに対応したオンチェーンストレージ。"
+        },
+        "icfalcon": {
+          "title": "ICFalcon",
+          "description": "グローバル CLI 付きの本番向け Motoko フレームワーク。"
+        }
+      },
+      "resources": {
+        "falconCli": {
+          "title": "Falcon CLI",
+          "description": "ICFalcon プロジェクトのコマンドとワークフロー。"
+        },
+        "icpHubPackages": {
+          "title": "ICP-Hub パッケージ",
+          "description": "Internet Computer 開発向けの厳選パッケージ。"
+        },
+        "icbucketDocs": {
+          "title": "ICBucket ドキュメント",
+          "description": "ストレージの API リファレンスと統合ガイド。"
+        },
+        "blog": {
+          "title": "ブログ",
+          "description": "ガイド、チュートリアル、ICP エコシステムの記事。"
+        }
+      },
+      "legal": {
+        "about": {
+          "title": "概要",
+          "description": "ICPay とは何か、ユーザー名決済の仕組み。"
+        },
+        "faq": {
+          "title": "よくある質問",
+          "description": "ウォレットとプロダクトに関するよくある質問への回答。"
+        },
+        "roadmap": {
+          "title": "ロードマップ",
+          "description": "リリース済み機能、今後の予定、作らないもの。"
+        },
+        "brands": {
+          "title": "ブランド",
+          "description": "商標とブランド利用ポリシー。"
+        },
+        "terms": {
+          "title": "利用規約",
+          "description": "ICPay 利用に関するサービス規約。"
+        },
+        "privacy": {
+          "title": "プライバシー",
+          "description": "データとアカウント情報の取り扱い。"
+        },
+        "transparency": {
+          "title": "透明性",
+          "description": "カストディモデル、手数料、オンチェーン運用。"
+        },
+        "charity": {
+          "title": "チャリティ",
+          "description": "政府公式の災害救援QRコード。"
+        }
+      },
+      "sectionMore": "その他",
+      "sectionCanisters": "Canisters",
+      "canisters": {
+        "manage": {
+          "title": "Canister management",
+          "description": "Create canisters and top up cycles from one place."
+        },
+        "create": {
+          "title": "Create canister",
+          "description": "Pay ICP and get a new canister ID via the official CMC."
+        },
+        "topup": {
+          "title": "Top up cycles",
+          "description": "Convert ICP to cycles for any canister via the CMC."
+        },
+        "cycles": {
+          "title": "Cycles wallet",
+          "description": "Mint cycles to the ledger, then withdraw to any canister."
+        },
+        "snapshots": {
+          "title": "Snapshots",
+          "description": "Take, list, load, and delete canister snapshots."
+        },
+        "mine": {
+          "title": "My canisters",
+          "description": "See every canister you created or saved — status and quick actions."
+        },
+        "tools": {
+          "title": "Canister tools",
+          "description": "Create, manage, mint cycles, top up, and snapshots from one hub."
+        }
+      }
+    },
+    "footer": {
+      "sectionProducts": "プロダクト",
+      "sectionResources": "リソース",
+      "sectionLegal": "法的情報",
+      "sectionCommunity": "コミュニティ",
+      "copyright": "© 2026 ICPay. All rights reserved.",
+      "blog": "ブログ",
+      "channels": "チャンネル",
+      "wallet": "ウォレット",
+      "products": {
+        "icfalcon": "ICFalcon",
+        "icbucket": "ICBucket",
+        "canister": "Canisters",
+        "topup": "Top up cycles",
+        "wallet": "ICPay ウォレット"
+      },
+      "resources": {
+        "falconCli": "Falcon CLI",
+        "icpHubPackages": "ICP-Hub パッケージ",
+        "icbucketDocs": "ICBucket ドキュメント",
+        "blog": "ブログ"
+      },
+      "legal": {
+        "about": "概要",
+        "faq": "よくある質問",
+        "roadmap": "ロードマップ",
+        "brands": "ブランド",
+        "terms": "利用規約",
+        "privacy": "プライバシー",
+        "transparency": "透明性",
+        "charity": "チャリティ"
+      },
+      "community": {
+        "github": "GitHub",
+        "x": "X",
+        "linkedin": "LinkedIn",
+        "discord": "Discord"
+      },
+      "sectionCompany": "Company",
+      "sectionExplore": "Explore",
+      "charity": "チャリティ"
+    },
+    "heroSignOptions": {
+      "label": "Internet Identity によるサインイン",
+      "ariaLabel": "Internet Identity 経由の Google、Apple、Microsoft サインイン"
+    },
+    "landing": {
+      "hero": {
+        "eyebrow": "Internet Computer ウォレット",
+        "title": "ユーザー名で ICP を送る。63 文字のアドレスは不要",
+        "tagline": "ICPay は Internet Computer 上のオープンソース・カストディアルウォレットです。ハンドルを取得し、誰からでも支払いを受け取り、チャンネル、オンチェーンストレージ、Motoko ツールをひとつのエコシステムで探索できます。",
+        "openWallet": "ウォレットを開く",
+        "browseChannels": "チャンネルを見る",
+        "signIn": "サインイン",
+        "aboutIcPay": "ICPay について",
+        "imageAlt": "モバイル版 ICPay ウォレット",
+        "imageAltDesktop": "デスクトップのICPayウォレット",
+        "previewMobile": "モバイル",
+        "previewDesktop": "デスクトップ",
+        "previewTabsLabel": "アプリプレビュー"
+      },
+      "cta": {
+        "signedInTitle": "サインイン済みです",
+        "signedInBody": "ウォレットを開いて ICP を送金したり、残高を確認したり、チャンネルやトークンを探索しましょう。",
+        "readyTitle": "ユーザー名で ICP を動かす準備はできましたか？",
+        "readyBody": "Internet Identity でサインインし、ハンドルを取得すれば、数秒で送金を始められます。シードフレーズ不要。ブラウザ拡張も不要です。",
+        "openWallet": "ウォレットを開く",
+        "browseChannels": "チャンネルを見る",
+        "signIn": "サインイン"
+      },
+      "features": {
+        "eyebrow": "プラットフォーム",
+        "title": "日常ユーザーと ICP 開発者のために構築",
+        "subtitle": "ICPay はウォレット以上のものです。Internet Computer 上の決済、コミュニティ、ストレージ、canister 開発への入り口です。",
+        "items": {
+          "0": {
+            "title": "ユーザー名決済",
+            "body": "ハンドルを取得して icpay.app/yourname を共有。送金者はアカウントも 63 文字の principal も不要です。"
+          },
+          "1": {
+            "title": "Internet Identity",
+            "body": "パスキーまたは連携アカウントでサインイン。シードフレーズの書き留めもブラウザ拡張も不要です。"
+          },
+          "2": {
+            "title": "チャンネル",
+            "body": "Telegram 風のブロードキャストコミュニティ。公開ディスカバリー、非公開招待、Markdown 投稿に対応。"
+          },
+          "3": {
+            "title": "ICBucket ストレージ",
+            "body": "API キーと SDK 付きのオンチェーンファイルストレージ。カード請求の代わりに ICP で 30 日プランを購入。"
+          },
+          "4": {
+            "title": "ICFalcon フレームワーク",
+            "body": "レイヤー強制、テスト、Internet Computer アプリ向けグローバル CLI を備えた本番向け Motoko スキャフォールド。"
+          },
+          "5": {
+            "title": "透明なカストディ",
+            "body": "資金は公式 ICP レジャーのユーザー別サブアカウントに保管。バックエンドはオープンソースで、メインネットではアップグレードのみ。"
+          }
+        }
+      },
+      "faq": {
+        "eyebrow": "よくある質問",
+        "title": "よくある質問",
+        "subtitle": "ウォレット、カストディモデル、ICPay スタックのその他についての簡潔な回答。",
+        "items": {
+          "0": {
+            "question": "ICPay とは何ですか？",
+            "answer": "ICPay は Internet Computer 上のカストディアルウォレットです。Internet Identity でサインインし、ユーザー名を取得して、長い principal アドレスの代わりにそのハンドルで ICP の送受信ができます。"
+          },
+          "1": {
+            "question": "シードフレーズは必要ですか？",
+            "answer": "いいえ。認証は Internet Identity が処理します。パスキーまたは連携 ID プロバイダーでアクセスを承認するだけで、紙に保存するニーモニックはありません。"
+          },
+          "2": {
+            "question": "ICPay はセルフカストディですか？",
+            "answer": "ICPay はカストディアルです。残高は ICPay canister が管理するユーザー別サブアカウントに保管され、あなたの principal のみが送金を承認できます。バックエンドコードはオープンソースでメインネットにデプロイされています。"
+          },
+          "3": {
+            "question": "ウォレット以外に何が含まれますか？",
+            "answer": "同じエコシステムには公開チャンネル、ICBucket オンチェーンストレージ、ICFalcon（構造化 CLI で canister を構築・デプロイする Motoko フレームワーク）が含まれます。"
+          },
+          "4": {
+            "question": "チャンネルはどのように機能しますか？",
+            "answer": "チャンネルはブロードキャストコミュニティです。オーナーは Telegram 風 Markdown で更新を投稿します。公開チャンネルは探索で見つけられ、非公開チャンネルはユーザー名または招待リンクでアクセスできます。"
+          },
+          "5": {
+            "question": "詳しくはどこで読めますか？",
+            "answer": "概要、よくある質問、透明性の各ページで製品詳細を確認するか、ブログで Internet Computer のガイドと開発者リソースをご覧ください。"
+          }
+        }
+      },
+      "howItWorks": {
+        "eyebrow": "仕組み",
+        "title": "使い方は難しいですか？",
+        "subtitle": "そうでもありません。Internet Identity サインインからユーザー名での ICP 送金まで 6 ステップ。ブラウザ拡張もニーモニックの書き留めも不要です。",
+        "stepLabel": "ステップ {step}",
+        "steps": {
+          "0": {
+            "title": "Internet Identity でサインイン",
+            "body": "パスキーまたは連携アカウントを使用。パスワード帳もシードフレーズの紛失もありません。"
+          },
+          "1": {
+            "title": "@username を取得",
+            "body": "ハンドルは一度だけ選択。63 文字の principal の代わりに icpay.app/yourname で支払いを受け取れます。"
+          },
+          "2": {
+            "title": "リンクまたはアドレスを共有",
+            "body": "ICP で支払う必要がある人に、ユーザー名ページまたは入金アドレスを送ります。"
+          },
+          "3": {
+            "title": "@username で送金",
+            "body": "数秒で ICP を転送。ハンドルを入力し、金額を確認すれば、レジャーにオンチェーンで記録されます。"
+          },
+          "4": {
+            "title": "すべての転送を追跡",
+            "body": "残高と履歴は公式 ICP レジャーに紐づきます。ブロックエクスプローラーで任意のトランザクションを開けます。"
+          },
+          "5": {
+            "title": "フルスタックを活用",
+            "body": "コミュニティにはチャンネル、オンチェーンファイルには ICBucket、Motoko 開発には ICFalcon——同じエコシステムです。"
+          }
+        }
+      },
+      "howToPay": {
+        "eyebrow": "支払い方法",
+        "title": "ユーザー名で送金、またはスキャンして支払い",
+        "subtitle": "@username を入力して ICP を送金するか、プロフィール QR コードを開いて受け取ります。同じウォレット、2 つの方法——どちらも Internet Computer レジャーで決済されます。",
+        "imageAlt": "ICPay 決済フロー：左はユーザー名での ICP 送金、右は QR コードスキャン決済"
+      },
+      "products": {
+        "eyebrow": "エコシステム",
+        "title": "ICPay 上に構築されたすべて",
+        "subtitle": "ウォレット、ストレージ、canister ツールをひとつのスタックに——Internet Computer のビルダーと日常ユーザー向けに設計。",
+        "items": {
+          "wallet": {
+            "title": "ICPay ウォレット",
+            "description": "ユーザー名ハンドルと Internet Identity で ICP の送受信・保管。",
+            "cta": "ウォレットを開く"
+          },
+          "icbucket": {
+            "title": "ICBucket",
+            "description": "API キー、SDK、30 日 ICP プラン付きのオンチェーンクラウドストレージ。",
+            "cta": "ストレージを探索"
+          },
+          "icfalcon": {
+            "title": "ICFalcon",
+            "description": "レイヤードアーキテクチャとグローバル CLI を備えた本番向け Motoko フレームワーク。",
+            "cta": "ICP で構築"
+          }
+        }
+      },
+      "trust": {
+        "eyebrow": "社会的証明",
+        "title": "信頼できますか？",
+        "subtitle": "ICPay はカストディアルで、まだ監査を受けていません——率直にお伝えします。今日検証できるのはオープンソースコード、メインネット canister、公開された透明性ポリシーです。",
+        "visit": "訪問 →",
+        "readMore": "詳しく見る →",
+        "items": {
+          "github": {
+            "label": "GitHub でオープンソース",
+            "description": "バックエンド Motoko と Next.js フロントエンドは公開されています。資金移動、認証、アップグレードパスを自分で確認できます。"
+          },
+          "backendCanister": {
+            "label": "メインネットバックエンド canister",
+            "description": "ウォレットロジックは Internet Computer メインネットの {canisterId} で動作しています。"
+          },
+          "transparency": {
+            "label": "透明性ページ",
+            "description": "公開されたカストディモデル、手数料、運営者の権限範囲——検証可能なオンチェーンアドレス付き。"
+          },
+          "x": {
+            "label": "X / Twitter",
+            "description": "@IcpayOfficial からの製品アップデート、ローンチ、Internet Computer エコシステムニュース。"
+          },
+          "linkedin": {
+            "label": "LinkedIn",
+            "description": "ICPay 公式 LinkedIn ページからの会社アップデートとチーム投稿。"
+          },
+          "frontendCanister": {
+            "label": "オンチェーンフロントエンド",
+            "description": "静的アセットと II 派生オリジンは {canisterId} から配信されます。"
+          }
+        }
+      },
+      "downloads": {
+        "eyebrow": "Download",
+        "title": "Pay on the go. Anywhere, anytime.",
+        "subtitle": "Install the ICPay desktop app and open your wallet in one click. Sign in with Internet Identity — no browser extension required.",
+        "imageAlt": "ICPay desktop wallet on laptop",
+        "comingSoon": "Coming soon",
+        "download": "Download",
+        "debTitle": "Linux (.deb)",
+        "debBody": "Debian and Ubuntu package.",
+        "platforms": {
+          "windows": {
+            "title": "Windows",
+            "body": "Installer for Windows 10 and later."
+          },
+          "linux": {
+            "title": "Linux",
+            "body": "Fedora RPM for Linux desktops."
+          },
+          "macos": {
+            "title": "macOS",
+            "body": "Native Mac app is on the way."
+          }
+        }
+      }
+    },
+    "icbucket": {
+      "hero": {
+        "eyebrow": "オンチェーンクラウドストレージ",
+        "title": "ICBucket",
+        "tagline": "S3 互換 API でファイルをオンチェーンに保存。サーバー不要、AWS の請求も不要 — ICPay 残高から ICP で支払うシンプルな 30 日プラン。",
+        "tryIcBucket": "ICBucket を試す",
+        "github": "GitHub",
+        "packages": "パッケージ",
+        "imageAlt": "モバイル版 ICBucket"
+      },
+      "install": {
+        "title": "インストール",
+        "subtitle": "Node.js、Python、Rust、Go 向け SDK。npm、PyPI、crates.io、Go modules からインストールできます。",
+        "copyLabel": "クリップボードにコピー",
+        "labels": {
+          "npm": "Node.js / TypeScript",
+          "pip": "Python",
+          "cargo": "Rust",
+          "go": "Go"
+        }
+      },
+      "integrate": {
+        "eyebrow": "統合ガイド",
+        "title": "ICBucket の統合方法",
+        "subtitle": "バケットを作成し、SDK でファイルをアップロードし、HTTPS で公開アセットを配信 — すべて ICPay 残高から、S3 互換 API で。",
+        "videoAriaLabel": "ICBucket の統合方法"
+      },
+      "problemSolution": {
+        "title": "課題と解決策",
+        "subtitle": "従来のクラウドストレージは高額で、集中管理され、複雑です。ICBucket はオンチェーンストレージ、30 日 ICP プラン、S3 スタイル API でこれを解決します。",
+        "problemColumn": "課題",
+        "solutionColumn": "解決策",
+        "rows": {
+          "0": {
+            "problemTitle": "高額な月額請求",
+            "problemDescription": "AWS S3、Google Cloud Storage、Azure Blob は月額課金です。コストは年々積み重なり、10 GB のプロジェクトでも 5 年で $240 を超えることがあります。",
+            "solutionTitle": "シンプルな 30 日プラン",
+            "solutionDescription": "ICPay 残高から ICP で支払い — 1 GB あたり 30 日で 0.5 ICP から。クレジットカード不要。いつでも更新でき、未使用期間は積み上がります。"
+          },
+          "1": {
+            "problemTitle": "集中管理",
+            "problemDescription": "ファイルは他社のサーバーに保存されます。プロバイダーは予告なくアカウントを停止したり、価格を引き上げたり、サービスを終了したりできます。",
+            "solutionTitle": "分散型・検閲耐性",
+            "solutionDescription": "ファイルは Internet Computer のレプリカに分散保存されます。単一障害点はなく、データを削除できるのはあなただけです。"
+          },
+          "2": {
+            "problemTitle": "複雑なセットアップ",
+            "problemDescription": "S3 のセットアップには AWS アカウント、IAM ロール、バケットポリシー、CORS 設定が必要 — ファイルを 1 つアップロードするだけでも。",
+            "solutionTitle": "S3 互換 API",
+            "solutionDescription": "createBucket、uploadFile、downloadFile などおなじみのメソッドを備えた S3 のドロップイン代替。既存コードを数分で移行できます。"
+          },
+          "3": {
+            "problemTitle": "ベンダーロックイン",
+            "problemDescription": "プロバイダーごとに API が異なります。S3 から Azure への移行はコードの書き直しが必要 — 真のポータビリティはありません。",
+            "solutionTitle": "オンチェーン検証可能性",
+            "solutionDescription": "すべてのアップロードはオンチェーンで追跡可能。canister URL によるコンテンツアドレス指定 — 不変で監査可能です。"
+          }
+        }
+      },
+      "pricing": {
+        "title": "ストレージの料金体系",
+        "subtitle": "ICPay 残高から ICP で前払い — クレジットカード不要、想定外の月額請求もなし。各ティアは 30 日プラン。いつでも更新でき、未使用期間は積み上がります。",
+        "currencyIcp": "ICP",
+        "currencyUsd": "USD",
+        "loadingPrice": "リアルタイム ICP 価格を読み込み中…",
+        "priceHint": "USD 見積もりは CoinGecko を使用 · 1 ICP ≈ {price}",
+        "mostPopular": "最も人気",
+        "per30Days": "30 日あたり",
+        "capacity": "{capacityGb} GB 容量",
+        "getStarted": "始める",
+        "footer": "ライブ価格は canister から取得：IC ストレージの cycle コストに 20% マージンを加え、0.5 ICP 単位で丸めています。取り消し線は以前の定価を示します。最大 500 GB のティアはアプリで利用できます。",
+        "footerCheckoutIcp": " 決済は常に ICP で行われます。",
+        "plans": {
+          "starter": {
+            "name": "Starter",
+            "features": {
+              "0": "1 GB 予約容量",
+              "1": "公開・非公開バケット",
+              "2": "API キー認証",
+              "3": "チャンクアップロード",
+              "4": "グローバル CDN URL",
+              "5": "保存時暗号化",
+              "6": "いつでも更新 — 期間は積み上がる"
+            }
+          },
+          "pro": {
+            "name": "Pro",
+            "features": {
+              "0": "5 GB 予約容量",
+              "1": "複数の API キー",
+              "2": "ファイルメタデータとタグ",
+              "3": "検索とフォルダ一覧",
+              "4": "一括コピー / 移動 / 削除",
+              "5": "TypeScript、Python、Go SDK",
+              "6": "いつでも更新 — 期間は積み上がる"
+            }
+          },
+          "business": {
+            "name": "Business",
+            "features": {
+              "0": "10 GB 予約容量",
+              "1": "複数バケット",
+              "2": "チーム API キー",
+              "3": "一括操作",
+              "4": "オンチェーン監査トレイル",
+              "5": "HTTPS ファイル配信",
+              "6": "いつでも更新 — 期間は積み上がる"
+            }
+          },
+          "scale": {
+            "name": "Scale",
+            "features": {
+              "0": "50 GB 予約容量",
+              "1": "Business の全機能",
+              "2": "高スループットアップロード",
+              "3": "本番ワークロード",
+              "4": "dApp と NFT アセットホスティング",
+              "5": "静的サイトアセット",
+              "6": "いつでも更新 — 期間は積み上がる"
+            }
+          }
+        }
+      },
+      "twitter": {
+        "title": "ICPay の最新情報",
+        "subtitle": "Internet Computer 向けオンチェーンストレージの構築に取り組む私たちの歩みをフォロー"
+      },
+      "features": {
+        "title": "オンチェーンストレージに必要なすべて",
+        "subtitle": "ICBucket はエンタープライズ級のクラウドストレージ機能を、エンタープライズ級の複雑さや月額請求なしで提供します。",
+        "items": {
+          "0": {
+            "title": "柔軟な容量ティア",
+            "description": "1GB から 100GB まで選択可能。小さく始めて、必要に応じてスケール。いつでも更新して保存期間を延長できます。"
+          },
+          "1": {
+            "title": "チャンクアップロード",
+            "description": "大きなファイルをチャンク（最大 2MB/チャンク）でアップロード。並列アップロードで高速転送。接続が切れても再開可能。"
+          },
+          "2": {
+            "title": "API キー管理",
+            "description": "バケットごとに複数の API キーを作成し、細かい権限（読み取り/書き込み/削除）を設定。いつでも失効・再生成できます。"
+          },
+          "3": {
+            "title": "公開・非公開バケット",
+            "description": "公開バケットは HTTPS でファイルを配信。非公開バケットは認証が必要。静的サイトと安全なバックアップの両方に最適。"
+          },
+          "4": {
+            "title": "S3 互換 API",
+            "description": "AWS S3 のドロップイン代替。おなじみのメソッド：createBucket、uploadFile、listFiles。既存コードを数分で移行。"
+          },
+          "5": {
+            "title": "オンチェーンセキュリティ",
+            "description": "ファイルは IC レプリカに分散保存。canister レベルのアクセス制御。サーバー侵害やデータ漏洩の心配なし。"
+          },
+          "6": {
+            "title": "ファイルメタデータと検索",
+            "description": "ファイルにタグ付け、カスタムメタデータを追加。名前、タグ、プレフィックスで検索。フォルダ一覧、日付やサイズでフィルタ。"
+          },
+          "7": {
+            "title": "高速コンテンツ配信",
+            "description": "ファイルは IC canister から直接配信。CDN 設定不要。IC 境界ノード経由でグローバル配信。"
+          }
+        }
+      },
+      "architecture": {
+        "title": "ストレージの仕組み",
+        "subtitle": "ファイルは従来のクラウド VM ではなく、Internet Computer 上の ICPay ウォレット canister 内に保存されます。アプリは canister と通信し、サブネットが暗号化データを保持します。",
+        "canisterId": "Canister ID · {canisterId}",
+        "diagramAriaLabel": "ICBucket アーキテクチャ図",
+        "writePath": "書き込みパス",
+        "readPath": "読み取りパス",
+        "uploadSteps": {
+          "0": "バケットを 1 回作成（容量分の ICP を支払い）。",
+          "1": "beginFileUpload → 2 MB チャンクを送信 → completeFileUpload。",
+          "2": "canister が各ファイルを暗号化し、stable memory に書き込みます。"
+        },
+        "readSteps": {
+          "0": "非公開ファイル：アプリから署名付き downloadFile 更新呼び出し。",
+          "1": "公開ファイル：canister ゲートウェイ URL でそのまま HTTPS GET。",
+          "2": "AWS バケットも別のストレージサーバーも不要 — 1 つのオンチェーン canister だけ。"
+        }
+      },
+      "comparison": {
+        "title": "ICBucket の比較",
+        "subtitle": "ICBucket と従来のクラウドストレージプロバイダーの比較。私たちの違いをご覧ください。",
+        "featureColumn": "機能",
+        "icbucketColumn": "ICBucket",
+        "s3Column": "AWS S3",
+        "gcsColumn": "Google Cloud",
+        "azureColumn": "Azure Blob",
+        "features": {
+          "0": "30 日 ICP プラン",
+          "1": "ICP で支払い（クレジットカード不要）",
+          "2": "分散型",
+          "3": "検閲耐性",
+          "4": "オンチェーン検証可能",
+          "5": "アカウント停止リスクなし",
+          "6": "S3 互換 API",
+          "7": "公開 HTTPS URL",
+          "8": "API キー認証",
+          "9": "チャンクアップロード"
+        }
+      },
+      "apiGuide": {
+        "title": "SDK と API リファレンス",
+        "subtitle": "Node.js、Python、Rust、Go 向け SDK を備えた S3 互換 API。AWS S3 のドロップイン代替。",
+        "codeExamples": "コード例",
+        "nodeTab": "Node.js",
+        "pythonTab": "Python",
+        "rustTab": "Rust",
+        "installation": "インストール",
+        "createInit": "作成と初期化",
+        "uploadFiles": "ファイルのアップロード",
+        "downloadAccess": "ダウンロードとアクセス",
+        "fileManagement": "ファイル管理",
+        "apiKeyTitle": "API キー管理",
+        "apiKeyIntro": "バケットごとに複数の API キーを細かい権限で作成：",
+        "permRead": "read",
+        "permReadDesc": "ファイルのダウンロード",
+        "permWrite": "write",
+        "permWriteDesc": "ファイルのアップロード",
+        "permDelete": "delete",
+        "permDeleteDesc": "ファイルの削除",
+        "apiKeyFooter": "Web UI からいつでもキーを失効・再生成できます。",
+        "rateLimitsTitle": "レート制限",
+        "rateLimitsIntro": "canister の安定性を確保するためのフェアユース制限：",
+        "rateLimitUpload": "アップロード：API キーあたり 100 リクエスト/分",
+        "rateLimitDownload": "ダウンロード：1000 リクエスト/分（公開ファイル）",
+        "rateLimitList": "一覧/検索：50 リクエスト/分",
+        "rateLimitChunk": "チャンクサイズ：最大 2MB/チャンク",
+        "rateLimitsFooter": "より高い制限やエンタープライズプランについてはお問い合わせください。"
+      },
+      "faq": {
+        "title": "よくある質問",
+        "subtitle": "ICBucket について知っておくべきこと。答えが見つかりませんか？お問い合わせください。",
+        "items": {
+          "0": {
+            "question": "ICBucket は AWS S3 とどう違いますか？",
+            "answer": "ICBucket は Internet Computer 上の分散型ストレージです。クレジットカードの AWS 請求の代わりに、ICPay 残高から 30 日ごとに ICP で支払います（例：5 GB で 2.5 ICP）。ファイルは IC レプリカにオンチェーンで保存されます。API キーと SDK で移行もスムーズです。"
+          },
+          "1": {
+            "question": "課金はどのように機能しますか？",
+            "answer": "各バケットは 30 日プランで、ICPay 残高から ICP で前払いします。期限切れになるとバケットは読み取り専用になり、更新するまで書き込めません。更新するとさらに 30 日が追加され、未使用期間は積み上がります。価格は canister からリアルタイムで提示されます（cycle コスト + マージン）。"
+          },
+          "2": {
+            "question": "本番アプリに ICBucket を使えますか？",
+            "answer": "はい。ICBucket は本番対応で、33 件のテストがすべて合格、チャンクアップロード、API キー認証、cycle 監視に対応しています。NFT メタデータ、dApp アセット、静的サイトですでに利用されています。ただし、IC 上のカストディアルストレージです — ミッションクリティカルなデータをデプロイする前にトレードオフを理解してください。"
+          },
+          "3": {
+            "question": "どのファイル形式に対応していますか？",
+            "answer": "すべてのファイル形式：画像、動画、PDF、JSON、HTML、CSS、JS など。コンテンツタイプは保持されます。公開バケットは正しい MIME タイプでファイルを配信し、ブラウザから直接アクセスできます（例：画像 URL が利用できます）。"
+          },
+          "4": {
+            "question": "S3 から ICBucket へどう移行しますか？",
+            "answer": "icpay-bucket SDK をインストールし、バケットを作成し、API キーを生成します。AWS SDK の呼び出しを ICBucket SDK の呼び出しに置き換えます（API はほぼ同一）。S3 からファイルをダウンロードし、ICBucket にアップロード。アプリ内の URL を更新します。小規模プロジェクトなら多くの場合 1 時間未満で完了します。"
+          },
+          "5": {
+            "question": "canister の cycle がなくなったらどうなりますか？",
+            "answer": "ICBucket の canister は監視され、バケット収益から自動的にチャージされます。cycle が危険なほど低下した場合、バケット所有者に更新を通知します。最悪の場合（canister が削除される）、ファイルは失われます — ただし適切な cycle 管理があれば極めて稀です。"
+          },
+          "6": {
+            "question": "NFT メタデータに ICBucket を使えますか？",
+            "answer": "はい、最適なユースケースです。metadata.json と画像ファイルをアップロードし、不変のオンチェーン URL（https://6vbhm-...-cai.icp0.io/bucket/nft-1.json）を取得。IPFS ゲートウェイ不要、リンク切れなし。公開バケットは即座にファイルを配信します。"
+          },
+          "7": {
+            "question": "ファイルサイズの制限はありますか？",
+            "answer": "単一ファイルのアップロードは 1 リクエストあたり 2MB に制限されています（IC 呼び出しサイズ制限）。より大きなファイルにはチャンクアップロードを使用 — クライアント側で 2MB チャンクに分割。SDK が自動処理します。最大 500MB のファイルまでテスト済みです。"
+          },
+          "8": {
+            "question": "ファイルを削除できますか？",
+            "answer": "はい、バケット所有者は Web UI または API でファイルを削除できます。削除されたファイルは canister から即座に除去され、ストレージクォータが解放されます。一括削除で多数のファイルを一度にクリーンアップできます。"
+          },
+          "9": {
+            "question": "バケットを公開にするには？",
+            "answer": "バケット作成時に visibility: 'public' を設定します。公開バケットは認証なしで HTTPS 経由でファイルを配信します。URL を知っている人なら誰でもアクセス可能。静的サイト、公開アセット、NFT メタデータに最適です。"
+          },
+          "10": {
+            "question": "ICBucket で静的ウェブサイトをホストできますか？",
+            "answer": "はい。HTML、CSS、JS、画像を公開バケットにアップロード。canister URL（https://6vbhm-...-cai.icp0.io/bucket/index.html）でアクセス。コンテンツタイプを正しく設定してください。index.html の自動配信はまだありません — URL にフルパスを指定してください。"
+          },
+          "11": {
+            "question": "ICBucket と IPFS の違いは？",
+            "answer": "ICBucket は S3 互換 API でファイルを IC canister に保存します。IPFS はコンテンツアドレス指定のピアツーピアです。ICBucket はゲートウェイ依存がなく、即時アクセス、よりシンプルな API。IPFS は分散化に優れますがアクセスは遅く不安定。ニーズに応じて選択してください。"
+          }
+        }
+      }
+    },
+    "icfalcon": {
+      "hero": {
+        "imageAlt": "ICFalcon フレームワーク",
+        "title": "ICFalcon",
+        "subtitle": "Internet Computer 向け本番対応 Motoko フレームワーク",
+        "features": "強制レイヤードアーキテクチャ · Next.js フロントエンド · グローバル CLI · Internet Identity 認証",
+        "installLabel": "1 コマンドでインストール",
+        "copyCommand": "コマンドをコピー",
+        "installHint": "依存関係のインストール、ローカルデプロイ、localhost:3000 での開発サーバー起動まで実行",
+        "npm": "npm",
+        "github": "GitHub",
+        "packages": "パッケージ"
+      },
+      "problemSolution": {
+        "title": "実際の課題を解決するために構築",
+        "subtitle": "ICFalcon は ICP 開発における一般的な摩擦点を解消します",
+        "problemHeading": "課題",
+        "solutionHeading": "解決策",
+        "problems": {
+          "0": {
+            "title": "標準化されたアーキテクチャがない",
+            "description": "多くの Motoko プロジェクトはゼロから始まり、レイヤリング、テスト、デプロイパターンに関する明確な指針がありません。チームは毎回構造を一から作り直します。"
+          },
+          "1": {
+            "title": "ツールが分散している",
+            "description": "ICP アプリの構築は dfx、mops、npm、カスタムスクリプトの使い分けを意味します。環境をまたいだスキャフォールディング、ビルド、デプロイのための統一 CLI がありません。"
+          },
+          "2": {
+            "title": "フロントエンドとバックエンドの統合の複雑さ",
+            "description": "Next.js フロントエンドを Motoko canister に接続するには、actor の手動生成、Identity 管理、環境設定が必要です。"
+          },
+          "3": {
+            "title": "限られたスターターテンプレート",
+            "description": "既存のテンプレートは本番対応には薄すぎるか、適応には固すぎるかのどちらか。実際のアプリ向けの中間的な選択肢がありません。"
+          }
+        },
+        "solutions": {
+          "0": {
+            "title": "本番向けレイヤリング",
+            "description": "4 層アーキテクチャ（api → service → repository → storage）を初日から強制。すべてのモジュールが同じパターンに従い、オンボーディングと保守が予測可能になります。"
+          },
+          "1": {
+            "title": "グローバル falcon CLI",
+            "description": "1 コマンドでモジュールのスキャフォールディング、パッケージのインストール、ビルド、テスト、デプロイ。ローカルと mainnet 環境でシームレスに動作し、対話式の確認付き。"
+          },
+          "2": {
+            "title": "統合スタック",
+            "description": "mo:core の Motoko バックエンド、shadcn/ui の Next.js フロントエンド、Internet Identity 認証、静的エクスポート。すべてが最初から接続済み。"
+          },
+          "3": {
+            "title": "Hub エコシステム",
+            "description": "`falcon add pkg [name]` で icp-hub から実績のあるパッケージをインストール。Ledger 統合、ファイルストレージ、レート制限など — プラグアンドプレイ。"
+          }
+        }
+      },
+      "article": {
+        "title": "ICFalcon とは？",
+        "subtitle": "Internet Computer アプリケーション構築に構造、ツール、スピードを提供するフレームワーク",
+        "frameworkTitle": "ボイラープレートではなくフレームワーク",
+        "frameworkP1": "ICFalcon は Motoko アプリケーション向けのオピニオネートな出発点です。4 層バックエンドアーキテクチャ（api → service → repository → storage）を強制し、モダンな Next.js フロントエンドと組み合わせ、スキャフォールディング、ビルド、デプロイ用のグローバル CLI を提供します。",
+        "frameworkP2": "構造を自分で考える最小限のテンプレートとは異なり、ICFalcon はスケールするパターンを提供します — ICPay のような本番アプリで使われているものと同じです。初日から stable memory 管理、マイグレーションガイド、Internet Identity 統合、テストハーネスが揃います。",
+        "layeringTitle": "レイヤードバックエンドアーキテクチャ",
+        "layeringP1": "バックエンドは厳格な関心の分離に従います。API モジュールは HTTP とバリデーションを担当。Services はビジネスロジックを含みます。Repositories はデータアクセスを抽象化。Storage は stable memory を管理します。",
+        "layeringP2": "このレイヤリングは規約で強制され、リポジトリ内で文書化されています。falcon m:f Product で新しいモジュールをスキャフォールディングすると、4 層すべてが生成され、main.mo に接続され、対応するフロントエンドサービスファイルが作成されます。推測も手動配線も不要です。",
+        "frontendTitle": "フロントエンド統合",
+        "frontendP1": "フロントエンドは shadcn/ui コンポーネントと Internet Identity 認証を備えた Next.js です。静的ファイル（output: \"export\"）にエクスポートするため、asset canister や Vercel などの従来のホストに配置できます。",
+        "frontendP2": "Agent 設定、Identity 派生、canister ID は事前に配線済み。バックエンド canister は .did ファイルを提供し、フロントエンドが自動取得します。actor の手動生成や環境変数のやりくりは不要です。",
+        "cliTitle": "falcon CLI",
+        "cliP1": "すべての操作は 1 つのグローバルコマンドで実行。プロジェクトの初期化（falcon s:init）。モジュールのスキャフォールディング（falcon m:f Name）。テストの実行（falcon b:test --local）。デプロイ（falcon b:deploy、確認プロンプト付き）。",
+        "cliP2": "CLI は dfx、mops、npm をラップし、モジュール、API エンドポイント、フロントエンドサービスのスキャフォールディングを追加します。--local フラグでローカルまたは mainnet を指定し、安全のためデフォルトは mainnet。コマンドは ops/docs/commands.md に記載されています。",
+        "hubTitle": "Hub パッケージ",
+        "hubP1": "ICFalcon はプラグアンドプレイの Motoko パッケージ集 icp-hub と統合しています。falcon add pkg [name] で Ledger 統合、ファイルストレージ、レート制限、その他の一般的なパターンをインストール。各パッケージは同じ 4 層構造に従い、テストを含みます。",
+        "hubP2": "パッケージは独立してバージョン管理・テストされます。Hub はオープンソースなので、モジュールをコントリビュートしたり、カスタムニーズ向けにフォークしたりできます。",
+        "audienceTitle": "誰のためのものか？",
+        "audienceP1": "ICFalcon は構造を一から作り直さずに本番対応の ICP アプリを出荷したい開発者向けです。stable memory、レイヤードバックエンド、Internet Identity 認証、モダンなフロントエンドが必要な canister を構築するなら、ICFalcon がより早く到達できます。",
+        "audienceP2": "最小限のテンプレートではありません。オピニオネートです。レイヤリングは強制され、CLI が主要インターフェースであり、スタックは Motoko + Next.js です。そのスタックが必要で明確な出発点が欲しいなら、ICFalcon がそれです。",
+        "stackTitle": "スタック概要",
+        "stackBackend": "バックエンド：",
+        "stackBackendValue": "Motoko · mo:core · api → service → repository → storage",
+        "stackFrontend": "フロントエンド：",
+        "stackFrontendValue": "Next.js · shadcn/ui · Internet Identity · static export",
+        "stackTooling": "ツール：",
+        "stackToolingValue": "falcon CLI · モジュールスキャフォールド · icp-hub パッケージ"
+      },
+      "faq": {
+        "title": "よくある質問",
+        "subtitle": "ICFalcon とその使い方に関する一般的な質問",
+        "items": {
+          "0": {
+            "question": "ICFalcon とは何ですか？",
+            "answer": "ICFalcon は Internet Computer アプリケーション構築用のオープンソース Motoko フレームワークです。本番対応のバックエンドアーキテクチャ、Next.js フロントエンド、スキャフォールディング・ビルド・デプロイ用のグローバル CLI を提供します。"
+          },
+          "1": {
+            "question": "ICFalcon を使うには Motoko の知識が必要ですか？",
+            "answer": "はい。ICFalcon は Motoko フレームワークなので、言語に慣れている必要があります。ただし、レイヤードアーキテクチャとスキャフォールディングコマンドにより、手動で書くボイラープレートは減ります。"
+          },
+          "2": {
+            "question": "ICFalcon は dfx new とどう違いますか？",
+            "answer": "dfx new は最小限の出発点を与えます。ICFalcon は強制レイヤリング、stable memory 管理、Internet Identity 統合、モジュールスキャフォールディング用 CLI を備えた本番向けの構造を提供します。設計上オピニオネートです。"
+          },
+          "3": {
+            "question": "既存の canister で ICFalcon を使えますか？",
+            "answer": "ICFalcon は移行ツールではなく出発点として設計されています。既存の canister がある場合、アーキテクチャの一部（レイヤリングパターン、CLI コマンド）を採用できますが、完全統合には手作業が必要です。"
+          },
+          "4": {
+            "question": "falcon CLI とは？",
+            "answer": "falcon CLI は dfx、mops、npm をラップするグローバルコマンドです。プロジェクト初期化、モジュールスキャフォールディング、テスト、ビルド、デプロイを担当します。--local フラグでローカルまたは mainnet を指定します。"
+          },
+          "5": {
+            "question": "パッケージはどこからインストールしますか？",
+            "answer": "バックエンドパッケージは mops（Motoko パッケージマネージャー）と icp-hub（厳選されたプラグアンドプレイモジュール集）からインストールします。フロントエンドパッケージは npm です。falcon CLI は `falcon add pkg [name]` で一部を抽象化します。"
+          },
+          "6": {
+            "question": "ICFalcon は本番対応ですか？",
+            "answer": "アーキテクチャは本番対応で、ICPay のようなライブアプリで使われています。ただし ICFalcon 自体はフレームワークであり、SaaS 製品ではありません。canister は自分で所有し、テスト、デプロイ、保守の責任があります。"
+          },
+          "7": {
+            "question": "ICFalcon は Rust canister に対応していますか？",
+            "answer": "いいえ。ICFalcon は Motoko フレームワークです。Rust が必要な場合は、別のスターターを使うか、ゼロから構築してください。"
+          },
+          "8": {
+            "question": "mainnet にデプロイするには？",
+            "answer": "`falcon b:deploy` を実行（--local なし）。CLI は mainnet へのデプロイ前に確認を求めます。デフォルトはアップグレードモード。データ損失を避けるため、再インストールモードは使用しません。"
+          },
+          "9": {
+            "question": "レイヤリングをカスタマイズできますか？",
+            "answer": "4 層アーキテクチャ（api → service → repository → storage）は規約と CLI スキャフォールディングで強制されます。逸脱は可能ですが、一貫した構造と自動スキャフォールディングの利点は失われます。"
+          },
+          "10": {
+            "question": "ICFalcon にコントリビュートするには？",
+            "answer": "リポジトリをフォークし、機能ブランチを作成し、pull request を開いてください。AGENTS.md のパターンに従い、提出前に `falcon b:test --local` と `falcon p:check --local` を実行してください。Hub パッケージは icp-hub に別途コントリビュートします。"
+          },
+          "11": {
+            "question": "ICFalcon は無料で使えますか？",
+            "answer": "はい。ICFalcon はオープンソースです。ソースコードは現状のまま使用・改変可能です。Hub パッケージは icp-hub 上の各エントリのライセンスに従います。"
+          }
+        }
+      }
+    }
+  },
+  "trade": {
+    "title": "Trade",
+    "subtitle": "Swap tokens via ICPSwap",
+    "youPay": "You pay",
+    "youReceive": "You receive",
+    "balance": "Balance",
+    "flip": "Flip tokens",
+    "review": "Review",
+    "confirmTitle": "Confirm trade",
+    "confirmBody": "Review the details below before trading.",
+    "confirmTrade": "Confirm trade",
+    "trading": "Trading…",
+    "slippage": "Slippage",
+    "serviceFee": "Service fee (0.1%)",
+    "poolFee": "Pool fee",
+    "depositFee": "Deposit transfer fee",
+    "rate": "Rate",
+    "successTitle": "Trade complete",
+    "successBody": "Tokens have arrived in your wallet.",
+    "insufficientBalance": "Not enough balance for this trade (includes transfer fee).",
+    "amountTooSmall": "Amount too small after service and transfer fees. Try a larger trade.",
+    "noLiquidity": "No pool liquidity for this direction. Try the other way or a different token.",
+    "unsupported": "One of these tokens is not supported for trading.",
+    "sameToken": "Choose two different tokens.",
+    "selectToken": "Select",
+    "selectPay": "Token to pay",
+    "selectReceive": "Token to receive",
+    "needTwoTokens": "You need at least two supported tokens to trade.",
+    "max": "Max",
+    "totalDebit": "Total from balance",
+    "feeNote": "Service and pool fees come from the amount you pay. Total adds one deposit transfer fee.",
+    "fetchingQuote": "Fetching quote…",
+    "processHint": "On-chain trades usually take 15–30 seconds.",
+    "stepDeposit": "Funding trade balance",
+    "stepExecute": "Executing on ICPSwap",
+    "stepDeliver": "Delivering to your wallet",
+    "balanceAfter": "Wallet balance",
+    "afterLabel": "after"
+  },
+  "cyclesTopUp": {
+    "eyebrow": "Cycles",
+    "title": "Top up a canister",
+    "subtitle": "Pay with your ICPay wallet. We send ICP to your Internet Identity when needed, then mint cycles via the official CMC.",
+    "formTitle": "Top up",
+    "formHint": "Paste a canister ID and amount. Connected steps: send from wallet → mint via CMC → done.",
+    "canisterId": "Canister ID",
+    "canisterPlaceholder": "aaaaa-aa…",
+    "canisterOk": "Canister found on the Internet Computer.",
+    "canisterNotFound": "Canister not found on the IC index. Check the ID.",
+    "amount": "Amount (ICP)",
+    "estimate": "Estimated cycles",
+    "estimateSource": "Estimate from CMC ICP→XDR conversion rate (official).",
+    "rateLine": "1 ICP ≈ {xdr} XDR ≈ {cycles} cycles",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "topUp": "Top up from wallet",
+    "toppingUp": "Topping up…",
+    "sending": "Sending from wallet…",
+    "minting": "Minting cycles…",
+    "stepSend": "Send from wallet",
+    "stepMint": "Mint cycles",
+    "stepDone": "Done",
+    "flowHintSend": "Will send {amount} ICP from your wallet to cover this top-up, then mint.",
+    "flowHintMintOnly": "Your II principal already has enough ICP — minting only.",
+    "successTitle": "Cycles sent",
+    "success": "Minted {cycles} cycles into the canister.",
+    "successWithdrew": "ICP was moved from your ICPay wallet first.",
+    "successHint": "Cycles were deposited. Open the dashboard to confirm status (balance is controller-only on most canisters).",
+    "viewOnDashboard": "View canister on IC dashboard",
+    "amountPaid": "Amount",
+    "failed": "Top-up failed",
+    "blockIndex": "Block index",
+    "invalidCanister": "Enter a valid canister principal",
+    "invalidAmount": "Enter a valid ICP amount",
+    "minAmount": "Minimum is 0.01 ICP",
+    "maxAmount": "Maximum is 50 ICP per call",
+    "insufficient": "Insufficient ICP in your ICPay wallet (amount + fees)",
+    "disclaimer": "Anyone can top up any canister — you do not need to be a controller. Uses the official ICP ledger and Cycles Minting Canister.",
+    "rateBadge": "1 ICP ≈ {xdr} XDR",
+    "cyclesUnit": "cycles",
+    "copyFailed": "Could not copy canister ID",
+    "stepLabel": "Step {n}",
+    "previewTitle": "Preview",
+    "previewRate": "CMC rate",
+    "previewStatus": "Status",
+    "previewReady": "Ready",
+    "previewLiveCycles": "Live cycles",
+    "previewNoController": "Not a controller",
+    "previewLoadingStatus": "Loading status…",
+    "liveStatusTitle": "Live canister status",
+    "runStatus": {
+      "running": "Running",
+      "stopping": "Stopping",
+      "stopped": "Stopped"
+    }
+  },
+  "canisterHub": {
+    "eyebrow": "Canisters",
+    "title": "Create and fuel canisters",
+    "subtitle": "Spin up a new Internet Computer canister or top up cycles — paid from your ICPay wallet through the official CMC. No dfx required.",
+    "createTitle": "Create canister",
+    "createDescription": "Pay ICP, get a new canister ID. You are the controller via Internet Identity.",
+    "topupTitle": "Top up cycles",
+    "topupDescription": "Convert ICP to cycles for any canister ID. Controllers optional.",
+    "note": "Frontend-only tools call the official CMC and ICP ledger. ICPay wallet withdraw is only used when your II principal needs ICP.",
+    "manageTitle": "Manage canister",
+    "manageDescription": "Live status, start/stop, and logs when your Internet Identity is a controller.",
+    "cyclesTitle": "Cycles wallet",
+    "cyclesDescription": "Mint ICP → cycles on the cycles ledger, then withdraw to any canister.",
+    "snapshotsTitle": "Snapshots",
+    "snapshotsDescription": "Take, list, load, and delete snapshots for canisters you control."
+  },
+  "canisterCreate": {
+    "eyebrow": "Canisters",
+    "title": "Create a canister",
+    "subtitle": "Pay with your ICPay wallet. We fund your Internet Identity when needed, then create via the official Cycles Minting Canister.",
+    "formTitle": "Create",
+    "formHint": "Steps: send from wallet → create via CMC → done. Leftover ICP becomes initial cycles.",
+    "controller": "Controller",
+    "controllerTip": "CMC requires the caller (your Internet Identity) as controller. Extra principals can be added below.",
+    "extraControllers": "Extra controllers",
+    "extraControllersTip": "Optional. Comma-separated principals that will also control the canister.",
+    "extraControllersPlaceholder": "principal-1, principal-2",
+    "subnet": "Subnet",
+    "subnetTip": "Default lets CMC pick a subnet. Open the menu to choose another — details load only when opened.",
+    "subnetDefault": "Default (CMC picks)",
+    "amount": "Amount (ICP)",
+    "estimate": "Estimated cycles from ICP",
+    "estimateSource": "Gross estimate from CMC ICP→XDR rate. Creation fee is deducted from this; remainder stays as cycles.",
+    "rateBadge": "1 ICP ≈ {xdr} XDR",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "create": "Create from wallet",
+    "creating": "Creating…",
+    "sending": "Sending from wallet…",
+    "stepSend": "Send from wallet",
+    "stepCreate": "Create via CMC",
+    "stepDone": "Done",
+    "stepLabel": "Step {n}",
+    "flowHintSend": "Will send {amount} ICP from your wallet to cover create, then notify CMC.",
+    "flowHintCreateOnly": "Your II principal already has enough ICP — create only.",
+    "successTitle": "Canister created",
+    "success": "Created canister {canister}.",
+    "successWithdrew": "ICP was moved from your ICPay wallet first.",
+    "successHint": "You are the controller. Install code with dfx or your tooling, and top up cycles when the balance runs low.",
+    "viewOnDashboard": "View on IC dashboard",
+    "topUpNext": "Top up cycles",
+    "amountPaid": "Amount",
+    "blockIndex": "Block index",
+    "failed": "Create failed",
+    "toastSuccess": "Canister created",
+    "invalidAmount": "Enter a valid ICP amount",
+    "minAmount": "Minimum is 0.5 ICP",
+    "maxAmount": "Maximum is 50 ICP per call",
+    "insufficient": "Insufficient ICP in your ICPay wallet (amount + fees)",
+    "metaFailed": "Could not load CMC rate or balance. Retry.",
+    "disclaimer": "Uses the official ICP ledger and Cycles Minting Canister (notify_create_canister). No ICPay backend mint path.",
+    "copyFailed": "Could not copy canister ID",
+    "subnetCountriesUnknown": "Location unknown",
+    "subnetDefaultHint": "Random authorized application subnet",
+    "subnetToggleDetails": "Show subnet details",
+    "subnetIdLabel": "Subnet ID",
+    "subnetCountriesLabel": "Node countries",
+    "subnetNodesLabel": "{nodes} replica nodes · {countries} countries",
+    "subnetMore": "More subnets",
+    "subnetLoadEmpty": "No subnets available right now.",
+    "previewTitle": "Preview",
+    "previewRate": "CMC rate",
+    "viewMine": "My canisters"
+  },
+  "canisterStatus": {
+    "idle": "Enter a canister ID and sign in to load live status.",
+    "deniedTitle": "Controller required",
+    "errorTitle": "Could not load status",
+    "cycles": "Cycles",
+    "reserved": "Reserved cycles",
+    "memory": "Memory",
+    "wasmMemory": "Wasm memory",
+    "stableMemory": "Stable memory",
+    "idleBurn": "Idle burn",
+    "version": "Version",
+    "moduleHash": "Module hash",
+    "freezing": "Freezing threshold",
+    "compute": "Compute allocation",
+    "memoryAlloc": "Memory allocation",
+    "snapshotsSize": "Snapshots size",
+    "controllers": "Controllers",
+    "youControl": "You control",
+    "run": {
+      "running": "Running",
+      "stopping": "Stopping",
+      "stopped": "Stopped"
+    },
+    "deniedBody": "Your Internet Identity cannot read this canister. Paste one you control, or create a new canister first.",
+    "createLink": "Create a canister",
+    "liveMetrics": "Live metrics"
+  },
+  "canisterManage": {
+    "eyebrow": "Canisters",
+    "title": "Manage a canister",
+    "subtitle": "Live canister_status when your Internet Identity is a controller. Start, stop, and fetch logs — no backend.",
+    "formTitle": "Actions",
+    "formHint": "Paste a canister ID you control. Status loads automatically after sign-in.",
+    "canisterId": "Canister ID",
+    "canisterPlaceholder": "aaaaa-aa…",
+    "invalidCanister": "Enter a valid canister principal",
+    "canisterNotFound": "Canister not found on the IC index.",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "start": "Start",
+    "starting": "Starting…",
+    "stop": "Stop",
+    "stopping": "Stopping…",
+    "stopConfirmTitle": "Stop this canister?",
+    "stopConfirmBody": "The canister will stop serving calls until you start it again.",
+    "cancel": "Cancel",
+    "fetchLogs": "Fetch logs",
+    "loadingLogs": "Loading logs…",
+    "logsEmpty": "No log records returned.",
+    "topUpLink": "Top up",
+    "toastStarted": "Canister started",
+    "toastStopped": "Canister stopped",
+    "previewTitle": "Preview",
+    "previewAccess": "Access",
+    "previewController": "Controller",
+    "previewDenied": "Not a controller",
+    "loading": "Loading…",
+    "statusTitle": "Live status",
+    "disclaimer": "Calls the IC management canister (aaaaa-aa) from your browser with Internet Identity. You must be a controller."
+  },
+  "canisterCycles": {
+    "eyebrow": "Cycles",
+    "title": "Cycles wallet",
+    "subtitle": "Mint cycles onto the cycles ledger with ICP, then withdraw to any canister. Official CMC notify_mint_cycles.",
+    "formTitle": "Mint or withdraw",
+    "formHint": "Mint deposits cycles to your II on the cycles ledger. Withdraw sends ledger cycles into a canister.",
+    "tabMint": "Mint",
+    "tabWithdraw": "Withdraw",
+    "amount": "Amount (ICP)",
+    "canisterId": "Canister ID",
+    "canisterPlaceholder": "aaaaa-aa…",
+    "cyclesAmount": "Amount (T cycles)",
+    "cyclesHint": "Enter trillion cycles, e.g. 1.5 for 1.5T cycles.",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "mint": "Mint from wallet",
+    "minting": "Minting…",
+    "sending": "Sending from wallet…",
+    "withdraw": "Withdraw to canister",
+    "withdrawing": "Withdrawing…",
+    "ledgerBalance": "Cycles ledger balance",
+    "estimate": "Estimated mint",
+    "previewTitle": "Preview",
+    "previewRate": "CMC rate",
+    "rateBadge": "1 ICP ≈ {xdr} XDR",
+    "invalidAmount": "Enter a valid ICP amount",
+    "invalidCanister": "Enter a valid canister principal",
+    "invalidCycles": "Enter a valid cycles amount in T",
+    "minAmount": "Minimum is 0.01 ICP",
+    "maxAmount": "Maximum is 50 ICP per call",
+    "insufficient": "Insufficient ICP in your ICPay wallet (amount + fees)",
+    "insufficientCycles": "Insufficient cycles on the ledger",
+    "disclaimer": "Uses the official ICP ledger, CMC (notify_mint_cycles), and cycles ledger. No ICPay backend mint path.",
+    "availableCycles": "Available {pretty} · {tAmount} T",
+    "max": "Max",
+    "successMintTitle": "Cycles minted",
+    "successWithdrawTitle": "Cycles withdrawn",
+    "successMintHint": "Cycles are on your cycles ledger. Withdraw into any canister when ready.",
+    "successWithdrawHint": "Cycles were deposited into this canister.",
+    "cyclesUnit": "cycles",
+    "withdrawNext": "Withdraw to a canister",
+    "viewMine": "My canisters",
+    "viewOnDashboard": "IC dashboard"
+  },
+  "canisterSnapshots": {
+    "eyebrow": "Canisters",
+    "title": "Canister snapshots",
+    "subtitle": "Take and manage snapshots when your Internet Identity is a controller.",
+    "formTitle": "Snapshots",
+    "formHint": "List existing snapshots, take a new one, or load/delete. Load replaces canister state.",
+    "canisterId": "Canister ID",
+    "canisterPlaceholder": "aaaaa-aa…",
+    "signIn": "Sign in with Internet Identity",
+    "connecting": "Connecting…",
+    "list": "List snapshots",
+    "loading": "Loading…",
+    "take": "Take snapshot",
+    "empty": "No snapshots yet.",
+    "load": "Load",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "loadTitle": "Load this snapshot?",
+    "loadBody": "Loading replaces the canister’s current state with the snapshot. This cannot be undone.",
+    "deleteTitle": "Delete this snapshot?",
+    "deleteBody": "The snapshot will be permanently removed.",
+    "toastTaken": "Snapshot created",
+    "toastLoaded": "Snapshot loaded",
+    "toastDeleted": "Snapshot deleted",
+    "statusTitle": "Live status",
+    "disclaimer": "Snapshot APIs require your Internet Identity to be a controller. Frontend-only via the IC management canister."
+  },
+  "canisterIdField": {
+    "label": "Canister ID",
+    "placeholder": "aaaaa-aa…",
+    "choose": "Mine",
+    "yours": "Your canisters",
+    "emptyHint": "Create a canister first — it will show up here to pick later."
+  },
+  "myCanisters": {
+    "title": "My canisters",
+    "subtitle": "Canisters you created or saved with this Internet Identity. Pick one for live status and actions.",
+    "create": "Create",
+    "yourPrincipal": "Your Internet Identity (controller)",
+    "principalHint": "Copy this to use as a backup controller on another account’s create form.",
+    "copyPrincipal": "Copy principal",
+    "addPlaceholder": "Paste a canister ID to track…",
+    "listTitle": "Mine",
+    "listHint": "Saved in this browser for your II.",
+    "empty": "No canisters yet. Create one or paste an ID you control.",
+    "back": "Back",
+    "detailTitle": "Details",
+    "detailEmpty": "Select a canister to see status and actions.",
+    "manage": "Manage",
+    "topUp": "Top up",
+    "snapshots": "Snapshots",
+    "copyId": "Copy ID",
+    "copied": "Copied",
+    "topUpHistory": "Top-up history",
+    "settings": "Settings",
+    "running": "Running",
+    "dashboard": "IC dashboard",
+    "remove": "Remove",
+    "backupHint": "Status and manage require you to be a controller. Top up works for any canister.",
+    "allTools": "All public tools",
+    "invalidId": "Enter a valid canister ID",
+    "count": "{count}",
+    "metaName": "Name",
+    "metaType": "Type",
+    "metaSubnet": "Subnet",
+    "metaControllers": "Controllers",
+    "menuActions": "Actions",
+    "view": "表示",
+    "createWithBackup": "Create with backup controller",
+    "link": "Link",
+    "loading": "Loading…",
+    "linkTitle": "Link a canister",
+    "linkHint": "Save a canister ID locally with an optional name so Mine and Mine pickers stay easy.",
+    "linkId": "Canister ID",
+    "linkName": "Name (optional)",
+    "linkNamePlaceholder": "e.g. Production wallet",
+    "linkCancel": "Cancel",
+    "linkConfirm": "Confirm link",
+    "linkSuccessTitle": "Canister linked",
+    "linkSuccessBody": "Saved to Mine in this browser.",
+    "linkSuccessNamed": "Saved as “{name}”.",
+    "rowDenied": "Not controller",
+    "metaLanguage": "Language",
+    "metaUpdated": "Index updated",
+    "metaSubnetId": "Subnet ID",
+    "metaSubnetType": "Subnet type",
+    "metaSubnetNodes": "Nodes up",
+    "metaSubnetCanisters": "Subnet canisters",
+    "metaUpgrades": "Recent upgrades",
+    "cyclesSource": "Live cycles from canister_status (controller only).",
+    "publicApiHint": "Cycle balance is not public on the IC index or ICRC API — only controllers can read it. Anyone can still",
+    "more": "More",
+    "start": "Start",
+    "stop": "Stop",
+    "starting": "Starting…",
+    "stopping": "Stopping…",
+    "stopConfirmTitle": "Stop this canister?",
+    "stopConfirmBody": "Stopping pauses execution until you start it again. Controllers only.",
+    "topUpTitle": "Top up cycles",
+    "topUpHint": "Send ICP from your wallet via CMC into this canister’s cycles balance.",
+    "topUpEstimate": "≈ {cycles} cycles",
+    "topUpCancel": "Cancel",
+    "topUpConfirm": "Confirm top up",
+    "transfer": "Transfer",
+    "transferTitle": "Transfer cycles",
+    "transferHint": "Sends from your cycles ledger to another canister via the official Cycles Ledger withdraw. Controllers cannot pull cycles out of a canister’s own balance.",
+    "transferFromContext": "Opened from",
+    "transferAmount": "Amount (T cycles)",
+    "transferConfirm": "Confirm transfer",
+    "transferCancel": "Cancel",
+    "transferring": "Transferring…",
+    "transferSuccessTitle": "Cycles transferred",
+    "transferSuccessBody": "Deposited to the destination canister from your cycles ledger.",
+    "transferLedgerEmpty": "Your cycles ledger is empty.",
+    "transferMintLink": "Mint cycles first",
+    "topUpEstimateLabel": "Estimated cycles",
+    "topUpEstimateHint": "Gross estimate from CMC ICP→XDR rate.",
+    "addController": "Add controller",
+    "addControllerTitle": "Add controller",
+    "addControllerHint": "Grants another principal full control of this canister via update_settings. Controllers is a full-replacement list — the current list is fetched and kept, this principal is only appended.",
+    "addControllerLabel": "Principal ID",
+    "addControllerPlaceholder": "aaaaa-aa…",
+    "addControllerFullListHint": "Existing controllers stay in place. This adds one more.",
+    "addControllerConfirm": "Add controller",
+    "addControllerSubmitting": "Adding…",
+    "addControllerSuccessTitle": "Controller added",
+    "addControllerSuccessBody": "This principal can now manage the canister.",
+    "invalidPrincipal": "Enter a valid principal ID"
   }
 }

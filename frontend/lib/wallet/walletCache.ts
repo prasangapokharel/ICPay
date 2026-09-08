@@ -10,6 +10,11 @@ export function walletKey(identity: Identity | undefined, ...parts: string[]) {
   return identity ? ([...parts, identity.getPrincipal().toText()] as const) : null
 }
 
+export function balancesCacheKey(identity: Identity, customLedgerIds: string[]) {
+  const customKey = [...customLedgerIds].sort().join(",")
+  return walletKey(identity, "token-balances", customKey)
+}
+
 function readCached<T>(key: readonly string[]): T | undefined {
   return cache.get(unstable_serialize(key))?.data as T | undefined
 }

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { PAGE_IMAGES } from "@/lib/public/page-images"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
@@ -27,7 +28,7 @@ export function PackagesHero() {
           className="mx-auto flex w-fit items-center gap-3 transition-opacity hover:opacity-80"
         >
           <Image
-            src="/images/product/icfalcon/icfalcon.png"
+            src={PAGE_IMAGES.icfalcon.hero}
             alt="ICFalcon"
             width={64}
             height={64}

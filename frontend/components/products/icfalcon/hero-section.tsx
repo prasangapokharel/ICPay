@@ -1,14 +1,17 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import Image from "next/image"
+import { PAGE_IMAGES } from "@/lib/public/page-images"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 export function HeroSection() {
+  const t = useTranslations("publicSite.icfalcon.hero")
   const [copied, setCopied] = useState(false)
   const command = "npm create icfalcon@latest my-app"
 
@@ -19,34 +22,31 @@ export function HeroSection() {
   }
 
   return (
-    <section className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-16 text-center">
+    <section className="flex min-h-[80vh] flex-col items-center justify-center border-b border-border/60 bg-background px-4 py-16 text-center">
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="flex justify-center">
           <Image
-            src="/images/product/icfalcon/icfalcon.png"
-            alt="ICFalcon Framework"
+            src={PAGE_IMAGES.icfalcon.hero}
+            alt={t("imageAlt")}
+            title={t("imageAlt")}
             width={280}
             height={280}
             priority
-            className="h-auto w-[280px] rounded-2xl"
+            className="w-[280px] rounded-2xl"
+            style={{ height: "auto" }}
           />
         </div>
 
         <div className="space-y-4">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            ICFalcon
+            {t("title")}
           </h1>
-          <p className="text-xl text-muted-foreground sm:text-2xl">
-            Production-Ready Motoko Framework for Internet Computer
-          </p>
-          <p className="text-base text-muted-foreground">
-            Enforced layered architecture · Next.js frontend · Global CLI ·
-            Internet Identity auth
-          </p>
+          <p className="text-xl text-muted-foreground sm:text-2xl">{t("subtitle")}</p>
+          <p className="text-base text-muted-foreground">{t("features")}</p>
         </div>
 
         <div className="mx-auto max-w-2xl space-y-3">
-          <p className="text-sm font-semibold">Install with one command</p>
+          <p className="text-sm font-semibold">{t("installLabel")}</p>
           <div className="relative">
             <Input
               value={command}
@@ -57,18 +57,15 @@ export function HeroSection() {
             <button
               onClick={handleCopy}
               className="absolute right-2 top-1/2 -translate-y-1/2 transition-colors hover:text-foreground"
-              aria-label="Copy command"
+              aria-label={t("copyCommand")}
             >
               <HugeiconsIcon
                 icon={copied ? Tick02Icon : Copy01Icon}
-                className="size-5"
+                className={`size-5 ${copied ? "text-primary" : "text-muted-foreground"}`}
               />
             </button>
           </div>
-          <p className="text-xs text-muted-foreground">
-            Installs dependencies, deploys locally, and starts dev server at
-            localhost:3000
-          </p>
+          <p className="text-xs text-muted-foreground">{t("installHint")}</p>
         </div>
 
         <div className="flex flex-col items-center gap-4 pt-6 sm:flex-row sm:justify-center">
@@ -83,7 +80,7 @@ export function HeroSection() {
               />
             }
           >
-            npm
+            {t("npm")}
           </Button>
           <Button
             variant="outline"
@@ -97,7 +94,7 @@ export function HeroSection() {
               />
             }
           >
-            GitHub
+            {t("github")}
           </Button>
           <Button
             variant="outline"
@@ -105,7 +102,7 @@ export function HeroSection() {
             nativeButton={false}
             render={<Link href="/products/icFalcon/packages" />}
           >
-            Packages
+            {t("packages")}
           </Button>
         </div>
       </div>

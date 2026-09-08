@@ -20,6 +20,9 @@ module {
   public let getById = Token.getById;
   public let listByUser = Token.listByUser;
   public let listActive = Token.listActive;
+  public let isCustodiedLedger = Token.isCustodiedLedger;
+  public let ensureCustodiedLedger = Token.ensureCustodiedLedger;
+  public let ensureCustodiedLedgerAsync = Token.ensureCustodiedLedgerAsync;
   public let registerLaunchedLedgers = Token.registerLaunchedLedgers;
   public let isSymbolAvailable = Token.isSymbolAvailable;
 

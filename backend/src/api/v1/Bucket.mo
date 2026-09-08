@@ -396,6 +396,34 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
     )
   };
 
+  public shared ({ caller }) func createFolder(
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Text> {
+    BucketService.createFolder(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      apiKey,
+    )
+  };
+
+  public shared ({ caller }) func deleteFolder(
+    bucketId: Types.BucketId,
+    path: Text,
+    apiKey: ?Text,
+  ) : async Types.ApiResult<Null> {
+    BucketService.deleteFolder(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      path,
+      apiKey,
+    )
+  };
+
   public shared ({ caller }) func setFileTags(
     bucketId: Types.BucketId,
     path: Text,

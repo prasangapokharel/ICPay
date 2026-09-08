@@ -2,6 +2,7 @@ import type { Identity } from "@icp-sdk/core/agent"
 import type { Principal } from "@icp-sdk/core/principal"
 import { call, query, unwrap, type Outcome } from "@/services/client"
 import { syncChannelAvatarCache } from "@/lib/community/channelAvatarCache"
+import { getWalletActor } from "@/services/wallet"
 
 export type CommunityVisibility = { open: null } | { inviteOnly: null }
 export type CommunityAccess = { free: null } | { paid: null }
@@ -56,9 +57,13 @@ export function isCommunityPaid(a: CommunityAccess): boolean {
   return "paid" in a
 }
 
-export function ownerHandle(channel: CommunityChannelPublic): string {
+export function ownerHandle(channel: {
+  owner: Principal | string
+  ownerUsername: [] | [string]
+}): string {
   const u = channel.ownerUsername[0]
-  return u ? `@${u}` : channel.owner.toText().slice(0, 8) + "…"
+  const text = typeof channel.owner === "string" ? channel.owner : channel.owner.toText()
+  return u ? `@${u}` : text.slice(0, 8) + "…"
 }
 
 export async function listPublicCommunityChannels(
@@ -234,4 +239,70 @@ export async function setCommunityChannelAvatar(
     >
   )
   return normalizeCommunityChannel(unwrap(outcome))
+}
+
+async function publicQuery<T>(
+  fn: (actor: Awaited<ReturnType<typeof getWalletActor>>) => Promise<T>
+): Promise<T> {
+  return fn(await getWalletActor(undefined))
+}
+
+export async function getPublicCommunityChannel(
+  slug: string
+): Promise<CommunityChannelPublic | null> {
+  try {
+    return await publicQuery(async (actor) => {
+      const r = (await actor.getCommunityChannel(slug)) as [] | [CommunityChannelPublic]
+      return r.length ? normalizeCommunityChannel(r[0]) : null
+    })
+  } catch {
+    return null
+  }
+}
+
+export async function getPublicCommunityChannelAvatarBytes(
+  slug: string
+): Promise<Uint8Array | undefined> {
+  try {
+    return await publicQuery(async (actor) => {
+      const r = (await actor.getCommunityChannel(slug)) as [] | [CommunityChannelPublic]
+      if (!r.length) return undefined
+      const raw = r[0].channelAvatar?.[0]
+      if (!raw?.length) return undefined
+      return raw instanceof Uint8Array ? raw : new Uint8Array(raw)
+    })
+  } catch {
+    return undefined
+  }
+}
+
+export async function listPublicChannelsForSeo(
+  limit = 50,
+  offset = 0
+): Promise<CommunityChannelPublic[]> {
+  try {
+    return await publicQuery(async (actor) => {
+      const rows = (await actor.listPublicCommunityChannels(
+        BigInt(limit),
+        BigInt(offset)
+      )) as CommunityChannelPublic[]
+      return rows.map(normalizeCommunityChannel)
+    })
+  } catch {
+    return []
+  }
+}
+
+export async function listAllPublicChannelsForSeo(
+  max = 500
+): Promise<CommunityChannelPublic[]> {
+  const out: CommunityChannelPublic[] = []
+  const page = 50
+  for (let offset = 0; offset < max; offset += page) {
+    const rows = await listPublicChannelsForSeo(page, offset)
+    if (rows.length === 0) break
+    out.push(...rows)
+    if (rows.length < page) break
+  }
+  return out
 }

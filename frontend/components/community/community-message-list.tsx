@@ -9,6 +9,7 @@ import {
 import { CommunityForwardModal } from "@/components/community/community-forward-modal"
 import { Button } from "@/components/ui/button"
 import { MessageGroup } from "@/components/ui/message"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/ui/utils"
 import type { ReactionCode } from "@/lib/community/reactions"
 import type { PendingMessage } from "@/lib/community/pendingMessage"
@@ -29,6 +30,7 @@ export function CommunityMessageList({
   onReact,
   onForward,
   scrollToMessageId,
+  highlightMessageId,
   onScrollToMessageDone,
 }: {
   channel: CommunityChannelPublic
@@ -45,6 +47,7 @@ export function CommunityMessageList({
   onReact?: (messageId: bigint, code: ReactionCode) => Promise<void>
   onForward?: (targetSlug: string, text: string) => Promise<void>
   scrollToMessageId?: bigint | null
+  highlightMessageId?: bigint | null
   onScrollToMessageDone?: () => void
 }) {
   const t = useTranslations("community")
@@ -135,7 +138,7 @@ export function CommunityMessageList({
       if (scrollRef.current) syncScrollState(scrollRef.current)
       onScrollToMessageDone?.()
     })
-  }, [scrollToMessageId, onScrollToMessageDone])
+  }, [scrollToMessageId, messages, onScrollToMessageDone])
 
   const handleScroll = () => {
     const el = scrollRef.current
@@ -155,10 +158,10 @@ export function CommunityMessageList({
 
   return (
     <div className="relative flex h-full min-h-0 flex-col overflow-hidden">
-      <div
+      <ScrollArea
         ref={scrollRef}
         onScroll={handleScroll}
-        className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [overflow-anchor:none]"
+        className="flex-1"
       >
         <div className={cn("flex flex-col py-2 pr-1", showEmpty && "min-h-full justify-center")}>
           {showEmpty ? (
@@ -172,6 +175,8 @@ export function CommunityMessageList({
                 <BroadcastMessage
                   key={msg.id.toString()}
                   message={msg}
+                  channelSlug={channel.slug}
+                  highlighted={highlightMessageId != null && msg.id === highlightMessageId}
                   pinned={pinnedId != null && msg.id === pinnedId}
                   delivered={isOwner && deliveredIds.has(msg.id.toString())}
                   isOwner={isOwner}
@@ -195,7 +200,7 @@ export function CommunityMessageList({
             </MessageGroup>
           )}
         </div>
-      </div>
+      </ScrollArea>
 
       {showJumpToLatest && (
         <Button

@@ -2,10 +2,11 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { Button } from "@/components/ui/button"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowRight01Icon, Folder02Icon } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
-import { BucketAvatarChip } from "@/components/bucket/bucket-file-thumb"
+import { TableCell, TableRow } from "@/components/ui/table"
 import {
   formatBytes,
   formatUsageLabel,
@@ -19,25 +20,40 @@ export function BucketCard({ bucket }: { bucket: BucketPublic }) {
   const active = isBucketActive(bucket.status)
 
   return (
-    <Button
-      variant="ghost"
-      nativeButton={false}
-      render={<Link href={`/bucket/${encodeURIComponent(bucket.id)}`} prefetch />}
-      className="h-auto w-full justify-start gap-3 rounded-none px-4 py-3"
-    >
-      <BucketAvatarChip name={bucket.name} />
-      <span className="min-w-0 flex-1 text-left">
-        <span className="flex items-center gap-2">
-          <span className="truncate text-sm font-semibold">{bucket.name}</span>
-          {!active && <Badge variant="secondary">{t("expired")}</Badge>}
-        </span>
-        <span className="block truncate text-xs text-muted-foreground">
-          {formatUsageLabel(bucket.storageUsed, bucket.capacity)}
-          {" · "}
-          {isPublicVisibility(bucket.visibility) ? t("public") : t("private")}
-        </span>
-      </span>
-    </Button>
+    <TableRow className="cursor-pointer">
+      <TableCell>
+        <Link
+          href={`/bucket/${encodeURIComponent(bucket.id)}`}
+          prefetch
+          className="flex items-center gap-2.5"
+        >
+          <HugeiconsIcon
+            icon={Folder02Icon}
+            className="size-5 shrink-0 text-muted-foreground"
+            strokeWidth={1.75}
+          />
+          <span className="truncate text-sm font-medium">{bucket.name}</span>
+        </Link>
+      </TableCell>
+      <TableCell className="text-muted-foreground">
+        {isPublicVisibility(bucket.visibility) ? t("public") : t("private")}
+      </TableCell>
+      <TableCell className="text-muted-foreground tabular-nums">
+        {formatUsageLabel(bucket.storageUsed, bucket.capacity)}
+      </TableCell>
+      <TableCell>
+        {active ? (
+          <Badge variant="outline">{t("active")}</Badge>
+        ) : (
+          <Badge variant="secondary">{t("expired")}</Badge>
+        )}
+      </TableCell>
+      <TableCell className="text-right">
+        <Link href={`/bucket/${encodeURIComponent(bucket.id)}`} prefetch aria-label={bucket.name}>
+          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+        </Link>
+      </TableCell>
+    </TableRow>
   )
 }
 

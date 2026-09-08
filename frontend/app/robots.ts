@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 import { BLOG_POSTS } from "@/services/blog/blog"
+import { CHARITY_CAMPAIGNS } from "@/lib/public/charity/campaigns"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 
@@ -17,9 +18,11 @@ const PRIVATE = [
   "/username",
   "/icpverse",
   "/u",
+  "/channels/new",
 ]
 
 const BLOG_PUBLIC = BLOG_POSTS.map((post) => `/blog/${post.slug}`)
+const CHARITY_PUBLIC = ["/charity", ...CHARITY_CAMPAIGNS.map((campaign) => campaign.href)]
 
 // Public and crawlable. Listed explicitly rather than relying on Allow: / so
 // that a new private route added above cannot silently shadow one of them.
@@ -34,6 +37,8 @@ const PUBLIC = [
   "/transparency",
   "/login",
   "/blog",
+  "/channels",
+  ...CHARITY_PUBLIC,
   ...BLOG_PUBLIC,
 ]
 

@@ -17,6 +17,14 @@ export type StoreFileOptions = {
   onProgress?: (pct: number) => void
 }
 
+async function cancelUpload(actor: WalletActor, uploadId: string) {
+  try {
+    await actor.cancelUpload(uploadId)
+  } catch {
+    /* best-effort cleanup */
+  }
+}
+
 async function sendChunks(
   actor: WalletActor,
   uploadId: string,
@@ -35,7 +43,7 @@ async function sendChunks(
       nextIndex += 1
       if (index >= total) return
 
-      const bytes = await readFileChunk(file, index)
+      const bytes = await readFileChunk(file, index, total)
       const res = (await actor.uploadFileChunkIndexed(
         uploadId,
         BigInt(index),
@@ -46,7 +54,7 @@ async function sendChunks(
         return
       }
       completed += 1
-      onProgress?.(10 + Math.round((completed / total) * 80))
+      onProgress?.(5 + Math.round((completed / total) * 85))
     }
   }
 
@@ -54,7 +62,10 @@ async function sendChunks(
     Array.from({ length: Math.min(UPLOAD_CHUNK_CONCURRENCY, total) }, () => worker())
   )
 
-  if (failure) return { err: failure }
+  if (failure) {
+    await cancelUpload(actor, uploadId)
+    return { err: failure }
+  }
   return { ok: null }
 }
 
@@ -67,8 +78,9 @@ async function uploadSmall(
   if (file.size > BUCKET_UPLOAD_SINGLE_MAX) {
     return { err: "File too large for single upload — use chunked upload" }
   }
-  options.onProgress?.(20)
+  options.onProgress?.(15)
   const bytes = new Uint8Array(await file.arrayBuffer())
+  options.onProgress?.(40)
   const res = (await actor.uploadFile(
     options.bucketId,
     options.path,
@@ -92,7 +104,7 @@ export async function storeFile(
       return uploadSmall(actor, file, options, contentType)
     }
 
-    options.onProgress?.(5)
+    options.onProgress?.(2)
 
     const begin = (await actor.beginFileUpload(
       options.bucketId,
@@ -103,14 +115,20 @@ export async function storeFile(
     )) as Outcome<string>
     if ("err" in begin) return begin
 
+    options.onProgress?.(5)
+
     const chunks = await sendChunks(actor, begin.ok, file, options.onProgress)
     if ("err" in chunks) return chunks
 
-    options.onProgress?.(95)
+    options.onProgress?.(92)
     const done = (await actor.completeFileUpload(
       begin.ok,
       options.apiKey ? [options.apiKey] : []
     )) as Outcome<string>
+    if ("err" in done) {
+      await cancelUpload(actor, begin.ok)
+      return done
+    }
     options.onProgress?.(100)
     return done
   })

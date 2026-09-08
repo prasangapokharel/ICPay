@@ -38,6 +38,41 @@ module {
     Array.map<Types.Token, Types.TokenPublic>(rows, Types.tokenToPublic);
   };
 
+  func isActiveLaunchedLedger(service: Context.TokenService, ledgerId: Text): Bool {
+    switch (TokenRepo.findByLedgerId(service.tokens, service.byLedger, ledgerId)) {
+      case (?t) { t.status == #active };
+      case (null) { false };
+    };
+  };
+
+  // Chain-key and SNS ledgers live in the registry; ICPay-launched ledgers are
+  // stored in TokenStorage and re-registered on every start so an upgrade never
+  // leaves a live launch unspendable until someone runs a manual backfill.
+  public func isCustodiedLedger(service: Context.TokenService, ledgerId: Text): Bool {
+    LedgerService.isAllowed(service.ledger, ledgerId)
+    or isActiveLaunchedLedger(service, ledgerId);
+  };
+
+  public func ensureCustodiedLedger(service: Context.TokenService, ledgerId: Text): Bool {
+    if (LedgerService.isAllowed(service.ledger, ledgerId)) { return true };
+    if (not isActiveLaunchedLedger(service, ledgerId)) { return false };
+    ignore LedgerService.registerLedger(service.ledger, ledgerId);
+    true;
+  };
+
+  public func ensureCustodiedLedgerAsync(service: Context.TokenService, ledgerId: Text): async Bool {
+    if (LedgerService.isAllowed(service.ledger, ledgerId)) { return true };
+    if (isActiveLaunchedLedger(service, ledgerId)) {
+      ignore LedgerService.registerLedger(service.ledger, ledgerId);
+      return true;
+    };
+    if (await LedgerService.isValidIcrcLedger(ledgerId)) {
+      ignore LedgerService.registerLedger(service.ledger, ledgerId);
+      return true;
+    };
+    false
+  };
+
   public func registerLaunchedLedgers(service: Context.TokenService): Nat {
     var added = 0;
     for (id in TokenRepo.activeLedgerIds(service.tokens).values()) {

@@ -16,25 +16,32 @@ export function BucketFileDeleteDialog({
   open,
   onOpenChange,
   fileName,
+  count,
   deleting,
   onConfirm,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   fileName: string
+  count?: number
   deleting: boolean
   onConfirm: () => void | Promise<void>
 }) {
   const t = useTranslations("bucket")
   const tc = useTranslations("common")
+  const bulk = (count ?? 1) > 1
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t("deleteFileTitle")}</AlertDialogTitle>
+          <AlertDialogTitle>
+            {bulk ? t("deleteSelectedTitle") : t("deleteFileTitle")}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            {t("deleteFileBody", { name: fileName })}
+            {bulk
+              ? t("deleteSelectedBody", { count: String(count) })
+              : t("deleteFileBody", { name: fileName })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

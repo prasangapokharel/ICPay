@@ -3,7 +3,7 @@ import { IcrcTransferError } from "@icp-sdk/canisters/ledger/icrc"
 import type { Principal } from "@icp-sdk/core/principal"
 import type { Outcome } from "@/services/client"
 import { icrcLedger } from "@/services/ledger/icrc"
-import { custodialSubaccount, isLedgerSupported } from "@/services/tokens"
+import { custodialSubaccount, canMoveToCustody } from "@/services/tokens"
 
 export type SweepResult = { blockIndex: bigint; amount: bigint }
 
@@ -44,7 +44,7 @@ export async function sweepToCustody(
   if (!identity) return { err: "Not authenticated" }
   if (amount <= 0n) return { err: "Nothing to move." }
 
-  if (!(await isLedgerSupported(identity, ledgerId))) {
+  if (!(await canMoveToCustody(identity, ledgerId))) {
     return { err: "This token cannot be moved into ICPay." }
   }
 

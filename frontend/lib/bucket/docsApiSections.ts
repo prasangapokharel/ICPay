@@ -64,6 +64,7 @@ ${DFX} deleteBucket '("${BUCKET}")'`,
 export function uploadSessionExamples(): Record<DocsExampleLang, string> {
   return {
     typescript: `import { prepareUploadFile } from "@/lib/bucket/prepareUpload"
+import { uploadChunkCount, readFileChunk } from "@/lib/bucket/uploadChunk"
 import { storeFile } from "@/services/bucket/store-file"
 import { getWalletActor } from "@/services/wallet"
 
@@ -81,8 +82,10 @@ const begin = await actor.beginFileUpload(
 )
 if ("err" in begin) throw new Error(begin.err)
 const uploadId = begin.ok
-for (let i = 0; i < chunks.length; i++) {
-  await actor.uploadFileChunkIndexed(uploadId, BigInt(i), chunks[i])
+const total = uploadChunkCount(file.size)
+for (let i = 0; i < total; i++) {
+  const bytes = await readFileChunk(file, i, total)
+  await actor.uploadFileChunkIndexed(uploadId, BigInt(i), bytes)
 }
 await actor.completeFileUpload(uploadId, ["${KEY}"])
 
