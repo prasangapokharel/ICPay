@@ -19,7 +19,7 @@ import { useTokenRegistry } from "@/lib/token/registry"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import type { DashboardData, UserPublic } from "@/services/types"
 import { getTransactions, getTransactionDetail } from "@/services/transactions/transactions"
-import { resolveUsername, searchUsers, getRecipientProfile } from "@/services/profile/profile"
+import { resolveUsername, searchUsers } from "@/services/profile/profile"
 import { listBookmarks } from "@/services/bookmark/bookmark"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
 import { checkUsername } from "@/services/buy/buy"
@@ -36,6 +36,7 @@ import {
   mergeWalletLedgerIds,
   canMoveToCustody,
   type TokenHolding,
+  type TokenMetadata,
 } from "@/services/tokens"
 import { fetchWalletBalances } from "@/lib/wallet/balanceSweep"
 
@@ -80,7 +81,10 @@ export function useDashboard() {
   const { identity } = useAuth()
 
   const { data, error, isLoading, mutate } = useSWR(
-    keyFor(identity, "dashboard"),
+    // ICP_LEDGER_ID is in the key because loadDashboard always calls
+    // getDashboard with that ledger. A future caller with a different ledger
+    // would hit this cache and get the wrong data without it.
+    keyFor(identity, "dashboard", ICP_LEDGER_ID),
     () => loadDashboard(identity!),
     FETCH_ONCE
   )
@@ -387,15 +391,19 @@ export function useResolvedUsername(name: string) {
 
 // Fetches full UserPublic for a resolved username to get createdAt for trust
 // signals. Fires only once the principal is confirmed — no wasted call on a
-// failed lookup. Same free query path as resolveUsername.
+// failed lookup.
+//
+// Uses the same SWR key as useUserSearch so any prior search result is served
+// from cache with zero additional canister calls. When no prior search exists,
+// this fetch populates the cache for useUserSearch to reuse.
 export function useRecipientProfile(username: string, principal: string | null) {
   const { identity } = useAuth()
   const trimmed = username.trim().toLowerCase()
   const enabled = trimmed.length >= USERNAME_MIN_LENGTH && principal !== null
 
   const { data } = useSWR(
-    enabled ? (["recipient-profile", trimmed] as const) : null,
-    () => getRecipientProfile(identity, trimmed),
+    enabled ? keyFor(identity, "search-users", trimmed) : null,
+    () => searchUsers(identity, trimmed),
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -404,7 +412,8 @@ export function useRecipientProfile(username: string, principal: string | null) 
     }
   )
 
-  return data ?? null
+  if (!data) return null
+  return data.find((u) => u.username[0]?.toLowerCase() === trimmed) ?? null
 }
 
 // Fetches raw tx count for a recipient principal from the NNS index (free
@@ -619,18 +628,39 @@ export function useTokenHoldings(customLedgerIds: string[] = []) {
   }
 }
 
+// Reads this ledger's metadata from the batch cache written by useTokenHoldings,
+// if it is already loaded. Returns undefined when the wallet page has not been
+// visited yet (cold deep link) and the individual fetch still has to run.
+//
+// "token-metadata-one" keys store a single TokenMetadata (not a Map), so they
+// must be excluded — both key names contain "token-metadata" as a substring.
+function getMetaFromBatchCache(
+  cache: ReturnType<typeof useSWRConfig>["cache"],
+  ledgerId: string
+): TokenMetadata | undefined {
+  for (const key of cache.keys()) {
+    if (typeof key !== "string") continue
+    if (!key.includes("token-metadata") || key.includes("token-metadata-one")) continue
+    const row = cache.get(key)?.data as Map<string, TokenMetadata> | undefined
+    if (row instanceof Map && row.has(ledgerId)) return row.get(ledgerId)!
+  }
+  return undefined
+}
+
 // The symbol and scale for a ledger, without its balance. Transaction rows carry
 // a ledgerId and nothing else, so every row was labelled "ICP" whatever token it
-// actually moved. Shares useTokenHolding's key, and seeds from the holdings cache
-// so a row renders its real ticker on the first paint rather than after a round
-// trip. ICP is the fallback because its ledger publishes no metadata.
+// actually moved. Checks the wallet batch-metadata cache first so a token detail
+// page visited after /wallet never makes a second round trip.
 export function useLedgerSymbol(ledgerId: string): { symbol: string; decimals: number } {
   const { identity } = useAuth()
+  const { cache } = useSWRConfig()
   const registry = useTokenRegistry()
   const fromRegistry = registry ? metadataFromRegistry(ledgerId, registry) : null
+  const fromBatch = getMetaFromBatchCache(cache, ledgerId)
 
   const { data } = useSWRImmutable(
-    !fromRegistry ? (["token-metadata-one", ledgerId] as const) : null,
+    // Skip the individual fetch if the registry or batch cache already has it.
+    !fromRegistry && !fromBatch ? (["token-metadata-one", ledgerId] as const) : null,
     () => fetchTokenMetadata(ledgerId, identity, registry)
   )
 
@@ -640,7 +670,7 @@ export function useLedgerSymbol(ledgerId: string): { symbol: string; decimals: n
     : principal
       ? readHoldings(principal)?.find((h) => h.ledgerId === ledgerId)
       : undefined
-  const meta = fromRegistry ?? data ?? cached
+  const meta = fromRegistry ?? fromBatch ?? data ?? cached
 
   return { symbol: meta?.symbol ?? "ICP", decimals: meta?.decimals ?? 8 }
 }
@@ -651,12 +681,15 @@ export function useLedgerSymbol(ledgerId: string): { symbol: string; decimals: n
 // useLedgerBalance's key, so arriving from /wallet reuses the cached balance.
 export function useTokenHolding(ledgerId: string | null) {
   const { identity } = useAuth()
+  const { cache } = useSWRConfig()
   const registry = useTokenRegistry()
   const { balance, isLoading: loadingBalance } = useLedgerBalance(ledgerId)
   const fromRegistry = ledgerId && registry ? metadataFromRegistry(ledgerId, registry) : null
+  const fromBatch = ledgerId ? getMetaFromBatchCache(cache, ledgerId) : undefined
 
   const { data: meta, isLoading: loadingMeta } = useSWRImmutable(
-    ledgerId && !fromRegistry ? (["token-metadata-one", ledgerId] as const) : null,
+    // Skip when the registry or the wallet batch cache already has this token.
+    ledgerId && !fromRegistry && !fromBatch ? (["token-metadata-one", ledgerId] as const) : null,
     () => fetchTokenMetadata(ledgerId!, identity, registry)
   )
 
@@ -664,21 +697,20 @@ export function useTokenHolding(ledgerId: string | null) {
   // balance is cached, so the page held a skeleton for the whole round trip.
   const principal = identity?.getPrincipal().toText()
   const cached =
-    !meta && ledgerId && principal
+    !meta && !fromBatch && ledgerId && principal
       ? readHoldings(principal)?.find((h) => h.ledgerId === ledgerId)
       : undefined
 
   // The balance is not awaited before rendering: the symbol and logo are what
   // identify the page, and 0n reads correctly for a token held in no amount.
-  const token: TokenHolding | undefined = fromRegistry
-    ? { ...fromRegistry, balance: balance ?? cached?.balance ?? 0n }
-    : meta
-      ? { ...meta, balance: balance ?? cached?.balance ?? 0n }
-      : cached
+  const resolvedMeta = fromRegistry ?? fromBatch ?? meta
+  const token: TokenHolding | undefined = resolvedMeta
+    ? { ...resolvedMeta, balance: balance ?? cached?.balance ?? 0n }
+    : cached
 
   return {
     token,
-    isLoading: !cached && (loadingMeta || (loadingBalance && balance === undefined)),
+    isLoading: !cached && !fromBatch && (loadingMeta || (loadingBalance && balance === undefined)),
   }
 }
 
