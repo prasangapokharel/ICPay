@@ -15,7 +15,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { formatE8s } from "@/lib/wallet/utils"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { useDashboard, useLiveBalance } from "@/hooks/wallet/useWalletData"
-import { cn } from "@/lib/ui/utils"
 
 export default function DashboardPage() {
   const { price, refresh } = useIcpPrice()

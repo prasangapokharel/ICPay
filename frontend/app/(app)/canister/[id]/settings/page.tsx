@@ -1,25 +1,22 @@
 "use client"
 
 import { useMemo } from "react"
-import { useParams, useSearchParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import useSWR from "swr"
-import { MyCanisterDetails, type CanisterDetailTab } from "@/components/canister/details"
+import { MyCanisterDetails } from "@/components/canister/details"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useCanisterStatus } from "@/hooks/canister/useCanisterStatus"
 import { useSavedCanisterEntries } from "@/hooks/canister/useSavedCanisters"
 import { fetchCanisterIndexMeta } from "@/services/canister/controlledCanisters"
 
-export default function CanisterDetailPage() {
+export default function CanisterSettingsPage() {
   const { identity, isAuthenticated } = useAuth()
   const params = useParams()
-  const searchParams = useSearchParams()
+  const router = useRouter()
   const canisterId = params.id as string
-  const tabParam = searchParams.get("tab") as CanisterDetailTab | null
-  const defaultTab: CanisterDetailTab =
-    tabParam === "settings" || tabParam === "snapshots" ? tabParam : "overview"
-
   const principal = identity?.getPrincipal().toText() ?? null
+
   const entries = useSavedCanisterEntries(principal)
   const nameById = useMemo(() => new Map(entries.map((e) => [e.id, e.name])), [entries])
   const localName = canisterId ? nameById.get(canisterId) ?? "" : ""
@@ -46,7 +43,12 @@ export default function CanisterDetailPage() {
             localName={localName}
             meta={meta}
             status={status}
-            defaultTab={defaultTab}
+            defaultTab="settings"
+            onTabChange={(tab) => {
+              if (tab === "overview") {
+                router.push(`/canister/${canisterId}`)
+              }
+            }}
             onCopyId={() => void navigator.clipboard.writeText(canisterId)}
             onRefresh={() => status.refresh()}
           />

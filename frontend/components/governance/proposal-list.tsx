@@ -43,12 +43,12 @@ export function ProposalList({
       <ul className="space-y-3">
         {slice.map((row) => (
           <li key={`${row.source}-${row.ledgerId ?? "nns"}-${row.id}`}>
-            <button
-              type="button"
+            <Button
+              variant="outline"
               onClick={() => setSelected(row)}
-              className="w-full rounded-xl border border-border/40 bg-background/45 p-3 text-left backdrop-blur-sm transition-colors hover:bg-muted/40 active:scale-[0.99]"
+              className="h-auto w-full flex-col items-start gap-0 p-3 text-left active:scale-[0.99]"
             >
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex w-full items-start justify-between gap-2">
                 <p className="text-sm font-semibold leading-snug">{row.title}</p>
                 <span className="shrink-0 rounded-full bg-muted/60 px-2 py-0.5 text-[10px] font-medium uppercase">
                   {row.source}
@@ -66,7 +66,7 @@ export function ProposalList({
                 </span>
                 {row.ledgerId ? <span>{row.ledgerId.slice(0, 5)}…</span> : null}
               </div>
-            </button>
+            </Button>
           </li>
         ))}
       </ul>

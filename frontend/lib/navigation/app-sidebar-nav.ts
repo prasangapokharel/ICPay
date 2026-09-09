@@ -128,7 +128,6 @@ export function resolveAppPageTitle(
   if (sidebar) return translate(sidebar.labelKey)
 
   if (pathname.startsWith("/channels")) return translate("settings.items.community")
-  if (pathname.startsWith("/live")) return translate("settings.items.live")
   if (pathname.startsWith("/profile")) return translate("settings.items.profile")
   if (pathname.startsWith("/transfer")) return translate("common.send")
   if (pathname.startsWith("/deposit")) return translate("common.receive")

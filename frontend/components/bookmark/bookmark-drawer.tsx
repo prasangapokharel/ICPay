@@ -117,18 +117,13 @@ export function BookmarkButton({
   }
 
   return (
-    <button
-      type="button"
+    <Button
+      variant={isBookmarked ? "default" : "outline"}
+      size="icon"
       onClick={toggle}
       disabled={loading}
       aria-label={isBookmarked ? t("remove") : t("add")}
-      className={cn(
-        "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors",
-        isBookmarked
-          ? "bg-primary text-primary-foreground hover:bg-primary/90"
-          : "border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground",
-        className
-      )}
+      className={cn("shrink-0", className)}
     >
       {loading ? (
         <Spinner className="size-4" />
@@ -139,7 +134,7 @@ export function BookmarkButton({
           strokeWidth={1.75}
         />
       )}
-    </button>
+    </Button>
   )
 }
 
@@ -171,9 +166,9 @@ function BookmarkRow({
 
   return (
     <div className="flex items-center gap-2.5 rounded-2xl px-1 py-2 hover:bg-muted/50">
-      <button
-        type="button"
-        className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
+      <Button
+        variant="ghost"
+        className="h-auto min-w-0 flex-1 items-center gap-2.5 p-0 text-left"
         onClick={pick}
         disabled={!onSelect}
       >
@@ -187,7 +182,7 @@ function BookmarkRow({
           @{username}
           <PremiumBadge name={username} className="size-3 shrink-0" />
         </p>
-      </button>
+      </Button>
 
       <div className="flex shrink-0 items-center gap-0.5">
         {onSelect && (

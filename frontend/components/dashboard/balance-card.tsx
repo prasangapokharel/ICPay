@@ -58,13 +58,13 @@ export function BalanceCard({
 
         {/* Balance */}
         <div className="relative z-10 mt-6 flex items-baseline gap-2">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => void onRefreshPrice()}
-            className="cursor-pointer text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums transition-opacity hover:opacity-80 active:opacity-60"
+            className="h-auto p-0 text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums hover:bg-transparent hover:opacity-80 active:opacity-60"
           >
             {hidden ? "•• •••• ••••" : <FormattedBalance value={balance} />}
-          </button>
+          </Button>
           <Button
             variant="ghost"
             size="icon-xs"

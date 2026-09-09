@@ -214,9 +214,9 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "icpay-swap-and-live",
-    title: "ICPay Swap & Live: Trade Tokens and Voice Rooms on the Internet Computer",
+    title: "ICPay Swap: Trade ICP and ICRC Tokens on the Internet Computer",
     description:
-      "Swap ICP and ICRC tokens in-wallet via ICPSwap, and join on-chain voice rooms with peer-to-peer audio — how ICPay Swap and Live work.",
+      "Swap ICP and ICRC tokens directly in your wallet with ICPSwap — live quotes, pool fees, and instant custodial subaccount settlement.",
     publishedAt: "2026-08-17",
     readingMinutes: 6,
     category: "Product",
@@ -228,6 +228,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "A plain-language guide to the Internet Computer Protocol — how it works, why it exists, and what makes it different from other blockchains.",
     publishedAt: "2026-08-09",
     readingMinutes: 6,
+    category: "Explainers",
   },
   {
     slug: "best-crypto-wallet",
@@ -236,6 +237,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Custodial vs self-custody, hot vs cold storage. A practical guide to picking a crypto wallet in 2026.",
     publishedAt: "2026-08-10",
     readingMinutes: 8,
+    category: "Security",
   },
   {
     slug: "best-icp-wallet",
@@ -244,6 +246,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "The best ICP wallet in 2026 — ICPay leads with Internet Identity login, username transfers, on-chain custody, and native ICRC-1 ledger calls. Compare features and alternatives.",
     publishedAt: "2026-08-28",
     readingMinutes: 8,
+    category: "Product",
   },
   {
     slug: "what-is-internet-identity",
@@ -252,6 +255,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "The passkey-based login system of the Internet Computer — no passwords, no seed phrases, anonymous by default.",
     publishedAt: "2026-08-10",
     readingMinutes: 5,
+    category: "Security",
   },
   {
     slug: "how-to-send-icp",
@@ -260,6 +264,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Send ICP by account ID or username, transfer fees, and the mistakes that lose funds.",
     publishedAt: "2026-08-10",
     readingMinutes: 5,
+    category: "How-to",
   },
   {
     slug: "icp-price",
@@ -268,6 +273,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Live ICP price, 7-day chart, technical read, and this week's Internet Computer news.",
     publishedAt: "2026-08-11",
     readingMinutes: 5,
+    category: "Market watch",
   },
   {
     slug: "icp-cloud-storage",
@@ -276,6 +282,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "What ICP cloud storage is, how on-chain buckets work, encrypted CDN delivery, pricing in ICP, and how it compares to AWS S3 and IPFS.",
     publishedAt: "2026-08-13",
     readingMinutes: 7,
+    category: "Infrastructure",
   },
   {
     slug: "internet-computer-chain-fusion",
@@ -284,6 +291,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "How ICP canisters hold, sign, and move Bitcoin, Ethereum, and Solana natively using threshold signatures — no bridges, no custodians.",
     publishedAt: "2026-08-16",
     readingMinutes: 7,
+    category: "Chain Fusion",
   },
   {
     slug: "how-icp-canisters-work",
@@ -292,6 +300,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "The Wasm-based smart contracts that hold code and state on ICP — subnets, stable memory, cycles, and the path a call takes from browser to consensus.",
     publishedAt: "2026-08-16",
     readingMinutes: 7,
+    category: "Explainers",
   },
   {
     slug: "icp-cycles-explained",
@@ -300,6 +309,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "The fuel of the Internet Computer — the XDR peg, storage and compute pricing, and the reverse gas model that keeps users paying nothing.",
     publishedAt: "2026-08-16",
     readingMinutes: 6,
+    category: "Explainers",
   },
   {
     slug: "icp-vs-ethereum",
@@ -308,6 +318,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Architecture, execution, storage, fees, and finality — an honest side-by-side of the Internet Computer and Ethereum.",
     publishedAt: "2026-08-16",
     readingMinutes: 7,
+    category: "Explainers",
   },
   {
     slug: "can-icp-replace-cloud-computing",
@@ -316,6 +327,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "What canisters genuinely replace from the traditional cloud, what they cannot, and where the line sits for real applications.",
     publishedAt: "2026-08-16",
     readingMinutes: 7,
+    category: "Infrastructure",
   },
   {
     slug: "icp-stable-memory",
@@ -324,6 +336,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "How canisters survive upgrades with persistent stable memory, why it replaces a managed database, and what migration discipline means.",
     publishedAt: "2026-08-16",
     readingMinutes: 6,
+    category: "Developers",
   },
   {
     slug: "icp-subnets-explained",
@@ -332,6 +345,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Nodes, subnets, replicas, and consensus — the physical layer that makes the Internet Computer tamper-proof.",
     publishedAt: "2026-08-16",
     readingMinutes: 6,
+    category: "Infrastructure",
   },
   {
     slug: "icp-reverse-gas-model",
@@ -340,6 +354,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "How canisters prepay their own cycles so users interact for free, and what the reverse gas model means for apps and developers.",
     publishedAt: "2026-08-16",
     readingMinutes: 5,
+    category: "Explainers",
   },
   {
     slug: "icp-https-outcalls",
@@ -348,6 +363,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "How canisters make HTTP requests to external APIs directly from on-chain code, what it costs, and why it removes the oracle.",
     publishedAt: "2026-08-16",
     readingMinutes: 5,
+    category: "Developers",
   },
   {
     slug: "how-to-stake-icp",
@@ -356,6 +372,7 @@ export const BLOG_POSTS: BlogPost[] = [
       "Creating a neuron, choosing a dissolve delay, voting rewards, and the liquidity risks of locking up your ICP.",
     publishedAt: "2026-08-16",
     readingMinutes: 6,
+    category: "How-to",
   },
   {
     slug: "icpay-bucket-sdk",

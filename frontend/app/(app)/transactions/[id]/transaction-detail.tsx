@@ -259,10 +259,11 @@ function DetailValue({
         </span>
       )}
       {copyable ? (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon-xs"
           onClick={() => void onCopy()}
-          className="shrink-0 rounded-md p-0.5 text-muted-foreground transition-colors hover:text-foreground"
+          className="shrink-0 text-muted-foreground hover:text-foreground"
           aria-label={tc("copy")}
         >
           <HugeiconsIcon
@@ -270,7 +271,7 @@ function DetailValue({
             className="size-4"
             strokeWidth={1.75}
           />
-        </button>
+        </Button>
       ) : null}
     </div>
   )
