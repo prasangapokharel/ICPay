@@ -153,7 +153,7 @@ export function MyCanisterTopupDialog({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-2">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-pink-500/10 text-pink-500">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <HugeiconsIcon icon={FuelStationIcon} className="size-5" />
             </div>
             <div>
@@ -200,7 +200,7 @@ export function MyCanisterTopupDialog({
             />
             <Button
               type="button"
-              className="rounded-xl bg-pink-600 px-5 text-white shadow-sm hover:bg-pink-500"
+              className="rounded-xl bg-primary px-5 text-primary-foreground shadow-sm hover:bg-primary/90"
               disabled={
                 !isAuthenticated ||
                 submitting ||

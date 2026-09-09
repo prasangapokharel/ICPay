@@ -36,9 +36,11 @@ import {
 export function SnapshotsCard({
   canisterId: fixedCanisterId,
   embedded = false,
+  isController: propIsController,
 }: {
   canisterId?: string
   embedded?: boolean
+  isController?: boolean
 } = {}) {
   const t = useTranslations("canisterSnapshots")
   const { identity, isAuthenticated, isLoading, login } = useAuth()
@@ -71,11 +73,23 @@ export function SnapshotsCard({
     Boolean(isAuthenticated && parsedOk)
   )
 
+  const canControl =
+    propIsController !== undefined
+      ? propIsController
+      : status.kind === "ok"
+        ? status.data.isController
+        : null
+
   const refreshList = async () => {
     if (!identity || !parsedOk) return
+    if (canControl === false) {
+      toast.error("Your Internet Identity is not a controller of this canister.")
+      return
+    }
     setBusy(true)
     try {
-      setRows(await listSnapshots(identity, trimmed))
+      const list = await listSnapshots(identity, trimmed)
+      setRows(list)
     } catch (e) {
       toast.error(formatManageError(e))
       setRows(null)
@@ -84,25 +98,23 @@ export function SnapshotsCard({
     }
   }
 
-  // Auto load snapshots when fixed canister ID is provided
+  // Auto load snapshots when fixed canister ID is provided and user is controller
   useEffect(() => {
-    if (!fixedCanisterId || !identity || !isAuthenticated || !parsedOk) return
+    if (!fixedCanisterId || !identity || !isAuthenticated || !parsedOk || canControl === false) return
     let cancelled = false
     void (async () => {
       try {
         const list = await listSnapshots(identity, trimmed)
         if (!cancelled) setRows(list)
-      } catch (e) {
-        if (!cancelled) {
-          toast.error(formatManageError(e))
-          setRows(null)
-        }
+      } catch {
+        // Silent failure on initial background load to avoid unsolicited toast errors
+        if (!cancelled) setRows(null)
       }
     })()
     return () => {
       cancelled = true
     }
-  }, [fixedCanisterId, identity, isAuthenticated, parsedOk, trimmed])
+  }, [fixedCanisterId, identity, isAuthenticated, parsedOk, trimmed, canControl])
 
   const onTake = async () => {
     if (!identity) return
@@ -157,7 +169,7 @@ export function SnapshotsCard({
                 variant="outline"
                 size="sm"
                 className="h-8 gap-1.5 text-xs"
-                disabled={busy}
+                disabled={busy || canControl === false}
                 onClick={() => void refreshList()}
               >
                 <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
@@ -165,8 +177,8 @@ export function SnapshotsCard({
               </Button>
               <Button
                 size="sm"
-                className="h-8 gap-1.5 text-xs"
-                disabled={!parsedOk || busy || status.kind !== "ok"}
+                className="h-8 gap-1.5 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={!parsedOk || busy || status.kind !== "ok" || canControl === false}
                 onClick={() => void onTake()}
               >
                 <HugeiconsIcon icon={Camera01Icon} className="size-3.5" />
@@ -189,6 +201,15 @@ export function SnapshotsCard({
           />
         )}
 
+        {canControl === false && isAuthenticated && (
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 text-xs text-muted-foreground space-y-1">
+            <p className="font-semibold text-foreground">Controller access required</p>
+            <p>
+              Your Internet Identity is not a controller of this canister. To list, create, or restore snapshots, add your principal as a controller under the Settings tab.
+            </p>
+          </div>
+        )}
+
         {!isAuthenticated ? (
           <Button
             size="lg"
@@ -203,7 +224,7 @@ export function SnapshotsCard({
           </Button>
         ) : null}
 
-        {rows && (
+        {canControl !== false && rows && (
           <div className="space-y-3">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Available Snapshots ({rows.length})

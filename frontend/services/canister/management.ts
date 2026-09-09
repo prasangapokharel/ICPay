@@ -112,21 +112,19 @@ function rejectDetails(err: unknown): { code?: number; text: string } {
 
 /** Management APIs only succeed for controllers — map replica rejects cleanly. */
 export function isControllerDenied(err: unknown): boolean {
-  const { code, text } = rejectDetails(err)
+  const { text } = rejectDetails(err)
   const lower = text.toLowerCase()
   if (
     lower.includes("not a controller") ||
     lower.includes("only controllers") ||
     lower.includes("unauthorized") ||
     lower.includes("not authorized") ||
+    lower.includes("not allowed to call") ||
     (lower.includes("caller") && lower.includes("controller"))
   ) {
     return true
   }
-  // CanisterReject (4) / CanisterError (5) on management = almost always access denied
-  if (code === 4 || code === 5) return true
-  const full = err instanceof Error ? err.message.toLowerCase() : lower
-  return full.includes("replica returned a rejection")
+  return false
 }
 
 export function formatManageError(err: unknown): string {

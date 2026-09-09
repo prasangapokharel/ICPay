@@ -58,7 +58,7 @@ export function CanisterOverviewGuide() {
               {/* Reverse Gas Model */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={FuelStationIcon} className="size-4 text-pink-500" />
+                  <HugeiconsIcon icon={FuelStationIcon} className="size-4 text-primary" />
                   <span>Reverse-Gas Model</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -69,7 +69,7 @@ export function CanisterOverviewGuide() {
               {/* Memory Model */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={CpuIcon} className="size-4 text-cyan-500" />
+                  <HugeiconsIcon icon={CpuIcon} className="size-4 text-foreground" />
                   <span>WASM & Stable Memory</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -80,7 +80,7 @@ export function CanisterOverviewGuide() {
               {/* Lifecycle States */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Blockchain01Icon} className="size-4 text-emerald-500" />
+                  <HugeiconsIcon icon={Blockchain01Icon} className="size-4 text-success" />
                   <span>Lifecycle Management</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -91,7 +91,7 @@ export function CanisterOverviewGuide() {
               {/* Subnet Consensus */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={AiSecurity01Icon} className="size-4 text-amber-500" />
+                  <HugeiconsIcon icon={AiSecurity01Icon} className="size-4 text-destructive" />
                   <span>Subnet Replication</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">

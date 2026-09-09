@@ -37,20 +37,20 @@ export function CanisterSettingsView({
 
       {/* Settings Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 p-1">
-          <TabsTrigger value="controllers" className="gap-1.5 text-xs sm:text-sm cursor-pointer">
+        <TabsList variant="line" className="w-full justify-start border-b border-border/40 gap-4 sm:gap-6">
+          <TabsTrigger value="controllers" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
             <HugeiconsIcon icon={UserGroupIcon} className="size-4" />
             <span>Controllers</span>
           </TabsTrigger>
-          <TabsTrigger value="resources" className="gap-1.5 text-xs sm:text-sm cursor-pointer">
+          <TabsTrigger value="resources" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
             <HugeiconsIcon icon={CpuIcon} className="size-4" />
             <span>Resources</span>
           </TabsTrigger>
-          <TabsTrigger value="visibility" className="gap-1.5 text-xs sm:text-sm cursor-pointer">
+          <TabsTrigger value="visibility" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
             <HugeiconsIcon icon={EyeIcon} className="size-4" />
             <span>Visibility</span>
           </TabsTrigger>
-          <TabsTrigger value="danger" className="gap-1.5 text-xs sm:text-sm text-destructive cursor-pointer">
+          <TabsTrigger value="danger" className="gap-1.5 pb-2 text-xs sm:text-sm text-destructive cursor-pointer">
             <HugeiconsIcon icon={Alert02Icon} className="size-4" />
             <span>Lifecycle</span>
           </TabsTrigger>
