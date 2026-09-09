@@ -10,6 +10,10 @@ import {
 } from "@hugeicons/core-free-icons"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
+import { useOwnProfile } from "@/hooks/wallet/useWalletData"
+import { isPremiumHandle } from "@/lib/verified/premiumTick"
+import { PremiumLockedCard } from "@/components/shared/premium-gate"
 import { CanisterGuideCard } from "./canister-guide-card"
 import { CanisterControllersCard } from "./canister-controllers-card"
 import { CanisterResourcesCard } from "./canister-resources-card"
@@ -29,6 +33,9 @@ export function CanisterSettingsView({
   onRefresh: () => void
 }) {
   const [activeTab, setActiveTab] = useState("controllers")
+  const { data: profile } = useOwnProfile()
+  const username = profile?.username[0] ?? null
+  const isPremium = isPremiumHandle(username)
 
   return (
     <div className="space-y-5">
@@ -45,10 +52,20 @@ export function CanisterSettingsView({
           <TabsTrigger value="resources" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
             <HugeiconsIcon icon={CpuIcon} className="size-4" />
             <span>Resources</span>
+            {!isPremium && (
+              <Badge variant="outline" className="ml-1 h-4 px-1 text-[9px] font-semibold text-primary border-primary/30 bg-primary/5">
+                PRO
+              </Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger value="visibility" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
             <HugeiconsIcon icon={EyeIcon} className="size-4" />
             <span>Visibility</span>
+            {!isPremium && (
+              <Badge variant="outline" className="ml-1 h-4 px-1 text-[9px] font-semibold text-primary border-primary/30 bg-primary/5">
+                PRO
+              </Badge>
+            )}
           </TabsTrigger>
           <TabsTrigger value="danger" className="gap-1.5 pb-2 text-xs sm:text-sm text-destructive cursor-pointer">
             <HugeiconsIcon icon={Alert02Icon} className="size-4" />
@@ -68,22 +85,40 @@ export function CanisterSettingsView({
 
         {/* Resources */}
         <TabsContent value="resources" className="space-y-4">
-          <CanisterResourcesCard
-            canisterId={canisterId}
-            data={data}
-            isController={isController}
-            onRefresh={onRefresh}
-          />
+          {isPremium ? (
+            <CanisterResourcesCard
+              canisterId={canisterId}
+              data={data}
+              isController={isController}
+              onRefresh={onRefresh}
+            />
+          ) : (
+            <PremiumLockedCard
+              title="Resource & Compute Limits"
+              description="Configuring on-chain compute allocation, guaranteed physical RAM reservation, 32-bit Wasm memory limits, and custom freezing protection thresholds is reserved for Premium handle owners (1–4 characters)."
+              actionText="Get Premium Handle"
+              href="/username"
+            />
+          )}
         </TabsContent>
 
         {/* Visibility */}
         <TabsContent value="visibility" className="space-y-4">
-          <CanisterVisibilityCard
-            canisterId={canisterId}
-            initialLogVisibility={data.logVisibility}
-            isController={isController}
-            onRefresh={onRefresh}
-          />
+          {isPremium ? (
+            <CanisterVisibilityCard
+              canisterId={canisterId}
+              initialLogVisibility={data.logVisibility}
+              isController={isController}
+              onRefresh={onRefresh}
+            />
+          ) : (
+            <PremiumLockedCard
+              title="Canister Log Visibility"
+              description="Configuring public log streaming versus controller-only inspection for autonomous on-chain diagnostics is reserved for Premium handle owners (1–4 characters)."
+              actionText="Get Premium Handle"
+              href="/username"
+            />
+          )}
         </TabsContent>
 
         {/* Lifecycle / Danger */}
