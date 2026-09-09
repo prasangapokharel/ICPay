@@ -127,15 +127,16 @@ export function TokenView() {
 
             if (item.key === "send") {
               return (
-                <button
+                <Button
                   key={item.key}
-                  type="button"
+                  variant="ghost"
+                  size="icon"
                   aria-label={t("send")}
                   onClick={() => setSendOpen(true)}
-                  className="transition-transform active:scale-95"
+                  className="h-auto w-auto p-0 transition-transform active:scale-95"
                 >
                   {icon}
-                </button>
+                </Button>
               )
             }
 

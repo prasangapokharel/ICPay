@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { CommunityReactionIcon } from "@/components/community/community-reaction-icon"
 import { REACTIONS, type ReactionCode } from "@/lib/community/reactions"
 import { cn } from "@/lib/ui/utils"
@@ -20,14 +21,14 @@ export function CommunityReactionPicker({
       {REACTIONS.map((reaction) => {
         const picked = activeCode === reaction.code
         return (
-          <button
+          <Button
             key={reaction.code}
-            type="button"
+            variant="ghost"
+            size="icon"
             disabled={disabled || picked}
             aria-label={reaction.id}
             aria-pressed={picked}
             className={cn(
-              "flex size-10 items-center justify-center rounded-full transition-colors",
               picked
                 ? "cursor-default opacity-40"
                 : "hover:bg-muted/70 active:scale-95 disabled:opacity-50"
@@ -38,7 +39,7 @@ export function CommunityReactionPicker({
             }}
           >
             <CommunityReactionIcon code={reaction.code} size={28} />
-          </button>
+          </Button>
         )
       })}
     </div>

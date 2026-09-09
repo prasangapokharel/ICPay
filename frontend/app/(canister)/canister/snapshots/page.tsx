@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
 import Link from "next/link"
-import { SnapshotsCard } from "@/components/canister/snapshots-card"
+import { SnapshotsCard } from "@/components/canister/details"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 

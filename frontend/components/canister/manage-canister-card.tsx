@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { CanisterStatusPanel } from "@/components/canister/canister-status-panel"
+import { CanisterStatusPanel } from "@/components/canister/details"
 import { CanisterIdField } from "@/components/canister/canister-id-field"
 import { CyclesFlowPreview } from "@/components/cycles/cycles-flow-preview"
 import { useAuth } from "@/components/auth/auth-provider"

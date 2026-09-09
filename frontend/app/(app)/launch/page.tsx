@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LaunchForm } from "@/components/launch/launch-form"
 import { TokenCard } from "@/components/launch/token-card"
@@ -42,16 +43,16 @@ export default function LaunchPage() {
 
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
-      <button
-        type="button"
+      <Button
+        variant="outline"
         onClick={() => setShowForm(true)}
-        className="flex w-full items-center gap-3 rounded-2xl border border-dashed bg-muted/40 p-4 text-left transition-colors hover:bg-muted"
+        className="flex h-auto w-full items-center gap-3 rounded-2xl border-dashed bg-muted/40 p-4 text-left transition-colors hover:bg-muted"
       >
         <span className="min-w-0">
           <span className="block text-sm font-semibold">{t("createCta")}</span>
           <span className="block text-xs text-muted-foreground">{t("createCtaBody")}</span>
         </span>
-      </button>
+      </Button>
 
       <div className="space-y-2">
         <p className="text-xs font-medium text-muted-foreground">{t("myTokens")}</p>

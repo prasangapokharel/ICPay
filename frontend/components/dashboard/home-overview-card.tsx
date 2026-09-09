@@ -59,14 +59,14 @@ export function HomeOverviewCard({
       </CardHeader>
       <CardContent className="space-y-4 pt-6">
         <div>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={() => void onRefreshPrice()}
-            className="cursor-pointer text-4xl font-semibold tracking-tight tabular-nums transition-opacity hover:opacity-80 active:opacity-60"
+            className="h-auto p-0 text-4xl font-semibold tracking-tight tabular-nums hover:bg-transparent hover:opacity-80 active:opacity-60"
           >
             {hidden ? "•• •••• ••••" : balance}
             <span className="ml-2 text-lg font-medium text-muted-foreground">ICP</span>
-          </button>
+          </Button>
           <div className="mt-1.5 flex items-center justify-between gap-2">
             <p className="text-base font-medium tabular-nums text-foreground/80">
               {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}

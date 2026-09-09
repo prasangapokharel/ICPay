@@ -69,10 +69,10 @@ export function CanisterIdField({
               <ul className="max-h-56 overflow-y-auto">
                 {saved.map((entry) => (
                   <li key={entry.id}>
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
                       className={cn(
-                        "flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left hover:bg-muted",
+                        "h-auto w-full flex-col items-start gap-0.5 px-2 py-2 text-left",
                         value.trim() === entry.id && "bg-muted"
                       )}
                       onClick={() => {
@@ -86,7 +86,7 @@ export function CanisterIdField({
                       <span className="w-full truncate font-mono text-[10px] text-muted-foreground">
                         {entry.id}
                       </span>
-                    </button>
+                    </Button>
                   </li>
                 ))}
               </ul>

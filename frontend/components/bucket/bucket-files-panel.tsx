@@ -18,7 +18,6 @@ import {
   joinObjectPath,
   listFolderEntries,
   nestedPrefix,
-  normalizePrefix,
   pathsUnderFolder,
 } from "@/lib/bucket/folderPath"
 import type { FileListPage, FilePublic } from "@/services/bucket/types"
@@ -83,7 +82,6 @@ export function BucketFilesPanel({
   const search = useBucketSearch(searching ? bucketId : null, debouncedQuery, page)
   const active = searching ? search : browse
   const { files, total, totalPages, isLoading, refresh: refreshFiles } = active
-  const apiFolders = searching ? [] : browse.folders
   const { refresh: refreshStats } = useBucketStats(bucketId)
 
   useEffect(() => {
@@ -103,8 +101,8 @@ export function BucketFilesPanel({
     if (searching) {
       return files.map((file) => ({ kind: "file" as const, file }))
     }
-    return listFolderEntries(files, prefix, apiFolders)
-  }, [apiFolders, files, prefix, searching])
+    return listFolderEntries(files, prefix, browse.folders)
+  }, [browse.folders, files, prefix, searching])
 
   const visible = useMemo(
     () => sortEntries(entries, files, prefix, sort),
