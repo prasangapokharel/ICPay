@@ -13,12 +13,9 @@ import {
   Copy01Icon,
   InformationCircleIcon,
   Link01Icon,
-  PlayIcon,
-  StopIcon,
   Settings02Icon,
   Camera01Icon,
   DashboardSquare01Icon,
-  Loading03Icon,
 } from "@hugeicons/core-free-icons"
 
 import { Button } from "@/components/ui/button"
@@ -27,16 +24,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 
 import { MyCanisterControls } from "@/components/canister/details/my-canister-controls"
 import { SubnetCountryFlags } from "@/components/canister/subnet-country-flags"
@@ -50,12 +37,7 @@ import type { CanisterStatusState } from "@/hooks/canister/useCanisterStatus"
 import type { ControlledCanister } from "@/services/canister/controlledCanisters"
 import { fetchSubnetIndexDetail } from "@/services/canister/controlledCanisters"
 import { shortSubnetId } from "@/services/canister/subnetLocations"
-import { shortCanisterId, rememberCanister } from "@/lib/canister/savedCanisters"
-import {
-  formatManageError,
-  startCanister,
-  stopCanister,
-} from "@/services/canister/management"
+import { shortCanisterId } from "@/lib/canister/savedCanisters"
 import { cn } from "@/lib/ui/utils"
 
 function shortHash(hash: string): string {
@@ -89,12 +71,9 @@ export function MyCanisterDetails({
   const router = useRouter()
   const { identity } = useAuth()
   const principal = identity?.getPrincipal().toText() ?? null
-
   const [activeTab, setActiveTab] = useState<string>(defaultTab)
   const [copied, setCopied] = useState(false)
   const [technicalOpen, setTechnicalOpen] = useState(false)
-  const [busyAction, setBusyAction] = useState<"start" | "stop" | null>(null)
-  const [stopConfirmOpen, setStopConfirmOpen] = useState(false)
 
   const handleTabSelect = (tab: string) => {
     setActiveTab(tab)
@@ -125,27 +104,6 @@ export function MyCanisterDetails({
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
     toast.success(t("copied"))
-  }
-
-  const runHeaderAction = async (action: "start" | "stop") => {
-    if (!identity) return
-    setBusyAction(action)
-    try {
-      if (action === "start") {
-        await startCanister(identity, canisterId)
-        toast.success("Canister started successfully")
-      } else {
-        await stopCanister(identity, canisterId)
-        toast.success("Canister stopped successfully")
-      }
-      rememberCanister(identity.getPrincipal().toText(), canisterId)
-      onRefresh()
-    } catch (e) {
-      toast.error(formatManageError(e))
-    } finally {
-      setBusyAction(null)
-      setStopConfirmOpen(false)
-    }
   }
 
   return (
@@ -184,7 +142,7 @@ export function MyCanisterDetails({
           </div>
         </div>
 
-        {/* Right side: Status badges & Quick Start/Stop button */}
+        {/* Right side: Status badge */}
         <div className="flex flex-wrap items-center gap-2">
           {status.kind === "ok" ? (
             <>
@@ -192,16 +150,16 @@ export function MyCanisterDetails({
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium",
                   runStatus === "running"
-                    ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
+                    ? "border-success/20 bg-success/10 text-success"
                     : runStatus === "stopped"
                       ? "border-border bg-muted text-muted-foreground"
-                      : "border-amber-500/20 bg-amber-500/10 text-amber-400"
+                      : "border-destructive/20 bg-destructive/10 text-destructive"
                 )}
               >
                 <span
                   className={cn(
                     "size-1.5 rounded-full",
-                    runStatus === "running" ? "bg-emerald-400 animate-pulse" : "bg-muted-foreground"
+                    runStatus === "running" ? "bg-success animate-pulse" : "bg-muted-foreground"
                   )}
                 />
                 {runStatus === "running"
@@ -211,64 +169,14 @@ export function MyCanisterDetails({
                     : "Stopping"}
               </span>
 
-              {isController ? (
-                <span className="inline-flex items-center rounded-full border border-border/40 bg-muted/60 px-3 py-1 text-xs font-medium text-muted-foreground">
-                  You control
-                </span>
-              ) : (
-                <span className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400">
+              {!isController && (
+                <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-3 py-1 text-xs font-medium text-muted-foreground">
                   Read only
                 </span>
-              )}
-
-              {/* Quick Start / Stop Toggle Button on the Right */}
-              {isController && (
-                <>
-                  {runStatus === "running" ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="h-8 gap-1.5 rounded-full border-amber-500/30 bg-amber-500/10 text-xs font-medium text-amber-400 hover:bg-amber-500/20 hover:text-amber-300 cursor-pointer"
-                      disabled={busyAction != null}
-                      onClick={() => setStopConfirmOpen(true)}
-                    >
-                      {busyAction === "stop" ? (
-                        <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
-                      ) : (
-                        <HugeiconsIcon icon={StopIcon} className="size-3.5" />
-                      )}
-                      <span>{busyAction === "stop" ? "Stopping..." : "Stop canister"}</span>
-                    </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="h-8 gap-1.5 rounded-full border-emerald-500/30 bg-emerald-500/10 text-xs font-medium text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 cursor-pointer"
-                      disabled={busyAction != null || runStatus === "stopping"}
-                      onClick={() => void runHeaderAction("start")}
-                    >
-                      {busyAction === "start" ? (
-                        <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
-                      ) : (
-                        <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
-                      )}
-                      <span>
-                        {busyAction === "start"
-                          ? "Starting..."
-                          : runStatus === "stopping"
-                            ? "Stopping..."
-                            : "Start canister"}
-                      </span>
-                    </Button>
-                  )}
-                </>
               )}
             </>
           ) : status.kind === "loading" ? (
             <div className="flex items-center gap-2">
-              <Skeleton className="h-6 w-24 rounded-full" />
               <Skeleton className="h-6 w-20 rounded-full" />
             </div>
           ) : null}
@@ -280,22 +188,20 @@ export function MyCanisterDetails({
         canisterId={canisterId}
         status={status}
         onRefresh={onRefresh}
-        onCopyId={onCopyId}
-        onTabChange={(tab) => handleTabSelect(tab)}
       />
 
       {/* 4. Tab Navigation: Overview | Settings | Snapshots */}
       <Tabs value={activeTab} onValueChange={handleTabSelect} className="space-y-4">
-        <TabsList className="grid w-full max-w-md grid-cols-3 p-1">
-          <TabsTrigger value="overview" className="gap-2 text-xs sm:text-sm cursor-pointer">
+        <TabsList variant="line" className="w-full justify-start border-b border-border/40 gap-6 sm:gap-8">
+          <TabsTrigger value="overview" className="gap-2 pb-2 text-xs sm:text-sm cursor-pointer">
             <HugeiconsIcon icon={DashboardSquare01Icon} className="size-4" />
             <span>Overview</span>
           </TabsTrigger>
-          <TabsTrigger value="settings" className="gap-2 text-xs sm:text-sm cursor-pointer">
+          <TabsTrigger value="settings" className="gap-2 pb-2 text-xs sm:text-sm cursor-pointer">
             <HugeiconsIcon icon={Settings02Icon} className="size-4" />
             <span>Settings</span>
           </TabsTrigger>
-          <TabsTrigger value="snapshots" className="gap-2 text-xs sm:text-sm cursor-pointer">
+          <TabsTrigger value="snapshots" className="gap-2 pb-2 text-xs sm:text-sm cursor-pointer">
             <HugeiconsIcon icon={Camera01Icon} className="size-4" />
             <span>Snapshots</span>
           </TabsTrigger>
@@ -303,9 +209,6 @@ export function MyCanisterDetails({
 
         {/* TAB 1: OVERVIEW */}
         <TabsContent value="overview" className="space-y-4">
-          {/* Overview Architecture Guide Card */}
-          <CanisterOverviewGuide />
-
           {/* Cycles Balance Card */}
           <div className="rounded-2xl border border-border/40 bg-card/40 p-6 space-y-4 shadow-xs">
             <div className="flex items-center justify-between">
@@ -483,6 +386,9 @@ export function MyCanisterDetails({
             )}
           </div>
 
+          {/* Overview Architecture Guide Card (Below the fold) */}
+          <CanisterOverviewGuide />
+
           {/* Technical Details Collapsible Card */}
           <Collapsible
             open={technicalOpen}
@@ -624,28 +530,9 @@ export function MyCanisterDetails({
         {/* TAB 3: SNAPSHOTS */}
         <TabsContent value="snapshots" className="space-y-4">
           <CanisterSnapshotsGuide />
-          <SnapshotsCard canisterId={canisterId} embedded />
+          <SnapshotsCard canisterId={canisterId} embedded isController={isController} />
         </TabsContent>
       </Tabs>
-
-      {/* Confirmation Modal for Stopping Canister */}
-      <AlertDialog open={stopConfirmOpen} onOpenChange={setStopConfirmOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("stopConfirmTitle")}</AlertDialogTitle>
-            <AlertDialogDescription>{t("stopConfirmBody")}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("topUpCancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={busyAction === "stop"}
-              onClick={() => void runHeaderAction("stop")}
-            >
-              {busyAction === "stop" ? t("stopping") : t("stop")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }

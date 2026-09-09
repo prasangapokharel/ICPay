@@ -69,7 +69,7 @@ export function CanisterSnapshotsGuide() {
               {/* Safe Upgrades */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Clock01Icon} className="size-4 text-emerald-500" />
+                  <HugeiconsIcon icon={Clock01Icon} className="size-4 text-success" />
                   <span>Pre-Upgrade Safety</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -80,7 +80,7 @@ export function CanisterSnapshotsGuide() {
               {/* State Restoration */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Alert02Icon} className="size-4 text-amber-500" />
+                  <HugeiconsIcon icon={Alert02Icon} className="size-4 text-destructive" />
                   <span>Restore Considerations</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -91,7 +91,7 @@ export function CanisterSnapshotsGuide() {
               {/* Storage Overhead */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Coins01Icon} className="size-4 text-pink-500" />
+                  <HugeiconsIcon icon={Coins01Icon} className="size-4 text-primary" />
                   <span>Storage & Cycles Cost</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">

@@ -70,7 +70,7 @@ export function CanisterGuideCard({
 
           <div className="space-y-1.5 rounded-xl border border-border/40 bg-card/60 p-3.5">
             <div className="flex items-center gap-2 text-foreground font-semibold">
-              <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-amber-500" />
+              <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-destructive" />
               <span>Freezing Threshold</span>
             </div>
             <p>
@@ -82,7 +82,7 @@ export function CanisterGuideCard({
 
           <div className="space-y-1.5 rounded-xl border border-border/40 bg-card/60 p-3.5">
             <div className="flex items-center gap-2 text-foreground font-semibold">
-              <HugeiconsIcon icon={CpuIcon} className="size-4 text-blue-500" />
+              <HugeiconsIcon icon={CpuIcon} className="size-4 text-foreground" />
               <span>Compute & Memory</span>
             </div>
             <p>
