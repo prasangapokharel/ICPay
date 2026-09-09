@@ -18,6 +18,19 @@ export function PremiumBadge({
 }) {
   const tier = premiumTier(name)
   if (!tier) return null
+  return <BadgeMark tier={tier} className={className} size={size} />
+}
+
+export function BadgeMark({
+  tier,
+  className,
+  size = 14,
+}: {
+  tier: BadgeTier | null
+  className?: string
+  size?: number
+}) {
+  if (!tier) return null
   return (
     <Svg viewBox="0 0 24 24" width={size} height={size} className={cn(className)}>
       <Path
