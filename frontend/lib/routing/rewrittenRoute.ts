@@ -77,16 +77,16 @@ export function useTokenLedgerId(): string {
 
 export function useChannelSlug(): string {
   const pathname = usePathname()
-  void pathname
-
-  return useSyncExternalStore(subscribe, getBrowserChannelSlug, () => "")
+  const routerSlug = channelSlugFromPath(pathname)
+  const browserSlug = useSyncExternalStore(subscribe, getBrowserChannelSlug, () => "")
+  return routerSlug || browserSlug
 }
 
 export function useChannelMessageId(): string {
   const pathname = usePathname()
-  void pathname
-
-  return useSyncExternalStore(subscribe, getBrowserChannelMessageId, () => "")
+  const routerMessageId = channelMessageIdFromPath(pathname)
+  const browserMessageId = useSyncExternalStore(subscribe, getBrowserChannelMessageId, () => "")
+  return routerMessageId || browserMessageId
 }
 
 function subscribe(onStoreChange: () => void) {

@@ -12,12 +12,15 @@ import {
   isCommunityPaid,
   ownerHandle,
 } from "@/services/community/community"
+import { useCommunityChannel } from "@/hooks/community/useCommunity"
+import { toCommunityChannelSnapshot } from "@/lib/community/snapshot"
+import { Spinner } from "@/components/ui/spinner"
 import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import Image from "next/image"
 
 export function ChannelPublicLanding({
   slug,
-  channel,
+  channel: initialChannel,
   avatarBytes,
 }: {
   slug: string
@@ -25,8 +28,18 @@ export function ChannelPublicLanding({
   avatarBytes?: Uint8Array
 }) {
   const t = useTranslations("community")
+  const { channel: clientChannel, isLoading } = useCommunityChannel(initialChannel ? "" : slug)
+  const channel = initialChannel ?? (clientChannel ? toCommunityChannelSnapshot(clientChannel) : null)
 
   if (!channel) {
+    if (isLoading) {
+      return (
+        <div className="flex min-h-svh items-center justify-center">
+          <Spinner className="size-6 text-muted-foreground" />
+        </div>
+      )
+    }
+
     return (
       <div className="flex min-h-svh flex-col items-center justify-center gap-6 px-6 text-center">
         <Image src={APP_LOGO} alt={APP_LOGO_ALT} title={APP_LOGO_ALT} width={48} height={48} className="opacity-60" />
