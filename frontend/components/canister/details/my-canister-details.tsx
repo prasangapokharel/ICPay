@@ -142,7 +142,7 @@ export function MyCanisterDetails({
           </div>
         </div>
 
-        {/* Right side: Status badge */}
+        {/* Right side: Status badge & Actions */}
         <div className="flex flex-wrap items-center gap-2">
           {status.kind === "ok" ? (
             <>
@@ -174,6 +174,12 @@ export function MyCanisterDetails({
                   Read only
                 </span>
               )}
+
+              <MyCanisterControls
+                canisterId={canisterId}
+                status={status}
+                onRefresh={onRefresh}
+              />
             </>
           ) : status.kind === "loading" ? (
             <div className="flex items-center gap-2">
@@ -183,14 +189,7 @@ export function MyCanisterDetails({
         </div>
       </div>
 
-      {/* 3. Action Toolbar (Top up, Transfer, Controls) */}
-      <MyCanisterControls
-        canisterId={canisterId}
-        status={status}
-        onRefresh={onRefresh}
-      />
-
-      {/* 4. Tab Navigation: Overview | Settings | Snapshots */}
+      {/* 3. Tab Navigation: Overview | Settings | Snapshots */}
       <Tabs value={activeTab} onValueChange={handleTabSelect} className="space-y-4">
         <TabsList variant="line" className="w-full justify-start border-b border-border/40 gap-6 sm:gap-8">
           <TabsTrigger value="overview" className="gap-2 pb-2 text-xs sm:text-sm cursor-pointer">

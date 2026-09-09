@@ -29,6 +29,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MyCanisterTopupDialog } from "@/components/canister/details/my-canister-topup-dialog"
@@ -87,96 +88,93 @@ export function MyCanisterControls({
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-border/40 bg-card/40 p-2 sm:p-2.5">
-        {/* Left: Start / Stop Button + More Menu */}
-        <div className="flex items-center gap-1">
-          {running ? (
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
             <Button
               type="button"
-              size="sm"
-              variant="ghost"
-              className="h-9 gap-2 text-xs font-medium text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer transition-colors"
-              disabled={!canControl || busy != null}
-              onClick={() => setStopOpen(true)}
-            >
-              {busy === "stop" ? (
-                <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
-              ) : (
-                <HugeiconsIcon icon={StopIcon} className="size-3.5" />
-              )}
-              <span>{busy === "stop" ? t("stopping") : "Stop canister"}</span>
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              size="sm"
-              variant="ghost"
-              className="h-9 gap-2 text-xs font-medium text-success hover:text-success hover:bg-success/10 cursor-pointer transition-colors"
-              disabled={!canControl || busy != null || isStopping}
-              onClick={() => void run("start")}
-            >
-              {busy === "start" ? (
-                <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
-              ) : (
-                <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
-              )}
-              <span>{busy === "start" ? t("starting") : isStopping ? "Stopping..." : "Start canister"}</span>
-            </Button>
-          )}
-
-          {canControl && (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    type="button"
-                    size="icon-sm"
-                    variant="ghost"
-                    className="size-8 text-muted-foreground hover:text-foreground cursor-pointer"
-                  />
-                }
-              >
-                <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem onClick={() => setAddControllerOpen(true)} className="cursor-pointer">
-                    <HugeiconsIcon icon={UserAdd01Icon} className="mr-2 size-4 text-primary" />
-                    {t("addController")}
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-        </div>
-
-        {/* Center: Top-up Cycles Button */}
-        <Button
-          type="button"
-          size="sm"
-          className="h-9 gap-2 rounded-xl bg-primary px-5 text-xs font-medium text-primary-foreground shadow-sm hover:bg-primary/90 sm:text-sm cursor-pointer transition-all"
-          disabled={busy != null}
-          onClick={() => setTopupOpen(true)}
+              size="icon-sm"
+              variant="outline"
+              className="size-7 rounded-lg border-border/40 bg-muted/30 text-muted-foreground hover:bg-muted/60 hover:text-foreground cursor-pointer transition-colors"
+              aria-label="Canister actions"
+            />
+          }
         >
-          <HugeiconsIcon icon={ArrowUp02Icon} className="size-4" />
-          <span>Top up cycles</span>
-        </Button>
+          {busy != null ? (
+            <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
+          ) : (
+            <HugeiconsIcon icon={MoreVerticalIcon} className="size-3.5" />
+          )}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-52">
+          <DropdownMenuGroup>
+            {/* Top up cycles - available to all */}
+            <DropdownMenuItem
+              onClick={() => setTopupOpen(true)}
+              className="cursor-pointer gap-2"
+            >
+              <HugeiconsIcon icon={ArrowUp02Icon} className="size-4 text-primary" />
+              <span>Top up cycles</span>
+            </DropdownMenuItem>
 
-        {/* Right: Transfer */}
-        <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            size="sm"
-            variant="ghost"
-            className="h-9 gap-2 text-xs font-normal text-muted-foreground hover:text-foreground cursor-pointer"
-            disabled={!canControl || busy != null}
-            onClick={() => setTransferOpen(true)}
-          >
-            <HugeiconsIcon icon={SentIcon} className="size-3.5" />
-            <span>{t("transfer")}</span>
-          </Button>
-        </div>
-      </div>
+            {/* Controller-only actions */}
+            {canControl && (
+              <>
+                <DropdownMenuSeparator />
+
+                {/* Start or Stop Canister */}
+                {running ? (
+                  <DropdownMenuItem
+                    onClick={() => setStopOpen(true)}
+                    disabled={busy != null}
+                    className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
+                  >
+                    {busy === "stop" ? (
+                      <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin text-destructive" />
+                    ) : (
+                      <HugeiconsIcon icon={StopIcon} className="size-4 text-destructive" />
+                    )}
+                    <span>{busy === "stop" ? t("stopping") : "Stop canister"}</span>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem
+                    onClick={() => void run("start")}
+                    disabled={busy != null || isStopping}
+                    className="cursor-pointer gap-2 text-success focus:text-success focus:bg-success/10"
+                  >
+                    {busy === "start" ? (
+                      <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin text-success" />
+                    ) : (
+                      <HugeiconsIcon icon={PlayIcon} className="size-4 text-success" />
+                    )}
+                    <span>{busy === "start" ? t("starting") : isStopping ? "Stopping..." : "Start canister"}</span>
+                  </DropdownMenuItem>
+                )}
+
+                <DropdownMenuSeparator />
+
+                {/* Add Controller */}
+                <DropdownMenuItem
+                  onClick={() => setAddControllerOpen(true)}
+                  className="cursor-pointer gap-2"
+                >
+                  <HugeiconsIcon icon={UserAdd01Icon} className="size-4 text-muted-foreground" />
+                  <span>{t("addController")}</span>
+                </DropdownMenuItem>
+
+                {/* Transfer */}
+                <DropdownMenuItem
+                  onClick={() => setTransferOpen(true)}
+                  className="cursor-pointer gap-2"
+                >
+                  <HugeiconsIcon icon={SentIcon} className="size-4 text-muted-foreground" />
+                  <span>{t("transfer")}</span>
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <AlertDialog open={stopOpen} onOpenChange={setStopOpen}>
         <AlertDialogContent>
