@@ -1,0 +1,39 @@
+# ICPay
+
+> Fast, secure multi-token wallet, decentralized cloud storage, and DEX trading platform built on the Internet Computer (ICP).
+
+ICPay provides seamless payments using Internet Identity, decentralized file storage (ICPay Bucket), gasless cross-chain assets, token launchpads, and decentralized swap operations.
+
+## Core Products & Features
+
+- [Dashboard](https://icpay.app/): Main application dashboard for sending, receiving, and managing ICP and ICRC tokens.
+- [Wallet](https://icpay.app/wallet): Multi-token wallet management, address book, subaccounts, and transaction history.
+- [Bucket Cloud Storage](https://icpay.app/bucket): Decentralized, encrypted-at-rest file storage and global CDN hosting on the Internet Computer.
+- [Swap & DEX Trading](https://icpay.app/trade): Instant decentralized token swaps and limit orders via ICPSwap integration.
+- [Token Launcher](https://icpay.app/token/create): Launch custom ICRC-1 / ICRC-2 tokens on the Internet Computer in one click.
+- [Canister Manager](https://icpay.app/canister): Deploy, monitor cycles, snapshot, and manage ICP canisters.
+- [Community Channels](https://icpay.app/channels): On-chain community channels and token-gated discussions.
+- [ICPay Presale & Tokenomics](https://icpay.app/icpay): ICPAY utility token details, distribution, and presale allocation.
+
+## Developer Documentation & APIs
+
+- [Bucket API & SDK Documentation](https://icpay.app/bucket/docs): REST and TypeScript SDK integration guide for ICPay Cloud Bucket.
+- [Storage Pricing & Tiers](https://icpay.app/bucket/pricing): Transparent 30-day billing breakdown for storage tiers (1 GB, 2 GB, 3 GB).
+- [API Authentication Guide](https://icpay.app/bucket/docs/api/auth): How to generate and authenticate with Bucket API keys.
+- [Canister Top-up & Cycles Guide](https://icpay.app/topup): Cycles ledger top-up and conversion instructions.
+
+## Articles & Guides
+
+- [ICP Cloud Storage Explained](https://icpay.app/blog/icp-cloud-storage): Deep-dive into decentralized file storage architecture on ICP.
+- [Internet Identity vs Seed Phrases](https://icpay.app/blog/internet-identity-vs-seed-phrases): Passwordless Web3 authentication guide.
+- [ICRC-1 Token Standard Guide](https://icpay.app/blog/icrc-1-token-standard): Understanding fungible token standards on the Internet Computer.
+- [On-Chain AI on Internet Computer](https://icpay.app/blog/on-chain-ai-internet-computer): Running LLMs and AI agents fully on-chain.
+- [ICP Price & Market Insights](https://icpay.app/blog/icp-price): Live ICP market dynamics, tokenomics, and staking economy.
+
+## Legal & Organization
+
+- [About ICPay](https://icpay.app/about): Mission, architecture, and technology overview.
+- [FAQ](https://icpay.app/faq): Frequently asked questions about ICPay security, custody, and fees.
+- [Transparency](https://icpay.app/transparency): On-chain canister IDs and auditability breakdown.
+- [Privacy Policy](https://icpay.app/privacy): Privacy policy and data handling principles.
+- [Terms of Service](https://icpay.app/terms): Terms and conditions for using ICPay services.
