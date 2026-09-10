@@ -32,6 +32,7 @@ export function LocaleFlag({ country, label, size = "md", className, priority }:
       unoptimized
       loading={priority ? "eager" : "lazy"}
       priority={priority}
+      style={{ width: `${width}px`, height: `${height}px` }}
       className={cn("shrink-0 rounded-full object-cover", className)}
     />
   )
