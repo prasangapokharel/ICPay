@@ -19,13 +19,14 @@ npm run ci cycles:balance -- --local
 
 | Command | What it does |
 |---|---|
-| `npm run ci cycles:balance` | Cycles left. **Watch this one** — at zero the canister is deleted, taking every user record with it. |
-| `npm run ci canister:status` | Cycles, memory, controllers, module hash. |
+| `npm run ci cycles:balance [canister]` | Cycles left. **Watch this one** — at zero the canister is deleted, taking every user record with it. |
+| `npm run ci canister:status [name]` | Cycles, memory, controllers, module hash. |
 | `npm run ci bucket:stats` | Cloud bucket usage, sales rollup, and top-up guidance. |
 | `npm run ci backend:hash` | The live module hash. This is the version marker, and the argument you pass to a rollback. |
+| `npm run ci trade:hash` | The live module hash for the `icpay_trade` DEX canister. |
 | `npm run ci backend:logs` | Canister logs. |
 | `npm run ci users:count` | Claimed @handle total (one query, 0 cycles). |
-| `npm run ci canister:list` | The two canisters this project owns, with their mainnet IDs. |
+| `npm run ci canister:list` | The four canisters this project owns (`backend`, `trade`, `frontend`, `blob store`), with their mainnet IDs. |
 
 `backend:hash` prints only the hash on stdout, so it pipes:
 
@@ -37,9 +38,12 @@ npm run ci backend:rollback <commit> $(npm run ci backend:hash --silent)
 
 | Command | What it does |
 |---|---|
-| `npm run ci backend:test` | The 33-test suite. |
+| `npm run ci backend:test` | The 59-test backend suite (`scripts/run-tests.sh`). |
 | `npm run ci backend:build` | Build the wasm without deploying. |
 | `npm run ci backend:deploy` | tests → build → confirm → deploy. Prints the rollback command afterwards. |
+| `npm run ci trade:test` | The trade canister test suite. |
+| `npm run ci trade:build` | Build the `icpay_trade` wasm without deploying. |
+| `npm run ci trade:deploy` | tests → build → confirm → deploy `icpay_trade`. |
 | `npm run ci frontend:build` | Typecheck and build. |
 | `npm run ci frontend:deploy` | Typecheck → confirm → ship to the asset canister. |
 | `npm run ci backend:wasm` | Upload the ICRC-1 ledger wasm token launches install. Run once. |
@@ -80,7 +84,7 @@ npm run ci backend:rollback f6f3c43 0xd8f923ac...
 
 | Command | What it does |
 |---|---|
-| `npm run ci cycles:balance [canister]` | Cycles remaining, idle burn, and runway in days. |
+| `npm run ci cycles:balance [canister]` | Cycles remaining, idle burn, and runway in days (`backend`, `trade`, `frontend`, `blob`). |
 | `npm run ci cycles:address` | The ledger account to send ICP to, and its balance. |
 | `npm run ci cycles:convert <icp>` | Burn ICP into cycles on the cycles ledger. |
 | `npm run ci cycles:topup <cycles> [canister]` | Move cycles from the cycles ledger into the canister. |
@@ -104,8 +108,8 @@ is happening is normal.
 
 | Cost | Commands |
 |---|---|
-| **0 — query only** | `users:count`, `bucket:stats`, `canister:status`, `canister:info`, `canister:call` (default), `ledger:balance`, `ledger:history`, `backend:hash`, `backend:logs`, `cycles:balance`, `cycles:address`, `backend:build`, `backend:test`, `frontend:build` |
-| **Canister update (~67M/call)** | `backend:deploy`, `backend:register`, `backend:sweep`, `backend:wasm`, `backend:reclaim`, `frontend:deploy`, `canister:call … --update` |
+| **0 — query only** | `users:count`, `bucket:stats`, `canister:status`, `canister:info`, `canister:call` (default), `ledger:balance`, `ledger:history`, `backend:hash`, `trade:hash`, `backend:logs`, `cycles:balance`, `cycles:address`, `backend:build`, `trade:build`, `backend:test`, `trade:test`, `frontend:build` |
+| **Canister update (~67M/call)** | `backend:deploy`, `trade:deploy`, `backend:register`, `backend:sweep`, `backend:sweep-icpay`, `backend:wasm`, `backend:reclaim`, `frontend:deploy`, `canister:call … --update` |
 | **ICP from operator wallet** | `cycles:convert`, `ledger:transfer` |
 | **Cycles ledger → canister** | `cycles:topup` |
 
@@ -201,6 +205,12 @@ To move it now rather than waiting for the next tick:
 
 ```bash
 npm run ci backend:sweep
+```
+
+To sweep stray ICPAY tokens from the wallet canister default ICRC account to treasury:
+
+```bash
+npm run ci backend:sweep-icpay
 ```
 
 Both paths run the same code and share the same fixed destination — it is **not
