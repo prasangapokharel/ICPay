@@ -5,11 +5,6 @@ import { usePathname } from "next/navigation"
 import { useMemo } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable"
 import { BlogSidebar } from "@/components/blog/blog-sidebar"
 import { BLOG_POSTS } from "@/services/blog/blog"
 
@@ -78,38 +73,24 @@ export function BlogLayoutShell({ children }: { children: React.ReactNode }) {
         )}
       </div>
 
-      {/* Desktop Resizable View (lg+) */}
-      <div className="hidden lg:block">
-        <ResizablePanelGroup
-          orientation="horizontal"
-          className="min-h-[calc(100vh-13rem)] rounded-2xl border border-border/60 bg-card/30 shadow-xs"
-        >
-          <ResizablePanel defaultSize="68%" minSize="50%" maxSize="78%" className="p-8 md:p-12">
+      {/* Main Section-Based Responsive Grid Layout (No Resizer) */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
+        {/* Main Article Card Section */}
+        <main className="lg:col-span-8 min-w-0">
+          <div className="rounded-2xl border border-border/60 bg-card/40 p-6 sm:p-8 md:p-10 shadow-xs backdrop-blur-xs">
             <div className="mx-auto max-w-3xl">{children}</div>
-          </ResizablePanel>
+          </div>
+        </main>
 
-          <ResizableHandle withHandle className="bg-border/60 hover:bg-primary transition-colors" />
-
-          <ResizablePanel defaultSize="32%" minSize="22%" maxSize="48%" className="bg-muted/10">
+        {/* Sticky Sidebar Section */}
+        <aside className="lg:col-span-4 min-w-0 lg:sticky lg:top-24">
+          <div className="rounded-2xl border border-border/60 bg-card/40 shadow-xs backdrop-blur-xs">
             <BlogSidebar
               suggestions={suggestions}
               categoriesWithCounts={categoriesWithCounts}
             />
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
-
-      {/* Mobile & Tablet Stacked View (below lg) */}
-      <div className="space-y-8 lg:hidden">
-        <div className="rounded-2xl border border-border/60 bg-card/30 p-6 md:p-8">
-          {children}
-        </div>
-        <div className="rounded-2xl border border-border/60 bg-card/30">
-          <BlogSidebar
-            suggestions={suggestions}
-            categoriesWithCounts={categoriesWithCounts}
-          />
-        </div>
+          </div>
+        </aside>
       </div>
     </div>
   )

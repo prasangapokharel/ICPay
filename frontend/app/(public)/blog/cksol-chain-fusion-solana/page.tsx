@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 
 const SLUG = "cksol-chain-fusion-solana"
@@ -79,15 +80,11 @@ export default function CkSolPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <header className="space-y-3 border-b border-border/40 pb-6">
+      <header className="space-y-4">
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary">
             Chain Fusion
           </span>
-          <span className="text-xs text-muted-foreground">·</span>
-          <span className="text-xs text-muted-foreground">September 10, 2026</span>
-          <span className="text-xs text-muted-foreground">·</span>
-          <span className="text-xs text-muted-foreground">7 min read</span>
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
           ckSOL Explained: Native Solana Integration on Internet Computer Without Bridges
@@ -97,6 +94,7 @@ export default function CkSolPage() {
           native Solana interoperability to the Internet Computer. By leveraging threshold Ed25519 cryptography and direct RPC
           integration, ICP canisters can hold, sign, and settle Solana transactions without centralized custodian bridges.
         </p>
+        <BlogAuthorMeta publishedAt={PUBLISHED_AT} readingMinutes={READING_MINUTES} />
       </header>
 
       <section className="space-y-4">

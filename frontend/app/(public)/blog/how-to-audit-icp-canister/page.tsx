@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 
 const SLUG = "how-to-audit-icp-canister"
@@ -79,15 +80,11 @@ export default function AuditCanisterPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <header className="space-y-3 border-b border-border/40 pb-6">
+      <header className="space-y-4">
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary">
             Developer Security
           </span>
-          <span className="text-xs text-muted-foreground">·</span>
-          <span className="text-xs text-muted-foreground">September 10, 2026</span>
-          <span className="text-xs text-muted-foreground">·</span>
-          <span className="text-xs text-muted-foreground">9 min read</span>
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
           How to Audit an ICP Canister: Security Best Practices & Vulnerability Prevention
@@ -97,6 +94,7 @@ export default function AuditCanisterPage() {
           evaluating Solidity EVM smart contracts. Canisters operate asynchronously, persist state across
           stable memory, and pay for their own cycles. Here is the definitive security audit guide.
         </p>
+        <BlogAuthorMeta publishedAt={PUBLISHED_AT} readingMinutes={READING_MINUTES} />
       </header>
 
       {/* Direct Callout Box */}
