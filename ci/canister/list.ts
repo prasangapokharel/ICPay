@@ -2,7 +2,7 @@ import { OWNED_CANISTERS, canisterIds } from "../lib.ts"
 
 // npm run ci canister:list
 //
-// The four canisters ICPay owns on mainnet. Ledger and II in dfx.json are
+// The three canisters ICPay owns on mainnet. Ledger and II in dfx.json are
 // external — pulled only for local replica runs.
 const ids = canisterIds()
 
