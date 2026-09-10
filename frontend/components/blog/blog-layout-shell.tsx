@@ -24,9 +24,9 @@ export function BlogLayoutShell({ children }: { children: React.ReactNode }) {
     if (currentPost?.category) {
       const sameCategory = others.filter((p) => p.category === currentPost.category)
       const otherCategory = others.filter((p) => p.category !== currentPost.category)
-      return [...sameCategory, ...otherCategory].slice(0, 4)
+      return [...sameCategory, ...otherCategory].slice(0, 8)
     }
-    return others.slice(0, 4)
+    return others.slice(0, 8)
   }, [slug, currentPost])
 
   const categoriesWithCounts = useMemo(() => {

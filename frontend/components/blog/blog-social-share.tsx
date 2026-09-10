@@ -1,8 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { CheckmarkCircle02Icon, Copy01Icon } from "@hugeicons/core-free-icons"
+import { BLOG_POSTS } from "@/services/blog/blog"
 
 export function BlogSocialShare({
   title,
@@ -12,10 +14,36 @@ export function BlogSocialShare({
   slug?: string
 }) {
   const [copied, setCopied] = useState(false)
+  const pathname = usePathname()
 
-  const canonicalUrl = slug ? `https://icpay.app/blog/${slug}` : "https://icpay.app/blog"
-  const shareTitle = title ? encodeURIComponent(title) : encodeURIComponent("ICPay Blog")
+  // Resolve slug dynamically if not explicitly provided as prop
+  const resolvedSlug =
+    slug ||
+    (pathname?.startsWith("/blog/") && pathname !== "/blog" && pathname !== "/blog/"
+      ? pathname.replace(/^\/blog\/?/, "").split("/")[0]
+      : "")
+
+  const matchedPost = resolvedSlug
+    ? BLOG_POSTS.find((p) => p.slug === resolvedSlug)
+    : null
+
+  const shareTitle =
+    title ||
+    matchedPost?.title ||
+    "ICPay Blog"
+
+  const canonicalUrl = resolvedSlug
+    ? `https://icpay.app/blog/${resolvedSlug}`
+    : typeof window !== "undefined" && window.location.origin
+      ? `${window.location.origin}${pathname || "/blog"}`
+      : "https://icpay.app/blog"
+
   const encodedUrl = encodeURIComponent(canonicalUrl)
+  const encodedTitle = encodeURIComponent(shareTitle)
+
+  const twitterShareUrl = `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`
+  const telegramShareUrl = `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`
+  const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
 
   const handleCopy = async () => {
     const url = typeof window !== "undefined" ? window.location.href : canonicalUrl
@@ -50,7 +78,7 @@ export function BlogSocialShare({
 
       {/* Facebook Button */}
       <a
-        href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+        href={facebookShareUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Share on Facebook"
@@ -63,7 +91,7 @@ export function BlogSocialShare({
 
       {/* Telegram Button */}
       <a
-        href={`https://t.me/share/url?url=${encodedUrl}&text=${shareTitle}`}
+        href={telegramShareUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Share on Telegram"
@@ -76,7 +104,7 @@ export function BlogSocialShare({
 
       {/* X / Twitter Button */}
       <a
-        href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${shareTitle}`}
+        href={twitterShareUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Share on X"
