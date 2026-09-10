@@ -34,9 +34,22 @@ export function BlogSidebar({
     <ScrollArea className="h-full max-h-[calc(100vh-8rem)] w-full">
       <div className="space-y-6 p-4 md:p-6">
         {/* Join ICPay Card */}
-        <Card className="relative overflow-hidden border-primary/20 bg-gradient-to-br from-card via-card to-primary/5 shadow-sm">
-          <div className="absolute -right-6 -top-6 size-24 rounded-full bg-primary/10 blur-2xl" />
-          <CardContent className="space-y-4 p-5">
+        <Card className="relative overflow-hidden border-primary/20 bg-primary/5 dark:bg-primary/10 shadow-sm">
+          {/* Organic hero background floating shapes */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -left-10 -top-6 size-32 rotate-12 rounded-[2rem] bg-primary/20 dark:bg-primary/15"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-8 -bottom-6 size-36 -rotate-6 rounded-[2.5rem] bg-primary/15 dark:bg-primary/10"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute right-1/4 top-1/2 size-20 -translate-y-1/2 rotate-45 rounded-[1.2rem] bg-primary/10 dark:bg-primary/10"
+          />
+
+          <CardContent className="relative z-10 space-y-4 p-5">
             <div className="space-y-1.5">
               <h3 className="text-base font-bold tracking-tight text-foreground">
                 Get started with ICPay
