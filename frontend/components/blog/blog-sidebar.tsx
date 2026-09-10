@@ -5,7 +5,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   CheckmarkCircle02Icon,
   Folder02Icon,
-  ZapIcon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -38,16 +37,7 @@ export function BlogSidebar({
         <Card className="relative overflow-hidden border-primary/20 bg-gradient-to-br from-card via-card to-primary/5 shadow-sm">
           <div className="absolute -right-6 -top-6 size-24 rounded-full bg-primary/10 blur-2xl" />
           <CardContent className="space-y-4 p-5">
-            <div className="flex items-center gap-2">
-              <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <HugeiconsIcon icon={ZapIcon} className="size-4" />
-              </span>
-              <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-                Custodial Wallet
-              </span>
-            </div>
-
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <h3 className="text-base font-bold tracking-tight text-foreground">
                 Get started with ICPay
               </h3>
