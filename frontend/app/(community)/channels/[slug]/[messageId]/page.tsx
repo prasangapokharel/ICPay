@@ -7,8 +7,6 @@ import {
 import { getCachedPublicChannelSnapshot } from "@/lib/community/publicCache"
 import { ChannelSlugView } from "@/components/community/channel-slug-view"
 
-export const instant = false
-
 export function generateStaticParams() {
   return [{ slug: "slug", messageId: "message" }]
 }

@@ -1,16 +1,29 @@
-import { redirect } from "next/navigation"
+"use client"
 
-type SwapPageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>
+import { useEffect, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+
+function SwapRedirect() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const query = new URLSearchParams()
+    const from = searchParams.get("from")
+    const to = searchParams.get("to")
+    if (from) query.set("from", from)
+    if (to) query.set("to", to)
+    const suffix = query.toString()
+    router.replace(suffix ? `/trade?${suffix}` : "/trade")
+  }, [router, searchParams])
+
+  return null
 }
 
-export default async function SwapPage({ searchParams }: SwapPageProps) {
-  const params = await searchParams
-  const query = new URLSearchParams()
-  const from = params.from
-  const to = params.to
-  if (typeof from === "string") query.set("from", from)
-  if (typeof to === "string") query.set("to", to)
-  const suffix = query.toString()
-  redirect(suffix ? `/trade?${suffix}` : "/trade")
+export default function SwapPage() {
+  return (
+    <Suspense fallback={null}>
+      <SwapRedirect />
+    </Suspense>
+  )
 }

@@ -4,8 +4,6 @@ import { ChannelsIndexView } from "@/components/community/channels-index-view"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 
-export const instant = false
-
 export const metadata: Metadata = {
   title: "ICP Communities — Public Channels on ICPay",
   description:
