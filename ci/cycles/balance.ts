@@ -2,7 +2,7 @@ import { OWNED_CANISTERS, arg, canisterIds, dfxOut, resolveOwnedCanister } from 
 
 // npm run ci cycles:balance [backend|frontend|blob]
 //
-// With no arg, prints balance + runway for all four owned canisters.
+// With no arg, prints balance + runway for all three owned canisters.
 // Cycles are what keep a canister alive — at zero it is deleted.
 const T = (n: number): string => `${(n / 1e12).toFixed(2)}T`
 
@@ -43,7 +43,7 @@ const resolved = resolveOwnedCanister(target)
 
 if (target && !resolved) {
   console.error(`Unknown canister: ${target}`)
-  console.error("Use: backend | trade | frontend | blob | icp_wallet_backend | icpay_trade | icp_wallet_frontend | icp_blob_store")
+  console.error("Use: backend | frontend | blob | icp_wallet_backend | icp_wallet_frontend | icp_blob_store")
   process.exit(1)
 }
 
