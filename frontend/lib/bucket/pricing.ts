@@ -9,7 +9,7 @@ const MARGIN_PERCENT = 20n
 const LIST_MARGIN_PERCENT = 50n
 const HALF_ICP_E8S = 50_000_000n
 
-export const BUCKET_POPULAR_TIER_GB = 5
+export const BUCKET_POPULAR_TIER_GB = 2
 
 export type BucketPricingTier = {
   gb: number

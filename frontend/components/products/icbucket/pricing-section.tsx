@@ -21,9 +21,8 @@ type PriceCurrency = "icp" | "usd"
 
 const PLAN_DEFS = [
   { id: "starter", capacityGb: 1 },
-  { id: "pro", capacityGb: 5 },
-  { id: "business", capacityGb: 10 },
-  { id: "scale", capacityGb: 50 },
+  { id: "pro", capacityGb: 2 },
+  { id: "business", capacityGb: 3 },
 ] as const
 
 function icpFromE8s(e8s: bigint): number {
@@ -85,7 +84,7 @@ export function PricingSection() {
             ) : null}
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-3">
             {PLAN_DEFS.map((plan) => {
               const priceE8s = calculatePriceE8s(plan.capacityGb)
               const listPriceE8s = calculateListPriceE8s(plan.capacityGb)
