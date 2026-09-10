@@ -36,6 +36,8 @@ const PUBLIC = [
   "/privacy",
   "/transparency",
   "/login",
+  "/llms.txt",
+  "/llms-full.txt",
   "/icbucket",
   "/products/icBucket",
   "/bucket/pricing",
