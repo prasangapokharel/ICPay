@@ -9,8 +9,6 @@ import { listAllPublicChannelsForSeo } from "@/services/community/community"
 import { ChannelSlugView } from "@/components/community/channel-slug-view"
 import type { CommunityChannelSnapshot } from "@/lib/community/snapshot"
 
-export const instant = false
-
 export async function generateStaticParams() {
   try {
     const channels = await listAllPublicChannelsForSeo(100)

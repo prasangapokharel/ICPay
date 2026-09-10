@@ -3,6 +3,8 @@ import { BLOG_POSTS } from "@/services/blog/blog"
 import { CHARITY_CAMPAIGNS } from "@/lib/public/charity/campaigns"
 import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
 
+export const dynamic = "force-static"
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 const staticExport = process.env.ICP_STATIC_EXPORT === "1"
 

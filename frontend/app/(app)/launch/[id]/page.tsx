@@ -1,7 +1,5 @@
 import { LaunchDetail } from "./launch-detail"
 
-export const instant = false
-
 // output: "export" cannot prerender a route whose parameter values only exist at
 // runtime -- token ids are assigned by the canister -- so one shell is emitted
 // here and the real id is read from the URL on the client. vercel.json rewrites
