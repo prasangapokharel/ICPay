@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 
 const SLUG = "transparent-crypto-donations-on-chain"
@@ -79,15 +80,11 @@ export default function TransparentCharityPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <header className="space-y-3 border-b border-border/40 pb-6">
+      <header className="space-y-4">
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary">
             Charity & Social Impact
           </span>
-          <span className="text-xs text-muted-foreground">·</span>
-          <span className="text-xs text-muted-foreground">September 10, 2026</span>
-          <span className="text-xs text-muted-foreground">·</span>
-          <span className="text-xs text-muted-foreground">7 min read</span>
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
           How On-Chain Donations Eliminate NGO Fraud & Intermediary Fees
@@ -98,6 +95,7 @@ export default function TransparentCharityPage() {
           swallowing large portions of donated capital. On-chain charity delivers 100% transparent, auditable
           philanthropy.
         </p>
+        <BlogAuthorMeta publishedAt={PUBLISHED_AT} readingMinutes={READING_MINUTES} />
       </header>
 
       {/* Direct Callout Box */}

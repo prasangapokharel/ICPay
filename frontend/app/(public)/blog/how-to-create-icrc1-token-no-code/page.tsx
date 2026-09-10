@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 
 const SLUG = "how-to-create-icrc1-token-no-code"
@@ -87,15 +88,11 @@ export default function CreateIcrc1TokenPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <header className="space-y-3 border-b border-border/40 pb-6">
+      <header className="space-y-4">
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary">
             How-To & Guides
           </span>
-          <span className="text-xs text-muted-foreground">·</span>
-          <span className="text-xs text-muted-foreground">September 10, 2026</span>
-          <span className="text-xs text-muted-foreground">·</span>
-          <span className="text-xs text-muted-foreground">7 min read</span>
         </div>
         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
           How to Create and Launch an ICRC-1 Token on the Internet Computer (No-Code Guide)
@@ -107,6 +104,7 @@ export default function CreateIcrc1TokenPage() {
           <strong className="text-foreground">ICRC-1 / ICRC-2 token</strong> directly from your browser
           in under 5 minutes without writing a single line of code.
         </p>
+        <BlogAuthorMeta publishedAt={PUBLISHED_AT} readingMinutes={READING_MINUTES} />
       </header>
 
       {/* Direct Callout Box */}
