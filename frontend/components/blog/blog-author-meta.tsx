@@ -1,15 +1,20 @@
 import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Clock01Icon } from "@hugeicons/core-free-icons"
+import { BlogSocialShare } from "@/components/blog/blog-social-share"
 
 export function BlogAuthorMeta({
   publishedAt,
   readingMinutes,
   authorName = "ICPay Team",
+  title,
+  slug,
 }: {
   publishedAt?: string
   readingMinutes?: number
   authorName?: string
+  title?: string
+  slug?: string
 }) {
   const formattedDate = publishedAt
     ? new Date(publishedAt).toLocaleDateString("en-US", {
@@ -20,7 +25,8 @@ export function BlogAuthorMeta({
     : "September 10, 2026"
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border/50 py-3 my-4">
+    <div className="flex flex-wrap items-center justify-between gap-4 border-y border-border/50 py-3.5 my-5">
+      {/* Author & Date */}
       <div className="flex items-center gap-3">
         <div className="relative size-10 shrink-0 overflow-hidden rounded-full border border-border/70 bg-background/80 shadow-xs">
           <Image
@@ -43,9 +49,14 @@ export function BlogAuthorMeta({
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-xs text-muted-foreground">
-        <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-primary" />
-        <span>{readingMinutes ?? 7} min read</span>
+      {/* Meta details: Reading time + Social Share buttons */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-xs text-muted-foreground">
+          <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-primary" />
+          <span>{readingMinutes ?? 7} min read</span>
+        </div>
+
+        <BlogSocialShare title={title} slug={slug} />
       </div>
     </div>
   )
