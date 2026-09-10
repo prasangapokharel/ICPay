@@ -27,9 +27,10 @@ export function LandingHeroPreview() {
           src={isMobile ? LANDING_MEDIA.heroMockup : LANDING_MEDIA.heroDesktop}
           alt={isMobile ? t("imageAlt") : t("imageAltDesktop")}
           title={isMobile ? t("imageAlt") : t("imageAltDesktop")}
-          width={isMobile ? 800 : 2240}
-          height={isMobile ? 1280 : 1260}
+          width={isMobile ? 600 : 1152}
+          height={isMobile ? 960 : 647}
           priority={isMobile}
+          sizes={isMobile ? "(max-width: 640px) 280px, 300px" : "(max-width: 1024px) 100vw, 600px"}
           className="w-full rounded-lg"
           style={{ height: "auto" }}
         />
