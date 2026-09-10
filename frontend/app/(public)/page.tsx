@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { LandingAuthRedirect } from "@/components/public/landing-auth-redirect"
 import { LandingCta } from "@/components/public/landing-cta"
 import { LandingDownloads } from "@/components/public/landing-downloads"
 import { LandingFaq } from "@/components/public/landing-faq"
@@ -34,6 +35,7 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <>
+      <LandingAuthRedirect />
       <LandingHero />
       <LandingFeatures />
       <LandingProducts />
@@ -46,3 +48,4 @@ export default function LandingPage() {
     </>
   )
 }
+
