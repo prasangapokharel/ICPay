@@ -32,6 +32,105 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "how-to-create-icrc1-token-no-code",
+    title: "How to Create and Launch an ICRC-1 Token on the Internet Computer (No-Code Guide)",
+    description:
+      "Learn how to create, mint, and deploy an ICRC-1 token on the Internet Computer in under 5 minutes without writing code or using dfx — step-by-step with ICPay.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 7,
+    category: "How-to",
+  },
+  {
+    slug: "ai-agent-crypto-wallets",
+    title: "Agentic Wallets: Why Autonomous AI Agents Need On-Chain Canister Accounts",
+    description:
+      "Why AI agents in 2026 cannot use traditional bank accounts or seed phrases — how on-chain canisters and reverse gas enable autonomous agentic commerce.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 9,
+    category: "Technology",
+  },
+  {
+    slug: "decentralized-storage-comparison-ipfs-filecoin-icp",
+    title: "Decentralized Storage Compared: IPFS vs. Arweave vs. Filecoin vs. icBucket (2026)",
+    description:
+      "A side-by-side comparison of decentralized storage protocols in 2026: persistence models, retrieval speeds, costs, and why native ICP canister storage is different.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 10,
+    category: "Infrastructure",
+  },
+  {
+    slug: "native-account-abstraction-vs-erc4337",
+    title: "ERC-4337 vs. ICP Native Account Abstraction: Why ICP Never Needed a Wallet Upgrade",
+    description:
+      "How native account abstraction on the Internet Computer compares to Ethereum ERC-4337 account abstraction — bundlers, paymasters, and passkey security compared.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 8,
+    category: "Explainers",
+  },
+  {
+    slug: "how-to-audit-icp-canister",
+    title: "How to Audit an ICP Canister: Security Best Practices & Vulnerability Prevention",
+    description:
+      "The comprehensive checklist for auditing Motoko and Rust canisters on the Internet Computer — reentrancy risks, cycle drains, controller security, and icFalcon.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 9,
+    category: "Developers",
+  },
+  {
+    slug: "passkey-crypto-wallets-guide",
+    title: "The Ultimate Guide to Passkey Crypto Wallets: Biometrics, FIDO2 & Zero Seed Phrases",
+    description:
+      "How passkey crypto wallets use WebAuthn, biometric hardware chips, and threshold cryptography to eliminate seed phrase theft while maintaining self-custody.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 8,
+    category: "Security",
+  },
+  {
+    slug: "cksol-chain-fusion-solana",
+    title: "ckSOL Explained: Native Solana Integration on Internet Computer Without Bridges",
+    description:
+      "How ckSOL brings native Solana to the Internet Computer using threshold Schnorr signatures and RPC canisters — zero bridge risk and 1-second finality.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 7,
+    category: "Chain Fusion",
+  },
+  {
+    slug: "canister-smart-contracts-vs-evm",
+    title: "Canister Smart Contracts vs. EVM: Concurrency, Storage & Execution Compared",
+    description:
+      "A deep technical breakdown comparing WebAssembly canister smart contracts to the Ethereum Virtual Machine (EVM) — actor model, orthogonal persistence, and gas.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 10,
+    category: "Technology",
+  },
+  {
+    slug: "migrate-aws-s3-to-on-chain-icbucket",
+    title: "How to Replace AWS S3 with On-Chain Object Storage: Python, Node.js & Go Guide",
+    description:
+      "Step-by-step developer tutorial for migrating file storage and media uploads from Amazon AWS S3 to icBucket on the Internet Computer with SDK code examples.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 8,
+    category: "Developers",
+  },
+  {
+    slug: "transparent-crypto-donations-on-chain",
+    title: "How On-Chain Donations Eliminate NGO Fraud & Intermediary Fees",
+    description:
+      "Why transparent on-chain charity donations on the Internet Computer eliminate traditional 10-20% payment processor cuts and provide 100% public cryptographic audit trails.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 7,
+    category: "Product",
+  },
+  {
+    slug: "what-is-on-chain",
+    title: "What Is On-Chain? The Definitive Guide to Blockchain Data, State & Execution",
+    description:
+      "What does 'on-chain' actually mean? We break down on-chain data, execution, storage, and transactions from a builder's perspective — plus on-chain vs. off-chain trade-offs and 2026 AI agent payments.",
+    publishedAt: "2026-09-10",
+    readingMinutes: 11,
+    category: "Explainers",
+  },
+  {
     slug: "what-is-cycles-minting-canister",
     title: "What Is the Cycles Minting Canister (CMC)? | ICPay",
     description:
