@@ -1,4 +1,4 @@
-export const CAPACITY_TIERS_GB = [1, 5, 10, 25, 50, 100, 250, 500] as const
+export const CAPACITY_TIERS_GB = [1, 2, 3] as const
 
 export const FILES_PAGE_SIZE = 20
 

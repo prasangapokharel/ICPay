@@ -36,7 +36,7 @@ export function BucketCreateForm({
   const balance = useLiveBalance()
 
   const [name, setName] = useState("")
-  const [capacityGB, setCapacityGB] = useState<number>(10)
+  const [capacityGB, setCapacityGB] = useState<number>(1)
   const [visibility, setVisibility] = useState<BucketVisibilityVariant>({ Public: null })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
