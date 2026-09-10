@@ -2,30 +2,25 @@
 
 > ICPay is an open, on-chain financial and cloud infrastructure application running on the Internet Computer (ICP).
 
-## Overview
-
 ICPay is a decentralized platform integrating multi-token custody, cloud bucket storage, DEX trading, and token management into a single interface authenticated via Internet Identity.
 
-### Key Architecture Components
-- **Custody & Wallets**: User funds sit in per-principal subaccounts of the backend canister (`6vbhm-nqaaa-aaaan-q6muq-cai`). Only the owning principal can initiate transfers or withdrawals.
-- **ICPay Bucket (Cloud Storage)**: Decentralized, encrypted-at-rest storage leveraging ICP storage canisters (`fly6t-piaaa-aaaan-q6oga-cai`) with high-speed global CDN delivery. Storage tiers are available in 1 GB, 2 GB, and 3 GB allotments with 30-day renewable prepaid cycle pricing.
-- **Trade & DEX**: Sub-second decentralized token swaps and limit orders via `icpay_trade` (`gomfy-saaaa-aaaan-q6onq-cai`) routing to ICPSwap liquidity pools.
-- **Token Launchpad**: Simple deployment of ICRC-1 and ICRC-2 compliant ledger canisters directly from the web interface.
-- **On-Chain Canister Management**: Real-time cycle balances, canister top-ups via Cycles Ledger, snapshots, and controller settings.
+## Application & Services
 
-## Site Map & Navigation
+- [Dashboard](https://icpay.app/): Dashboard & asset balance overview
+- [Wallet](https://icpay.app/wallet): Multi-token wallet balances, addresses, and transaction history
+- [Bucket Cloud Storage](https://icpay.app/bucket): ICPay Cloud Bucket file dashboard and management
+- [Storage Pricing & Tiers](https://icpay.app/bucket/pricing): Storage pricing tiers (1 GB, 2 GB, 3 GB)
+- [Bucket Developer Guide](https://icpay.app/bucket/docs): REST API & SDK documentation for developers
+- [DEX Trading & Swap](https://icpay.app/trade): DEX token swaps and ICPSwap trading interface
+- [Token Launcher](https://icpay.app/token/create): ICRC-1 / ICRC-2 token creation portal
+- [Canister Manager](https://icpay.app/canister): ICP canister management suite, snapshots, and metrics
+- [Community Channels](https://icpay.app/channels): On-chain community messaging & discussions
+- [Cycles Top-up](https://icpay.app/topup): Cycles ledger top-up and ICP-to-cycles conversion
 
-- `https://icpay.app/` — Dashboard & asset overview
-- `https://icpay.app/wallet` — Wallet balances, addresses, and history
-- `https://icpay.app/bucket` — ICPay Cloud Bucket dashboard
-- `https://icpay.app/bucket/pricing` — Storage pricing tiers (1 GB, 2 GB, 3 GB)
-- `https://icpay.app/bucket/docs` — API & SDK documentation for developers
-- `https://icpay.app/trade` — DEX Swap & trading interface
-- `https://icpay.app/token/create` — ICRC token creation portal
-- `https://icpay.app/canister` — ICP canister management suite
-- `https://icpay.app/channels` — Community messaging & discussions
-- `https://icpay.app/topup` — Cycles top-up and conversion
-- `https://icpay.app/transparency` — Canister IDs, controllers, and verification
-- `https://icpay.app/faq` — Frequently Asked Questions
-- `https://icpay.app/terms` — Terms of Service
-- `https://icpay.app/privacy` — Privacy Policy
+## Trust & Information
+
+- [Transparency](https://icpay.app/transparency): Live canister IDs, controllers, and verification
+- [FAQ](https://icpay.app/faq): Frequently Asked Questions about custody, security, and fees
+- [About](https://icpay.app/about): Mission, technology, and architecture
+- [Terms of Service](https://icpay.app/terms): Terms of Service
+- [Privacy Policy](https://icpay.app/privacy): Privacy Policy
