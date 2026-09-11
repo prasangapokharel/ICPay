@@ -4,8 +4,6 @@ import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { ThemeProvider, ThemeColorScript } from "@/components/theme-provider"
 import { AuthProvider } from "@/components/auth/auth-provider"
-import { Toaster } from "@/components/ui/toast"
-import { TooltipProvider } from "@/components/ui/tooltip"
 import { SwrProvider } from "@/components/swr-provider"
 import { LocaleProvider } from "@/components/i18n/locale-provider"
 import { AutoLocale } from "@/components/i18n/auto-locale"
@@ -130,11 +128,7 @@ export default function RootLayout({
             <AutoLocale />
             <FiatProvider>
               <SwrProvider>
-                <TooltipProvider>
-                  <Toaster>
-                    <AuthProvider>{children}</AuthProvider>
-                  </Toaster>
-                </TooltipProvider>
+                <AuthProvider>{children}</AuthProvider>
               </SwrProvider>
             </FiatProvider>
           </LocaleProvider>

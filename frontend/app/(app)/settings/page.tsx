@@ -51,7 +51,7 @@ export default function MenuPage() {
           href: "/withdraw",
           key: "withdraw",
           icon: "withdraw",
-          keywords: "transfer trading wallet internal",
+          keywords: "withdraw cash out external wallet",
         },
         {
           href: "/wallet",

@@ -64,10 +64,7 @@ export function usePublicSiteLinks() {
     productMenu: mapMenuItems(PUBLIC_PRODUCT_MENU_DEFS, "products"),
     canisterMenu: mapMenuItems(PUBLIC_CANISTER_MENU_DEFS, "canisters"),
     resourceMenu: mapMenuItems(PUBLIC_RESOURCE_MENU_DEFS, "resources"),
-    legalMenu: [
-      ...mapMenuItems([{ id: "blog", href: "/blog" }], "resources"),
-      ...mapMenuItems(PUBLIC_LEGAL_MENU_DEFS, "legal"),
-    ],
+    legalMenu: mapMenuItems(PUBLIC_LEGAL_MENU_DEFS, "legal"),
     productLinks: mapFooterLabels(PUBLIC_PRODUCT_LINK_DEFS, "products"),
     resourceLinks: mapFooterLabels(PUBLIC_RESOURCE_LINK_DEFS, "resources"),
     legalLinks: mapFooterLabels(

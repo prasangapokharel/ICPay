@@ -6,7 +6,6 @@ import {
 } from "@/lib/market/tradeSeo"
 import { MarketOverview } from "@/components/public/market/market-overview"
 
-export const instant = false
 
 export async function generateMetadata(): Promise<Metadata> {
   const listed = await fetchIcpswapTokenAll()

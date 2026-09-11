@@ -35,10 +35,10 @@ export function LandingCta() {
             size="lg"
             variant="outline"
             nativeButton={false}
-            render={<Link href="/market" />}
+            render={<Link href="/channels" />}
             className="h-11 rounded-full px-7"
           >
-            {t("browseMarkets")}
+            {t("browseChannels")}
           </Button>
         </div>
       </div>

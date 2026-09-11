@@ -2,7 +2,6 @@
 
 import useSWR from "swr"
 import type { MarketStats } from "@/services/market/marketStats"
-import { usePageVisible } from "@/hooks/live/usePageVisible"
 
 async function fetcher(): Promise<MarketStats> {
   const res = await fetch("/api/market/stats")
@@ -11,9 +10,8 @@ async function fetcher(): Promise<MarketStats> {
 }
 
 export function useMarketStats() {
-  const pageVisible = usePageVisible()
   const { data, error, isLoading } = useSWR<MarketStats>("/api/market/stats", fetcher, {
-    refreshInterval: pageVisible ? 60_000 : 0,
+    refreshInterval: 60_000,
     revalidateOnFocus: false,
   })
 

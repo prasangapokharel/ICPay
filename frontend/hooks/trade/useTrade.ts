@@ -95,6 +95,7 @@ export type TradeBalanceUpdate = {
   tokenOutId: string
   amountIn: bigint
   amountOut: bigint
+  tokenInFee?: bigint
 }
 
 export function useApplyTradeBalances() {

@@ -50,6 +50,7 @@ function TradePageContent() {
             tokenOutId: result.tokenOut.ledgerId,
             amountIn: result.amountIn,
             amountOut: result.amountOut,
+            tokenInFee: result.tokenIn.fee,
           })
           setDone(result)
         }}

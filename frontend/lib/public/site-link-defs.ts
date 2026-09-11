@@ -10,12 +10,9 @@ export type NavMenuItemDef = {
   external?: boolean
 }
 
-export const PUBLIC_PRIMARY_LINK_DEFS: SiteLinkDef[] = [
-  { id: "markets", href: "/market" },
-]
+export const PUBLIC_PRIMARY_LINK_DEFS: SiteLinkDef[] = [{ id: "blog", href: "/blog" }]
 
 export const PUBLIC_PRODUCT_MENU_DEFS: NavMenuItemDef[] = [
-  { id: "markets", href: "/market" },
   { id: "wallet", href: "/login" },
   { id: "launch", href: "/token/create" },
   { id: "icbucket", href: "/icbucket" },
@@ -36,6 +33,7 @@ export const PUBLIC_RESOURCE_MENU_DEFS: NavMenuItemDef[] = [
   { id: "falconCli", href: "/products/icFalcon/commands" },
   { id: "icpHubPackages", href: "/products/icFalcon/packages" },
   { id: "icbucketDocs", href: "/bucket/docs" },
+  { id: "blog", href: "/blog" },
 ]
 
 export const PUBLIC_LEGAL_MENU_DEFS: NavMenuItemDef[] = [
@@ -50,7 +48,6 @@ export const PUBLIC_LEGAL_MENU_DEFS: NavMenuItemDef[] = [
 ]
 
 export const PUBLIC_PRODUCT_LINK_DEFS: SiteLinkDef[] = [
-  { id: "markets", href: "/market" },
   { id: "icfalcon", href: "/icfalcon" },
   { id: "icbucket", href: "/icbucket" },
   { id: "canister", href: "/canister" },

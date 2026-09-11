@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import { HeroSignOptions } from "@/components/public/hero-sign-options"
-import { LandingHeroMarkets } from "@/components/public/landing-hero-markets"
+import { LandingHeroPreview } from "@/components/public/landing-hero-preview"
 
 export function LandingHero() {
   const t = useTranslations("publicSite.landing.hero")
@@ -39,10 +39,10 @@ export function LandingHero() {
                   size="lg"
                   variant="outline"
                   nativeButton={false}
-                  render={<Link href="/market" />}
+                  render={<Link href="/channels" />}
                   className="h-11 rounded-full px-7"
                 >
-                  {t("browseMarkets")}
+                  {t("browseChannels")}
                 </Button>
               </>
             ) : (
@@ -70,8 +70,8 @@ export function LandingHero() {
           <HeroSignOptions />
         </div>
 
-        <div className="w-full lg:max-w-lg lg:justify-self-end">
-          <LandingHeroMarkets />
+        <div className="w-full lg:max-w-none">
+          <LandingHeroPreview />
         </div>
       </div>
     </section>

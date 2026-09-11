@@ -247,8 +247,6 @@ const FUNDS_KEYS = [
   "transactions",
   "token-balances",
   "self-custody",
-  "trade-balance",
-  "trade-balances",
 ]
 
 export function useRefreshWallet() {

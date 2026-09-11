@@ -10,7 +10,6 @@ import {
   uniquePairSlugs,
 } from "@/lib/market/tradeSeo"
 
-export const instant = false
 
 export async function generateStaticParams() {
   if (process.env.ICP_STATIC_EXPORT === "1") {
