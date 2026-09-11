@@ -96,13 +96,13 @@ export function CommunityForwardModal({
               const busy = busySlug === ch.slug
               const done = successSlug === ch.slug
               return (
-                <button
+                <Button
                   key={ch.slug}
-                  type="button"
+                  variant="ghost"
                   disabled={Boolean(busySlug) && !busy}
                   onClick={() => void pick(ch.slug)}
                   className={cn(
-                    "flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-muted/60",
+                    "h-auto w-full items-center gap-3 px-4 py-2.5 text-left",
                     busy && "bg-muted/40"
                   )}
                 >
@@ -117,7 +117,7 @@ export function CommunityForwardModal({
                       <CommunityIcon name="check" size={16} />
                     </span>
                   )}
-                </button>
+                </Button>
               )
             })
           )}

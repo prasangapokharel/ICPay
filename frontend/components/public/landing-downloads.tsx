@@ -144,10 +144,10 @@ export function LandingDownloads() {
             src={LANDING_MEDIA.laptopMockup}
             alt={t("imageAlt")}
             title={t("imageAlt")}
-            width={2240}
-            height={1260}
+            width={1152}
+            height={647}
             loading="lazy"
-            sizes="(max-width: 1024px) 100vw, 50vw"
+            sizes="(max-width: 1024px) 100vw, 576px"
             className="w-full"
             style={{ height: "auto" }}
           />

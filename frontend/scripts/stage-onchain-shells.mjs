@@ -24,6 +24,9 @@ const shells = [
   { file: "token/token.html", id: "token-ledger" },
   { file: "token/token/deposit.html", id: "token-deposit" },
   { file: "icpverse/profile.html", id: "icpverse-profile" },
+  { file: "canister/id.html", id: "canister-id" },
+  { file: "canister/id/settings.html", id: "canister-settings" },
+  { file: "transactions/id.html", id: "transactions-id" },
   { file: "u.html", id: "profile-u" },
 ]
 
@@ -32,6 +35,7 @@ const metaFor = (id) =>
 
 for (const { file, id } of shells) {
   const path = join(outDir, file)
+  if (!existsSync(path)) continue
   let html = readFileSync(path, "utf8")
   if (html.includes('name="icpay-shell"')) continue
   html = html.replace("<head>", `<head>${metaFor(id)}`)

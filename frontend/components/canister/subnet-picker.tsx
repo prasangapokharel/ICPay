@@ -115,17 +115,17 @@ export function SubnetPicker({
         sideOffset={6}
         className="w-[var(--anchor-width)] max-w-[min(100vw-2rem,28rem)] gap-0 p-1.5 sm:w-96"
       >
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={() => pick(SUBNET_DEFAULT)}
           className={cn(
-            "flex w-full flex-col gap-0.5 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-muted",
+            "h-auto w-full flex-col gap-0.5 px-3 py-2.5 text-left",
             value === SUBNET_DEFAULT && "bg-muted"
           )}
         >
           <span className="text-sm font-medium">{t("subnetDefault")}</span>
           <span className="text-xs text-muted-foreground">{t("subnetDefaultHint")}</span>
-        </button>
+        </Button>
 
         <div className="my-1 border-t border-border/50" />
 
@@ -158,10 +158,10 @@ export function SubnetPicker({
                   className={cn("rounded-xl", selectedRow && "bg-muted/70")}
                 >
                   <div className="flex items-center gap-0.5 px-1">
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
                       onClick={() => pick(subnet.id)}
-                      className="flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-muted/80"
+                      className="h-auto min-w-0 flex-1 items-center gap-2 px-2 py-2 text-left"
                     >
                       <span className="min-w-0 flex-1 space-y-1">
                         {subnet.countries.length > 0 ? (
@@ -175,7 +175,7 @@ export function SubnetPicker({
                           {shortSubnetId(subnet.id)}
                         </span>
                       </span>
-                    </button>
+                    </Button>
                     <CollapsibleTrigger
                       render={
                         <Button

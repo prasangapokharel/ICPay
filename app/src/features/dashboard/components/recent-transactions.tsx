@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Pressable, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { useTranslations } from '@/components/i18n/locale-provider'
@@ -6,10 +7,12 @@ import { Badge } from '@/components/ui/badge'
 import { AppIcon } from '@/components/ui/app-icon'
 import { Text } from '@/components/ui/text'
 import { PremiumBadge } from '@/components/shared/premium-badge'
+import { TransactionDetailSheet } from '@/features/transactions/transaction-detail-sheet'
 import type { TransactionPublic } from '@/services/types'
 import {
   formatTime,
   formatTokenAmount,
+  isHexAccountId,
   shortenCounterparty,
   txStatusLabel,
   txTypeLabel,
@@ -20,6 +23,13 @@ import { cn } from '@/lib/utils'
 export function RecentTransactions({ transactions }: { transactions: TransactionPublic[] }) {
   const t = useTranslations('dashboard')
   const router = useRouter()
+  const [selectedTx, setSelectedTx] = useState<TransactionPublic | null>(null)
+  const [detailOpen, setDetailOpen] = useState(false)
+
+  const handleSelectTx = (tx: TransactionPublic) => {
+    setSelectedTx(tx)
+    setDetailOpen(true)
+  }
 
   return (
     <View className="gap-3">
@@ -44,30 +54,44 @@ export function RecentTransactions({ transactions }: { transactions: Transaction
       ) : (
         <View className="rounded-2xl border border-border/40">
           {transactions.map((tx) => (
-            <TransactionRow key={tx.id} tx={tx} />
+            <TransactionRow key={tx.id} tx={tx} onPress={() => handleSelectTx(tx)} />
           ))}
         </View>
       )}
+      <TransactionDetailSheet
+        tx={selectedTx}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
+      />
     </View>
   )
 }
 
-function TransactionRow({ tx }: { tx: TransactionPublic }) {
+function TransactionRow({ tx, onPress }: { tx: TransactionPublic; onPress?: () => void }) {
   const t = useTranslations('transactions')
   const type = txTypeLabel(tx.txType)
   const incoming = type === 'deposit'
   const status = txStatusLabel(tx.status)
   const counterparty = incoming ? tx.from : tx.to
   const { symbol, decimals } = useLedgerSymbol(tx.ledgerId)
-  const handle = counterparty.startsWith('@') ? counterparty.slice(1) : null
+  const handle = counterparty.startsWith('@')
+    ? counterparty.slice(1)
+    : !isHexAccountId(counterparty) && !counterparty.includes('-')
+      ? counterparty
+      : null
 
   return (
-    <View className="flex-row items-center gap-3 border-b border-border/40 px-4 py-2 last:border-b-0 active:bg-muted/30">
+    <Pressable
+      onPress={onPress}
+      className="flex-row items-center gap-3 border-b border-border/40 px-4 py-2.5 last:border-b-0 active:bg-muted/40"
+      accessibilityRole="button"
+      accessibilityLabel={`${t(`type.${type}`)} ${formatTokenAmount(tx.amount, decimals, 4)} ${symbol}`}
+    >
       <UserAvatar seed={counterparty} size={40} />
       <View className="min-w-0 flex-1">
         <View className="flex-row items-center gap-1">
           <Text className="truncate text-sm font-medium">{handle ?? shortenCounterparty(counterparty)}</Text>
-          <PremiumBadge name={handle} />
+          {handle ? <PremiumBadge name={handle} size={13} /> : null}
         </View>
         <Text className="mt-0.5 text-xs text-muted-foreground">
           {t(`type.${type}`)} · {formatTime(tx.createdAt)}
@@ -80,6 +104,6 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
         </Text>
         {status !== 'completed' ? <Badge className="mt-0.5">{t(`status.${status}`)}</Badge> : null}
       </View>
-    </View>
+    </Pressable>
   )
 }

@@ -107,6 +107,7 @@ export interface WalletActor {
     uploadId: string,
     apiKey: [] | [string]
   ) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
+  cancelUpload: (uploadId: string) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
   downloadFile: (
     bucketId: string,
     path: string,

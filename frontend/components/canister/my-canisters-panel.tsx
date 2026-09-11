@@ -29,11 +29,14 @@ import {
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { MyCanisterRow } from "@/components/canister/my-canister-row"
 import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
+import { PremiumGateDialog } from "@/components/shared/premium-gate"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
+import { useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { useMineCanisters } from "@/hooks/canister/useMineCanisters"
 import { useMineStatusMap } from "@/hooks/canister/useMineStatusMap"
 import { useSavedCanisterEntries } from "@/hooks/canister/useSavedCanisters"
+import { isPremiumHandle } from "@/lib/verified/premiumTick"
 import {
   displayCanisterLabel,
   rememberCanister,
@@ -75,6 +78,10 @@ function EmptyBlock({
 export function MyCanistersPanel() {
   const t = useTranslations("myCanisters")
   const { identity, isAuthenticated } = useAuth()
+  const { data: profile } = useOwnProfile()
+  const username = profile?.username[0] ?? null
+  const isPremium = isPremiumHandle(username)
+
   const principal = identity?.getPrincipal().toText() ?? null
   const mine = useMineCanisters(principal)
   const entries = useSavedCanisterEntries(principal)
@@ -84,6 +91,7 @@ export function MyCanistersPanel() {
   const [draftId, setDraftId] = useState("")
   const [draftName, setDraftName] = useState("")
   const [linkOpen, setLinkOpen] = useState(false)
+  const [premiumGateOpen, setPremiumGateOpen] = useState(false)
   const [linkedOk, setLinkedOk] = useState<{ id: string; name: string } | null>(null)
 
   const previews = useMineStatusMap(
@@ -98,6 +106,10 @@ export function MyCanistersPanel() {
   const draftInvalid = draftTouched && !draftValid
 
   const openLink = () => {
+    if (!isPremium) {
+      setPremiumGateOpen(true)
+      return
+    }
     setDraftName("")
     setLinkOpen(true)
   }
@@ -316,6 +328,16 @@ export function MyCanistersPanel() {
             : t("linkSuccessBody")
         }
         monoId={linkedOk?.id}
+      />
+
+      <PremiumGateDialog
+        open={premiumGateOpen}
+        onOpenChange={setPremiumGateOpen}
+        title="Link External Canister"
+        description="Linking, labeling, and monitoring external canisters in your dashboard is an ICPay Premium feature. Upgrade your handle (1–4 characters) to manage any canister across the Internet Computer."
+        featureName="Canister Linking"
+        actionText="Get Premium Handle"
+        href="/username"
       />
 
       {topUpTarget && (

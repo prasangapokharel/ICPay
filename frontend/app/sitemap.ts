@@ -3,6 +3,8 @@ import { BLOG_POSTS } from "@/services/blog/blog"
 import { CHARITY_CAMPAIGNS } from "@/lib/public/charity/campaigns"
 import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
 
+export const dynamic = "force-static"
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 const staticExport = process.env.ICP_STATIC_EXPORT === "1"
 
@@ -60,6 +62,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/roadmap`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${siteUrl}/brand-protection`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/login`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${siteUrl}/icbucket`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${siteUrl}/products/icBucket`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/bucket/pricing`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/icfalcon`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${siteUrl}/products/icFalcon`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/products/icFalcon/packages`, changeFrequency: "weekly", priority: 0.75 },
+    { url: `${siteUrl}/products/icFalcon/commands`, changeFrequency: "weekly", priority: 0.75 },
     { url: `${siteUrl}/token/create`, changeFrequency: "weekly", priority: 0.85 },
     { url: `${siteUrl}/canister`, changeFrequency: "weekly", priority: 0.85 },
     { url: `${siteUrl}/canister/tools`, changeFrequency: "weekly", priority: 0.8 },

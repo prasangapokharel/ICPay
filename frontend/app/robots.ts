@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next"
 import { BLOG_POSTS } from "@/services/blog/blog"
 import { CHARITY_CAMPAIGNS } from "@/lib/public/charity/campaigns"
 
+export const dynamic = "force-static"
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 
 // Signed-in wallet routes. They render nothing for an anonymous crawler, so
@@ -36,6 +38,23 @@ const PUBLIC = [
   "/privacy",
   "/transparency",
   "/login",
+  "/llms.txt",
+  "/llms-full.txt",
+  "/icbucket",
+  "/products/icBucket",
+  "/bucket/pricing",
+  "/icfalcon",
+  "/products/icFalcon",
+  "/products/icFalcon/packages",
+  "/products/icFalcon/commands",
+  "/canister",
+  "/canister/tools",
+  "/canister/manage",
+  "/canister/create",
+  "/canister/cycles",
+  "/canister/snapshots",
+  "/token/create",
+  "/topup",
   "/blog",
   "/channels",
   ...CHARITY_PUBLIC,

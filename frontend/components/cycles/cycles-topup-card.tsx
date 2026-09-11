@@ -16,7 +16,7 @@ import {
 } from "@/components/cycles/cycles-topup-alerts"
 import { CyclesFlowPreview } from "@/components/cycles/cycles-flow-preview"
 import { CanisterIdField } from "@/components/canister/canister-id-field"
-import { CanisterStatusPanel } from "@/components/canister/canister-status-panel"
+import { CanisterStatusPanel } from "@/components/canister/details"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useCanisterStatus } from "@/hooks/canister/useCanisterStatus"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"

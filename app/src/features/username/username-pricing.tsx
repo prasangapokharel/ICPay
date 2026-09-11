@@ -1,7 +1,7 @@
 import { View } from 'react-native'
 import { useTranslations } from '@/components/i18n/locale-provider'
 import { Text } from '@/components/ui/text'
-import { PremiumBadge } from '@/components/shared/premium-badge'
+import { BadgeMark } from '@/components/shared/premium-badge'
 import { formatAmount } from '@/lib/wallet-utils'
 import { TIERS, USERNAME_FREE_MIN_LENGTH } from '@/lib/username'
 import { tierBadgeSpans } from '@/lib/verifed/premium-tick'
@@ -26,7 +26,7 @@ export function UsernamePricing() {
                   const lengths = span.min === span.max ? `${span.min}` : `${span.min}-${span.max}`
                   return (
                     <View key={span.badge} className="flex-row items-center gap-1 rounded-full bg-muted px-1.5 py-0.5">
-                      <PremiumBadge name={'x'.repeat(span.min)} size={12} />
+                      <BadgeMark tier={span.badge} size={12} />
                       <Text className="text-[10px] text-muted-foreground">{t('badgeChip', { lengths })}</Text>
                     </View>
                   )

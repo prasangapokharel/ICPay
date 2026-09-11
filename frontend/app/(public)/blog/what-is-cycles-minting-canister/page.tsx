@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 
 const SLUG = "what-is-cycles-minting-canister"
@@ -51,7 +52,7 @@ export default function WhatIsCmcPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <header className="space-y-2">
+      <header className="space-y-3">
         <p className="text-xs font-medium uppercase tracking-widest text-primary">Explainers</p>
         <h1 className="text-2xl font-bold leading-snug tracking-tight">
           What Is the Cycles Minting Canister (CMC)?
@@ -61,7 +62,7 @@ export default function WhatIsCmcPage() {
           cycles and allocates canisters. ICPay talks to CMC from your browser — create, top up, and
           mint — with no custom mint backend.
         </p>
-        <p className="text-[11px] text-muted-foreground">September 5, 2026 · 9 min read</p>
+        <BlogAuthorMeta publishedAt="2026-09-05" readingMinutes={9} />
       </header>
 
       <section className="space-y-3">

@@ -166,9 +166,9 @@ export function CommunityChannelView({
           >
             <CommunityIcon name="back" size={20} />
           </Button>
-          <button
-            type="button"
-            className="flex min-w-0 flex-1 items-center gap-3 text-left"
+          <Button
+            variant="ghost"
+            className="h-auto min-w-0 flex-1 items-center gap-3 p-0 text-left"
             onClick={() => setInfoOpen(true)}
           >
             <CommunityAvatar
@@ -193,7 +193,7 @@ export function CommunityChannelView({
                     : t("membersCount", { count: members })}
               </p>
             </div>
-          </button>
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger
               render={

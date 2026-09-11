@@ -1,8 +1,9 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { useCommunityWallpaper } from "@/hooks/community/useCommunityWallpaper"
 import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { useCommunityWallpaper } from "@/hooks/community/useCommunityWallpaper"
 import { wallpaperUrl } from "@/lib/community/wallpaper"
 import { cn } from "@/lib/ui/utils"
 
@@ -19,14 +20,14 @@ export function CommunityWallpaperPicker({ slug }: { slug: string }) {
           const url = wallpaperUrl(id)
           const isDefault = id === 0
           return (
-            <button
+            <Button
               key={id}
-              type="button"
+              variant="ghost"
               aria-label={isDefault ? t("themeDefault") : t("channelThemeOption", { n: id })}
               aria-pressed={selected}
               onClick={() => selectWallpaper(id)}
               className={cn(
-                "aspect-square relative w-full cursor-pointer overflow-hidden rounded-xl border-2 transition-all",
+                "relative aspect-square h-auto w-full cursor-pointer overflow-hidden rounded-xl border-2 p-0 transition-all",
                 selected
                   ? "border-primary ring-2 ring-primary/25"
                   : "border-border/50 opacity-90 hover:opacity-100 hover:ring-1 hover:ring-border/60"
@@ -45,7 +46,7 @@ export function CommunityWallpaperPicker({ slug }: { slug: string }) {
                   {t("themeDefault")}
                 </span>
               ) : null}
-            </button>
+            </Button>
           )
         })}
       </div>

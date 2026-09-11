@@ -3,6 +3,8 @@ import { Principal } from "@icp-sdk/core/principal"
 import {
   encodeSnapshotId,
   IcManagementCanister,
+  LogVisibility,
+  type CanisterSettings,
 } from "@icp-sdk/canisters/ic-management"
 import { createAgent } from "@/services/icp"
 import { parseCanisterId } from "@/services/cycles/topUp"
@@ -28,11 +30,16 @@ export type CanisterStatusView = {
   controllers: string[]
   isController: boolean
   freezingThreshold: string
+  freezingThresholdSeconds?: bigint
   computeAllocation: string
+  computeAllocationPercent?: bigint
   memoryAllocation: string
+  memoryAllocationBytes?: bigint
   wasmMemory: string
+  wasmMemoryLimitBytes?: bigint
   stableMemory: string
   snapshotsSize: string
+  logVisibility?: "controllers" | "public"
 }
 
 export type SnapshotView = {
@@ -56,6 +63,9 @@ export async function fetchCanisterStatus(
   const caller = identity.getPrincipal().toText()
   const controllers = raw.settings.controllers.map((p) => p.toText())
 
+  const isLogPublic =
+    raw.settings.log_visibility != null && "public" in raw.settings.log_visibility
+
   return {
     canisterId: canisterId.toText(),
     runStatus: parseRunStatus(raw.status),
@@ -69,11 +79,16 @@ export async function fetchCanisterStatus(
     controllers,
     isController: controllers.includes(caller),
     freezingThreshold: `${raw.settings.freezing_threshold.toString()} s`,
+    freezingThresholdSeconds: raw.settings.freezing_threshold,
     computeAllocation: `${raw.settings.compute_allocation.toString()}%`,
+    computeAllocationPercent: raw.settings.compute_allocation,
     memoryAllocation: formatBytes(raw.settings.memory_allocation),
+    memoryAllocationBytes: raw.settings.memory_allocation,
     wasmMemory: formatBytes(raw.memory_metrics.wasm_memory_size),
+    wasmMemoryLimitBytes: raw.settings.wasm_memory_limit,
     stableMemory: formatBytes(raw.memory_metrics.stable_memory_size),
     snapshotsSize: formatBytes(raw.memory_metrics.snapshots_size),
+    logVisibility: isLogPublic ? "public" : "controllers",
   }
 }
 
@@ -97,21 +112,19 @@ function rejectDetails(err: unknown): { code?: number; text: string } {
 
 /** Management APIs only succeed for controllers — map replica rejects cleanly. */
 export function isControllerDenied(err: unknown): boolean {
-  const { code, text } = rejectDetails(err)
+  const { text } = rejectDetails(err)
   const lower = text.toLowerCase()
   if (
     lower.includes("not a controller") ||
     lower.includes("only controllers") ||
     lower.includes("unauthorized") ||
     lower.includes("not authorized") ||
+    lower.includes("not allowed to call") ||
     (lower.includes("caller") && lower.includes("controller"))
   ) {
     return true
   }
-  // CanisterReject (4) / CanisterError (5) on management = almost always access denied
-  if (code === 4 || code === 5) return true
-  const full = err instanceof Error ? err.message.toLowerCase() : lower
-  return full.includes("replica returned a rejection")
+  return false
 }
 
 export function formatManageError(err: unknown): string {
@@ -142,6 +155,39 @@ export async function addController(
   const controllers = [...current, newController.toText()]
   await mgmt.updateSettings({ canisterId, settings: { controllers } })
   return controllers
+}
+
+export async function removeController(
+  identity: Identity,
+  canisterIdText: string,
+  removeControllerText: string
+): Promise<string[]> {
+  const canisterId = parseCanisterId(canisterIdText)
+  const target = Principal.fromText(removeControllerText.trim()).toText()
+  const mgmt = await management(identity)
+  const raw = await mgmt.canisterStatus({ canisterId, certified: false })
+  const current = raw.settings.controllers.map((p) => p.toText())
+  const controllers = current.filter((c) => c !== target)
+  if (controllers.length === current.length) {
+    return current
+  }
+  await mgmt.updateSettings({ canisterId, settings: { controllers } })
+  return controllers
+}
+
+export async function updateCanisterSettings(
+  identity: Identity,
+  canisterIdText: string,
+  settings: CanisterSettings
+): Promise<void> {
+  const canisterId = parseCanisterId(canisterIdText)
+  const mgmt = await management(identity)
+  await mgmt.updateSettings({ canisterId, settings })
+}
+
+export async function deleteCanister(identity: Identity, canisterIdText: string): Promise<void> {
+  const mgmt = await management(identity)
+  await mgmt.deleteCanister(parseCanisterId(canisterIdText))
 }
 
 export async function startCanister(identity: Identity, canisterIdText: string): Promise<void> {
@@ -221,4 +267,5 @@ export async function deleteSnapshot(
   })
 }
 
-export { Principal }
+export { Principal, LogVisibility }
+export type { CanisterSettings }

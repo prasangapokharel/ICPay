@@ -1,0 +1,26 @@
+# ICPay — Complete Agent Context
+
+> ICPay is an open, on-chain financial and cloud infrastructure application running on the Internet Computer (ICP).
+
+ICPay is a decentralized platform integrating multi-token custody, cloud bucket storage, DEX trading, and token management into a single interface authenticated via Internet Identity.
+
+## Application & Services
+
+- [Dashboard](https://icpay.app/): Dashboard & asset balance overview
+- [Wallet](https://icpay.app/wallet): Multi-token wallet balances, addresses, and transaction history
+- [Bucket Cloud Storage](https://icpay.app/bucket): ICPay Cloud Bucket file dashboard and management
+- [Storage Pricing & Tiers](https://icpay.app/bucket/pricing): Storage pricing tiers (1 GB, 2 GB, 3 GB)
+- [Bucket Developer Guide](https://icpay.app/bucket/docs): REST API & SDK documentation for developers
+- [DEX Trading & Swap](https://icpay.app/trade): DEX token swaps and ICPSwap trading interface
+- [Token Launcher](https://icpay.app/token/create): ICRC-1 / ICRC-2 token creation portal
+- [Canister Manager](https://icpay.app/canister): ICP canister management suite, snapshots, and metrics
+- [Community Channels](https://icpay.app/channels): On-chain community messaging & discussions
+- [Cycles Top-up](https://icpay.app/topup): Cycles ledger top-up and ICP-to-cycles conversion
+
+## Trust & Information
+
+- [Transparency](https://icpay.app/transparency): Live canister IDs, controllers, and verification
+- [FAQ](https://icpay.app/faq): Frequently Asked Questions about custody, security, and fees
+- [About](https://icpay.app/about): Mission, technology, and architecture
+- [Terms of Service](https://icpay.app/terms): Terms of Service
+- [Privacy Policy](https://icpay.app/privacy): Privacy Policy
