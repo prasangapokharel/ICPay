@@ -1,42 +1,81 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
+
+const SLUG = "icpay-swap-and-live"
+const TITLE = "ICPay Swap: Trade ICP and ICRC Tokens in Your Wallet | ICPay"
+const DESCRIPTION =
+  "Exchange ICP and ICRC tokens directly inside your ICPay wallet via ICPSwap. Zero custody friction, live quotes, and subaccount settlement."
+const PUBLISHED_AT = "2026-08-17"
+const READING_MINUTES = 5
 
 export const metadata: Metadata = {
-  title: "ICPay Swap & Live: Trade Tokens and Voice Rooms on the Internet Computer",
-  description:
-    "ICPay Swap lets you exchange ICP and ICRC tokens in-wallet via ICPSwap. ICPay Live adds on-chain voice rooms with peer-to-peer audio. Here is how both work.",
-  alternates: { canonical: "/blog/icpay-swap-and-live" },
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: [
+    "ICPay Swap",
+    "ICP swap",
+    "ICPSwap integration",
+    "trade ICRC tokens",
+    "Internet Computer DEX",
+    "swap ICP to ckBTC",
+    "crypto swap wallet",
+    "gasless swap ICP",
+  ],
+  alternates: { canonical: blogCanonical(SLUG) },
   openGraph: {
-    title: "ICPay Swap & Live — ICPay Blog",
-    description:
-      "Swap tokens and join voice rooms — two new ICPay features built on the Internet Computer.",
+    title: "ICPay Swap — ICPay Blog",
+    description: DESCRIPTION,
+    url: blogCanonical(SLUG),
+    siteName: "ICPay",
     type: "article",
-    publishedTime: "2026-08-17T00:00:00Z",
+    publishedTime: `${PUBLISHED_AT}T00:00:00Z`,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
   },
 }
 
-export default function IcpaySwapAndLivePage() {
+const jsonLd = blogArticleJsonLd({
+  slug: SLUG,
+  title: TITLE,
+  description: DESCRIPTION,
+  publishedAt: PUBLISHED_AT,
+  readingMinutes: READING_MINUTES,
+})
+
+export default function IcpaySwapPage() {
   return (
     <article className="space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <header className="space-y-2">
-        <p className="text-xs font-medium text-primary uppercase tracking-widest">Product</p>
-        <h1 className="text-2xl font-bold tracking-tight leading-snug">
-          ICPay Swap &amp; Live: Two New Ways to Use Your Wallet
+        <p className="text-xs font-medium uppercase tracking-widest text-primary">Product</p>
+        <h1 className="text-2xl font-bold leading-snug tracking-tight">
+          ICPay Swap: Trade Tokens Directly Inside Your Wallet
         </h1>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          ICPay started as a simple ICP wallet — send, receive, hold. Swap and Live extend that
-          into token trading and real-time voice, without leaving the app or handing custody to
-          another service.
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          ICPay began as a seamless ICP wallet for username-based transfers. With ICPay Swap,
+          you can trade ICP and ICRC tokens directly on-chain without leaving the app or handing
+          custody to an external centralized exchange.
         </p>
-        <p className="text-[11px] text-muted-foreground">August 17, 2026 · 6 min read</p>
+        <p className="text-[11px] text-muted-foreground">August 17, 2026 · {READING_MINUTES} min read</p>
       </header>
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">ICPay Swap</h2>
+        <h2 className="text-base font-semibold tracking-tight">How ICPay Swap Works</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
           <strong className="text-foreground">Swap</strong> exchanges one token for another inside
-          your ICPay balance. Pick a token you hold, pick what you want, enter an amount, and
-          confirm. Quotes come from{" "}
+          your ICPay balance. Select a token you hold, choose the asset you wish to acquire, enter an
+          amount, and review the live quote.
+        </p>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Quotes are sourced directly from{" "}
           <a
             href="https://icpswap.com"
             className="underline underline-offset-2 hover:text-foreground"
@@ -45,142 +84,69 @@ export default function IcpaySwapAndLivePage() {
           >
             ICPSwap
           </a>{" "}
-          — the largest decentralised exchange on the Internet Computer — and execution settles
-          through the same custodial subaccount model ICPay already uses for sends and deposits.
+          — the premier decentralized exchange on the Internet Computer. Settlement occurs through
+          the same secure custodial subaccount model ICPay already utilizes for deposits and transfers,
+          ensuring only your authenticated principal can authorize the operation.
         </p>
         <ul className="space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
           <li className="list-disc">
-            <strong className="text-foreground">Supported tokens</strong> — ICP plus ICRC-1 and
-            ICRC-2 tokens in your wallet. ICPAY itself is excluded from swapping.
+            <strong className="text-foreground">Supported tokens</strong> — ICP alongside ICRC-1 and
+            ICRC-2 standard tokens such as ckBTC, ckETH, and ecosystem assets.
           </li>
           <li className="list-disc">
-            <strong className="text-foreground">Live quotes</strong> — rates refresh as you type;
-            you see expected output, pool fee, and ICPay service fee before confirming.
+            <strong className="text-foreground">Live quotes & transparency</strong> — Rates update
+            in real time, displaying expected output, liquidity pool fee, and slippage estimate
+            before confirmation.
           </li>
           <li className="list-disc">
-            <strong className="text-foreground">One tap from the dashboard</strong> — Send, Swap,
-            and Receive sit on the home screen; Swap is also in the menu under Money.
-          </li>
-        </ul>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Swaps are on-chain ledger operations routed through ICPSwap pools. ICPay does not hold
-          your keys — you authorise each swap with Internet Identity, the same way you authorise a
-          transfer.
-        </p>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">How to swap</h2>
-        <ol className="space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
-          <li className="list-decimal">Open ICPay and sign in with Internet Identity.</li>
-          <li className="list-decimal">Tap <strong className="text-foreground">Swap</strong> on the dashboard or menu.</li>
-          <li className="list-decimal">Choose the token you are selling and the token you want.</li>
-          <li className="list-decimal">Enter an amount and review the quote.</li>
-          <li className="list-decimal">Confirm — balances update after the swap completes on-chain.</li>
-        </ol>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          If a swap fails mid-execution but funds were already moved, ICPay shows a recovery path
-          so you can finish or unwind the trade instead of leaving tokens stuck.
-        </p>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">ICPay Live</h2>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          <strong className="text-foreground">Live</strong> is voice chat for the Internet
-          Computer — think of it as lightweight audio rooms tied to your ICPay identity. Host a
-          hangout, a weekly sync, or an AMA. Guests join from a link, hear speakers immediately,
-          and turn the mic on only when they want to talk.
-        </p>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          The design splits work cleanly: <strong className="text-foreground">signaling stays
-          on-chain</strong> (who is in the room, WebRTC offers, answers, ICE candidates) while{" "}
-          <strong className="text-foreground">audio stays peer-to-peer</strong> between browsers.
-          That keeps voice off the canister and cycle costs low — queries are free, and only room
-          join/leave and signal posts cost cycles.
-        </p>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">Inside a live room</h2>
-        <ul className="space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
-          <li className="list-disc">
-            <strong className="text-foreground">Auto-listen</strong> — you hear others as soon as
-            audio connects. No need to enable your mic first.
-          </li>
-          <li className="list-disc">
-            <strong className="text-foreground">Participant grid</strong> — avatars and @usernames
-            in a compact layout. Premium handles show a verified badge.
-          </li>
-          <li className="list-disc">
-            <strong className="text-foreground">Host controls</strong> — start, pause, resume, or
-            end the room. Public rooms appear in the live list; private rooms need an invite link.
-          </li>
-          <li className="list-disc">
-            <strong className="text-foreground">Premium hosting</strong> — creating a room
-            requires a premium or ultra-premium username (1–4 characters). Anyone can join.
+            <strong className="text-foreground">One-tap accessibility</strong> — Accessible straight
+            from the home dashboard and quick-action drawers.
           </li>
         </ul>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">How to join or host</h2>
+        <h2 className="text-base font-semibold tracking-tight">Step-by-Step: Executing a Swap</h2>
         <ol className="space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
           <li className="list-decimal">
-            Go to <strong className="text-foreground">Live</strong> in the ICPay menu.
+            Open <Link href="/swap" className="underline underline-offset-2 hover:text-foreground">ICPay Swap</Link> and authenticate with Internet Identity.
           </li>
           <li className="list-decimal">
-            Browse public rooms and tap <strong className="text-foreground">Join</strong>, or open
-            a private invite link.
+            Select the source token you wish to sell and target token you want to receive.
           </li>
           <li className="list-decimal">
-            Wait for the host to start the room if it is still in draft.
+            Input the desired amount and inspect the estimated exchange rate and pool fee.
           </li>
           <li className="list-decimal">
-            Listen automatically; tap the mic button when you want to speak.
+            Tap <strong className="text-foreground">Swap</strong> to approve the on-chain trade.
+          </li>
+          <li className="list-decimal">
+            Your balances update automatically upon consensus finalization (~2 seconds).
           </li>
         </ol>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Premium handle holders can tap <strong className="text-foreground">New room</strong>,
-          set a title and visibility, then start when ready.
-        </p>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">Why both features fit ICP</h2>
+        <h2 className="text-base font-semibold tracking-tight">On-Chain Safety & Settlement</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Swap and Live are not bolted-on web2 services. Swap routes through ICPSwap canisters on
-          the IC; Live stores room state and signaling in the same wallet canister that already
-          holds your balance. Your Internet Identity principal is your identity in both — no extra
-          accounts, no separate login.
-        </p>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          That is the point of building on the Internet Computer: wallet, exchange, storage, and
-          now voice — one chain, one auth model, auditable on-chain logic.
+          Because ICPay trades run through canister smart contracts on the Internet Computer, transactions
+          are atomic. If a swap cannot be completed due to price volatility or slippage limits, the transaction
+          reverts and tokens remain safely protected in your subaccount.
         </p>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">Try it</h2>
+      <section className="space-y-3 border-t pt-6">
+        <h2 className="text-base font-semibold tracking-tight">Next steps</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Swap and Live are live at{" "}
-          <a
-            href="https://icpay.app"
-            className="underline underline-offset-2 hover:text-foreground"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            icpay.app
-          </a>
-          . New here? Start with{" "}
-          <Link href="/blog/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
-            what is ICP
+          Ready to trade? Launch the <Link href="/swap" className="underline underline-offset-2 hover:text-foreground">Swap interface</Link>,
+          or learn more about how ICP tokens work in our guide to the{" "}
+          <Link href="/blog/icrc-1-token-standard" className="underline underline-offset-2 hover:text-foreground">
+            ICRC-1 Token Standard
           </Link>{" "}
-          or{" "}
-          <Link href="/blog/how-to-send-icp" className="underline underline-offset-2 hover:text-foreground">
-            how to send ICP
-          </Link>
-          .
+          and{" "}
+          <Link href="/blog/what-is-icp" className="underline underline-offset-2 hover:text-foreground">
+            What is ICP
+          </Link>.
         </p>
       </section>
     </article>

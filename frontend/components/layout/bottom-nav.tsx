@@ -21,7 +21,7 @@ export function BottomNav() {
     <nav
       className={cn(
         "fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md",
-        "px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2",
+        "px-3 pb-0.1 pt-2",
       )}
     >
       <div

@@ -82,7 +82,6 @@ export function BucketFilesPanel({
   const search = useBucketSearch(searching ? bucketId : null, debouncedQuery, page)
   const active = searching ? search : browse
   const { files, total, totalPages, isLoading, refresh: refreshFiles } = active
-  const apiFolders = useMemo(() => (searching ? [] : browse.folders), [searching, browse.folders])
   const { refresh: refreshStats } = useBucketStats(bucketId)
 
   useEffect(() => {
@@ -90,27 +89,20 @@ export function BucketFilesPanel({
     return () => window.clearTimeout(timer)
   }, [query])
 
-  // Derived state: reset page and selection when filter changes, selection when page changes.
-  const [prevPrefix, setPrevPrefix] = useState(prefix)
-  const [prevDebouncedQuery, setPrevDebouncedQuery] = useState(debouncedQuery)
-  const [prevPage, setPrevPage] = useState(page)
-
-  if (prevPrefix !== prefix || prevDebouncedQuery !== debouncedQuery) {
-    setPrevPrefix(prefix)
-    setPrevDebouncedQuery(debouncedQuery)
+  useEffect(() => {
     setPage(0)
+  }, [prefix, debouncedQuery])
+
+  useEffect(() => {
     setSelected(new Set())
-  } else if (prevPage !== page) {
-    setPrevPage(page)
-    setSelected(new Set())
-  }
+  }, [prefix, page, debouncedQuery])
 
   const entries = useMemo(() => {
     if (searching) {
       return files.map((file) => ({ kind: "file" as const, file }))
     }
-    return listFolderEntries(files, prefix, apiFolders)
-  }, [apiFolders, files, prefix, searching])
+    return listFolderEntries(files, prefix, browse.folders)
+  }, [browse.folders, files, prefix, searching])
 
   const visible = useMemo(
     () => sortEntries(entries, files, prefix, sort),

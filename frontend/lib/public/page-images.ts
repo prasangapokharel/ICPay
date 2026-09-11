@@ -8,17 +8,17 @@ export function pageImageUrl(path: string): string {
 
 export const PAGE_IMAGES = {
   landing: {
-    heroPhone: page("landing/hero-phone.png"),
-    heroDesktop: page("landing/desktop.png"),
-    laptopMockup: page("landing/laptop-mockup.png"),
+    heroPhone: page("landing/hero-phone.webp"),
+    heroDesktop: page("landing/desktop.webp"),
+    laptopMockup: page("landing/laptop-mockup.webp"),
     paymentFlow: page("landing/payment-flow.webp"),
   },
   icbucket: {
-    heroPhone: page("icbucket/hero-phone.png"),
-    hero: page("icbucket/hero.png"),
+    heroPhone: page("icbucket/hero-phone.webp"),
+    hero: page("icbucket/hero.webp"),
   },
   icfalcon: {
-    hero: page("icfalcon/hero.png"),
+    hero: page("icfalcon/hero.webp"),
   },
   login: {
     bg: page("login/bg.webp"),

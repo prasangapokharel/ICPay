@@ -50,27 +50,28 @@ export function TradeAmountField({
               {t("balance")}: {formatTokenAmount(balance, token.decimals)}
             </span>
             {onMax && maxHint !== undefined && maxHint > 0n && (
-              <button
-                type="button"
-                className="font-semibold text-primary hover:underline"
+              <Button
+                variant="ghost"
+                size="xs"
+                className="h-auto p-0 font-semibold text-primary hover:bg-transparent hover:underline"
                 onClick={onMax}
               >
                 {t("max")}
-              </button>
+              </Button>
             )}
           </div>
         )}
       </div>
 
       <div className="mt-3 flex items-center gap-3">
-        <button
-          type="button"
+        <Button
+          variant="outline"
           onClick={onPickToken}
-          className="flex shrink-0 items-center gap-2 rounded-full border border-border/60 bg-background py-1.5 pl-1.5 pr-3 text-sm font-semibold shadow-sm transition-colors hover:bg-muted/50"
+          className="h-auto shrink-0 items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3 text-sm font-semibold"
         >
           {token ? <TokenLogo token={token} className="size-8" /> : null}
           <span>{token?.symbol ?? t("selectToken")}</span>
-        </button>
+        </Button>
 
         {readOnly ? (
           <p className="min-w-0 flex-1 truncate text-right text-[clamp(1.5rem,6vw,2rem)] font-semibold tabular-nums tracking-tight">

@@ -1,23 +1,56 @@
 import type { Metadata } from "next"
 import { IcpLiveData } from "@/components/blog/icp-live-data"
+import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
+
+const SLUG = "what-is-icp"
+const TITLE = "What is ICP? A Plain-Language Guide to the Internet Computer | ICPay"
+const DESCRIPTION =
+  "A plain-language guide to the Internet Computer Protocol — how it works, why it exists, and what makes it different from other blockchains."
+const PUBLISHED_AT = "2026-08-09"
+const READING_MINUTES = 6
 
 export const metadata: Metadata = {
-  title: "What is ICP?",
-  description:
-    "A plain-language guide to the Internet Computer Protocol — how it works, why it exists, and what makes it different from other blockchains.",
-  alternates: { canonical: "/blog/what-is-icp" },
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: [
+    "what is ICP",
+    "Internet Computer Protocol",
+    "ICP crypto guide",
+    "canisters explained",
+    "reverse gas model",
+    "Internet Identity",
+  ],
+  alternates: { canonical: blogCanonical(SLUG) },
   openGraph: {
     title: "What is ICP? — ICPay Blog",
-    description:
-      "A plain-language guide to the Internet Computer Protocol — live price, market data, and everything you need to know.",
+    description: DESCRIPTION,
+    url: blogCanonical(SLUG),
+    siteName: "ICPay",
     type: "article",
-    publishedTime: "2026-08-09T00:00:00Z",
+    publishedTime: `${PUBLISHED_AT}T00:00:00Z`,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
   },
 }
+
+const jsonLd = blogArticleJsonLd({
+  slug: SLUG,
+  title: TITLE,
+  description: DESCRIPTION,
+  publishedAt: PUBLISHED_AT,
+  readingMinutes: READING_MINUTES,
+})
 
 export default function WhatIsIcpPage() {
   return (
     <article className="space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <header className="space-y-2">
         <p className="text-xs font-medium text-primary uppercase tracking-widest">Guide</p>
         <h1 className="text-2xl font-bold tracking-tight leading-snug">What is ICP?</h1>

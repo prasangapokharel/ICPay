@@ -22,6 +22,16 @@ export const PUBLIC_PRODUCT_MENU_DEFS: NavMenuItemDef[] = [
   { id: "icfalcon", href: "/icfalcon" },
 ]
 
+export const PUBLIC_CANISTER_MENU_DEFS: NavMenuItemDef[] = [
+  { id: "mine", href: "/canister" },
+  { id: "tools", href: "/canister/tools" },
+  { id: "manage", href: "/canister/manage" },
+  { id: "create", href: "/canister/create" },
+  { id: "cycles", href: "/canister/cycles" },
+  { id: "topup", href: "/topup" },
+  { id: "snapshots", href: "/canister/snapshots" },
+]
+
 export const PUBLIC_RESOURCE_MENU_DEFS: NavMenuItemDef[] = [
   { id: "falconCli", href: "/products/icFalcon/commands" },
   { id: "icpHubPackages", href: "/products/icFalcon/packages" },
@@ -43,6 +53,8 @@ export const PUBLIC_PRODUCT_LINK_DEFS: SiteLinkDef[] = [
   { id: "markets", href: "/market" },
   { id: "icfalcon", href: "/icfalcon" },
   { id: "icbucket", href: "/icbucket" },
+  { id: "canister", href: "/canister" },
+  { id: "topup", href: "/topup" },
   { id: "wallet", href: "/login" },
 ]
 

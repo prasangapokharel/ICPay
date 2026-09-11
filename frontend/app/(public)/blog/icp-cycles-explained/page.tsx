@@ -181,6 +181,11 @@ export default function IcpCyclesPage() {
               How Internet Computer canisters work
             </Link>
           </li>
+          <li className="list-disc">
+            <Link href="/blog/how-to-top-up-icp-cycles" className="underline underline-offset-2 hover:text-foreground">
+              How to top up ICP cycles
+            </Link>
+          </li>
         </ul>
       </section>
     </article>

@@ -30,6 +30,7 @@ import { BucketFolderDialog } from "@/components/bucket/bucket-folder-dialog"
 import { BucketUploadControl } from "@/components/bucket/bucket-upload-control"
 import { BucketRenewDrawer } from "@/components/bucket/bucket-renew-drawer"
 import { BucketApiKeysModal } from "@/components/bucket/bucket-api-keys-modal"
+import { BucketStatsHeader } from "@/components/bucket/bucket-stats-header"
 import {
   useBucketStats,
   useInvalidateBucketCache,
@@ -284,6 +285,8 @@ export function BucketDetail() {
         {trail}
         {headerActions}
       </div>
+
+      <BucketStatsHeader stats={stats} onRenew={() => setRenewOpen(true)} />
 
       {!canWrite && (
         <Alert>

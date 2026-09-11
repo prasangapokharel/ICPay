@@ -51,7 +51,7 @@ export function CommunityChannelCard({
         selected && "bg-muted/50 md:bg-muted/40"
       )}
     >
-      <Link href={href} prefetch className="flex min-w-0 flex-1 items-center gap-3">
+      <Link href={href} prefetch={false} className="flex min-w-0 flex-1 items-center gap-3">
         <div className="relative shrink-0">
           <CommunityAvatar
             seed={channel.slug}

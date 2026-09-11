@@ -47,6 +47,7 @@ export function PublicNavMobile() {
   const {
     primaryLinks,
     productMenu,
+    canisterMenu,
     resourceMenu,
     legalMenu,
     sectionLabels,
@@ -82,10 +83,10 @@ export function PublicNavMobile() {
                   href={link.href}
                   onClick={close}
                   className={cn(
-                    "block rounded-xl px-3 py-2.5 text-sm transition-colors hover:bg-muted",
+                    "rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-muted",
                     pathname === link.href || pathname.startsWith(`${link.href}/`)
-                      ? "text-foreground"
-                      : "text-muted-foreground"
+                      ? "bg-muted text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {link.label}
@@ -95,6 +96,7 @@ export function PublicNavMobile() {
 
             <MobileNavSection title={sectionLabels.products} items={productMenu} onNavigate={close} />
             <MobileNavSection title={sectionLabels.resources} items={resourceMenu} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.canisters} items={canisterMenu} onNavigate={close} />
             <MobileNavSection title={sectionLabels.more} items={legalMenu} onNavigate={close} />
           </div>
         </DrawerContent>

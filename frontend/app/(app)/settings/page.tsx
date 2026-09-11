@@ -110,6 +110,23 @@ export default function MenuPage() {
       ],
     },
     {
+      key: "canisters",
+      items: [
+        {
+          href: "/canister",
+          key: "canisters",
+          icon: "canister",
+          keywords: "canister cycles subnet create manage snapshots topup mine",
+        },
+        {
+          href: "/topup",
+          key: "canisterTopup",
+          icon: "canisterTopup",
+          keywords: "topup cycles cmc canister fuel gas",
+        },
+      ],
+    },
+    {
       key: "activity",
       items: [
         {

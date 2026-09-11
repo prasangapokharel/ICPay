@@ -31,7 +31,7 @@ Always use
 - Tailwind CSS
 - Radix UI primitives
 - CVA (Class Variance Authority)
-- Lucide React icons
+- HugeiconFree icons
 
 Never recreate functionality that already exists in shadcn/ui.
 

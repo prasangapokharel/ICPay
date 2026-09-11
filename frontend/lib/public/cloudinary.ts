@@ -14,7 +14,7 @@ export function cloudinaryVideo(url: string, transforms: string): string {
 }
 
 export const CLOUDINARY_TRANSFORMS = {
-  productCard: "f_auto,q_auto,w_900,c_limit",
+  productCard: "f_auto,q_auto,w_600,c_limit",
   og: "f_auto,q_auto,w_1200,h_630,c_fill",
   video: "q_auto,vc_auto,w_1280,c_limit",
 } as const

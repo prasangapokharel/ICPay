@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { CommunityReactionIcon } from "@/components/community/community-reaction-icon"
 import { myReactionCode, type ReactionCode } from "@/lib/community/reactions"
 import { cn } from "@/lib/ui/utils"
@@ -35,21 +36,22 @@ export function CommunityReactionRow({
         const code = Number(row.code) as ReactionCode
         const active = mine === code
         return (
-          <button
+          <Button
             key={`${code}-${row.count.toString()}`}
-            type="button"
+            variant="ghost"
+            size="xs"
             disabled={disabled}
             onClick={() => onToggle(code)}
             className={cn(
-              "inline-flex min-h-5 items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs font-medium transition-colors animate-in fade-in zoom-in-95 duration-200",
+              "h-5 min-h-5 gap-0.5 rounded-full px-1.5 py-0.5 text-xs font-medium transition-colors animate-in fade-in zoom-in-95 duration-200",
               active
-                ? "bg-primary/15 text-primary"
+                ? "bg-primary/15 text-primary hover:bg-primary/20"
                 : "text-muted-foreground hover:bg-muted/70"
             )}
           >
             <CommunityReactionIcon code={code} size={18} />
             <span>{row.count.toString()}</span>
-          </button>
+          </Button>
         )
       })}
     </div>

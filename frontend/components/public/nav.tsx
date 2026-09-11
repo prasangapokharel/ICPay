@@ -3,17 +3,12 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
 import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import { getNavMenuIcon } from "@/lib/public/nav-menu-icons"
 import { charityCampaignShellClass, isCharityCampaignPath } from "@/lib/public/charity/shell"
 import type { NavMenuItem } from "@/lib/public/site-links"
 import { cn } from "@/lib/ui/utils"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
-import { useAuth } from "@/components/auth/auth-provider"
-import { Button } from "@/components/ui/button"
 import { NavMenuItemContent } from "@/components/public/nav-menu-item"
 import { PublicNavAuth } from "@/components/public/public-nav-auth"
 import { PublicNavMobile } from "@/components/public/public-nav-mobile"
@@ -94,12 +89,10 @@ function NavDropdown({
 
 export function PublicNav() {
   const pathname = usePathname()
-  const { isAuthenticated, isLoading } = useAuth()
-  const tDeposit = useTranslations("deposit")
-  const tTrade = useTranslations("trade")
   const {
     primaryLinks,
     productMenu,
+    canisterMenu,
     resourceMenu,
     legalMenu,
     sectionLabels,
@@ -116,7 +109,7 @@ export function PublicNav() {
           : "border-b border-border/60 bg-background/95"
       )}
     >
-      <div className="flex h-14 w-full items-center justify-between gap-4 px-4 md:h-16 md:px-6">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 md:h-16 md:px-6">
         <div className="flex min-w-0 items-center gap-5 lg:gap-8">
           <Link
             href="/"
@@ -130,8 +123,11 @@ export function PublicNav() {
               height={36}
               className="size-9 rounded-lg object-cover"
               priority
+              loading="eager"
             />
-            <span className="text-xl font-bold tracking-tight text-foreground md:text-2xl">ICPay</span>
+            <span className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
+              ICPay
+            </span>
           </Link>
 
           <NavigationMenu className="hidden max-w-none lg:flex" align="start">
@@ -154,6 +150,7 @@ export function PublicNav() {
 
               <NavDropdown label={sectionLabels.products} items={productMenu} />
               <NavDropdown label={sectionLabels.resources} items={resourceMenu} columns={2} />
+              <NavDropdown label={sectionLabels.canisters} items={canisterMenu} />
               <NavDropdown label={sectionLabels.more} items={legalMenu} columns={2} />
             </NavigationMenuList>
           </NavigationMenu>
@@ -161,26 +158,6 @@ export function PublicNav() {
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
           <LanguageSwitch />
-          {isAuthenticated && !isLoading ? (
-            <Button
-              size="sm"
-              variant="outline"
-              nativeButton={false}
-              render={<Link href="/deposit" />}
-              className="hidden rounded-full px-4 sm:inline-flex"
-            >
-              <HugeiconsIcon icon={ArrowDown01Icon} className="size-4" strokeWidth={1.75} />
-              {tDeposit("title")}
-            </Button>
-          ) : null}
-          <Button
-            size="sm"
-            nativeButton={false}
-            render={<Link href="/market/trade" />}
-            className="bg-primary text-primary-foreground hover:bg-primary/90"
-          >
-            {tTrade("title")}
-          </Button>
           <ThemeToggle />
           <span aria-hidden className="mx-0.5 hidden h-5 w-px bg-border/60 sm:block" />
           <PublicNavAuth />

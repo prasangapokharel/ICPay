@@ -23,6 +23,9 @@ import { Spinner } from "@/components/ui/spinner"
 import { mapBucketError } from "@/lib/bucket/bucket"
 import { copyText } from "@/lib/wallet/utils"
 import { useBucketApiKeys } from "@/hooks/bucket/useBucketApiKeys"
+import { useOwnProfile } from "@/hooks/wallet/useWalletData"
+import { isPremiumHandle } from "@/lib/verified/premiumTick"
+import { PremiumGateDialog } from "@/components/shared/premium-gate"
 import type { ApiKeyCreateResult, ApiKeyPublic } from "@/services/bucket/types"
 
 function permLabel(
@@ -47,11 +50,16 @@ export function BucketApiKeysModal({
 }) {
   const t = useTranslations("bucket")
   const tc = useTranslations("common")
+  const { data: profile } = useOwnProfile()
+  const username = profile?.username[0] ?? null
+  const isPremium = isPremiumHandle(username)
+
   const { keys, isLoading, createKey, revokeKey, refresh } = useBucketApiKeys(
     bucketId,
     open
   )
   const [createOpen, setCreateOpen] = useState(false)
+  const [premiumGateOpen, setPremiumGateOpen] = useState(false)
   const [name, setName] = useState("")
   const [read, setRead] = useState(true)
   const [write, setWrite] = useState(true)
@@ -171,6 +179,10 @@ export function BucketApiKeysModal({
             size="sm"
             className="w-full"
             onClick={() => {
+              if (!isPremium) {
+                setPremiumGateOpen(true)
+                return
+              }
               resetForm()
               setCreateOpen(true)
             }}
@@ -179,6 +191,16 @@ export function BucketApiKeysModal({
           </Button>
         </DialogContent>
       </Dialog>
+
+      <PremiumGateDialog
+        open={premiumGateOpen}
+        onOpenChange={setPremiumGateOpen}
+        title="Bucket API Key Access"
+        description="Generating programmatic API keys for headless S3, SDK integrations, and automated backups is exclusive to ICPay Premium handles (1–4 characters). Upgrade your handle to generate scoped read, write, and delete keys."
+        featureName="Bucket API Keys"
+        actionText="Get Premium Handle"
+        href="/username"
+      />
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="max-w-sm gap-4" showCloseButton>
@@ -199,24 +221,30 @@ export function BucketApiKeysModal({
             </div>
             <div className="space-y-2">
               <Label>{t("apiKeyPermissions")}</Label>
-              <label className="flex items-center gap-2 text-sm">
-                <Checkbox checked={read} onCheckedChange={(v) => setRead(v === true)} />
-                {t("apiKeyPermRead")}
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <Checkbox checked={write} onCheckedChange={(v) => setWrite(v === true)} />
-                {t("apiKeyPermWrite")}
-              </label>
-              <label className="flex items-center gap-2 text-sm">
-                <Checkbox checked={del} onCheckedChange={(v) => setDel(v === true)} />
-                {t("apiKeyPermDelete")}
-              </label>
+              <div className="space-y-1.5">
+                <label className="flex items-center gap-2 text-xs">
+                  <Checkbox checked={read} onCheckedChange={(v) => setRead(Boolean(v))} />
+                  {t("apiKeyPermRead")}
+                </label>
+                <label className="flex items-center gap-2 text-xs">
+                  <Checkbox checked={write} onCheckedChange={(v) => setWrite(Boolean(v))} />
+                  {t("apiKeyPermWrite")}
+                </label>
+                <label className="flex items-center gap-2 text-xs">
+                  <Checkbox checked={del} onCheckedChange={(v) => setDel(Boolean(v))} />
+                  {t("apiKeyPermDelete")}
+                </label>
+              </div>
             </div>
+            {error && (
+              <Alert variant="destructive" className="py-2">
+                <AlertDescription className="text-xs">{error}</AlertDescription>
+              </Alert>
+            )}
             <Button
               type="button"
-              size="sm"
               className="w-full"
-              disabled={busy || name.trim().length === 0}
+              disabled={busy || !name.trim() || (!read && !write && !del)}
               onClick={handleCreate}
             >
               {busy ? t("apiKeyCreating") : t("apiKeyCreate")}
@@ -225,9 +253,9 @@ export function BucketApiKeysModal({
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!created} onOpenChange={(next) => !next && setCreated(null)}>
-        <DialogContent className="max-w-md gap-3" showCloseButton>
-          <DialogHeader className="gap-1">
+      <Dialog open={created != null} onOpenChange={(v) => !v && setCreated(null)}>
+        <DialogContent className="max-w-sm gap-4" showCloseButton>
+          <DialogHeader>
             <DialogTitle>{t("apiKeyCreatedTitle")}</DialogTitle>
             <DialogDescription className="text-xs">{t("apiKeyCreatedBody")}</DialogDescription>
           </DialogHeader>

@@ -1,0 +1,193 @@
+# Canister Tycoon — Cyberpunk Server & Node Survival Simulator
+### Game Design Document (GDD) & Technical Architecture Guide
+
+---
+
+## 1. Executive Summary & Game Pitch
+
+* **Title:** Canister Tycoon: Subnet Zero
+* **Genre:** Automation / Base-Builder / Strategy Tycoon (*Factorio* meets *Cyberpunk 2077* & *Silicon Valley*)
+* **Platform:** Next.js (Web / Desktop / Mobile Web)
+* **On-Chain Backend:** Internet Computer via `@icp-sdk/core` / `icp-coresdk` canisters
+* **Visual Style:** 2D Isometric Cyberpunk Pixel Art with glowing neon bloom shaders, animated data-packet streams, and dynamic heat-map overlays.
+* **Core Hook:** You are an underground rogue node operator in a dystopian, heavily monitored digital future. You design, wire, cool, and protect modular server racks, fiber-optic bandwidth pipelines, and decentralized compute canisters against thermal overloads, botnet DDoS raids, and corporate power blackouts.
+
+---
+
+## 2. Core Pillars & Player Fantasy
+
+1. **Intricate Engineering & Layout Optimization:** Every rack, wire, and pipe matters. Poor cable management creates thermal bottlenecks; unshielded power supplies blow fuses.
+2. **High-Stakes Live Operations:** Real-time events force tactical choices — do you overclock your GPUs to capture a high-yield transaction spike, risking a catastrophic fire?
+3. **True Sovereign Ownership:** Save games, node blueprints, hardware perks, and global leaderboard rankings are verified and stored directly in your personal on-chain canister using `icp-coresdk`.
+
+---
+
+## 3. The Core Gameplay Loop
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     1. BUILD & CONFIGURE                    │
+│   Place Racks, Motherboards, GPUs, CPUs, PSUs & Coolers     │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    2. ROUTE & NETWORK                       │
+│    Connect Fiber Cables, Quantum Routers & Firewall Gates   │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  3. PROCESS TRANSACTIONS                    │
+│    Serve Real-Time HTTP Outcalls, AI Inference & Cycles     │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  4. SURVIVE THREATS & SPIKES                │
+│    Mitigate Botnet DDoS, Heat Cascades, Power Surges & Hack │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  5. EARN CYCLES & EXPAND                    │
+│    Upgrade Facility, Unlock New Subnets, Mint Node Badges   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 4. Hardware & Infrastructure Catalog
+
+### 4.1. Compute & Storage Nodes
+| Tier | Hardware Unit | Compute Power (MIPS) | Heat Output | Power Draw | Description |
+|---|---|---|---|---|---|
+| **Tier 1** | *Refurbished Blade 2040* | 50 MIPS | +15°C | 120W | Cheap starting unit. Prone to hardware jitter. |
+| **Tier 2** | *Silicon-Core Canister Array* | 250 MIPS | +45°C | 400W | Balanced workhorse for stable canister hosting. |
+| **Tier 3** | *Neural Matrix Accelerator (AI)* | 1,200 MIPS | +110°C | 1,100W | Massive yield on AI smart contracts, extreme heat. |
+| **Tier 4** | *Quantum Gate Q-8* | 5,000 MIPS | +250°C | 2,800W | Requires cryo-liquid cooling. Zero latency throughput. |
+
+### 4.2. Cooling & Thermal Management
+* **Passive Heat Sinks:** Cheap, 0W power, but only dissipates minor ambient heat.
+* **High-RPM Fan Arrays:** Low cost, noisy, requires exhaust duct placement.
+* **Closed-Loop Liquid Tubes:** Routes coolant from server racks to radiator blocks.
+* **Liquid Nitrogen Cryo-Pods:** Heavy power cost, cools adjacent 3x3 tiles to -10°C.
+* **Sub-Immersion Mineral Oil Tanks:** Eliminates fire risk, high upfront capital investment.
+
+### 4.3. Power & Energy Infrastructure
+* **Grid Tap (Street Line):** Cheap baseline power, but vulnerable to city brownouts and utility tariff spikes.
+* **Diesel Generator Sub-Station:** Backup power during outages; requires buying fuel barrels.
+* **Solar Rooftop Arrays:** Free daytime energy, zero power during cyber-storms.
+* **Nuclear Micro-Reactor (Late Game):** Massive clean energy, requires radiation shielding.
+
+### 4.4. Networking & Security
+* **Cat-8 Copper Lines:** Basic short-range bandwidth routing.
+* **Fiber-Optic Laser Trunk:** High throughput, ultra-low latency.
+* **Hardware Firewall Gateway:** Automatically filters 80% of low-grade botnet packets.
+* **Honeypot Decoy Rack:** Diverts hacker attacks away from your primary database canisters.
+
+---
+
+## 5. Thermodynamics & Resource Economy
+
+### 5.1. Resource Formulas
+
+1. **Cycle Earnings per Second ($E$):**
+   $$E = (\text{Total Compute MIPS} \times \text{Network Quality}) \times \text{Multiplier}_{\text{overclock}} - \text{Latency Penalty}$$
+
+2. **Thermal Dissipation Balance:**
+   $$\Delta T = \sum \text{Heat}_{\text{Hardware}} - \sum \text{Cooling}_{\text{Active}} - \text{Ambient Dissipation}$$
+   * If Rack Temp > 85°C: **Thermal Throttling (-50% Output)**
+   * If Rack Temp > 105°C: **Hardware Melt & Catastrophic Fire**
+
+3. **Power Grid Stability:**
+   $$\text{Load Ratio} = \frac{\text{Power Required}}{\text{Power Supply Capacity}}$$
+   * If $\text{Load Ratio} > 1.0$: Circuit breaker trips; whole cluster powers down.
+
+---
+
+## 6. Live Events & Hazard System
+
+| Event Name | Frequency | Warning Indicator | Player Action Required |
+|---|---|---|---|
+| **Botnet DDoS Wave** | Every 5–8 mins | Network HUD spikes Red, Ping climbs | Activate Hardware Firewall, throttle untrusted IPs |
+| **Citywide Grid Brownout** | Random / Storms | Lights flicker, Grid voltage drops to 0 | Turn on Backup Diesel Generators before batteries drain |
+| **DeFi Yield Spike** | Every 10 mins | Golden ticker banner, 5x gas payout | Overclock racks to max compute for 60 seconds |
+| **Coolant Pipe Leak** | Hardware wear | Puddle appears under liquid loop | Dispatch repair drone / fix pipe before short-circuit |
+| **Cyber Police Node Audit** | Triggered by high power | Sirens outside, 30s timer | Enable encrypted zero-knowledge proxy router |
+
+---
+
+## 7. Progression & Facility Evolution
+
+1. **Level 1: The Neon Basement (10x10 Grid)**
+   * Starting funds: 5,000 Cycles.
+   * Basic wall power outlet, ceiling fan, 2 blade racks.
+2. **Level 2: Abandoned Subway Vault (24x24 Grid)**
+   * Multiple power rooms, direct sewer water line for heat exchangers.
+   * Access to Tier 2 and Tier 3 hardware.
+3. **Level 3: Cyberpunk Penthouse Data Center (40x40 Grid)**
+   * Rooftop solar/wind access, drone landing pad for instant hardware deliveries.
+   * High-frequency trading contracts and multi-subnet clustering.
+4. **Level 4: Oceanic Deep-Sea Subnet Pod (60x60 Grid)**
+   * Natural ocean cryogenic cooling, geothermal power, top-tier Quantum canisters.
+
+---
+
+## 8. Web3 & `icp-coresdk` Integration Architecture
+
+### 8.1. On-Chain Features
+* **Player State Canister:** Every player can save their facility layout, inventory, and achievements to their own authenticated subaccount.
+* **Internet Identity Login:** 1-click biometric passkey authentication. No passwords or seed phrases.
+* **Decentralized Leaderboard:** Real-time queries for highest Cycles/sec, longest uptime, and zero-downtime streaks.
+* **Canister Blueprints:** Players can export efficient node blueprints as shareable URLs or collectible on-chain configs.
+
+### 8.2. Next.js Code Structure
+```
+game-project/
+├── app/
+│   ├── layout.tsx             # Theme, audio manager, II provider
+│   ├── page.tsx               # Main game interface
+│   └── leaderboard/           # Global on-chain rankings
+├── components/
+│   ├── game/
+│   │   ├── GameCanvas.tsx     # Phaser.js / Pixi.js viewport
+│   │   ├── HardwareTray.tsx   # Drag-and-drop hardware selector
+│   │   ├── MetricHUD.tsx      # Temp, Power, Cycles/sec, Network
+│   │   └── EventModal.tsx     # DDoS / Blackout alerts
+│   └── ui/                    # Cyberpunk glassmorphic HUD controls
+├── engine/
+│   ├── grid.ts                # Isometric coordinates & tile math
+│   ├── simulation.ts          # Thermal, power, and compute ticks
+│   ├── threats.ts             # Event spawner (DDoS, leaks, spikes)
+│   └── sound.ts               # WebAudio synthwave sound effects
+└── services/
+    ├── icp.ts                 # icp-coresdk canister client
+    └── save-manager.ts        # LocalStorage + On-Chain sync
+```
+
+---
+
+## 9. Visual & Sound Design (Aesthetics)
+
+* **Color Palette:**
+  * Background: Pitch Void (`#08090d`), Dark Slate (`#0f172a`).
+  * Accents: Cyberpunk Cyan (`#06b6d4`), Neon Fuchsia (`#ec4899`), Electric Emerald (`#10b981`), Warning Amber (`#f59e0b`).
+* **Visual Effects:**
+  * Animated pulsing data lines when bandwidth flows.
+  * Heatmap mode: Toggleable infrared overlay showing hot spots in real time.
+  * Particle smoke and spark animations when racks overheat.
+* **Audio:**
+  * Subtle hum of cooling fans that scales in volume and pitch with load.
+  * High-tech click/snap sound effects when snapping racks into the grid.
+  * Low-frequency warning sirens during DDoS and blackouts.
+
+---
+
+## 10. Summary & Immediate Next Steps
+
+1. **Step 1:** Initialize a new Next.js 16 + Tailwind project with `@icp-sdk/core` (or `icp-coresdk`) and `pixi.js` / `phaser`.
+2. **Step 2:** Build the 2D isometric grid renderer with drag-and-drop placement.
+3. **Step 3:** Implement the 1-second simulation tick for Heat, Power, and Cycle earnings.
+4. **Step 4:** Add the threat event system (DDoS and Power outages).
+5. **Step 5:** Connect Internet Identity and on-chain canister persistence.

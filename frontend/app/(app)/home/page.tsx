@@ -17,7 +17,7 @@ import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { useDashboard, useLiveBalance } from "@/hooks/wallet/useWalletData"
 
 export default function DashboardPage() {
-  const { price } = useIcpPrice()
+  const { price, refresh } = useIcpPrice()
   const { data, error, isLoading } = useDashboard()
   const liveBalance = useLiveBalance()
   const [hidden, setHidden] = useState(false)
@@ -53,6 +53,7 @@ export default function DashboardPage() {
           price={price}
           hidden={hidden}
           onToggleHidden={() => setHidden((v) => !v)}
+          onRefreshPrice={refresh}
           username={username}
         />
         <DashboardActions />
@@ -67,7 +68,8 @@ export default function DashboardPage() {
             price={price}
             hidden={hidden}
             onToggleHidden={() => setHidden((v) => !v)}
-            user={data.user}
+            onRefreshPrice={refresh}
+            username={username}
           />
           <HomeHoldingsCard />
         </div>

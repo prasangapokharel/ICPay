@@ -16,7 +16,7 @@ export function AppSiteHeader() {
   const title = resolveAppPageTitle(pathname, (key) => t(key as never))
 
   return (
-    <header className="hidden h-(--header-height) shrink-0 items-center gap-2 border-b bg-background/80 backdrop-blur-sm md:flex">
+    <header className="sticky top-0 z-20 hidden h-(--header-height) shrink-0 items-center gap-2 border-b bg-background/80 backdrop-blur-sm md:flex">
       <div className="flex w-full items-center gap-2 px-4 lg:gap-3 lg:px-6">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mx-1 h-4 data-vertical:self-auto" />

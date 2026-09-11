@@ -120,22 +120,23 @@ export function TokenView() {
             if (item.swapOnly && !isSwapToken(token.ledgerId)) return null
 
             const icon = (
-              <span className="flex size-11 items-center justify-center rounded-full bg-gray-800 text-foreground">
+              <span className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground">
                 <HugeiconsIcon icon={item.icon} className="size-5" strokeWidth={1.75} />
               </span>
             )
 
             if (item.key === "send") {
               return (
-                <button
+                <Button
                   key={item.key}
-                  type="button"
+                  variant="ghost"
+                  size="icon"
                   aria-label={t("send")}
                   onClick={() => setSendOpen(true)}
-                  className="transition-transform active:scale-95"
+                  className="h-auto w-auto p-0 transition-transform active:scale-95"
                 >
                   {icon}
-                </button>
+                </Button>
               )
             }
 

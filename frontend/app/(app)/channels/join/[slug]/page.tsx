@@ -2,8 +2,6 @@ import { Suspense } from "react"
 import { CommunityJoinScreen } from "./community-join-screen"
 import { Spinner } from "@/components/ui/spinner"
 
-export const instant = false
-
 export function generateStaticParams() {
   return [{ slug: "slug" }]
 }
