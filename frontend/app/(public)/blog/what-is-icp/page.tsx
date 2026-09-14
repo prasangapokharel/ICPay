@@ -150,8 +150,8 @@ export default function WhatIsIcpPage() {
       <section className="space-y-3">
         <h2 className="text-base font-semibold tracking-tight">ICP and ICPay</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          ICPay is an ICP-native custodial wallet. It lives on the IC — the backend is a
-          canister, and the frontend is served from an asset canister. Sending ICP means the
+          ICPay is an ICP-native custodial wallet. It lives on the IC — the backend is a Motoko
+          canister, and identity authentication is anchored via an official on-chain asset canister. Sending ICP means the
           canister calls the ICP ledger directly, in the same consensus round as your request.
           There is no bridge, no wrapped token, and no off-chain relayer.
         </p>

@@ -57,16 +57,19 @@ export function PackagesHero() {
                 size="lg"
                 className="px-3 pr-11 font-mono text-center text-sm sm:text-base"
               />
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
+                type="button"
                 onClick={handleCopy}
-                className="absolute right-2 top-1/2 -translate-y-1/2 transition-colors hover:text-foreground"
+                className="absolute right-1 top-1/2 size-7 -translate-y-1/2 rounded-full text-muted-foreground hover:text-foreground"
                 aria-label="Copy command"
               >
                 <HugeiconsIcon
                   icon={copied ? Tick02Icon : Copy01Icon}
-                  className="size-5"
+                  className="size-4"
                 />
-              </button>
+              </Button>
             </div>
             <p className="text-xs text-muted-foreground">
               Replace <code className="rounded bg-muted px-1 py-0.5 font-mono">&lt;slug&gt;</code> with package name below

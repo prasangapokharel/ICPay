@@ -111,18 +111,20 @@ export function UsernameScreen() {
         ) : null}
         {!shapeError && available === true ? (
           <View className="mt-1.5 gap-2">
-            <Text className="text-xs text-green-600">{t('availableName', { name: trimmed })}</Text>
+            <Text className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+              {t('availableName', { name: trimmed })}
+            </Text>
             {scarcityStats && scarcityStats.isRare ? (
               <View className="flex-row flex-wrap gap-2">
-                <View className="flex-row items-center gap-1.5 rounded-full bg-orange-50 px-2.5 py-1">
+                <View className="flex-row items-center gap-1.5 rounded-full bg-orange-50 px-2.5 py-1 dark:bg-orange-950/40">
                   <Text className="text-xs">🔥</Text>
-                  <Text className="text-xs font-medium text-orange-700">
+                  <Text className="text-xs font-medium text-orange-700 dark:text-orange-300">
                     {scarcityStats.remaining} {trimmed.length}-char names left
                   </Text>
                 </View>
-                <View className="flex-row items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1">
+                <View className="flex-row items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 dark:bg-blue-950/40">
                   <Text className="text-xs">👁️</Text>
-                  <Text className="text-xs font-medium text-blue-700">
+                  <Text className="text-xs font-medium text-blue-700 dark:text-blue-300">
                     {scarcityStats.viewedToday} viewed today
                   </Text>
                 </View>

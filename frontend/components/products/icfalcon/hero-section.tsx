@@ -54,16 +54,19 @@ export function HeroSection() {
               size="lg"
               className="px-3 pr-11 font-mono text-center text-sm sm:text-base"
             />
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
+              type="button"
               onClick={handleCopy}
-              className="absolute right-2 top-1/2 -translate-y-1/2 transition-colors hover:text-foreground"
+              className="absolute right-1 top-1/2 size-7 -translate-y-1/2 rounded-full text-muted-foreground hover:text-foreground"
               aria-label={t("copyCommand")}
             >
               <HugeiconsIcon
                 icon={copied ? Tick02Icon : Copy01Icon}
-                className={`size-5 ${copied ? "text-primary" : "text-muted-foreground"}`}
+                className={`size-4 ${copied ? "text-primary" : "text-muted-foreground"}`}
               />
-            </button>
+            </Button>
           </div>
           <p className="text-xs text-muted-foreground">{t("installHint")}</p>
         </div>

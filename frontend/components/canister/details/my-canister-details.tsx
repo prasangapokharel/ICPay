@@ -109,14 +109,16 @@ export function MyCanisterDetails({
   return (
     <div className="space-y-5">
       {/* 1. Back navigation */}
-      <button
+      <Button
+        variant="ghost"
+        size="sm"
         type="button"
         onClick={() => router.push("/canister")}
-        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+        className="h-auto p-0 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:bg-transparent hover:text-foreground"
       >
         <HugeiconsIcon icon={ArrowLeft02Icon} className="size-3.5" />
         <span>Canisters</span>
-      </button>
+      </Button>
 
       {/* 2. Header Row: Title, ID pill, Status Badges & Quick Start/Stop */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -128,17 +130,19 @@ export function MyCanisterDetails({
           {/* Canister ID pill with copy button */}
           <div className="inline-flex items-center gap-2 rounded-lg border border-border/40 bg-muted/30 px-2.5 py-1 font-mono text-xs text-muted-foreground">
             <span>{canisterId}</span>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               type="button"
               onClick={handleCopy}
-              className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+              className="size-5 p-0 text-muted-foreground hover:bg-transparent hover:text-foreground"
               aria-label={t("copyId")}
             >
               <HugeiconsIcon
                 icon={copied ? CheckmarkCircle02Icon : Copy01Icon}
                 className="size-3.5"
               />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -449,14 +453,16 @@ export function MyCanisterDetails({
                   <div className="border-t border-border/40 pt-3 space-y-2">
                     <div className="flex items-center justify-between">
                       <dt className="text-muted-foreground">Controllers ({status.data.controllers.length})</dt>
-                      <button
+                      <Button
+                        variant="link"
+                        size="sm"
                         type="button"
                         onClick={() => handleTabSelect("settings")}
-                        className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline cursor-pointer"
+                        className="h-auto p-0 inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
                       >
                         <HugeiconsIcon icon={Settings02Icon} className="size-3" />
                         <span>Manage in Settings</span>
-                      </button>
+                      </Button>
                     </div>
                     <div className="space-y-1.5">
                       {status.data.controllers.map((ctrl) => {

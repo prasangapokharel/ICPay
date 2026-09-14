@@ -3,7 +3,7 @@
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Cancel01Icon } from "@hugeicons/core-free-icons"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
-import { NOT_DOING } from "./roadmap-data"
+import { NOT_DOING } from "@/lib/roadmap/roadmapData"
 
 // A roadmap that only lists what you will build is a wish list. The refusals
 // carry more signal than the plans, so they get their own section.

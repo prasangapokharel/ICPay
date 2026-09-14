@@ -80,17 +80,17 @@ export function CreateCanisterCard() {
   const [rate, setRate] = useState<bigint | null>(null)
   const [iiBalance, setIiBalance] = useState<bigint | null>(null)
   const [fee, setFee] = useState<bigint>(10_000n)
-  const [loadingMeta, setLoadingMeta] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [flowStep, setFlowStep] = useState<CreateCanisterFlowStep | null>(null)
   const [flowFailed, setFlowFailed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastOk, setLastOk] = useState<CreateCanisterSuccess | null>(null)
 
+  const loadingMeta = Boolean(isAuthenticated && identity && rate == null && !error)
   const fieldsLocked = !hydrated || isLoading || !isAuthenticated || submitting
 
   const amountE8s = useMemo(() => parseIcp(amountText), [amountText])
-  const iiBal = iiBalance ?? 0n
+  const iiBal = isAuthenticated && identity ? (iiBalance ?? 0n) : 0n
   const shortfall = amountE8s != null ? walletShortfall(amountE8s, iiBal, fee) : 0n
   const walletCost = amountE8s != null ? walletCostForTopUp(amountE8s, iiBal, fee) : 0n
   const maxSpend =
@@ -124,11 +124,9 @@ export function CreateCanisterCard() {
 
   useEffect(() => {
     if (!isAuthenticated || !identity) {
-      setIiBalance(null)
       return
     }
     let cancelled = false
-    setLoadingMeta(true)
     void Promise.all([
       fetchCmcXdrPermyriad(identity),
       fetchPrincipalIcpBalance(identity),
@@ -142,9 +140,6 @@ export function CreateCanisterCard() {
       })
       .catch(() => {
         if (!cancelled) setError(t("metaFailed"))
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingMeta(false)
       })
     return () => {
       cancelled = true

@@ -11,6 +11,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { type TokenHolding } from "@/services/tokens"
 import { TokenLogo } from "@/components/token/token-logo"
@@ -67,14 +68,15 @@ export function SwapTokenPicker({
             <ul className="space-y-0.5">
               {filtered.map((token) => (
                 <li key={token.ledgerId}>
-                  <button
+                  <Button
+                    variant="ghost"
                     type="button"
                     onClick={() => {
                       onSelect(token)
                       onOpenChange(false)
                       setQuery("")
                     }}
-                    className={`flex w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left transition-colors hover:bg-muted/60 active:scale-[0.99] ${
+                    className={`flex h-auto w-full items-center gap-3 rounded-2xl px-2 py-2.5 text-left justify-start transition-colors hover:bg-muted/60 active:scale-[0.99] ${
                       token.ledgerId === selectedId ? "bg-muted/50" : ""
                     }`}
                   >
@@ -86,7 +88,7 @@ export function SwapTokenPicker({
                     <p className="shrink-0 text-sm font-semibold tabular-nums">
                       {formatTokenAmount(token.balance, token.decimals)}
                     </p>
-                  </button>
+                  </Button>
                 </li>
               ))}
             </ul>

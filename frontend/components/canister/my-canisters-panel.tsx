@@ -16,7 +16,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Dialog,
@@ -253,68 +258,76 @@ export function MyCanistersPanel() {
             <DialogTitle>{t("linkTitle")}</DialogTitle>
             <DialogDescription>{t("linkHint")}</DialogDescription>
           </DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-2">
-              <Label htmlFor="link-canister-id">{t("linkId")}</Label>
-              <div className="relative">
-                <Input
-                  id="link-canister-id"
-                  value={draftId}
-                  onChange={(e) => setDraftId(e.target.value)}
-                  placeholder={t("addPlaceholder")}
-                  spellCheck={false}
-                  aria-invalid={draftInvalid}
-                  className={cn(
-                    "pr-9 font-mono text-sm",
-                    draftValid && "border-emerald-500/60 focus-visible:ring-emerald-500/30",
-                    draftInvalid && "border-destructive focus-visible:ring-destructive/30"
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              if (draftValid) onConfirmLink()
+            }}
+          >
+            <FieldGroup className="gap-4 py-2">
+              <Field className="gap-2">
+                <FieldLabel htmlFor="link-canister-id">{t("linkId")}</FieldLabel>
+                <div className="relative">
+                  <Input
+                    id="link-canister-id"
+                    value={draftId}
+                    onChange={(e) => setDraftId(e.target.value)}
+                    placeholder={t("addPlaceholder")}
+                    spellCheck={false}
+                    aria-invalid={draftInvalid}
+                    className={cn(
+                      "pr-9 font-mono text-sm",
+                      draftValid && "border-emerald-500/60 focus-visible:ring-emerald-500/30",
+                      draftInvalid && "border-destructive focus-visible:ring-destructive/30"
+                    )}
+                  />
+                  {draftTouched && (
+                    <span className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2">
+                      <HugeiconsIcon
+                        icon={draftValid ? Tick02Icon : Cancel01Icon}
+                        className={cn(
+                          "size-3.5",
+                          draftValid ? "text-emerald-500" : "text-destructive"
+                        )}
+                      />
+                    </span>
                   )}
+                </div>
+                {draftInvalid ? (
+                  <FieldDescription className="text-xs text-destructive">{t("invalidId")}</FieldDescription>
+                ) : null}
+              </Field>
+
+              <Field className="gap-2">
+                <FieldLabel htmlFor="link-canister-name">{t("linkName")}</FieldLabel>
+                <Input
+                  id="link-canister-name"
+                  value={draftName}
+                  onChange={(e) => setDraftName(e.target.value)}
+                  placeholder={t("linkNamePlaceholder")}
+                  maxLength={48}
                 />
-                {draftTouched && (
-                  <span className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2">
-                    <HugeiconsIcon
-                      icon={draftValid ? Tick02Icon : Cancel01Icon}
-                      className={cn(
-                        "size-3.5",
-                        draftValid ? "text-emerald-500" : "text-destructive"
-                      )}
-                    />
-                  </span>
-                )}
-              </div>
-              {draftInvalid ? (
-                <p className="text-xs text-destructive">{t("invalidId")}</p>
-              ) : null}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="link-canister-name">{t("linkName")}</Label>
-              <Input
-                id="link-canister-name"
-                value={draftName}
-                onChange={(e) => setDraftName(e.target.value)}
-                placeholder={t("linkNamePlaceholder")}
-                maxLength={48}
-              />
-            </div>
-          </div>
-          <DialogFooter className="flex-col gap-2 sm:flex-col sm:justify-stretch">
-            <Button
-              type="button"
-              className="w-full"
-              disabled={!draftValid}
-              onClick={onConfirmLink}
-            >
-              {t("linkConfirm")}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={() => setLinkOpen(false)}
-            >
-              {t("linkCancel")}
-            </Button>
-          </DialogFooter>
+              </Field>
+            </FieldGroup>
+
+            <DialogFooter className="mt-4 flex-col gap-2 sm:flex-col sm:justify-stretch">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!draftValid}
+              >
+                {t("linkConfirm")}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => setLinkOpen(false)}
+              >
+                {t("linkCancel")}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
 

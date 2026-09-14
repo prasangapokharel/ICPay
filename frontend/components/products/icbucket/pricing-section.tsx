@@ -134,7 +134,7 @@ export function PricingSection() {
                         </li>
                       ))}
                     </ul>
-                    <Link href="https://icpay.app/bucket">
+                    <Link href="/bucket">
                       <Button
                         className="w-full"
                         variant={popular ? "default" : "outline"}

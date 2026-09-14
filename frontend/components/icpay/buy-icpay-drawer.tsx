@@ -6,7 +6,12 @@ import { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -157,7 +162,7 @@ export function BuyIcpayDrawer({
           <DrawerTitle>{t("title")}</DrawerTitle>
         </DrawerHeader>
 
-        <div className="space-y-4 px-4">
+        <FieldGroup className="gap-4 px-4">
           {!identity ? (
             <Alert>
               <AlertDescription>{t("loginRequired")}</AlertDescription>
@@ -173,8 +178,8 @@ export function BuyIcpayDrawer({
                 </div>
               )}
 
-              <div className="space-y-2">
-                <Label htmlFor="buy-icp">{t("pay")}</Label>
+              <Field className="gap-2">
+                <FieldLabel htmlFor="buy-icp">{t("pay")}</FieldLabel>
                 <Input
                   id="buy-icp"
                   size="xl"
@@ -205,34 +210,36 @@ export function BuyIcpayDrawer({
                   ))}
                 </div>
                 {receive !== null && (
-                  <p className="text-sm font-medium tabular-nums text-foreground">
+                  <FieldDescription className="text-sm font-medium tabular-nums text-foreground">
                     {t("receive", {
                       amount: formatTokenAmount(receive, ICP_DECIMALS),
                       symbol,
                     })}
-                  </p>
+                  </FieldDescription>
                 )}
-              </div>
+              </Field>
 
               <div className="space-y-2">
-                <button
+                <Button
+                  variant="link"
                   type="button"
                   onClick={() => setExternal((v) => !v)}
-                  className="text-xs text-muted-foreground underline-offset-2 hover:underline"
+                  className="h-auto p-0 text-xs text-muted-foreground underline-offset-2 hover:underline"
                 >
                   {external ? t("sendToSelf") : t("sendExternal")}
-                </button>
+                </Button>
                 {external && (
-                  <>
+                  <Field className="gap-2">
                     <Input
+                      id="buy-recipient-principal"
                       size="lg"
                       placeholder={t("principalPlaceholder")}
                       value={recipient}
                       onChange={(e) => setRecipient(e.target.value)}
                       className="rounded-2xl font-mono text-xs"
                     />
-                    <p className="text-xs text-destructive">{t("externalWarning")}</p>
-                  </>
+                    <FieldDescription className="text-xs text-destructive">{t("externalWarning")}</FieldDescription>
+                  </Field>
                 )}
               </div>
 
@@ -266,7 +273,7 @@ export function BuyIcpayDrawer({
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-        </div>
+        </FieldGroup>
 
         <DrawerFooter>
           {!identity ? (

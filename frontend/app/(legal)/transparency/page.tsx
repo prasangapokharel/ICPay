@@ -10,12 +10,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/transparency" },
 }
 
-const CANISTER_ID = "6vbhm-nqaaa-aaaan-q6muq-cai"
-const FRONTEND_CANISTER_ID = "63dke-waaaa-aaaan-q6mvq-cai"
-const CONTROLLER = "or2yr-zj6k5-5gi2u-qo3tj-5pyn6-lbgwr-gqgpq-ubmff-ih4t4-yopxz-lqe"
-const TREASURY = "ni5n2-efxui-dyqdu-2mnpr-atclq-d6snc-zdq5q-u6ibz-ibpkq-brjpj-gqe"
-const ICP_LEDGER = "ryjl3-tyaaa-aaaaa-aaaba-cai"
-const REPO = "https://github.com/prasangapokharel/ICPay"
+import {
+  BACKEND_CANISTER_ID as CANISTER_ID,
+  FRONTEND_CANISTER_ID,
+  OPERATOR_CONTROLLER_PRINCIPAL as CONTROLLER,
+  TREASURY_PRINCIPAL as TREASURY,
+  ICP_LEDGER_CANISTER_ID as ICP_LEDGER,
+  ICPAY_REPO_URL as REPO,
+} from "@/lib/ic/constants"
 
 export default function TransparencyPage() {
   return (

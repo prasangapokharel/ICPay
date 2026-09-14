@@ -94,8 +94,13 @@ node_modules/
 
 # Desktop wallet build outputs (CI copies artifacts here locally)
 /downloads/
-
+desktop
+.cursor
+docs
 # Desktop wallet
 desktop/wallet/node_modules/
 desktop/wallet/dist/
 desktop/wallet/src-tauri/target/
+
+#automate psot
+auto

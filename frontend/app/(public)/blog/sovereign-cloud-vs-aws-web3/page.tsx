@@ -67,12 +67,12 @@ export default function SovereignCloudVsAwsPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold tracking-tight">ICPay: a 100% on-chain DApp</h2>
+        <h2 className="text-base font-semibold tracking-tight">ICPay: on-chain execution &amp; custody</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          ICPay&apos;s backend is a Motoko canister on mainnet. User balances live in canister stable
-          memory. Transfers call the ICP ledger directly. The frontend is served from an asset
-          canister with certified responses — users can verify the UI has not been tampered with.
-          There is no AWS bill, no Vercel deployment, and no database that can be subpoenaed.
+          ICPay&apos;s backend is a Motoko canister on mainnet. User balances live in dedicated
+          cryptographic subaccounts on the official ICP ledger. Transfers call the ICP ledger
+          directly with zero off-chain intermediaries. Custody, transactions, and user identity
+          are 100% on-chain and publicly auditable.
         </p>
         <p className="text-sm leading-relaxed text-muted-foreground">
           This is what <strong className="text-foreground">Web3 hosting on ICP</strong> looks like in

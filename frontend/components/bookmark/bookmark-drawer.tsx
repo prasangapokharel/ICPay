@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { PremiumBadge } from "@/components/verified/premium-badge"
 import { avatarUriFor } from "@/lib/profile/avatar"
 import { optionalText } from "@/lib/bucket/bucket"
 import {

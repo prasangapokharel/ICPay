@@ -185,6 +185,7 @@ export function MyCanisterControls({
           <AlertDialogFooter>
             <AlertDialogCancel>{t("topUpCancel")}</AlertDialogCancel>
             <AlertDialogAction
+              variant="destructive"
               disabled={busy === "stop"}
               onClick={() => void run("stop")}
             >

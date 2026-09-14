@@ -197,9 +197,9 @@ export function CanisterLifecycleCard({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={busyAction === "delete"}>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              variant="destructive"
               disabled={busyAction === "delete"}
               onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {busyAction === "delete" ? "Deleting…" : "Delete Permanently"}
             </AlertDialogAction>

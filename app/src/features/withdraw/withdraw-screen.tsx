@@ -135,11 +135,26 @@ export function WithdrawScreen() {
           </Button>
         </View>
       </View>
-      <Input value={amount} onChangeText={setAmount} keyboardType="decimal-pad" size="amount" />
+      <Input
+        value={amount}
+        onChangeText={setAmount}
+        keyboardType="decimal-pad"
+        placeholder={tc('amount')}
+        size="amount"
+      />
       <FiatAmount usd={usd} />
-      <Text className="text-xs text-muted-foreground">
-        {t('networkFee')}: {formatAmount(ICP_FEE)} ICP
-      </Text>
+      {balance != null ? (
+        <Text className="text-xs text-muted-foreground">
+          {tt('maxSendable', {
+            amount: formatAmount(balance > ICP_FEE ? balance - ICP_FEE : 0n),
+            fee: formatAmount(ICP_FEE),
+          })}
+        </Text>
+      ) : (
+        <Text className="text-xs text-muted-foreground">
+          {t('networkFee')}: {formatAmount(ICP_FEE)} ICP
+        </Text>
+      )}
       {error ? (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
