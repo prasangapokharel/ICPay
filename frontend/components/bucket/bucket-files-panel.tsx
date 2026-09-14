@@ -84,18 +84,26 @@ export function BucketFilesPanel({
   const { files, total, totalPages, isLoading, refresh: refreshFiles } = active
   const { refresh: refreshStats } = useBucketStats(bucketId)
 
+  const [prevFilter, setPrevFilter] = useState({ prefix, debouncedQuery })
+  if (prevFilter.prefix !== prefix || prevFilter.debouncedQuery !== debouncedQuery) {
+    setPrevFilter({ prefix, debouncedQuery })
+    setPage(0)
+  }
+
+  const [prevSelectedDep, setPrevSelectedDep] = useState({ prefix, page, debouncedQuery })
+  if (
+    prevSelectedDep.prefix !== prefix ||
+    prevSelectedDep.page !== page ||
+    prevSelectedDep.debouncedQuery !== debouncedQuery
+  ) {
+    setPrevSelectedDep({ prefix, page, debouncedQuery })
+    setSelected(new Set())
+  }
+
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 300)
     return () => window.clearTimeout(timer)
   }, [query])
-
-  useEffect(() => {
-    setPage(0)
-  }, [prefix, debouncedQuery])
-
-  useEffect(() => {
-    setSelected(new Set())
-  }, [prefix, page, debouncedQuery])
 
   const entries = useMemo(() => {
     if (searching) {

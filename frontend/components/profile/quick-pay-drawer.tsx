@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -157,7 +157,7 @@ export function QuickPayDrawer({
               </DrawerDescription>
             </DrawerHeader>
 
-            <div className="space-y-4 px-4">
+            <FieldGroup className="gap-4 px-4">
               {request ? (
                 // Nothing to choose: the amount and the reason came in on the
                 // link, so the drawer only has to show what is about to happen.
@@ -236,8 +236,8 @@ export function QuickPayDrawer({
                     />
                   )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="quick-pay-purpose">{t("purposeLabel")}</Label>
+                  <Field className="gap-2">
+                    <FieldLabel htmlFor="quick-pay-purpose">{t("purposeLabel")}</FieldLabel>
                     <Select
                       value={purpose}
                       onValueChange={(value) => setPurpose((value as PurposeKey) ?? PURPOSES[0].key)}
@@ -253,7 +253,7 @@ export function QuickPayDrawer({
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+                  </Field>
                 </>
               )}
 
@@ -262,7 +262,7 @@ export function QuickPayDrawer({
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-            </div>
+            </FieldGroup>
 
             <DrawerFooter className="pt-4">
               {/* Insufficient balance is said on the button rather than in an

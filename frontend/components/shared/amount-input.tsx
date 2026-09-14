@@ -1,7 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { Label } from "@/components/ui/label"
+import { Field, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/ui/utils"
@@ -45,9 +45,9 @@ export function AmountInput({
   const setAmount = (e8s: bigint) => onChange(toPlainIcp(e8s))
 
   return (
-    <div className="space-y-2">
+    <Field className="gap-2">
       <div className="flex items-baseline justify-between">
-        <Label htmlFor={id}>{label}</Label>
+        <FieldLabel htmlFor={id}>{label}</FieldLabel>
         {balance !== undefined && (
           <span className="rounded-full bg-muted/60 px-2.5 py-1 text-xs text-muted-foreground">
             {t("balance")}{" "}
@@ -104,6 +104,6 @@ export function AmountInput({
           ? "\u00a0"
           : `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}`}
       </p>
-    </div>
+    </Field>
   )
 }

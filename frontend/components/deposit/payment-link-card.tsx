@@ -5,7 +5,12 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   Dialog,
@@ -100,63 +105,70 @@ export function PaymentLinkDialog({
           </Alert>
         ) : (
           <>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="request-amount">{t("amountLabel")}</Label>
-                <Input
-                  id="request-amount"
-                  inputMode="decimal"
-                  autoComplete="off"
-                  placeholder={t("amountPlaceholder")}
-                  value={amount}
-                  onChange={(e) => clearOnEdit(e.target.value, setAmount)}
-                  className="tabular-nums"
-                />
-              </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleGenerate()
+              }}
+            >
+              <FieldGroup className="gap-4">
+                <Field className="gap-2">
+                  <FieldLabel htmlFor="request-amount">{t("amountLabel")}</FieldLabel>
+                  <Input
+                    id="request-amount"
+                    inputMode="decimal"
+                    autoComplete="off"
+                    placeholder={t("amountPlaceholder")}
+                    value={amount}
+                    onChange={(e) => clearOnEdit(e.target.value, setAmount)}
+                    className="tabular-nums"
+                  />
+                </Field>
 
-              <div className="space-y-2">
-                <div className="flex items-baseline justify-between">
-                  <Label htmlFor="request-memo">{t("memoLabel")}</Label>
-                  <span
-                    className={
-                      memoTooLong
-                        ? "text-xs font-medium tabular-nums text-destructive"
-                        : "text-xs tabular-nums text-muted-foreground"
-                    }
-                  >
-                    {memoByteLength(trimmedMemo)}/{MEMO_MAX_BYTES}
-                  </span>
-                </div>
-                <Input
-                  id="request-memo"
-                  autoComplete="off"
-                  placeholder={t("memoPlaceholder")}
-                  value={memo}
-                  onChange={(e) => clearOnEdit(e.target.value, setMemo)}
-                />
-              </div>
+                <Field className="gap-2">
+                  <div className="flex items-baseline justify-between">
+                    <FieldLabel htmlFor="request-memo">{t("memoLabel")}</FieldLabel>
+                    <span
+                      className={
+                        memoTooLong
+                          ? "text-xs font-medium tabular-nums text-destructive"
+                          : "text-xs tabular-nums text-muted-foreground"
+                      }
+                    >
+                      {memoByteLength(trimmedMemo)}/{MEMO_MAX_BYTES}
+                    </span>
+                  </div>
+                  <Input
+                    id="request-memo"
+                    autoComplete="off"
+                    placeholder={t("memoPlaceholder")}
+                    value={memo}
+                    onChange={(e) => clearOnEdit(e.target.value, setMemo)}
+                  />
+                </Field>
 
-              <p className="text-xs text-muted-foreground">{t("optionalHint")}</p>
+                <FieldDescription className="text-xs text-muted-foreground">{t("optionalHint")}</FieldDescription>
 
-              {amountInvalid && (
-                <Alert variant="destructive">
-                  <AlertDescription>{t("amountInvalid")}</AlertDescription>
-                </Alert>
-              )}
-              {memoTooLong && (
-                <Alert variant="destructive">
-                  <AlertDescription>
-                    {t("memoTooLong", { max: MEMO_MAX_BYTES })}
-                  </AlertDescription>
-                </Alert>
-              )}
-            </div>
+                {amountInvalid && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{t("amountInvalid")}</AlertDescription>
+                  </Alert>
+                )}
+                {memoTooLong && (
+                  <Alert variant="destructive">
+                    <AlertDescription>
+                      {t("memoTooLong", { max: MEMO_MAX_BYTES })}
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </FieldGroup>
 
-            <DialogFooter>
-              <Button className="w-full" disabled={!canGenerate} onClick={handleGenerate}>
-                {t("generate")}
-              </Button>
-            </DialogFooter>
+              <DialogFooter className="mt-4">
+                <Button type="submit" className="w-full" disabled={!canGenerate}>
+                  {t("generate")}
+                </Button>
+              </DialogFooter>
+            </form>
 
             {generatedLink && (
               <div className="space-y-3 rounded-xl bg-muted/50 p-3">

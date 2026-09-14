@@ -16,7 +16,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import { addController, Principal } from "@/services/canister/management"
@@ -93,65 +98,71 @@ export function MyCanisterAddControllerDialog({
             </div>
           </DialogHeader>
 
-          <div className="space-y-4 py-2">
-            {/* Guide Callout */}
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs space-y-1">
-              <div className="flex items-center gap-1.5 font-medium text-foreground">
-                <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5 text-primary" />
-                <span>Controller Permissions on Internet Computer</span>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              void onConfirm()
+            }}
+          >
+            <FieldGroup className="gap-4 py-2">
+              {/* Guide Callout */}
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs space-y-1">
+                <div className="flex items-center gap-1.5 font-medium text-foreground">
+                  <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5 text-primary" />
+                  <span>Controller Permissions on Internet Computer</span>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  Controllers hold full administrative authority over this canister. They can install WASM code, start or stop execution, modify resource limits, and add or remove other controllers.
+                </p>
               </div>
-              <p className="text-muted-foreground leading-relaxed">
-                Controllers hold full administrative authority over this canister. They can install WASM code, start or stop execution, modify resource limits, and add or remove other controllers.
+
+              <p className="text-xs text-muted-foreground">
+                {t("transferFromContext")}:{" "}
+                <span className="break-all font-mono text-foreground/80">{canisterId}</span>
               </p>
-            </div>
 
-            <p className="text-xs text-muted-foreground">
-              {t("transferFromContext")}:{" "}
-              <span className="break-all font-mono text-foreground/80">{canisterId}</span>
-            </p>
+              <Field className="gap-2">
+                <FieldLabel htmlFor="add-controller-principal">{t("addControllerLabel")}</FieldLabel>
+                <Input
+                  id="add-controller-principal"
+                  value={principalText}
+                  onChange={(e) => setPrincipalText(e.target.value)}
+                  placeholder={t("addControllerPlaceholder")}
+                  spellCheck={false}
+                  autoComplete="off"
+                  disabled={submitting}
+                  aria-invalid={Boolean(principalError)}
+                  className="font-mono text-sm"
+                />
+                {principalError ? (
+                  <FieldDescription className="text-xs font-medium text-destructive">{principalError}</FieldDescription>
+                ) : (
+                  <FieldDescription className="text-[11px] text-muted-foreground">{t("addControllerFullListHint")}</FieldDescription>
+                )}
+              </Field>
+            </FieldGroup>
 
-            <div className="space-y-2">
-              <Label htmlFor="add-controller-principal">{t("addControllerLabel")}</Label>
-              <Input
-                id="add-controller-principal"
-                value={principalText}
-                onChange={(e) => setPrincipalText(e.target.value)}
-                placeholder={t("addControllerPlaceholder")}
-                spellCheck={false}
-                autoComplete="off"
-                disabled={submitting}
-                aria-invalid={Boolean(principalError)}
-                className="font-mono text-sm"
+            <DialogFooter className="mt-4 gap-2 sm:gap-0">
+              <DialogClose
+                render={
+                  <Button variant="outline" disabled={submitting}>
+                    {t("topUpCancel")}
+                  </Button>
+                }
               />
-              {principalError ? (
-                <p className="text-xs font-medium text-destructive">{principalError}</p>
-              ) : (
-                <p className="text-[11px] text-muted-foreground">{t("addControllerFullListHint")}</p>
-              )}
-            </div>
-          </div>
-
-          <DialogFooter className="gap-2 sm:gap-0">
-            <DialogClose
-              render={
-                <Button variant="outline" disabled={submitting}>
-                  {t("topUpCancel")}
-                </Button>
-              }
-            />
-            <Button
-              type="button"
-              disabled={
-                !isAuthenticated ||
-                submitting ||
-                !principalText.trim() ||
-                principalError != null
-              }
-              onClick={() => void onConfirm()}
-            >
-              {submitting ? t("addControllerSubmitting") : t("addControllerConfirm")}
-            </Button>
-          </DialogFooter>
+              <Button
+                type="submit"
+                disabled={
+                  !isAuthenticated ||
+                  submitting ||
+                  !principalText.trim() ||
+                  principalError != null
+                }
+              >
+                {submitting ? t("addControllerSubmitting") : t("addControllerConfirm")}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
 

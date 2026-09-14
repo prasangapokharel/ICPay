@@ -200,9 +200,9 @@ export function CanisterControllersCard({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={removing}>Cancel</AlertDialogCancel>
             <AlertDialogAction
+              variant="destructive"
               disabled={removing}
               onClick={handleRemove}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {removing ? "Removing…" : "Remove Controller"}
             </AlertDialogAction>

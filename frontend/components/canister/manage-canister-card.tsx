@@ -190,6 +190,7 @@ export function ManageCanisterCard() {
                     <AlertDialogFooter>
                       <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                       <AlertDialogAction
+                        variant="destructive"
                         onClick={() => {
                           setStopOpen(false)
                           void run("stop")

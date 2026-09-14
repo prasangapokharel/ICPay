@@ -4,22 +4,20 @@ import { useTranslations } from '@/components/i18n/locale-provider'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Spinner } from '@/components/ui/spinner'
 import { Text } from '@/components/ui/text'
-import { AppIcon } from '@/components/ui/app-icon'
 import { DepositAddressBlock } from '@/features/deposit/deposit-address-block'
 import { useAuth } from '@/components/auth/auth-provider'
-import { useDepositAddress, useOwnProfile, useRefreshWallet } from '@/hooks/use-wallet-data'
+import { useDepositAddress, useRefreshWallet } from '@/hooks/use-wallet-data'
 import { syncDeposits } from '@/services/deposit/deposit'
 import { ICP_LEDGER_ID } from '@/services/tokens'
 import { icrc1Account } from '@/lib/account-id'
 
 export function DepositScreen() {
   const t = useTranslations('deposit')
-  const tp = useTranslations('paymentLink')
   const { data, error, isLoading } = useDepositAddress()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
-  const { data: user } = useOwnProfile()
   const [tab, setTab] = useState<'icrc' | 'legacy' | 'principal'>('icrc')
   const [syncing, setSyncing] = useState(false)
   const [note, setNote] = useState<string | null>(null)
@@ -74,6 +72,28 @@ export function DepositScreen() {
         ))}
       </View>
       <DepositAddressBlock value={value} hint={hint} />
+      <View className="gap-2 rounded-2xl border border-border/50 bg-muted/20 p-4">
+        <View className="flex-row items-center justify-between">
+          <View className="flex-1 pr-2">
+            <Text className="text-sm font-semibold">{t('syncTitle')}</Text>
+            <Text className="text-xs text-muted-foreground">{t('syncHint')}</Text>
+          </View>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={syncing}
+            onPress={() => void handleSync()}
+          >
+            {syncing ? <Spinner /> : t('syncAction')}
+          </Button>
+        </View>
+        {note ? (
+          <Text className="mt-1 text-xs font-medium text-primary">{note}</Text>
+        ) : null}
+        {syncError ? (
+          <Text className="mt-1 text-xs font-medium text-destructive">{syncError}</Text>
+        ) : null}
+      </View>
     </View>
   )
 }

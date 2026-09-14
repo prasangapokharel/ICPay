@@ -61,14 +61,16 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
                 <p className="text-xs text-muted-foreground">{t("heroSubtitle")}</p>
               </div>
             </div>
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               type="button"
               onClick={() => setManualGuideOpen(true)}
-              className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
               aria-label={t("viewGuide")}
             >
               <HugeiconsIcon icon={InformationCircleIcon} className="size-4" strokeWidth={1.75} />
-            </button>
+            </Button>
           </div>
 
           <div className="py-2 text-center">

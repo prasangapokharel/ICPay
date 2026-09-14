@@ -6,7 +6,12 @@ import useSWR from "swr"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -245,12 +250,12 @@ export function SendTokenDrawer({
             ) : null}
           </div>
         ) : (
-        <div className="space-y-4 px-4">
+        <FieldGroup className="gap-4 px-4">
           {/* Recipient leads, the same order the transfer page uses: who is
               being paid is the first decision, and a wrong handle wastes the fee
               whatever the amount is. */}
-          <div className="space-y-2">
-            <Label htmlFor="send-username">{t("recipient")}</Label>
+          <Field className="gap-2">
+            <FieldLabel htmlFor="send-username">{t("recipient")}</FieldLabel>
             <div className="relative">
               <Input
                 id="send-username"
@@ -283,7 +288,7 @@ export function SendTokenDrawer({
                 isLoading={resolving || debouncedHandle !== handle}
               />
             )}
-          </div>
+          </Field>
 
           <QrScanner
             open={scanOpen}
@@ -291,9 +296,9 @@ export function SendTokenDrawer({
             onScan={(hit, raw) => applyAddress(hit, raw)}
           />
 
-          <div className="space-y-2">
+          <Field className="gap-2">
             <div className="flex items-baseline justify-between gap-3">
-              <Label htmlFor="send-amount">{tc("amount")}</Label>
+              <FieldLabel htmlFor="send-amount">{tc("amount")}</FieldLabel>
               <span className="text-xs text-muted-foreground">
                 {tc("balance")}{" "}
                 <span className="font-medium tabular-nums text-foreground">
@@ -344,15 +349,15 @@ export function SendTokenDrawer({
               </div>
             )}
             {value !== "" && amount === null && (
-              <p className="text-xs text-destructive">
+              <FieldDescription className="text-destructive">
                 {t("badAmount", { decimals: token.decimals })}
-              </p>
+              </FieldDescription>
             )}
-          </div>
+          </Field>
 
-          <div className="space-y-2">
+          <Field className="gap-2">
             <div className="flex items-baseline justify-between">
-              <Label htmlFor="send-memo">{t("memoLabel")}</Label>
+              <FieldLabel htmlFor="send-memo">{t("memoLabel")}</FieldLabel>
               <span
                 className={cn(
                   "text-xs tabular-nums",
@@ -369,7 +374,7 @@ export function SendTokenDrawer({
               onChange={(e) => setMemo(e.target.value)}
               className="rounded-2xl"
             />
-          </div>
+          </Field>
 
           <div className="space-y-1.5 rounded-2xl bg-muted/40 p-4">
             <Row label={tc("fee")} value={`${full(token.fee)} ${token.symbol}`} />
@@ -385,7 +390,7 @@ export function SendTokenDrawer({
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-        </div>
+        </FieldGroup>
         )}
 
         <DrawerFooter className={confirming ? "flex-row gap-2" : undefined}>

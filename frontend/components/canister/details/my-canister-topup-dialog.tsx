@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { AmountInput } from "@/components/shared/amount-input"
+import { FieldDescription, FieldGroup } from "@/components/ui/field"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
@@ -164,7 +165,7 @@ export function MyCanisterTopupDialog({
             </div>
           </DialogHeader>
 
-          <div className="space-y-4 py-2">
+          <FieldGroup className="gap-4 py-2">
             <p className="break-all font-mono text-xs text-muted-foreground">{canisterId}</p>
             <AmountInput
               id="mine-topup-amount"
@@ -176,7 +177,7 @@ export function MyCanisterTopupDialog({
               size="xl"
             />
             {amountError ? (
-              <p className="text-xs font-medium text-destructive">{amountError}</p>
+              <FieldDescription className="text-xs font-medium text-destructive">{amountError}</FieldDescription>
             ) : estimated != null ? (
               <div className="rounded-2xl border border-border/60 bg-muted/25 px-4 py-3.5">
                 <p className="text-xs font-medium text-muted-foreground">
@@ -188,7 +189,7 @@ export function MyCanisterTopupDialog({
                 <p className="mt-1 text-[11px] text-muted-foreground">{t("topUpEstimateHint")}</p>
               </div>
             ) : null}
-          </div>
+          </FieldGroup>
 
           <DialogFooter className="gap-2 sm:gap-0">
             <DialogClose

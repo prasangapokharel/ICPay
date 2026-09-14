@@ -3,7 +3,8 @@
 import Link from "next/link"
 import { useState } from "react"
 import { usePathname } from "next/navigation"
-import { MenuIcon } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Menu01Icon } from "@hugeicons/core-free-icons"
 import type { NavMenuItem } from "@/lib/public/site-links"
 import { cn } from "@/lib/ui/utils"
 import { NavMenuLinkRow } from "@/components/public/nav-menu-item"
@@ -66,7 +67,7 @@ export function PublicNavMobile() {
         aria-label={navLabels.openMenu}
         onClick={() => setOpen(true)}
       >
-        <MenuIcon className="size-4" />
+        <HugeiconsIcon icon={Menu01Icon} className="size-4" />
       </Button>
 
       <Drawer open={open} onOpenChange={setOpen} swipeDirection="right" showSwipeHandle>

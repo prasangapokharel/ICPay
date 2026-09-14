@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ChevronRightIcon } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/ui/utils"
 
 type CharityBreadcrumbProps = {
@@ -16,7 +17,9 @@ export function CharityBreadcrumb({ items, className }: CharityBreadcrumbProps) 
 
           return (
             <li key={`${item.label}-${index}`} className="flex items-center gap-1.5">
-              {index > 0 ? <ChevronRightIcon className="size-3.5 shrink-0 opacity-60" /> : null}
+              {index > 0 ? (
+                <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5 shrink-0 opacity-60" />
+              ) : null}
               {item.href && !isLast ? (
                 <Link href={item.href} className="transition-colors hover:text-foreground">
                   {item.label}
