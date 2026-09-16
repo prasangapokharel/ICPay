@@ -29,6 +29,7 @@ import type {
 
 export interface WalletActor {
   health: () => Promise<string>
+  get_cycles: () => Promise<bigint>
   login: () => Promise<AuthResult>
   _internet_identity_sign_in_start: () => Promise<Uint8Array>
   _internet_identity_sign_in_finish: () => Promise<{ ok: null } | { err: string }>

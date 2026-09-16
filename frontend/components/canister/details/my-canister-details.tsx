@@ -11,6 +11,7 @@ import {
   ArrowLeft02Icon,
   CheckmarkCircle02Icon,
   Copy01Icon,
+  FuelStationIcon,
   InformationCircleIcon,
   Link01Icon,
   Settings02Icon,
@@ -26,6 +27,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 import { MyCanisterControls } from "@/components/canister/details/my-canister-controls"
+import { MyCanisterTopupDialog } from "@/components/canister/details/my-canister-topup-dialog"
 import { SubnetCountryFlags } from "@/components/canister/subnet-country-flags"
 import { CanisterOverviewGuide } from "@/components/canister/details/canister-overview-guide"
 import { CanisterSnapshotsGuide } from "@/components/canister/details/canister-snapshots-guide"
@@ -74,6 +76,7 @@ export function MyCanisterDetails({
   const [activeTab, setActiveTab] = useState<string>(defaultTab)
   const [copied, setCopied] = useState(false)
   const [technicalOpen, setTechnicalOpen] = useState(false)
+  const [topupOpen, setTopupOpen] = useState(false)
 
   const handleTabSelect = (tab: string) => {
     setActiveTab(tab)
@@ -147,6 +150,7 @@ export function MyCanisterDetails({
         </div>
 
         {/* Right side: Status badge & Actions */}
+        {/* Right side: Status badge & Actions */}
         <div className="flex flex-wrap items-center gap-2">
           {status.kind === "ok" ? (
             <>
@@ -189,7 +193,18 @@ export function MyCanisterDetails({
             <div className="flex items-center gap-2">
               <Skeleton className="h-6 w-20 rounded-full" />
             </div>
-          ) : null}
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/60 px-3 py-1 text-xs font-medium text-muted-foreground">
+                {status.kind === "denied" ? "Linked (Non-controller)" : "Status unavailable"}
+              </span>
+              <MyCanisterControls
+                canisterId={canisterId}
+                status={status}
+                onRefresh={onRefresh}
+              />
+            </div>
+          )}
         </div>
       </div>
 
@@ -227,6 +242,17 @@ export function MyCanisterDetails({
                   </p>
                 </HoverCardContent>
               </HoverCard>
+
+              <Button
+                size="sm"
+                variant="outline"
+                type="button"
+                onClick={() => setTopupOpen(true)}
+                className="h-7 gap-1.5 px-2.5 text-xs font-medium cursor-pointer"
+              >
+                <HugeiconsIcon icon={FuelStationIcon} className="size-3.5 text-primary" strokeWidth={1.75} />
+                <span>Top up</span>
+              </Button>
             </div>
 
             {status.kind === "ok" ? (
@@ -245,12 +271,31 @@ export function MyCanisterDetails({
                 <Skeleton className="h-12 w-48 rounded-lg" />
               </div>
             ) : (
-              <p className="text-2xl font-semibold text-muted-foreground">—</p>
+              <div className="space-y-1">
+                <p className="text-2xl font-semibold text-muted-foreground">—</p>
+                <p className="text-xs text-muted-foreground">
+                  {status.kind === "denied"
+                    ? "Private on-chain · Only controllers can query live cycles and memory."
+                    : "Unable to retrieve status from canister."}
+                </p>
+              </div>
             )}
 
             <div className="border-t border-border/40 pt-3">
               <p className="text-xs text-muted-foreground/80">
-                Live from <span className="font-mono text-muted-foreground">canister_status</span> · visible because you&apos;re a controller
+                {status.kind === "ok" && isController ? (
+                  <>
+                    Live from <span className="font-mono text-muted-foreground">canister_status</span> · visible because you&apos;re a controller
+                  </>
+                ) : status.kind === "ok" && !isController ? (
+                  <>
+                    Live from <span className="font-mono text-muted-foreground">canister_status</span> · read-only view
+                  </>
+                ) : (
+                  <>
+                    Anyone can permissionlessly top up cycles to keep this canister running.
+                  </>
+                )}
               </p>
             </div>
           </div>
@@ -526,8 +571,36 @@ export function MyCanisterDetails({
               <Skeleton className="h-48 w-full rounded-xl" />
             </div>
           ) : (
-            <div className="rounded-xl border border-border/60 bg-muted/20 p-6 text-center text-xs text-muted-foreground">
-              Canister status unavailable
+            <div className="rounded-2xl border border-border/40 bg-card/40 p-8 text-center space-y-3">
+              <div className="flex size-10 mx-auto items-center justify-center rounded-xl bg-muted/60 text-muted-foreground">
+                <HugeiconsIcon icon={InformationCircleIcon} className="size-5" />
+              </div>
+              <h3 className="text-sm font-semibold text-foreground">
+                {status.kind === "denied" ? "Controller Access Required" : "Canister Settings Unavailable"}
+              </h3>
+              <p className="max-w-md mx-auto text-xs text-muted-foreground leading-relaxed">
+                {status.kind === "denied"
+                  ? "Your current Internet Identity is not registered as a controller of this canister. On the Internet Computer, only authorized controllers can inspect and configure controllers, compute allocations, and lifecycle settings."
+                  : "Unable to query canister settings from the Internet Computer management canister."}
+              </p>
+              <div className="pt-2 flex justify-center items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  nativeButton={false}
+                  render={
+                    <a
+                      href={`https://dashboard.internetcomputer.org/canister/${canisterId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  }
+                  className="cursor-pointer gap-1.5"
+                >
+                  <HugeiconsIcon icon={Link01Icon} className="size-3.5" />
+                  <span>View on IC Dashboard</span>
+                </Button>
+              </div>
             </div>
           )}
         </TabsContent>
@@ -538,6 +611,13 @@ export function MyCanisterDetails({
           <SnapshotsCard canisterId={canisterId} embedded isController={isController} />
         </TabsContent>
       </Tabs>
+
+      <MyCanisterTopupDialog
+        open={topupOpen}
+        onOpenChange={setTopupOpen}
+        canisterId={canisterId}
+        onDone={onRefresh}
+      />
     </div>
   )
 }
