@@ -30,18 +30,18 @@ export function FaqSection() {
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
           </div>
 
-          <div className="w-full space-y-4">
-            <Accordion>
+          <div className="w-full">
+            <Accordion className="space-y-3">
               {FAQ_IDS.map((id, index) => (
                 <AccordionItem
                   key={id}
                   value={`item-${index}`}
-                  className="rounded-lg border px-6"
+                  className="rounded-xl border border-border/60 bg-card px-5"
                 >
-                  <AccordionTrigger className="text-left hover:no-underline">
+                  <AccordionTrigger className="text-left font-medium hover:no-underline">
                     {t(`items.${id}.question`)}
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">
+                  <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
                     {t(`items.${id}.answer`)}
                   </AccordionContent>
                 </AccordionItem>

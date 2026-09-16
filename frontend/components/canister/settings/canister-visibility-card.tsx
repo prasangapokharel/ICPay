@@ -47,18 +47,18 @@ export function CanisterVisibilityCard({
   }
 
   return (
-    <Card className="rounded-2xl border border-border/40 bg-card/40 shadow-xs">
+    <Card className="rounded-2xl border border-border/40 bg-card/40">
       <CardHeader>
         <div className="flex items-center gap-2 text-foreground font-semibold">
-          <HugeiconsIcon icon={EyeIcon} className="size-4 text-primary" />
+          <HugeiconsIcon icon={EyeIcon} className="size-4 text-primary" strokeWidth={1.75} />
           <CardTitle className="text-base">Canister Visibility & Logs</CardTitle>
         </div>
         <CardDescription className="text-xs">
           Determine who can inspect execution logs, error backtraces, and runtime telemetry.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-3 rounded-xl border border-border/40 bg-muted/20 p-4">
+      <CardContent className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 rounded-xl border border-border/40 bg-muted/20 p-4">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-medium text-foreground">Log Inspection Policy</p>
@@ -99,8 +99,8 @@ export function CanisterVisibilityCard({
 
         {isController && (
           <div className="flex justify-end pt-1">
-            <Button type="button" size="sm" disabled={saving} onClick={handleSave} className="gap-1.5">
-              <HugeiconsIcon icon={FloppyDiskIcon} className="size-4" />
+            <Button type="button" size="sm" disabled={saving} onClick={handleSave}>
+              <HugeiconsIcon icon={FloppyDiskIcon} data-icon="inline-start" />
               {saving ? "Saving…" : "Save Visibility"}
             </Button>
           </div>

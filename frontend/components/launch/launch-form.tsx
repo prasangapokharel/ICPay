@@ -2,20 +2,31 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
+import Image from "next/image"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Tick02Icon,
   Cancel01Icon,
   Alert02Icon,
   InformationCircleIcon,
+  Globe02Icon,
+  ArrowDown01Icon,
+  Coins01Icon,
+  AiSecurity01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from "@/components/ui/field"
 import {
   Drawer,
   DrawerClose,
@@ -60,25 +71,22 @@ const SOCIAL_FIELDS = [
   { key: "twitter", placeholder: "https://x.com/mytoken" },
 ] as const satisfies readonly { key: keyof Socials; placeholder: string }[]
 
-// One-tap whole-token supplies, stored already formatted so the field and the
-// canister see the same string the creator would have typed.
 const SUPPLY_PRESETS = [
   { label: "100M", value: "100,000,000" },
   { label: "300M", value: "300,000,000" },
   { label: "500M", value: "500,000,000" },
+  { label: "1B", value: "1,000,000,000" },
 ] as const
 
 export function LaunchForm({
   onLaunch,
   isAuthenticated = true,
   onConnect,
-  authLoading = false,
   connecting = false,
 }: {
   onLaunch: (input: LaunchInput) => Promise<string | null>
   isAuthenticated?: boolean
   onConnect?: () => void
-  authLoading?: boolean
   connecting?: boolean
 }) {
   const t = useTranslations("launch")
@@ -106,16 +114,11 @@ export function LaunchForm({
   const supplyError = supply ? validateSupply(supply) : null
   const socialErrors = SOCIAL_FIELDS.map((f) => validateLink(socials[f.key]))
 
-  // Debounced so the availability query runs once per typing pause. Only the
-  // settled symbol is asked about, and the verdict is held back until the
-  // debounce catches up so it always describes the text on screen.
   const debouncedSymbol = useDebounced(symbolError ? "" : symbol)
   const { available, isLoading: checking } = useSymbolAvailability(debouncedSymbol)
   const symbolSettled =
     !symbolError && symbol !== "" && normalizeSymbol(debouncedSymbol) === normalizeSymbol(symbol)
 
-  // The launch fee and one ledger fee. The 2 ICP hop to the cycles minting
-  // canister is paid out of the fee, so the creator is not charged for it.
   const launchFee = fee?.total
   const total = launchFee === undefined ? undefined : launchFee + ICP_FEE
   const insufficient = total !== undefined && balance !== undefined && total > balance
@@ -135,7 +138,6 @@ export function LaunchForm({
     complete && symbolSettled && available === true && !insufficient && ready !== false
 
   const needsConnect = !isAuthenticated && !!onConnect
-  const canSubmit = needsConnect ? !authLoading && !connecting : canReview
 
   const handleConfirm = async () => {
     const totalSupply = parseSupply(supply)
@@ -151,9 +153,6 @@ export function LaunchForm({
       telegram: socials.telegram || undefined,
       twitter: socials.twitter || undefined,
       totalSupply,
-      // Every launch is immutable. An upgradeable token keeps its creator as a
-      // controller, which ICPay will not list for sending, so offering it only
-      // produced tokens the wallet then refused.
       immutable: true,
     })
     setLaunching(false)
@@ -165,7 +164,7 @@ export function LaunchForm({
 
   return (
     <TooltipProvider delay={200}>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-6">
         {ready === false && (
           <Alert variant="destructive">
             <HugeiconsIcon icon={Alert02Icon} className="size-4" />
@@ -173,183 +172,245 @@ export function LaunchForm({
           </Alert>
         )}
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-          <LogoPicker value={logo} onChange={setLogo} disabled={launching} />
-
-          <div className="flex min-w-0 flex-1 flex-col gap-4">
-            <Field
-              id="token-name"
-              label={t("nameLabel")}
-              count={`${name.length}/${NAME_MAX_LENGTH}`}
-              error={nameError && t(`errors.${nameError}`, { max: NAME_MAX_LENGTH })}
-            >
-              <Input
-                id="token-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t("namePlaceholder")}
-                maxLength={NAME_MAX_LENGTH}
-                autoComplete="off"
-              />
-            </Field>
-
-            <Field
-              id="token-symbol"
-              label={t("symbolLabel")}
-              count={`${symbol.length}/${SYMBOL_MAX_LENGTH}`}
-              error={symbolError && t(`errors.${symbolError}`, { max: SYMBOL_MAX_LENGTH, min: 2 })}
-            >
-              <div className="relative">
-                <Input
-                  id="token-symbol"
-                  value={symbol}
-                  // Uppercased as typed: this is the form that will be compared
-                  // and the form the token will trade under.
-                  onChange={(e) => setSymbol(normalizeSymbol(e.target.value))}
-                  placeholder="MTK"
-                  maxLength={SYMBOL_MAX_LENGTH}
-                  autoComplete="off"
-                  autoCapitalize="characters"
-                  spellCheck={false}
-                  className="pr-10 font-mono uppercase"
-                />
-                {symbolSettled && !checking && available !== null && (
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <HugeiconsIcon
-                      icon={available ? Tick02Icon : Cancel01Icon}
-                      className={cn("size-5", available ? "text-success" : "text-destructive")}
-                    />
-                  </span>
-                )}
-                {(checking || (symbol !== "" && !symbolError && !symbolSettled)) && (
-                  <Spinner className="absolute right-3 top-1/2 size-4 -translate-y-1/2" />
+        {/* Live Token Preview Pill / Header */}
+        {(name.trim() || symbol.trim()) && (
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-3.5 sm:p-4">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted border border-border/60">
+                {logo ? (
+                  <Image src={logo} alt="" width={40} height={40} className="size-full object-cover" unoptimized />
+                ) : (
+                  <HugeiconsIcon icon={Coins01Icon} className="size-5 text-primary" />
                 )}
               </div>
-            </Field>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <h4 className="truncate text-sm font-semibold text-foreground">
+                    {name.trim() || "Untitled Token"}
+                  </h4>
+                  {symbol.trim() && (
+                    <span className="shrink-0 rounded-md bg-primary/15 px-1.5 py-0.5 font-mono text-[10px] font-bold text-primary">
+                      ${normalizeSymbol(symbol)}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {supply ? `${supply} total supply` : "Set supply below"}
+                </p>
+              </div>
+            </div>
+            <div className="hidden shrink-0 text-right sm:block">
+              <span className="rounded-full border border-primary/30 bg-background px-2.5 py-1 text-[11px] font-medium text-primary">
+                Preview
+              </span>
+            </div>
           </div>
-        </div>
-
-        {symbolSettled && available === false && (
-          <p className="-mt-2 text-xs text-destructive">{t("symbolTaken", { symbol })}</p>
         )}
 
-        <Field
-          id="token-description"
-          label={t("descriptionLabel")}
-          count={`${description.length}/${DESCRIPTION_MAX_LENGTH}`}
-          error={descriptionError && t(`errors.${descriptionError}`, { max: DESCRIPTION_MAX_LENGTH })}
-        >
-          <Textarea
-            id="token-description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder={t("descriptionPlaceholder")}
-            maxLength={DESCRIPTION_MAX_LENGTH}
-            className="min-h-20"
-          />
-        </Field>
+        <FieldGroup className="gap-5">
+          {/* Identity & Branding */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+            <LogoPicker value={logo} onChange={setLogo} disabled={launching} />
 
-        <Field
-          id="token-supply"
-          label={t("supplyLabel")}
-          error={supplyError && t(`errors.${supplyError}`)}
-          hint={t("supplyHint")}
-        >
-          <Input
-            id="token-supply"
-            value={supply}
-            // Grouped as typed. An unpunctuated nine-digit supply is the kind of
-            // number people ship one zero off from what they meant.
-            onChange={(e) => setSupply(formatSupply(e.target.value))}
-            placeholder="1,000,000,000"
-            inputMode="numeric"
-            autoComplete="off"
-            className="tabular-nums"
-          />
-          <div className="flex flex-wrap gap-2 pt-1.5">
-            {SUPPLY_PRESETS.map((preset) => (
-              <Button
-                key={preset.label}
-                type="button"
-                variant={parseSupply(supply) === parseSupply(preset.value) ? "default" : "outline"}
-                size="sm"
-                className="h-7 rounded-lg px-3 text-xs"
-                onClick={() => setSupply(preset.value)}
-              >
-                {preset.label}
-              </Button>
-            ))}
-          </div>
-        </Field>
-
-        <Collapsible open={socialsOpen} onOpenChange={setSocialsOpen}>
-          <CollapsibleTrigger
-            render={
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex h-10 w-full items-center justify-between rounded-xl border border-border/60 bg-muted/20 px-3.5 text-sm font-medium text-foreground hover:bg-muted/40"
-              >
-                {t("socialsToggle")}
-              </Button>
-            }
-          />
-          <CollapsibleContent className="flex flex-col gap-4 pt-4">
-            {SOCIAL_FIELDS.map((field, i) => (
-              <Field
-                key={field.key}
-                id={`token-${field.key}`}
-                label={t(`${field.key}Label`)}
-                error={socialErrors[i] && t(`errors.${socialErrors[i]}`)}
-              >
+            <div className="flex min-w-0 flex-1 flex-col gap-4">
+              <Field>
+                <div className="flex items-baseline justify-between">
+                  <FieldLabel htmlFor="token-name">{t("nameLabel")}</FieldLabel>
+                  <span className="text-xs tabular-nums text-muted-foreground">
+                    {name.length}/{NAME_MAX_LENGTH}
+                  </span>
+                </div>
                 <Input
-                  id={`token-${field.key}`}
-                  value={socials[field.key]}
-                  onChange={(e) => setSocials({ ...socials, [field.key]: e.target.value })}
-                  placeholder={field.placeholder}
-                  inputMode="url"
+                  id="token-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t("namePlaceholder")}
+                  maxLength={NAME_MAX_LENGTH}
                   autoComplete="off"
-                  spellCheck={false}
-                  className="text-xs"
+                  className="rounded-xl"
                 />
+                {nameError && (
+                  <FieldError>{t(`errors.${nameError}`, { max: NAME_MAX_LENGTH })}</FieldError>
+                )}
               </Field>
-            ))}
-          </CollapsibleContent>
-        </Collapsible>
 
-        {/* One statement rather than a choice. The launch is irreversible and the
-          only outcome ICPay will list for sending, so it is stated, not asked. */}
-        <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-muted/20 px-3.5 py-3">
-          <p className="text-sm font-medium">{t("immutableTitle")}</p>
-          <Tooltip>
-            <TooltipTrigger
-              type="button"
-              aria-label={t("immutableTitle")}
-              className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <HugeiconsIcon icon={InformationCircleIcon} className="size-4" strokeWidth={1.75} />
-            </TooltipTrigger>
-            <TooltipContent
-              side="top"
-              align="start"
-              className="max-w-72 p-3 text-left text-[11px] leading-relaxed"
-            >
-              {t("immutableBody")}
-            </TooltipContent>
-          </Tooltip>
-        </div>
-
-        <div className="flex flex-col gap-2 rounded-xl border border-border/60 bg-muted/20 p-4">
-          <Row label={t("creationFee")} value={launchFee === undefined ? "—" : `${formatAmount(launchFee)} ICP`} />
-          <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} muted />
-          <div className="border-t pt-2">
-            <Row
-              label={tc("total")}
-              value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
-              emphasis
-            />
+              <Field>
+                <div className="flex items-baseline justify-between">
+                  <FieldLabel htmlFor="token-symbol">{t("symbolLabel")}</FieldLabel>
+                  <span className="text-xs tabular-nums text-muted-foreground">
+                    {symbol.length}/{SYMBOL_MAX_LENGTH}
+                  </span>
+                </div>
+                <div className="relative">
+                  <Input
+                    id="token-symbol"
+                    value={symbol}
+                    onChange={(e) => setSymbol(normalizeSymbol(e.target.value))}
+                    placeholder="MTK"
+                    maxLength={SYMBOL_MAX_LENGTH}
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                    spellCheck={false}
+                    className="rounded-xl pr-10 font-mono uppercase"
+                  />
+                  {symbolSettled && !checking && available !== null && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <HugeiconsIcon
+                        icon={available ? Tick02Icon : Cancel01Icon}
+                        className={cn("size-5", available ? "text-success" : "text-destructive")}
+                      />
+                    </span>
+                  )}
+                  {(checking || (symbol !== "" && !symbolError && !symbolSettled)) && (
+                    <Spinner className="absolute right-3 top-1/2 size-4 -translate-y-1/2" />
+                  )}
+                </div>
+                {symbolError ? (
+                  <FieldError>{t(`errors.${symbolError}`, { max: SYMBOL_MAX_LENGTH, min: 2 })}</FieldError>
+                ) : symbolSettled && available === false ? (
+                  <FieldError>{t("symbolTaken", { symbol })}</FieldError>
+                ) : null}
+              </Field>
+            </div>
           </div>
-        </div>
+
+          {/* Description */}
+          <Field>
+            <div className="flex items-baseline justify-between">
+              <FieldLabel htmlFor="token-description">{t("descriptionLabel")}</FieldLabel>
+              <span className="text-xs tabular-nums text-muted-foreground">
+                {description.length}/{DESCRIPTION_MAX_LENGTH}
+              </span>
+            </div>
+            <Textarea
+              id="token-description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder={t("descriptionPlaceholder")}
+              maxLength={DESCRIPTION_MAX_LENGTH}
+              className="min-h-20 rounded-xl"
+            />
+            {descriptionError ? (
+              <FieldError>{t(`errors.${descriptionError}`, { max: DESCRIPTION_MAX_LENGTH })}</FieldError>
+            ) : null}
+          </Field>
+
+          {/* Total Supply */}
+          <Field>
+            <FieldLabel htmlFor="token-supply">{t("supplyLabel")}</FieldLabel>
+            <Input
+              id="token-supply"
+              value={supply}
+              onChange={(e) => setSupply(formatSupply(e.target.value))}
+              placeholder="1,000,000,000"
+              inputMode="numeric"
+              autoComplete="off"
+              className="tabular-nums"
+            />
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <span className="text-xs text-muted-foreground">Presets:</span>
+              {SUPPLY_PRESETS.map((preset) => (
+                <Button
+                  key={preset.label}
+                  type="button"
+                  variant={parseSupply(supply) === parseSupply(preset.value) ? "default" : "outline"}
+                  size="xs"
+                  onClick={() => setSupply(preset.value)}
+                >
+                  {preset.label}
+                </Button>
+              ))}
+            </div>
+            {supplyError ? (
+              <FieldError>{t(`errors.${supplyError}`)}</FieldError>
+            ) : (
+              <FieldDescription>{t("supplyHint")}</FieldDescription>
+            )}
+          </Field>
+
+          {/* Optional Social Links */}
+          <Collapsible open={socialsOpen} onOpenChange={setSocialsOpen} className="w-full">
+            <CollapsibleTrigger
+              render={
+                <Button
+                  variant="outline"
+                  className="flex w-full items-center justify-between"
+                >
+                  <div className="flex items-center gap-2">
+                    <HugeiconsIcon icon={Globe02Icon} className="size-4 text-primary" strokeWidth={1.75} />
+                    <span>{t("socialsToggle")}</span>
+                  </div>
+                  <HugeiconsIcon
+                    icon={ArrowDown01Icon}
+                    className={cn(
+                      "size-4 text-muted-foreground transition-transform duration-200",
+                      socialsOpen && "rotate-180"
+                    )}
+                  />
+                </Button>
+              }
+            />
+            <CollapsibleContent className="space-y-3.5 pt-3">
+              {SOCIAL_FIELDS.map((field, i) => (
+                <Field key={field.key}>
+                  <FieldLabel htmlFor={`token-${field.key}`}>{t(`${field.key}Label`)}</FieldLabel>
+                  <Input
+                    id={`token-${field.key}`}
+                    value={socials[field.key]}
+                    onChange={(e) => setSocials({ ...socials, [field.key]: e.target.value })}
+                    placeholder={field.placeholder}
+                    inputMode="url"
+                    autoComplete="off"
+                    spellCheck={false}
+                    className="text-xs"
+                  />
+                  {socialErrors[i] ? <FieldError>{t(`errors.${socialErrors[i]}`)}</FieldError> : null}
+                </Field>
+              ))}
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Immutable Guarantee Banner */}
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-muted/30 p-4">
+            <div className="flex items-center gap-2.5">
+              <HugeiconsIcon
+                icon={AiSecurity01Icon}
+                className="size-4.5 text-primary"
+                strokeWidth={1.75}
+              />
+              <p className="text-sm font-semibold text-foreground">{t("immutableTitle")}</p>
+            </div>
+            <Tooltip>
+              <TooltipTrigger
+                type="button"
+                aria-label={t("immutableTitle")}
+                className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+              >
+                <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-primary" strokeWidth={1.75} />
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                align="end"
+                className="max-w-72 p-3 text-left text-[11px] leading-relaxed"
+              >
+                {t("immutableBody")}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+
+          {/* Fee Breakdown Card */}
+          <div className="flex flex-col gap-2.5 rounded-2xl border border-border/70 bg-card/60 p-4">
+            <Row label={t("creationFee")} value={launchFee === undefined ? "—" : `${formatAmount(launchFee)} ICP`} />
+            <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} muted />
+            <div className="border-t border-border/60 pt-2.5">
+              <Row
+                label={tc("total")}
+                value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
+                emphasis
+              />
+            </div>
+          </div>
+        </FieldGroup>
 
         {error && (
           <Alert variant="destructive">
@@ -360,10 +421,10 @@ export function LaunchForm({
         <Button
           size="lg"
           className="w-full"
-          disabled={!canSubmit}
+          disabled={needsConnect ? connecting : !canReview}
           onClick={() => (needsConnect ? onConnect?.() : setConfirmOpen(true))}
         >
-          {(authLoading || connecting) && <Spinner className="size-4" />}
+          {connecting && <Spinner className="size-4" />}
           {needsConnect
             ? connecting
               ? tl("connecting")
@@ -373,30 +434,27 @@ export function LaunchForm({
               : t("review")}
         </Button>
 
-        {/* The confirm step is not ceremony: the fee is charged before the ledger
-          canister exists, and nothing about a launch can be undone afterwards. */}
+        {/* Confirmation Drawer */}
         <Drawer
           open={confirmOpen}
           onOpenChange={(open) => {
-            // Closing mid-launch would leave the creator on the form with a call
-            // in flight, and a second press would be a second 5 ICP.
             if (!launching) setConfirmOpen(open)
           }}
           showSwipeHandle
         >
-          <DrawerContent>
+          <DrawerContent className="max-w-md mx-auto">
             <DrawerHeader>
-              <DrawerTitle>{t("confirmTitle")}</DrawerTitle>
+              <DrawerTitle className="text-xl font-bold">{t("confirmTitle")}</DrawerTitle>
               <DrawerDescription>{t("confirmBody")}</DrawerDescription>
             </DrawerHeader>
 
-            <div className="space-y-3 px-4">
-              <div className="space-y-1.5 rounded-2xl border p-3.5">
+            <div className="space-y-3 px-4 py-2">
+              <div className="space-y-2 rounded-2xl border border-border/70 bg-card p-4">
                 <Row label={t("nameLabel")} value={name.trim()} />
                 <Row label={t("symbolLabel")} value={normalizeSymbol(symbol)} mono />
                 <Row label={t("supplyLabel")} value={`${supply} ${normalizeSymbol(symbol)}`} />
                 <Row label={t("controlLabel")} value={t("immutableTitle")} />
-                <div className="border-t pt-1.5">
+                <div className="border-t border-border/60 pt-2">
                   <Row
                     label={tc("total")}
                     value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
@@ -411,48 +469,22 @@ export function LaunchForm({
               </Alert>
             </div>
 
-            <DrawerFooter>
-              <Button onClick={handleConfirm} disabled={launching}>
+            <DrawerFooter className="gap-2">
+              <Button
+                size="lg"
+                className="w-full"
+                onClick={handleConfirm}
+                disabled={launching}
+              >
                 {launching && <Spinner className="size-4" />}
                 {launching ? t("launching") : t("confirmLaunch")}
               </Button>
-              <DrawerClose render={<Button variant="outline" disabled={launching}>{tc("cancel")}</Button>} />
+              <DrawerClose render={<Button variant="outline" size="lg" className="w-full" disabled={launching}>{tc("cancel")}</Button>} />
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
       </div>
     </TooltipProvider>
-  )
-}
-
-function Field({
-  id,
-  label,
-  count,
-  error,
-  hint,
-  children,
-}: {
-  id: string
-  label: string
-  count?: string
-  error?: string | null
-  hint?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="space-y-1.5">
-      <div className="flex items-baseline justify-between">
-        <Label htmlFor={id}>{label}</Label>
-        {count && <span className="text-xs tabular-nums text-muted-foreground">{count}</span>}
-      </div>
-      {children}
-      {error ? (
-        <p className="text-xs text-destructive">{error}</p>
-      ) : (
-        hint && <p className="text-xs text-muted-foreground">{hint}</p>
-      )}
-    </div>
   )
 }
 
@@ -477,7 +509,7 @@ function Row({
           "min-w-0 break-all text-right text-sm",
           mono && "font-mono text-xs",
           muted && "text-muted-foreground",
-          emphasis && "font-semibold tabular-nums"
+          emphasis && "font-semibold tabular-nums text-foreground"
         )}
       >
         {value}

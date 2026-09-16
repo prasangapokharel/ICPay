@@ -29,7 +29,6 @@ export function HeroSection() {
               size="lg"
               nativeButton={false}
               render={<Link href="/bucket" />}
-              className="h-11 rounded-full px-7"
             >
               {t("tryIcBucket")}
             </Button>
@@ -44,7 +43,6 @@ export function HeroSection() {
                   rel="noopener noreferrer"
                 />
               }
-              className="h-11 rounded-full px-7"
             >
               {t("github")}
             </Button>
@@ -53,7 +51,6 @@ export function HeroSection() {
               variant="outline"
               nativeButton={false}
               render={<Link href="/products/icBucket/packages" />}
-              className="h-11 rounded-full px-7"
             >
               {t("packages")}
             </Button>

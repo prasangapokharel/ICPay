@@ -28,14 +28,7 @@ const ARCHITECTURE_DIAGRAM = `flowchart TB
   upload --> memory
   memory --> canister
   canister --> http
-  http --> users
-
-  classDef client fill:#fdf2f8,stroke:#db2777,stroke-width:1px
-  classDef core fill:#f0f9ff,stroke:#0284c7,stroke-width:1px
-  classDef store fill:#f0fdf4,stroke:#16a34a,stroke-width:1px
-  class web,sdk,script client
-  class canister,upload,http core
-  class memory store`
+  http --> users`
 
 const UPLOAD_STEP_IDS = ["0", "1", "2"] as const
 const READ_STEP_IDS = ["0", "1", "2"] as const

@@ -106,7 +106,7 @@ export function PublicNav() {
         "sticky top-0 z-50 backdrop-blur-md",
         isCharityCampaignPage
           ? cn("border-b-0", charityCampaignShellClass)
-          : "border-b border-border/60 bg-background/95"
+          : "border-b border-border/60 bg-background"
       )}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 md:h-16 md:px-6">

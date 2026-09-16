@@ -202,11 +202,11 @@ gap-6
 p-4
 p-6
 
-space-y-4
-space-y-6
+flex flex-col gap-4
+flex flex-col gap-6
 ```
 
-Maintain consistent spacing.
+Avoid `space-x-*` and `space-y-*` in favor of flex/grid gaps. Maintain consistent spacing.
 
 ---
 
@@ -229,16 +229,21 @@ Avoid divs for text.
 
 # Icons
 
-Always use Lucide React.
+Always use **`@hugeicons/react`** with **`@hugeicons/core-free-icons`** (`HugeiconsIcon`).
 
-Keep icon sizes consistent.
+Never use `lucide-react`, `@tabler/icons-react`, or inline SVG hand-rolls.
 
-Typical sizes
+Keep icon sizes consistent:
+- In `Button` or components: use `data-icon="inline-start"` / `data-icon="inline-end"`, omit sizing classes.
+- Standalone: `className="size-4"`, `size-5`, `size-6` or `size={16}`, `size={18}`, `size={20}`.
+- Stroke width: prefer `strokeWidth={1.75}`.
 
-```
-size-4
-size-5
-size-6
+Example:
+```tsx
+import { HugeiconsIcon } from "@hugeicons/react"
+import { CheckmarkCircle02Icon, Search01Icon } from "@hugeicons/core-free-icons"
+
+<HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-primary" strokeWidth={1.75} />
 ```
 
 Avoid mixing icon libraries.
