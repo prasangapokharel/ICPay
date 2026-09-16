@@ -9,6 +9,7 @@ import {
   ArrowDown01Icon,
   ArrowUp01Icon,
   Exchange01Icon,
+  LinkSquare02Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -23,18 +24,11 @@ import { SendTokenDrawer } from "@/components/wallet/send-token-drawer"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
 import { transfer, type TransferMode } from "@/services/transfer/transfer"
-import { isSwapToken } from "@/lib/swap/tokens"
 import { type TokenHolding } from "@/services/tokens"
 import { TokenHistoryList } from "@/components/token/token-history-list"
 import { TokenStandardsBadge } from "@/components/token/token-standards-badge"
 import { BtcWithdrawalList } from "@/components/chainkey/btc-withdrawal-list"
 import { CKBTC_LEDGER_ID } from "@/services/chainkey/constants"
-
-const TOKEN_ACTIONS = [
-  { key: "send" as const, icon: ArrowUp01Icon, action: "button" as const },
-  { key: "deposit" as const, icon: ArrowDown01Icon, action: "link" as const, href: (id: string) => `/token/${id}/deposit` },
-  { key: "swap" as const, icon: Exchange01Icon, action: "link" as const, href: (id: string) => `/trade?from=${id}`, swapOnly: true },
-]
 
 type Sent = { amount: bigint; recipient: string; blockIndex: bigint; memo?: string }
 
@@ -115,44 +109,56 @@ export function TokenView() {
           <TokenStandardsBadge ledgerId={token.ledgerId} />
         </div>
 
-        <div className="mt-5 flex justify-center gap-10">
-          {TOKEN_ACTIONS.map((item) => {
-            if (item.swapOnly && !isSwapToken(token.ledgerId)) return null
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
+          <Button
+            variant="outline"
+            size="sm"
+            type="button"
+            onClick={() => setSendOpen(true)}
+            className="h-9 gap-1.5 rounded-full px-4 text-xs font-medium cursor-pointer"
+          >
+            <HugeiconsIcon icon={ArrowUp01Icon} className="size-3.5" strokeWidth={2} />
+            <span>{t("send")}</span>
+          </Button>
 
-            const icon = (
-              <span className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground">
-                <HugeiconsIcon icon={item.icon} className="size-5" strokeWidth={1.75} />
-              </span>
-            )
+          <Button
+            variant="outline"
+            size="sm"
+            nativeButton={false}
+            render={<Link href={`/token/${token.ledgerId}/deposit`} prefetch />}
+            className="h-9 gap-1.5 rounded-full px-4 text-xs font-medium cursor-pointer"
+          >
+            <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5" strokeWidth={2} />
+            <span>{t("deposit")}</span>
+          </Button>
 
-            if (item.key === "send") {
-              return (
-                <Button
-                  key={item.key}
-                  variant="ghost"
-                  size="icon"
-                  aria-label={t("send")}
-                  onClick={() => setSendOpen(true)}
-                  className="h-auto w-auto p-0 transition-transform active:scale-95"
-                >
-                  {icon}
-                </Button>
-              )
+          <Button
+            variant="outline"
+            size="sm"
+            nativeButton={false}
+            render={<Link href={`/trade?from=${token.ledgerId}`} prefetch />}
+            className="h-9 gap-1.5 rounded-full px-4 text-xs font-medium cursor-pointer"
+          >
+            <HugeiconsIcon icon={Exchange01Icon} className="size-3.5" strokeWidth={2} />
+            <span>{t("swap")}</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            nativeButton={false}
+            render={
+              <a
+                href={`https://app.icpswap.com/swap?input=ryjl3-tyaaa-aaaaa-aaaba-cai&output=${token.ledgerId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              />
             }
-
-            const href = item.href!(token.ledgerId)
-            return (
-              <Link
-                key={item.key}
-                href={href}
-                prefetch
-                aria-label={t(item.key)}
-                className="transition-transform active:scale-95"
-              >
-                {icon}
-              </Link>
-            )
-          })}
+            className="h-9 gap-1.5 rounded-full px-4 text-xs font-medium cursor-pointer"
+          >
+            <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" strokeWidth={2} />
+            <span>Market</span>
+          </Button>
         </div>
       </div>
 

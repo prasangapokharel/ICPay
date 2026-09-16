@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -20,6 +19,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
+import { MyCanisterTopupDialog } from "@/components/canister/details/my-canister-topup-dialog"
 import { statusOf, failureReason } from "@/services/launch/launch"
 import { formatCycles } from "@/services/cycles/topUp"
 import type { TokenPublic } from "@/services/types"
@@ -42,6 +42,7 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
   const [ledgerId] = token.ledgerId
   const [moduleHash] = token.moduleHash
   const [cyclesFunded] = token.cyclesFunded
+  const [topUpOpen, setTopUpOpen] = useState(false)
   const creatorPrincipal = token.creator ? (typeof token.creator === "string" ? token.creator : token.creator.toText()) : null
 
   return (
@@ -148,11 +149,12 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
             <Button
               variant="outline"
               size="sm"
-              className="justify-start text-xs font-medium"
-              render={<Link href={`/canister?id=${ledgerId}`} />}
+              type="button"
+              className="justify-start text-xs font-medium cursor-pointer"
+              onClick={() => setTopUpOpen(true)}
             >
               <HugeiconsIcon icon={FuelStationIcon} data-icon="inline-start" strokeWidth={1.75} />
-              Top Up & Manage Cycles
+              Top Up Cycles
             </Button>
 
             <Button
@@ -204,6 +206,14 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
             </Button>
           </div>
         </div>
+      )}
+
+      {ledgerId && (
+        <MyCanisterTopupDialog
+          open={topUpOpen}
+          onOpenChange={setTopUpOpen}
+          canisterId={ledgerId}
+        />
       )}
     </div>
   )
