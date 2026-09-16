@@ -33,7 +33,7 @@ export function WalletBalanceCard({ balance, usdValue }: WalletBalanceCardProps)
   const loading = balance === undefined
 
   return (
-    <div className="rounded-3xl bg-primary p-4 text-primary-foreground shadow-lg sm:p-5">
+    <div className="rounded-3xl bg-primary p-4 text-primary-foreground sm:p-5">
       <div className="mb-2 flex items-center justify-between gap-3">
         <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-primary-foreground/45">
           Internet Computer
@@ -43,13 +43,13 @@ export function WalletBalanceCard({ balance, usdValue }: WalletBalanceCardProps)
           size="icon-sm"
           onClick={() => setHidden((v) => !v)}
           aria-label={hidden ? tDashboard("showBalance") : tDashboard("hideBalance")}
-          className="-mr-1 shrink-0 text-primary-foreground/70 hover:bg-primary-foreground/15 hover:text-primary-foreground"
+          className="shrink-0 text-primary-foreground/70 hover:bg-primary-foreground/15 hover:text-primary-foreground"
         >
           <HugeiconsIcon icon={hidden ? ViewOffIcon : ViewIcon} className="size-4" strokeWidth={1.75} />
         </Button>
       </div>
 
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         {loading ? (
           <Skeleton className="h-9 w-40 bg-primary-foreground/20" />
         ) : (

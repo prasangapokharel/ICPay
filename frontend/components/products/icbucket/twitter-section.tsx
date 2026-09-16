@@ -31,7 +31,7 @@ export function TwitterSection() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <Card className="overflow-hidden">
               <CardContent className="p-0">
-                <blockquote className="twitter-tweet" data-theme="light">
+                <blockquote className="twitter-tweet">
                   <p lang="en" dir="ltr">
                     Introducing ICPay Bucket
                     <br />
@@ -57,7 +57,7 @@ export function TwitterSection() {
 
             <Card className="overflow-hidden">
               <CardContent className="p-0">
-                <blockquote className="twitter-tweet" data-theme="light">
+                <blockquote className="twitter-tweet">
                   <p lang="en" dir="ltr">
                     ICPay Cloud API keys are live.
                     <br />
@@ -84,7 +84,7 @@ export function TwitterSection() {
 
             <Card className="overflow-hidden">
               <CardContent className="p-0">
-                <blockquote className="twitter-tweet" data-theme="light">
+                <blockquote className="twitter-tweet">
                   <p lang="en" dir="ltr">
                     Centralized storage vs. on-chain storage.
                     <br />

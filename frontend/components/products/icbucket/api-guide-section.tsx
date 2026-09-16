@@ -1,8 +1,43 @@
 "use client"
 
+import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+
+function CodeSnippet({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (e) {
+      console.error("Failed to copy:", e)
+    }
+  }
+
+  return (
+    <div className="relative group">
+      <pre className="overflow-x-auto rounded-xl border border-border/60 bg-muted/40 p-4 font-mono text-xs leading-relaxed text-foreground">
+        <code>{code}</code>
+      </pre>
+      <Button
+        size="icon-xs"
+        variant="outline"
+        onClick={handleCopy}
+        className="absolute right-2.5 top-2.5 opacity-0 transition-opacity group-hover:opacity-100"
+        aria-label="Copy code"
+      >
+        <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5 text-primary" strokeWidth={1.75} />
+      </Button>
+    </div>
+  )
+}
 
 export function ApiGuideSection() {
   const t = useTranslations("publicSite.icbucket.apiGuide")
@@ -219,40 +254,30 @@ let results = bucket.search_files("logo").await?;`,
                 </TabsList>
 
                 {Object.entries(examples).map(([lang, code]) => (
-                  <TabsContent key={lang} value={lang} className="space-y-6">
-                    <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">{t("installation")}</h3>
-                      <pre className="overflow-x-auto rounded-lg bg-muted p-4">
-                        <code className="text-sm">{code.install}</code>
-                      </pre>
+                  <TabsContent key={lang} value={lang} className="space-y-6 pt-4">
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-semibold text-foreground">{t("installation")}</h3>
+                      <CodeSnippet code={code.install} />
                     </div>
 
-                    <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">{t("createInit")}</h3>
-                      <pre className="overflow-x-auto rounded-lg bg-muted p-4">
-                        <code className="text-sm">{code.create}</code>
-                      </pre>
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-semibold text-foreground">{t("createInit")}</h3>
+                      <CodeSnippet code={code.create} />
                     </div>
 
-                    <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">{t("uploadFiles")}</h3>
-                      <pre className="overflow-x-auto rounded-lg bg-muted p-4">
-                        <code className="text-sm">{code.upload}</code>
-                      </pre>
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-semibold text-foreground">{t("uploadFiles")}</h3>
+                      <CodeSnippet code={code.upload} />
                     </div>
 
-                    <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">{t("downloadAccess")}</h3>
-                      <pre className="overflow-x-auto rounded-lg bg-muted p-4">
-                        <code className="text-sm">{code.download}</code>
-                      </pre>
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-semibold text-foreground">{t("downloadAccess")}</h3>
+                      <CodeSnippet code={code.download} />
                     </div>
 
-                    <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">{t("fileManagement")}</h3>
-                      <pre className="overflow-x-auto rounded-lg bg-muted p-4">
-                        <code className="text-sm">{code.manage}</code>
-                      </pre>
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-semibold text-foreground">{t("fileManagement")}</h3>
+                      <CodeSnippet code={code.manage} />
                     </div>
                   </TabsContent>
                 ))}

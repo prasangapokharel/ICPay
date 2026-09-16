@@ -94,11 +94,11 @@ export function PricingSection() {
               return (
                 <Card
                   key={plan.id}
-                  className={`relative overflow-visible ${popular ? "border-primary shadow-lg" : ""}`}
+                  className={`relative overflow-visible ${popular ? "border-primary" : ""}`}
                 >
                   {popular ? (
                     <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap">
-                      <div className="rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground shadow-md">
+                      <div className="rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground">
                         {t("mostPopular")}
                       </div>
                     </div>

@@ -87,17 +87,17 @@ export function CanisterLifecycleCard({
 
   return (
     <>
-      <Card className="rounded-2xl border border-destructive/30 bg-card/40 shadow-xs">
+      <Card className="rounded-2xl border border-destructive/30 bg-card/40">
         <CardHeader>
           <div className="flex items-center gap-2 text-destructive font-semibold">
-            <HugeiconsIcon icon={Alert02Icon} className="size-4" />
+            <HugeiconsIcon icon={Alert02Icon} className="size-4" strokeWidth={1.75} />
             <CardTitle className="text-base">Canister Lifecycle & Danger Zone</CardTitle>
           </div>
           <CardDescription className="text-xs">
             Manage canister execution state or permanently decommission this on-chain canister.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="flex flex-col gap-4">
           {/* Start / Stop Section */}
           <div className="flex flex-col gap-3 rounded-xl border border-border/40 bg-muted/20 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -117,9 +117,9 @@ export function CanisterLifecycleCard({
                 size="sm"
                 disabled={!isController || busyAction != null}
                 onClick={() => setStopConfirmOpen(true)}
-                className="shrink-0 gap-1.5"
+                className="shrink-0"
               >
-                <HugeiconsIcon icon={StopIcon} className="size-4" />
+                <HugeiconsIcon icon={StopIcon} data-icon="inline-start" />
                 Stop Canister
               </Button>
             ) : (
@@ -129,9 +129,9 @@ export function CanisterLifecycleCard({
                 size="sm"
                 disabled={!isController || busyAction != null}
                 onClick={() => handleToggleState("start")}
-                className="shrink-0 gap-1.5"
+                className="shrink-0"
               >
-                <HugeiconsIcon icon={PlayIcon} className="size-4" />
+                <HugeiconsIcon icon={PlayIcon} data-icon="inline-start" />
                 {busyAction === "start" ? "Starting…" : "Start Canister"}
               </Button>
             )}
@@ -152,9 +152,9 @@ export function CanisterLifecycleCard({
               size="sm"
               disabled={!isController || busyAction != null || runStatus !== "stopped"}
               onClick={() => setDeleteConfirmOpen(true)}
-              className="shrink-0 gap-1.5"
+              className="shrink-0"
             >
-              <HugeiconsIcon icon={Delete02Icon} className="size-4" />
+              <HugeiconsIcon icon={Delete02Icon} data-icon="inline-start" />
               Delete Canister
             </Button>
           </div>
@@ -188,7 +188,7 @@ export function CanisterLifecycleCard({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Irrevocably delete this canister?</AlertDialogTitle>
-            <AlertDialogDescription className="space-y-2 text-xs">
+            <AlertDialogDescription className="flex flex-col gap-2 text-xs">
               <p>This action is completely permanent and cannot be reversed.</p>
               <p className="break-all font-mono font-medium text-foreground">{canisterId}</p>
               <p>All canister memory, code, and stable state will be destroyed.</p>

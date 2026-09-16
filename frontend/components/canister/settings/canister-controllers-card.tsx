@@ -99,10 +99,10 @@ export function CanisterControllersCard({
 
   return (
     <>
-      <Card className="rounded-2xl border border-border/40 bg-card/40 shadow-xs">
+      <Card className="rounded-2xl border border-border/40 bg-card/40">
         <CardHeader>
           <div className="flex items-center gap-2 text-foreground font-semibold">
-            <HugeiconsIcon icon={UserGroupIcon} className="size-4 text-primary" />
+            <HugeiconsIcon icon={UserGroupIcon} className="size-4 text-primary" strokeWidth={1.75} />
             <CardTitle className="text-base">Canister Controllers</CardTitle>
           </div>
           <CardDescription className="text-xs">
@@ -110,8 +110,8 @@ export function CanisterControllersCard({
             code, change settings, start/stop execution, and manage cycles.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
+        <CardContent className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             {controllers.map((ctrl) => {
               const isYou = principal === ctrl
               const canRemove = isController && controllers.length > 1
@@ -122,7 +122,7 @@ export function CanisterControllersCard({
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <HugeiconsIcon icon={AiSecurity01Icon} className="size-3.5 text-muted-foreground shrink-0" />
+                      <HugeiconsIcon icon={AiSecurity01Icon} className="size-3.5 text-muted-foreground shrink-0" strokeWidth={1.75} />
                       <span className="truncate font-mono font-medium text-foreground">
                         {ctrl}
                       </span>
@@ -140,9 +140,9 @@ export function CanisterControllersCard({
                       size="sm"
                       disabled={removing}
                       onClick={() => setRemoveTarget(ctrl)}
-                      className="h-7 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      className="text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
-                      <HugeiconsIcon icon={Delete02Icon} className="mr-1 size-3.5" />
+                      <HugeiconsIcon icon={Delete02Icon} data-icon="inline-start" />
                       Remove
                     </Button>
                   )}
@@ -152,7 +152,7 @@ export function CanisterControllersCard({
           </div>
 
           {isController && (
-            <form onSubmit={handleAdd} className="space-y-2.5 pt-2">
+            <form onSubmit={handleAdd} className="flex flex-col gap-2.5 pt-2">
               <Label htmlFor="new-ctrl-input" className="text-xs font-medium">
                 Add New Controller
               </Label>
@@ -169,9 +169,9 @@ export function CanisterControllersCard({
                   type="submit"
                   size="sm"
                   disabled={adding || !newControllerText.trim()}
-                  className="shrink-0 gap-1.5"
+                  className="shrink-0"
                 >
-                  <HugeiconsIcon icon={UserAdd01Icon} className="size-4" />
+                  <HugeiconsIcon icon={UserAdd01Icon} data-icon="inline-start" />
                   {adding ? "Adding…" : "Add Controller"}
                 </Button>
               </div>
@@ -188,7 +188,7 @@ export function CanisterControllersCard({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Remove controller?</AlertDialogTitle>
-            <AlertDialogDescription className="space-y-2 text-xs">
+            <AlertDialogDescription className="flex flex-col gap-2 text-xs">
               <p>Are you sure you want to remove this principal as a controller?</p>
               <p className="break-all font-mono font-medium text-foreground">{removeTarget}</p>
               <p>

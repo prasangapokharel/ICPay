@@ -25,15 +25,16 @@ const FEATURE_MATRIX = [
   { id: "9", icbucket: true, s3: true, gcs: true, azure: true },
 ] as const
 
+function CheckIcon() {
+  return <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-5 text-primary" strokeWidth={1.75} />
+}
+
+function XIcon() {
+  return <HugeiconsIcon icon={Cancel01Icon} className="size-5 text-muted-foreground/60" strokeWidth={1.75} />
+}
+
 export function ComparisonSection() {
   const t = useTranslations("publicSite.icbucket.comparison")
-
-  const CheckIcon = () => (
-    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-5 text-primary" />
-  )
-  const XIcon = () => (
-    <HugeiconsIcon icon={Cancel01Icon} className="size-5 text-muted-foreground" />
-  )
 
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
