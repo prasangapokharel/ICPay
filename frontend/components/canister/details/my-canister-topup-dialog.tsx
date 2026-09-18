@@ -191,7 +191,7 @@ export function MyCanisterTopupDialog({
             ) : null}
           </FieldGroup>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="mt-2 gap-2 sm:gap-2">
             <DialogClose
               render={
                 <Button variant="outline" disabled={submitting}>
@@ -201,7 +201,6 @@ export function MyCanisterTopupDialog({
             />
             <Button
               type="button"
-              className="rounded-xl bg-primary px-5 text-primary-foreground shadow-sm hover:bg-primary/90"
               disabled={
                 !isAuthenticated ||
                 submitting ||

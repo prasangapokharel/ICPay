@@ -19,25 +19,27 @@ export function LandingHeroPreview() {
     <div className="flex w-full flex-col">
       <div
         className={cn(
-          "relative mx-auto w-full",
+          "relative mx-auto w-full transition-all duration-300 ease-out",
           isMobile ? "max-w-[280px] sm:max-w-[300px]" : "max-w-full"
         )}
       >
-        <Image
-          src={isMobile ? LANDING_MEDIA.heroMockup : LANDING_MEDIA.heroDesktop}
-          alt={isMobile ? t("imageAlt") : t("imageAltDesktop")}
-          title={isMobile ? t("imageAlt") : t("imageAltDesktop")}
-          width={isMobile ? 600 : 1152}
-          height={isMobile ? 960 : 647}
-          priority={isMobile}
-          sizes={isMobile ? "(max-width: 640px) 280px, 300px" : "(max-width: 1024px) 100vw, 600px"}
-          className="w-full rounded-lg"
-          style={{ height: "auto" }}
-        />
+        <div key={view} className="animate-in fade-in duration-300">
+          <Image
+            src={isMobile ? LANDING_MEDIA.heroMockup : LANDING_MEDIA.heroDesktop}
+            alt={isMobile ? t("imageAlt") : t("imageAltDesktop")}
+            title={isMobile ? t("imageAlt") : t("imageAltDesktop")}
+            width={isMobile ? 600 : 1152}
+            height={isMobile ? 960 : 647}
+            priority
+            sizes={isMobile ? "(max-width: 640px) 280px, 300px" : "(max-width: 1024px) 100vw, 600px"}
+            className="w-full rounded-lg"
+            style={{ height: "auto" }}
+          />
+        </div>
       </div>
 
       <div
-        className="mt-6 flex border-b border-border/50"
+        className="relative mt-6 flex border-b border-border/50"
         role="tablist"
         aria-label={t("previewTabsLabel")}
       >
@@ -51,23 +53,25 @@ export function LandingHeroPreview() {
               aria-selected={active}
               onClick={() => setView(id)}
               className={cn(
-                "relative flex-1 pb-3 text-center text-sm font-medium",
+                "relative flex-1 pb-3 text-center text-sm font-medium transition-colors duration-200",
                 active
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground/80"
               )}
             >
               {t(id === "mobile" ? "previewMobile" : "previewDesktop")}
-              {active ? (
-                <span
-                  className="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
-                  aria-hidden
-                />
-              ) : null}
             </button>
           )
         })}
+        <span
+          className={cn(
+            "absolute bottom-0 h-0.5 w-1/2 bg-primary transition-transform duration-300 ease-out",
+            isMobile ? "translate-x-0" : "translate-x-full"
+          )}
+          aria-hidden="true"
+        />
       </div>
     </div>
   )
 }
+

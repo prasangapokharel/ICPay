@@ -101,7 +101,7 @@ export function PremiumGateDialog({
           </ul>
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-0 mt-2">
+        <DialogFooter className="gap-2 sm:gap-2 mt-2">
           <Button
             type="button"
             variant="outline"
