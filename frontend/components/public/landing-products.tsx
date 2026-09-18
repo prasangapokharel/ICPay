@@ -51,15 +51,12 @@ export function LandingProducts() {
                   />
                 </div>
                 <CardContent className="flex flex-1 flex-col gap-2 p-5">
-                  <h3 className="text-lg font-semibold tracking-tight text-foreground">
+                  <h3 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
                     {t(`items.${product.id}.title`)}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">
                     {t(`items.${product.id}.description`)}
                   </p>
-                  <span className="mt-auto inline-flex text-sm font-semibold text-primary">
-                    {t(`items.${product.id}.cta`)} →
-                  </span>
                 </CardContent>
               </Card>
             </Link>

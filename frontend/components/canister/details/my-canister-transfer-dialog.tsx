@@ -214,7 +214,7 @@ export function MyCanisterTransferDialog({
             </Field>
           </FieldGroup>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="mt-2 gap-2 sm:gap-2">
             <DialogClose
               render={
                 <Button variant="outline" disabled={submitting}>

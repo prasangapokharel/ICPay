@@ -142,7 +142,7 @@ export function MyCanisterAddControllerDialog({
               </Field>
             </FieldGroup>
 
-            <DialogFooter className="mt-4 gap-2 sm:gap-0">
+            <DialogFooter className="mt-4 gap-2 sm:gap-2">
               <DialogClose
                 render={
                   <Button variant="outline" disabled={submitting}>
