@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { ArrowRight01Icon, Cancel01Icon, PlayIcon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import {
@@ -24,13 +24,9 @@ export function LandingHero() {
   const { isAuthenticated, isLoading } = useAuth()
   const [videoOpen, setVideoOpen] = useState(false)
 
-  // Auto-show video modal on landing
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setVideoOpen(true)
-    }, 600)
-    return () => clearTimeout(timer)
-  }, [])
+  const handleCloseVideo = () => {
+    setVideoOpen(false)
+  }
 
   return (
     <section className="border-b border-border/60 bg-background">
@@ -56,7 +52,16 @@ export function LandingHero() {
         </div>
 
         {/* Big Video Modal (Auto-shows on landing with smooth rise animation) */}
-        <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
+        <Dialog
+          open={videoOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseVideo()
+            } else {
+              setVideoOpen(true)
+            }
+          }}
+        >
           <DialogContent
             showCloseButton={false}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[94vw] max-w-[1100px] sm:max-w-[1100px] md:max-w-[1100px] lg:max-w-[1140px] p-0 border-0 bg-transparent shadow-none outline-none overflow-visible"
@@ -70,7 +75,7 @@ export function LandingHero() {
               {/* Close Button */}
               <button
                 type="button"
-                onClick={() => setVideoOpen(false)}
+                onClick={handleCloseVideo}
                 className="absolute top-4 right-4 z-30 flex size-10 items-center justify-center rounded-full bg-black/70 text-white/90 backdrop-blur-md transition-all hover:bg-black hover:text-white hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 cursor-pointer shadow-lg"
                 aria-label="Close video"
               >
@@ -86,7 +91,7 @@ export function LandingHero() {
                     autoPlay
                     muted
                     playsInline
-                    onEnded={() => setVideoOpen(false)}
+                    onEnded={handleCloseVideo}
                     className="h-full w-full object-contain"
                   />
                 )}
@@ -108,46 +113,36 @@ export function LandingHero() {
           </p>
           <div className="flex flex-wrap gap-3">
             {!isLoading && isAuthenticated ? (
-              <>
-                <Button
-                  size="lg"
-                  nativeButton={false}
-                  render={<Link href="/home" />}
-                  className="h-11 rounded-full px-7"
-                >
-                  {t("openWallet")}
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href="/channels" />}
-                  className="h-11 rounded-full px-7"
-                >
-                  {t("browseChannels")}
-                </Button>
-              </>
+              <Button
+                size="lg"
+                nativeButton={false}
+                render={<Link href="/home" />}
+                className="h-11 rounded-full px-7"
+              >
+                {t("openWallet")}
+              </Button>
             ) : (
-              <>
-                <Button
-                  size="lg"
-                  nativeButton={false}
-                  render={<Link href="/login" />}
-                  className="h-11 rounded-full px-7"
-                >
-                  {t("signIn")}
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  nativeButton={false}
-                  render={<Link href="/about" />}
-                  className="h-11 rounded-full px-7"
-                >
-                  {t("aboutIcPay")}
-                </Button>
-              </>
+              <Button
+                size="lg"
+                nativeButton={false}
+                render={<Link href="/login" />}
+                className="h-11 rounded-full px-7"
+              >
+                {t("signIn")}
+              </Button>
             )}
+            <Button
+              size="lg"
+              variant="ghost"
+              type="button"
+              onClick={() => setVideoOpen(true)}
+              className="h-11 rounded-full px-4 text-muted-foreground hover:text-foreground cursor-pointer gap-2"
+            >
+              <span className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <HugeiconsIcon icon={PlayIcon} className="size-3" />
+              </span>
+              <span>Watch overview</span>
+            </Button>
           </div>
           <HeroSignOptions />
         </div>
@@ -156,7 +151,7 @@ export function LandingHero() {
           <LandingHeroPreview />
         </div>
       </div>
-      </div>
-    </section>
+    </div>
+  </section>
   )
 }
