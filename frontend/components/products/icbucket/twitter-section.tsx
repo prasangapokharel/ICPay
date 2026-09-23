@@ -15,21 +15,22 @@ export function TwitterSection() {
     document.body.appendChild(script)
 
     return () => {
-      document.body.removeChild(script)
+      try {
+        if (script.parentNode) script.parentNode.removeChild(script)
+      } catch {}
     }
   }, [])
 
   return (
-    <section className="border-b border-border/60 bg-background py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
-          </div>
+    <section className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
+        <div className="mb-12 space-y-4 text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">{t("title")}</h2>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{t("subtitle")}</p>
+        </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="overflow-hidden">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="overflow-hidden border-border/60 bg-card rounded-2xl shadow-sm">
               <CardContent className="p-0">
                 <blockquote className="twitter-tweet">
                   <p lang="en" dir="ltr">
@@ -112,7 +113,6 @@ export function TwitterSection() {
               </CardContent>
             </Card>
           </div>
-        </div>
       </div>
     </section>
   )

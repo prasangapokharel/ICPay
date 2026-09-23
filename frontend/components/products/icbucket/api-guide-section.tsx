@@ -30,10 +30,10 @@ function CodeSnippet({ code }: { code: string }) {
         size="icon-xs"
         variant="outline"
         onClick={handleCopy}
-        className="absolute right-2.5 top-2.5 opacity-0 transition-opacity group-hover:opacity-100"
+        className="absolute right-2.5 top-2.5 opacity-0 group-hover:opacity-100 transition-none"
         aria-label="Copy code"
       >
-        <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5 text-primary" strokeWidth={1.75} />
+        <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5 text-primary transition-none" strokeWidth={1.75} />
       </Button>
     </div>
   )
@@ -233,99 +233,97 @@ let results = bucket.search_files("logo").await?;`,
   }
 
   return (
-    <section className="border-b border-border/60 bg-background py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
-          </div>
+    <section className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
+        <div className="mb-12 space-y-3 text-center md:mb-14">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">{t("title")}</h2>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{t("subtitle")}</p>
+        </div>
 
-          <Card>
+        <Card className="border-border/60 bg-card rounded-2xl shadow-sm">
+          <CardHeader>
+            <CardTitle>{t("codeExamples")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="node" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="node">{t("nodeTab")}</TabsTrigger>
+                <TabsTrigger value="python">{t("pythonTab")}</TabsTrigger>
+                <TabsTrigger value="rust">{t("rustTab")}</TabsTrigger>
+              </TabsList>
+
+              {Object.entries(examples).map(([lang, code]) => (
+                <TabsContent key={lang} value={lang} className="space-y-6 pt-4">
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-foreground">{t("installation")}</h3>
+                    <CodeSnippet code={code.install} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-foreground">{t("createInit")}</h3>
+                    <CodeSnippet code={code.create} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-foreground">{t("uploadFiles")}</h3>
+                    <CodeSnippet code={code.upload} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-foreground">{t("downloadAccess")}</h3>
+                    <CodeSnippet code={code.download} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-foreground">{t("fileManagement")}</h3>
+                    <CodeSnippet code={code.manage} />
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        <div className="mt-8 grid gap-6 md:grid-cols-2">
+          <Card className="border-border/60 bg-card rounded-2xl shadow-sm">
             <CardHeader>
-              <CardTitle>{t("codeExamples")}</CardTitle>
+              <CardTitle className="text-lg">{t("apiKeyTitle")}</CardTitle>
             </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="node" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="node">{t("nodeTab")}</TabsTrigger>
-                  <TabsTrigger value="python">{t("pythonTab")}</TabsTrigger>
-                  <TabsTrigger value="rust">{t("rustTab")}</TabsTrigger>
-                </TabsList>
-
-                {Object.entries(examples).map(([lang, code]) => (
-                  <TabsContent key={lang} value={lang} className="space-y-6 pt-4">
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-semibold text-foreground">{t("installation")}</h3>
-                      <CodeSnippet code={code.install} />
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-semibold text-foreground">{t("createInit")}</h3>
-                      <CodeSnippet code={code.create} />
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-semibold text-foreground">{t("uploadFiles")}</h3>
-                      <CodeSnippet code={code.upload} />
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-semibold text-foreground">{t("downloadAccess")}</h3>
-                      <CodeSnippet code={code.download} />
-                    </div>
-
-                    <div className="space-y-2">
-                      <h3 className="text-sm font-semibold text-foreground">{t("fileManagement")}</h3>
-                      <CodeSnippet code={code.manage} />
-                    </div>
-                  </TabsContent>
-                ))}
-              </Tabs>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">{t("apiKeyIntro")}</p>
+              <ul className="space-y-1 text-sm">
+                <li>
+                  <code className="rounded bg-muted px-1 py-0.5 text-xs">{t("permRead")}</code> -{" "}
+                  {t("permReadDesc")}
+                </li>
+                <li>
+                  <code className="rounded bg-muted px-1 py-0.5 text-xs">{t("permWrite")}</code> -{" "}
+                  {t("permWriteDesc")}
+                </li>
+                <li>
+                  <code className="rounded bg-muted px-1 py-0.5 text-xs">{t("permDelete")}</code> -{" "}
+                  {t("permDeleteDesc")}
+                </li>
+              </ul>
+              <p className="text-sm text-muted-foreground">{t("apiKeyFooter")}</p>
             </CardContent>
           </Card>
 
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t("apiKeyTitle")}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">{t("apiKeyIntro")}</p>
-                <ul className="space-y-1 text-sm">
-                  <li>
-                    <code className="rounded bg-muted px-1 py-0.5 text-xs">{t("permRead")}</code> -{" "}
-                    {t("permReadDesc")}
-                  </li>
-                  <li>
-                    <code className="rounded bg-muted px-1 py-0.5 text-xs">{t("permWrite")}</code> -{" "}
-                    {t("permWriteDesc")}
-                  </li>
-                  <li>
-                    <code className="rounded bg-muted px-1 py-0.5 text-xs">{t("permDelete")}</code> -{" "}
-                    {t("permDeleteDesc")}
-                  </li>
-                </ul>
-                <p className="text-sm text-muted-foreground">{t("apiKeyFooter")}</p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t("rateLimitsTitle")}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">{t("rateLimitsIntro")}</p>
-                <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>• {t("rateLimitUpload")}</li>
-                  <li>• {t("rateLimitDownload")}</li>
-                  <li>• {t("rateLimitList")}</li>
-                  <li>• {t("rateLimitChunk")}</li>
-                </ul>
-                <p className="text-sm text-muted-foreground">{t("rateLimitsFooter")}</p>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="border-border/60 bg-card rounded-2xl shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-lg">{t("rateLimitsTitle")}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">{t("rateLimitsIntro")}</p>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li>• {t("rateLimitUpload")}</li>
+                <li>• {t("rateLimitDownload")}</li>
+                <li>• {t("rateLimitList")}</li>
+                <li>• {t("rateLimitChunk")}</li>
+              </ul>
+              <p className="text-sm text-muted-foreground">{t("rateLimitsFooter")}</p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>

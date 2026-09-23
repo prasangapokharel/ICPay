@@ -10,6 +10,7 @@ import { ComparisonSection } from "@/components/products/icbucket/comparison-sec
 import { PricingSection } from "@/components/products/icbucket/pricing-section"
 import { ApiGuideSection } from "@/components/products/icbucket/api-guide-section"
 import { FaqSection } from "@/components/products/icbucket/faq-section"
+import { ICBUCKET_PACKAGE_LINKS, ProductOpenSourceBanner } from "@/components/products/shared/product-footer"
 import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
 export const metadata: Metadata = {
@@ -81,6 +82,10 @@ export default function ICBucketPage() {
       <ComparisonSection />
       <ApiGuideSection />
       <FaqSection />
+      <ProductOpenSourceBanner
+        packageLinks={ICBUCKET_PACKAGE_LINKS}
+        openSourceDescription="ICBucket SDKs are open source on npm, PyPI, crates.io, and GitHub."
+      />
     </div>
   )
 }

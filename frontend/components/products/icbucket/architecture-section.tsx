@@ -69,35 +69,34 @@ export function ArchitectureSection() {
   }, [rootId])
 
   return (
-    <section className="border-b border-border/60 bg-background py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-6xl space-y-10">
-          <div className="space-y-3 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
-            <p className="font-mono text-xs text-muted-foreground">
-              {t("canisterId", { canisterId: WALLET_CANISTER_ID })}
-            </p>
-          </div>
+    <section className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 space-y-10">
+        <div className="space-y-3 text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">{t("title")}</h2>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{t("subtitle")}</p>
+          <p className="font-mono text-xs text-muted-foreground">
+            {t("canisterId", { canisterId: WALLET_CANISTER_ID })}
+          </p>
+        </div>
 
-          <Card className="overflow-hidden">
-            <CardContent className="p-4 md:p-6">
-              {renderError ? (
-                <pre className="overflow-x-auto rounded-lg bg-muted/50 p-4 text-xs leading-relaxed">
-                  {ARCHITECTURE_DIAGRAM}
-                </pre>
-              ) : (
-                <div
-                  ref={hostRef}
-                  className="flex justify-center overflow-x-auto [&_svg]:max-w-full [&_svg]:h-auto"
-                  aria-label={t("diagramAriaLabel")}
-                />
-              )}
-            </CardContent>
-          </Card>
+        <Card className="overflow-hidden border-border/60 bg-card rounded-2xl shadow-sm">
+          <CardContent className="p-4 md:p-6">
+            {renderError ? (
+              <pre className="overflow-x-auto rounded-lg bg-muted/50 p-4 text-xs leading-relaxed">
+                {ARCHITECTURE_DIAGRAM}
+              </pre>
+            ) : (
+              <div
+                ref={hostRef}
+                className="flex justify-center overflow-x-auto [&_svg]:max-w-full [&_svg]:h-auto"
+                aria-label={t("diagramAriaLabel")}
+              />
+            )}
+          </CardContent>
+        </Card>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card size="sm">
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card size="sm" className="border-border/60 bg-card rounded-2xl shadow-sm">
               <CardContent className="space-y-3 pt-6">
                 <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
                   {t("writePath")}
@@ -123,7 +122,6 @@ export function ArchitectureSection() {
             </Card>
           </div>
         </div>
-      </div>
     </section>
   )
 }

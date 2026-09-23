@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { cn } from "@/lib/ui/utils"
 
 const COMMANDS = [
   { lang: "npm", cmd: "npm install icpay-bucket" },
@@ -29,42 +30,40 @@ export function InstallSection() {
   }
 
   return (
-    <section className="border-b border-border/60 bg-background py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-10 space-y-3 text-center md:mb-12">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
-          </div>
+    <section className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
+        <div className="mb-10 space-y-3 text-center md:mb-12">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">{t("title")}</h2>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{t("subtitle")}</p>
+        </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {COMMANDS.map((item) => (
-              <div key={item.lang} className="space-y-2">
-                <span className="text-xs font-medium tracking-wide text-muted-foreground">
-                  {t(`labels.${item.lang}`)}
-                </span>
-                <div className="relative">
-                  <Input
-                    value={item.cmd}
-                    readOnly
-                    className="h-11 bg-background pr-10 font-mono text-sm"
+        <div className="grid gap-4 md:grid-cols-2">
+          {COMMANDS.map((item) => (
+            <div key={item.lang} className="space-y-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {t(`labels.${item.lang}`)}
+              </span>
+              <div className="relative">
+                <Input
+                  value={item.cmd}
+                  readOnly
+                  className="h-11 rounded-xl border-border/60 bg-card pr-10 font-mono text-sm shadow-xs"
+                />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => copyToClipboard(item.cmd, item.lang)}
+                  className="absolute right-1 top-1/2 size-9 -translate-y-1/2 p-0 text-muted-foreground hover:text-foreground cursor-pointer transition-none"
+                  aria-label={t("copyLabel")}
+                >
+                  <HugeiconsIcon
+                    icon={copied === item.lang ? Tick02Icon : Copy01Icon}
+                    className={cn("size-4 transition-none", copied === item.lang && "text-primary")}
                   />
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => copyToClipboard(item.cmd, item.lang)}
-                    className="absolute right-1 top-1/2 size-9 -translate-y-1/2 p-0"
-                    aria-label={t("copyLabel")}
-                  >
-                    <HugeiconsIcon
-                      icon={copied === item.lang ? Tick02Icon : Copy01Icon}
-                      className="size-4"
-                    />
-                  </Button>
-                </div>
+                </Button>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

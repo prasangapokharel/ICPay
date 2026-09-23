@@ -38,38 +38,33 @@ export function LandingHeroPreview() {
         </div>
       </div>
 
-      <div
-        className="relative mt-6 flex border-b border-border/50"
-        role="tablist"
-        aria-label={t("previewTabsLabel")}
-      >
-        {VIEWS.map((id) => {
-          const active = view === id
-          return (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => setView(id)}
-              className={cn(
-                "relative flex-1 pb-3 text-center text-sm font-medium transition-colors duration-200",
-                active
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground/80"
-              )}
-            >
-              {t(id === "mobile" ? "previewMobile" : "previewDesktop")}
-            </button>
-          )
-        })}
-        <span
-          className={cn(
-            "absolute bottom-0 h-0.5 w-1/2 bg-primary transition-transform duration-300 ease-out",
-            isMobile ? "translate-x-0" : "translate-x-full"
-          )}
-          aria-hidden="true"
-        />
+      <div className="mt-6 flex justify-center">
+        <div
+          className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-card/80 p-1 shadow-xs backdrop-blur-xs"
+          role="tablist"
+          aria-label={t("previewTabsLabel")}
+        >
+          {VIEWS.map((id) => {
+            const active = view === id
+            return (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setView(id)}
+                className={cn(
+                  "rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer",
+                  active
+                    ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {t(id === "mobile" ? "previewMobile" : "previewDesktop")}
+              </button>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
