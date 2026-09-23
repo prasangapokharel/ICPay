@@ -46,15 +46,12 @@ export function LandingTrust() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {trustLinks.map((item) => {
             const content = (
-              <Card className="h-full border-border/60 bg-card shadow-sm transition-shadow hover:shadow-md">
+              <Card className="h-full border-border/60 bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-border">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base font-semibold leading-snug">{item.label}</CardTitle>
+                  <CardTitle className="text-base font-semibold leading-snug transition-colors group-hover:text-primary">{item.label}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-                  <span className="mt-3 inline-flex text-sm font-semibold text-primary">
-                    {item.external ? t("visit") : t("readMore")}
-                  </span>
                 </CardContent>
               </Card>
             )

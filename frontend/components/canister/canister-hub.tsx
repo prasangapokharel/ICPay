@@ -68,9 +68,11 @@ export function CanisterHub() {
             <Link key={card.href} href={card.href} className="group block outline-none">
               <Card className="h-full transition-colors group-hover:border-primary/40 group-focus-visible:ring-2 group-focus-visible:ring-ring">
                 <CardHeader className="gap-3">
-                  <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <HugeiconsIcon icon={card.icon} className="size-5" strokeWidth={1.75} />
-                  </span>
+                  <HugeiconsIcon
+                    icon={card.icon}
+                    className="size-5 text-primary"
+                    strokeWidth={1.75}
+                  />
                   <CardTitle className="text-lg">{card.title}</CardTitle>
                   <CardDescription className="text-sm leading-relaxed">
                     {card.description}

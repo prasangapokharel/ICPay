@@ -3,6 +3,12 @@ import { BLOG_POSTS } from "@/services/blog/blog"
 import { CHARITY_CAMPAIGNS } from "@/lib/public/charity/campaigns"
 import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
 
+// IMPORTANT: Keep force-static. This runs listAllPublicChannelsForSeo() which
+// calls the IC canister. Without this, Next.js would re-execute that canister
+// call on every Googlebot / Bingbot crawl, spending real Fluid Active CPU time.
+// The sitemap is generated once per deploy and served from Vercel's CDN for free.
+// If a live sitemap is ever needed, wrap the call in unstable_cache({ revalidate: 3600 })
+// instead of removing this line — see docs/fluid/plan/readme.md for details.
 export const dynamic = "force-static"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"

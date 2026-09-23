@@ -12,6 +12,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
 import { sanitizeFolderName } from "@/lib/bucket/folderPath"
 
@@ -74,16 +80,24 @@ export function BucketFolderDialog({
             }
           }}
         >
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={t("folderName")}
-            autoComplete="off"
-            spellCheck={false}
-            autoFocus
-            disabled={busy}
-          />
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
+          <FieldGroup className="gap-4">
+            <Field className="gap-2">
+              <FieldLabel htmlFor="bucket-folder-name">{t("folderName")}</FieldLabel>
+              <Input
+                id="bucket-folder-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t("folderName")}
+                autoComplete="off"
+                spellCheck={false}
+                autoFocus
+                disabled={busy}
+              />
+              {error ? (
+                <FieldDescription className="text-sm font-medium text-destructive">{error}</FieldDescription>
+              ) : null}
+            </Field>
+          </FieldGroup>
           <DialogFooter className="gap-2 sm:gap-2">
             <Button type="button" variant="outline" disabled={busy} onClick={close}>
               {tCommon("cancel")}

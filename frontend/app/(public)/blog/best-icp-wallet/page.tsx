@@ -41,8 +41,7 @@ export default function BestIcpWalletPage() {
         </h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
           Most wallets treat ICP like any other token. ICPay is built specifically for the Internet
-          Computer — the backend is a Motoko canister on mainnet, the frontend is served from an
-          asset canister, and every transfer calls the official ICP ledger (
+          Computer — the backend is a Motoko canister on mainnet, user authentication is cryptographically anchored via an on-chain asset canister derivation origin, and every transfer calls the official ICP ledger (
           <code className="text-xs">ryjl3-tyaaa-aaaaa-aaaba-cai</code>) directly. That makes
           ICPay the most complete ICP-native wallet available today.
         </p>

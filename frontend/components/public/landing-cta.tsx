@@ -14,32 +14,38 @@ export function LandingCta() {
   }
 
   return (
-    <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-16 md:flex-row md:items-center md:px-6 md:py-20">
-        <div className="space-y-3">
-          <h2 className="text-2xl font-bold tracking-tight md:text-3xl">{t("readyTitle")}</h2>
-          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
-            {t("readyBody")}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Button
-            size="lg"
-            nativeButton={false}
-            render={<Link href="/login" />}
-            className="h-11 rounded-full px-7"
-          >
-            {t("signIn")}
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            nativeButton={false}
-            render={<Link href="/channels" />}
-            className="h-11 rounded-full px-7"
-          >
-            {t("browseChannels")}
-          </Button>
+    <section className="border-b border-border/60 bg-background py-16 md:py-20">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-gradient-to-br from-card via-card to-primary/5 p-8 md:p-12 shadow-sm">
+          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+            <div className="space-y-3">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+                {t("readyTitle")}
+              </h2>
+              <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                {t("readyBody")}
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-wrap gap-3">
+              <Button
+                size="lg"
+                nativeButton={false}
+                render={<Link href="/login" />}
+                className="h-11 rounded-full px-7"
+              >
+                {t("signIn")}
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                nativeButton={false}
+                render={<Link href="/channels" />}
+                className="h-11 rounded-full px-7"
+              >
+                {t("browseChannels")}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </section>

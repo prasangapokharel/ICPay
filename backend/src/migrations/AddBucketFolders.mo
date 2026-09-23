@@ -6,8 +6,8 @@ import BucketStorage "../storage/BucketStorage";
 
 // Adds persisted empty-folder markers to bucketStore on upgrade.
 //
-// Wire once via `(with migration = AddBucketFolders.migration)` on main.mo for
-// the deploy that ships createFolder / listFolder.folders.
+// APPLIED on mainnet (hash 0x1ee569c1f54ae79d56122c1b1ebee04daaf05b98dd927701afc1b3e061654c0d)
+// Do NOT re-wire to main.mo.
 module {
   public type OldBucketStore = {
     buckets: Map.Map<Types.BucketId, Types.Bucket>;

@@ -3,6 +3,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { LANDING_MEDIA } from "@/lib/public/landing-media"
 import { Card, CardContent } from "@/components/ui/card"
 
@@ -37,32 +39,35 @@ export function LandingProducts() {
             const imageLabel = t(`items.${product.id}.title`)
 
             return (
-            <Link key={product.id} href={product.href} className="group block h-full">
-              <Card className="flex h-full flex-col gap-0 overflow-hidden border-border/60 bg-card p-0 shadow-sm transition-shadow hover:shadow-md">
-                <div className="relative aspect-[5/3] w-full shrink-0 overflow-hidden bg-muted">
-                  <Image
-                    src={product.image}
-                    alt={imageLabel}
-                    title={imageLabel}
-                    fill
-                    loading="lazy"
-                    sizes="(max-width: 1024px) 100vw, 33vw"
-                    className="object-cover object-center"
-                  />
-                </div>
-                <CardContent className="flex flex-1 flex-col gap-2 p-5">
-                  <h3 className="text-lg font-semibold tracking-tight text-foreground">
-                    {t(`items.${product.id}.title`)}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {t(`items.${product.id}.description`)}
-                  </p>
-                  <span className="mt-auto inline-flex text-sm font-semibold text-primary">
-                    {t(`items.${product.id}.cta`)} →
-                  </span>
-                </CardContent>
-              </Card>
-            </Link>
+              <Link key={product.id} href={product.href} className="group block h-full">
+                <Card className="flex h-full flex-col gap-0 overflow-hidden border-border/60 bg-card p-0 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-border hover:shadow-lg">
+                  <div className="relative aspect-[5/3] w-full shrink-0 overflow-hidden bg-muted">
+                    <Image
+                      src={product.image}
+                      alt={imageLabel}
+                      title={imageLabel}
+                      fill
+                      loading="lazy"
+                      sizes="(max-width: 1024px) 100vw, 33vw"
+                      className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                  <CardContent className="flex flex-1 flex-col justify-between gap-3 p-5">
+                    <div className="space-y-1.5">
+                      <h3 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
+                        {t(`items.${product.id}.title`)}
+                      </h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {t(`items.${product.id}.description`)}
+                      </p>
+                    </div>
+                    <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary transition-transform duration-200 group-hover:translate-x-1">
+                      <span>Explore</span>
+                      <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             )
           })}
         </div>

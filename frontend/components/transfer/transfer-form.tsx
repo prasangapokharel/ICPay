@@ -5,7 +5,12 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
@@ -224,7 +229,7 @@ export function TransferForm({
   }
 
   return (
-    <div className="space-y-5">
+    <FieldGroup className="gap-5">
       <Tabs
         value={mode}
         onValueChange={(v) => {
@@ -240,8 +245,8 @@ export function TransferForm({
           <TabsTrigger value="account">{t("tabAccount")}</TabsTrigger>
         </TabsList>
       </Tabs>
-      <div className="space-y-2">
-        <Label htmlFor="to">{t(labelKeys[mode].label)}</Label>
+      <Field className="gap-2">
+        <FieldLabel htmlFor="to">{t(labelKeys[mode].label)}</FieldLabel>
         <div className="relative">
           <Input
             id="to"
@@ -286,25 +291,27 @@ export function TransferForm({
             isLoading={resolving || debouncedTo.trim() !== to.trim()}
           />
         )}
-      </div>
+      </Field>
 
-      <AmountInput
-        id="amount"
-        label={tc("amount")}
-        value={amount}
-        onChange={(v) => {
-          setAmount(v)
-          setError(null)
-        }}
-        balance={balance}
-        maxE8s={sendable}
-        size="default"
-      />
-      {sendable !== undefined && (
-        <p className="text-xs text-muted-foreground">
-          {t("maxSendable", { amount: formatAmount(sendable), fee: formatAmount(ICP_FEE) })}
-        </p>
-      )}
+      <div>
+        <AmountInput
+          id="amount"
+          label={tc("amount")}
+          value={amount}
+          onChange={(v) => {
+            setAmount(v)
+            setError(null)
+          }}
+          balance={balance}
+          maxE8s={sendable}
+          size="default"
+        />
+        {sendable !== undefined && (
+          <FieldDescription className="mt-1.5 text-xs text-muted-foreground">
+            {t("maxSendable", { amount: formatAmount(sendable), fee: formatAmount(ICP_FEE) })}
+          </FieldDescription>
+        )}
+      </div>
 
       <QrScanner open={scanOpen} onOpenChange={setScanOpen} onScan={applyScan} />
       <BookmarkDrawer
@@ -318,9 +325,9 @@ export function TransferForm({
         }}
       />
 
-      <div className="space-y-2">
+      <Field className="gap-2">
         <div className="flex items-baseline justify-between">
-          <Label htmlFor="memo">{t("memoLabel")}</Label>
+          <FieldLabel htmlFor="memo">{t("memoLabel")}</FieldLabel>
           <span
             className={
               memoTooLong
@@ -338,11 +345,11 @@ export function TransferForm({
           onChange={(e) => setMemo(e.target.value)}
         />
         {memoTooLong && (
-          <p className="text-xs text-destructive">
+          <FieldDescription className="text-destructive">
             {t("memoTooLong", { max: MEMO_MAX_BYTES })}
-          </p>
+          </FieldDescription>
         )}
-      </div>
+      </Field>
 
       {error && (
         <Alert variant="destructive">
@@ -428,7 +435,7 @@ export function TransferForm({
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-    </div>
+    </FieldGroup>
   )
 }
 

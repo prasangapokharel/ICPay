@@ -1,7 +1,13 @@
+import {
+  BACKEND_CANISTER_ID,
+  FRONTEND_CANISTER_ID,
+  ICP_LEDGER_CANISTER_ID,
+} from "@/lib/ic/constants"
+
 export const ICPAY_CANISTERS = {
-  backend: "6vbhm-nqaaa-aaaan-q6muq-cai",
-  frontend: "63dke-waaaa-aaaan-q6mvq-cai",
-  icpLedger: "ryjl3-tyaaa-aaaaa-aaaba-cai",
+  backend: BACKEND_CANISTER_ID,
+  frontend: FRONTEND_CANISTER_ID,
+  icpLedger: ICP_LEDGER_CANISTER_ID,
 } as const
 
 export const ICPAY_SOCIAL_LINKS = {

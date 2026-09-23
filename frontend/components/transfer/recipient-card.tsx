@@ -1,6 +1,6 @@
 "use client"
 
-import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { PremiumBadge } from "@/components/verified/premium-badge"
 import { ScoreCircle } from "@/components/transfer/trust-signals"
 import { useTranslations } from "next-intl"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"

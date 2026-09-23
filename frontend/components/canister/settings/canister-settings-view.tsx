@@ -38,19 +38,19 @@ export function CanisterSettingsView({
   const isPremium = isPremiumHandle(username)
 
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-5">
       {/* Educational Guide Card */}
       <CanisterGuideCard />
 
       {/* Settings Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col gap-4">
         <TabsList variant="line" className="w-full justify-start border-b border-border/40 gap-4 sm:gap-6">
           <TabsTrigger value="controllers" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
-            <HugeiconsIcon icon={UserGroupIcon} className="size-4" />
+            <HugeiconsIcon icon={UserGroupIcon} className="size-4" strokeWidth={1.75} />
             <span>Controllers</span>
           </TabsTrigger>
           <TabsTrigger value="resources" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
-            <HugeiconsIcon icon={CpuIcon} className="size-4" />
+            <HugeiconsIcon icon={CpuIcon} className="size-4" strokeWidth={1.75} />
             <span>Resources</span>
             {!isPremium && (
               <Badge variant="outline" className="ml-1 h-4 px-1 text-[9px] font-semibold text-primary border-primary/30 bg-primary/5">
@@ -59,7 +59,7 @@ export function CanisterSettingsView({
             )}
           </TabsTrigger>
           <TabsTrigger value="visibility" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
-            <HugeiconsIcon icon={EyeIcon} className="size-4" />
+            <HugeiconsIcon icon={EyeIcon} className="size-4" strokeWidth={1.75} />
             <span>Visibility</span>
             {!isPremium && (
               <Badge variant="outline" className="ml-1 h-4 px-1 text-[9px] font-semibold text-primary border-primary/30 bg-primary/5">
@@ -68,13 +68,13 @@ export function CanisterSettingsView({
             )}
           </TabsTrigger>
           <TabsTrigger value="danger" className="gap-1.5 pb-2 text-xs sm:text-sm text-destructive cursor-pointer">
-            <HugeiconsIcon icon={Alert02Icon} className="size-4" />
+            <HugeiconsIcon icon={Alert02Icon} className="size-4" strokeWidth={1.75} />
             <span>Lifecycle</span>
           </TabsTrigger>
         </TabsList>
 
         {/* Controllers */}
-        <TabsContent value="controllers" className="space-y-4">
+        <TabsContent value="controllers" className="flex flex-col gap-4">
           <CanisterControllersCard
             canisterId={canisterId}
             controllers={data.controllers}
@@ -84,7 +84,7 @@ export function CanisterSettingsView({
         </TabsContent>
 
         {/* Resources */}
-        <TabsContent value="resources" className="space-y-4">
+        <TabsContent value="resources" className="flex flex-col gap-4">
           {isPremium ? (
             <CanisterResourcesCard
               canisterId={canisterId}
@@ -103,7 +103,7 @@ export function CanisterSettingsView({
         </TabsContent>
 
         {/* Visibility */}
-        <TabsContent value="visibility" className="space-y-4">
+        <TabsContent value="visibility" className="flex flex-col gap-4">
           {isPremium ? (
             <CanisterVisibilityCard
               canisterId={canisterId}
@@ -122,7 +122,7 @@ export function CanisterSettingsView({
         </TabsContent>
 
         {/* Lifecycle / Danger */}
-        <TabsContent value="danger" className="space-y-4">
+        <TabsContent value="danger" className="flex flex-col gap-4">
           <CanisterLifecycleCard
             canisterId={canisterId}
             runStatus={data.runStatus}

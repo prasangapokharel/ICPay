@@ -14,8 +14,8 @@ export const PAGE_IMAGES = {
     paymentFlow: page("landing/payment-flow.webp"),
   },
   icbucket: {
-    heroPhone: page("icbucket/hero-phone.webp"),
-    hero: page("icbucket/hero.webp"),
+    hero: page("icbucket/hero.png"),
+    videoPoster: page("icbucket/video-poster.webp"),
   },
   icfalcon: {
     hero: page("icfalcon/hero.webp"),

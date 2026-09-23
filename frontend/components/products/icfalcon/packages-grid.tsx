@@ -11,6 +11,7 @@ import {
   CardContent,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import type { FalconPackage } from "@/services/products/falcon/packages"
 
 type PackagesGridProps = {
@@ -53,18 +54,21 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                   <pre className="overflow-x-auto rounded bg-muted/30 p-2 pr-10 text-xs font-mono">
                     <code>falcon add pkg {pkg.slug}</code>
                   </pre>
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    type="button"
                     onClick={() => handleCopy(pkg.slug)}
-                    className="absolute top-2 right-2 transition-colors hover:text-foreground"
+                    className="absolute top-1 right-1 size-6 text-muted-foreground hover:text-foreground"
                     aria-label="Copy install command"
                   >
                     <HugeiconsIcon
                       icon={
                         copiedSlug === pkg.slug ? Tick02Icon : Copy01Icon
                       }
-                      className="size-4"
+                      className="size-3.5"
                     />
-                  </button>
+                  </Button>
                 </div>
                 <div className="text-xs text-muted-foreground">
                   <span className="font-semibold">Import:</span>{" "}
