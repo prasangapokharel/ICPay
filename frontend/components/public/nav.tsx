@@ -103,10 +103,8 @@ export function PublicNav() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 backdrop-blur-md",
-        isCharityCampaignPage
-          ? cn("border-b-0", charityCampaignShellClass)
-          : "border-b border-border/60 bg-background/90"
+        "sticky top-0 z-50 backdrop-blur-md bg-background/80",
+        isCharityCampaignPage && charityCampaignShellClass
       )}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 md:h-16 md:px-6">

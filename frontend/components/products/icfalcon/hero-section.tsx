@@ -49,16 +49,17 @@ export function HeroSection() {
 
       <div className="relative z-10 mx-auto max-w-4xl space-y-8">
         <div className="flex justify-center">
-          <Image
-            src={PAGE_IMAGES.icfalcon.hero}
-            alt={t("imageAlt")}
-            title={t("imageAlt")}
-            width={280}
-            height={280}
-            priority
-            className="w-[280px] rounded-2xl drop-shadow-xl"
-            style={{ height: "auto" }}
-          />
+          <div className="relative mx-auto flex w-full max-w-[200px] sm:max-w-[240px] items-center justify-center">
+            <Image
+              src={PAGE_IMAGES.icfalcon.hero}
+              alt={t("imageAlt")}
+              title={t("imageAlt")}
+              width={240}
+              height={160}
+              priority
+              className="h-auto w-full max-w-[170px] sm:max-w-[210px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
+            />
+          </div>
         </div>
 
         <div className="space-y-4">

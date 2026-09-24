@@ -44,7 +44,7 @@ export function BucketDocsShell({ doc, navGroups, backHref = "/icbucket" }: Buck
                   </p>
                 ) : null}
               </div>
-              <BucketDocsCopyMenu markdown={doc.fullMarkdown} />
+              <BucketDocsCopyMenu markdown={doc.fullMarkdown} title={doc.title} />
             </div>
           </header>
           <div className="max-w-none pb-16">{doc.content}</div>
