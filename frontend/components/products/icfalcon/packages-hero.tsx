@@ -35,7 +35,7 @@ export function PackagesHero() {
             className="h-16 w-16 rounded-xl"
           />
           <div className="text-left">
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent">
               Falcon Packages
             </h1>
             <p className="text-sm text-muted-foreground">ICP-Hub Registry</p>

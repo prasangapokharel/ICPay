@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Nodejs, Python, Rust } from "@dev.icons/react"
 
 function CodeSnippet({ code }: { code: string }) {
   const [copied, setCopied] = useState(false)
@@ -236,7 +237,9 @@ let results = bucket.search_files("logo").await?;`,
     <section className="border-b border-border/60 bg-background">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
         <div className="mb-12 space-y-3 text-center md:mb-14">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">{t("title")}</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent md:text-5xl">
+            {t("title")}
+          </h2>
           <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{t("subtitle")}</p>
         </div>
 
@@ -247,9 +250,18 @@ let results = bucket.search_files("logo").await?;`,
           <CardContent>
             <Tabs defaultValue="node" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="node">{t("nodeTab")}</TabsTrigger>
-                <TabsTrigger value="python">{t("pythonTab")}</TabsTrigger>
-                <TabsTrigger value="rust">{t("rustTab")}</TabsTrigger>
+                <TabsTrigger value="node" className="gap-2">
+                  <Nodejs size={16} />
+                  <span>{t("nodeTab")}</span>
+                </TabsTrigger>
+                <TabsTrigger value="python" className="gap-2">
+                  <Python size={16} />
+                  <span>{t("pythonTab")}</span>
+                </TabsTrigger>
+                <TabsTrigger value="rust" className="gap-2">
+                  <Rust size={16} />
+                  <span>{t("rustTab")}</span>
+                </TabsTrigger>
               </TabsList>
 
               {Object.entries(examples).map(([lang, code]) => (

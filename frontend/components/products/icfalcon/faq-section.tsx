@@ -19,8 +19,10 @@ export function FaqSection() {
     <section className="bg-background py-16 md:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-3xl">
-          <div className="mb-12 text-center">
-            <h2 className="mb-3 text-3xl font-bold tracking-tight">{t("title")}</h2>
+          <div className="mb-12 text-center space-y-3">
+            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent">
+              {t("title")}
+            </h2>
             <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
           </div>
 

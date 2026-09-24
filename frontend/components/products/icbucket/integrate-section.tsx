@@ -2,6 +2,8 @@
 
 import { useTranslations } from "next-intl"
 import { LANDING_MEDIA } from "@/lib/public/landing-media"
+import { HeroVideoDialog } from "@/components/ui/hero-video-dialog"
+import { ShineBorder } from "@/components/ui/shine-border"
 
 export function IntegrateSection() {
   const t = useTranslations("publicSite.icbucket.integrate")
@@ -21,17 +23,20 @@ export function IntegrateSection() {
           </p>
         </div>
 
-        <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm">
-          <video
-            controls
-            playsInline
-            preload="metadata"
-            poster={LANDING_MEDIA.icbucketIntegratePoster}
-            className="block h-auto w-full"
-            aria-label={t("videoAriaLabel")}
-          >
-            <source src={LANDING_MEDIA.icbucketIntegrateVideo} type="video/mp4" />
-          </video>
+        <div className="relative mx-auto max-w-5xl rounded-2xl">
+          <ShineBorder
+            className="rounded-2xl z-20"
+            borderWidth={1.5}
+            duration={12}
+            shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+          />
+          <HeroVideoDialog
+            animationStyle="from-center"
+            videoSrc={LANDING_MEDIA.icbucketIntegrateVideo}
+            thumbnailSrc={LANDING_MEDIA.icbucketIntegratePoster}
+            thumbnailAlt={t("videoAriaLabel")}
+            className="w-full drop-shadow-xl"
+          />
         </div>
       </div>
     </section>

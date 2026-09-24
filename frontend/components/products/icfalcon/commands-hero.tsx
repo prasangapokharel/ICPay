@@ -5,7 +5,7 @@ export function CommandsHero() {
   return (
     <section className="border-b px-4 py-16 text-center">
       <div className="mx-auto max-w-3xl space-y-6">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent">
           Falcon CLI Commands
         </h1>
         <p className="text-lg text-muted-foreground">

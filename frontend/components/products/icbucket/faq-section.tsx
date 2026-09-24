@@ -22,7 +22,9 @@ export function FaqSection() {
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
             FAQ
           </p>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">{t("title")}</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent md:text-5xl">
+            {t("title")}
+          </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">{t("subtitle")}</p>
         </div>
 

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { HeroSignOptions } from "@/components/public/hero-sign-options"
 import { LandingHeroPreview } from "@/components/public/landing-hero-preview"
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
 
 const VIDEO_URL =
   "https://res.cloudinary.com/dn2ycbmrc/video/upload/v1789445491/Copy_of_Nature_Travel_Youtube_Video_Intro_zdqlhn.mp4"
@@ -34,17 +35,19 @@ export function LandingHero() {
         <div className="mb-8 flex justify-center sm:mb-10">
           <Link
             href="/canister/tools"
-            className="group inline-flex items-center gap-2.5 rounded-full border border-border/70 bg-card/60 py-1 pl-1.5 pr-2 text-xs font-medium text-foreground shadow-xs backdrop-blur-xs transition-all duration-200 hover:border-border hover:bg-card hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 py-1 pl-1.5 pr-2 text-xs font-medium text-foreground shadow-xs backdrop-blur-xs transition-all duration-200 hover:border-border hover:bg-card hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-semibold text-primary dark:bg-primary/20">
               New
             </span>
-            <span className="font-medium text-foreground">
-              Canister Management
-            </span>
-            <span className="hidden text-muted-foreground sm:inline">
-              · Tools & Operations
-            </span>
+            <AnimatedShinyText className="inline-flex items-center gap-1.5 text-xs">
+              <span className="font-medium text-foreground">
+                Canister Management
+              </span>
+              <span className="hidden text-muted-foreground sm:inline">
+                · Tools & Operations
+              </span>
+            </AnimatedShinyText>
             <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground transition-transform duration-200 group-hover:translate-x-0.5">
               <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" />
             </span>
@@ -105,7 +108,7 @@ export function LandingHero() {
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
               {t("eyebrow")}
             </p>
-            <h1 className="max-w-xl text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
+            <h1 className="max-w-xl text-4xl font-extrabold tracking-tight bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent md:text-5xl lg:text-[3.35rem] lg:leading-[1.06]">
               {t("title")}
             </h1>
           <p className="max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">

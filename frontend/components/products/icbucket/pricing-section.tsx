@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ShineBorder } from "@/components/ui/shine-border"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
@@ -94,16 +95,24 @@ export function PricingSection() {
               <Card
                 key={plan.id}
                 className={`relative overflow-visible border-border/60 bg-card rounded-2xl shadow-sm ${
-                  popular ? "border-primary ring-1 ring-primary/30" : ""
+                  popular ? "border-primary/40 shadow-md ring-1 ring-primary/20" : ""
                 }`}
               >
-                {popular ? (
-                  <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap">
-                    <div className="rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground shadow-xs">
-                      {t("mostPopular")}
+                {popular && (
+                  <>
+                    <ShineBorder
+                      className="rounded-2xl z-0"
+                      borderWidth={1.5}
+                      duration={12}
+                      shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                    />
+                    <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap">
+                      <div className="rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground shadow-xs">
+                        {t("mostPopular")}
+                      </div>
                     </div>
-                  </div>
-                ) : null}
+                  </>
+                )}
                 <CardHeader className="space-y-3 pb-6 pt-8">
                   <CardTitle className="text-2xl font-bold">{t(`plans.${plan.id}.name`)}</CardTitle>
                   <div className="space-y-1">

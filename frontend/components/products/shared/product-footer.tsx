@@ -5,6 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Github01Icon, Package01Icon } from "@hugeicons/core-free-icons"
 import { PublicFooter } from "@/components/public/footer"
 import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
+import { Npm, Python, Go } from "@dev.icons/react"
 
 export type ProductPackageLink = {
   label: string
@@ -57,10 +58,15 @@ export function ProductOpenSourceBanner({
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                     >
-                      <HugeiconsIcon
-                        icon={link.label === "Go" ? Github01Icon : Package01Icon}
-                        className="size-4"
-                      />
+                      {link.label.toLowerCase().includes("npm") ? (
+                        <Npm size={16} />
+                      ) : link.label.toLowerCase().includes("pypi") || link.label.toLowerCase().includes("python") ? (
+                        <Python size={16} />
+                      ) : link.label.toLowerCase().includes("go") ? (
+                        <Go size={16} />
+                      ) : (
+                        <HugeiconsIcon icon={Package01Icon} className="size-4" />
+                      )}
                       {link.label}
                     </Link>
                   ))}
