@@ -7,7 +7,7 @@ export type PublicLayoutVariant = "content" | "wide"
 
 function PublicNavFallback() {
   return (
-    <header className="sticky top-0 z-50 h-14 border-b border-border/60 bg-background/95 backdrop-blur-md md:h-16" />
+    <header className="sticky top-0 z-50 h-14 bg-background/80 backdrop-blur-md md:h-16" />
   )
 }
 

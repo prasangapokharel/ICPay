@@ -174,34 +174,34 @@ export function LaunchForm({
 
         {/* Live Token Preview Pill / Header */}
         {(name.trim() || symbol.trim()) && (
-          <div className="flex items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-3.5 sm:p-4">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted border border-border/60">
+          <div className="relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl border border-primary/30 bg-card/80 p-3.5 sm:p-4 shadow-md backdrop-blur-md">
+            <div className="flex min-w-0 items-center gap-3.5">
+              <div className="relative flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-muted/60 border border-border/60">
                 {logo ? (
-                  <Image src={logo} alt="" width={40} height={40} className="size-full object-cover" unoptimized />
+                  <Image src={logo} alt="" width={44} height={44} className="size-full object-cover" unoptimized />
                 ) : (
                   <HugeiconsIcon icon={Coins01Icon} className="size-5 text-primary" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <h4 className="truncate text-sm font-semibold text-foreground">
+                  <h4 className="truncate text-base font-bold text-foreground">
                     {name.trim() || "Untitled Token"}
                   </h4>
                   {symbol.trim() && (
-                    <span className="shrink-0 rounded-md bg-primary/15 px-1.5 py-0.5 font-mono text-[10px] font-bold text-primary">
+                    <span className="shrink-0 rounded-lg bg-primary/15 border border-primary/25 px-2 py-0.5 font-mono text-xs font-bold text-primary">
                       ${normalizeSymbol(symbol)}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {supply ? `${supply} total supply` : "Set supply below"}
+                <p className="text-xs text-muted-foreground pt-0.5">
+                  {supply ? `${supply} total supply • ICRC-1 on-chain` : "Set supply and parameters below"}
                 </p>
               </div>
             </div>
             <div className="hidden shrink-0 text-right sm:block">
-              <span className="rounded-full border border-primary/30 bg-background px-2.5 py-1 text-[11px] font-medium text-primary">
-                Preview
+              <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                Live Preview
               </span>
             </div>
           </div>
@@ -307,19 +307,26 @@ export function LaunchForm({
               autoComplete="off"
               className="tabular-nums"
             />
-            <div className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="text-xs text-muted-foreground">Presets:</span>
-              {SUPPLY_PRESETS.map((preset) => (
-                <Button
-                  key={preset.label}
-                  type="button"
-                  variant={parseSupply(supply) === parseSupply(preset.value) ? "default" : "outline"}
-                  size="xs"
-                  onClick={() => setSupply(preset.value)}
-                >
-                  {preset.label}
-                </Button>
-              ))}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1.5">
+              <span className="text-xs text-muted-foreground mr-1">Presets:</span>
+              {SUPPLY_PRESETS.map((preset) => {
+                const isSelected = parseSupply(supply) === parseSupply(preset.value)
+                return (
+                  <Button
+                    key={preset.label}
+                    type="button"
+                    variant={isSelected ? "default" : "outline"}
+                    size="xs"
+                    onClick={() => setSupply(preset.value)}
+                    className={cn(
+                      "rounded-lg px-2.5 font-mono text-xs cursor-pointer transition-all",
+                      isSelected && "shadow-xs ring-1 ring-primary/30"
+                    )}
+                  >
+                    {preset.label}
+                  </Button>
+                )
+              })}
             </div>
             {supplyError ? (
               <FieldError>{t(`errors.${supplyError}`)}</FieldError>
@@ -384,7 +391,7 @@ export function LaunchForm({
               <TooltipTrigger
                 type="button"
                 aria-label={t("immutableTitle")}
-                className="inline-flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer"
+                className="inline-flex size-6 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
               >
                 <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-primary" strokeWidth={1.75} />
               </TooltipTrigger>
