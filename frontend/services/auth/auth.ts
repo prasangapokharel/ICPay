@@ -14,7 +14,6 @@ import {
   isInternetIdentityReturn,
   clearInternetIdentityReturnHash,
 } from "@/lib/auth/transport"
-import { finishAttributeVerification, startAttributeRequest } from "@/services/auth/attributes"
 
 export type LoginOptions = {
   openIdProvider?: OpenIdProvider
@@ -74,20 +73,9 @@ export class PopupBlockedError extends Error {
 
 async function signInWithAttributes(
   authClient: AuthClient,
-  options?: LoginOptions,
+  _options?: LoginOptions,
 ): Promise<Identity | null> {
-  const identity = await authClient.signIn(signInOptions())
-
-  if (wantsRedirectTransport(options)) return identity
-
-  try {
-    const attributes = await startAttributeRequest(authClient, options?.openIdProvider)
-    await finishAttributeVerification(identity, attributes)
-  } catch (e) {
-    console.warn("II attribute verification skipped:", e)
-  }
-
-  return identity
+  return await authClient.signIn(signInOptions())
 }
 
 export async function resumeRedirectSignIn(): Promise<Identity | null> {
