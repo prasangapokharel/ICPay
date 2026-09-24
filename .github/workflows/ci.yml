@@ -29,7 +29,13 @@ jobs:
       - run: npm i -g ic-mops
       - name: Install moc toolchain
         working-directory: backend
-        run: mops toolchain use moc 1.13.0
+        run: |
+          for i in 1 2 3; do
+            mops toolchain use moc 1.13.0 && exit 0
+            echo "mops toolchain use failed (attempt $i), retrying..."
+            sleep 5
+          done
+          exit 1
       - name: Install mops packages
         working-directory: backend
         run: |
