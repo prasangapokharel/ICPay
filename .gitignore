@@ -1,4 +1,5 @@
 # Local tooling and operating-system files
+/.agents/
 .opencode/
 .cursor/
 .windsurf/
@@ -17,18 +18,8 @@ frontend/.agents/skills/vercel-react-best-practices
 # Only the README screenshots and the command reference are public. git will not
 # descend into an excluded directory, so this excludes the contents rather than
 # the directory itself -- otherwise the negations below could never match.
-docs/*
-!docs/demo/
-!docs/command/
-!docs/pkg/
-!docs/sdk/
-!docs/language/
-!docs/workflow.md
-!docs/security/
-!docs/phase/
-!docs/icpay/
-!docs/icFrame/
-!docs/presale/
+docs/
+
 # docs/bucket/ stays local (PDF exports, not committed)
 
 # Per-machine agent prefs (skills under .claude/skills/ are tracked)

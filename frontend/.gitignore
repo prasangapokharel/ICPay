@@ -40,3 +40,4 @@ next-env.d.ts
 app/(app)/profile/card/
 components/card/
 scripts/.next/
+
