@@ -77,7 +77,12 @@ function subscribe(fn: () => void) {
   }
 }
 
+let hasHydrated = false
+
 function getSnapshot(): Locale {
+  if (!hasHydrated) {
+    return DEFAULT_LOCALE
+  }
   const stored = localStorage.getItem(STORAGE_KEY)
   return isLocale(stored) ? stored : DEFAULT_LOCALE
 }
@@ -93,6 +98,9 @@ function subscribeTimeZone() {
 }
 
 function getTimeZoneSnapshot() {
+  if (!hasHydrated) {
+    return "UTC"
+  }
   return Intl.DateTimeFormat().resolvedOptions().timeZone
 }
 
@@ -111,6 +119,13 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const setLocale = useCallback((next: Locale) => {
     localStorage.setItem(STORAGE_KEY, next)
     listeners.forEach((fn) => fn())
+  }, [])
+
+  useEffect(() => {
+    if (!hasHydrated) {
+      hasHydrated = true
+      listeners.forEach((fn) => fn())
+    }
   }, [])
 
   useEffect(() => {

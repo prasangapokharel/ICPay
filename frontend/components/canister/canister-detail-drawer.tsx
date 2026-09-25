@@ -75,7 +75,7 @@ export function CanisterDetailDrawer({
       showSwipeHandle={isMobile}
       swipeDirection={isMobile ? "down" : "right"}
     >
-      <DrawerContent className="data-[swipe-axis=x]:sm:w-[560px] data-[swipe-axis=x]:sm:max-w-[560px] flex flex-col h-full max-h-[94dvh] sm:max-h-dvh">
+      <DrawerContent className="data-[swipe-axis=x]:sm:w-[560px] data-[swipe-axis=x]:sm:max-w-[560px]">
         <DrawerHeader className="border-b border-border/60 pb-3">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0 flex-1 text-left">
@@ -113,7 +113,7 @@ export function CanisterDetailDrawer({
           />
         </div>
 
-        <DrawerFooter className="border-t border-border/60 pt-2 pb-3">
+        <DrawerFooter className="border-t border-border/60 pt-2 pb-3 sm:hidden">
           <DrawerClose render={<Button variant="outline" className="w-full text-xs h-8">Close</Button>} />
         </DrawerFooter>
       </DrawerContent>

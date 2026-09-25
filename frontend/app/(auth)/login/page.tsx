@@ -82,6 +82,7 @@ export default function LoginPage() {
               width={32}
               height={32}
               priority
+              loading="eager"
               fetchPriority="high"
               sizes="2rem"
               className="size-8 shrink-0 object-contain"

@@ -109,32 +109,44 @@ export function TokenDetailDrawer({
         showSwipeHandle={isMobile}
         swipeDirection={isMobile ? "down" : "right"}
       >
-        <DrawerContent className="data-[swipe-axis=x]:sm:w-[440px] data-[swipe-axis=x]:sm:max-w-[440px] flex flex-col h-full max-h-[92dvh] sm:max-h-dvh">
+        <DrawerContent className="data-[swipe-axis=x]:sm:w-[460px] data-[swipe-axis=x]:sm:max-w-[460px]">
           <DrawerHeader className="border-b border-border/60 pb-3">
-            <div className="flex items-center gap-3">
-              <TokenLogo token={token} className="size-10 shrink-0" />
-              <div className="min-w-0 flex-1 text-left">
-                <DrawerTitle className="truncate text-base font-semibold">
-                  {token.name}
-                </DrawerTitle>
-                <DrawerDescription className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
-                  <span className="font-semibold text-foreground">{token.symbol}</span>
-                  <span>·</span>
-                  <button
-                    type="button"
-                    onClick={handleCopyLedger}
-                    className="inline-flex items-center gap-1 rounded hover:text-foreground cursor-pointer transition-colors"
-                    title={token.ledgerId}
-                  >
-                    <span>{token.ledgerId.slice(0, 5)}...{token.ledgerId.slice(-3)}</span>
-                    <HugeiconsIcon
-                      icon={copiedId ? Tick02Icon : Copy01Icon}
-                      className={cn("size-3", copiedId && "text-emerald-500")}
-                    />
-                  </button>
-                </DrawerDescription>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <TokenLogo token={token} className="size-10 shrink-0" />
+                <div className="min-w-0 text-left">
+                  <DrawerTitle className="truncate text-base font-semibold">
+                    {token.name}
+                  </DrawerTitle>
+                  <DrawerDescription className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground">{token.symbol}</span>
+                    <span>·</span>
+                    <button
+                      type="button"
+                      onClick={handleCopyLedger}
+                      className="inline-flex items-center gap-1 rounded hover:text-foreground cursor-pointer transition-colors"
+                      title={token.ledgerId}
+                    >
+                      <span>{token.ledgerId.slice(0, 5)}...{token.ledgerId.slice(-3)}</span>
+                      <HugeiconsIcon
+                        icon={copiedId ? Tick02Icon : Copy01Icon}
+                        className={cn("size-3", copiedId && "text-emerald-500")}
+                      />
+                    </button>
+                  </DrawerDescription>
+                </div>
               </div>
-              <TokenStandardsBadge ledgerId={token.ledgerId} />
+              <DrawerClose
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="size-8 rounded-full shrink-0 text-muted-foreground hover:text-foreground cursor-pointer"
+                  >
+                    ✕
+                  </Button>
+                }
+              />
             </div>
           </DrawerHeader>
 
@@ -152,6 +164,11 @@ export function TokenDetailDrawer({
                   decimals={token.decimals}
                   className="text-xs font-medium text-muted-foreground tabular-nums"
                 />
+              </div>
+
+              {/* Token Standards Badges */}
+              <div className="mt-3 flex justify-center">
+                <TokenStandardsBadge ledgerId={token.ledgerId} />
               </div>
 
               {/* Action Buttons */}
@@ -252,7 +269,7 @@ export function TokenDetailDrawer({
             </div>
           </div>
 
-          <DrawerFooter className="border-t border-border/60 pt-2 pb-3">
+          <DrawerFooter className="border-t border-border/60 pt-2 pb-3 sm:hidden">
             <DrawerClose render={<Button variant="outline" className="w-full text-xs h-8">Close</Button>} />
           </DrawerFooter>
         </DrawerContent>
