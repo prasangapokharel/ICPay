@@ -52,10 +52,15 @@
   --animate-shine: shine var(--duration) infinite linear;
 
   @keyframes shiny-text {
-    0%, 90%, 100% {
+
+    0%,
+    90%,
+    100% {
       background-position: calc(-100% - var(--shiny-width)) 0;
     }
-    30%, 60% {
+
+    30%,
+    60% {
       background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
@@ -64,9 +69,11 @@
     0% {
       background-position: 0% 0%;
     }
+
     50% {
       background-position: 100% 100%;
     }
+
     to {
       background-position: 0% 0%;
     }
@@ -77,6 +84,7 @@
   from {
     transform: translateX(0);
   }
+
   to {
     transform: translateX(-50%);
   }
@@ -121,9 +129,9 @@
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0% 0 0);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(13.979% 0.00002 271.152);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.459 0.187 3.815);
   --primary-foreground: oklch(0.971 0.014 343.198);

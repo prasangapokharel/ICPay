@@ -38,7 +38,40 @@ pub struct SwapResult {
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct TradeRecord {
+    pub timestamp_ns: u64,
+    pub token_in: String,
+    pub token_out: String,
+    pub amount_in: Nat,
+    pub amount_out: Nat,
+    pub service_fee: Nat,
+    pub tx_id: String,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub enum OrderStatus {
+    Open,
+    Filled,
+    Cancelled,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct LimitOrder {
+    pub id: u64,
+    pub user: Principal,
+    pub token_in: String,
+    pub token_out: String,
+    pub amount_in: Nat,
+    pub min_amount_out: Nat,
+    pub created_at_ns: u64,
+    pub filled_at_ns: Option<u64>,
+    pub status: OrderStatus,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct InitArgs {
     pub wallet_canister: Principal,
     pub treasury: Principal,
 }
+
+

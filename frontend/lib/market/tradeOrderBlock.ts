@@ -7,6 +7,7 @@ export type TradeOrderBlock =
   | "empty"
   | "need_transfer"
   | "insufficient"
+  | "min_icp"
   | "min_usd"
   | "no_liquidity"
   | "too_small"
@@ -18,7 +19,8 @@ export function tradeOrderBlock(opts: {
   tradingBal: bigint
   amountIn: bigint | null
   maxIn: bigint
-  aboveMinUsd: boolean
+  aboveMinIcp?: boolean
+  aboveMinUsd?: boolean
   hasQuote: boolean
   blocked?: boolean
   hasPool?: boolean
@@ -31,7 +33,8 @@ export function tradeOrderBlock(opts: {
   if (opts.tradingBal <= 0n) return "need_transfer"
   if (opts.amountIn == null || opts.amountIn <= 0n) return "empty"
   if (opts.amountIn > opts.maxIn) return "insufficient"
-  if (!opts.aboveMinUsd) return "min_usd"
+  if (opts.aboveMinIcp === false) return "min_icp"
+  if (opts.aboveMinUsd === false) return "min_usd"
   if (opts.impactBand === "block") return "no_liquidity"
   if (opts.quoteError === "liquidity" || opts.quoteError === "no_pool") return "no_liquidity"
   if (opts.quoteError === "too_small") return "too_small"
@@ -43,9 +46,9 @@ export function tradeOrderBlock(opts: {
 
 export function tradeOrderAlert(
   block: TradeOrderBlock,
-  minUsd: number,
+  minIcp: number = 0.05,
   quoteError?: TradeQuoteErrorKind | null
-): { key: string; values?: { usd: number }; destructive: boolean } | null {
+): { key: string; values?: { icp?: number; usd?: number }; destructive: boolean } | null {
   if (block === "blocked") return { key: "cannotTrade", destructive: false }
   if (block === "no_pool") return { key: "noPoolHint", destructive: false }
   if (block === "no_liquidity") return { key: "insufficientLiquidity", destructive: true }
@@ -54,9 +57,11 @@ export function tradeOrderAlert(
     if (quoteError === "unsupported") return { key: "unsupportedToken", destructive: true }
     return { key: "quoteUnavailable", destructive: true }
   }
-  if (block === "min_usd") return { key: "minTradeUsd", values: { usd: minUsd }, destructive: true }
+  if (block === "min_icp") return { key: "minTradeIcp", values: { icp: minIcp }, destructive: true }
+  if (block === "min_usd") return { key: "minTradeUsd", values: { usd: 1 }, destructive: true }
   return null
 }
+
 
 export function tradeImpactAlert(
   band: PriceImpactBand | null,

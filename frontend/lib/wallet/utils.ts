@@ -19,7 +19,7 @@ export function isHexAccountId(s: string): boolean {
 // forms Number() would otherwise accept -- "1e5", "0x10", "-1" -- which a person
 // typing an amount never means. Returns null for anything unparseable or <= 0.
 export function parseIcp(value: string): bigint | null {
-  const t = value.trim()
+  const t = value.trim().replace(/,/g, "")
   if (t === "" || t === "." || !/^\d*\.?\d*$/.test(t)) return null
   const n = Number(t)
   if (!Number.isFinite(n) || n <= 0) return null
@@ -33,7 +33,7 @@ export function parseIcp(value: string): bigint | null {
 // is exact at every decimals. Excess precision is rejected, not truncated:
 // silently dropping a digit changes the amount someone is sending.
 export function parseTokenAmount(value: string, decimals: number): bigint | null {
-  const t = value.trim()
+  const t = value.trim().replace(/,/g, "")
   if (t === "" || t === "." || !/^\d*\.?\d*$/.test(t)) return null
 
   const [whole, fraction = ""] = t.split(".")
@@ -100,7 +100,18 @@ export function formatTokenAmount(amount: bigint, decimals: number, maxFraction 
   const trimmed = fraction.slice(0, maxFraction).replace(/0+$/, "")
   // A nonzero balance too small to show at this precision reads as plain "0",
   // which looks like an empty wallet, so it gets a leading-approximation mark.
-  if (!trimmed) return whole === 0n && amount > 0n ? "<0.000001" : whole.toLocaleString()
+  if (!trimmed) {
+    if (whole === 0n && amount > 0n) {
+      const firstNonZero = fraction.search(/[1-9]/)
+      if (firstNonZero !== -1 && firstNonZero < decimals) {
+        const precision = Math.min(firstNonZero + 4, decimals)
+        const subTrimmed = fraction.slice(0, precision).replace(/0+$/, "")
+        if (subTrimmed) return `0.${subTrimmed}`
+      }
+      return "<0.000001"
+    }
+    return whole.toLocaleString()
+  }
   return `${whole.toLocaleString()}.${trimmed}`
 }
 

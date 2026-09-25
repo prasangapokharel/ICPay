@@ -15,7 +15,14 @@ import {
 } from "@/lib/trade/fees"
 import { patchHoldings } from "@/lib/wallet/holdingsCache"
 import { walletKey } from "@/lib/wallet/walletCache"
-import { fetchTradeQuoteChecked, getTradingBalance, type TradeQuoteOpts } from "@/services/trade/trade"
+import {
+  fetchTradeQuoteChecked,
+  getOpenLimitOrders,
+  getTradingBalance,
+  getUserLimitOrders,
+  getUserTrades,
+  type TradeQuoteOpts,
+} from "@/services/trade/trade"
 
 const keyFor = (identity: Identity | undefined, ...parts: string[]) =>
   identity ? ([...parts, identity.getPrincipal().toText()] as const) : null
@@ -219,12 +226,47 @@ export function useApplyInternalTransfer() {
   }
 }
 
+export function useRefreshTradeBalances() {
+  const { identity } = useAuth()
+  const { mutate } = useSWRConfig()
+  const refreshWallet = useRefreshWallet()
+
+  return async (specificLedgerId?: string) => {
+    if (!identity) return
+    const principal = identity.getPrincipal().toText()
+
+    await mutate(
+      (key) =>
+        Array.isArray(key) &&
+        (key[0] === "trade-balance" || key[0] === "trade-balances") &&
+        key[key.length - 1] === principal,
+      undefined,
+      { revalidate: true }
+    )
+
+    if (specificLedgerId) {
+      const k = tradeBalanceKey(identity, specificLedgerId)
+      if (k) await mutate(k, undefined, { revalidate: true })
+    }
+
+    await mutate(
+      (key) =>
+        Array.isArray(key) &&
+        (key.includes("open-limit-orders") || key.includes("user-limit-orders") || key.includes("user-trades")),
+      undefined,
+      { revalidate: true }
+    )
+
+    await refreshWallet()
+  }
+}
+
 export function useTradingBalance(ledgerId: string | null) {
   const { isAuthenticated, identity } = useAuth()
   const { data: tradeBal } = useSWR(
     identity && ledgerId ? tradeBalanceKey(identity, ledgerId) : null,
     () => getTradingBalance(identity, ledgerId!),
-    { revalidateOnFocus: false, dedupingInterval: 8_000 }
+    { revalidateOnFocus: false, dedupingInterval: 4_000 }
   )
   if (!isAuthenticated || !ledgerId) return null
   if (tradeBal === undefined) return null
@@ -237,4 +279,40 @@ export function useSpendableBalance(ledgerId: string | null) {
   const tradeBal = useTradingBalance(ledgerId)
   if (!isAuthenticated || !ledgerId) return null
   return mergeSpendable(token?.balance, tradeBal)
+}
+
+export function useUserLimitOrders(limit = 50) {
+  const { identity, isAuthenticated } = useAuth()
+  const { data, error, isLoading, mutate } = useSWR(
+    isAuthenticated && identity
+      ? keyFor(identity, "user-limit-orders", limit.toString())
+      : null,
+    () => getUserLimitOrders(identity, limit),
+    { revalidateOnFocus: true, refreshInterval: 8_000 }
+  )
+  return { orders: data ?? [], error, isLoading, refresh: mutate }
+}
+
+export function useOpenLimitOrders(onlyUser = true) {
+  const { identity, isAuthenticated } = useAuth()
+  const { data, error, isLoading, mutate } = useSWR(
+    isAuthenticated && identity
+      ? keyFor(identity, "open-limit-orders", onlyUser ? "user" : "all")
+      : null,
+    () => getOpenLimitOrders(identity, onlyUser),
+    { revalidateOnFocus: true, refreshInterval: 8_000 }
+  )
+  return { openOrders: data ?? [], error, isLoading, refresh: mutate }
+}
+
+export function useUserTrades(limit = 50) {
+  const { identity, isAuthenticated } = useAuth()
+  const { data, error, isLoading, mutate } = useSWR(
+    isAuthenticated && identity
+      ? keyFor(identity, "user-trades", limit.toString())
+      : null,
+    () => getUserTrades(identity, limit),
+    { revalidateOnFocus: true, refreshInterval: 12_000 }
+  )
+  return { trades: data ?? [], error, isLoading, refresh: mutate }
 }

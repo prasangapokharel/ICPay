@@ -70,15 +70,20 @@ jobs:
       - run: npm run typecheck
         working-directory: frontend
 
-      # Lint sits at a known baseline of 5 set-state-in-effect errors, so a bare
-      # eslint call would fail the build. This fails only if the count RISES.
-      - name: Lint (must not exceed baseline)
+      - name: Unit Tests
+        working-directory: frontend
+        run: npx tsx --test test/**/*.ts
+
+      - name: Lint (strict zero error policy)
         working-directory: frontend
         run: |
           count=$(npx eslint services hooks components app lib --ext .ts,.tsx -f json \
             | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).reduce((n,f)=>n+f.errorCount,0)))')
-          echo "eslint errors: $count (baseline 5)"
-          test "$count" -le 5
+          echo "eslint errors: $count (must be 0)"
+          test "$count" -eq 0
+
+      - name: Candid Contract Check
+        run: bash scripts/check-did-sync.sh
 
       - run: npm run build
         working-directory: frontend

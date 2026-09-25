@@ -14,7 +14,7 @@ fn full_quote_pipeline_matches_fee_rules() {
     let q = breakdown(amount_in, gross_out, pool_tier, ledger_fee);
     let min_out = default_min_out(q.net_out);
 
-    assert_eq!(svc, 100_000);
+    assert_eq!(svc, 150_000);
     assert_eq!(q.service_fee, svc);
     assert_eq!(q.swap_fee, swap_fee);
     assert_eq!(q.net_out, gross_out - ledger_fee * 2);

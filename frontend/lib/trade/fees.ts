@@ -1,18 +1,21 @@
-/** Mirrors icpay_trade SERVICE_FEE_BPS (0.1%) and MIN_SERVICE_FEE. */
-export const SERVICE_FEE_BPS = 10n
+/** Maker fee (0.05% = 5 bps) for Limit Orders. Taker fee (0.15% = 15 bps) for Market Swaps. */
+export const TAKER_FEE_BPS = 15n
+export const MAKER_FEE_BPS = 5n
+export const SERVICE_FEE_BPS = TAKER_FEE_BPS
 export const MIN_SERVICE_FEE = 1n
 
 export const DEFAULT_SLIPPAGE_BPS = 100n
 
-export function tradeServiceFee(amountIn: bigint): bigint {
+export function tradeServiceFee(amountIn: bigint, isMaker = false): bigint {
   if (amountIn === 0n) return 0n
-  const raw = (amountIn * SERVICE_FEE_BPS) / 10_000n
+  const bps = isMaker ? MAKER_FEE_BPS : TAKER_FEE_BPS
+  const raw = (amountIn * bps) / 10_000n
   return raw > MIN_SERVICE_FEE ? raw : MIN_SERVICE_FEE
 }
 
-export function amountAfterServiceFee(amountIn: bigint): bigint {
+export function amountAfterServiceFee(amountIn: bigint, isMaker = false): bigint {
   if (amountIn === 0n) return 0n
-  const fee = tradeServiceFee(amountIn)
+  const fee = tradeServiceFee(amountIn, isMaker)
   return amountIn > fee ? amountIn - fee : 0n
 }
 

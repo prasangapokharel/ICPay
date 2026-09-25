@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
 import {
   InputGroup,
   InputGroupAddon,
@@ -14,7 +14,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDown01Icon, ArrowUp01Icon, Search01Icon } from "@hugeicons/core-free-icons"
 import { TokenAvatar } from "./token-avatar"
 import { cn } from "@/lib/ui/utils"
-import { changeClass, formatPct, formatUsd, formatWatchlistPrice } from "@/lib/market/format"
+import { changeClass, formatPct, formatWatchlistPrice } from "@/lib/market/format"
 import { marketPageCount, sortDefaultsForChangeFilter } from "@/lib/market/overview"
 import { takeWatchlistRows, WATCHLIST_PAGE_SIZE } from "@/lib/market/watchlistPage"
 import { pinWatchlistRows } from "@/lib/market/customWatchlist"
@@ -167,14 +167,11 @@ export function TradeMarketWatchlist({
           />
         </div>
         <ul>
-            {loading && rows.length === 0
-              ? Array.from({ length: 8 }).map((_, i) => (
-                  <li key={i} className="flex items-center gap-2 px-1.5 py-1.5">
-                    <Skeleton className="size-6 rounded-full" />
-                    <Skeleton className="h-7 flex-1" />
-                  </li>
-                ))
-              : shown.map((row) => (
+            {loading && rows.length === 0 ? (
+              <li className="flex h-36 items-center justify-center p-4">
+                <Spinner className="size-5 text-muted-foreground/60" />
+              </li>
+            ) : shown.map((row) => (
                   <li key={row.baseLedgerId}>
                     <button
                       type="button"

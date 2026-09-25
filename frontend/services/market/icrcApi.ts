@@ -1,6 +1,9 @@
 const ICRC_API_BASE = "https://icrc-api.internetcomputer.org/api/v2"
 export const ICRC_MAX_PAGES = 10
-const ICRC_FETCH_TIMEOUT_MS = 15_000
+const ICRC_FETCH_TIMEOUT_MS = 10_000
+const CACHE_TTL_MS = 60_000
+
+let memoryTokensCache: { data: IcrcApiToken[]; expiresAt: number } | null = null
 
 export function isIcrcFetchAbort(err: unknown): boolean {
   if (!err || typeof err !== "object") return false
@@ -13,7 +16,10 @@ export function isIcrcFetchAbort(err: unknown): boolean {
 }
 
 async function fetchIcrc(url: string): Promise<Response> {
-  return fetch(url, { signal: AbortSignal.timeout(ICRC_FETCH_TIMEOUT_MS) })
+  return fetch(url, {
+    signal: AbortSignal.timeout(ICRC_FETCH_TIMEOUT_MS),
+    next: { revalidate: 120 },
+  })
 }
 
 export function shouldContinueIcrcPages(
@@ -101,9 +107,20 @@ export type FetchIcrcTokensOpts = {
   hasTransactions?: boolean
 }
 
-export async function fetchIcrcTokens(opts: FetchIcrcTokensOpts | number = 500): Promise<IcrcApiToken[]> {
+export async function fetchIcrcTokens(opts: FetchIcrcTokensOpts | number = 100): Promise<IcrcApiToken[]> {
   const options: FetchIcrcTokensOpts = typeof opts === "number" ? { limit: opts } : opts
-  const limit = options.limit ?? 500
+  const limit = options.limit ?? 100
+
+  // Serve from memory cache if available and not expired
+  if (
+    memoryTokensCache &&
+    Date.now() < memoryTokensCache.expiresAt &&
+    !options.sortBy &&
+    memoryTokensCache.data.length >= Math.min(limit, 100)
+  ) {
+    return memoryTokensCache.data.slice(0, limit)
+  }
+
   const allTokens: IcrcApiToken[] = []
   let cursor: string | null = null
 
@@ -111,8 +128,9 @@ export async function fetchIcrcTokens(opts: FetchIcrcTokensOpts | number = 500):
     let pageCount = 0
     while (allTokens.length < limit && pageCount < ICRC_MAX_PAGES) {
       pageCount++
+      const pageSize = Math.min(limit - allTokens.length, 100)
       const params = new URLSearchParams({
-        limit: "100",
+        limit: String(pageSize),
         network: "mainnet",
         has_transactions: String(options.hasTransactions ?? true),
       })
@@ -131,10 +149,17 @@ export async function fetchIcrcTokens(opts: FetchIcrcTokensOpts | number = 500):
       cursor = body.next_cursor
     }
 
+    if (!options.sortBy && allTokens.length > 0) {
+      memoryTokensCache = {
+        data: allTokens,
+        expiresAt: Date.now() + CACHE_TTL_MS,
+      }
+    }
+
     return allTokens.slice(0, limit)
   } catch (err) {
     if (!isIcrcFetchAbort(err)) console.error("[icrcApi] Failed to fetch tokens:", err)
-    return []
+    return memoryTokensCache?.data ? memoryTokensCache.data.slice(0, limit) : []
   }
 }
 

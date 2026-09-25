@@ -38,8 +38,8 @@ mod tests {
     #[test]
     fn net_out_subtracts_double_ledger_fee() {
         let q = breakdown(100_000_000, 50_000, 3000, 10);
-        assert_eq!(q.service_fee, 100_000);
-        assert_eq!(q.amount_after_fee, 99_900_000);
+        assert_eq!(q.service_fee, 150_000);
+        assert_eq!(q.amount_after_fee, 99_850_000);
         assert!(q.net_out < 50_000);
     }
 }

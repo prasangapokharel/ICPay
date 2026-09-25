@@ -34,6 +34,7 @@ const COMMANDS: Record<string, string> = {
   "frontend:deploy": "frontend/deploy.ts",
   "canister:list": "canister/list.ts",
   "canister:status": "canister/status.ts",
+  "canister:health": "canister/health.ts",
   "canister:id": "canister/id.ts",
   "canister:call": "canister/call.ts",
   "canister:info": "canister/info.ts",

@@ -76,14 +76,20 @@ function factsFromIcrcApi(token: IcrcApiToken): IcrcLedgerFacts {
   }
 }
 
+let terminalPairsCache: { data: TerminalPairRow[]; expiresAt: number } | null = null
+
 export async function fetchTerminalPairs(): Promise<TerminalPairRow[]> {
+  if (terminalPairsCache && Date.now() < terminalPairsCache.expiresAt) {
+    return terminalPairsCache.data
+  }
+
   const [tokens, listed] = await Promise.all([
-    fetchIcrcTokens({ limit: 500, hasTransactions: true }),
+    fetchIcrcTokens({ limit: 150, hasTransactions: true }),
     fetchIcpswapTokenAll(),
   ])
   const poolByLedger = new Map(listed.map((row) => [row.ledgerId, row]))
 
-  return tokens
+  const rows: TerminalPairRow[] = tokens
     .filter((t) => t.ledger_canister_id !== ICP_LEDGER_ID && t.ledger_canister_id !== ICPAY_LEDGER_ID)
     .map((t) => {
       const base = factsFromIcrcApi(t)
@@ -124,6 +130,9 @@ export async function fetchTerminalPairs(): Promise<TerminalPairRow[]> {
       if (volA !== volB) return volB - volA
       return a.base.symbol.localeCompare(b.base.symbol)
     })
+
+  terminalPairsCache = { data: rows, expiresAt: Date.now() + 60_000 }
+  return rows
 }
 
 export async function fetchTradePairSnapshot(

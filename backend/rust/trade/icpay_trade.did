@@ -1,11 +1,24 @@
 // [Account](https://github.com/dfinity/ICRC-1/blob/main/standards/ICRC-3/README.md#value)
 // representation of ledgers supporting the ICRC-1 standard.
 type Account = record { owner : principal; subaccount : opt blob };
-type ApiResult = variant { Ok : SwapResult; Err : text };
-type ApiResult_1 = variant { Ok : SwapQuoteResult; Err : text };
+type ApiResult = variant { Ok : nat; Err : text };
+type ApiResult_1 = variant { Ok : SwapResult; Err : text };
+type ApiResult_2 = variant { Ok : SwapQuoteResult; Err : text };
+type ApiResult_3 = variant { Ok : LimitOrder; Err : text };
 type InitArgs = record { wallet_canister : principal; treasury : principal };
+type LimitOrder = record {
+  id : nat64;
+  status : OrderStatus;
+  min_amount_out : nat;
+  filled_at_ns : opt nat64;
+  token_in : text;
+  user : principal;
+  created_at_ns : nat64;
+  amount_in : nat;
+  token_out : text;
+};
+type OrderStatus = variant { Open; Filled; Cancelled };
 type Result = variant { Ok; Err : text };
-type Result_1 = variant { Ok : nat; Err : text };
 type SwapQuoteResult = record {
   amount_after_fee : nat;
   service_fee : nat;
@@ -22,14 +35,30 @@ type SwapResult = record {
   amount_out : nat;
   amount_in : nat;
 };
+type TradeRecord = record {
+  service_fee : nat;
+  tx_id : text;
+  timestamp_ns : nat64;
+  token_in : text;
+  amount_out : nat;
+  amount_in : nat;
+  token_out : text;
+};
 service : (InitArgs) -> {
+  cancel_limit_order : (nat64) -> (ApiResult);
   credit_from_wallet : (principal, text, nat, nat64) -> (Result);
-  debit_to_wallet : (principal, text, nat, Account) -> (Result_1);
-  execute_swap : (text, text, nat, nat) -> (ApiResult);
+  debit_to_wallet : (principal, text, nat, Account) -> (ApiResult);
+  execute_swap : (text, text, nat, nat) -> (ApiResult_1);
   // Wallet-only: one ingress call from the user, swap runs inside wallet orchestration.
-  execute_swap_for_user : (principal, text, text, nat, nat) -> (ApiResult);
+  execute_swap_for_user : (principal, text, text, nat, nat) -> (ApiResult_1);
+  get_open_limit_orders : (opt principal) -> (vec LimitOrder) query;
   // M1: wire to factory + pool quote. Slippage default is exposed for clients until then.
-  get_swap_quote : (text, text, nat) -> (ApiResult_1) query;
+  get_swap_quote : (text, text, nat) -> (ApiResult_2) query;
   get_trading_balance : (principal, text) -> (nat) query;
+  get_treasury : () -> (principal) query;
+  get_user_limit_orders : (principal, opt nat64) -> (vec LimitOrder) query;
+  get_user_trades : (principal, opt nat64) -> (vec TradeRecord) query;
   health : () -> (text) query;
+  place_limit_order : (text, text, nat, nat) -> (ApiResult_3);
+  sweep_fees : (text) -> (ApiResult);
 }

@@ -6,8 +6,9 @@ use crate::icpswap::factory::resolve_pool;
 use crate::icpswap::pool::deposit_from_and_swap;
 use crate::icpswap::types::DepositAndSwapArgs;
 use crate::ledger::icrc::{approve_spender, transfer_fee};
-use crate::storage::balances;
+use crate::storage::{balances, trades::{self, StoredTrade}};
 use crate::types::{ApiResult, SwapResult};
+use crate::wallet::lock::UserTradeLock;
 
 pub async fn execute_swap_for(
     user: Principal,
@@ -16,6 +17,11 @@ pub async fn execute_swap_for(
     amount_in: Nat,
     amount_out_min: Nat,
 ) -> ApiResult<SwapResult> {
+    let _lock = match UserTradeLock::try_acquire(user) {
+        Ok(guard) => guard,
+        Err(e) => return ApiResult::err(e),
+    };
+
     let amount_in_u64: u64 = match amount_in.0.try_into() {
         Ok(v) => v,
         Err(_) => return ApiResult::err("amount_in too large"),
@@ -115,12 +121,28 @@ pub async fn execute_swap_for(
 
     balances::credit(user, &token_out, net_out);
 
-    let tx_ns = ic_cdk::api::time();
+    let tx_ns = crate::config::current_time_ns();
+    let tx_id = format!("trade-{tx_ns}");
+
+    trades::record_trade(
+        user,
+        StoredTrade {
+            timestamp_ns: tx_ns,
+            token_in: token_in.clone(),
+            token_out: token_out.clone(),
+            amount_in: amount_in_u64,
+            amount_out: net_out,
+            service_fee: svc,
+            tx_id: tx_id.clone(),
+        },
+    );
+
     ApiResult::ok(SwapResult {
         block_index: approve_block,
         amount_in: Nat::from(amount_in_u64),
         amount_out: Nat::from(net_out),
         service_fee: Nat::from(svc),
-        tx_id: format!("trade-{tx_ns}"),
+        tx_id,
     })
 }
+

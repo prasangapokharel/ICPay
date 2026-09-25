@@ -10,13 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
 import { TokenAvatar } from "@/components/public/market/trade/token-avatar"
 import { TradeInfoHint } from "@/components/public/market/trade/trade-info-hint"
 import { cn } from "@/lib/ui/utils"
 import { buildPortfolioAssetRows } from "@/lib/market/availableAssets"
 import { formatUsd, formatPct } from "@/lib/market/format"
-import { formatTokenAmount } from "@/lib/wallet/utils"
+import { formatTokenAmount, toPlainTokenAmount } from "@/lib/wallet/utils"
 import type { TerminalPairRow } from "@/services/market/tradePairSnapshot"
 
 export function TradeAvailableAssets({
@@ -48,10 +48,8 @@ export function TradeAvailableAssets({
       </CardHeader>
       <CardContent className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-0 pb-1">
         {loading ? (
-          <div className="space-y-1.5 px-3 py-2">
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-7 w-full rounded-md" />
-            ))}
+          <div className="flex h-32 items-center justify-center p-4">
+            <Spinner className="size-5 text-muted-foreground/60" />
           </div>
         ) : assets.length === 0 ? (
           <p className="px-3 py-6 text-center text-xs text-muted-foreground">
@@ -101,18 +99,21 @@ export function TradeAvailableAssets({
                           logoUrl={row.logoUrl}
                           className="size-5 shrink-0"
                         />
-                        <span className="truncate text-xs font-medium">{row.symbol}</span>
+                        <span className="truncate text-xs font-semibold">{row.symbol}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="px-3 py-1.5 text-right tabular-nums">
-                      <div className="text-xs font-medium">
-                        {formatTokenAmount(row.balance, row.decimals, 4)}
+                    <TableCell className="px-3 py-1.5 text-right font-mono tabular-nums">
+                      <div
+                        className="text-xs font-medium text-foreground"
+                        title={`${toPlainTokenAmount(row.balance, row.decimals)} ${row.symbol}`}
+                      >
+                        {formatTokenAmount(row.balance, row.decimals, 6)}
                       </div>
-                      <div className="text-[10px] text-muted-foreground/90">
+                      <div className="text-[10px] text-muted-foreground/80 font-mono">
                         {row.valueUsd != null ? formatUsd(row.valueUsd, 2) : "—"}
                       </div>
                     </TableCell>
-                    <TableCell className="px-3 py-1.5 text-right tabular-nums">
+                    <TableCell className="px-3 py-1.5 text-right font-mono tabular-nums">
                       <div
                         className={cn(
                           "text-xs font-medium",
@@ -126,7 +127,7 @@ export function TradeAvailableAssets({
                       </div>
                       <div
                         className={cn(
-                          "text-[10px]",
+                          "text-[10px] font-mono",
                           up && "text-emerald-500/90",
                           down && "text-destructive/90",
                           !up && !down && "text-muted-foreground/90"

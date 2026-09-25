@@ -7,7 +7,7 @@ import { Copy01Icon, LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-i
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
 import { copyText, formatTokenAmount } from "@/lib/wallet/utils"
 import { formatPct, formatUsd } from "@/lib/market/format"
 import { canisterDashboardUrl, looksLikeCanisterId } from "@/lib/market/canisterLink"
@@ -38,21 +38,15 @@ export function TradeInfoTabs({
   )
 
   if (!snapshot) {
-    const skeleton = (
-      <div className="flex h-full flex-col gap-3 p-4">
-        <Skeleton className="h-8 w-48 rounded-lg" />
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="flex justify-between">
-            <Skeleton className="h-3.5 w-24" />
-            <Skeleton className="h-3.5 w-32" />
-          </div>
-        ))}
+    const loader = (
+      <div className="flex h-full min-h-[220px] items-center justify-center p-6">
+        <Spinner className="size-6 text-muted-foreground/60" />
       </div>
     )
-    if (bare) return skeleton
+    if (bare) return loader
     return (
-      <Card size="sm" className="m-1 h-full gap-3 p-4">
-        {skeleton}
+      <Card size="sm" className="m-1 h-full flex items-center justify-center p-6">
+        {loader}
       </Card>
     )
   }
@@ -77,14 +71,9 @@ export function TradeInfoTabs({
 
       <TabsContent value="pool" className="mt-3 min-h-0 flex-1 space-y-2.5 overflow-y-auto px-4 pb-3 text-sm">
         {poolsLoading ? (
-          <>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex justify-between">
-                <Skeleton className="h-3.5 w-24" />
-                <Skeleton className="h-3.5 w-32" />
-              </div>
-            ))}
-          </>
+          <div className="flex h-40 items-center justify-center p-6">
+            <Spinner className="size-6 text-muted-foreground/60" />
+          </div>
         ) : mainPool ? (
           <>
             <InfoRow label={t("poolId")} value={mainPool.poolId} mono />

@@ -73,9 +73,8 @@ export class PopupBlockedError extends Error {
 
 async function signInWithAttributes(
   authClient: AuthClient,
-  _options?: LoginOptions,
 ): Promise<Identity | null> {
-return await authClient.signIn(signInOptions())
+  return await authClient.signIn(signInOptions())
 }
 
 export async function resumeRedirectSignIn(): Promise<Identity | null> {
@@ -84,7 +83,6 @@ export async function resumeRedirectSignIn(): Promise<Identity | null> {
     const options: LoginOptions = { transport: "redirect" }
     const identity = await signInWithAttributes(
       new AuthClient(clientOptions(options)),
-      options,
     )
     clearRedirectPending()
     clearInternetIdentityReturnHash()
@@ -100,7 +98,7 @@ export async function login(options?: LoginOptions): Promise<Identity | null> {
   if (wantsRedirectTransport(options)) markRedirectPending()
   const authClient = createClient(options)
 
-  return signInWithAttributes(authClient, options)
+  return signInWithAttributes(authClient)
     .then((identity) => {
       if (wantsRedirectTransport(options)) {
         clearRedirectPending()

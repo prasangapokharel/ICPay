@@ -5,7 +5,8 @@ function assert(cond: boolean, msg: string) {
 }
 
 assert(truncateHash("abc") === "abc", "short")
-assert(truncateHash("abcdefghijklmnop") === "abcdef…mnop", "mid")
+assert(truncateHash("abcdefghijklmnop") === "abc...nop", "mid")
+assert(truncateHash("242981729027") === "242...027", "number hash")
 assert(swapHashLabel("local-1") === null, "hide local")
 assert(swapHashLabel("trade-abc2024") === "trade-abc2024", "show trade id")
 assert(swapHashLabel("trade-abc2024", 0n) === "trade-abc2024", "ignore block 0")

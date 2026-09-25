@@ -34,8 +34,9 @@ import { BackToTop } from "@/components/ui/back-to-top"
 
 export function MarketOverview() {
   const t = useTranslations("marketOverview")
+  const [activeTab, setActiveTab] = useState("overview")
   const { rows, isLoading } = useTerminalWatchlist()
-  const { stats, isLoading: statsLoading } = useMarketStats()
+  const { stats, isLoading: statsLoading } = useMarketStats(activeTab === "trading")
   const { feed, isLoading: feedLoading } = useMarketFeed()
   const [query, setQuery] = useState("")
   const [change, setChange] = useState<MarketChangeFilter>("all")
@@ -88,7 +89,7 @@ export function MarketOverview() {
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t("subtitle")}</p>
       </header>
 
-      <Tabs defaultValue="overview" className="mb-10 gap-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-10 gap-4">
         <TabsList variant="line" className="w-full justify-start border-b">
           <TabsTrigger value="overview" className="px-1 pb-2.5 text-base data-active:text-foreground">
             {t("tabOverview")}

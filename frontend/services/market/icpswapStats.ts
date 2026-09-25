@@ -65,10 +65,19 @@ export function listedTokenFromAllRow(raw: unknown): IcpswapListedToken | null {
   }
 }
 
+let icpswapAllCache: { data: IcpswapListedToken[]; expiresAt: number } | null = null
+
 export async function fetchIcpswapTokenAll(): Promise<IcpswapListedToken[]> {
+  if (icpswapAllCache && Date.now() < icpswapAllCache.expiresAt) {
+    return icpswapAllCache.data
+  }
+
   try {
-    const res = await fetch("https://api.icpswap.com/info/token/all")
-    if (!res.ok) return []
+    const res = await fetch("https://api.icpswap.com/info/token/all", {
+      next: { revalidate: 120 },
+      signal: AbortSignal.timeout(10_000),
+    })
+    if (!res.ok) return icpswapAllCache?.data ?? []
     const body = await res.json()
     const rows = Array.isArray(body?.data) ? body.data : []
     const out: IcpswapListedToken[] = []
@@ -76,19 +85,32 @@ export async function fetchIcpswapTokenAll(): Promise<IcpswapListedToken[]> {
       const listed = listedTokenFromAllRow(row)
       if (listed) out.push(listed)
     }
+    icpswapAllCache = { data: out, expiresAt: Date.now() + 60_000 }
     return out
   } catch {
-    return []
+    return icpswapAllCache?.data ?? []
   }
 }
 
+const tokenStatsCache = new Map<string, { data: IcpswapTokenStats | null; expiresAt: number }>()
+
 export async function fetchIcpswapTokenStats(ledgerId: string): Promise<IcpswapTokenStats | null> {
+  const cached = tokenStatsCache.get(ledgerId)
+  if (cached && Date.now() < cached.expiresAt) {
+    return cached.data
+  }
+
   try {
-    const res = await fetch(`https://api.icpswap.com/info/token/${ledgerId}`)
-    if (!res.ok) return null
+    const res = await fetch(`https://api.icpswap.com/info/token/${ledgerId}`, {
+      next: { revalidate: 60 },
+      signal: AbortSignal.timeout(8_000),
+    })
+    if (!res.ok) return cached?.data ?? null
     const body = await res.json()
-    return statsFromIcpswapRow(body?.data as Record<string, unknown> | undefined)
+    const result = statsFromIcpswapRow(body?.data as Record<string, unknown> | undefined)
+    tokenStatsCache.set(ledgerId, { data: result, expiresAt: Date.now() + 60_000 })
+    return result
   } catch {
-    return null
+    return cached?.data ?? null
   }
 }

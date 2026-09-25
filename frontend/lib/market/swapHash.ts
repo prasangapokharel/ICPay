@@ -1,9 +1,9 @@
 import { explorerTxUrl } from "@/lib/wallet/utils"
 
-export function truncateHash(value: string): string {
+export function truncateHash(value: string, prefix = 3, suffix = 3): string {
   const text = value.trim()
-  if (text.length <= 12) return text
-  return `${text.slice(0, 6)}…${text.slice(-4)}`
+  if (text.length <= prefix + suffix + 3) return text
+  return `${text.slice(0, prefix)}...${text.slice(-suffix)}`
 }
 
 function usableBlock(blockIndex?: bigint | null): bigint | null {

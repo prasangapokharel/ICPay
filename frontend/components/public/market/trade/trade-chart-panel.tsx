@@ -17,7 +17,7 @@ import {
 } from "lightweight-charts"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/ui/utils"
 import { formatUsd } from "@/lib/market/format"
 import {
@@ -371,7 +371,7 @@ export function TradeChartPanel({
         {/* Loading overlay */}
         {waiting && (
           <div className="absolute inset-1 z-20 flex flex-col items-center justify-center rounded-xl bg-background/80 backdrop-blur-xs">
-            <Skeleton className="size-full rounded-xl" />
+            <Spinner className="size-8 text-muted-foreground/60" />
           </div>
         )}
 
@@ -395,8 +395,8 @@ export function TradeChartPanel({
             <div
               className="pointer-events-none absolute z-30 transition-[top,left] duration-75"
               style={{
-                left: `${Math.min(cursorDiff.x + 14, (containerRef.current?.clientWidth || 600) - 170)}px`,
-                top: `${Math.max(10, Math.min(cursorDiff.y - 14, (containerRef.current?.clientHeight || 300) - 32))}px`,
+                left: `${cursorDiff.x + 14}px`,
+                top: `${Math.max(10, cursorDiff.y - 14)}px`,
               }}
             >
               <Badge

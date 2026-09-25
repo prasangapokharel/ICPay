@@ -48,6 +48,7 @@ export async function fetchTradeQuote(
 
   const swapFee = poolSwapFee(quoteAmountIn, pool.fee)
   const netOut = netSwapOutput(grossOut, tokenOutFee)
+  if (netOut <= 0n) throw new Error("Amount too small after fees or insufficient pool liquidity")
 
   return {
     amountOut: netOut,
@@ -58,5 +59,6 @@ export async function fetchTradeQuote(
     poolId: pool.poolId,
   }
 }
+
 
 export { icpswapErrorMessage }

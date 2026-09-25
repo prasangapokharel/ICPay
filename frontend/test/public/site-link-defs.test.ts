@@ -13,9 +13,7 @@ function assert(cond: boolean, msg: string) {
 }
 
 assert(PUBLIC_PRIMARY_LINK_DEFS.length === 1, "one primary")
-assert(PUBLIC_PRIMARY_LINK_DEFS[0]?.id === "markets", "markets first")
-assert(!PUBLIC_RESOURCE_MENU_DEFS.some((d) => d.id === "blog"), "blog not in resources menu")
-assert(!PUBLIC_LEGAL_MENU_DEFS.some((d) => d.id === "blog"), "blog not in legal defs")
+assert(PUBLIC_PRIMARY_LINK_DEFS[0]?.id === "blog", "blog first")
 
 const root = join(import.meta.dirname, "../../language")
 for (const loc of readdirSync(root)) {

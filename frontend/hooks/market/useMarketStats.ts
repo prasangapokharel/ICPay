@@ -9,11 +9,16 @@ async function fetcher(): Promise<MarketStats> {
   return res.json()
 }
 
-export function useMarketStats() {
-  const { data, error, isLoading } = useSWR<MarketStats>("/api/market/stats", fetcher, {
-    refreshInterval: 60_000,
-    revalidateOnFocus: false,
-  })
+export function useMarketStats(enabled = true) {
+  const { data, error, isLoading } = useSWR<MarketStats>(
+    enabled ? "/api/market/stats" : null,
+    fetcher,
+    {
+      refreshInterval: 60_000,
+      dedupingInterval: 60_000,
+      revalidateOnFocus: false,
+    }
+  )
 
   return {
     stats: data ?? null,

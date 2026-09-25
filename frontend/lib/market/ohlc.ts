@@ -8,7 +8,8 @@ export function ohlcWindowQuery(window: ChartWindow): { level: IcpswapChartLevel
   return { level: "d1", limit: 90 }
 }
 
-export function ohlcTickIsTime(window: ChartWindow): boolean {
+export function ohlcTickIsTime(window?: ChartWindow): boolean {
+  void window
   return false
 }
 

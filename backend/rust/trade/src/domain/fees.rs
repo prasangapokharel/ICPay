@@ -1,13 +1,30 @@
-use crate::config::{MIN_SERVICE_FEE, SERVICE_FEE_BPS};
+use crate::config::{MAKER_FEE_BPS, MIN_SERVICE_FEE, TAKER_FEE_BPS};
 
-/// 0.1% service fee on amount_in (floor 1 base unit).
-pub fn service_fee(amount_in: u64) -> u64 {
-    let raw = amount_in.saturating_mul(SERVICE_FEE_BPS) / 10_000;
+/// Taker fee (0.15% = 15 bps) on amount_in (floor 1 base unit).
+pub fn taker_fee(amount_in: u64) -> u64 {
+    let raw = amount_in.saturating_mul(TAKER_FEE_BPS) / 10_000;
     raw.max(MIN_SERVICE_FEE)
+}
+
+/// Maker fee (0.05% = 5 bps) on amount_in (floor 1 base unit).
+#[allow(dead_code)]
+pub fn maker_fee(amount_in: u64) -> u64 {
+    let raw = amount_in.saturating_mul(MAKER_FEE_BPS) / 10_000;
+    raw.max(MIN_SERVICE_FEE)
+}
+
+/// Default service fee on amount_in (taker fee).
+pub fn service_fee(amount_in: u64) -> u64 {
+    taker_fee(amount_in)
 }
 
 pub fn amount_after_service_fee(amount_in: u64) -> u64 {
     amount_in.saturating_sub(service_fee(amount_in))
+}
+
+#[allow(dead_code)]
+pub fn amount_after_maker_fee(amount_in: u64) -> u64 {
+    amount_in.saturating_sub(maker_fee(amount_in))
 }
 
 /// ICRC-2 allowance ICPSwap needs before depositFromAndSwap (amount + ledger fee).
@@ -37,14 +54,17 @@ mod tests {
     use super::*;
 
     #[test]
-    fn service_fee_one_percent_of_bps() {
-        assert_eq!(service_fee(100_000_000), 100_000);
-        assert_eq!(service_fee(1), 1);
+    fn taker_and_maker_fee_rates() {
+        assert_eq!(taker_fee(100_000_000), 150_000); // 0.15% of 1 ICP = 0.0015 ICP
+        assert_eq!(maker_fee(100_000_000), 50_000);  // 0.05% of 1 ICP = 0.0005 ICP
+        assert_eq!(taker_fee(1), 1);
+        assert_eq!(maker_fee(1), 1);
     }
 
     #[test]
     fn amount_after_fee() {
-        assert_eq!(amount_after_service_fee(100_000_000), 99_900_000);
+        assert_eq!(amount_after_service_fee(100_000_000), 99_850_000);
+        assert_eq!(amount_after_maker_fee(100_000_000), 99_950_000);
     }
 
     #[test]
@@ -54,6 +74,6 @@ mod tests {
 
     #[test]
     fn icrc2_allowance_covers_swap_and_ledger_fee() {
-        assert_eq!(icrc2_allowance_amount(99_900_000, 10_000), 99_910_000);
+        assert_eq!(icrc2_allowance_amount(99_850_000, 10_000), 99_860_000);
     }
 }

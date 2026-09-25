@@ -9,13 +9,19 @@ use std::borrow::Cow;
 use std::cell::RefCell;
 
 pub mod balances;
+pub mod limit_orders;
 pub mod pools;
+pub mod trades;
 
 pub type Memory = VirtualMemory<DefaultMemoryImpl>;
 
 pub const CONFIG_MEM_ID: MemoryId = MemoryId::new(0);
 pub const POOLS_MEM_ID: MemoryId = MemoryId::new(1);
 pub const BALANCES_MEM_ID: MemoryId = MemoryId::new(2);
+pub const TRADES_MEM_ID: MemoryId = MemoryId::new(3);
+pub const LIMIT_ORDERS_MEM_ID: MemoryId = MemoryId::new(4);
+
+
 
 #[derive(CandidType, SerdeDeserialize, Serialize, Clone, Debug)]
 pub struct CanisterConfig {

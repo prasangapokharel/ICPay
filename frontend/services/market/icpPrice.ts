@@ -48,10 +48,21 @@ async function fetchCmcIcp(identity?: Identity): Promise<IcpPrice> {
   return { usd, change24h: 0, marketCap: 0, volume24h: 0 }
 }
 
+let icpPriceCache: { data: IcpPrice; expiresAt: number } | null = null
+
 export async function fetchIcpPrice(identity?: Identity): Promise<IcpPrice> {
+  if (icpPriceCache && Date.now() < icpPriceCache.expiresAt) {
+    return icpPriceCache.data
+  }
   try {
-    return await fetchCoinGeckoIcp()
+    const price = await fetchCoinGeckoIcp()
+    icpPriceCache = { data: price, expiresAt: Date.now() + 30_000 }
+    return price
   } catch {
-    return fetchCmcIcp(identity)
+    const fallback = await fetchCmcIcp(identity)
+    if (fallback.usd > 0) {
+      icpPriceCache = { data: fallback, expiresAt: Date.now() + 30_000 }
+    }
+    return fallback
   }
 }

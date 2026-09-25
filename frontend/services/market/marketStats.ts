@@ -1,4 +1,4 @@
-import { fetchIcrcTokens, icrcPercentChange24h, isIcrcFetchAbort } from "./icrcApi"
+import { fetchIcrcLedgersCount, fetchIcrcTokens, icrcPercentChange24h, isIcrcFetchAbort } from "./icrcApi"
 import { fetchIcpswapProtocolStats } from "./icpswapProtocol"
 
 export type MarketStats = {
@@ -10,11 +10,18 @@ export type MarketStats = {
   avgPriceChange24h: number
 }
 
+let statsCache: { data: MarketStats; expiresAt: number } | null = null
+
 export async function fetchMarketStats(): Promise<MarketStats> {
+  if (statsCache && Date.now() < statsCache.expiresAt) {
+    return statsCache.data
+  }
+
   try {
-    const [tokens, protocol] = await Promise.all([
-      fetchIcrcTokens({ limit: 500, hasTransactions: true }),
+    const [tokens, protocol, totalCount] = await Promise.all([
+      fetchIcrcTokens({ limit: 100, hasTransactions: true }),
       fetchIcpswapProtocolStats(),
+      fetchIcrcLedgersCount(),
     ])
 
     let totalVolume24h = 0
@@ -36,17 +43,20 @@ export async function fetchMarketStats(): Promise<MarketStats> {
       totalTransactions7d += token.total_transactions_count_over_past_7d || 0
     }
 
-    return {
+    const result: MarketStats = {
       totalVolume24h: protocol?.volumeUsd24h || totalVolume24h,
       totalTvl: protocol?.tvlUsd || 0,
-      totalTokens: tokens.length,
+      totalTokens: totalCount > 0 ? totalCount : tokens.length,
       totalHolders,
       totalTransactions7d,
       avgPriceChange24h: priceChangeCount > 0 ? priceChangeSum / priceChangeCount : 0,
     }
+
+    statsCache = { data: result, expiresAt: Date.now() + 60_000 }
+    return result
   } catch (err) {
     if (!isIcrcFetchAbort(err)) console.error("[marketStats] Failed to fetch stats:", err)
-    return {
+    return statsCache?.data ?? {
       totalVolume24h: 0,
       totalTvl: 0,
       totalTokens: 0,
