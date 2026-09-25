@@ -14,7 +14,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDown01Icon, ArrowUp01Icon, Search01Icon } from "@hugeicons/core-free-icons"
 import { TokenAvatar } from "./token-avatar"
 import { cn } from "@/lib/ui/utils"
-import { changeClass, formatPct, formatUsd } from "@/lib/market/format"
+import { changeClass, formatPct, formatUsd, formatWatchlistPrice } from "@/lib/market/format"
 import { marketPageCount, sortDefaultsForChangeFilter } from "@/lib/market/overview"
 import { takeWatchlistRows, WATCHLIST_PAGE_SIZE } from "@/lib/market/watchlistPage"
 import { pinWatchlistRows } from "@/lib/market/customWatchlist"
@@ -195,26 +195,26 @@ export function TradeMarketWatchlist({
                               ? (activeLogoUrl ?? row.base.logoUrl)
                               : row.base.logoUrl
                           }
-                          className="size-6"
+                          className="size-6 shrink-0"
                         />
-                        <span className="min-w-0 flex-1">
+                        <span className="min-w-0 flex-1 truncate">
                           <span className="flex items-center gap-1">
-                            <span className="font-semibold leading-none">{row.base.symbol}</span>
+                            <span className="truncate font-semibold leading-none">{row.base.symbol}</span>
                             <span className="text-[10px] text-muted-foreground">/ ICP</span>
                             {!row.hasPool && (
-                              <Badge variant="outline" className="h-3.5 px-1 text-[8px]">
+                              <Badge variant="outline" className="h-3.5 shrink-0 px-1 text-[8px]">
                                 {t("noPool")}
                               </Badge>
                             )}
                           </span>
                         </span>
                       </div>
-                      <span className="text-right text-[11px] tabular-nums leading-none">
-                        {formatUsd(row.stats?.priceUsd, 6, { compact: false })}
+                      <span className="text-right text-[11px] font-medium tabular-nums leading-none">
+                        {formatWatchlistPrice(row.stats?.priceUsd)}
                       </span>
                       <span
                         className={cn(
-                          "text-right text-[10px] tabular-nums",
+                          "text-right text-[10px] font-medium tabular-nums",
                           changeClass(row.stats?.priceChange24h)
                         )}
                       >

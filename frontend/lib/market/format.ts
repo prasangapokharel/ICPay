@@ -23,6 +23,26 @@ export function formatUsdFull(value: number | null | undefined): string {
   return `$${value.toFixed(decimals)}`
 }
 
+/** Clean price formatting for tight market lists and watchlists. */
+export function formatWatchlistPrice(value: number | null | undefined): string {
+  if (value === null || value === undefined || !Number.isFinite(value) || value <= 0) {
+    return "—"
+  }
+  if (value >= 1_000) {
+    return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  }
+  if (value >= 1) {
+    return `$${value.toFixed(2)}`
+  }
+  if (value >= 0.01) {
+    return `$${value.toFixed(4)}`
+  }
+  if (value >= 0.0001) {
+    return `$${value.toFixed(6)}`
+  }
+  return `$${value.toPrecision(4)}`
+}
+
 /** Compact headline + full decimals underneath when the number is long. */
 export function priceLayers(
   value: number | null | undefined,

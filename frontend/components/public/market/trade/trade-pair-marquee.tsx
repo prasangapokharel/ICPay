@@ -35,7 +35,7 @@ export function TradePairMarquee({
 
   return (
     <Card size="sm" className="group m-1 overflow-hidden py-0">
-      <div className="overflow-hidden">
+      <div className="overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_28px,black_calc(100%-28px),transparent)]">
         <div
           className={cn(
             "flex w-max items-stretch",
