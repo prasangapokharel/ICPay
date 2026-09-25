@@ -32,6 +32,24 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "bitget-wallet-exploit-lessons-self-custody",
+    title: "The $351M Bitget Exploit: How Centralized Backend Vulnerabilities Expose Crypto and Why On-Chain Verification Wins",
+    description:
+      "A breakdown of the $351.6M Bitget hot wallet security breach, how transaction spoofing bypassed backend authorization, and why on-chain smart contract canisters eliminate centralized honeypots.",
+    publishedAt: "2026-09-25",
+    readingMinutes: 7,
+    category: "Security",
+  },
+  {
+    slug: "drafting-a-tool-agnostic-guide-to-building-without-code",
+    title: "Drafting a Tool-Agnostic Guide to Building Without Code on the Internet Computer",
+    description:
+      "A platform-independent blueprint for creating and launching ICRC-1 tokens and on-chain assets without code. Originally published on Medium by @mrcupss.design.",
+    publishedAt: "2026-09-25",
+    readingMinutes: 5,
+    category: "Guides",
+  },
+  {
     slug: "how-to-create-icrc1-token-no-code",
     title: "How to Create and Launch an ICRC-1 Token on the Internet Computer (No-Code Guide)",
     description:
