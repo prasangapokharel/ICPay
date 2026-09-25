@@ -38,6 +38,7 @@
     "embla-carousel-react": "^8.6.0",
     "gray-matter": "^4.0.3",
     "input-otp": "^1.4.2",
+    "lightweight-charts": "^5.2.1",
     "lucide-react": "^1.28.0",
     "mermaid": "^11.17.0",
     "motion": "^13.4.2",

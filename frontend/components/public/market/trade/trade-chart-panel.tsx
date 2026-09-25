@@ -1,37 +1,91 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart"
+  createChart,
+  type IChartApi,
+  type ISeriesApi,
+  type CandlestickData,
+  type HistogramData,
+  type AreaData,
+  ColorType,
+  CrosshairMode,
+  CandlestickSeries,
+  HistogramSeries,
+  AreaSeries,
+} from "lightweight-charts"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/ui/utils"
 import { formatUsd } from "@/lib/market/format"
 import {
   CHART_INTERVALS,
-  ohlcTickIsTime,
-  ohlcYPad,
-  toChartRows,
   type ChartWindow,
+  type OhlcBar,
 } from "@/lib/market/ohlc"
 import { useIcpswapOhlc } from "@/hooks/market/useTradeTerminal"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
 
-const chartConfig = {
-  price: { label: "USD", color: "var(--chart-1)" },
-} satisfies ChartConfig
+interface CursorDiffInfo {
+  x: number
+  y: number
+  cursorPrice: number
+  basePrice: number
+  diff: number
+  diffPct: number
+  isAbove: boolean
+}
 
-function tickLabel(value: string, window: ChartWindow) {
-  const d = new Date(value)
-  return ohlcTickIsTime(window)
-    ? d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })
-    : d.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+type ChartType = "candle" | "area"
+
+function cleanOhlcData(bars: OhlcBar[]): {
+  candles: CandlestickData[]
+  volumes: HistogramData[]
+  areas: AreaData[]
+} {
+  const seen = new Set<number>()
+  const candles: CandlestickData[] = []
+  const volumes: HistogramData[] = []
+  const areas: AreaData[] = []
+
+  const sorted = [...bars].sort((a, b) => a.time - b.time)
+
+  for (const b of sorted) {
+    if (!Number.isFinite(b.close) || b.close <= 0) continue
+    const rawTime = b.time > 10_000_000_000 ? Math.floor(b.time / 1000) : Math.floor(b.time)
+    if (!Number.isFinite(rawTime) || rawTime <= 0) continue
+
+    if (seen.has(rawTime)) continue
+    seen.add(rawTime)
+
+    const open = Number.isFinite(b.open) && b.open > 0 ? b.open : b.close
+    const high = Number.isFinite(b.high) && b.high > 0 ? Math.max(b.high, open, b.close) : b.close
+    const low = Number.isFinite(b.low) && b.low > 0 ? Math.min(b.low, open, b.close) : b.close
+    const close = b.close
+    const isUp = close >= open
+
+    candles.push({
+      time: rawTime as CandlestickData["time"],
+      open,
+      high,
+      low,
+      close,
+    })
+
+    volumes.push({
+      time: rawTime as HistogramData["time"],
+      value: Number(b.volumeUsd || 0),
+      color: isUp ? "rgba(34, 197, 94, 0.4)" : "rgba(239, 68, 68, 0.4)",
+    })
+
+    areas.push({
+      time: rawTime as AreaData["time"],
+      value: close,
+    })
+  }
+
+  return { candles, volumes, areas }
 }
 
 export function TradeChartPanel({
@@ -45,96 +99,304 @@ export function TradeChartPanel({
 }) {
   const t = useTranslations("marketTrade")
   const [window, setWindow] = useState<ChartWindow>("1h")
+  const [chartType, setChartType] = useState<ChartType>("candle")
+  const [cursorDiff, setCursorDiff] = useState<CursorDiffInfo | null>(null)
+
   const { bars, isLoading } = useIcpswapOhlc(snapshot?.baseLedgerId, window)
-  const series = useMemo(() => toChartRows(bars), [bars])
-  const domain = useMemo(() => ohlcYPad(bars), [bars])
-  const waiting = (loading || isLoading) && series.length === 0
+
+  const { candles, volumes, areas } = useMemo(() => cleanOhlcData(bars), [bars])
+  const waiting = (loading || isLoading) && candles.length === 0
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const chartRef = useRef<IChartApi | null>(null)
+  const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null)
+  const areaSeriesRef = useRef<ISeriesApi<"Area"> | null>(null)
+  const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null)
+  const latestPriceRef = useRef<number>(0)
+
+  const latestCandle = candles[candles.length - 1] ?? null
+  const currentPrice = snapshot?.stats?.priceUsd ?? latestCandle?.close ?? 0
+
+  useEffect(() => {
+    if (currentPrice > 0) {
+      latestPriceRef.current = currentPrice
+    } else if (candles.length > 0) {
+      latestPriceRef.current = Number(candles[candles.length - 1].close)
+    }
+  }, [currentPrice, candles])
+
+  // Initialize Lightweight Chart instance
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    const initialHeight = containerRef.current.clientHeight || 340
+    const initialWidth = containerRef.current.clientWidth || 600
+
+    const chart = createChart(containerRef.current, {
+      layout: {
+        background: { type: ColorType.Solid, color: "transparent" },
+        textColor: "#94a3b8",
+        fontSize: 11,
+        fontFamily: "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      },
+      grid: {
+        vertLines: { color: "rgba(255, 255, 255, 0.04)" },
+        horzLines: { color: "rgba(255, 255, 255, 0.04)" },
+      },
+      crosshair: {
+        mode: CrosshairMode.Normal,
+        vertLine: {
+          color: "rgba(148, 163, 184, 0.4)",
+          width: 1,
+          style: 3,
+        },
+        horzLine: {
+          color: "rgba(148, 163, 184, 0.4)",
+          width: 1,
+          style: 3,
+        },
+      },
+      rightPriceScale: {
+        borderVisible: false,
+        scaleMargins: { top: 0.1, bottom: 0.22 },
+        autoScale: true,
+      },
+      timeScale: {
+        borderVisible: false,
+        timeVisible: true,
+        secondsVisible: false,
+      },
+      width: initialWidth,
+      height: initialHeight,
+    })
+
+    // Volume Subseries
+    const volumeSeries = chart.addSeries(HistogramSeries, {
+      priceFormat: { type: "volume" },
+      priceScaleId: "volume",
+    })
+    chart.priceScale("volume").applyOptions({
+      scaleMargins: { top: 0.82, bottom: 0 },
+    })
+
+    // Candlestick Series
+    const candleSeries = chart.addSeries(CandlestickSeries, {
+      upColor: "#22c55e",
+      downColor: "#ef4444",
+      borderUpColor: "#22c55e",
+      borderDownColor: "#ef4444",
+      wickUpColor: "#22c55e",
+      wickDownColor: "#ef4444",
+    })
+
+    // Area Series (Line Mode)
+    const areaSeries = chart.addSeries(AreaSeries, {
+      topColor: "rgba(34, 197, 94, 0.4)",
+      bottomColor: "rgba(34, 197, 94, 0.01)",
+      lineColor: "#22c55e",
+      lineWidth: 2,
+    })
+
+    chartRef.current = chart
+    candleSeriesRef.current = candleSeries
+    areaSeriesRef.current = areaSeries
+    volumeSeriesRef.current = volumeSeries
+
+    // Crosshair Delta Tooltip tracking
+    chart.subscribeCrosshairMove((param) => {
+      if (!param.point || !containerRef.current) {
+        setCursorDiff(null)
+        return
+      }
+
+      const activeSeries = chartType === "candle" ? candleSeriesRef.current : areaSeriesRef.current
+      if (!activeSeries) {
+        setCursorDiff(null)
+        return
+      }
+
+      const { x, y } = param.point
+      const container = containerRef.current
+      if (x < 0 || y < 0 || x > container.clientWidth || y > container.clientHeight) {
+        setCursorDiff(null)
+        return
+      }
+
+      const cursorPrice = activeSeries.coordinateToPrice(y)
+      const basePrice = latestPriceRef.current
+
+      if (cursorPrice === null || isNaN(cursorPrice) || cursorPrice <= 0 || basePrice <= 0) {
+        setCursorDiff(null)
+        return
+      }
+
+      const diff = cursorPrice - basePrice
+      const diffPct = (diff / basePrice) * 100
+
+      setCursorDiff({
+        x,
+        y,
+        cursorPrice,
+        basePrice,
+        diff,
+        diffPct,
+        isAbove: diff >= 0,
+      })
+    })
+
+    // Auto-Resize with ResizeObserver
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (entry && chartRef.current) {
+        const { width, height } = entry.contentRect
+        if (width > 0 && height > 0) {
+          chartRef.current.applyOptions({ width, height })
+        }
+      }
+    })
+    ro.observe(containerRef.current)
+
+    return () => {
+      ro.disconnect()
+      chart.remove()
+      chartRef.current = null
+      candleSeriesRef.current = null
+      areaSeriesRef.current = null
+      volumeSeriesRef.current = null
+    }
+  }, [chartType])
+
+  // Update Data and Series visibility
+  useEffect(() => {
+    if (!chartRef.current) return
+
+    if (candleSeriesRef.current) {
+      candleSeriesRef.current.applyOptions({
+        visible: chartType === "candle",
+      })
+      if (candles.length > 0) {
+        candleSeriesRef.current.setData(candles)
+      }
+    }
+
+    if (areaSeriesRef.current) {
+      areaSeriesRef.current.applyOptions({
+        visible: chartType === "area",
+      })
+      if (areas.length > 0) {
+        areaSeriesRef.current.setData(areas)
+      }
+    }
+
+    if (volumeSeriesRef.current && volumes.length > 0) {
+      volumeSeriesRef.current.setData(volumes)
+    }
+
+    if (candles.length > 0) {
+      requestAnimationFrame(() => {
+        if (chartRef.current) {
+          chartRef.current.timeScale().fitContent()
+        }
+      })
+    }
+  }, [candles, volumes, areas, chartType])
 
   const body = (
-    <div className="flex h-full min-h-[200px] flex-col">
+    <div className="flex h-full min-h-[220px] flex-col">
       <div
-        className="flex shrink-0 items-center gap-3 border-b px-4 py-2"
+        className="flex shrink-0 items-center justify-between border-b px-4 py-2"
         role="tablist"
         aria-label={t("tabChart")}
       >
-        {CHART_INTERVALS.map((id) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={window === id}
-            onClick={() => setWindow(id)}
-            className={cn(
-              "text-xs tabular-nums",
-              window === id
-                ? "font-semibold text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {id === "1h" ? t("interval1h") : id === "1d" ? t("interval1d") : t("interval1w")}
-          </button>
-        ))}
+        <div className="flex items-center gap-1">
+          {CHART_INTERVALS.map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={window === id}
+              onClick={() => setWindow(id)}
+              className={cn(
+                "rounded px-2 py-0.5 text-xs font-semibold tabular-nums transition-colors",
+                window === id
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              {id === "1h" ? t("interval1h") : id === "1d" ? t("interval1d") : t("interval1w")}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="flex items-center rounded-md border border-border/60 bg-muted/30 p-0.5 text-[10px] font-medium">
+            <button
+              type="button"
+              onClick={() => setChartType("candle")}
+              className={cn(
+                "rounded px-2 py-0.5 transition-colors",
+                chartType === "candle"
+                  ? "bg-background text-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Candles
+            </button>
+            <button
+              type="button"
+              onClick={() => setChartType("area")}
+              className={cn(
+                "rounded px-2 py-0.5 transition-colors",
+                chartType === "area"
+                  ? "bg-background text-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Line
+            </button>
+          </div>
+          {snapshot && (
+            <span className="hidden text-xs font-mono font-medium text-muted-foreground sm:inline-block">
+              {snapshot.base.symbol}/{snapshot.quote.symbol}
+            </span>
+          )}
+        </div>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col px-2 pt-3 pb-3">
+
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden p-1">
         {waiting ? (
-          <Skeleton className="h-full min-h-[200px] w-full rounded-xl" />
-        ) : series.length > 0 ? (
-          <ChartContainer config={chartConfig} className="aspect-auto h-full min-h-[200px] w-full flex-1">
-            <AreaChart data={series} margin={{ left: 0, right: 8, top: 8, bottom: 4 }}>
-              <defs>
-                <linearGradient id="fillTradePrice" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-price)" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="var(--color-price)" stopOpacity={0.08} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="date"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                minTickGap={32}
-                tickFormatter={(value) => tickLabel(value, window)}
-              />
-              <YAxis
-                domain={domain}
-                width={64}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(v) => formatUsd(Number(v), 4)}
-              />
-              <ChartTooltip
-                cursor={{
-                  stroke: "hsl(var(--muted-foreground))",
-                  strokeDasharray: "4 4",
-                  strokeWidth: 1,
+          <Skeleton className="size-full rounded-xl" />
+        ) : candles.length > 0 ? (
+          <div className="relative size-full">
+            <div
+              ref={containerRef}
+              className="absolute inset-0 size-full"
+              onMouseLeave={() => setCursorDiff(null)}
+            />
+
+            {/* Floating Crosshair Delta Badge */}
+            {cursorDiff && (
+              <div
+                className={cn(
+                  "pointer-events-none absolute z-30 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-mono font-bold shadow-xl border backdrop-blur-md transition-[top,left] duration-75",
+                  cursorDiff.isAbove
+                    ? "bg-background/90 text-emerald-400 border-emerald-500/40"
+                    : "bg-background/90 text-rose-400 border-rose-500/40"
+                )}
+                style={{
+                  left: `${Math.min(cursorDiff.x + 16, (containerRef.current?.clientWidth || 600) - 160)}px`,
+                  top: `${Math.max(10, Math.min(cursorDiff.y - 15, (containerRef.current?.clientHeight || 300) - 35))}px`,
                 }}
-                content={
-                  <ChartTooltipContent
-                    indicator="dot"
-                    labelFormatter={(value) =>
-                      new Date(String(value)).toLocaleString(undefined, {
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                      })
-                    }
-                  />
-                }
-              />
-              <Area
-                dataKey="price"
-                type="natural"
-                fill="url(#fillTradePrice)"
-                stroke="var(--color-price)"
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ChartContainer>
+              >
+                <span>{cursorDiff.isAbove ? "+" : ""}{cursorDiff.diffPct.toFixed(2)}%</span>
+                <span className="text-[10px] font-normal opacity-75">
+                  ({cursorDiff.isAbove ? "+" : "-"}{formatUsd(Math.abs(cursorDiff.diff), 4)})
+                </span>
+              </div>
+            )}
+          </div>
         ) : (
-          <div className="flex h-full min-h-[200px] flex-1 items-center justify-center text-sm text-muted-foreground">
+          <div className="flex size-full items-center justify-center text-sm text-muted-foreground">
             {t("noChartData")}
           </div>
         )}
