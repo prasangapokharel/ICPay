@@ -49,6 +49,8 @@
   --animate-live-speak-ring: live-speak-ring 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   --animate-market-marquee: market-marquee 48s linear infinite;
   --animate-shiny-text: shiny-text 8s infinite;
+  --animate-shine: shine var(--duration) infinite linear;
+
   @keyframes shiny-text {
     0%, 90%, 100% {
       background-position: calc(-100% - var(--shiny-width)) 0;
@@ -57,21 +59,19 @@
       background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
-}
-  30%, 60% {
-    background-position: calc(100% + var(--shiny-width)) 0;
+
+  @keyframes shine {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    to {
+      background-position: 0% 0%;
     }
   }
-  --animate-shine: shine var(--duration) infinite linear
-;
-  @keyframes shine {
-  0% {
-    background-position: 0% 0%;}
-  50% {
-    background-position: 100% 100%;}
-  to {
-    background-position: 0% 0%;}}}
->>>>>>> feat/sidebar-header-brand-logo
+}
 
 @keyframes market-marquee {
   from {
