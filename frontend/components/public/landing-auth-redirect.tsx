@@ -9,6 +9,13 @@ export function LandingAuthRedirect() {
   const router = useRouter()
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname
+      if (path !== "/" && path !== "/index.html") {
+        return
+      }
+    }
+
     if (!isLoading && isAuthenticated) {
       router.replace("/home")
     }

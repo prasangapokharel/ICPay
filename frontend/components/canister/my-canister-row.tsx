@@ -22,6 +22,7 @@ export function MyCanisterRow({
   status,
   statusLoading,
   onTopUp,
+  onView,
 }: {
   id: string
   label: string
@@ -31,6 +32,7 @@ export function MyCanisterRow({
   status?: MineRowStatus
   statusLoading?: boolean
   onTopUp: () => void
+  onView?: (id: string) => void
 }) {
   const t = useTranslations("myCanisters")
   const ts = useTranslations("canisterStatus")
@@ -99,6 +101,12 @@ export function MyCanisterRow({
                     variant="ghost"
                     size="icon-sm"
                     render={<Link href={`/canister/${id}`} />}
+                    onClick={(e) => {
+                      if (onView && !e.metaKey && !e.ctrlKey) {
+                        e.preventDefault()
+                        onView(id)
+                      }
+                    }}
                     aria-label={t("view")}
                   >
                     <HugeiconsIcon icon={ViewIcon} className="size-4" strokeWidth={1.75} />

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -34,6 +35,7 @@ import {
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { MyCanisterRow } from "@/components/canister/my-canister-row"
 import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
+import { CanisterDetailDrawer } from "@/components/canister/canister-detail-drawer"
 import { PremiumGateDialog } from "@/components/shared/premium-gate"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -98,6 +100,37 @@ export function MyCanistersPanel() {
   const [linkOpen, setLinkOpen] = useState(false)
   const [premiumGateOpen, setPremiumGateOpen] = useState(false)
   const [linkedOk, setLinkedOk] = useState<{ id: string; name: string } | null>(null)
+  const [activeCanisterId, setActiveCanisterId] = useState<string | null>(null)
+  const [closedDrawerManually, setClosedDrawerManually] = useState(false)
+
+  const searchParams = useSearchParams()
+  const canisterQuery = searchParams.get("id") ?? searchParams.get("canister")
+
+  const selectedCanisterId = useMemo(() => {
+    if (activeCanisterId) return activeCanisterId
+    if (!closedDrawerManually && canisterQuery) return canisterQuery
+    return null
+  }, [activeCanisterId, closedDrawerManually, canisterQuery])
+
+  const detailDrawerOpen = selectedCanisterId !== null
+
+  const handleOpenDetail = (id: string) => {
+    setClosedDrawerManually(false)
+    setActiveCanisterId(id)
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `/canister?id=${id}`)
+    }
+  }
+
+  const handleDetailDrawerChange = (open: boolean) => {
+    if (!open) {
+      setClosedDrawerManually(true)
+      setActiveCanisterId(null)
+      if (typeof window !== "undefined") {
+        window.history.replaceState(null, "", "/canister")
+      }
+    }
+  }
 
   const previews = useMineStatusMap(
     identity,
@@ -229,6 +262,7 @@ export function MyCanistersPanel() {
                         selected={false}
                         status={previews.map[id]}
                         statusLoading={previews.isLoading}
+                        onView={() => handleOpenDetail(id)}
                         onTopUp={() => {
                           setTopUpTarget(id)
                           setTopUpOpen(true)
@@ -366,6 +400,12 @@ export function MyCanistersPanel() {
           }}
         />
       )}
+
+      <CanisterDetailDrawer
+        open={detailDrawerOpen}
+        onOpenChange={handleDetailDrawerChange}
+        canisterId={selectedCanisterId}
+      />
     </AppPage>
   )
 }

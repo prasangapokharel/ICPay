@@ -53,12 +53,14 @@ export function TokenList({
   outside,
   existingLedgerIds = [],
   onAddCustom,
+  onSelectToken,
 }: {
   holdings: TokenHolding[]
   isLoading: boolean
   outside?: Map<string, bigint>
   existingLedgerIds?: string[]
   onAddCustom?: (ledgerId: string, meta: TokenMetadata) => void
+  onSelectToken?: (token: TokenHolding) => void
 }) {
   const t = useTranslations("wallet")
   const tPage = useTranslations("transactions")
@@ -180,6 +182,7 @@ export function TokenList({
             <TokenRow
               key={token.ledgerId}
               token={token}
+              onSelect={onSelectToken}
               outside={
                 (outside?.get(token.ledgerId) ?? 0n) > token.fee
                   ? outside!.get(token.ledgerId)!
@@ -218,19 +221,35 @@ export function TokenList({
   )
 }
 
-function TokenRow({ token, outside }: { token: TokenHolding; outside?: bigint }) {
+function TokenRow({
+  token,
+  outside,
+  onSelect,
+}: {
+  token: TokenHolding
+  outside?: bigint
+  onSelect?: (token: TokenHolding) => void
+}) {
   const t = useTranslations("wallet")
   const { identity } = useAuth()
   const href = `/token/${token.ledgerId}`
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (onSelect && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault()
+      onSelect(token)
+    }
+  }
 
   return (
     <Link
       href={href}
       prefetch
+      onClick={handleClick}
       onMouseEnter={() => prefetchAppRoute(href, identity)}
       onFocus={() => prefetchAppRoute(href, identity)}
       className={cn(
-        "flex items-center gap-3 rounded-xl px-2 py-3 transition-colors",
+        "flex items-center gap-3 rounded-xl px-2 py-3 transition-colors cursor-pointer",
         "hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
       )}
     >

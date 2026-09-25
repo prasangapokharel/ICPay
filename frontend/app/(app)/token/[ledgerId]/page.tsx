@@ -1,11 +1,15 @@
 import { TokenView } from "./token-view"
+import { ICP_LEDGER_ID, ICPAY_LEDGER_ID } from "@/services/tokens"
+import { CKBTC_LEDGER_ID, CKETH_LEDGER_ID } from "@/services/chainkey/constants"
 
-// output: "export" cannot prerender a route whose parameter values only exist at
-// runtime -- the ledger list is discovered from SNS-W in the browser -- so a
-// single shell is emitted here and the real id is read from the URL on the
-// client. vercel.json rewrites /token/<ledgerId> onto this shell.
 export function generateStaticParams() {
-  return [{ ledgerId: "token" }]
+  return [
+    { ledgerId: "token" },
+    { ledgerId: ICP_LEDGER_ID },
+    { ledgerId: ICPAY_LEDGER_ID },
+    { ledgerId: CKBTC_LEDGER_ID },
+    { ledgerId: CKETH_LEDGER_ID },
+  ]
 }
 
 export default function TokenPage() {

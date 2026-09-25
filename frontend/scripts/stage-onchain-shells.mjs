@@ -42,4 +42,14 @@ for (const { file, id } of shells) {
   writeFileSync(path, html)
 }
 
+const indexPath = join(outDir, "index.html")
+if (existsSync(indexPath)) {
+  let indexHtml = readFileSync(indexPath, "utf8")
+  if (!indexHtml.includes('/onchain-shell.js')) {
+    indexHtml = indexHtml.replace("<head>", `<head><script src="/onchain-shell.js"></script>`)
+    writeFileSync(indexPath, indexHtml)
+    console.log("Injected /onchain-shell.js into out/index.html head")
+  }
+}
+
 console.log(`Tagged ${shells.length} on-chain route shells in ${outDir}`)
