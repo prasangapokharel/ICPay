@@ -98,7 +98,7 @@ export function TradeChartPanel({
   bare?: boolean
 }) {
   const t = useTranslations("marketTrade")
-  const [window, setWindow] = useState<ChartWindow>("1h")
+  const [window, setWindow] = useState<ChartWindow>("1w")
   const [chartType, setChartType] = useState<ChartType>("candle")
   const [cursorDiff, setCursorDiff] = useState<CursorDiffInfo | null>(null)
 
@@ -325,13 +325,13 @@ export function TradeChartPanel({
               aria-selected={window === id}
               onClick={() => setWindow(id)}
               className={cn(
-                "rounded px-2 py-0.5 text-xs font-semibold tabular-nums transition-colors",
+                "rounded px-2.5 py-0.5 text-xs font-semibold tabular-nums transition-colors",
                 window === id
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
-              {id === "1h" ? t("interval1h") : id === "1d" ? t("interval1d") : t("interval1w")}
+              {id === "1d" ? t("interval1d") : t("interval1w")}
             </button>
           ))}
         </div>

@@ -1,16 +1,15 @@
-export type IcpswapChartLevel = "h1" | "d1"
-export type ChartWindow = "1h" | "1d" | "1w"
+export type IcpswapChartLevel = "d1"
+export type ChartWindow = "1d" | "1w"
 
-export const CHART_INTERVALS: ChartWindow[] = ["1h", "1d", "1w"]
+export const CHART_INTERVALS: ChartWindow[] = ["1d", "1w"]
 
 export function ohlcWindowQuery(window: ChartWindow): { level: IcpswapChartLevel; limit: number } {
-  if (window === "1d") return { level: "d1", limit: 90 }
   if (window === "1w") return { level: "d1", limit: 180 }
-  return { level: "h1", limit: 48 }
+  return { level: "d1", limit: 90 }
 }
 
 export function ohlcTickIsTime(window: ChartWindow): boolean {
-  return window === "1h"
+  return false
 }
 
 export type OhlcBar = {
