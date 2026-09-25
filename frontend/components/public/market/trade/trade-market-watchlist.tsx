@@ -118,7 +118,7 @@ export function TradeMarketWatchlist({
             onChange={(e) => setQuery(e.target.value)}
           />
         </InputGroup>
-        <div className="mt-2 flex gap-1">
+        <div className="mt-2 flex gap-1.5">
           {(["all", "up", "down"] as const).map((key) => (
             <button
               key={key}
@@ -132,10 +132,10 @@ export function TradeMarketWatchlist({
                 }
               }}
               className={cn(
-                "rounded-md px-2 py-0.5 text-[10px] font-medium",
+                "rounded-md px-2.5 py-1 text-[10px] font-medium transition-all",
                 changeFilter === key
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               {key === "all" ? t("filterAll") : key === "up" ? t("filterGainers") : t("filterLosers")}
@@ -180,10 +180,10 @@ export function TradeMarketWatchlist({
                       type="button"
                       onClick={() => onSelect(row.baseLedgerId)}
                       className={cn(
-                        "grid w-full grid-cols-[1fr_auto_auto] items-center gap-x-3 rounded-lg px-1.5 py-1.5 text-left text-xs transition-colors",
+                        "grid w-full grid-cols-[1fr_auto_auto] items-center gap-x-3 rounded-lg px-2 py-1.5 text-left text-xs transition-colors",
                         row.baseLedgerId === activeBaseId
-                          ? "bg-primary/10"
-                          : "hover:bg-muted/50"
+                          ? "bg-primary/15 font-medium text-foreground ring-1 ring-primary/30"
+                          : "hover:bg-muted/50 text-foreground/90"
                       )}
                     >
                       <div className="flex min-w-0 items-center gap-2">

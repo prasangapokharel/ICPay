@@ -415,15 +415,15 @@ export function TradeOrderPanel({
               </div>
             )}
 
-            <div className="overflow-hidden rounded-md border border-border/50 bg-background/60">
+            <div className="overflow-hidden rounded-lg border border-border/60 bg-background/80 transition-colors focus-within:border-ring">
               <div className="relative">
-                <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] text-muted-foreground">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
                   {t("amountLabel")}
                 </span>
                 <Input
                   inputMode="decimal"
                   placeholder="0.00"
-                  className="h-10 border-0 bg-transparent pl-16 pr-12 text-right text-sm tabular-nums shadow-none focus-visible:ring-0"
+                  className="h-10 border-0 bg-transparent pl-16 pr-14 text-right text-sm tabular-nums shadow-none focus-visible:ring-0"
                   value={amountText}
                   onChange={(e) => {
                     setAmountText(e.target.value)
@@ -432,14 +432,14 @@ export function TradeOrderPanel({
                     setImpactConfirmed(false)
                   }}
                 />
-                <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-muted-foreground">
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-foreground">
                   {paySymbol}
                 </span>
               </div>
               {hasAmount ? (
-                <div className="flex items-center justify-between border-t border-border/40 px-2.5 py-1.5 text-[11px]">
+                <div className="flex items-center justify-between border-t border-border/40 px-3 py-1.5 text-[11px]">
                   <span className="text-muted-foreground">{t("total")}</span>
-                  <span className="tabular-nums text-muted-foreground">
+                  <span className="tabular-nums font-medium text-foreground/80">
                     {payUsd !== null ? formatUsd(payUsd, 2) : "—"}
                   </span>
                 </div>
@@ -447,13 +447,13 @@ export function TradeOrderPanel({
             </div>
 
             {isAuthenticated && tradingBal !== null && tradingBal > 0n && (
-              <div className="grid grid-cols-4 gap-1">
+              <div className="grid grid-cols-4 gap-1.5">
                 {QUICK_FILLS.map((pct) => (
                   <button
                     key={pct}
                     type="button"
                     onClick={() => applyFill(pct)}
-                    className="rounded border border-border bg-muted/40 py-1 text-[10px] font-medium text-foreground/80 transition-colors hover:border-primary hover:bg-primary/20 hover:text-foreground"
+                    className="rounded-md border border-border/60 bg-muted/30 py-1 text-[10px] font-medium text-muted-foreground transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-foreground active:scale-95"
                   >
                     {pct === 100 ? t("max") : `${pct}%`}
                   </button>
@@ -505,15 +505,15 @@ export function TradeOrderPanel({
                 {t("signIn")}
               </Button>
             ) : (
-              <Button
-                variant="default"
-                size="lg"
-                className={cn(
-                  "w-full font-semibold text-white",
-                  isBuy
-                    ? "bg-emerald-500 hover:bg-emerald-500/90"
-                    : "bg-rose-500 hover:bg-rose-500/90"
-                )}
+                <Button
+                  variant="default"
+                  size="lg"
+                  className={cn(
+                    "w-full font-semibold text-white shadow-xs transition-all active:scale-[0.99]",
+                    isBuy
+                      ? "bg-emerald-600 hover:bg-emerald-500"
+                      : "bg-rose-600 hover:bg-rose-500"
+                  )}
                 disabled={!canOpenTransfer(block) && !canSubmitTrade(block)}
                 onClick={() => {
                   if (canOpenTransfer(block)) {

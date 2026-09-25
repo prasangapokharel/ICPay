@@ -153,7 +153,7 @@ export function MarketOverview() {
           </InputGroup>
         </div>
 
-        <div className="mb-3 flex gap-1">
+        <div className="mb-3 flex gap-1.5">
           {(["all", "up", "down"] as const).map((key) => (
             <button
               key={key}
@@ -168,8 +168,10 @@ export function MarketOverview() {
                 }
               }}
               className={cn(
-                "rounded-full px-3 py-1 text-xs font-medium",
-                change === key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"
+                "rounded-full px-3.5 py-1 text-xs font-medium transition-all",
+                change === key
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               {key === "all" ? t("filterAll") : key === "up" ? t("filterGainers") : t("filterLosers")}

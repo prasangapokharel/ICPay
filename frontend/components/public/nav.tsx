@@ -107,7 +107,7 @@ export function PublicNav() {
         isCharityCampaignPage && charityCampaignShellClass
       )}
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 md:h-16 md:px-6">
+      <div className="mx-auto flex h-14 w-full items-center justify-between gap-4 px-4 md:h-16 md:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-5 lg:gap-8">
           <Link
             href="/"
