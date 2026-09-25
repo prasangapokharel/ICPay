@@ -99,7 +99,7 @@ export function TradeChartPanel({
   bare?: boolean
 }) {
   const t = useTranslations("marketTrade")
-  const [window, setWindow] = useState<ChartWindow>("1w")
+  const [window, setWindow] = useState<ChartWindow>("1d")
   const [chartType, setChartType] = useState<ChartType>("candle")
   const [cursorDiff, setCursorDiff] = useState<CursorDiffInfo | null>(null)
 
@@ -364,11 +364,6 @@ export function TradeChartPanel({
               Line
             </button>
           </div>
-          {snapshot && (
-            <span className="hidden text-xs font-mono font-medium text-muted-foreground sm:inline-block">
-              {snapshot.base.symbol}/{snapshot.quote.symbol}
-            </span>
-          )}
         </div>
       </div>
 
