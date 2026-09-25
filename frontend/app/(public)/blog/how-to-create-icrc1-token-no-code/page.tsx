@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
+import { MediumArticleCard } from "@/components/blog/medium-article-card"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 
 const SLUG = "how-to-create-icrc1-token-no-code"
@@ -120,6 +121,9 @@ export default function CreateIcrc1TokenPage() {
           to deploy a production-ready ICRC-1 canister smart contract instantly using Internet Identity.
         </p>
       </div>
+
+      {/* Featured Medium Publication Card */}
+      <MediumArticleCard variant="featured" />
 
       <section className="space-y-4">
         <h2 className="text-xl font-bold tracking-tight text-foreground">
@@ -261,6 +265,9 @@ export default function CreateIcrc1TokenPage() {
           </li>
         </ul>
       </section>
+
+      {/* Medium Support CTA Card */}
+      <MediumArticleCard variant="cta" />
 
       <section className="space-y-3 border-t border-border/40 pt-6">
         <h2 className="text-base font-semibold tracking-tight text-foreground">Related Reading</h2>
