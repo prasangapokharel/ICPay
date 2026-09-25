@@ -125,7 +125,7 @@ export function TradeChartPanel({
     }
   }, [currentPrice, candles])
 
-  // Initialize Lightweight Chart instance
+  // 1. Initialize chart on mount
   useEffect(() => {
     if (!containerRef.current) return
 
@@ -146,12 +146,12 @@ export function TradeChartPanel({
       crosshair: {
         mode: CrosshairMode.Normal,
         vertLine: {
-          color: "rgba(148, 163, 184, 0.4)",
+          color: "rgba(148, 163, 184, 0.35)",
           width: 1,
           style: 3,
         },
         horzLine: {
-          color: "rgba(148, 163, 184, 0.4)",
+          color: "rgba(148, 163, 184, 0.35)",
           width: 1,
           style: 3,
         },
@@ -189,9 +189,9 @@ export function TradeChartPanel({
       wickDownColor: "#ef4444",
     })
 
-    // Area Series (Line Mode)
+    // Area Series
     const areaSeries = chart.addSeries(AreaSeries, {
-      topColor: "rgba(34, 197, 94, 0.4)",
+      topColor: "rgba(34, 197, 94, 0.35)",
       bottomColor: "rgba(34, 197, 94, 0.01)",
       lineColor: "#22c55e",
       lineWidth: 2,
@@ -202,14 +202,16 @@ export function TradeChartPanel({
     areaSeriesRef.current = areaSeries
     volumeSeriesRef.current = volumeSeries
 
-    // Crosshair Delta Tooltip tracking
+    // Crosshair Delta Tooltip
     chart.subscribeCrosshairMove((param) => {
       if (!param.point || !containerRef.current) {
         setCursorDiff(null)
         return
       }
 
-      const activeSeries = chartType === "candle" ? candleSeriesRef.current : areaSeriesRef.current
+      const activeSeries = candleSeriesRef.current?.options().visible
+        ? candleSeriesRef.current
+        : areaSeriesRef.current
       if (!activeSeries) {
         setCursorDiff(null)
         return
@@ -264,32 +266,38 @@ export function TradeChartPanel({
       areaSeriesRef.current = null
       volumeSeriesRef.current = null
     }
-  }, [chartType])
+  }, [])
 
-  // Update Data and Series visibility
+  // 2. Reactively feed data and toggle series visibility
   useEffect(() => {
     if (!chartRef.current) return
 
+    const isCandle = chartType === "candle"
+
     if (candleSeriesRef.current) {
-      candleSeriesRef.current.applyOptions({
-        visible: chartType === "candle",
-      })
-      if (candles.length > 0) {
+      candleSeriesRef.current.applyOptions({ visible: isCandle })
+      if (isCandle && candles.length > 0) {
         candleSeriesRef.current.setData(candles)
+      } else if (!isCandle) {
+        candleSeriesRef.current.setData([])
       }
     }
 
     if (areaSeriesRef.current) {
-      areaSeriesRef.current.applyOptions({
-        visible: chartType === "area",
-      })
-      if (areas.length > 0) {
+      areaSeriesRef.current.applyOptions({ visible: !isCandle })
+      if (!isCandle && areas.length > 0) {
         areaSeriesRef.current.setData(areas)
+      } else if (isCandle) {
+        areaSeriesRef.current.setData([])
       }
     }
 
-    if (volumeSeriesRef.current && volumes.length > 0) {
-      volumeSeriesRef.current.setData(volumes)
+    if (volumeSeriesRef.current) {
+      if (volumes.length > 0) {
+        volumeSeriesRef.current.setData(volumes)
+      } else {
+        volumeSeriesRef.current.setData([])
+      }
     }
 
     if (candles.length > 0) {
@@ -299,7 +307,7 @@ export function TradeChartPanel({
         }
       })
     }
-  }, [candles, volumes, areas, chartType])
+  }, [candles, volumes, areas, chartType, snapshot?.baseLedgerId])
 
   const body = (
     <div className="flex h-full min-h-[220px] flex-col">
@@ -364,42 +372,49 @@ export function TradeChartPanel({
       </div>
 
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden p-1">
-        {waiting ? (
-          <Skeleton className="size-full rounded-xl" />
-        ) : candles.length > 0 ? (
-          <div className="relative size-full">
-            <div
-              ref={containerRef}
-              className="absolute inset-0 size-full"
-              onMouseLeave={() => setCursorDiff(null)}
-            />
-
-            {/* Floating Crosshair Delta Badge */}
-            {cursorDiff && (
-              <div
-                className={cn(
-                  "pointer-events-none absolute z-30 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-mono font-bold shadow-xl border backdrop-blur-md transition-[top,left] duration-75",
-                  cursorDiff.isAbove
-                    ? "bg-background/90 text-emerald-400 border-emerald-500/40"
-                    : "bg-background/90 text-rose-400 border-rose-500/40"
-                )}
-                style={{
-                  left: `${Math.min(cursorDiff.x + 16, (containerRef.current?.clientWidth || 600) - 160)}px`,
-                  top: `${Math.max(10, Math.min(cursorDiff.y - 15, (containerRef.current?.clientHeight || 300) - 35))}px`,
-                }}
-              >
-                <span>{cursorDiff.isAbove ? "+" : ""}{cursorDiff.diffPct.toFixed(2)}%</span>
-                <span className="text-[10px] font-normal opacity-75">
-                  ({cursorDiff.isAbove ? "+" : "-"}{formatUsd(Math.abs(cursorDiff.diff), 4)})
-                </span>
-              </div>
-            )}
+        {/* Loading overlay */}
+        {waiting && (
+          <div className="absolute inset-1 z-20 flex flex-col items-center justify-center rounded-xl bg-background/80 backdrop-blur-xs">
+            <Skeleton className="size-full rounded-xl" />
           </div>
-        ) : (
-          <div className="flex size-full items-center justify-center text-sm text-muted-foreground">
+        )}
+
+        {/* Empty state overlay */}
+        {!waiting && candles.length === 0 && (
+          <div className="absolute inset-1 z-10 flex size-full items-center justify-center text-sm text-muted-foreground">
             {t("noChartData")}
           </div>
         )}
+
+        {/* Chart canvas is permanently mounted */}
+        <div className="relative size-full">
+          <div
+            ref={containerRef}
+            className="absolute inset-0 size-full"
+            onMouseLeave={() => setCursorDiff(null)}
+          />
+
+          {/* Floating Crosshair Delta Badge */}
+          {cursorDiff && (
+            <div
+              className={cn(
+                "pointer-events-none absolute z-30 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-mono font-bold shadow-xl border backdrop-blur-md transition-[top,left] duration-75",
+                cursorDiff.isAbove
+                  ? "bg-background/90 text-emerald-400 border-emerald-500/40"
+                  : "bg-background/90 text-rose-400 border-rose-500/40"
+              )}
+              style={{
+                left: `${Math.min(cursorDiff.x + 16, (containerRef.current?.clientWidth || 600) - 160)}px`,
+                top: `${Math.max(10, Math.min(cursorDiff.y - 15, (containerRef.current?.clientHeight || 300) - 35))}px`,
+              }}
+            >
+              <span>{cursorDiff.isAbove ? "+" : ""}{cursorDiff.diffPct.toFixed(2)}%</span>
+              <span className="text-[10px] font-normal opacity-75">
+                ({cursorDiff.isAbove ? "+" : "-"}{formatUsd(Math.abs(cursorDiff.diff), 4)})
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
