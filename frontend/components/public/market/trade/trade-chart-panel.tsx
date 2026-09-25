@@ -16,6 +16,7 @@ import {
   AreaSeries,
 } from "lightweight-charts"
 import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/ui/utils"
 import { formatUsd } from "@/lib/market/format"
@@ -397,21 +398,28 @@ export function TradeChartPanel({
           {/* Floating Crosshair Delta Badge */}
           {cursorDiff && (
             <div
-              className={cn(
-                "pointer-events-none absolute z-30 flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-mono font-bold shadow-xl border backdrop-blur-md transition-[top,left] duration-75",
-                cursorDiff.isAbove
-                  ? "bg-background/90 text-emerald-400 border-emerald-500/40"
-                  : "bg-background/90 text-rose-400 border-rose-500/40"
-              )}
+              className="pointer-events-none absolute z-30 transition-[top,left] duration-75"
               style={{
-                left: `${Math.min(cursorDiff.x + 16, (containerRef.current?.clientWidth || 600) - 160)}px`,
-                top: `${Math.max(10, Math.min(cursorDiff.y - 15, (containerRef.current?.clientHeight || 300) - 35))}px`,
+                left: `${Math.min(cursorDiff.x + 14, (containerRef.current?.clientWidth || 600) - 170)}px`,
+                top: `${Math.max(10, Math.min(cursorDiff.y - 14, (containerRef.current?.clientHeight || 300) - 32))}px`,
               }}
             >
-              <span>{cursorDiff.isAbove ? "+" : ""}{cursorDiff.diffPct.toFixed(2)}%</span>
-              <span className="text-[10px] font-normal opacity-75">
-                ({cursorDiff.isAbove ? "+" : "-"}{formatUsd(Math.abs(cursorDiff.diff), 4)})
-              </span>
+              <Badge
+                variant="outline"
+                className={cn(
+                  "gap-1.5 border-border/80 bg-background/95 px-2.5 py-1 text-xs font-mono font-medium shadow-md backdrop-blur-md",
+                  cursorDiff.isAbove ? "text-emerald-500" : "text-rose-500"
+                )}
+              >
+                <span>
+                  {cursorDiff.isAbove ? "+" : ""}
+                  {cursorDiff.diffPct.toFixed(2)}%
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  ({cursorDiff.isAbove ? "+" : "-"}
+                  {formatUsd(Math.abs(cursorDiff.diff), 4)})
+                </span>
+              </Badge>
             </div>
           )}
         </div>
