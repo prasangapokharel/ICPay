@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
 import { TokenAvatar } from "@/components/public/market/trade/token-avatar"
 import { InfoTooltip } from "@/components/ui/info-tooltip"
+import { ShineBorder } from "@/components/ui/shine-border"
 import { cn } from "@/lib/ui/utils"
 import { changeClass, formatPct, formatUsd, priceLayers, sanePriceRange } from "@/lib/market/format"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
@@ -63,8 +64,14 @@ export function TradePairToolbar({
   return (
     <Card
       size="sm"
-      className="m-1 flex flex-row flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3"
+      className="relative m-1 flex flex-row flex-wrap items-center gap-x-8 gap-y-3 overflow-hidden px-4 py-3"
     >
+      <ShineBorder
+        borderWidth={1}
+        duration={12}
+        shineColor={["#3b82f6", "#10b981", "#6366f1"]}
+        className="opacity-30 dark:opacity-40"
+      />
       <div className="flex items-center gap-3 pr-2">
         <TokenAvatar
           symbol={snapshot.base.symbol}

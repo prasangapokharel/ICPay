@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Card } from "@/components/ui/card"
+import { ShineBorder } from "@/components/ui/shine-border"
 import { TokenAvatar } from "@/components/public/market/trade/token-avatar"
 import { changeClass, formatPct, formatUsd } from "@/lib/market/format"
 import { marketRankImage } from "@/lib/market/rankBadge"
@@ -27,7 +28,7 @@ export function MarketHighlightCards({
   const siblings = listed.map((row) => ({ symbol: row.base.symbol, ledgerId: row.baseLedgerId }))
   return (
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-      <FeedCard title={t("trending")} rows={trending} siblings={siblings} moreHref="/market/ranking/volume" />
+      <FeedCard title={t("trending")} rows={trending} siblings={siblings} moreHref="/market/ranking/volume" featured />
       <FeedCard title={t("newListing")} rows={newListings} siblings={siblings} moreHref="/market/trade" />
       <FeedCard title={t("topGainer")} rows={gainers} siblings={siblings} moreHref="/market/ranking/gainer" />
       <PairCard title={t("topVolume")} rows={volume} siblings={siblings} moreHref="/market/ranking/volume" />
@@ -40,15 +41,25 @@ function FeedCard({
   rows,
   siblings,
   moreHref,
+  featured,
 }: {
   title: string
   rows: MarketFeedRow[]
   siblings: { symbol: string; ledgerId: string }[]
   moreHref: string
+  featured?: boolean
 }) {
   const t = useTranslations("marketOverview")
   return (
-    <Card size="sm" className="p-4">
+    <Card size="sm" className="relative overflow-hidden p-4">
+      {featured && (
+        <ShineBorder
+          borderWidth={1}
+          duration={14}
+          shineColor={["#3b82f6", "#8b5cf6", "#10b981"]}
+          className="opacity-35 dark:opacity-45"
+        />
+      )}
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold">{title}</h2>
         <Link href={moreHref} className="text-xs text-muted-foreground hover:text-foreground">
