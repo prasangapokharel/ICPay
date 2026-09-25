@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import type { Identity } from "@icp-sdk/core/agent"
 import { useTranslations } from "next-intl"
-import { ChevronDownIcon, ChevronsUpDownIcon } from "lucide-react"
+import { ArrowDown01Icon, ArrowUpDownIcon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import { Button } from "@/components/ui/button"
 import {
@@ -64,27 +65,23 @@ export function SubnetPicker({
   const [loaded, setLoaded] = useState(false)
   const [detailId, setDetailId] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!open || loaded || !identity) return
-    let cancelled = false
-    setLoading(true)
-    void fetchDefaultSubnets(identity)
-      .then((list) => {
-        if (!cancelled) {
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen)
+    if (nextOpen && !loaded && identity && !loading) {
+      setLoading(true)
+      void fetchDefaultSubnets(identity)
+        .then((list) => {
           setSubnets(list)
           setLoaded(true)
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setSubnets([])
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-    return () => {
-      cancelled = true
+        })
+        .catch(() => {
+          setSubnets([])
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     }
-  }, [open, loaded, identity])
+  }
 
   const selected = value === SUBNET_DEFAULT ? null : subnets.find((s) => s.id === value) ?? null
 
@@ -95,7 +92,7 @@ export function SubnetPicker({
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger
         render={
           <Button
@@ -107,7 +104,7 @@ export function SubnetPicker({
         }
       >
         <TriggerLabel value={value} selected={selected} defaultLabel={t("subnetDefault")} />
-        <ChevronDownIcon className="size-4 shrink-0 opacity-50" />
+        <HugeiconsIcon icon={ArrowDown01Icon} className="size-4 shrink-0 opacity-50" />
       </PopoverTrigger>
 
       <PopoverContent
@@ -187,7 +184,7 @@ export function SubnetPicker({
                         />
                       }
                     >
-                      <ChevronsUpDownIcon className="size-3.5" />
+                      <HugeiconsIcon icon={ArrowUpDownIcon} className="size-3.5" />
                     </CollapsibleTrigger>
                   </div>
 

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useMemo } from "react"
+import { useMemo, useSyncExternalStore } from "react"
 import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
@@ -14,12 +14,18 @@ export function PublicNavAuth() {
   const { identity, isAuthenticated, isLoading } = useAuth()
   const principal = identity?.getPrincipal().toText() ?? ""
 
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
+
   const avatarUri = useMemo(
     () => (principal ? createAvatar(adventurer, { seed: principal }).toDataUri() : ""),
     [principal]
   )
 
-  if (isLoading) {
+  if (!mounted || isLoading) {
     return <div className="size-9 shrink-0 animate-pulse rounded-full bg-muted" aria-hidden />
   }
 

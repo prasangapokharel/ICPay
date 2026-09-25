@@ -31,27 +31,36 @@ export function FeaturesSection() {
   const t = useTranslations("publicSite.icbucket.features")
 
   return (
-    <section className="border-b border-border/60 bg-background py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
-          </div>
+    <section className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
+        <div className="mb-12 space-y-3 text-center md:mb-14">
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent md:text-5xl">
+            {t("title")}
+          </h2>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{t("subtitle")}</p>
+        </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {FEATURE_IDS.map((id, index) => (
-              <Card key={id} className="border-muted transition-colors hover:border-primary/50">
-                <CardHeader className="space-y-3">
-                  <HugeiconsIcon icon={FEATURE_ICONS[index]} className="size-6 text-primary" />
-                  <CardTitle className="text-lg">{t(`items.${id}.title`)}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">{t(`items.${id}.description`)}</p>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {FEATURE_IDS.map((id, index) => (
+            <Card
+              key={id}
+              className="border-border/60 bg-card rounded-2xl shadow-sm"
+            >
+              <CardHeader className="gap-3">
+                <HugeiconsIcon
+                  icon={FEATURE_ICONS[index]}
+                  className="size-5 text-primary"
+                  strokeWidth={1.75}
+                />
+                <CardTitle className="text-base font-semibold text-foreground">
+                  {t(`items.${id}.title`)}
+                </CardTitle>
+                <CardContent className="p-0">
+                  <p className="text-sm leading-relaxed text-muted-foreground">{t(`items.${id}.description`)}</p>
                 </CardContent>
-              </Card>
-            ))}
-          </div>
+              </CardHeader>
+            </Card>
+          ))}
         </div>
       </div>
     </section>

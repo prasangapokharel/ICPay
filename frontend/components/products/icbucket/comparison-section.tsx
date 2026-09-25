@@ -25,67 +25,68 @@ const FEATURE_MATRIX = [
   { id: "9", icbucket: true, s3: true, gcs: true, azure: true },
 ] as const
 
+function CheckIcon() {
+  return <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-5 text-primary" strokeWidth={1.75} />
+}
+
+function XIcon() {
+  return <HugeiconsIcon icon={Cancel01Icon} className="size-5 text-muted-foreground/60" strokeWidth={1.75} />
+}
+
 export function ComparisonSection() {
   const t = useTranslations("publicSite.icbucket.comparison")
 
-  const CheckIcon = () => (
-    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-5 text-primary" />
-  )
-  const XIcon = () => (
-    <HugeiconsIcon icon={Cancel01Icon} className="size-5 text-muted-foreground" />
-  )
-
   return (
-    <section className="border-b border-border/60 bg-background py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
-          </div>
+    <section className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
+        <div className="mb-12 space-y-3 text-center md:mb-14">
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent md:text-5xl">
+            {t("title")}
+          </h2>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{t("subtitle")}</p>
+        </div>
 
-          <div className="overflow-x-auto rounded-lg border bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/50">
-                  <TableHead className="w-[250px] text-center font-bold">{t("featureColumn")}</TableHead>
-                  <TableHead className="text-center font-bold">{t("icbucketColumn")}</TableHead>
-                  <TableHead className="text-center font-bold">{t("s3Column")}</TableHead>
-                  <TableHead className="text-center font-bold">{t("gcsColumn")}</TableHead>
-                  <TableHead className="text-center font-bold">{t("azureColumn")}</TableHead>
+        <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card shadow-sm">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/50 hover:bg-muted/50 border-b border-border/60">
+                <TableHead className="w-[280px] text-left px-5 py-4 font-bold text-foreground">{t("featureColumn")}</TableHead>
+                <TableHead className="text-center font-bold text-foreground">{t("icbucketColumn")}</TableHead>
+                <TableHead className="text-center font-bold text-muted-foreground">{t("s3Column")}</TableHead>
+                <TableHead className="text-center font-bold text-muted-foreground">{t("gcsColumn")}</TableHead>
+                <TableHead className="text-center font-bold text-muted-foreground">{t("azureColumn")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {FEATURE_MATRIX.map((feature) => (
+                <TableRow key={feature.id} className="border-b border-border/60 last:border-b-0 hover:bg-muted/20">
+                  <TableCell className="text-left px-5 py-3.5 font-medium text-foreground">
+                    {t(`features.${feature.id}`)}
+                  </TableCell>
+                  <TableCell className="text-center py-3.5 bg-primary/5">
+                    <div className="flex justify-center">
+                      {feature.icbucket ? <CheckIcon /> : <XIcon />}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center py-3.5">
+                    <div className="flex justify-center">
+                      {feature.s3 ? <CheckIcon /> : <XIcon />}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center py-3.5">
+                    <div className="flex justify-center">
+                      {feature.gcs ? <CheckIcon /> : <XIcon />}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center py-3.5">
+                    <div className="flex justify-center">
+                      {feature.azure ? <CheckIcon /> : <XIcon />}
+                    </div>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {FEATURE_MATRIX.map((feature) => (
-                  <TableRow key={feature.id}>
-                    <TableCell className="text-center font-medium">
-                      {t(`features.${feature.id}`)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex justify-center">
-                        {feature.icbucket ? <CheckIcon /> : <XIcon />}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex justify-center">
-                        {feature.s3 ? <CheckIcon /> : <XIcon />}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex justify-center">
-                        {feature.gcs ? <CheckIcon /> : <XIcon />}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex justify-center">
-                        {feature.azure ? <CheckIcon /> : <XIcon />}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </section>

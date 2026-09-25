@@ -35,7 +35,7 @@ export function LandingTrust() {
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
             {t("eyebrow")}
           </p>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight bg-linear-to-b from-foreground via-foreground/90 to-foreground/50 bg-clip-text text-transparent md:text-4xl">
             {t("title")}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
@@ -46,15 +46,12 @@ export function LandingTrust() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {trustLinks.map((item) => {
             const content = (
-              <Card className="h-full border-border/60 bg-card shadow-sm transition-shadow hover:shadow-md">
+              <Card className="h-full border-border/60 bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-border">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base font-semibold leading-snug">{item.label}</CardTitle>
+                  <CardTitle className="text-base font-semibold leading-snug transition-colors group-hover:text-primary">{item.label}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-                  <span className="mt-3 inline-flex text-sm font-semibold text-primary">
-                    {item.external ? t("visit") : t("readMore")}
-                  </span>
                 </CardContent>
               </Card>
             )

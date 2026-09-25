@@ -17,7 +17,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { CanisterIdField } from "@/components/canister/canister-id-field"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -140,7 +145,7 @@ export function MyCanisterTransferDialog({
             </div>
           </DialogHeader>
 
-          <div className="space-y-4 py-2">
+          <FieldGroup className="gap-4 py-2">
             <p className="text-xs text-muted-foreground">
               {t("transferFromContext")}:{" "}
               <span className="break-all font-mono text-foreground/80">{fromCanisterId}</span>
@@ -155,9 +160,9 @@ export function MyCanisterTransferDialog({
               error={toError}
             />
 
-            <div className="space-y-2">
+            <Field className="gap-2">
               <div className="flex items-end justify-between gap-2">
-                <Label htmlFor="transfer-cycles">{t("transferAmount")}</Label>
+                <FieldLabel htmlFor="transfer-cycles">{t("transferAmount")}</FieldLabel>
                 {ledgerBal != null && (
                   <p className="text-xs tabular-nums text-muted-foreground">
                     {tw("availableCycles", {
@@ -191,12 +196,12 @@ export function MyCanisterTransferDialog({
                   {tw("max")}
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">{tw("cyclesHint")}</p>
+              <FieldDescription className="text-xs text-muted-foreground">{tw("cyclesHint")}</FieldDescription>
               {amountError ? (
-                <p className="text-xs font-medium text-destructive">{amountError}</p>
+                <FieldDescription className="text-xs font-medium text-destructive">{amountError}</FieldDescription>
               ) : null}
               {!loadingBal && ledgerBal === 0n ? (
-                <p className="text-xs text-muted-foreground">
+                <FieldDescription className="text-xs text-muted-foreground">
                   {t("transferLedgerEmpty")}{" "}
                   <Link
                     href="/canister/cycles"
@@ -204,12 +209,12 @@ export function MyCanisterTransferDialog({
                   >
                     {t("transferMintLink")}
                   </Link>
-                </p>
+                </FieldDescription>
               ) : null}
-            </div>
-          </div>
+            </Field>
+          </FieldGroup>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="mt-2 gap-2 sm:gap-2">
             <DialogClose
               render={
                 <Button variant="outline" disabled={submitting}>

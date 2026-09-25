@@ -482,6 +482,7 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
 
   return IDL.Service({
     health: IDL.Func([], [IDL.Text], ["query"]),
+    get_cycles: IDL.Func([], [IDL.Nat], ["query"]),
     login: IDL.Func([], [AuthResult], []),
     _internet_identity_sign_in_start: IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
     _internet_identity_sign_in_finish: IDL.Func(

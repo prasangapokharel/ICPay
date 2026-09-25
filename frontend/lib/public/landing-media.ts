@@ -18,11 +18,12 @@ export const LANDING_MEDIA = {
   heroMockup: PAGE_IMAGES.landing.heroPhone,
   heroDesktop: PAGE_IMAGES.landing.heroDesktop,
   laptopMockup: PAGE_IMAGES.landing.laptopMockup,
-  bucketMockup: PAGE_IMAGES.icbucket.heroPhone,
+  bucketMockup: PAGE_IMAGES.icbucket.hero,
   paymentFlow: PAGE_IMAGES.landing.paymentFlow,
   heroBanner: cloudinaryImage(HERO_BANNER_RAW, CLOUDINARY_TRANSFORMS.productCard),
   icbucket: cloudinaryImage(ICBUCKET_RAW, CLOUDINARY_TRANSFORMS.productCard),
   icfalcon: cloudinaryImage(ICFALCON_RAW, CLOUDINARY_TRANSFORMS.productCard),
   icbucketIntegrateVideo: cloudinaryVideo(ICBUCKET_VIDEO_RAW, CLOUDINARY_TRANSFORMS.video),
+  icbucketIntegratePoster: PAGE_IMAGES.icbucket.videoPoster,
   ogImage: cloudinaryImage(HERO_BANNER_RAW, CLOUDINARY_TRANSFORMS.og),
 } as const

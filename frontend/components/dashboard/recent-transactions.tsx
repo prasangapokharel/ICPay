@@ -10,7 +10,7 @@ import { InboxIcon, Message01Icon, ArrowRight01Icon } from "@hugeicons/core-free
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { PremiumBadge } from "@/components/verifed/premium-badge"
+import { PremiumBadge } from "@/components/verified/premium-badge"
 import type { TransactionPublic } from "@/services/types"
 import {
   formatTokenAmount,

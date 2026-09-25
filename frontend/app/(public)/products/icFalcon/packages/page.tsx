@@ -3,133 +3,70 @@
 import { useState, useEffect } from "react"
 import { PackagesHero } from "@/components/products/icfalcon/packages-hero"
 import { PackagesGrid } from "@/components/products/icfalcon/packages-grid"
-import { Button } from "@/components/ui/button"
-
-const PACKAGES_PER_PAGE = 12
-
-type FalconPackage = {
-  slug: string
-  version: string
-  description: string
-  path: string
-  import: string
-}
+import { fetchFalconPackages, type FalconPackage } from "@/services/products/falcon/packages"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function PackagesPage() {
   const [packages, setPackages] = useState<FalconPackage[]>([])
   const [loading, setLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const response = await fetch(
-          "https://raw.githubusercontent.com/prasangapokharel/icp-hub/refs/heads/master/index.json"
-        )
-        const data: { packages: Record<string, { version: string; description: string; path: string; import: string }> } = await response.json()
-        
-        const packagesArray = Object.entries(data.packages).map(([slug, info]) => ({
-          slug,
-          ...info,
-        }))
-        
-        setPackages(packagesArray)
-      } catch (error) {
+    let cancelled = false
+    fetchFalconPackages()
+      .then((data) => {
+        if (!cancelled) setPackages(data)
+      })
+      .catch((error) => {
         console.error("Failed to fetch packages:", error)
-      } finally {
-        setLoading(false)
-      }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
     }
-
-    fetchPackages()
   }, [])
 
-  const totalPages = Math.ceil(packages.length / PACKAGES_PER_PAGE)
-  const startIndex = (currentPage - 1) * PACKAGES_PER_PAGE
-  const endIndex = startIndex + PACKAGES_PER_PAGE
-  const currentPackages = packages.slice(startIndex, endIndex)
-
-  const goToPage = (page: number) => {
-    setCurrentPage(page)
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    }
-  }
-
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <PackagesHero />
-      
+
       <div className="container mx-auto px-4 py-12">
-        <div className="mx-auto max-w-6xl space-y-6">
+        <div className="mx-auto max-w-6xl">
           {loading ? (
-            <div className="py-12 text-center text-muted-foreground">Loading packages...</div>
-          ) : (
-            <>
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-muted-foreground">
-                  Showing {startIndex + 1}-{Math.min(endIndex, packages.length)} of {packages.length} packages
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Page {currentPage} of {totalPages}
-                </p>
+            <div className="space-y-6">
+              {/* Skeleton controls */}
+              <div className="space-y-4 rounded-2xl border border-border/60 bg-card/60 p-6">
+                <Skeleton className="h-10 w-full rounded-xl" />
+                <div className="flex flex-wrap gap-2">
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <Skeleton key={i} className="h-8 w-24 rounded-full" />
+                  ))}
+                </div>
               </div>
 
-              <PackagesGrid packages={currentPackages} />
-
-              {totalPages > 1 && (
-                <div className="flex flex-wrap items-center justify-center gap-2 pt-8">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => goToPage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="gap-1"
+              {/* Skeleton cards */}
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex flex-col justify-between rounded-2xl border border-border/60 bg-card/60 p-5 space-y-4"
                   >
-                    Previous
-                  </Button>
-
-                  <div className="flex flex-wrap items-center justify-center gap-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                      if (
-                        page === 1 ||
-                        page === totalPages ||
-                        (page >= currentPage - 1 && page <= currentPage + 1)
-                      ) {
-                        return (
-                          <Button
-                            key={page}
-                            variant={page === currentPage ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => goToPage(page)}
-                            className="min-w-[2.5rem]"
-                          >
-                            {page}
-                          </Button>
-                        )
-                      } else if (page === currentPage - 2 || page === currentPage + 2) {
-                        return (
-                          <span key={page} className="px-2 text-sm text-muted-foreground">
-                            ...
-                          </span>
-                        )
-                      }
-                      return null
-                    })}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-5 w-24 rounded-md" />
+                        <Skeleton className="h-4 w-12 rounded-md" />
+                      </div>
+                      <Skeleton className="h-4 w-full rounded-md" />
+                      <Skeleton className="h-4 w-3/4 rounded-md" />
+                    </div>
+                    <Skeleton className="h-10 w-full rounded-xl" />
                   </div>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => goToPage(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="gap-1"
-                  >
-                    Next
-                  </Button>
-                </div>
-              )}
-            </>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <PackagesGrid packages={packages} />
           )}
         </div>
       </div>

@@ -1,4 +1,20 @@
+/**
+ * Transparent streaming proxy to the IC canister CDN (cloud.icpay.app).
+ *
+ * CPU budget: effectively zero — this route streams the upstream response body
+ * through without buffering, parsing, or transforming it. The `await fetch()`
+ * call is I/O wait, not Active CPU time, so it does not count toward the
+ * Vercel Fluid compute billing.
+ *
+ * Do NOT add JSON.parse, body buffering, or any transformation logic here.
+ * Doing so converts free I/O-wait time into billable Active CPU time.
+ */
 import { WALLET_CANISTER_ID } from "@/services/icp"
+
+// Terminate after 30 s — cloud files can be large, but 30 s is enough for
+// any realistic upload. Prevents a hung upstream from holding the slot open
+// for the full 60 s Hobby-plan limit.
+export const maxDuration = 30
 
 const CORS_HEADERS: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",

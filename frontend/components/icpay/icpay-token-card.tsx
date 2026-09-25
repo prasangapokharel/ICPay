@@ -188,13 +188,14 @@ function MetricRow({
         )}
       </span>
       {onClick ? (
-        <button
+        <Button
+          variant="link"
           type="button"
           onClick={onClick}
-          className="text-xs font-medium tabular-nums hover:text-primary"
+          className="h-auto p-0 text-xs font-medium tabular-nums hover:text-primary"
         >
           {value}
-        </button>
+        </Button>
       ) : (
         <span className="text-xs font-medium tabular-nums">{value}</span>
       )}

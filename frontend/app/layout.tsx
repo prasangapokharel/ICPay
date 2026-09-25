@@ -1,4 +1,4 @@
-import { Geist_Mono, Inter } from "next/font/google"
+import { Geist, Geist_Mono } from "next/font/google"
 import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
@@ -13,7 +13,10 @@ import { SiteAnalytics } from "@/components/analytics/site-analytics"
 import { Toaster } from "@/components/ui/sonner"
 import { SITE_VERIFICATION } from "@/lib/public/site-verification"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+const fontSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -55,6 +58,13 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180" }],
+  },
   verification: {
     google: SITE_VERIFICATION.google,
     yandex: SITE_VERIFICATION.yandex,
@@ -107,7 +117,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
+      className={cn("antialiased", fontMono.variable, fontSans.variable, "font-sans")}
     >
       <head>
         <ThemeColorScript />

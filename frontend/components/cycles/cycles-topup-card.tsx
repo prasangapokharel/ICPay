@@ -412,15 +412,15 @@ export function CyclesTopUpCard() {
           {(liveStatus.kind === "ok" ||
             liveStatus.kind === "denied" ||
             liveStatus.kind === "loading") && (
-            <Card className="gap-0">
-              <CardHeader className="border-b pb-3">
-                <CardTitle className="text-base">{t("liveStatusTitle")}</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4">
-                <CanisterStatusPanel state={liveStatus} compact />
-              </CardContent>
-            </Card>
-          )}
+              <Card className="gap-0">
+                <CardHeader className="border-b pb-3">
+                  <CardTitle className="text-base">{t("liveStatusTitle")}</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <CanisterStatusPanel state={liveStatus} compact />
+                </CardContent>
+              </Card>
+            )}
         </div>
       </div>
     </div>

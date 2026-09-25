@@ -7,18 +7,37 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Spinner } from "@/components/ui/spinner"
 import { mapBucketError } from "@/lib/bucket/bucket"
 import { copyText } from "@/lib/wallet/utils"
@@ -155,15 +174,37 @@ export function BucketApiKeysModal({
                       </Badge>
                     ) : (
                       <ButtonGroup className="shrink-0">
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon-sm"
-                          aria-label={t("apiKeyRevoke")}
-                          onClick={() => handleRevoke(key.id)}
-                        >
-                          <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger
+                            render={
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon-sm"
+                                aria-label={t("apiKeyRevoke")}
+                              >
+                                <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+                              </Button>
+                            }
+                          />
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>{t("apiKeyRevoke")}?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently revoke this API key. Any applications, scripts, or backups using this key will immediately lose access.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>{tc("cancel")}</AlertDialogCancel>
+                              <AlertDialogAction
+                                variant="destructive"
+                                onClick={() => void handleRevoke(key.id)}
+                              >
+                                {t("apiKeyRevoke")}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </ButtonGroup>
                     )}
                   </li>
@@ -208,48 +249,84 @@ export function BucketApiKeysModal({
             <DialogTitle>{t("apiKeyCreate")}</DialogTitle>
             <DialogDescription className="text-xs">{t("apiKeyCreateHint")}</DialogDescription>
           </DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="api-key-name">{t("apiKeyName")}</Label>
-              <Input
-                id="api-key-name"
-                value={name}
-                maxLength={32}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t("apiKeyNamePlaceholder")}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              void handleCreate()
+            }}
+          >
+            <FieldGroup className="gap-4">
+              <Field className="gap-2">
+                <FieldLabel htmlFor="api-key-name">{t("apiKeyName")}</FieldLabel>
+                <Input
+                  id="api-key-name"
+                  value={name}
+                  maxLength={32}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t("apiKeyNamePlaceholder")}
+                />
+              </Field>
+
+              <FieldSet className="gap-2">
+                <FieldLegend variant="label">{t("apiKeyPermissions")}</FieldLegend>
+                <FieldGroup className="gap-2">
+                  <Field orientation="horizontal">
+                    <Checkbox
+                      id="perm-read"
+                      checked={read}
+                      onCheckedChange={(v) => setRead(Boolean(v))}
+                    />
+                    <FieldLabel htmlFor="perm-read" className="font-normal text-xs">
+                      {t("apiKeyPermRead")}
+                    </FieldLabel>
+                  </Field>
+                  <Field orientation="horizontal">
+                    <Checkbox
+                      id="perm-write"
+                      checked={write}
+                      onCheckedChange={(v) => setWrite(Boolean(v))}
+                    />
+                    <FieldLabel htmlFor="perm-write" className="font-normal text-xs">
+                      {t("apiKeyPermWrite")}
+                    </FieldLabel>
+                  </Field>
+                  <Field orientation="horizontal">
+                    <Checkbox
+                      id="perm-del"
+                      checked={del}
+                      onCheckedChange={(v) => setDel(Boolean(v))}
+                    />
+                    <FieldLabel htmlFor="perm-del" className="font-normal text-xs">
+                      {t("apiKeyPermDelete")}
+                    </FieldLabel>
+                  </Field>
+                </FieldGroup>
+              </FieldSet>
+
+              {error && (
+                <Alert variant="destructive" className="py-2">
+                  <AlertDescription className="text-xs">{error}</AlertDescription>
+                </Alert>
+              )}
+            </FieldGroup>
+
+            <DialogFooter className="mt-4 gap-2 sm:gap-2">
+              <DialogClose
+                render={
+                  <Button variant="outline" type="button" disabled={busy}>
+                    {tc("cancel")}
+                  </Button>
+                }
               />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("apiKeyPermissions")}</Label>
-              <div className="space-y-1.5">
-                <label className="flex items-center gap-2 text-xs">
-                  <Checkbox checked={read} onCheckedChange={(v) => setRead(Boolean(v))} />
-                  {t("apiKeyPermRead")}
-                </label>
-                <label className="flex items-center gap-2 text-xs">
-                  <Checkbox checked={write} onCheckedChange={(v) => setWrite(Boolean(v))} />
-                  {t("apiKeyPermWrite")}
-                </label>
-                <label className="flex items-center gap-2 text-xs">
-                  <Checkbox checked={del} onCheckedChange={(v) => setDel(Boolean(v))} />
-                  {t("apiKeyPermDelete")}
-                </label>
-              </div>
-            </div>
-            {error && (
-              <Alert variant="destructive" className="py-2">
-                <AlertDescription className="text-xs">{error}</AlertDescription>
-              </Alert>
-            )}
-            <Button
-              type="button"
-              className="w-full"
-              disabled={busy || !name.trim() || (!read && !write && !del)}
-              onClick={handleCreate}
-            >
-              {busy ? t("apiKeyCreating") : t("apiKeyCreate")}
-            </Button>
-          </div>
+              <Button
+                type="submit"
+                disabled={busy || !name.trim() || (!read && !write && !del)}
+              >
+                {busy && <Spinner className="size-3.5" />}
+                {busy ? t("apiKeyCreating") : t("apiKeyCreate")}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
 

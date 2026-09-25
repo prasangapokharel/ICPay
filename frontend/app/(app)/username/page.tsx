@@ -25,7 +25,7 @@ import {
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { BadgeMark, PremiumBadge } from "@/components/verifed/premium-badge"
+import { BadgeMark, PremiumBadge } from "@/components/verified/premium-badge"
 import {
   BADGE_RANGES,
   tierBadgeSpans,
@@ -122,201 +122,201 @@ export default function UsernamePage() {
     <AppPage title={t("title")} description={t("subtitle")}>
       <Card className="border-border/60 shadow-sm">
         <CardContent className="space-y-6 px-5 py-7">
-      <div className="space-y-2">
-        <Label htmlFor="buy-username">{t("label")}</Label>
-        <div className="relative">
-          <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-base text-muted-foreground">
-            @
-          </span>
-          <Input
-            id="buy-username"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value)
-              setError(null)
-            }}
-            placeholder="btc"
-            maxLength={USERNAME_MAX_LENGTH}
-            autoCapitalize="none"
-            autoCorrect="off"
-            spellCheck={false}
-            className="pr-10 pl-9"
-          />
-          {trimmed !== "" && !shapeError && !checking && (
-            <span className="absolute top-1/2 right-4 -translate-y-1/2">
-              <HugeiconsIcon
-                icon={available ? Tick02Icon : Cancel01Icon}
-                className={cn(
-                  "size-5",
-                  available ? "text-success" : "text-destructive"
-                )}
+          <div className="space-y-2">
+            <Label htmlFor="buy-username">{t("label")}</Label>
+            <div className="relative">
+              <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-base text-muted-foreground">
+                @
+              </span>
+              <Input
+                id="buy-username"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value)
+                  setError(null)
+                }}
+                placeholder="btc"
+                maxLength={USERNAME_MAX_LENGTH}
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                className="pr-10 pl-9"
               />
-            </span>
-          )}
-          {checking && (
-            <Spinner className="absolute top-1/2 right-4 size-4 -translate-y-1/2" />
-          )}
-        </div>
-        {shapeError && (
-          <p className="text-xs text-destructive">
-            {t(`errors.${shapeError}`, {
-              max: USERNAME_MAX_LENGTH,
-              min: USERNAME_FREE_MIN_LENGTH,
-            })}
-          </p>
-        )}
-        {!shapeError && available === false && (
-          <p className="text-xs text-destructive">
-            {t("taken", { name: trimmed })}
-          </p>
-        )}
-        {!shapeError && available === true && (
-          <p className="text-xs text-success">
-            {t("availableName", { name: trimmed })}
-          </p>
-        )}
-      </div>
-
-      {trimmed !== "" && !shapeError && tier && (
-        <div className="space-y-3 rounded-2xl bg-muted/40 p-4">
-          <div className="flex items-baseline justify-between">
-            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              {t(`tiers.${tier.labelKey}`)}
-              {/* Asked of the typed name, not the tier: ultra spans both marks,
-                  so this is the only place the exact badge is knowable. */}
-              <PremiumBadge name={trimmed} className="size-3.5" />
-            </span>
-            <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
-              <Image
-                src={ICP_LOGO}
-                alt=""
-                width={40}
-                height={40}
-                className="size-5 object-contain"
-              />
-              {formatAmount(price)}
-            </span>
-          </div>
-          <div className="flex items-baseline justify-between text-xs text-muted-foreground">
-            <span>{t("networkFee")}</span>
-            <span className="tabular-nums">{formatAmount(ICP_FEE)} ICP</span>
-          </div>
-          <div className="flex items-baseline justify-between border-t pt-3 text-sm font-medium">
-            <span>{t("total")}</span>
-            <span className="tabular-nums">{formatAmount(total)} ICP</span>
-          </div>
-          {treasury && (
-            <p className="text-xs text-muted-foreground">
-              {t("treasuryNote", { principal: shortPrincipal(treasury) })}
-            </p>
-          )}
-        </div>
-      )}
-
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      <Button
-        size="lg"
-        className="h-12 w-full rounded-2xl text-base"
-        disabled={!canBuy}
-        onClick={handleBuy}
-      >
-        {buying ? <Spinner className="size-4" /> : null}
-        {buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}
-      </Button>
-
-      <div className="space-y-2">
-        <div className="flex items-center gap-1.5">
-          <p className="text-xs font-medium text-muted-foreground">
-            {t("pricing")}
-          </p>
-          {/* A popover, not a tooltip: the badge rule is the reason to pick one
-              tier over another, and on a phone there is no hover to reveal it. */}
-          <Popover>
-            <PopoverTrigger
-              aria-label={t("badgeInfoTitle")}
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <HugeiconsIcon icon={InformationCircleIcon} className="size-4" />
-            </PopoverTrigger>
-            <PopoverContent align="start" className="gap-3">
-              <PopoverHeader>
-                <PopoverTitle className="text-sm">
-                  {t("badgeInfoTitle")}
-                </PopoverTitle>
-                <PopoverDescription className="text-xs">
-                  {t("badgeInfo", { min: USERNAME_FREE_MIN_LENGTH })}
-                </PopoverDescription>
-              </PopoverHeader>
-              {/* Listed as two rows rather than two ticks in the heading: side
-                  by side they read as a pair a buyer gets together. */}
-              <div className="flex flex-col gap-2 text-xs">
-                {(["gold", "blue"] as const).map((badge) => (
-                  <div key={badge} className="flex items-start gap-2">
-                    <BadgeMark tier={badge} className="mt-px size-3.5" />
-                    <span>
-                      <span className="font-medium text-foreground">
-                        {t(
-                          badge === "gold" ? "goldBadgeTitle" : "blueBadgeTitle"
-                        )}
-                      </span>{" "}
-                      <span className="text-muted-foreground">
-                        {t(
-                          badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo",
-                          {
-                            lengths: `${BADGE_RANGES[badge].min}-${BADGE_RANGES[badge].max}`,
-                          }
-                        )}
-                      </span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-        <div className="overflow-hidden rounded-2xl border">
-          {TIERS.map((tier, i) => (
-            <div
-              key={tier.labelKey}
-              className={cn(
-                "flex items-baseline justify-between px-4 py-3 text-sm",
-                i > 0 && "border-t"
+              {trimmed !== "" && !shapeError && !checking && (
+                <span className="absolute top-1/2 right-4 -translate-y-1/2">
+                  <HugeiconsIcon
+                    icon={available ? Tick02Icon : Cancel01Icon}
+                    className={cn(
+                      "size-5",
+                      available ? "text-success" : "text-destructive"
+                    )}
+                  />
+                </span>
               )}
-            >
-              <div>
-                <p className="font-medium">{t(`tiers.${tier.labelKey}`)}</p>
+              {checking && (
+                <Spinner className="absolute top-1/2 right-4 size-4 -translate-y-1/2" />
+              )}
+            </div>
+            {shapeError && (
+              <p className="text-xs text-destructive">
+                {t(`errors.${shapeError}`, {
+                  max: USERNAME_MAX_LENGTH,
+                  min: USERNAME_FREE_MIN_LENGTH,
+                })}
+              </p>
+            )}
+            {!shapeError && available === false && (
+              <p className="text-xs text-destructive">
+                {t("taken", { name: trimmed })}
+              </p>
+            )}
+            {!shapeError && available === true && (
+              <p className="text-xs text-success">
+                {t("availableName", { name: trimmed })}
+              </p>
+            )}
+          </div>
+
+          {trimmed !== "" && !shapeError && tier && (
+            <div className="space-y-3 rounded-2xl bg-muted/40 p-4">
+              <div className="flex items-baseline justify-between">
+                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  {t(`tiers.${tier.labelKey}`)}
+                  {/* Asked of the typed name, not the tier: ultra spans both marks,
+                  so this is the only place the exact badge is knowable. */}
+                  <PremiumBadge name={trimmed} className="size-3.5" />
+                </span>
+                <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
+                  <Image
+                    src={ICP_LOGO}
+                    alt=""
+                    width={40}
+                    height={40}
+                    className="size-5 object-contain"
+                  />
+                  {formatAmount(price)}
+                </span>
+              </div>
+              <div className="flex items-baseline justify-between text-xs text-muted-foreground">
+                <span>{t("networkFee")}</span>
+                <span className="tabular-nums">{formatAmount(ICP_FEE)} ICP</span>
+              </div>
+              <div className="flex items-baseline justify-between border-t pt-3 text-sm font-medium">
+                <span>{t("total")}</span>
+                <span className="tabular-nums">{formatAmount(total)} ICP</span>
+              </div>
+              {treasury && (
                 <p className="text-xs text-muted-foreground">
-                  {t(`tiers.${tier.rangeKey}`)}
+                  {t("treasuryNote", { principal: shortPrincipal(treasury) })}
                 </p>
-                {/* Marked per row rather than described in the note, so the
+              )}
+            </div>
+          )}
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          <Button
+            size="lg"
+            className="h-12 w-full rounded-2xl text-base"
+            disabled={!canBuy}
+            onClick={handleBuy}
+          >
+            {buying ? <Spinner className="size-4" /> : null}
+            {buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}
+          </Button>
+
+          <div className="space-y-2">
+            <div className="flex items-center gap-1.5">
+              <p className="text-xs font-medium text-muted-foreground">
+                {t("pricing")}
+              </p>
+              {/* A popover, not a tooltip: the badge rule is the reason to pick one
+              tier over another, and on a phone there is no hover to reveal it. */}
+              <Popover>
+                <PopoverTrigger
+                  aria-label={t("badgeInfoTitle")}
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <HugeiconsIcon icon={InformationCircleIcon} className="size-4" />
+                </PopoverTrigger>
+                <PopoverContent align="start" className="gap-3">
+                  <PopoverHeader>
+                    <PopoverTitle className="text-sm">
+                      {t("badgeInfoTitle")}
+                    </PopoverTitle>
+                    <PopoverDescription className="text-xs">
+                      {t("badgeInfo", { min: USERNAME_FREE_MIN_LENGTH })}
+                    </PopoverDescription>
+                  </PopoverHeader>
+                  {/* Listed as two rows rather than two ticks in the heading: side
+                  by side they read as a pair a buyer gets together. */}
+                  <div className="flex flex-col gap-2 text-xs">
+                    {(["gold", "blue"] as const).map((badge) => (
+                      <div key={badge} className="flex items-start gap-2">
+                        <BadgeMark tier={badge} className="mt-px size-3.5" />
+                        <span>
+                          <span className="font-medium text-foreground">
+                            {t(
+                              badge === "gold" ? "goldBadgeTitle" : "blueBadgeTitle"
+                            )}
+                          </span>{" "}
+                          <span className="text-muted-foreground">
+                            {t(
+                              badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo",
+                              {
+                                lengths: `${BADGE_RANGES[badge].min}-${BADGE_RANGES[badge].max}`,
+                              }
+                            )}
+                          </span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="overflow-hidden rounded-2xl border">
+              {TIERS.map((tier, i) => (
+                <div
+                  key={tier.labelKey}
+                  className={cn(
+                    "flex items-baseline justify-between px-4 py-3 text-sm",
+                    i > 0 && "border-t"
+                  )}
+                >
+                  <div>
+                    <p className="font-medium">{t(`tiers.${tier.labelKey}`)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t(`tiers.${tier.rangeKey}`)}
+                    </p>
+                    {/* Marked per row rather than described in the note, so the
                     badge reads as part of what the price buys. Each mark is
                     labelled with the lengths it covers: ultra spans both, and
                     two bare ticks read as though the row granted them both. */}
-                <div className="mt-1.5 flex flex-wrap gap-1">
-                  {tierBadgeSpans(tier).map((span) => (
-                    <BadgeChip key={span.badge} span={span} />
-                  ))}
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      {tierBadgeSpans(tier).map((span) => (
+                        <BadgeChip key={span.badge} span={span} />
+                      ))}
+                    </div>
+                  </div>
+                  <span className="font-semibold tabular-nums">
+                    {formatAmount(tier.price)} ICP
+                  </span>
                 </div>
-              </div>
-              <span className="font-semibold tabular-nums">
-                {formatAmount(tier.price)} ICP
-              </span>
+              ))}
             </div>
-          ))}
-        </div>
-        <p className="text-xs text-muted-foreground">{t("note")}</p>
-        <Link
-          href="/brand-protection"
-          className="inline-block text-xs font-medium text-foreground underline underline-offset-4 transition-colors hover:text-primary"
-        >
-          {t("brandProtectionLink")}
-        </Link>
-      </div>
+            <p className="text-xs text-muted-foreground">{t("note")}</p>
+            <Link
+              href="/brand-protection"
+              className="inline-block text-xs font-medium text-foreground underline underline-offset-4 transition-colors hover:text-primary"
+            >
+              {t("brandProtectionLink")}
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </AppPage>

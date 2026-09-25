@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/chart"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Badge } from "@/components/ui/badge"
-import { PHASES, STATUS_META, phaseProgress, overallProgress } from "./roadmap-data"
+import { PHASES, STATUS_META, phaseProgress, overallProgress } from "@/lib/roadmap/roadmapData"
 
 const config = { pct: { label: "Complete", color: "var(--primary)" } } satisfies ChartConfig
 

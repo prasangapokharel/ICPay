@@ -4,6 +4,7 @@ import { useState } from "react"
 import { usePathname } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { CheckmarkCircle02Icon, Copy01Icon } from "@hugeicons/core-free-icons"
+import { Button } from "@/components/ui/button"
 import { BLOG_POSTS } from "@/services/blog/blog"
 
 export function BlogSocialShare({
@@ -116,19 +117,21 @@ export function BlogSocialShare({
       </a>
 
       {/* Copy Link Button */}
-      <button
+      <Button
         onClick={handleCopy}
         type="button"
+        variant="outline"
+        size="icon"
         aria-label="Copy link to clipboard"
         title={copied ? "Copied!" : "Copy link"}
-        className="flex size-8 items-center justify-center rounded-full border border-border/70 bg-background/80 text-muted-foreground transition-all duration-200 hover:border-primary/50 hover:bg-primary/10 hover:text-primary hover:scale-105 shadow-2xs cursor-pointer"
+        className="size-8 rounded-full border-border/70 bg-background/80 text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-primary hover:scale-105 shadow-2xs"
       >
         {copied ? (
           <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-green-500" />
         ) : (
           <HugeiconsIcon icon={Copy01Icon} className="size-3.5" />
         )}
-      </button>
+      </Button>
     </div>
   )
 }

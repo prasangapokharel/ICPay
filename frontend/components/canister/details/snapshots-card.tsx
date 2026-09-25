@@ -292,7 +292,10 @@ export function SnapshotsCard({
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-              <AlertDialogAction onClick={() => void onConfirm()}>
+              <AlertDialogAction
+                variant={confirm?.kind === "delete" ? "destructive" : "default"}
+                onClick={() => void onConfirm()}
+              >
                 {confirm?.kind === "load" ? t("load") : t("delete")}
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -341,7 +344,10 @@ export function SnapshotsCard({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={() => void onConfirm()}>
+            <AlertDialogAction
+              variant={confirm?.kind === "delete" ? "destructive" : "default"}
+              onClick={() => void onConfirm()}
+            >
               {confirm?.kind === "load" ? t("load") : t("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>

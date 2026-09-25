@@ -24,6 +24,8 @@ export function HeroSignOptions() {
               title={provider.label}
               width={22}
               height={22}
+              priority
+              loading="eager"
               unoptimized
               className={cn(
                 "size-5 object-contain",

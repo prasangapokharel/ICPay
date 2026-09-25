@@ -1,24 +1,16 @@
 # Local tooling and operating-system files
+/.agents/
 .opencode/
 .cursor/
 .windsurf/
-# Points at itself, so it resolves to nothing. The real skill lives in the
-# global ~/.claude/skills/ and is not part of this repo.
 frontend/.agents/skills/vercel-react-best-practices
-# Anchored to the root: these are the per-machine agent instruction files. The
-# leading slash matters -- unanchored, they would also swallow .claude/AGENTS.md
-# and frontend/AGENTS.md, which are committed on purpose.
 /AGENTS.md
 /CLAUDE.md
 .DS_Store
-# .claude/ carries the agent map -- the point of it is that a fresh clone gets
-# the same context. Only the per-machine permission grants stay local.
 .claude/settings.local.json
-# Local agent prefs only — docs/ is tracked; exclude scratch and vendored deps inside it.
-docs/cursor/
-docs/**/node_modules/
+docs/
 
-# Per-machine agent prefs (skills under .claude/skills/ are tracked)
+# docs/bucket/ stays local (PDF exports, not committed)
 .claude/user-prefs.md
 
 # Local backend draft notes and agent doc mirrors (not product source)
@@ -38,8 +30,6 @@ backend/freemodel/cookies.json
 *.p12
 *.pfx
 id_rsa*
-# dfx identities are the keys to the canister; an exported one must never be
-# committed, and identity.json carries the active identity's material.
 **/identity.json
 **/.config/dfx/
 *.identity.json
@@ -72,15 +62,20 @@ pnpm-debug.log*
 # staged Next export for the asset canister
 backend/dist/
 node_modules/
-# Root package.json is CI-only (tsx); lockfile belongs in frontend/
 /package-lock.json
-# Root /pkg only — backend/pkg is the Motoko library and must stay tracked
 /pkg
 !backend/pkg/
 !backend/testing/pkg/
 
 # Desktop wallet (local Tauri app — build artifacts and source stay off-repo)
 /desktop/
-
-# Desktop wallet build outputs (CI copies artifacts here locally)
 /downloads/
+desktop
+.cursor
+docs
+desktop/wallet/node_modules/
+desktop/wallet/dist/
+desktop/wallet/src-tauri/target/
+
+#automate psot
+auto

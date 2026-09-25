@@ -68,50 +68,50 @@ export function ProblemSolution() {
   const t = useTranslations("publicSite.icbucket.problemSolution")
 
   return (
-    <section className="border-b border-border/60 bg-background py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-10 space-y-3 text-center md:mb-12">
-            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{t("title")}</h2>
-            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">{t("subtitle")}</p>
-          </div>
+    <section className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
+        <div className="mb-10 space-y-3 text-center md:mb-12">
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent md:text-5xl">
+            {t("title")}
+          </h2>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{t("subtitle")}</p>
+        </div>
 
-          <div className="overflow-x-auto rounded-lg border bg-card">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/50 hover:bg-muted/50">
-                  <TableHead className="w-1/2 px-4 py-4 text-base font-semibold">
-                    {t("problemColumn")}
-                  </TableHead>
-                  <TableHead className="w-1/2 border-l px-4 py-4 text-base font-semibold">
-                    {t("solutionColumn")}
-                  </TableHead>
+        <div className="overflow-x-auto rounded-2xl border border-border/60 bg-card shadow-sm">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/50 hover:bg-muted/50 border-b border-border/60">
+                <TableHead className="w-1/2 px-5 py-4 text-base font-semibold text-foreground">
+                  {t("problemColumn")}
+                </TableHead>
+                <TableHead className="w-1/2 border-l border-border/60 px-5 py-4 text-base font-semibold text-foreground">
+                  {t("solutionColumn")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {ROW_IDS.map((id, index) => (
+                <TableRow key={id} className="align-top border-b border-border/60 last:border-b-0 hover:bg-muted/20">
+                  <TableCell className="whitespace-normal px-5 py-5">
+                    <TopicCell
+                      icon={ROW_ICONS[index].problem}
+                      title={t(`rows.${id}.problemTitle`)}
+                      description={t(`rows.${id}.problemDescription`)}
+                      tone="problem"
+                    />
+                  </TableCell>
+                  <TableCell className="whitespace-normal border-l border-border/60 px-5 py-5">
+                    <TopicCell
+                      icon={ROW_ICONS[index].solution}
+                      title={t(`rows.${id}.solutionTitle`)}
+                      description={t(`rows.${id}.solutionDescription`)}
+                      tone="solution"
+                    />
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {ROW_IDS.map((id, index) => (
-                  <TableRow key={id} className="align-top">
-                    <TableCell className="whitespace-normal px-4 py-5">
-                      <TopicCell
-                        icon={ROW_ICONS[index].problem}
-                        title={t(`rows.${id}.problemTitle`)}
-                        description={t(`rows.${id}.problemDescription`)}
-                        tone="problem"
-                      />
-                    </TableCell>
-                    <TableCell className="whitespace-normal border-l px-4 py-5">
-                      <TopicCell
-                        icon={ROW_ICONS[index].solution}
-                        title={t(`rows.${id}.solutionTitle`)}
-                        description={t(`rows.${id}.solutionDescription`)}
-                        tone="solution"
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </section>

@@ -1,5 +1,6 @@
 import type { TransactionPublic } from "@/services/types"
 import { formatTokenAmount, formatTimeIso, txStatusLabel } from "@/lib/wallet/utils"
+import { ICP_LEDGER_CANISTER_ID } from "@/lib/ic/constants"
 
 function csvCell(value: string): string {
   if (value.includes('"') || value.includes(",") || value.includes("\n")) {
@@ -74,6 +75,6 @@ export function downloadAnalyticsCsv(content: string, username: string): void {
 
 // Hook-free helper for pages that already have symbol lookup.
 export function ledgerSymbolFallback(ledgerId: string): string {
-  if (ledgerId === "ryjl3-tyaaa-aaaaa-aaaba-cai") return "ICP"
+  if (ledgerId === ICP_LEDGER_CANISTER_ID) return "ICP"
   return ledgerId.slice(0, 5).toUpperCase()
 }

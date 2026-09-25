@@ -2189,7 +2189,17 @@
     "topupDescription": "Convert ICP to cycles for any canister ID. Controllers optional.",
     "snapshotsTitle": "Snapshots",
     "snapshotsDescription": "Take, list, load, and delete snapshots for canisters you control.",
-    "note": "Frontend-only tools call the official CMC, cycles ledger, and IC management canister. ICPay wallet withdraw is only used when your II principal needs ICP."
+    "note": "Frontend-only tools call the official CMC, cycles ledger, and IC management canister. ICPay wallet withdraw is only used when your II principal needs ICP.",
+    "guidesTitle": "Developer Guides",
+    "guidesSubtitle": "Step-by-step guides for canister creation, cycle management, and controller operations.",
+    "guideCreate": "How to create an ICP canister",
+    "guideTopUp": "How to top up ICP cycles",
+    "guideManage": "How to manage an ICP canister",
+    "guideMint": "How to mint cycles to the ledger",
+    "guideSnapshot": "How to snapshot an ICP canister",
+    "guideCmc": "What is the Cycles Minting Canister",
+    "guideControllers": "Canister controllers explained",
+    "guideOutOfCycles": "Canister out of cycles — how to fix"
   },
   "myCanisters": {
     "title": "My canisters",

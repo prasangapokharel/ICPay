@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar"
 import { DashboardNavFooter, DashboardNavMain } from "@/components/layout/dashboard/nav-main"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
-import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
+import { APP_LOGO_ALT, SIDEBAR_HEADER_LOGO } from "@/lib/ui/brand-images"
 
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
   return (
@@ -27,17 +27,16 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<Link href="/home" />}
             >
-              <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+              <div className="flex h-8 items-center px-1">
                 <Image
-                  src={APP_LOGO}
+                  src={SIDEBAR_HEADER_LOGO}
                   alt={APP_LOGO_ALT}
-                  width={32}
-                  height={32}
+                  width={140}
+                  height={30}
                   priority
-                  className="size-8 object-cover"
+                  className="h-7 w-auto object-contain"
                 />
-              </span>
-              <span className="text-sm font-semibold">ICPay</span>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

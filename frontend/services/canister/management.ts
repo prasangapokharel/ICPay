@@ -1,4 +1,4 @@
-import type { Identity } from "@icp-sdk/core/agent"
+import { Actor, type Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
 import {
   encodeSnapshotId,
@@ -53,42 +53,89 @@ async function management(identity: Identity): Promise<IcManagementCanister> {
   return IcManagementCanister.create({ agent })
 }
 
+async function tryQueryCanisterCycles(
+  identity: Identity,
+  canisterId: Principal
+): Promise<bigint | null> {
+  try {
+    const agent = await createAgent(identity)
+    const cyclesActor = Actor.createActor<{ get_cycles: () => Promise<bigint> }>(
+      ({ IDL }) =>
+        IDL.Service({
+          get_cycles: IDL.Func([], [IDL.Nat], ["query"]),
+        }),
+      { agent, canisterId }
+    )
+    return await cyclesActor.get_cycles()
+  } catch {
+    return null
+  }
+}
+
 export async function fetchCanisterStatus(
   identity: Identity,
   canisterIdText: string
 ): Promise<CanisterStatusView> {
   const canisterId = parseCanisterId(canisterIdText)
-  const mgmt = await management(identity)
-  const raw = await mgmt.canisterStatus({ canisterId, certified: false })
-  const caller = identity.getPrincipal().toText()
-  const controllers = raw.settings.controllers.map((p) => p.toText())
+  try {
+    const mgmt = await management(identity)
+    const raw = await mgmt.canisterStatus({ canisterId, certified: false })
+    const caller = identity.getPrincipal().toText()
+    const controllers = raw.settings.controllers.map((p) => p.toText())
 
-  const isLogPublic =
-    raw.settings.log_visibility != null && "public" in raw.settings.log_visibility
+    const isLogPublic =
+      raw.settings.log_visibility != null && "public" in raw.settings.log_visibility
 
-  return {
-    canisterId: canisterId.toText(),
-    runStatus: parseRunStatus(raw.status),
-    cycles: raw.cycles,
-    cyclesLabel: formatCycles(raw.cycles),
-    memoryLabel: formatBytes(raw.memory_size),
-    idleBurnLabel: `${formatCycles(raw.idle_cycles_burned_per_day)} / day`,
-    reservedLabel: formatCycles(raw.reserved_cycles),
-    version: raw.version.toString(),
-    moduleHash: formatModuleHash(raw.module_hash[0] ?? null),
-    controllers,
-    isController: controllers.includes(caller),
-    freezingThreshold: `${raw.settings.freezing_threshold.toString()} s`,
-    freezingThresholdSeconds: raw.settings.freezing_threshold,
-    computeAllocation: `${raw.settings.compute_allocation.toString()}%`,
-    computeAllocationPercent: raw.settings.compute_allocation,
-    memoryAllocation: formatBytes(raw.settings.memory_allocation),
-    memoryAllocationBytes: raw.settings.memory_allocation,
-    wasmMemory: formatBytes(raw.memory_metrics.wasm_memory_size),
-    wasmMemoryLimitBytes: raw.settings.wasm_memory_limit,
-    stableMemory: formatBytes(raw.memory_metrics.stable_memory_size),
-    snapshotsSize: formatBytes(raw.memory_metrics.snapshots_size),
-    logVisibility: isLogPublic ? "public" : "controllers",
+    return {
+      canisterId: canisterId.toText(),
+      runStatus: parseRunStatus(raw.status),
+      cycles: raw.cycles,
+      cyclesLabel: formatCycles(raw.cycles),
+      memoryLabel: formatBytes(raw.memory_size),
+      idleBurnLabel: `${formatCycles(raw.idle_cycles_burned_per_day)} / day`,
+      reservedLabel: formatCycles(raw.reserved_cycles),
+      version: raw.version.toString(),
+      moduleHash: formatModuleHash(raw.module_hash[0] ?? null),
+      controllers,
+      isController: controllers.includes(caller),
+      freezingThreshold: `${raw.settings.freezing_threshold.toString()} s`,
+      freezingThresholdSeconds: raw.settings.freezing_threshold,
+      computeAllocation: `${raw.settings.compute_allocation.toString()}%`,
+      computeAllocationPercent: raw.settings.compute_allocation,
+      memoryAllocation: formatBytes(raw.settings.memory_allocation),
+      memoryAllocationBytes: raw.settings.memory_allocation,
+      wasmMemory: formatBytes(raw.memory_metrics.wasm_memory_size),
+      wasmMemoryLimitBytes: raw.settings.wasm_memory_limit,
+      stableMemory: formatBytes(raw.memory_metrics.stable_memory_size),
+      snapshotsSize: formatBytes(raw.memory_metrics.snapshots_size),
+      logVisibility: isLogPublic ? "public" : "controllers",
+    }
+  } catch (err) {
+    if (isControllerDenied(err)) {
+      const publicCycles = await tryQueryCanisterCycles(identity, canisterId)
+      if (publicCycles != null) {
+        return {
+          canisterId: canisterId.toText(),
+          runStatus: "running",
+          cycles: publicCycles,
+          cyclesLabel: formatCycles(publicCycles),
+          memoryLabel: "—",
+          idleBurnLabel: "—",
+          reservedLabel: "—",
+          version: "—",
+          moduleHash: "—",
+          controllers: [],
+          isController: false,
+          freezingThreshold: "—",
+          computeAllocation: "—",
+          memoryAllocation: "—",
+          wasmMemory: "—",
+          stableMemory: "—",
+          snapshotsSize: "—",
+        }
+      }
+    }
+    throw err
   }
 }
 

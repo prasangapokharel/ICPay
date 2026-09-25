@@ -37,7 +37,7 @@ assert.equal(CREATE_CANISTER_MEMO, 0x41455243n)
 assert.equal(TOP_UP_CANISTER_MEMO, 0x50555054n)
 
 const replicaDump = new Error(
-  "The replica returned a rejection error: Request ID: abc Reject code: 5 Reject text: Caller 7pb7z-x"
+  "The replica returned a rejection error: Request ID: abc Reject code: 5 Reject text: Caller 7pb7z-x is not a controller of the canister"
 )
 assert.equal(isControllerDenied(replicaDump), true)
 assert.equal(

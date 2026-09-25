@@ -17,9 +17,9 @@ const PLATFORM_CONFIG: Record<Platform, {
   labelKey: "github" | "linkedin" | "website"
   placeholderKey: "github" | "linkedin" | "website"
 }> = {
-  github:   { icon: Github01Icon,   labelKey: "github",   placeholderKey: "github" },
+  github: { icon: Github01Icon, labelKey: "github", placeholderKey: "github" },
   linkedin: { icon: Linkedin01Icon, labelKey: "linkedin", placeholderKey: "linkedin" },
-  website:  { icon: Globe02Icon,    labelKey: "website",  placeholderKey: "website" },
+  website: { icon: Globe02Icon, labelKey: "website", placeholderKey: "website" },
 }
 
 function platformKey(p: SocialPlatform): Platform {
