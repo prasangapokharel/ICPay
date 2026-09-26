@@ -43,9 +43,9 @@ export const metadata: Metadata = {
     siteName: "ICPay",
     images: [
       {
-        url: pageImageUrl(PAGE_IMAGES.icbucket.heroPng),
-        width: 1200,
-        height: 630,
+        url: pageImageUrl(PAGE_IMAGES.icbucket.og),
+        width: 1920,
+        height: 1080,
         alt: "ICBucket - On-Chain Cloud Storage",
       },
     ],
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     title: "ICBucket - On-Chain Cloud Storage for Web3",
     description:
       "Store files on-chain with API keys and SDKs. 30-day ICP plans — no servers, no AWS bills.",
-    images: [pageImageUrl(PAGE_IMAGES.icbucket.heroPng)],
+    images: [pageImageUrl(PAGE_IMAGES.icbucket.og)],
     creator: "@IcpayOfficial",
   },
   alternates: {

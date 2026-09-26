@@ -36,9 +36,9 @@ export const metadata: Metadata = {
     siteName: "ICPay",
     images: [
       {
-        url: pageImageUrl(PAGE_IMAGES.icfalcon.hero),
-        width: 1200,
-        height: 630,
+        url: pageImageUrl(PAGE_IMAGES.icfalcon.og),
+        width: 1920,
+        height: 1080,
         alt: "ICFalcon - Motoko Framework",
       },
     ],
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     title: "ICFalcon - Motoko Framework for Internet Computer",
     description:
       "Production-ready Motoko framework. Start building: npm create icfalcon@latest",
-    images: [pageImageUrl(PAGE_IMAGES.icfalcon.hero)],
+    images: [pageImageUrl(PAGE_IMAGES.icfalcon.og)],
     creator: "@IcpayOfficial",
   },
   alternates: {

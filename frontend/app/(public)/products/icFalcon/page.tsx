@@ -3,7 +3,7 @@ import { HeroSection } from "@/components/products/icfalcon/hero-section"
 import { ProblemSolution } from "@/components/products/icfalcon/problem-solution"
 import { ArticleSection } from "@/components/products/icfalcon/article-section"
 import { FaqSection } from "@/components/products/icfalcon/faq-section"
-import { PAGE_IMAGES } from "@/lib/public/page-images"
+import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
 export const metadata: Metadata = {
   title: "ICFalcon - Production-Ready Motoko Framework for Internet Computer",
@@ -30,14 +30,21 @@ export const metadata: Metadata = {
     description:
       "Production-ready Motoko framework for Internet Computer. Layered architecture, Next.js frontend, global CLI. Build and deploy ICP canisters with one command.",
     type: "website",
-    images: [PAGE_IMAGES.icfalcon.hero],
+    images: [
+      {
+        url: pageImageUrl(PAGE_IMAGES.icfalcon.og),
+        width: 1920,
+        height: 1080,
+        alt: "ICFalcon - Motoko Framework",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "ICFalcon - Motoko Framework for Internet Computer",
     description:
       "Production-ready Motoko framework for ICP canister development. Install with one command: npm create icfalcon@latest",
-    images: [PAGE_IMAGES.icfalcon.hero],
+    images: [pageImageUrl(PAGE_IMAGES.icfalcon.og)],
   },
   alternates: { canonical: "/products/icFalcon" },
 }

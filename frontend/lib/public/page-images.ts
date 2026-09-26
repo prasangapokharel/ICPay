@@ -16,10 +16,12 @@ export const PAGE_IMAGES = {
   icbucket: {
     hero: page("icbucket/hero.gif"),
     heroPng: page("icbucket/hero.png"),
+    og: page("icbucket/og.png"),
     videoPoster: page("icbucket/video-poster.webp"),
   },
   icfalcon: {
     hero: page("icfalcon/hero.webp"),
+    og: page("icfalcon/og.png"),
   },
   login: {
     bg: page("login/bg.webp"),
