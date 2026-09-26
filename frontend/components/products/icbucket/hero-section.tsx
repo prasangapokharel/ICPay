@@ -1,11 +1,17 @@
 "use client"
 
-import Image from "next/image"
+import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HeroSignOptions } from "@/components/public/hero-sign-options"
 import { Button } from "@/components/ui/button"
-import { PAGE_IMAGES } from "@/lib/public/page-images"
+import {
+  Globe,
+  DEFAULT_COUNTRY_NODES,
+  type GlobeCountryNode,
+} from "@/components/ui/globe"
+import { LocaleFlag } from "@/components/i18n/locale-flag"
+import { cn } from "@/lib/ui/utils"
 
 function GitHubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -19,6 +25,7 @@ function GitHubIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function HeroSection() {
   const t = useTranslations("publicSite.icbucket.hero")
+  const [selectedCountry, setSelectedCountry] = useState<GlobeCountryNode | null>(null)
 
   return (
     <section className="border-b border-border/60 bg-background">
@@ -71,17 +78,79 @@ export function HeroSection() {
           <HeroSignOptions />
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-md items-center justify-center bg-transparent lg:max-w-lg">
-          <Image
-            src={PAGE_IMAGES.icbucket.hero}
-            alt={t("imageAlt")}
-            width={1200}
-            height={1200}
-            priority
-            sizes="(max-width: 1024px) 100vw, 512px"
-            className="w-full bg-transparent object-contain select-none"
-            style={{ height: "auto" }}
-          />
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative mx-auto flex aspect-square w-full max-w-md items-center justify-center bg-transparent lg:max-w-lg">
+            <Globe
+              selectedCountryId={selectedCountry?.id}
+              onSelectCountry={setSelectedCountry}
+            />
+          </div>
+
+          {/* Active Subnet Country Node Details */}
+          {selectedCountry && (
+            <div className="w-full max-w-md rounded-2xl border border-border/60 bg-card/85 p-3.5 shadow-sm backdrop-blur-md transition-all duration-300">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <LocaleFlag
+                    country={selectedCountry.country}
+                    label={selectedCountry.name}
+                    size="md"
+                    className="size-5 rounded-full object-cover shadow-xs shrink-0"
+                  />
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-foreground">
+                        {selectedCountry.name}
+                      </span>
+                      <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-400">
+                        Subnet Active
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">{selectedCountry.region}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 text-xs font-mono text-right">
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block">Capacity</span>
+                    <span className="font-semibold text-foreground">{selectedCountry.nodes} Canisters</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block">Latency</span>
+                    <span className="font-semibold text-emerald-400">{selectedCountry.latency}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Quick Country Selector Chips */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 max-w-md">
+            {DEFAULT_COUNTRY_NODES.map((node) => {
+              const isSelected = selectedCountry?.id === node.id
+              return (
+                <button
+                  key={node.id}
+                  type="button"
+                  onClick={() => setSelectedCountry(node)}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-all duration-200 cursor-pointer",
+                    isSelected
+                      ? "border-primary bg-primary/10 text-primary font-medium shadow-xs"
+                      : "border-border/60 bg-muted/40 text-muted-foreground hover:border-border hover:bg-muted/80 hover:text-foreground"
+                  )}
+                >
+                  <LocaleFlag
+                    country={node.country}
+                    label={node.name}
+                    size="sm"
+                    className="size-3.5 rounded-full object-cover shrink-0"
+                  />
+                  <span>{node.name.split(" ")[0]}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
     </section>
