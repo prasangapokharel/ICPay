@@ -1,14 +1,17 @@
 import type { Metadata } from "next"
-import { LandingAuthRedirect } from "@/components/public/landing-auth-redirect"
-import { LandingCta } from "@/components/public/landing-cta"
-import { LandingDownloads } from "@/components/public/landing-downloads"
-import { LandingFaq } from "@/components/public/landing-faq"
-import { LandingFeatures } from "@/components/public/landing-features"
-import { LandingHero } from "@/components/public/landing-hero"
-import { LandingHowItWorks } from "@/components/public/landing-how-it-works"
-// import { LandingHowToPay } from "@/components/public/landing-how-to-pay"
-import { LandingProducts } from "@/components/public/landing-products"
-import { LandingTrust } from "@/components/public/landing-trust"
+import {
+  LandingAuthRedirect,
+  LandingCta,
+  LandingDownloads,
+  LandingFaq,
+  LandingFeatures,
+  LandingHero,
+  LandingHowItWorks,
+  // LandingHowToPay,
+  LandingProducts,
+  LandingTrust,
+  LandingTransparency,
+} from "@/components/public/landing"
 import { LANDING_MEDIA } from "@/lib/public/landing-media"
 
 export const metadata: Metadata = {
@@ -42,10 +45,10 @@ export default function LandingPage() {
       <LandingHowItWorks />
       {/* <LandingHowToPay /> */}
       <LandingTrust />
+      <LandingTransparency />
       <LandingDownloads />
       <LandingFaq />
       <LandingCta />
     </>
   )
 }
-

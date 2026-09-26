@@ -7,13 +7,13 @@ import {
   Message01Icon,
   ShieldIcon,
   TerminalIcon,
+  UserIcon,
   ViewIcon,
-  Wallet01Icon,
 } from "@hugeicons/core-free-icons"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 
 const FEATURE_CONFIG = [
-  { id: "0", icon: Wallet01Icon },
+  { id: "0", icon: UserIcon },
   { id: "1", icon: ShieldIcon },
   { id: "2", icon: Message01Icon },
   { id: "3", icon: CloudIcon },
@@ -46,14 +46,16 @@ export function LandingFeatures() {
               className="border-border/60 bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-md"
             >
               <CardHeader className="gap-3">
-                <HugeiconsIcon
-                  icon={Icon}
-                  className="size-5 text-primary"
-                  strokeWidth={1.75}
-                />
-                <CardTitle className="text-base font-semibold text-foreground">
-                  {t(`items.${id}.title`)}
-                </CardTitle>
+                <div className="flex items-center gap-2.5">
+                  <HugeiconsIcon
+                    icon={Icon}
+                    className="size-5 shrink-0 text-primary"
+                    strokeWidth={1.75}
+                  />
+                  <CardTitle className="text-base font-semibold text-foreground">
+                    {t(`items.${id}.title`)}
+                  </CardTitle>
+                </div>
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   {t(`items.${id}.body`)}
                 </p>

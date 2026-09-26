@@ -4,6 +4,12 @@ export const BACKEND_CANISTER_ID = "6vbhm-nqaaa-aaaan-q6muq-cai"
 /** ICPay mainnet frontend asset canister (used for II derivation origin) */
 export const FRONTEND_CANISTER_ID = "63dke-waaaa-aaaan-q6mvq-cai"
 
+/** ICPay mainnet trade canister */
+export const TRADE_CANISTER_ID = "gomfy-saaaa-aaaan-q6onq-cai"
+
+/** ICPay mainnet blob store (icBucket) canister */
+export const BLOB_STORE_CANISTER_ID = "fly6t-piaaa-aaaan-q6oga-cai"
+
 /** Official ICP ledger canister */
 export const ICP_LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"
 
