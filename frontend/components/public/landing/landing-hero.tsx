@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { HeroSignOptions } from "@/components/public/hero-sign-options"
-import { LandingHeroPreview } from "@/components/public/landing-hero-preview"
+import { LandingHeroPreview } from "./landing-hero-preview"
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
 
 const VIDEO_URL =
