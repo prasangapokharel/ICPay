@@ -28,10 +28,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
       <main
         className={cn(
-          "mx-auto flex min-h-0 w-full flex-1 flex-col max-w-md md:max-w-none",
+          "mx-auto flex w-full flex-1 flex-col max-w-md md:max-w-none",
           channels
             ? channelChat
-              ? "h-full overflow-hidden p-0"
+              ? "h-full min-h-0 overflow-hidden p-0"
               : cn("px-0 pt-0", bottomNavSpacerClass, "md:pb-0")
             : cn("px-4 pt-2", bottomNavSpacerClass, "md:px-6 md:py-6 md:pb-6"),
         )}
